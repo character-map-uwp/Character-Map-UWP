@@ -1,0 +1,137 @@
+﻿<Page
+    x:Class="CharacterMap.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:CharacterMap"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
+    mc:Ignorable="d">
+
+    <Page.BottomAppBar>
+        <CommandBar IsOpen="False" ClosedDisplayMode="Minimal">
+            <AppBarButton x:Name="BtnAbout" Icon="Help" Label="about" Click="BtnAbout_OnClick" />
+        </CommandBar>
+    </Page.BottomAppBar>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <ComboBox x:Name="CmbFontFamily" x:Uid="CmbFontFamily" Width="300" 
+                      SelectedItem="{Binding SelectedFont, Mode=TwoWay}" 
+                      SelectedValuePath="Name"
+                      ItemsSource="{Binding FontList}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <SearchBox x:Name="SearchBoxUnicode" 
+                       PlaceholderText="Unicode" 
+                       BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                       Margin="10,0,0,0" VerticalAlignment="Bottom" MinWidth="170" SearchHistoryEnabled="True" QuerySubmitted="SearchBoxUnicode_OnQuerySubmitted" />
+            
+            <ToggleSwitch x:Name="ToggleTheme" VerticalAlignment="Bottom" Margin="20,0,0,0" OffContent="Light Theme" OnContent="Dark Theme" Toggled="ToggleTheme_OnToggled" />
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="0,10,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="7*" />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" 
+                    BorderThickness="{ThemeResource TextControlBorderThemeThickness}" 
+                    BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}">
+                <GridView x:Name="CharGrid" ItemsSource="{Binding Chars}" 
+                          Padding="4"
+                          SelectionChanged="CharGrid_OnSelectionChanged">
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <Border BorderThickness="1" 
+                                    BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
+                                    Height="50" Width="50">
+                                <TextBlock FontFamily="{Binding ElementName=CmbFontFamily, Path=SelectedValue}" 
+                                       Text="{Binding Char}"
+                                       FontSize="22" 
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Center" 
+                                           TextAlignment="Center" />
+                            </Border>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </GridView>
+            </Border>
+
+            <Border x:Name="PreviewPanel" Grid.Column="1" Margin="10,0,0,0" 
+                    Padding="10"
+                    BorderThickness="{ThemeResource TextControlBorderThemeThickness}" 
+                    BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}">
+                <Grid VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Viewbox Height="Auto" Width="Auto" Grid.Row="0" Stretch="Uniform" StretchDirection="Both">
+                        <Grid x:Name="GridRenderTarget" MinHeight="900" MinWidth="900">
+                            <Viewbox>
+                                <TextBlock x:Name="TxtPreview" TextAlignment="Center" 
+                                   FontFamily="{Binding ElementName=CmbFontFamily, Path=SelectedValue}" />
+                            </Viewbox>
+                        </Grid>
+                    </Viewbox>
+                    <StackPanel Grid.Row="1">
+                        <TextBox
+                            x:Uid="TxtUnicode"
+                             IsReadOnly="True"
+                             x:Name="TxtUnicode" 
+                             Foreground="#666"
+                             TextAlignment="Center" 
+                             Margin="0,10,0,10" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="10" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <Button x:Name="BtnSelect" x:Uid="BtnSelect" Click="BtnSelect_OnClick" HorizontalAlignment="Stretch" />
+                            <Button x:Name="BtnSavePng" Grid.Column="2" x:Uid="BtnSavePng" HorizontalAlignment="Stretch" Click="BtnSavePng_OnClick" />
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Border Grid.Column="0" BorderThickness="{ThemeResource TextControlBorderThemeThickness}" 
+                    BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" Padding="5">
+                <TextBlock x:Name="TxtSelected" FontFamily="{Binding ElementName=CmbFontFamily, Path=SelectedValue}" FontSize="28" />
+            </Border>
+            <Button x:Uid="BtnCopy" Grid.Column="1" VerticalAlignment="Top" Height="55" Padding="20,0" Margin="20,0,0,0" Click="BtnCopy_OnClick" />
+        </Grid>
+
+        <Grid Grid.Row="3" Margin="0,5,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" Margin="0,0,5,0" x:Name="TxtXamlCode" x:Uid="TxtXamlCode" GotFocus="TxtXamlCode_OnGotFocus" />
+                <TextBox Grid.Column="1" Margin="5,0,0,0" x:Name="TxtFontIcon" x:Uid="TxtFontIcon" GotFocus="TxtFontIcon_OnGotFocus" />
+            </Grid>
+        </Grid>
+    </Grid>
+</Page>
