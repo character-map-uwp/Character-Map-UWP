@@ -55,7 +55,7 @@ namespace CharacterMap
             {
                 TxtSelected.Text += ch.Char ?? string.Empty;
 
-                TxtXamlCode.Text = $"&#x{ch.UnicodeIndex.ToString("x").ToUpper()}";
+                TxtXamlCode.Text = $"&#x{ch.UnicodeIndex.ToString("x").ToUpper()};";
                 var installedFont = CmbFontFamily.SelectedItem as InstalledFont;
 
                 if (installedFont != null)

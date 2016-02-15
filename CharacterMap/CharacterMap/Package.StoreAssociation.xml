@@ -370,14 +370,17 @@
     <MainPackageIdentityName>58027.diaosbook</MainPackageIdentityName>
     <MainPackageIdentityName>58027.FloppyBirdNoAd</MainPackageIdentityName>
     <MainPackageIdentityName>58027.FontAwesome</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.GPSMeter</MainPackageIdentityName>
     <MainPackageIdentityName>58027.IPList</MainPackageIdentityName>
     <MainPackageIdentityName>58027.5420172B3A1CA</MainPackageIdentityName>
     <MainPackageIdentityName>58027.RegExToolkit</MainPackageIdentityName>
     <MainPackageIdentityName>58027.ShanghaiMetro</MainPackageIdentityName>
     <MainPackageIdentityName>58027.SimpleQRCodeCreator</MainPackageIdentityName>
     <MainPackageIdentityName>58027.UWPURILauncher</MainPackageIdentityName>
-    <MainPackageIdentityName>58027.WalmartMoneyCardUWP</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.XAMLPad</MainPackageIdentityName>
     <MainPackageIdentityName>58027.97489EDE08D6</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.36491A292B406</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.56359FBBEA3AB</MainPackageIdentityName>
     <MainPackageIdentityName>58027.580483F4489E3</MainPackageIdentityName>
     <MainPackageIdentityName>58027.6157856FB1D01</MainPackageIdentityName>
     <MainPackageIdentityName>58027.149565FD8B0DE</MainPackageIdentityName>
@@ -388,6 +391,7 @@
     <MainPackageIdentityName>58027.896369447195</MainPackageIdentityName>
     <MainPackageIdentityName>58027.219435AB2C12</MainPackageIdentityName>
     <MainPackageIdentityName>58027.2184C78DA306</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.WalmartMoneyCardUWP</MainPackageIdentityName>
   </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://dev.windows.com/dashboard/Application?appId=9WZDNCRDXF41" />
 </StoreAssociation>
