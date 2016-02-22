@@ -5,6 +5,7 @@
     xmlns:local="using:CharacterMap"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:RateMyApp.UWP.Controls"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
 
@@ -21,6 +22,16 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <controls:FeedbackOverlay x:Uid="RMA" 
+                                  Grid.Row="0"
+                                  Grid.RowSpan="4"
+                x:Name="FeedbackOverlay"
+                FeedbackTo="Edi.Wang@outlook.com"
+                ApplicationName="Character Map UWP"
+                CompanyName="edi.wang"
+                FirstCount="4"
+                SecondCount="8" />
 
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <ComboBox x:Name="CmbFontFamily" x:Uid="CmbFontFamily" Width="300" 

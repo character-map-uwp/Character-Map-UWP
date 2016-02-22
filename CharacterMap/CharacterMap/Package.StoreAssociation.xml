@@ -365,6 +365,7 @@
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
+    <MainPackageIdentityName>58027.24</MainPackageIdentityName>
     <MainPackageIdentityName>58027.3438822B1737D</MainPackageIdentityName>
     <MainPackageIdentityName>58027.NuGetSearch</MainPackageIdentityName>
     <MainPackageIdentityName>58027.diaosbook</MainPackageIdentityName>
