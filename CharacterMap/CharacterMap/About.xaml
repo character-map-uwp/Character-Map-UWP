@@ -26,8 +26,8 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="19,0,0,0">
-            <TextBlock x:Uid="TxtAboutTitle" Text="" Style="{ThemeResource TitleTextBlockStyle}" Margin="0,12,0,0"/>
-            <TextBlock x:Uid="TxtAboutHeader" Text="" Margin="0,-6.5,0,26.5" Style="{ThemeResource HeaderTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
+            <TextBlock x:Uid="TxtAboutTitle" Text="" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding DisplayName}" Margin="0,0,0,20" Style="{ThemeResource TitleTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
         </StackPanel>
 
         <Grid Grid.Row="1" x:Name="ContentRoot" Margin="19,9.5,19,0">
@@ -39,16 +39,17 @@
                 <Border.Background>
                     <SolidColorBrush Color="{ThemeResource SystemAccentColor}" />
                 </Border.Background>
-                <Image Source="Assets/NewStoreLogo.scale-400.png" Stretch="Fill" />
+                <Image Source="Assets/tile.png" Stretch="Fill" />
             </Border>
             <StackPanel>
-                <TextBlock Margin="0,0,0,12" FontSize="24" Text="{Binding DisplayName}" />
                 <TextBlock Text="{Binding Publisher}" />
                 <TextBlock>
                             <Run>Version</Run>
                             <Run Text="{Binding Version}" /> (<Run Text="{Binding Architecture}" />)
                 </TextBlock>
 
+                <TextBlock Text="GitHub" Margin="0,10,0,0" />
+                <HyperlinkButton Content="https://github.com/EdiWang/UWP-CharacterMap" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
                 <TextBlock x:Uid="TxtAboutText" TextWrapping="Wrap" Margin="0,20,0,10" />
                 <HyperlinkButton x:Uid="LnkVisitBlog" Content="" NavigateUri="http://edi.wang" />
             </StackPanel>

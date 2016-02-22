@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BtnCopy.Content" xml:space="preserve">
-    <value>Copy</value>
-  </data>
   <data name="TxtUnicode.Header" xml:space="preserve">
     <value>Unicode</value>
   </data>
@@ -141,9 +138,6 @@
   <data name="LnkVisitBlog.Content" xml:space="preserve">
     <value>Visit Author's Blog</value>
   </data>
-  <data name="TxtAboutHeader.Text" xml:space="preserve">
-    <value>Character Map (Universal Windows)</value>
-  </data>
   <data name="TxtAboutText.Text" xml:space="preserve">
     <value>This App is designed to replace Windows system win32 character map. It is more DPI aware on high DPI screens.</value>
   </data>
@@ -152,5 +146,11 @@
   </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>Save PNG (900x900)</value>
+  </data>
+  <data name="ToggleTheme.OffContent" xml:space="preserve">
+    <value>Light Theme</value>
+  </data>
+  <data name="ToggleTheme.OnContent" xml:space="preserve">
+    <value>Dark Theme</value>
   </data>
 </root>

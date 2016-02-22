@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BtnCopy.Content" xml:space="preserve">
-    <value>复制</value>
-  </data>
   <data name="TxtUnicode.Header" xml:space="preserve">
     <value>Unicode编码</value>
   </data>
@@ -141,9 +138,6 @@
   <data name="LnkVisitBlog.Content" xml:space="preserve">
     <value>访问作者博客</value>
   </data>
-  <data name="TxtAboutHeader.Text" xml:space="preserve">
-    <value>字符映射表 (Windows通用版)</value>
-  </data>
   <data name="TxtAboutText.Text" xml:space="preserve">
     <value>本应用可替换Windows系统自带的WIN32字符映射表。适配高DPI屏幕的设备。</value>
   </data>
@@ -155,5 +149,11 @@
   </data>
   <data name="Saved" xml:space="preserve">
     <value>已保存</value>
+  </data>
+  <data name="ToggleTheme.OffContent" xml:space="preserve">
+    <value>浅色主题</value>
+  </data>
+  <data name="ToggleTheme.OnContent" xml:space="preserve">
+    <value>深色主题</value>
   </data>
 </root>

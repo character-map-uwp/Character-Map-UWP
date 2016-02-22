@@ -157,5 +157,15 @@ namespace CharacterMap
                 this.RequestedTheme = ToggleTheme.IsOn ? ElementTheme.Dark : ElementTheme.Light;
             }
         }
+
+        private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
+        {
+            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
+        }
+
+        private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
+        {
+            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
+        }
     }
 }
