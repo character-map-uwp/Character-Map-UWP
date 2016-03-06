@@ -31,7 +31,10 @@ namespace CharacterMap
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            CmbFontFamily.SelectedIndex = 0;
+            if (null != CmbFontFamily.Items)
+            {
+                CmbFontFamily.SelectedIndex = 0;
+            }
         }
 
         private void CharGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -189,6 +192,14 @@ namespace CharacterMap
         private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
+        }
+
+        private void ToggleSymbolFontsOnly_OnToggled(object sender, RoutedEventArgs e)
+        {
+            if (null != CmbFontFamily.Items)
+            {
+                CmbFontFamily.SelectedIndex = 0;
+            }
         }
     }
 }

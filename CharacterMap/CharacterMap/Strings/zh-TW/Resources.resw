@@ -118,42 +118,45 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TxtUnicode.Header" xml:space="preserve">
-    <value>Unicode</value>
+    <value>Unicode編碼</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
-    <value>Select</value>
+    <value>選擇</value>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>XAML Code</value>
+    <value>XAML轉義代碼</value>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
-    <value>FontIcon</value>
+    <value>字體圖示</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Character Map</value>
+    <value>字元對應表</value>
   </data>
   <data name="LnkVisitBlog.Content" xml:space="preserve">
-    <value>Visit Author's Blog</value>
+    <value>訪問作者博客</value>
   </data>
   <data name="TxtAboutText.Text" xml:space="preserve">
-    <value>This App is designed to replace Windows system win32 character map. It is more DPI aware on high DPI screens.</value>
+    <value>本應用可替換Windows系統自帶的WIN32字元對應表。 適配高DPI螢幕的設備。</value>
   </data>
   <data name="TxtAboutTitle.Text" xml:space="preserve">
-    <value>About</value>
+    <value>關於</value>
   </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
-    <value>Save PNG (900x900)</value>
+    <value>保存PNG (900x900)</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>已保存</value>
   </data>
   <data name="ToggleTheme.OffContent" xml:space="preserve">
-    <value>Light Theme</value>
+    <value>淺色主題</value>
   </data>
   <data name="ToggleTheme.OnContent" xml:space="preserve">
-    <value>Dark Theme</value>
-  </data>
-  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>Show Symbol Fonts Only</value>
+    <value>深色主題</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>All Fonts</value>
+    <value>顯示所有字體</value>
+  </data>
+  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
+    <value>僅顯示圖示字體</value>
   </data>
 </root>
