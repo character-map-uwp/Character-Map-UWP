@@ -132,11 +132,19 @@
                     BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" Padding="5">
                 <TextBlock x:Name="TxtSelected" FontFamily="{Binding ElementName=CmbFontFamily, Path=SelectedValue}" FontSize="28" />
             </Border>
-            <Button Grid.Column="1" VerticalAlignment="Top" Height="55" Padding="20,0" Margin="10,0,0,0" Click="BtnCopy_OnClick">
-                <Button.Content>
-                    <SymbolIcon Symbol="Copy" />
-                </Button.Content>
-            </Button>
+
+            <StackPanel Grid.Column="1"  Orientation="Horizontal">
+                <Button VerticalAlignment="Top" Height="55" Padding="20,0" Margin="10,0,0,0" Click="BtnCopy_OnClick">
+                    <Button.Content>
+                        <SymbolIcon Symbol="Copy" />
+                    </Button.Content>
+                </Button>
+                <Button VerticalAlignment="Top" Height="55" Padding="20,0" Margin="10,0,0,0" Click="BtnClearCopy_Click">
+                    <Button.Content>
+                        <SymbolIcon Symbol="Delete" />
+                    </Button.Content>
+                </Button>
+            </StackPanel>
         </Grid>
 
         <Grid Grid.Row="3" Margin="0,5,0,0">

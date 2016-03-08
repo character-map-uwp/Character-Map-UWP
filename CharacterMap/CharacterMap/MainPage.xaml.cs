@@ -167,5 +167,10 @@ namespace CharacterMap
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
         }
+
+        private void BtnClearCopy_Click(object sender, RoutedEventArgs e)
+        {
+            TxtSelected.Text = string.Empty;
+        }
     }
 }
