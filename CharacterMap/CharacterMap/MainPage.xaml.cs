@@ -8,6 +8,7 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,7 +31,10 @@ namespace CharacterMap
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            if (null != CmbFontFamily.Items)
+            {
             CmbFontFamily.SelectedIndex = 0;
+        }
         }
 
         private void CharGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -155,6 +159,28 @@ namespace CharacterMap
             if (null != ToggleTheme)
             {
                 this.RequestedTheme = ToggleTheme.IsOn ? ElementTheme.Dark : ElementTheme.Light;
+
+                if (ToggleTheme.IsOn)
+                {
+                    Edi.UWP.Helpers.UI.ApplyColorToTitleBar(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White);
+                    Edi.UWP.Helpers.UI.ApplyColorToTitleButton(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White);
+                    Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 43, 43, 43), Colors.DarkGray);
+                }
+                else
+                {
+                    Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 0, 114, 188), Colors.White);
+                    Edi.UWP.Helpers.UI.ApplyColorToTitleBar(
+                    Color.FromArgb(255, 0, 114, 188),
+                    Colors.White,
+                    Colors.LightGray,
+                    Colors.Gray);
+
+                    Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
+                        Color.FromArgb(255, 0, 114, 188), Colors.White,
+                        Color.FromArgb(255, 51, 148, 208), Colors.White,
+                        Color.FromArgb(255, 0, 114, 188), Colors.White,
+                        Colors.LightGray, Colors.Gray);
+                }
             }
         }
 
@@ -166,6 +192,14 @@ namespace CharacterMap
         private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
+        }
+
+        private void ToggleSymbolFontsOnly_OnToggled(object sender, RoutedEventArgs e)
+        {
+            if (null != CmbFontFamily.Items)
+            {
+                CmbFontFamily.SelectedIndex = 0;
+            }
         }
 
         private void BtnClearCopy_Click(object sender, RoutedEventArgs e)

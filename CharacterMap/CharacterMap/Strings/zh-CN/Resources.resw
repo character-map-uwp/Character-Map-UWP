@@ -120,9 +120,6 @@
   <data name="TxtUnicode.Header" xml:space="preserve">
     <value>Unicode编码</value>
   </data>
-  <data name="CmbFontFamily.Header" xml:space="preserve">
-    <value>字体</value>
-  </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>选择</value>
   </data>
@@ -155,5 +152,11 @@
   </data>
   <data name="ToggleTheme.OnContent" xml:space="preserve">
     <value>深色主题</value>
+  </data>
+  <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
+    <value>显示所有字体</value>
+  </data>
+  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
+    <value>仅显示图标字体</value>
   </data>
 </root>

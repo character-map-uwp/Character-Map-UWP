@@ -15,6 +15,7 @@ namespace CharacterMap.ViewModel
         private ObservableCollection<InstalledFont> _fontList;
         private ObservableCollection<Character> _chars;
         private InstalledFont _selectedFont;
+        private bool _showSymbolFontsOnly;
 
         public ObservableCollection<InstalledFont> FontList
         {
@@ -26,6 +27,17 @@ namespace CharacterMap.ViewModel
         {
             get { return _chars; }
             set { _chars = value; RaisePropertyChanged(); }
+        }
+
+        public bool ShowSymbolFontsOnly
+        {
+            get { return _showSymbolFontsOnly; }
+            set
+            {
+                _showSymbolFontsOnly = value;
+                FilterFontList(value);
+                RaisePropertyChanged();
+            }
         }
 
         public InstalledFont SelectedFont
@@ -49,6 +61,17 @@ namespace CharacterMap.ViewModel
         {
             var fontList = InstalledFont.GetFonts();
             FontList = fontList.OrderBy(f => f.Name).ToObservableCollection();
+        }
+
+        private void FilterFontList(bool isSymbolFontsOnly)
+        {
+            var fontList = InstalledFont.GetFonts();
+
+            var newList = fontList.Where(f => f.IsSymbolFont || !isSymbolFontsOnly)
+                                  .OrderBy(f => f.Name)
+                                  .ToObservableCollection();
+
+            FontList = newList;
         }
     }
 }
