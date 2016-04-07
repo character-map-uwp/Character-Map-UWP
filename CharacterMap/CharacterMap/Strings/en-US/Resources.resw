@@ -156,4 +156,7 @@
   <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
     <value>All Fonts</value>
   </data>
+  <data name="TxtCopiedMessage.Text" xml:space="preserve">
+    <value>Copied</value>
+  </data>
 </root>

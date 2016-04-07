@@ -23,6 +23,28 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <Grid.Resources>
+            <Storyboard x:Name="BorderFadeInStoryboard">
+                <DoubleAnimation 
+                        From="0" 
+                        To="1" Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity" Duration="0:0:0.6" />
+            </Storyboard>
+
+            <Storyboard x:Name="BorderFadeOutStoryboard">
+                <DoubleAnimation 
+                        From="1" 
+                        To="0" Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity" Duration="0:0:0.6" />
+            </Storyboard>
+        </Grid.Resources>
+
+        <Border x:Name="BorderCopiedMessage" Grid.Row="0"
+                Grid.RowSpan="4"
+                Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                    Opacity="0"
+                    Margin="10,10,10,50" Padding="16,7" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <TextBlock x:Name="TxtCopiedMessage" x:Uid="TxtCopiedMessage" Foreground="White" />
+        </Border>
+
         <controls:FeedbackOverlay x:Uid="RMA" 
                                   Grid.Row="0"
                                   Grid.RowSpan="4"

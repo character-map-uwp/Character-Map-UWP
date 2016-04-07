@@ -50,6 +50,12 @@ namespace CharacterMap
         private void BtnCopy_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtSelected.Text);
+            BorderFadeInStoryboard.Completed += async (o, _) =>
+            {
+                await Task.Delay(1000);
+                BorderFadeOutStoryboard.Begin();
+            };
+            BorderFadeInStoryboard.Begin();
         }
 
         private void BtnSelect_OnClick(object sender, RoutedEventArgs e)
@@ -184,14 +190,26 @@ namespace CharacterMap
             }
         }
 
-        private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
+        private async void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
+            BorderFadeInStoryboard.Completed += async (o, _) =>
+            {
+                await Task.Delay(1000);
+                BorderFadeOutStoryboard.Begin();
+            };
+            BorderFadeInStoryboard.Begin();
         }
 
-        private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
+        private async void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
+            BorderFadeInStoryboard.Completed += async (o, _) =>
+            {
+                await Task.Delay(1000);
+                BorderFadeOutStoryboard.Begin();
+            };
+            BorderFadeInStoryboard.Begin();
         }
 
         private void ToggleSymbolFontsOnly_OnToggled(object sender, RoutedEventArgs e)

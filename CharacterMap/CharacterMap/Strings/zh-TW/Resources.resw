@@ -159,4 +159,7 @@
   <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
     <value>僅顯示圖示字體</value>
   </data>
+  <data name="TxtCopiedMessage.Text" xml:space="preserve">
+    <value>已復制</value>
+  </data>
 </root>
