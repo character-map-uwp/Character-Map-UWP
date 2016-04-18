@@ -6,8 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:RateMyApp.UWP.Controls"
+    xmlns:core="using:CharacterMap.Core"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
+    
+    <Page.Resources>
+        <core:AppSettings x:Key="AppSettings" />
+    </Page.Resources>
 
     <Page.BottomAppBar>
         <CommandBar IsOpen="False" ClosedDisplayMode="Minimal">

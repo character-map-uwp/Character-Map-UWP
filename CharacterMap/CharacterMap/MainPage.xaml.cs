@@ -21,12 +21,43 @@ namespace CharacterMap
     public sealed partial class MainPage : Page
     {
         public MainViewModel MainViewModel { get; set; }
+
+        public AppSettings AppSettings { get; set; }
         
         public MainPage()
         {
             this.InitializeComponent();
             this.MainViewModel = this.DataContext as MainViewModel;
             this.Loaded += MainPage_Loaded;
+            AppSettings = new AppSettings();
+            LoadTheme();
+        }
+
+        private void LoadTheme()
+        {
+            this.RequestedTheme = AppSettings.UseDarkThemeSetting ? ElementTheme.Dark : ElementTheme.Light;
+            this.ToggleTheme.IsOn = AppSettings.UseDarkThemeSetting;
+            if (AppSettings.UseDarkThemeSetting)
+            {
+                Edi.UWP.Helpers.UI.ApplyColorToTitleBar(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White);
+                Edi.UWP.Helpers.UI.ApplyColorToTitleButton(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White);
+                Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 43, 43, 43), Colors.DarkGray);
+            }
+            else
+            {
+                Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 0, 114, 188), Colors.White);
+                Edi.UWP.Helpers.UI.ApplyColorToTitleBar(
+                Color.FromArgb(255, 0, 114, 188),
+                Colors.White,
+                Colors.LightGray,
+                Colors.Gray);
+
+                Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
+                    Color.FromArgb(255, 0, 114, 188), Colors.White,
+                    Color.FromArgb(255, 51, 148, 208), Colors.White,
+                    Color.FromArgb(255, 0, 114, 188), Colors.White,
+                    Colors.LightGray, Colors.Gray);
+            }
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -164,29 +195,8 @@ namespace CharacterMap
         {
             if (null != ToggleTheme)
             {
-                this.RequestedTheme = ToggleTheme.IsOn ? ElementTheme.Dark : ElementTheme.Light;
-
-                if (ToggleTheme.IsOn)
-                {
-                    Edi.UWP.Helpers.UI.ApplyColorToTitleBar(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White);
-                    Edi.UWP.Helpers.UI.ApplyColorToTitleButton(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White);
-                    Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 43, 43, 43), Colors.DarkGray);
-                }
-                else
-                {
-                    Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 0, 114, 188), Colors.White);
-                    Edi.UWP.Helpers.UI.ApplyColorToTitleBar(
-                    Color.FromArgb(255, 0, 114, 188),
-                    Colors.White,
-                    Colors.LightGray,
-                    Colors.Gray);
-
-                    Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
-                        Color.FromArgb(255, 0, 114, 188), Colors.White,
-                        Color.FromArgb(255, 51, 148, 208), Colors.White,
-                        Color.FromArgb(255, 0, 114, 188), Colors.White,
-                        Colors.LightGray, Colors.Gray);
-                }
+                AppSettings.UseDarkThemeSetting = ToggleTheme.IsOn;
+                LoadTheme();
             }
         }
 

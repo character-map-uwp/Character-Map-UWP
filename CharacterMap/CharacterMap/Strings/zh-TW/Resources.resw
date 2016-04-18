@@ -142,7 +142,7 @@
     <value>關於</value>
   </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
-    <value>保存PNG (900x900)</value>
+    <value>保存PNG</value>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>已保存</value>

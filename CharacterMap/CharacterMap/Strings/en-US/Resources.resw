@@ -142,7 +142,7 @@
     <value>About</value>
   </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
-    <value>Save PNG (900x900)</value>
+    <value>Save PNG</value>
   </data>
   <data name="ToggleTheme.OffContent" xml:space="preserve">
     <value>Light Theme</value>
