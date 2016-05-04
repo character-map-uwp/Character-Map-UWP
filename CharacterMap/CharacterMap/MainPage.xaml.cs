@@ -23,7 +23,7 @@ namespace CharacterMap
         public MainViewModel MainViewModel { get; set; }
 
         public AppSettings AppSettings { get; set; }
-        
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -62,10 +62,10 @@ namespace CharacterMap
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (null != CmbFontFamily.Items)
+            if (null != LstFontFamily.Items)
             {
-            CmbFontFamily.SelectedIndex = 0;
-        }
+                LstFontFamily.SelectedIndex = 0;
+            }
         }
 
         private void CharGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -97,7 +97,7 @@ namespace CharacterMap
                 TxtSelected.Text += ch.Char ?? string.Empty;
 
                 TxtXamlCode.Text = $"&#x{ch.UnicodeIndex.ToString("x").ToUpper()};";
-                var installedFont = CmbFontFamily.SelectedItem as InstalledFont;
+                var installedFont = LstFontFamily.SelectedItem as InstalledFont;
 
                 if (installedFont != null)
                     TxtFontIcon.Text =
@@ -137,7 +137,7 @@ namespace CharacterMap
 
         private void BtnAbout_OnClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof (About));
+            Frame.Navigate(typeof(About));
         }
 
         private async void BtnSavePng_OnClick(object sender, RoutedEventArgs e)
@@ -224,9 +224,9 @@ namespace CharacterMap
 
         private void ToggleSymbolFontsOnly_OnToggled(object sender, RoutedEventArgs e)
         {
-            if (null != CmbFontFamily.Items)
+            if (null != LstFontFamily.Items)
             {
-                CmbFontFamily.SelectedIndex = 0;
+                LstFontFamily.SelectedIndex = 0;
             }
         }
 
