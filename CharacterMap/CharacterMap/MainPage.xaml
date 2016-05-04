@@ -142,13 +142,21 @@
                             <DataTemplate>
                                 <Border BorderThickness="1" 
                                     BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
-                                    Height="50" Width="50">
-                                    <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
-                                       Text="{Binding Char}"
-                                       FontSize="22" 
-                                           VerticalAlignment="Center" 
-                                           HorizontalAlignment="Center" 
-                                           TextAlignment="Center" />
+                                    Height="100" Width="100">
+                                    <Grid>
+                                        <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
+                                           Text="{Binding Char}"
+                                           FontSize="44" 
+                                               VerticalAlignment="Top"
+                                               Margin="0,5,0,0"
+                                               HorizontalAlignment="Center" 
+                                               TextAlignment="Center" />
+                                        <StackPanel Margin="2" VerticalAlignment="Bottom"  HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding Path=UnicodeString}" FontFamily="Courier New" FontSize="12" TextAlignment="Right" ></TextBlock>
+                                            <TextBlock Text="{Binding Path=XAMLString}" FontFamily="Courier New" FontSize="12"  TextAlignment="Right"></TextBlock>    
+                                        </StackPanel>
+                                        
+                                    </Grid>
                                 </Border>
                             </DataTemplate>
                         </GridView.ItemTemplate>
