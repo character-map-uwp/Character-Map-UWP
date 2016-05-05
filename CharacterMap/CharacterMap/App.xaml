@@ -11,6 +11,7 @@
         <converters:StringFormatConverter x:Key="StringFormatConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
+        <converters1:CharGridSelectedItemToTextConverter x:Key="CharGridSelectedItemToTextConverter" />
 
         <Style TargetType="Grid" x:Name="TransitionalGrid">
             <Setter Property="Transitions">
@@ -27,6 +28,16 @@
                 <Setter.Value>
                     <TransitionCollection>
                         <EntranceThemeTransition IsStaggeringEnabled="False" FromHorizontalOffset="50" FromVerticalOffset="0" />
+                    </TransitionCollection>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ListView">
+            <Setter Property="ItemContainerTransitions">
+                <Setter.Value>
+                    <TransitionCollection>
+                        <EntranceThemeTransition IsStaggeringEnabled="True" FromHorizontalOffset="50" FromVerticalOffset="0" />
                     </TransitionCollection>
                 </Setter.Value>
             </Setter>

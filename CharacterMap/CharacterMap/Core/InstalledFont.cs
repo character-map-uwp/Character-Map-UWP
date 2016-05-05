@@ -77,27 +77,12 @@ namespace CharacterMap.Core
         }
     }
 
-
     public class Character
     {
         public string Char { get; set; }
 
         public int UnicodeIndex { get; set; }
 
-        public string UnicodeString
-        {
-            get
-            {
-                return "U+" + UnicodeIndex.ToString("x").ToUpper();
-            }
-        }
-
-        public string XAMLString
-        {
-            get
-            {
-                return "&#x" + UnicodeIndex.ToString("x").ToUpper();
-            }
-        }
+        public string UnicodeString => "U+" + UnicodeIndex.ToString("x").ToUpper();
     }
 }

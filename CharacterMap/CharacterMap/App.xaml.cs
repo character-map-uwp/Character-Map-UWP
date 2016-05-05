@@ -7,7 +7,9 @@ using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using CharacterMap.Core;
 using Edi.UWP.Helpers;
+using Utils = CharacterMap.Core.Utils;
 
 namespace CharacterMap
 {
@@ -95,18 +97,15 @@ namespace CharacterMap
                     AppViewBackButtonVisibility.Visible :
                     AppViewBackButtonVisibility.Collapsed;
 
-                Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 0, 114, 188), Colors.White);
-                Edi.UWP.Helpers.UI.ApplyColorToTitleBar(
-                Color.FromArgb(255, 0, 114, 188),
-                Colors.White,
-                Colors.LightGray,
-                Colors.Gray);
-
-                Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
-                    Color.FromArgb(255, 0, 114, 188), Colors.White,
-                    Color.FromArgb(255, 51, 148, 208), Colors.White,
-                    Color.FromArgb(255, 0, 114, 188), Colors.White,
-                    Colors.LightGray, Colors.Gray);
+                var settings = new AppSettings();
+                if (settings.UseDarkThemeSetting)
+                {
+                    Utils.UseDarkTheme();
+                }
+                else
+                {
+                    Utils.UseLightTheme();
+                }
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;

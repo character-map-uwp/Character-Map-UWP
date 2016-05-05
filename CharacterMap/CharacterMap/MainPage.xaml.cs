@@ -8,7 +8,6 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,27 +36,6 @@ namespace CharacterMap
         {
             this.RequestedTheme = AppSettings.UseDarkThemeSetting ? ElementTheme.Dark : ElementTheme.Light;
             this.ToggleTheme.IsChecked = AppSettings.UseDarkThemeSetting;
-            if (AppSettings.UseDarkThemeSetting)
-            {
-                Edi.UWP.Helpers.UI.ApplyColorToTitleBar(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White);
-                Edi.UWP.Helpers.UI.ApplyColorToTitleButton(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White);
-                Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 43, 43, 43), Colors.DarkGray);
-            }
-            else
-            {
-                Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 0, 114, 188), Colors.White);
-                Edi.UWP.Helpers.UI.ApplyColorToTitleBar(
-                Color.FromArgb(255, 0, 114, 188),
-                Colors.White,
-                Colors.LightGray,
-                Colors.Gray);
-
-                Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
-                    Color.FromArgb(255, 0, 114, 188), Colors.White,
-                    Color.FromArgb(255, 51, 148, 208), Colors.White,
-                    Color.FromArgb(255, 0, 114, 188), Colors.White,
-                    Colors.LightGray, Colors.Gray);
-            }
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -65,15 +43,6 @@ namespace CharacterMap
             if (null != LstFontFamily.Items)
             {
                 LstFontFamily.SelectedIndex = 0;
-            }
-        }
-
-        private void CharGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var ch = CharGrid?.SelectedItem as Character;
-            if (ch != null)
-            {
-                TxtPreview.Text = ch.Char ?? string.Empty;
             }
         }
 
@@ -171,6 +140,8 @@ namespace CharacterMap
 
                 using (var fileStream = await sFile.OpenAsync(FileAccessMode.ReadWrite))
                 {
+                    var localDpi = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
+
                     BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, fileStream);
                     Stream pixelStream = stream;
                     byte[] pixels = new byte[pixelStream.Length];
@@ -178,8 +149,8 @@ namespace CharacterMap
                     encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight,
                               (uint)pixelWidth,
                               (uint)pixelHeight,
-                              96.0,
-                              96.0,
+                              localDpi,
+                              localDpi,
                               pixels);
                     await encoder.FlushAsync();
                 }
