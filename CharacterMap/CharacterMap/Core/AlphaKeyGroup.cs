@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Windows.Globalization.Collation;
 
-namespace BeijingMetro_UWP.Common
+namespace CharacterMap.Core
 {
     public class AlphaKeyGroup<T> : List<T>
     {

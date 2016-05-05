@@ -12,6 +12,7 @@
 
     <Page.Resources>
         <core:AppSettings x:Key="AppSettings" />
+        <CollectionViewSource x:Name="GroupedFontList" x:Key="GroupedFontList" IsSourceGrouped="True" Source="{Binding GroupedFontList}"/>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -46,7 +47,6 @@
                                   Grid.Row="0"
                                   Grid.Column="0"
                                   Grid.ColumnSpan="2"
-                                  Grid.RowSpan="4"
                 x:Name="FeedbackOverlay"
                 FeedbackTo="Edi.Wang@outlook.com"
                 ApplicationName="Character Map UWP"
@@ -54,7 +54,7 @@
                 FirstCount="4"
                 SecondCount="8" />
 
-        <Grid Grid.Column="0" Padding="10" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+        <Grid Grid.Column="0" Padding="0,10,0,0" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -65,6 +65,7 @@
 
             <ToggleSwitch 
                 Grid.Row="0"
+                Margin="10,0,0,0"
                 x:Name="ToggleSymbolFontsOnly"
                 VerticalAlignment="Bottom"
                 Toggled="ToggleSymbolFontsOnly_OnToggled"
@@ -73,32 +74,78 @@
 
             <Border Grid.Row="1" Height="1" Background="{ThemeResource AppBarSeparatorForegroundThemeBrush}" Margin="0,7" />
 
-            <ScrollViewer Grid.Row="2">
-                <ListView x:Name="LstFontFamily" ItemsSource="{Binding FontList}" 
-                      SelectedItem="{Binding SelectedFont, Mode=TwoWay}" 
-                      SelectedValuePath="Name">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}" />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
+            <Grid Grid.Row="2">
+                <SemanticZoom>
+                    <SemanticZoom.ZoomedInView>
+                        <ListView x:Name="LstFontFamily" 
+                          ItemsSource="{Binding Source={StaticResource GroupedFontList}}" 
+                          SelectedItem="{Binding SelectedFont, Mode=TwoWay}" 
+                          SelectedValuePath="Name"
+                          Margin="0,0,0,0">
 
-            <Border Grid.Row="3" Height="1" Background="{ThemeResource AppBarSeparatorForegroundThemeBrush}" Margin="0,7" />
+                            <ListView.Resources>
+                                <Style TargetType="ListViewItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.Resources>
+
+                            <ListView.GroupStyle>
+                                <GroupStyle HidesIfEmpty="True">
+                                    <GroupStyle.HeaderTemplate>
+                                        <DataTemplate>
+                                            <Border BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="2" Height="45" Width="45" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                <TextBlock Text="{Binding Key}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" FontSize="31" Padding="6,0,0,0" FontWeight="SemiLight" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </DataTemplate>
+                                    </GroupStyle.HeaderTemplate>
+                                </GroupStyle>
+                            </ListView.GroupStyle>
+
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" Height="40" />
+                                        <TextBlock Text="{Binding Name}" Padding="8,0,0,0" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </SemanticZoom.ZoomedInView>
+
+                    <SemanticZoom.ZoomedOutView>
+                        <GridView x:Name="ZoomGridView" ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border>
+                                        <Border Margin="2" 
+                                        Width="60" 
+                                        Height="60" 
+                                        HorizontalAlignment="Center" 
+                                        Background="{Binding Group.Count,Converter={StaticResource ZoomBackgroundConverter}}">
+                                            <TextBlock Text="{Binding Group.Key}" 
+                                               Foreground="White" 
+                                               FontSize="33" 
+                                               HorizontalAlignment="Center" 
+                                               VerticalAlignment="Center"/>
+                                        </Border>
+                                    </Border>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+                    </SemanticZoom.ZoomedOutView>
+                </SemanticZoom>
+            </Grid>
+
+            <Border Grid.Row="3" Height="1" Background="{ThemeResource AppBarSeparatorForegroundThemeBrush}" Margin="0,10,0,0" />
 
             <Grid Grid.Row="4">
-                <ToggleSwitch 
-                        x:Name="ToggleTheme" 
-                      HorizontalAlignment="Left"
-                      x:Uid="ToggleTheme"
-                      Toggled="ToggleTheme_OnToggled" />
-
-                <Button x:Name="BtnAbout" Click="BtnAbout_OnClick" 
-                    Background="Transparent" 
-                    BorderThickness="1"
-                    HorizontalAlignment="Right"
-                    BorderBrush="{ThemeResource AppBarSeparatorForegroundThemeBrush}">
+                <ToggleButton x:Name="ToggleTheme" Checked="ToggleTheme_OnChecked" Unchecked="ToggleTheme_OnUnchecked" Padding="10">
+                    <ToggleButton.Content>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
+                    </ToggleButton.Content>
+                </ToggleButton>
+                <Button x:Name="BtnAbout" Click="BtnAbout_OnClick"  Padding="10"
+                    HorizontalAlignment="Right">
                     <Button.Content>
                         <SymbolIcon Symbol="Help" />
                     </Button.Content>
@@ -114,7 +161,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="24" FontWeight="Light" />
-            
+
             <SearchBox x:Name="SearchBoxUnicode" 
                        Grid.Row="0"
                        PlaceholderText="Unicode" 
@@ -142,20 +189,20 @@
                             <DataTemplate>
                                 <Border BorderThickness="1" 
                                     BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
-                                    Height="100" Width="100">
+                                    Height="70" Width="70">
                                     <Grid>
                                         <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
                                            Text="{Binding Char}"
-                                           FontSize="44" 
+                                           FontSize="36" 
                                                VerticalAlignment="Top"
                                                Margin="0,5,0,0"
                                                HorizontalAlignment="Center" 
                                                TextAlignment="Center" />
                                         <StackPanel Margin="2" VerticalAlignment="Bottom"  HorizontalAlignment="Right">
-                                            <TextBlock Text="{Binding Path=UnicodeString}" FontFamily="Courier New" FontSize="12" TextAlignment="Right" ></TextBlock>
-                                            <TextBlock Text="{Binding Path=XAMLString}" FontFamily="Courier New" FontSize="12"  TextAlignment="Right"></TextBlock>    
+                                            <TextBlock Text="{Binding Path=UnicodeString}" FontFamily="Consolas" FontSize="12" TextAlignment="Right" Foreground="#888" />
+                                            <!--<TextBlock Text="{Binding Path=XAMLString}" FontFamily="Consolas" FontSize="12"  TextAlignment="Right" />-->
                                         </StackPanel>
-                                        
+
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -183,13 +230,6 @@
                         </Viewbox>
 
                         <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
-                            <TextBox
-                            x:Uid="TxtUnicode"
-                             IsReadOnly="True"
-                             x:Name="TxtUnicode" 
-                             Foreground="#666"
-                             TextAlignment="Center" 
-                             Margin="0,10,0,10" />
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition />

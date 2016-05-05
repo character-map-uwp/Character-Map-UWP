@@ -36,7 +36,7 @@ namespace CharacterMap
         private void LoadTheme()
         {
             this.RequestedTheme = AppSettings.UseDarkThemeSetting ? ElementTheme.Dark : ElementTheme.Light;
-            this.ToggleTheme.IsOn = AppSettings.UseDarkThemeSetting;
+            this.ToggleTheme.IsChecked = AppSettings.UseDarkThemeSetting;
             if (AppSettings.UseDarkThemeSetting)
             {
                 Edi.UWP.Helpers.UI.ApplyColorToTitleBar(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White);
@@ -74,7 +74,6 @@ namespace CharacterMap
             if (ch != null)
             {
                 TxtPreview.Text = ch.Char ?? string.Empty;
-                TxtUnicode.Text = "U+" + ch.UnicodeIndex.ToString("x").ToUpper();
             }
         }
 
@@ -191,15 +190,6 @@ namespace CharacterMap
             return FileUpdateStatus.Failed;
         }
 
-        private void ToggleTheme_OnToggled(object sender, RoutedEventArgs e)
-        {
-            if (null != ToggleTheme)
-            {
-                AppSettings.UseDarkThemeSetting = ToggleTheme.IsOn;
-                LoadTheme();
-            }
-        }
-
         private async void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
@@ -233,6 +223,24 @@ namespace CharacterMap
         private void BtnClearCopy_Click(object sender, RoutedEventArgs e)
         {
             TxtSelected.Text = string.Empty;
+        }
+
+        private void ToggleTheme_OnChecked(object sender, RoutedEventArgs e)
+        {
+            if (null != ToggleTheme)
+            {
+                AppSettings.UseDarkThemeSetting = true;
+                LoadTheme();
+            }
+        }
+
+        private void ToggleTheme_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            if (null != ToggleTheme)
+            {
+                AppSettings.UseDarkThemeSetting = false;
+                LoadTheme();
+            }
         }
     }
 }

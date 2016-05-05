@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CharacterMap.Core;
 using Edi.UWP.Helpers;
 using GalaSoft.MvvmLight;
@@ -13,6 +9,7 @@ namespace CharacterMap.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private ObservableCollection<InstalledFont> _fontList;
+        private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
         private ObservableCollection<Character> _chars;
         private InstalledFont _selectedFont;
         private bool _showSymbolFontsOnly;
@@ -21,6 +18,12 @@ namespace CharacterMap.ViewModel
         {
             get { return _fontList; }
             set { _fontList = value; RaisePropertyChanged(); }
+        }
+
+        public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
+        {
+            get { return _groupedFontList; }
+            set { _groupedFontList = value; RaisePropertyChanged(); }
         }
 
         public ObservableCollection<Character> Chars
@@ -61,6 +64,7 @@ namespace CharacterMap.ViewModel
         {
             var fontList = InstalledFont.GetFonts();
             FontList = fontList.OrderBy(f => f.Name).ToObservableCollection();
+            CreateFontListGroup();
         }
 
         private void FilterFontList(bool isSymbolFontsOnly)
@@ -72,6 +76,13 @@ namespace CharacterMap.ViewModel
                                   .ToObservableCollection();
 
             FontList = newList;
+            CreateFontListGroup();
+        }
+
+        private void CreateFontListGroup()
+        {
+            var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1), true);
+            GroupedFontList = list.ToObservableCollection();
         }
     }
 }

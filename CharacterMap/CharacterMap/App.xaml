@@ -4,11 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:CharacterMap"
     xmlns:converters="using:Edi.UWP.Helpers.Converters"
+    xmlns:converters1="using:CharacterMap.Converters"
     RequestedTheme="Light">
     <Application.Resources>
         <vm:ViewModelLocator x:Key="Locator" xmlns:vm="using:CharacterMap.ViewModel" />
         <converters:StringFormatConverter x:Key="StringFormatConverter" />
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
 
         <Style TargetType="Grid" x:Name="TransitionalGrid">
             <Setter Property="Transitions">
