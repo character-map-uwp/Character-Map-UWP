@@ -386,11 +386,19 @@
             <Border Grid.Row="2" Height="1" Background="{ThemeResource AppBarSeparatorForegroundThemeBrush}" Margin="0,10,0,0" />
 
             <Grid Grid.Row="3">
-                <ToggleButton x:Name="ToggleTheme" Checked="ToggleTheme_OnChecked" Unchecked="ToggleTheme_OnUnchecked" Padding="10">
-                    <ToggleButton.Content>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
-                    </ToggleButton.Content>
-                </ToggleButton>
+                <StackPanel Orientation="Horizontal">
+                    <ToggleButton x:Name="ToggleTheme" Checked="ToggleTheme_OnChecked" Unchecked="ToggleTheme_OnUnchecked" Padding="10">
+                        <ToggleButton.Content>
+                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
+                        </ToggleButton.Content>
+                    </ToggleButton>
+                    <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Padding="10">
+                        <Button.Content>
+                            <SymbolIcon Symbol="Setting" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+                
                 <Button x:Name="BtnAbout" Click="BtnAbout_OnClick"  Padding="10"
                     HorizontalAlignment="Right">
                     <Button.Content>

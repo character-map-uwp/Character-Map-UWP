@@ -213,5 +213,11 @@ namespace CharacterMap
                 LoadTheme();
             }
         }
+
+        private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            // bug: when navigate back to main page, converter will blow up.
+            Frame.Navigate(typeof(Settings));
+        }
     }
 }

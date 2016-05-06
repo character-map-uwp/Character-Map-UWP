@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Storage;
 
 namespace CharacterMap.Core
@@ -20,6 +15,71 @@ namespace CharacterMap.Core
             set
             {
                 SaveSettings(nameof(UseDarkThemeSetting), value);
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool RememberMySettings
+        {
+            get
+            {
+                return ReadSettings(nameof(RememberMySettings), false);
+            }
+            set
+            {
+                SaveSettings(nameof(RememberMySettings), value);
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string LastFontOrSymbolFilter
+        {
+            get
+            {
+                return ReadSettings(nameof(LastFontOrSymbolFilter), string.Empty);
+            }
+            set
+            {
+                SaveSettings(nameof(LastFontOrSymbolFilter), value);
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string LastSelectedFontName
+        {
+            get
+            {
+                return ReadSettings(nameof(LastSelectedFontName), string.Empty);
+            }
+            set
+            {
+                SaveSettings(nameof(LastSelectedFontName), value);
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int GridSize
+        {
+            get
+            {
+                return ReadSettings(nameof(GridSize), 60);
+            }
+            set
+            {
+                SaveSettings(nameof(GridSize), value);
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int ImageWidthHeight
+        {
+            get
+            {
+                return ReadSettings(nameof(ImageWidthHeight), 900);
+            }
+            set
+            {
+                SaveSettings(nameof(ImageWidthHeight), value);
                 NotifyPropertyChanged();
             }
         }
