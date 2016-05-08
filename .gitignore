@@ -210,3 +210,11 @@ FakesAssemblies/
 GeneratedArtifacts/
 _Pvt_Extensions/
 ModelManifest.xml
+/CharacterMap/CharacterMap/BundleArtifacts
+/CharacterMap/CharacterMap/_scale-400.appx
+/CharacterMap/CharacterMap/_scale-150.appx
+/CharacterMap/CharacterMap/_scale-125.appx
+/CharacterMap/CharacterMap/_scale-100.appx
+/CharacterMap/CharacterMap/_pkginfo.txt
+/CharacterMap/CharacterMap/_language-zh-hant.appx
+/CharacterMap/CharacterMap/_language-zh-hans.appx
