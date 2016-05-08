@@ -13,6 +13,26 @@
     </Page.Resources>
     
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.ChildrenTransitions>
+            <TransitionCollection>
+                <EntranceThemeTransition/>
+            </TransitionCollection>
+        </Grid.ChildrenTransitions>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="19,0,0,0">
+            <TextBlock x:Uid="SettingsTitle" Text="Settings" Style="{ThemeResource SubtitleTextBlockStyle}" Margin="0,10,0,0"/>
+            <TextBlock Text="{Binding DisplayName}" Margin="0,0,0,20" Style="{ThemeResource TitleTextBlockStyle}" CharacterSpacing="{ThemeResource PivotHeaderItemCharacterSpacing}"/>
+        </StackPanel>
+
+        <Grid Grid.Row="1" Margin="10,0">
+            <StackPanel>
+                <ToggleSwitch Header="Remember My Last Selection" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=RememberMySettings, Mode=TwoWay}" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

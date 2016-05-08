@@ -392,11 +392,11 @@
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
                         </ToggleButton.Content>
                     </ToggleButton>
-                    <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Padding="10">
+                    <!--<Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Padding="10">
                         <Button.Content>
                             <SymbolIcon Symbol="Setting" />
                         </Button.Content>
-                    </Button>
+                    </Button>-->
                 </StackPanel>
                 
                 <Button x:Name="BtnAbout" Click="BtnAbout_OnClick"  Padding="10"

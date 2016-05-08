@@ -8,16 +8,25 @@ namespace CharacterMap.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
+        public AppSettings AppSettings { get; set; }
+
         private ObservableCollection<InstalledFont> _fontList;
         private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
         private ObservableCollection<Character> _chars;
         private InstalledFont _selectedFont;
-        private bool _showSymbolFontsOnly;
 
         public ObservableCollection<InstalledFont> FontList
         {
-            get { return _fontList; }
-            set { _fontList = value; RaisePropertyChanged(); }
+            get
+            {
+                return _fontList;
+            }
+            set
+            {
+                _fontList = value;
+                CreateFontListGroup();
+                RaisePropertyChanged();
+            }
         }
 
         public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
@@ -34,18 +43,24 @@ namespace CharacterMap.ViewModel
 
         public bool ShowSymbolFontsOnly
         {
-            get { return _showSymbolFontsOnly; }
+            get
+            {
+                return AppSettings.ShowSymbolFontsOnly;
+            }
             set
             {
-                _showSymbolFontsOnly = value;
-                FilterFontList(value);
+                AppSettings.ShowSymbolFontsOnly = value;
+                RefreshFontList();
                 RaisePropertyChanged();
             }
         }
 
         public InstalledFont SelectedFont
         {
-            get { return _selectedFont; }
+            get
+            {
+                return _selectedFont;
+            }
             set
             {
                 _selectedFont = value;
@@ -62,21 +77,16 @@ namespace CharacterMap.ViewModel
 
         public MainViewModel()
         {
-            var fontList = InstalledFont.GetFonts();
-            FontList = fontList.OrderBy(f => f.Name).ToObservableCollection();
-            CreateFontListGroup();
+            AppSettings = new AppSettings();
+            RefreshFontList();
         }
 
-        private void FilterFontList(bool isSymbolFontsOnly)
+        private void RefreshFontList()
         {
             var fontList = InstalledFont.GetFonts();
-
-            var newList = fontList.Where(f => f.IsSymbolFont || !isSymbolFontsOnly)
+            FontList = fontList.Where(f => f.IsSymbolFont || !ShowSymbolFontsOnly)
                                   .OrderBy(f => f.Name)
                                   .ToObservableCollection();
-
-            FontList = newList;
-            CreateFontListGroup();
         }
 
         private void CreateFontListGroup()

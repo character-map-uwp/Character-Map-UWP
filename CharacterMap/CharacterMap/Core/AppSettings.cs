@@ -32,19 +32,19 @@ namespace CharacterMap.Core
             }
         }
 
-        public string LastFontOrSymbolFilter
+        public bool ShowSymbolFontsOnly
         {
             get
             {
-                return ReadSettings(nameof(LastFontOrSymbolFilter), string.Empty);
+                return ReadSettings(nameof(ShowSymbolFontsOnly), false);
             }
             set
             {
-                SaveSettings(nameof(LastFontOrSymbolFilter), value);
+                SaveSettings(nameof(ShowSymbolFontsOnly), value);
                 NotifyPropertyChanged();
             }
         }
-
+        
         public string LastSelectedFontName
         {
             get
