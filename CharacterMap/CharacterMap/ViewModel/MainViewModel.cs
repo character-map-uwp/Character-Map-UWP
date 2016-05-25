@@ -70,7 +70,7 @@ namespace CharacterMap.ViewModel
                     var chars = _selectedFont.GetCharacters();
                     Chars = chars.ToObservableCollection();
                 }
-
+                
                 RaisePropertyChanged();
             }
         }

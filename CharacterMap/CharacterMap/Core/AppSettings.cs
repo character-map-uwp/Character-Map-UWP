@@ -19,15 +19,15 @@ namespace CharacterMap.Core
             }
         }
 
-        public bool RememberMySettings
+        public bool UseDefaultSelection
         {
             get
             {
-                return ReadSettings(nameof(RememberMySettings), false);
+                return ReadSettings(nameof(UseDefaultSelection), false);
             }
             set
             {
-                SaveSettings(nameof(RememberMySettings), value);
+                SaveSettings(nameof(UseDefaultSelection), value);
                 NotifyPropertyChanged();
             }
         }
@@ -45,15 +45,15 @@ namespace CharacterMap.Core
             }
         }
         
-        public string LastSelectedFontName
+        public string DefaultSelectedFontName
         {
             get
             {
-                return ReadSettings(nameof(LastSelectedFontName), string.Empty);
+                return ReadSettings(nameof(DefaultSelectedFontName), string.Empty);
             }
             set
             {
-                SaveSettings(nameof(LastSelectedFontName), value);
+                SaveSettings(nameof(DefaultSelectedFontName), value);
                 NotifyPropertyChanged();
             }
         }

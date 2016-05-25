@@ -282,7 +282,6 @@
                     RequestedTheme="Dark"
                     x:Name="ToggleSymbolFontsOnly"
                     VerticalAlignment="Bottom"
-                    Toggled="ToggleSymbolFontsOnly_OnToggled"
                     IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}"
                     x:Uid="ToggleSymbolFontsOnly" Style="{StaticResource NiceToggleSwitchStyle}" />
             </Grid>
@@ -293,6 +292,7 @@
                         <ListView x:Name="LstFontFamily" 
                           ItemsSource="{Binding Source={StaticResource GroupedFontList}}" 
                           SelectedItem="{Binding SelectedFont, Mode=TwoWay}" 
+                          SelectionMode="Single"
                           SelectedValuePath="Name"
                           Margin="0,0,0,0">
 
@@ -392,11 +392,11 @@
                             <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
                         </ToggleButton.Content>
                     </ToggleButton>
-                    <!--<Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Padding="10">
+                    <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Padding="10">
                         <Button.Content>
                             <SymbolIcon Symbol="Setting" />
                         </Button.Content>
-                    </Button>-->
+                    </Button>
                 </StackPanel>
                 
                 <Button x:Name="BtnAbout" Click="BtnAbout_OnClick"  Padding="10"
@@ -420,8 +420,16 @@
                     <ColumnDefinition Width="7*" />
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
-
-                <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="23" Foreground="White" Margin="10,8,10,10" />
+                
+                <Grid Grid.Column="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="23" Foreground="White" Margin="10,8,10,10" />
+                    
+                    <Button x:Name="BtnSetDefault" Grid.Column="1" Content="Set As Default" RequestedTheme="Dark" HorizontalAlignment="Right" Click="BtnSetDefault_OnClick" />
+                </Grid>
 
                 <SearchBox Grid.Column="1" x:Name="SearchBoxUnicode" 
                        PlaceholderText="Unicode" 
