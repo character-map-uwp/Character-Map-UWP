@@ -52,6 +52,9 @@
                 <HyperlinkButton Content="https://github.com/EdiWang/UWP-CharacterMap" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
                 <TextBlock x:Uid="TxtAboutText" TextWrapping="Wrap" Margin="0,20,0,10" />
                 <HyperlinkButton x:Uid="LnkVisitBlog" Content="" NavigateUri="http://edi.wang" />
+                
+                <TextBlock Text="Thanks" />
+                <TextBlock Text="German language translated by: Armin Osaj" />
             </StackPanel>
         </Grid>
     </Grid>
