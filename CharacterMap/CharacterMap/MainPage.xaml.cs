@@ -62,6 +62,10 @@ namespace CharacterMap
                         }
                     }
                 }
+                else
+                {
+                    LstFontFamily.SelectedIndex = 0;
+                }
             }
         }
 
@@ -84,8 +88,15 @@ namespace CharacterMap
             var ch = CharGrid?.SelectedItem as Character;
             if (ch != null)
             {
-                TxtSelected.Text += ch.Char ?? string.Empty;
-                TxtXamlCode.Text = $"&#x{ch.UnicodeIndex.ToString("x").ToUpper()};";
+                if (null != TxtSelected)
+                {
+                    TxtSelected.Text += ch.Char ?? string.Empty;
+                }
+
+                if (null != TxtXamlCode)
+                {
+                    TxtXamlCode.Text = $"&#x{ch.UnicodeIndex.ToString("x").ToUpper()};";
+                }
 
                 var installedFont = LstFontFamily.SelectedItem as InstalledFont;
                 if (installedFont != null)
