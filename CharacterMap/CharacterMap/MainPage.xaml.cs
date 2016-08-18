@@ -196,9 +196,9 @@ namespace CharacterMap
             }
         }
 
-        private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
+        private async void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(Settings));
+            await DigSettings.ShowAsync();
         }
 
         private void BtnSetDefault_OnClick(object sender, RoutedEventArgs e)

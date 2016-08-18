@@ -49,6 +49,15 @@
             </Storyboard>
         </Grid.Resources>
 
+        <ContentDialog x:Name="DigSettings"
+                       Grid.Column="0" Grid.Row="0"
+                       FullSizeDesired="False"
+                       Title="Settings" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
+            <StackPanel DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
+                <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
+            </StackPanel>
+        </ContentDialog>
+
         <Border x:Name="BorderCopiedMessage" Grid.Row="1"
                 Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
                     Opacity="0"
