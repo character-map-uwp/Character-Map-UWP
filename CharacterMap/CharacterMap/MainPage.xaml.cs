@@ -1,10 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Graphics.Imaging;
-using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.Storage.Streams;
@@ -129,9 +126,9 @@ namespace CharacterMap
             }
         }
 
-        private void BtnAbout_OnClick(object sender, RoutedEventArgs e)
+        private async void BtnAbout_OnClick(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(About));
+            await DigAbout.ShowAsync();
         }
 
         private async void BtnSavePng_OnClick(object sender, RoutedEventArgs e)
@@ -146,7 +143,7 @@ namespace CharacterMap
 
             if (result != FileUpdateStatus.Complete)
             {
-                var dig = new MessageDialog(result.ToString(), "Oh Shit");
+                var dig = new MessageDialog($"FileUpdateStatus: {result}", "Failed to Save PNG File.");
                 await dig.ShowAsync();
             }
         }
