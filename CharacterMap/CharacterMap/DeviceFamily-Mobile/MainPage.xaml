@@ -51,6 +51,7 @@
 
         <ContentDialog x:Name="DigSettings"
                        Grid.Column="0" Grid.Row="0"
+                       Grid.RowSpan="2"
                        FullSizeDesired="False"
                        Title="Settings" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
             <StackPanel DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
