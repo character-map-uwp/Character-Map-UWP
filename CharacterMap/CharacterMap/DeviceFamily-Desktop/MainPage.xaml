@@ -262,14 +262,17 @@
                 </Grid.ColumnDefinitions>
 
 
-                <GridView x:Name="CharGrid" ItemsSource="{Binding Chars}" 
-                              Grid.Column="0"
-                              Margin="10,0,0,0"
+                <GridView x:Name="CharGrid" 
+                          ItemsSource="{Binding Chars}" 
+                          SelectionMode="Single"
+                          Grid.Column="0"
+                          Margin="10,0,0,0"
                           Padding="0,0,4,4">
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <Border BorderThickness="1" 
                                     BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
+                                    DoubleTapped="SelectItemDoubleClick"
                                     Height="64" Width="64">
                                 <Grid>
                                     <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 

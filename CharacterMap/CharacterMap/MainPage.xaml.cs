@@ -8,6 +8,7 @@ using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using CharacterMap.Core;
@@ -83,6 +84,11 @@ namespace CharacterMap
         private void BtnSelect_OnClick(object sender, RoutedEventArgs e)
         {
             var ch = CharGrid?.SelectedItem as Character;
+            SelectChar(ch);
+        }
+
+        private void SelectChar(Character ch)
+        {
             if (ch != null)
             {
                 if (null != TxtSelected)
@@ -99,7 +105,7 @@ namespace CharacterMap
                 if (installedFont != null)
                 {
                     TxtFontIcon.Text =
-                           $@"<FontIcon FontFamily=""{installedFont.Name}"" Glyph=""&#x{ch.UnicodeIndex.ToString("x").ToUpper()};"" />";
+                        $@"<FontIcon FontFamily=""{installedFont.Name}"" Glyph=""&#x{ch.UnicodeIndex.ToString("x").ToUpper()};"" />";
                 }
             }
         }
@@ -201,6 +207,12 @@ namespace CharacterMap
         private void BtnSetDefault_OnClick(object sender, RoutedEventArgs e)
         {
             AppSettings.DefaultSelectedFontName = LstFontFamily.SelectedValue as string;
+        }
+
+        private void SelectItemDoubleClick(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            var ch = CharGrid?.SelectedItem as Character;
+            SelectChar(ch);
         }
     }
 }

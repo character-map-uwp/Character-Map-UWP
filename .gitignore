@@ -218,3 +218,4 @@ ModelManifest.xml
 /CharacterMap/CharacterMap/_pkginfo.txt
 /CharacterMap/CharacterMap/_language-zh-hant.appx
 /CharacterMap/CharacterMap/_language-zh-hans.appx
+*.appx
