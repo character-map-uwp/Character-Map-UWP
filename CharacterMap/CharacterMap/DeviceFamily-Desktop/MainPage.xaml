@@ -249,7 +249,7 @@
                        PlaceholderText="Unicode" 
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Bottom"
-                       BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}"
+                       BorderThickness="0"
                        Margin="10"
                        SearchHistoryEnabled="True" 
                        QuerySubmitted="SearchBoxUnicode_OnQuerySubmitted" />
@@ -287,7 +287,7 @@
                                         <TextBlock Text="{Binding Path=UnicodeString}" 
                                                    FontFamily="Consolas" 
                                                    FontSize="12" 
-                                                   TextAlignment="Right" 
+                                                   TextAlignment="Center" 
                                                    Foreground="#888" />
                                     </StackPanel>
                                 </Grid>
@@ -299,7 +299,7 @@
 
                 <Border x:Name="PreviewPanel" Grid.Column="1" Margin="10,0,10,0" 
                     Padding="10"
-                    BorderThickness="1" 
+                    BorderThickness="1,0,0,0" 
                     BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}">
                     <Grid VerticalAlignment="Stretch">
                         <Grid.RowDefinitions>
@@ -370,14 +370,16 @@
                     </Grid>
                 </Border>
             </Grid>
-            <Grid Grid.Row="2" Margin="10,0,10,10">
+            <Grid Grid.Row="2" Padding="5" Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="7*" />
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0" BorderThickness="1" 
-                    BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" Padding="5">
-                    <TextBlock x:Name="TxtSelected" FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="28" />
+                    BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" Padding="4">
+                    <TextBlock x:Name="TxtSelected" CharacterSpacing="2" 
+                               FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
+                               FontSize="26" />
                 </Border>
 
                 <Grid Grid.Column="1">
