@@ -48,11 +48,11 @@ namespace CharacterMap
                     if (!string.IsNullOrEmpty(AppSettings.DefaultSelectedFontName))
                     {
                         var lastSelectedFont = LstFontFamily.Items.FirstOrDefault(
-                            (i =>
-                            {
-                                var installedFont = i as InstalledFont;
-                                return installedFont != null && installedFont.Name == AppSettings.DefaultSelectedFontName;
-                            }));
+                        (i =>
+                        {
+                            var installedFont = i as InstalledFont;
+                            return installedFont != null && installedFont.Name == AppSettings.DefaultSelectedFontName;
+                        }));
 
                         if (null != lastSelectedFont)
                         {
@@ -105,7 +105,8 @@ namespace CharacterMap
                 if (installedFont != null)
                 {
                     TxtFontIcon.Text =
-                        $@"<FontIcon FontFamily=""{installedFont.Name}"" Glyph=""&#x{ch.UnicodeIndex.ToString("x").ToUpper()};"" />";
+                        $@"<FontIcon FontFamily=""{installedFont.Name}"" Glyph=""&#x{ch.UnicodeIndex.ToString("x")
+                            .ToUpper()};"" />";
                 }
             }
         }
@@ -139,17 +140,19 @@ namespace CharacterMap
 
         private async void BtnSavePng_OnClick(object sender, RoutedEventArgs e)
         {
-            var bitmap = new RenderTargetBitmap();
-            await bitmap.RenderAsync(GridRenderTarget);
-
-            IBuffer buffer = await bitmap.GetPixelsAsync();
-            var stream = buffer.AsStream();
-            var fileName = $"{DateTime.Now.ToString("yyyy-MM-dd-HHmmss")}";
-            var result = await Utils.SaveStreamToImage(PickerLocationId.PicturesLibrary, fileName, stream, bitmap.PixelWidth, bitmap.PixelHeight);
-
-            if (result != FileUpdateStatus.Complete)
+            try
             {
-                var dig = new MessageDialog($"FileUpdateStatus: {result}", "Failed to Save PNG File.");
+                var bitmap = new RenderTargetBitmap();
+                await bitmap.RenderAsync(GridRenderTarget);
+
+                IBuffer buffer = await bitmap.GetPixelsAsync();
+                var stream = buffer.AsStream();
+                var fileName = $"{DateTime.Now:yyyy-MM-dd-HHmmss}";
+                await Utils.SaveStreamToImage(PickerLocationId.PicturesLibrary, fileName, stream, bitmap.PixelWidth, bitmap.PixelHeight);
+            }
+            catch (Exception ex)
+            {
+                var dig = new MessageDialog($"{ex.Message}", "Failed to Save PNG File.");
                 await dig.ShowAsync();
             }
         }
