@@ -14,7 +14,7 @@ namespace CharacterMap.Converters
             {
                 var count = int.Parse(value.ToString());
                 if (count > 0)
-                    return new SolidColorBrush(Color.FromArgb(255, 0, 114, 188));
+                    return new SolidColorBrush(Edi.UWP.Helpers.UI.GetAccentColor());
             }
             return new SolidColorBrush(Windows.UI.Colors.Gray);
 
