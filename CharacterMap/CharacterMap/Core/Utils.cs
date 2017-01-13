@@ -23,19 +23,22 @@ namespace CharacterMap.Core
 
         public static void UseLightTheme()
         {
-            var color = Edi.UWP.Helpers.UI.GetAccentColor();
+            var accentColor = Edi.UWP.Helpers.UI.GetAccentColor();
+            var btnHoverColor = Color.FromArgb(128,
+                (byte)(accentColor.R + 30),
+                (byte)(accentColor.G + 30),
+                (byte)(accentColor.B + 30));
 
-            Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(color, Colors.White);
             Edi.UWP.Helpers.UI.ApplyColorToTitleBar(
-            color,
+            accentColor,
             Colors.White,
             Colors.LightGray,
             Colors.Gray);
 
             Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
-                color, Colors.White,
-                color, Colors.White,
-                color, Colors.White,
+                accentColor, Colors.White,
+                btnHoverColor, Colors.White,
+                accentColor, Colors.White,
                 Colors.LightGray, Colors.Gray);
         }
         public static int ParseHexString(string hexNumber)
