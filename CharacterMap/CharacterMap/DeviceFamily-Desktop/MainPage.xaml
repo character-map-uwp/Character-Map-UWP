@@ -261,10 +261,10 @@
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
 
-
                 <GridView x:Name="CharGrid" 
                           ItemsSource="{Binding Chars}" 
                           SelectionMode="Single"
+                          SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                           Grid.Column="0"
                           Margin="10,0,0,0"
                           Padding="0,0,4,4">
@@ -296,7 +296,6 @@
                     </GridView.ItemTemplate>
                 </GridView>
 
-
                 <Border x:Name="PreviewPanel" Grid.Column="1" Margin="10,0,10,0" 
                     Padding="10"
                     BorderThickness="1,0,0,0" 
@@ -311,7 +310,7 @@
                             <Grid x:Name="GridRenderTarget" MinHeight="900" MinWidth="900">
                                 <Viewbox>
                                     <TextBlock x:Name="TxtPreview" TextAlignment="Center" 
-                                               Text="{Binding SelectedItem, ElementName=CharGrid, Converter={StaticResource CharGridSelectedItemToTextConverter}}"
+                                               Text="{Binding SelectedChar.Char}"
                                    FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" />
                                 </Viewbox>
                             </Grid>
@@ -333,7 +332,12 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
 
-                                <Button x:Name="BtnSelect" x:Uid="BtnSelect" Click="BtnSelect_OnClick" HorizontalAlignment="Stretch" />
+                                <Button Click="BtnCopy_OnClick" HorizontalAlignment="Stretch">
+                                    <Button.Content>
+                                        <SymbolIcon Symbol="Copy" />
+                                    </Button.Content>
+                                </Button>
+                                
                                 <Button x:Name="BtnSavePng" Grid.Column="2" x:Uid="BtnSavePng" HorizontalAlignment="Stretch" Click="BtnSavePng_OnClick" />
                             </Grid>
 
@@ -344,7 +348,7 @@
                                     <ColumnDefinition Width="40" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtXamlCode" x:Uid="TxtXamlCode" GotFocus="TxtXamlCode_OnGotFocus" IsReadOnly="True" />
+                                <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtXamlCode" x:Uid="TxtXamlCode" GotFocus="TxtXamlCode_OnGotFocus" IsReadOnly="True" Text="{Binding XamlCode}" />
                                 <Button Grid.Column="2" x:Name="BtnCopyXamlCode" Click="BtnCopyXamlCode_OnClick" VerticalAlignment="Bottom">
                                     <Button.Content>
                                         <SymbolIcon Symbol="Copy" />
@@ -359,7 +363,7 @@
                                     <ColumnDefinition Width="40" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtFontIcon" x:Uid="TxtFontIcon" GotFocus="TxtFontIcon_OnGotFocus" IsReadOnly="True" />
+                                <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtFontIcon" x:Uid="TxtFontIcon" GotFocus="TxtFontIcon_OnGotFocus" IsReadOnly="True" Text="{Binding FontIcon}"/>
                                 <Button Grid.Column="2" x:Name="BtnCopyFontIcon" Click="BtnCopyFontIcon_OnClick" VerticalAlignment="Bottom">
                                     <Button.Content>
                                         <SymbolIcon Symbol="Copy" />
@@ -369,36 +373,6 @@
                         </StackPanel>
                     </Grid>
                 </Border>
-            </Grid>
-            <Grid Grid.Row="2" Padding="5" Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="7*" />
-                    <ColumnDefinition Width="3*" />
-                </Grid.ColumnDefinitions>
-                <Border Grid.Column="0" BorderThickness="1" 
-                    BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}" Padding="4">
-                    <TextBlock x:Name="TxtSelected" CharacterSpacing="2" 
-                               FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
-                               FontSize="26" />
-                </Border>
-
-                <Grid Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-
-                    <Button Grid.Column="0" VerticalAlignment="Top" Height="50" Padding="20,0" Margin="10,0,0,0" Click="BtnCopy_OnClick" HorizontalAlignment="Stretch">
-                        <Button.Content>
-                            <SymbolIcon Symbol="Copy" />
-                        </Button.Content>
-                    </Button>
-                    <Button Grid.Column="1" VerticalAlignment="Top" Height="50" Padding="20,0" Margin="10,0,0,0" Click="BtnClearCopy_Click" HorizontalAlignment="Stretch">
-                        <Button.Content>
-                            <SymbolIcon Symbol="Delete" />
-                        </Button.Content>
-                    </Button>
-                </Grid>
             </Grid>
         </Grid>
     </Grid>

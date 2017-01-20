@@ -14,6 +14,9 @@ namespace CharacterMap.ViewModel
         private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
         private ObservableCollection<Character> _chars;
         private InstalledFont _selectedFont;
+        private Character _selectedChar;
+        private string _xamlCode;
+        private string _fontIcon;
 
         public ObservableCollection<InstalledFont> FontList
         {
@@ -39,6 +42,33 @@ namespace CharacterMap.ViewModel
         {
             get { return _chars; }
             set { _chars = value; RaisePropertyChanged(); }
+        }
+
+        public Character SelectedChar
+        {
+            get { return _selectedChar; }
+            set
+            {
+                _selectedChar = value;
+                if (null != value)
+                {
+                    XamlCode = $"&#x{value.UnicodeIndex.ToString("x").ToUpper()};";
+                    FontIcon = $@"<FontIcon FontFamily=""{SelectedFont.Name}"" Glyph=""&#x{value.UnicodeIndex.ToString("x").ToUpper()};"" />";
+                }
+                RaisePropertyChanged();
+            }
+        }
+
+        public string XamlCode
+        {
+            get { return _xamlCode; }
+            set { _xamlCode = value; RaisePropertyChanged(); }
+        }
+
+        public string FontIcon
+        {
+            get { return _fontIcon; }
+            set { _fontIcon = value; RaisePropertyChanged(); }
         }
 
         public bool ShowSymbolFontsOnly
@@ -70,7 +100,7 @@ namespace CharacterMap.ViewModel
                     var chars = _selectedFont.GetCharacters();
                     Chars = chars.ToObservableCollection();
                 }
-                
+
                 RaisePropertyChanged();
             }
         }

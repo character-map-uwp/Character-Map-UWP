@@ -170,7 +170,6 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
 
-                            <Button x:Name="BtnSelect" x:Uid="BtnSelect" Click="BtnSelect_OnClick" HorizontalAlignment="Stretch" />
                             <Button x:Name="BtnSavePng" Grid.Column="2" x:Uid="BtnSavePng" HorizontalAlignment="Stretch" Click="BtnSavePng_OnClick" />
                         </Grid>
 

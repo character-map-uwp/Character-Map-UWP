@@ -16,7 +16,7 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>CharacterMap_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>CharacterMap_TemporaryKey.pfx</PackageCertificateKeyFile>
     <SccProjectName>
     </SccProjectName>
     <SccLocalPath>
@@ -25,7 +25,7 @@
     </SccAuxPath>
     <SccProvider>
     </SccProvider>
-    <PackageCertificateThumbprint>98A47F705B83D55BCBC0A521EC38CBC04ADFDE43</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>5734288D4D84B51A3437C031C9EE82FBE3A160C4</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>

@@ -3,7 +3,6 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Storage.Pickers;
-using Windows.Storage.Provider;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -69,46 +68,16 @@ namespace CharacterMap
 
         private void BtnCopy_OnClick(object sender, RoutedEventArgs e)
         {
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtSelected.Text);
+            var character = CharGrid.SelectedItem as Character;
+            if (character != null)
+                Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
+
             BorderFadeInStoryboard.Completed += async (o, _) =>
             {
                 await Task.Delay(1000);
                 BorderFadeOutStoryboard.Begin();
             };
             BorderFadeInStoryboard.Begin();
-        }
-
-        /// <summary>
-        /// When User Click "Select" Button for an Character in the Grid
-        /// </summary>
-        private void BtnSelect_OnClick(object sender, RoutedEventArgs e)
-        {
-            var ch = CharGrid?.SelectedItem as Character;
-            SelectChar(ch);
-        }
-
-        private void SelectChar(Character ch)
-        {
-            if (ch != null)
-            {
-                if (null != TxtSelected)
-                {
-                    TxtSelected.Text += ch.Char ?? string.Empty;
-                }
-
-                if (null != TxtXamlCode)
-                {
-                    TxtXamlCode.Text = $"&#x{ch.UnicodeIndex.ToString("x").ToUpper()};";
-                }
-
-                var installedFont = LstFontFamily.SelectedItem as InstalledFont;
-                if (installedFont != null)
-                {
-                    TxtFontIcon.Text =
-                        $@"<FontIcon FontFamily=""{installedFont.Name}"" Glyph=""&#x{ch.UnicodeIndex.ToString("x")
-                            .ToUpper()};"" />";
-                }
-            }
         }
 
         private void TxtFontIcon_OnGotFocus(object sender, RoutedEventArgs e)
@@ -179,11 +148,6 @@ namespace CharacterMap
             BorderFadeInStoryboard.Begin();
         }
 
-        private void BtnClearCopy_Click(object sender, RoutedEventArgs e)
-        {
-            TxtSelected.Text = string.Empty;
-        }
-
         private void ToggleTheme_OnChecked(object sender, RoutedEventArgs e)
         {
             if (null != ToggleTheme)
@@ -215,7 +179,6 @@ namespace CharacterMap
         private void SelectItemDoubleClick(object sender, DoubleTappedRoutedEventArgs e)
         {
             var ch = CharGrid?.SelectedItem as Character;
-            SelectChar(ch);
         }
     }
 }
