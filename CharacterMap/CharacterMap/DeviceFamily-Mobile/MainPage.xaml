@@ -114,6 +114,8 @@
             </Grid.RowDefinitions>
 
             <GridView x:Name="CharGrid" ItemsSource="{Binding Chars}" 
+                      SelectionMode="Single"
+                          SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                               Grid.Column="0"
                             Padding="0,0,4,4">
                 <GridView.ItemTemplate>
@@ -180,7 +182,7 @@
                                 <ColumnDefinition Width="40" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtXamlCode" x:Uid="TxtXamlCode" GotFocus="TxtXamlCode_OnGotFocus" IsReadOnly="True" />
+                            <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtXamlCode" x:Uid="TxtXamlCode" GotFocus="TxtXamlCode_OnGotFocus" IsReadOnly="True" Text="{Binding XamlCode}" />
                             <Button Grid.Column="2" x:Name="BtnCopyXamlCode" Click="BtnCopyXamlCode_OnClick" VerticalAlignment="Bottom">
                                 <Button.Content>
                                     <SymbolIcon Symbol="Copy" />
@@ -195,7 +197,7 @@
                                 <ColumnDefinition Width="40" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtFontIcon" x:Uid="TxtFontIcon" GotFocus="TxtFontIcon_OnGotFocus" IsReadOnly="True" />
+                            <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtFontIcon" x:Uid="TxtFontIcon" GotFocus="TxtFontIcon_OnGotFocus" IsReadOnly="True" Text="{Binding FontIcon}"/>
                             <Button Grid.Column="2" x:Name="BtnCopyFontIcon" Click="BtnCopyFontIcon_OnClick" VerticalAlignment="Bottom">
                                 <Button.Content>
                                     <SymbolIcon Symbol="Copy" />

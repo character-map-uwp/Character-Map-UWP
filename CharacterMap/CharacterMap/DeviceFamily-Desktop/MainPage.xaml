@@ -272,7 +272,6 @@
                         <DataTemplate>
                             <Border BorderThickness="1" 
                                     BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
-                                    DoubleTapped="SelectItemDoubleClick"
                                     Height="64" Width="64">
                                 <Grid>
                                     <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 

@@ -175,10 +175,5 @@ namespace CharacterMap
         {
             AppSettings.DefaultSelectedFontName = LstFontFamily.SelectedValue as string;
         }
-
-        private void SelectItemDoubleClick(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            var ch = CharGrid?.SelectedItem as Character;
-        }
     }
 }
