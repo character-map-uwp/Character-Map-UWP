@@ -97,16 +97,7 @@ namespace CharacterMap
                     AppViewBackButtonVisibility.Visible :
                     AppViewBackButtonVisibility.Collapsed;
 
-                var settings = new AppSettings();
-                if (settings.UseDarkThemeSetting)
-                {
-                    Utils.UseDarkTheme();
-                }
-                else
-                {
-                    Utils.UseLightTheme();
-                }
-
+                Utils.UseTheme();
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }

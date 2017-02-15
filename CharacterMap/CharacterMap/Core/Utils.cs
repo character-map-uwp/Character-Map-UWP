@@ -4,24 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.UI;
+using Windows.UI.Xaml;
 
 namespace CharacterMap.Core
 {
     public class Utils
     {
-        public static void UseDarkTheme()
-        {
-            Edi.UWP.Helpers.UI.ApplyColorToTitleBar(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White);
-            Edi.UWP.Helpers.UI.ApplyColorToTitleButton(Color.FromArgb(255, 43, 43, 43), Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White, Colors.DimGray, Colors.White);
-            Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(Color.FromArgb(255, 43, 43, 43), Colors.DarkGray);
-        }
-
-        public static void UseLightTheme()
+        public static void UseTheme()
         {
             var accentColor = Edi.UWP.Helpers.UI.GetAccentColor();
             var btnHoverColor = Color.FromArgb(128,
@@ -29,17 +24,13 @@ namespace CharacterMap.Core
                 (byte)(accentColor.G + 30),
                 (byte)(accentColor.B + 30));
 
-            Edi.UWP.Helpers.UI.ApplyColorToTitleBar(
-            accentColor,
-            Colors.White,
-            Colors.LightGray,
-            Colors.Gray);
-
             Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
                 accentColor, Colors.White,
                 btnHoverColor, Colors.White,
                 accentColor, Colors.White,
                 Colors.LightGray, Colors.Gray);
+
+            Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(accentColor, Colors.DarkGray);
         }
         public static int ParseHexString(string hexNumber)
         {

@@ -15,62 +15,87 @@
         <CollectionViewSource x:Name="GroupedFontList" x:Key="GroupedFontList" IsSourceGrouped="True" Source="{Binding GroupedFontList}"/>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="265" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="{StaticResource SystemControlBackgroundAccentBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0" x:Name="TitleBar" HorizontalAlignment="Stretch" Background="Transparent">
+                <TextBlock Text="Character Map (Windows 10 Universal)" Foreground="White" Margin="10,5" HorizontalAlignment="Stretch" FontSize="12" />
+            </Grid>
+            <StackPanel Grid.Column="1" Margin="0,0,270,0" Orientation="Horizontal">
+                <ToggleButton x:Name="ToggleTheme" Checked="ToggleTheme_OnChecked" Unchecked="ToggleTheme_OnUnchecked" Style="{StaticResource IconToggleButtonStyle}">
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
+                </ToggleButton>
+                <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Style="{ThemeResource IconButtonStyle}">
+                    <SymbolIcon Symbol="Setting" />
+                </Button>
+                <Button x:Name="BtnAbout" Click="BtnAbout_OnClick" Style="{ThemeResource IconButtonStyle}">
+                    <SymbolIcon Symbol="Help" />
+                </Button>
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="265" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
 
-        <Grid.Resources>
-            <Storyboard x:Name="BorderFadeInStoryboard">
-                <DoubleAnimation 
+            <Grid.Resources>
+                <Storyboard x:Name="BorderFadeInStoryboard">
+                    <DoubleAnimation 
                         From="0" 
                         To="1" Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity" Duration="0:0:0.6" />
-            </Storyboard>
+                </Storyboard>
 
-            <Storyboard x:Name="BorderFadeOutStoryboard">
-                <DoubleAnimation 
+                <Storyboard x:Name="BorderFadeOutStoryboard">
+                    <DoubleAnimation 
                         From="1" 
                         To="0" Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity" Duration="0:0:0.6" />
-            </Storyboard>
-        </Grid.Resources>
+                </Storyboard>
+            </Grid.Resources>
 
-        <ContentDialog x:Name="DigSettings"
+            <ContentDialog x:Name="DigSettings"
                        Grid.Column="0" Grid.Row="0"
                        Grid.ColumnSpan="2"
                        FullSizeDesired="False"
                        Title="Settings" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
-            <StackPanel DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
-                <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
-            </StackPanel>
-        </ContentDialog>
+                <StackPanel DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
+                    <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
+                </StackPanel>
+            </ContentDialog>
 
-        <ContentDialog x:Name="DigAbout"
+            <ContentDialog x:Name="DigAbout"
                        Grid.Column="0" Grid.Row="0"
                        Grid.ColumnSpan="2"
                        FullSizeDesired="False"
                        Title="About" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
-            <Grid DataContext="{Binding Source={StaticResource Locator}, Path=About}" Margin="0,10,0,0">
-                <StackPanel>
-                    <TextBlock Text="{Binding Publisher}" />
-                    <TextBlock>
+                <Grid DataContext="{Binding Source={StaticResource Locator}, Path=About}" Margin="0,10,0,0">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Publisher}" />
+                        <TextBlock>
                             <Run>Version</Run>
                             <Run Text="{Binding Version}" /> (<Run Text="{Binding Architecture}" />)
-                    </TextBlock>
+                        </TextBlock>
 
-                    <TextBlock Text="GitHub" Margin="0,10,0,0" />
-                    <HyperlinkButton Content="https://github.com/EdiWang/UWP-CharacterMap" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
-                    <TextBlock x:Uid="TxtAboutText" TextWrapping="Wrap" Margin="0,20,0,10" />
-                    <HyperlinkButton x:Uid="LnkVisitBlog" Content="" NavigateUri="http://edi.wang" />
+                        <TextBlock Text="GitHub" Margin="0,10,0,0" />
+                        <HyperlinkButton Content="https://github.com/EdiWang/UWP-CharacterMap" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
+                        <TextBlock x:Uid="TxtAboutText" TextWrapping="Wrap" Margin="0,20,0,10" />
+                        <HyperlinkButton x:Uid="LnkVisitBlog" Content="" NavigateUri="http://edi.wang" />
 
-                    <TextBlock Text="Thanks" />
-                    <TextBlock Text="German language translated by: Armin Osaj" />
-                </StackPanel>
-            </Grid>
-        </ContentDialog>
+                        <TextBlock Text="Thanks" />
+                        <TextBlock Text="German language translated by: Armin Osaj" />
+                    </StackPanel>
+                </Grid>
+            </ContentDialog>
 
 
-        <controls:FeedbackOverlay x:Uid="RMA" 
+            <controls:FeedbackOverlay x:Uid="RMA" 
                                   Grid.Row="0"
                                   Grid.Column="0"
                                   Grid.ColumnSpan="2"
@@ -81,16 +106,16 @@
                 FirstCount="4"
                 SecondCount="8" />
 
-        <Grid Grid.Column="0" Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+            <Grid Grid.Column="0" Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
-                <ToggleSwitch 
+                <Grid Grid.Row="0" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+                    <ToggleSwitch 
                     Grid.Row="0"
                     Margin="10,5,0,5"
                     RequestedTheme="Dark"
@@ -98,24 +123,24 @@
                     VerticalAlignment="Bottom"
                     IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}"
                     x:Uid="ToggleSymbolFontsOnly" Style="{StaticResource NiceToggleSwitchStyle}" />
-            </Grid>
+                </Grid>
 
-            <Grid Grid.Row="1">
-                <SemanticZoom>
-                    <SemanticZoom.ZoomedInView>
-                        <ListView x:Name="LstFontFamily" 
+                <Grid Grid.Row="1">
+                    <SemanticZoom>
+                        <SemanticZoom.ZoomedInView>
+                            <ListView x:Name="LstFontFamily" 
                           ItemsSource="{Binding Source={StaticResource GroupedFontList}}" 
                           SelectedItem="{Binding SelectedFont, Mode=TwoWay}" 
                           SelectionMode="Single"
                           SelectedValuePath="Name"
                           Margin="0,0,0,0">
 
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="ListViewItem">
-                                                <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" 
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListViewItem">
+                                                    <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" 
                                                    ContentMargin="{TemplateBinding Padding}" 
                                                    CheckMode="Inline" 
                                                    ContentTransitions="{TemplateBinding ContentTransitions}" 
@@ -138,114 +163,92 @@
                                                    SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" 
                                                    SelectedBackground="{ThemeResource SystemControlBackgroundAltHighBrush}"
                                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ListView.ItemContainerStyle>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
 
-                            <ListView.Resources>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.Resources>
+                                <ListView.Resources>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.Resources>
 
-                            <ListView.GroupStyle>
-                                <GroupStyle HidesIfEmpty="True">
-                                    <GroupStyle.HeaderTemplate>
-                                        <DataTemplate>
-                                            <Border BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="2" Height="45" Width="45" Margin="0,0,0,0" HorizontalAlignment="Stretch">
-                                                <TextBlock Text="{Binding Key}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" FontSize="31" Padding="6,0,0,0" FontWeight="SemiLight" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                                            </Border>
-                                        </DataTemplate>
-                                    </GroupStyle.HeaderTemplate>
-                                </GroupStyle>
-                            </ListView.GroupStyle>
+                                <ListView.GroupStyle>
+                                    <GroupStyle HidesIfEmpty="True">
+                                        <GroupStyle.HeaderTemplate>
+                                            <DataTemplate>
+                                                <Border BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="2" Height="45" Width="45" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                    <TextBlock Text="{Binding Key}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" FontSize="31" Padding="6,0,0,0" FontWeight="SemiLight" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </GroupStyle.HeaderTemplate>
+                                    </GroupStyle>
+                                </ListView.GroupStyle>
 
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" Height="36" />
-                                        <TextBlock Text="{Binding Name}" Padding="8,0,0,0" VerticalAlignment="Center" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </SemanticZoom.ZoomedInView>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border BorderThickness="2" BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" Height="36" />
+                                            <TextBlock Text="{Binding Name}" Padding="8,0,0,0" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </SemanticZoom.ZoomedInView>
 
-                    <SemanticZoom.ZoomedOutView>
-                        <GridView x:Name="ZoomGridView" ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <GridView.ItemTemplate>
-                                <DataTemplate>
-                                    <Border>
-                                        <Border Margin="2" 
+                        <SemanticZoom.ZoomedOutView>
+                            <GridView x:Name="ZoomGridView" ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <GridView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border>
+                                            <Border Margin="2" 
                                         Width="60" 
                                         Height="60" 
                                         HorizontalAlignment="Center" 
                                         Background="{Binding Group.Count,Converter={StaticResource ZoomBackgroundConverter}}">
-                                            <TextBlock Text="{Binding Group.Key}" 
+                                                <TextBlock Text="{Binding Group.Key}" 
                                                Foreground="White" 
                                                FontSize="33" 
                                                HorizontalAlignment="Center" 
                                                VerticalAlignment="Center"/>
+                                            </Border>
                                         </Border>
-                                    </Border>
-                                </DataTemplate>
-                            </GridView.ItemTemplate>
-                        </GridView>
-                    </SemanticZoom.ZoomedOutView>
-                </SemanticZoom>
-            </Grid>
-
-            <Border Grid.Row="2" Height="1" Background="{ThemeResource AppBarSeparatorForegroundThemeBrush}" Margin="0,10,0,0" />
-
-            <Grid Grid.Row="3">
-                <StackPanel Orientation="Horizontal">
-                    <ToggleButton x:Name="ToggleTheme" Checked="ToggleTheme_OnChecked" Unchecked="ToggleTheme_OnUnchecked" Padding="10">
-                        <ToggleButton.Content>
-                            <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
-                        </ToggleButton.Content>
-                    </ToggleButton>
-                    <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Padding="10">
-                        <Button.Content>
-                            <SymbolIcon Symbol="Setting" />
-                        </Button.Content>
-                    </Button>
-                </StackPanel>
-
-                <Button x:Name="BtnAbout" Click="BtnAbout_OnClick"  Padding="10"
-                    HorizontalAlignment="Right">
-                    <Button.Content>
-                        <SymbolIcon Symbol="Help" />
-                    </Button.Content>
-                </Button>
-            </Grid>
-        </Grid>
-
-        <Grid Grid.Column="1">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <Grid Grid.Row="0" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Height="50">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="7*" />
-                    <ColumnDefinition Width="3*" />
-                </Grid.ColumnDefinitions>
-
-                <Grid Grid.Column="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="23" Foreground="White" Margin="10,8,10,10" />
-
-                    <Button x:Name="BtnSetDefault" Grid.Column="1" Content="Set As Default" RequestedTheme="Dark" HorizontalAlignment="Right" Click="BtnSetDefault_OnClick" />
+                                    </DataTemplate>
+                                </GridView.ItemTemplate>
+                            </GridView>
+                        </SemanticZoom.ZoomedOutView>
+                    </SemanticZoom>
                 </Grid>
 
-                <SearchBox Grid.Column="1" x:Name="SearchBoxUnicode" 
+                <Border Grid.Row="2" Height="1" Background="{ThemeResource AppBarSeparatorForegroundThemeBrush}" Margin="0,10,0,0" />
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Height="50">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="23" Foreground="White" Margin="10,8,10,10" />
+
+                        <Button x:Name="BtnSetDefault" Grid.Column="1" Content="Set As Default" RequestedTheme="Dark" HorizontalAlignment="Right" Click="BtnSetDefault_OnClick" />
+                    </Grid>
+
+                    <SearchBox Grid.Column="1" x:Name="SearchBoxUnicode" 
                        PlaceholderText="Unicode" 
                        HorizontalAlignment="Stretch"
                        VerticalAlignment="Bottom"
@@ -253,28 +256,28 @@
                        Margin="10"
                        SearchHistoryEnabled="True" 
                        QuerySubmitted="SearchBoxUnicode_OnQuerySubmitted" />
-            </Grid>
+                </Grid>
 
-            <Grid Grid.Row="1" Margin="0,10,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="7*" />
-                    <ColumnDefinition Width="3*" />
-                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="1" Margin="0,10,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
 
-                <GridView x:Name="CharGrid" 
+                    <GridView x:Name="CharGrid" 
                           ItemsSource="{Binding Chars}" 
                           SelectionMode="Single"
                           SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                           Grid.Column="0"
                           Margin="10,0,0,0"
                           Padding="0,0,4,4">
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderThickness="1" 
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Border BorderThickness="1" 
                                     BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
                                     Height="64" Width="64">
-                                <Grid>
-                                    <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
+                                    <Grid>
+                                        <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
                                            Text="{Binding Char}"
                                            FontSize="34" 
                                                VerticalAlignment="Top"
@@ -282,96 +285,97 @@
                                                HorizontalAlignment="Center" 
                                                TextAlignment="Center" />
 
-                                    <StackPanel Margin="2" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                                        <TextBlock Text="{Binding Path=UnicodeString}" 
+                                        <StackPanel Margin="2" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding Path=UnicodeString}" 
                                                    FontFamily="Consolas" 
                                                    FontSize="12" 
                                                    TextAlignment="Center" 
                                                    Foreground="#888" />
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
 
-                <Border x:Name="PreviewPanel" Grid.Column="1" Margin="10,0,10,0" 
+                    <Border x:Name="PreviewPanel" Grid.Column="1" Margin="10,0,10,0" 
                     Padding="10"
                     BorderThickness="1,0,0,0" 
                     BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}">
-                    <Grid VerticalAlignment="Stretch">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
+                        <Grid VerticalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                        <Viewbox Height="Auto" Width="Auto" Grid.Row="0" Stretch="Uniform" StretchDirection="Both">
-                            <Grid x:Name="GridRenderTarget" MinHeight="900" MinWidth="900">
-                                <Viewbox>
-                                    <TextBlock x:Name="TxtPreview" TextAlignment="Center" 
+                            <Viewbox Height="Auto" Width="Auto" Grid.Row="0" Stretch="Uniform" StretchDirection="Both">
+                                <Grid x:Name="GridRenderTarget" MinHeight="900" MinWidth="900">
+                                    <Viewbox>
+                                        <TextBlock x:Name="TxtPreview" TextAlignment="Center" 
                                                Text="{Binding SelectedChar.Char}"
                                    FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" />
-                                </Viewbox>
-                            </Grid>
-                        </Viewbox>
+                                    </Viewbox>
+                                </Grid>
+                            </Viewbox>
 
-                        <Border x:Name="BorderCopiedMessage" 
+                            <Border x:Name="BorderCopiedMessage" 
                                 Grid.Row="0"
                                 Background="{ThemeResource SystemControlBackgroundAccentBrush}" 
                                 Opacity="0"
                                 Margin="10,10,10,50" Padding="16,7" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-                            <TextBlock x:Name="TxtCopiedMessage" x:Uid="TxtCopiedMessage" Foreground="White" />
-                        </Border>
+                                <TextBlock x:Name="TxtCopiedMessage" x:Uid="TxtCopiedMessage" Foreground="White" />
+                            </Border>
 
-                        <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition />
-                                </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Row="1" VerticalAlignment="Bottom">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition />
+                                    </Grid.ColumnDefinitions>
 
-                                <Button Click="BtnCopy_OnClick" HorizontalAlignment="Stretch">
-                                    <Button.Content>
-                                        <SymbolIcon Symbol="Copy" />
-                                    </Button.Content>
-                                </Button>
-                                
-                                <Button x:Name="BtnSavePng" Grid.Column="2" x:Uid="BtnSavePng" HorizontalAlignment="Stretch" Click="BtnSavePng_OnClick" />
-                            </Grid>
+                                    <Button Click="BtnCopy_OnClick" HorizontalAlignment="Stretch">
+                                        <Button.Content>
+                                            <SymbolIcon Symbol="Copy" />
+                                        </Button.Content>
+                                    </Button>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="40" />
-                                </Grid.ColumnDefinitions>
+                                    <Button x:Name="BtnSavePng" Grid.Column="2" x:Uid="BtnSavePng" HorizontalAlignment="Stretch" Click="BtnSavePng_OnClick" />
+                                </Grid>
 
-                                <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtXamlCode" x:Uid="TxtXamlCode" GotFocus="TxtXamlCode_OnGotFocus" IsReadOnly="True" Text="{Binding XamlCode}" />
-                                <Button Grid.Column="2" x:Name="BtnCopyXamlCode" Click="BtnCopyXamlCode_OnClick" VerticalAlignment="Bottom">
-                                    <Button.Content>
-                                        <SymbolIcon Symbol="Copy" />
-                                    </Button.Content>
-                                </Button>
-                            </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
 
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="10" />
-                                    <ColumnDefinition Width="40" />
-                                </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtXamlCode" x:Uid="TxtXamlCode" GotFocus="TxtXamlCode_OnGotFocus" IsReadOnly="True" Text="{Binding XamlCode}" />
+                                    <Button Grid.Column="2" x:Name="BtnCopyXamlCode" Click="BtnCopyXamlCode_OnClick" VerticalAlignment="Bottom">
+                                        <Button.Content>
+                                            <SymbolIcon Symbol="Copy" />
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
 
-                                <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtFontIcon" x:Uid="TxtFontIcon" GotFocus="TxtFontIcon_OnGotFocus" IsReadOnly="True" Text="{Binding FontIcon}"/>
-                                <Button Grid.Column="2" x:Name="BtnCopyFontIcon" Click="BtnCopyFontIcon_OnClick" VerticalAlignment="Bottom">
-                                    <Button.Content>
-                                        <SymbolIcon Symbol="Copy" />
-                                    </Button.Content>
-                                </Button>
-                            </Grid>
-                        </StackPanel>
-                    </Grid>
-                </Border>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="10" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtFontIcon" x:Uid="TxtFontIcon" GotFocus="TxtFontIcon_OnGotFocus" IsReadOnly="True" Text="{Binding FontIcon}"/>
+                                    <Button Grid.Column="2" x:Name="BtnCopyFontIcon" Click="BtnCopyFontIcon_OnClick" VerticalAlignment="Bottom">
+                                        <Button.Content>
+                                            <SymbolIcon Symbol="Copy" />
+                                        </Button.Content>
+                                    </Button>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>
