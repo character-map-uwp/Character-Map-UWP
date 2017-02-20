@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:RateMyApp.UWP.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:controls1="using:Microsoft.Toolkit.Uwp.UI.Controls"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
 
@@ -20,6 +21,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <!-- Title Bar Grid-->
         <Grid Grid.Row="0" Background="{StaticResource SystemControlBackgroundAccentBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -40,6 +42,7 @@
                 </Button>
             </StackPanel>
         </Grid>
+        <!-- Main UI Grid -->
         <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="265" />
@@ -60,6 +63,7 @@
                 </Storyboard>
             </Grid.Resources>
 
+            <!-- Dialogs -->
             <ContentDialog x:Name="DigSettings"
                        Grid.Column="0" Grid.Row="0"
                        Grid.ColumnSpan="2"
@@ -69,7 +73,6 @@
                     <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
                 </StackPanel>
             </ContentDialog>
-
             <ContentDialog x:Name="DigAbout"
                        Grid.Column="0" Grid.Row="0"
                        Grid.ColumnSpan="2"
@@ -93,8 +96,6 @@
                     </StackPanel>
                 </Grid>
             </ContentDialog>
-
-
             <controls:FeedbackOverlay x:Uid="RMA" 
                                   Grid.Row="0"
                                   Grid.Column="0"
@@ -106,6 +107,7 @@
                 FirstCount="4"
                 SecondCount="8" />
 
+            <!-- Font List Grid -->
             <Grid Grid.Column="0" Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
@@ -232,6 +234,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
+                <!-- Selected Font Title Grid -->
                 <Grid Grid.Row="0" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Height="50">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="7*" />
@@ -258,6 +261,7 @@
                        QuerySubmitted="SearchBoxUnicode_OnQuerySubmitted" />
                 </Grid>
 
+                <!-- Char Browsing Grid -->
                 <Grid Grid.Row="1" Margin="0,10,0,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="7*" />
@@ -375,6 +379,20 @@
                             </StackPanel>
                         </Grid>
                     </Border>
+
+                    <!--Column Grid Splitter-->
+                    <controls1:GridSplitter
+            Width="11"
+            Background="#CCC"
+            GripperCursor="Default"
+            HorizontalAlignment="Left"
+            Grid.Column="1"
+            ResizeDirection="Auto"
+            ResizeBehavior="BasedOnAlignment"
+            CursorBehavior="ChangeOnSplitterHover"
+            GripperForeground="White">
+                    </controls1:GridSplitter>
+
                 </Grid>
             </Grid>
         </Grid>
