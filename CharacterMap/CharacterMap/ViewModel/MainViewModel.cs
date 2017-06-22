@@ -20,10 +20,7 @@ namespace CharacterMap.ViewModel
 
         public ObservableCollection<InstalledFont> FontList
         {
-            get
-            {
-                return _fontList;
-            }
+            get => _fontList;
             set
             {
                 _fontList = value;
@@ -34,19 +31,19 @@ namespace CharacterMap.ViewModel
 
         public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
         {
-            get { return _groupedFontList; }
+            get => _groupedFontList;
             set { _groupedFontList = value; RaisePropertyChanged(); }
         }
 
         public ObservableCollection<Character> Chars
         {
-            get { return _chars; }
+            get => _chars;
             set { _chars = value; RaisePropertyChanged(); }
         }
 
         public Character SelectedChar
         {
-            get { return _selectedChar; }
+            get => _selectedChar;
             set
             {
                 _selectedChar = value;
@@ -61,22 +58,19 @@ namespace CharacterMap.ViewModel
 
         public string XamlCode
         {
-            get { return _xamlCode; }
+            get => _xamlCode;
             set { _xamlCode = value; RaisePropertyChanged(); }
         }
 
         public string FontIcon
         {
-            get { return _fontIcon; }
+            get => _fontIcon;
             set { _fontIcon = value; RaisePropertyChanged(); }
         }
 
         public bool ShowSymbolFontsOnly
         {
-            get
-            {
-                return AppSettings.ShowSymbolFontsOnly;
-            }
+            get => AppSettings.ShowSymbolFontsOnly;
             set
             {
                 AppSettings.ShowSymbolFontsOnly = value;
@@ -87,10 +81,7 @@ namespace CharacterMap.ViewModel
 
         public InstalledFont SelectedFont
         {
-            get
-            {
-                return _selectedFont;
-            }
+            get => _selectedFont;
             set
             {
                 _selectedFont = value;

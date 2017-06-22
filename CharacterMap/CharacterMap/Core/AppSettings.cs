@@ -6,12 +6,19 @@ namespace CharacterMap.Core
 {
     public class AppSettings : INotifyPropertyChanged
     {
+        public int PngResolution
+        {
+            get => ReadSettings(nameof(PngResolution), 128);
+            set
+            {
+                SaveSettings(nameof(PngResolution), 128);
+                NotifyPropertyChanged();
+            }
+        }
+
         public bool UseDarkThemeSetting
         {
-            get
-            {
-                return ReadSettings(nameof(UseDarkThemeSetting), false);
-            }
+            get => ReadSettings(nameof(UseDarkThemeSetting), false);
             set
             {
                 SaveSettings(nameof(UseDarkThemeSetting), value);
@@ -21,10 +28,7 @@ namespace CharacterMap.Core
 
         public bool UseDefaultSelection
         {
-            get
-            {
-                return ReadSettings(nameof(UseDefaultSelection), false);
-            }
+            get => ReadSettings(nameof(UseDefaultSelection), false);
             set
             {
                 SaveSettings(nameof(UseDefaultSelection), value);
@@ -34,10 +38,7 @@ namespace CharacterMap.Core
 
         public bool ShowSymbolFontsOnly
         {
-            get
-            {
-                return ReadSettings(nameof(ShowSymbolFontsOnly), false);
-            }
+            get => ReadSettings(nameof(ShowSymbolFontsOnly), false);
             set
             {
                 SaveSettings(nameof(ShowSymbolFontsOnly), value);
@@ -47,10 +48,7 @@ namespace CharacterMap.Core
         
         public string DefaultSelectedFontName
         {
-            get
-            {
-                return ReadSettings(nameof(DefaultSelectedFontName), string.Empty);
-            }
+            get => ReadSettings(nameof(DefaultSelectedFontName), string.Empty);
             set
             {
                 SaveSettings(nameof(DefaultSelectedFontName), value);
@@ -60,10 +58,7 @@ namespace CharacterMap.Core
 
         public int GridSize
         {
-            get
-            {
-                return ReadSettings(nameof(GridSize), 60);
-            }
+            get => ReadSettings(nameof(GridSize), 60);
             set
             {
                 SaveSettings(nameof(GridSize), value);
@@ -73,10 +68,7 @@ namespace CharacterMap.Core
 
         public int ImageWidthHeight
         {
-            get
-            {
-                return ReadSettings(nameof(ImageWidthHeight), 900);
-            }
+            get => ReadSettings(nameof(ImageWidthHeight), 900);
             set
             {
                 SaveSettings(nameof(ImageWidthHeight), value);
