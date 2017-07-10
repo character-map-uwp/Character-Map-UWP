@@ -2,6 +2,7 @@
 using System.Linq;
 using CharacterMap.Core;
 using Edi.UWP.Helpers;
+using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
 
 namespace CharacterMap.ViewModel

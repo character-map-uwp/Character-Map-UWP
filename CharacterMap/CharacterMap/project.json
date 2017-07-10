@@ -1,18 +1,18 @@
 ﻿{
   "dependencies": {
     "AsyncStackTraceEx": "1.0.1.1",
-    "Edi.UWP.Helpers": "1.0.11",
-    "Microsoft.ApplicationInsights": "2.3.0",
+    "Edi.UWP.Helpers": "1.0.12",
+    "Microsoft.ApplicationInsights": "2.4.0",
     "Microsoft.ApplicationInsights.PersistenceChannel": "1.2.3",
     "Microsoft.ApplicationInsights.WindowsApps": "1.1.1",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.2",
-    "Microsoft.Toolkit.Uwp": "1.4.1",
-    "Microsoft.Toolkit.Uwp.UI.Controls": "1.4.1",
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.3.3",
+    "Microsoft.Toolkit.Uwp": "1.5.0",
+    "Microsoft.Toolkit.Uwp.UI.Controls": "1.5.0",
     "MvvmLight": "5.3.0",
     "RateMyApp.UWP": "2.1.0",
-    "SharpDX": "3.1.1",
-    "SharpDX.Direct2D1": "3.1.1",
-    "SharpDX.DXGI": "3.1.1"
+    "SharpDX": "4.0.1",
+    "SharpDX.Direct2D1": "4.0.1",
+    "SharpDX.DXGI": "4.0.1"
   },
   "frameworks": {
     "uap10.0": {}
