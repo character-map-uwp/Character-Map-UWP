@@ -251,7 +251,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="23" Foreground="White" Margin="10,8,10,10" />
+                        <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="23" FontWeight="Light" Foreground="White" Margin="10,8,10,10" />
 
                         <Button x:Name="BtnSetDefault" Grid.Column="1" Content="Set As Default" RequestedTheme="Dark" HorizontalAlignment="Right" Click="BtnSetDefault_OnClick" />
                     </Grid>
