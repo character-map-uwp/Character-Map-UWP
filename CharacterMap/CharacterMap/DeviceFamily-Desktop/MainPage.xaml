@@ -71,7 +71,7 @@
                        Title="Settings" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
                 <StackPanel DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
                     <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
-                    <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngResolution, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" />
+                    <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" />
                     
                     <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" /> 
                     
@@ -318,7 +318,7 @@
                             </Grid.RowDefinitions>
 
                             <Viewbox Height="Auto" Width="Auto" Grid.Row="0" Stretch="Uniform" StretchDirection="Both">
-                                <Grid x:Name="GridRenderTarget" MinHeight="{Binding Source={StaticResource AppSettings}, Path=PngResolution}" MinWidth="{Binding Source={StaticResource AppSettings}, Path=PngResolution}">
+                                <Grid x:Name="GridRenderTarget" MinHeight="{Binding Source={StaticResource AppSettings}, Path=PngSize}" MinWidth="{Binding Source={StaticResource AppSettings}, Path=PngSize}">
                                     <Viewbox>
                                         <TextBlock x:Name="TxtPreview" TextAlignment="Center" 
                                                Text="{Binding SelectedChar.Char}"

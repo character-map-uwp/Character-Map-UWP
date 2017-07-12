@@ -6,12 +6,12 @@ namespace CharacterMap.Core
 {
     public class AppSettings : INotifyPropertyChanged
     {
-        public double PngResolution
+        public double PngSize
         {
-            get => ReadSettings(nameof(PngResolution), 128.00d);
+            get => ReadSettings(nameof(PngSize), 128.00d);
             set
             {
-                SaveSettings(nameof(PngResolution), value);
+                SaveSettings(nameof(PngSize), value);
                 NotifyPropertyChanged();
             }
         }
