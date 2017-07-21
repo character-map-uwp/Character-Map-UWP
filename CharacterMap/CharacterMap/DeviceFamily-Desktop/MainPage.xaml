@@ -8,6 +8,9 @@
     xmlns:controls="using:RateMyApp.UWP.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:controls1="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:core1="using:Microsoft.Xaml.Interactions.Core"
+    Loaded="MainPage_Loaded"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
 
@@ -30,10 +33,17 @@
             <Grid Grid.Column="0" x:Name="TitleBar" HorizontalAlignment="Stretch" Background="Transparent">
                 <TextBlock Text="Character Map (Windows 10 Universal)" Foreground="White" Margin="10,5" HorizontalAlignment="Stretch" FontSize="12" />
             </Grid>
-            <StackPanel Grid.Column="1" Margin="0,0,270,0" Orientation="Horizontal">
-                <ToggleButton x:Name="ToggleTheme" Checked="ToggleTheme_OnChecked" Unchecked="ToggleTheme_OnUnchecked" Style="{StaticResource IconToggleButtonStyle}">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
-                </ToggleButton>
+            <StackPanel Grid.Column="1" Margin="0,0,160,0" Orientation="Horizontal">
+                <ToggleSwitch RequestedTheme="Dark"
+                    x:Uid="Settings_ThemeToggle" OnContent="Dark" OffContent="Light"
+                    IsOn="{x:Bind MainViewModel.IsLightThemeEnabled, Mode=OneWay}">
+                    <interactivity:Interaction.Behaviors>
+                        <core1:EventTriggerBehavior EventName="Toggled">
+                            <core1:InvokeCommandAction Command="{x:Bind MainViewModel.SwitchThemeCommand}"/>
+                        </core1:EventTriggerBehavior>
+                    </interactivity:Interaction.Behaviors>
+                </ToggleSwitch>
+                
                 <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Style="{ThemeResource IconButtonStyle}">
                     <SymbolIcon Symbol="Setting" />
                 </Button>
@@ -403,3 +413,4 @@
         </Grid>
     </Grid>
 </Page>
+

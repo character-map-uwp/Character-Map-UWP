@@ -16,16 +16,6 @@ namespace CharacterMap.Core
             }
         }
 
-        public bool UseDarkThemeSetting
-        {
-            get => ReadSettings(nameof(UseDarkThemeSetting), false);
-            set
-            {
-                SaveSettings(nameof(UseDarkThemeSetting), value);
-                NotifyPropertyChanged();
-            }
-        }
-
         public bool UseDefaultSelection
         {
             get => ReadSettings(nameof(UseDefaultSelection), false);

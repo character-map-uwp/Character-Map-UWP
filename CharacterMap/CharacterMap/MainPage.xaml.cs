@@ -25,21 +25,19 @@ namespace CharacterMap
         {
             this.InitializeComponent();
             this.MainViewModel = this.DataContext as MainViewModel;
-            this.Loaded += MainPage_Loaded;
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
             AppSettings = new AppSettings();
-            LoadTheme();
-        }
-
-        private void LoadTheme()
-        {
-            this.RequestedTheme = AppSettings.UseDarkThemeSetting ? ElementTheme.Dark : ElementTheme.Light;
-            this.ToggleTheme.IsChecked = AppSettings.UseDarkThemeSetting;
 
             var coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
             coreTitleBar.ExtendViewIntoTitleBar = true;
             Window.Current.SetTitleBar(TitleBar);
+
+            BorderFadeInStoryboard.Completed += async (o, _) =>
+            {
+                await Task.Delay(1000);
+                BorderFadeOutStoryboard.Begin();
+            };
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -75,12 +73,6 @@ namespace CharacterMap
             var character = CharGrid.SelectedItem as Character;
             if (character != null)
                 Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
-
-            BorderFadeInStoryboard.Completed += async (o, _) =>
-            {
-                await Task.Delay(1000);
-                BorderFadeOutStoryboard.Begin();
-            };
             BorderFadeInStoryboard.Begin();
         }
 
@@ -133,41 +125,13 @@ namespace CharacterMap
         private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
-            BorderFadeInStoryboard.Completed += async (o, _) =>
-            {
-                await Task.Delay(1000);
-                BorderFadeOutStoryboard.Begin();
-            };
             BorderFadeInStoryboard.Begin();
         }
 
         private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
-            BorderFadeInStoryboard.Completed += async (o, _) =>
-            {
-                await Task.Delay(1000);
-                BorderFadeOutStoryboard.Begin();
-            };
             BorderFadeInStoryboard.Begin();
-        }
-
-        private void ToggleTheme_OnChecked(object sender, RoutedEventArgs e)
-        {
-            if (null != ToggleTheme)
-            {
-                AppSettings.UseDarkThemeSetting = true;
-                LoadTheme();
-            }
-        }
-
-        private void ToggleTheme_OnUnchecked(object sender, RoutedEventArgs e)
-        {
-            if (null != ToggleTheme)
-            {
-                AppSettings.UseDarkThemeSetting = false;
-                LoadTheme();
-            }
         }
 
         private async void BtnSettings_OnClick(object sender, RoutedEventArgs e)

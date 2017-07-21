@@ -9,6 +9,7 @@
     "Microsoft.Toolkit.Uwp": "1.5.0",
     "Microsoft.Toolkit.Uwp.UI.Controls": "1.5.0",
     "MvvmLight": "5.3.0",
+    "Newtonsoft.Json": "10.0.3",
     "RateMyApp.UWP": "2.1.0",
     "SharpDX": "4.0.1",
     "SharpDX.Direct2D1": "4.0.1",

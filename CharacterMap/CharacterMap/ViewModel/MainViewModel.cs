@@ -1,23 +1,39 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using CharacterMap.Core;
-using Edi.UWP.Helpers;
+using CharacterMap.Services;
 using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 
 namespace CharacterMap.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        public AppSettings AppSettings { get; set; }
-
+        private ObservableCollection<Character> _chars;
+        private string _fontIcon;
         private ObservableCollection<InstalledFont> _fontList;
         private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
-        private ObservableCollection<Character> _chars;
-        private InstalledFont _selectedFont;
+        private bool _isLightThemeEnabled;
         private Character _selectedChar;
+        private InstalledFont _selectedFont;
         private string _xamlCode;
-        private string _fontIcon;
+
+        public MainViewModel(IDialogService dialogService)
+        {
+            DialogService = dialogService;
+            AppSettings = new AppSettings();
+            RefreshFontList();
+
+            SwitchThemeCommand = new RelayCommand(async () => { await ThemeSelectorService.SwitchThemeAsync(); });
+        }
+
+        public AppSettings AppSettings { get; set; }
+        public ICommand SwitchThemeCommand { get; }
+        public IDialogService DialogService { get; set; }
 
         public ObservableCollection<InstalledFont> FontList
         {
@@ -33,13 +49,21 @@ namespace CharacterMap.ViewModel
         public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
         {
             get => _groupedFontList;
-            set { _groupedFontList = value; RaisePropertyChanged(); }
+            set
+            {
+                _groupedFontList = value;
+                RaisePropertyChanged();
+            }
         }
 
         public ObservableCollection<Character> Chars
         {
             get => _chars;
-            set { _chars = value; RaisePropertyChanged(); }
+            set
+            {
+                _chars = value;
+                RaisePropertyChanged();
+            }
         }
 
         public Character SelectedChar
@@ -51,7 +75,9 @@ namespace CharacterMap.ViewModel
                 if (null != value)
                 {
                     XamlCode = $"&#x{value.UnicodeIndex.ToString("x").ToUpper()};";
-                    FontIcon = $@"<FontIcon FontFamily=""{SelectedFont.Name}"" Glyph=""&#x{value.UnicodeIndex.ToString("x").ToUpper()};"" />";
+                    FontIcon = $@"<FontIcon FontFamily=""{SelectedFont.Name}"" Glyph=""&#x{
+                            value.UnicodeIndex.ToString("x").ToUpper()
+                        };"" />";
                 }
                 RaisePropertyChanged();
             }
@@ -60,13 +86,21 @@ namespace CharacterMap.ViewModel
         public string XamlCode
         {
             get => _xamlCode;
-            set { _xamlCode = value; RaisePropertyChanged(); }
+            set
+            {
+                _xamlCode = value;
+                RaisePropertyChanged();
+            }
         }
 
         public string FontIcon
         {
             get => _fontIcon;
-            set { _fontIcon = value; RaisePropertyChanged(); }
+            set
+            {
+                _fontIcon = value;
+                RaisePropertyChanged();
+            }
         }
 
         public bool ShowSymbolFontsOnly
@@ -97,24 +131,43 @@ namespace CharacterMap.ViewModel
             }
         }
 
-        public MainViewModel()
+        public bool IsLightThemeEnabled
         {
-            AppSettings = new AppSettings();
-            RefreshFontList();
+            get => _isLightThemeEnabled;
+            set => Set(ref _isLightThemeEnabled, value);
+        }
+
+        public void Initialize()
+        {
+            IsLightThemeEnabled = ThemeSelectorService.IsLightThemeEnabled;
         }
 
         private void RefreshFontList()
         {
-            var fontList = InstalledFont.GetFonts();
-            FontList = fontList.Where(f => f.IsSymbolFont || !ShowSymbolFontsOnly)
-                                  .OrderBy(f => f.Name)
-                                  .ToObservableCollection();
+            try
+            {
+                var fontList = InstalledFont.GetFonts();
+                FontList = fontList.Where(f => f.IsSymbolFont || !ShowSymbolFontsOnly)
+                    .OrderBy(f => f.Name)
+                    .ToObservableCollection();
+            }
+            catch (Exception e)
+            {
+                DialogService.ShowMessageBox(e.Message, "Error Loading Font List");
+            }
         }
 
         private void CreateFontListGroup()
         {
-            var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1), true);
-            GroupedFontList = list.ToObservableCollection();
+            try
+            {
+                var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1), true);
+                GroupedFontList = list.ToObservableCollection();
+            }
+            catch (Exception e)
+            {
+                DialogService.ShowMessageBox(e.Message, "Error Loading Font Group");
+            }
         }
     }
 }

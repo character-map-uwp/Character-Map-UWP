@@ -7,15 +7,13 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:RateMyApp.UWP.Controls"
     xmlns:core="using:CharacterMap.Core"
+    Loaded="MainPage_Loaded"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
 
     <Page.BottomAppBar>
         <CommandBar>
             <CommandBar.PrimaryCommands>
-                <AppBarToggleButton x:Name="ToggleTheme" Label="Theme" Checked="ToggleTheme_OnChecked" Unchecked="ToggleTheme_OnUnchecked">
-                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE708;" />
-                </AppBarToggleButton>
                 <AppBarToggleButton Label="Show Symbol Only" IsChecked="{Binding ShowSymbolFontsOnly, Mode=TwoWay}" Icon="Filter"/>
                 <AppBarButton Icon="Setting" Label="Settings" Click="BtnSettings_OnClick" />
             </CommandBar.PrimaryCommands>
