@@ -124,7 +124,7 @@
     <value>Auswählen</value>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>XAML Code</value>
+    <value>XAML-Code</value>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>FontIcon</value>
@@ -136,22 +136,22 @@
     <value>Blog des Entwicklers besuchen</value>
   </data>
   <data name="TxtAboutText.Text" xml:space="preserve">
-    <value>Diese App wurde entworfen, um die integrierte Win32 Zeichentabelle zu ersetzen. Sie kommt deutlich besser mit höheren DPI-Einstellungen zurecht.</value>
+    <value>Diese App wurde entworfen, um die integrierte Win32-Zeichentabelle zu ersetzen. Sie kommt deutlich besser mit höheren DPI-Einstellungen zurecht.</value>
   </data>
   <data name="TxtAboutTitle.Text" xml:space="preserve">
     <value>Über</value>
   </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
-    <value>Speichere PNG</value>
+    <value>Als PNG speichern</value>
   </data>
   <data name="ToggleTheme.OffContent" xml:space="preserve">
-    <value>Helles Theme</value>
+    <value>Helles Design</value>
   </data>
   <data name="ToggleTheme.OnContent" xml:space="preserve">
-    <value>Dunkles Theme</value>
+    <value>Dunkles Design</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>Zeige nur Symbol Schriftarten</value>
+    <value>Nur Symbol-Schriftarten anzeigen</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
     <value>Alle Schriftarten</value>
