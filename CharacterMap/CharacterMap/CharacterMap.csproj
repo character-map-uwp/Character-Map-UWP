@@ -25,7 +25,7 @@
     </SccAuxPath>
     <SccProvider>
     </SccProvider>
-    <PackageCertificateThumbprint>4FD683E9271A577075999D54150389628CA53DAD</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>E93A1CFF42E421E11DB1156AA0B8F4939BF3EC6E</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
