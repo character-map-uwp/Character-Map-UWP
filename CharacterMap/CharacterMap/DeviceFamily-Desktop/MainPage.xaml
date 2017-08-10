@@ -26,32 +26,34 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Title Bar Grid-->
-        <Grid Grid.Row="0" Background="{StaticResource SystemControlBackgroundAccentBrush}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0" x:Name="TitleBar" HorizontalAlignment="Stretch" Background="Transparent">
-                <TextBlock Text="Character Map (Windows 10 Universal)" Foreground="White" Margin="10,5" HorizontalAlignment="Stretch" FontSize="12" />
+        <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3">
+            <Rectangle x:Name="TitleBarBackgroundElement" Fill="{StaticResource SystemControlBackgroundAccentBrush}" />
+            <Grid Padding="{x:Bind CoreTitleBarPadding, Mode=OneWay}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Text="Character Map (Windows 10 Universal)" Foreground="White" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ToggleSwitch RequestedTheme="Dark" Style="{StaticResource NiceToggleSwitchStyle}"
+                                  Margin="0" Padding="10" Width="100"
+                                  x:Uid="Settings_ThemeToggle" OnContent="Dark" OffContent="Light"
+                                  IsOn="{x:Bind MainViewModel.IsLightThemeEnabled, Mode=OneWay}">     
+                        <interactivity:Interaction.Behaviors>
+                            <core1:EventTriggerBehavior EventName="Toggled">
+                                <core1:InvokeCommandAction Command="{x:Bind MainViewModel.SwitchThemeCommand}"/>
+                            </core1:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                    </ToggleSwitch>
+
+                    <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Style="{ThemeResource IconButtonStyle}">
+                        <SymbolIcon Symbol="Setting" />
+                    </Button>
+                    <Button x:Name="BtnAbout" Click="BtnAbout_OnClick" Style="{ThemeResource IconButtonStyle}">
+                        <SymbolIcon Symbol="Help" />
+                    </Button>
+                </StackPanel>
             </Grid>
-            <StackPanel Grid.Column="1" Margin="0,0,160,0" Orientation="Horizontal">
-                <ToggleSwitch RequestedTheme="Dark"
-                    x:Uid="Settings_ThemeToggle" OnContent="Dark" OffContent="Light"
-                    IsOn="{x:Bind MainViewModel.IsLightThemeEnabled, Mode=OneWay}">
-                    <interactivity:Interaction.Behaviors>
-                        <core1:EventTriggerBehavior EventName="Toggled">
-                            <core1:InvokeCommandAction Command="{x:Bind MainViewModel.SwitchThemeCommand}"/>
-                        </core1:EventTriggerBehavior>
-                    </interactivity:Interaction.Behaviors>
-                </ToggleSwitch>
-                
-                <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Style="{ThemeResource IconButtonStyle}">
-                    <SymbolIcon Symbol="Setting" />
-                </Button>
-                <Button x:Name="BtnAbout" Click="BtnAbout_OnClick" Style="{ThemeResource IconButtonStyle}">
-                    <SymbolIcon Symbol="Help" />
-                </Button>
-            </StackPanel>
         </Grid>
         <!-- Main UI Grid -->
         <Grid Grid.Row="1" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -83,9 +85,9 @@
                 <StackPanel DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
                     <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
                     <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" />
-                    
-                    <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" /> 
-                    
+
+                    <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" />
+
                     <TextBlock Text="Note: PNG resolution will be affected by your screen DPI (e.g. 128px on 150% DPI will be 192px). This will be fixed in next release." TextWrapping="Wrap" Foreground="#666" />
                 </StackPanel>
             </ContentDialog>
