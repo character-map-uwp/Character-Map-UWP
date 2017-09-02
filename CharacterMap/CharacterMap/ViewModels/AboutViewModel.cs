@@ -1,8 +1,7 @@
-﻿using System;
-using GalaSoft.MvvmLight;
+﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
-namespace CharacterMap.ViewModel
+namespace CharacterMap.ViewModels
 {
     public class AboutViewModel : ViewModelBase
     {

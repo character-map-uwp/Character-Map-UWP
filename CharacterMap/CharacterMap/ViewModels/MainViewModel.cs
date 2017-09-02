@@ -9,7 +9,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 
-namespace CharacterMap.ViewModel
+namespace CharacterMap.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {

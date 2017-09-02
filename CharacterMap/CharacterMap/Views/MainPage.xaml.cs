@@ -16,7 +16,7 @@ using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using CharacterMap.Annotations;
 using CharacterMap.Core;
-using CharacterMap.ViewModel;
+using CharacterMap.ViewModels;
 
 namespace CharacterMap.Views
 {

@@ -5,10 +5,11 @@
     xmlns:local="using:CharacterMap"
     xmlns:converters="using:Edi.UWP.Helpers.Converters"
     xmlns:converters1="using:CharacterMap.Converters"
+    xmlns:viewModels="using:CharacterMap.ViewModels"
     RequestedTheme="Light">
     <Application.Resources>
         <ResourceDictionary>
-            <vm:ViewModelLocator x:Key="Locator" xmlns:vm="using:CharacterMap.ViewModel" />
+            <viewModels:ViewModelLocator x:Key="Locator" />
             <converters:StringFormatConverter x:Key="StringFormatConverter" />
             <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
