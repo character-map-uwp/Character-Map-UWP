@@ -144,9 +144,6 @@
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>保存PNG</value>
   </data>
-  <data name="Saved" xml:space="preserve">
-    <value>已保存</value>
-  </data>
   <data name="ToggleTheme.OffContent" xml:space="preserve">
     <value>浅色主题</value>
   </data>
