@@ -1,13 +1,12 @@
 ﻿using System;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using CharacterMap.Core;
+using CharacterMap.Services;
 using Edi.UWP.Helpers;
 using Utils = CharacterMap.Core.Utils;
 
@@ -18,6 +17,9 @@ namespace CharacterMap
     /// </summary>
     sealed partial class App : Application
     {
+        private Lazy<ActivationService> _activationService;
+        private ActivationService ActivationService => _activationService.Value;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().

@@ -177,6 +177,7 @@
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
     <Compile Include="Services\ToastNotificationsService.cs" />
     <Compile Include="Services\WhatsNewDisplayService.cs" />
