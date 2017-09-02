@@ -18,7 +18,7 @@ using CharacterMap.Annotations;
 using CharacterMap.Core;
 using CharacterMap.ViewModel;
 
-namespace CharacterMap
+namespace CharacterMap.Views
 {
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {

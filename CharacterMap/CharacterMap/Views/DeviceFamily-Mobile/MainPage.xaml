@@ -1,11 +1,10 @@
 ﻿<Page
-    x:Class="CharacterMap.MainPage"
+    x:Class="CharacterMap.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:CharacterMap"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:RateMyApp.UWP.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:userControls="using:CharacterMap.UserControls"
     Loaded="MainPage_Loaded"
@@ -62,7 +61,6 @@
             </StackPanel>
         </ContentDialog>
 
-
         <ContentDialog x:Name="DigAbout"
                        Grid.Column="0" Grid.Row="0"
                        Grid.RowSpan="2"
@@ -70,16 +68,6 @@
                        Title="About" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
             <userControls:AboutDialog />
         </ContentDialog>
-
-        <controls:FeedbackOverlay x:Uid="RMA" 
-                                  Grid.Row="0"
-                                  Grid.RowSpan="2"
-                x:Name="FeedbackOverlay"
-                FeedbackTo="Edi.Wang@outlook.com"
-                ApplicationName="Character Map UWP"
-                CompanyName="edi.wang"
-                FirstCount="4"
-                SecondCount="8" />
 
         <ComboBox x:Name="LstFontFamily" 
                   Grid.Row="0"
