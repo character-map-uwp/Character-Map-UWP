@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace CharacterMap.Core
+namespace CharacterMap.Helpers
 {
     public static class Json
     {

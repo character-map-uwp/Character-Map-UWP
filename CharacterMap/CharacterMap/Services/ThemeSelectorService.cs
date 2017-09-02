@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using CharacterMap.Core;
+using CharacterMap.Helpers;
 
 namespace CharacterMap.Services
 {

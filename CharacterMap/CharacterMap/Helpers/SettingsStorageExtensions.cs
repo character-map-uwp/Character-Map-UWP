@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
 
-namespace CharacterMap.Core
+namespace CharacterMap.Helpers
 {
     public static class SettingsStorageExtensions
     {

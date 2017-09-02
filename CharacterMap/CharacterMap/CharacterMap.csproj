@@ -162,6 +162,8 @@
     <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Activation\ActivationHandler.cs" />
+    <Compile Include="Activation\DefaultLaunchActivationHandler.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -170,9 +172,14 @@
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\InstalledFont.cs" />
-    <Compile Include="Core\Json.cs" />
-    <Compile Include="Core\SettingsStorageExtensions.cs" />
+    <Compile Include="Helpers\Json.cs" />
+    <Compile Include="Helpers\ResourceExtensions.cs" />
+    <Compile Include="Helpers\SettingsStorageExtensions.cs" />
+    <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Services\NavigationServiceEx.cs" />
+    <Compile Include="Services\ToastNotificationsService.cs" />
+    <Compile Include="Services\WhatsNewDisplayService.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -185,6 +192,9 @@
     <Compile Include="ViewModel\AboutViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="Views\WhatsNewDialog.xaml.cs">
+      <DependentUpon>WhatsNewDialog.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -291,6 +301,10 @@
     <Page Include="UserControls\AboutDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WhatsNewDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup />
