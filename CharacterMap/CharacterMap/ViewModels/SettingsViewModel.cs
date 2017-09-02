@@ -8,6 +8,10 @@ namespace CharacterMap.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
+        public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
+
+        public RelayCommand CommandReview { get; set; }
+
         private bool _isLightThemeEnabled;
         public bool IsLightThemeEnabled
         {
@@ -27,6 +31,7 @@ namespace CharacterMap.ViewModels
         public SettingsViewModel()
         {
             SwitchThemeCommand = new RelayCommand(async () => { await ThemeSelectorService.SwitchThemeAsync(); });
+            CommandReview = new RelayCommand(async () => await Edi.UWP.Helpers.Tasks.OpenStoreReviewAsync());
         }
 
         public void Initialize()

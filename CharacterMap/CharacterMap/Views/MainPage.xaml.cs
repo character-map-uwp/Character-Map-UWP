@@ -149,11 +149,6 @@ namespace CharacterMap.Views
             }
         }
 
-        private async void BtnAbout_OnClick(object sender, RoutedEventArgs e)
-        {
-            await DigAbout.ShowAsync();
-        }
-
         private async void BtnSavePng_OnClick(object sender, RoutedEventArgs e)
         {
             try

@@ -6,7 +6,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:core="using:CharacterMap.Core"
-    xmlns:userControls="using:CharacterMap.UserControls"
     Loaded="MainPage_Loaded"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
@@ -17,9 +16,6 @@
                 <AppBarToggleButton Label="Show Symbol Only" IsChecked="{Binding ShowSymbolFontsOnly, Mode=TwoWay}" Icon="Filter"/>
                 <AppBarButton Icon="Setting" Label="Settings" Click="BtnSettings_OnClick" />
             </CommandBar.PrimaryCommands>
-            <CommandBar.SecondaryCommands>
-                <AppBarButton Label="About" Click="BtnAbout_OnClick" />
-            </CommandBar.SecondaryCommands>
         </CommandBar>
     </Page.BottomAppBar>
 
@@ -59,14 +55,6 @@
 
                 <TextBlock Text="Note: PNG resolution will be affected by your screen DPI (e.g. 128px on 150% DPI will be 192px). This will be fixed in next release." TextWrapping="Wrap" Foreground="#666" />
             </StackPanel>
-        </ContentDialog>
-
-        <ContentDialog x:Name="DigAbout"
-                       Grid.Column="0" Grid.Row="0"
-                       Grid.RowSpan="2"
-                       FullSizeDesired="False"
-                       Title="About" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
-            <userControls:AboutDialog />
         </ContentDialog>
 
         <ComboBox x:Name="LstFontFamily" 

@@ -9,7 +9,6 @@
     xmlns:controls1="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:core1="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:userControls="using:CharacterMap.UserControls"
     Loaded="MainPage_Loaded"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
@@ -47,9 +46,6 @@
 
                     <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Style="{StaticResource IconButtonStyle}" RequestedTheme="Dark">
                         <SymbolIcon Symbol="Setting" />
-                    </Button>
-                    <Button x:Name="BtnAbout" Click="BtnAbout_OnClick" Style="{StaticResource IconButtonStyle}" RequestedTheme="Dark">
-                        <SymbolIcon Symbol="Help" />
                     </Button>
                 </StackPanel>
             </Grid>
@@ -89,13 +85,6 @@
 
                     <TextBlock Text="Note: PNG resolution will be affected by your screen DPI (e.g. 128px on 150% DPI will be 192px). This will be fixed in next release." TextWrapping="Wrap" Foreground="#666" />
                 </StackPanel>
-            </ContentDialog>
-            <ContentDialog x:Name="DigAbout"
-                       Grid.Column="0" Grid.Row="0"
-                       Grid.ColumnSpan="2"
-                       FullSizeDesired="False"
-                       Title="About" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
-                <userControls:AboutDialog />
             </ContentDialog>
 
             <!-- Font List Grid -->
