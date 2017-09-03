@@ -10,29 +10,33 @@
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" />
-            <converters:StringFormatConverter x:Key="StringFormatConverter" />
-            <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-            <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
-            <converters1:CharGridSelectedItemToTextConverter x:Key="CharGridSelectedItemToTextConverter" />
-            <Style TargetType="Grid" x:Name="TransitionalGrid">
-                <Setter Property="Transitions">
-                    <Setter.Value>
-                        <TransitionCollection>
-                            <ContentThemeTransition HorizontalOffset="50" VerticalOffset="0" />
-                        </TransitionCollection>
-                    </Setter.Value>
-                </Setter>
-            </Style>
-            <Style TargetType="GridView">
-                <Setter Property="ItemContainerTransitions">
-                    <Setter.Value>
-                        <TransitionCollection>
-                            <EntranceThemeTransition IsStaggeringEnabled="False" FromHorizontalOffset="50" FromVerticalOffset="0" />
-                        </TransitionCollection>
-                    </Setter.Value>
-                </Setter>
-            </Style>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <converters:StringFormatConverter x:Key="StringFormatConverter" />
+                    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                    <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
+                    <converters1:CharGridSelectedItemToTextConverter x:Key="CharGridSelectedItemToTextConverter" />
+                </ResourceDictionary>
+                <ResourceDictionary>
+                    <Style TargetType="Grid" x:Name="TransitionalGrid">
+                        <Setter Property="Transitions">
+                            <Setter.Value>
+                                <TransitionCollection>
+                                    <ContentThemeTransition HorizontalOffset="50" VerticalOffset="0" />
+                                </TransitionCollection>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                    <Style TargetType="GridView">
+                        <Setter Property="ItemContainerTransitions">
+                            <Setter.Value>
+                                <TransitionCollection>
+                                    <EntranceThemeTransition IsStaggeringEnabled="False" FromHorizontalOffset="50" FromVerticalOffset="0" />
+                                </TransitionCollection>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBlock.xaml"/>
                 <ResourceDictionary Source="/Styles/IconButtonStyle.xaml"/>
                 <ResourceDictionary Source="/Styles/NiceToggleSwitchStyle.xaml"/>

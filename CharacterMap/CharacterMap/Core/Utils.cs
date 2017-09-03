@@ -16,22 +16,6 @@ namespace CharacterMap.Core
 {
     public class Utils
     {
-        public static void UseTheme()
-        {
-            var accentColor = Edi.UWP.Helpers.UI.GetAccentColor();
-            var btnHoverColor = Color.FromArgb(128,
-                (byte)(accentColor.R + 30),
-                (byte)(accentColor.G + 30),
-                (byte)(accentColor.B + 30));
-
-            Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
-                accentColor, Colors.White,
-                btnHoverColor, Colors.White,
-                accentColor, Colors.White,
-                Colors.LightGray, Colors.Gray);
-
-            Edi.UWP.Helpers.Mobile.SetWindowsMobileStatusBarColor(accentColor, Colors.DarkGray);
-        }
         public static int ParseHexString(string hexNumber)
         {
             hexNumber = hexNumber.Replace("x", string.Empty);
