@@ -135,12 +135,6 @@
   <data name="LnkVisitBlog.Content" xml:space="preserve">
     <value>Visit Author's Blog</value>
   </data>
-  <data name="TxtAboutText.Text" xml:space="preserve">
-    <value>This App is designed to replace Windows system win32 character map. It is more DPI aware on high DPI screens.</value>
-  </data>
-  <data name="TxtAboutTitle.Text" xml:space="preserve">
-    <value>About</value>
-  </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>Save PNG</value>
   </data>
@@ -158,5 +152,20 @@
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Copied</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>About this application</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>This App is designed to replace Windows system win32 character map. It is more DPI aware on high DPI screens.</value>
+  </data>
+  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>Privacy Terms</value>
+  </data>
+  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
+    <value>http://edi.wang/docs/pp-general.html</value>
   </data>
 </root>

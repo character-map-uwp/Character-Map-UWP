@@ -5,8 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     DataContext="{Binding SettingsViewModel, Source={StaticResource Locator}}"
-    xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
-    xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:CharacterMap.Core"
     mc:Ignorable="d">
 
@@ -29,61 +27,35 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="48"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
                 x:Uid="Settings_Title"
                 x:Name="TitlePage"
+                Text="#Settings_Title"
                 Style="{StaticResource PageTitleStyle}" />
 
             <StackPanel Grid.Row="1" Margin="0,16,0,0">
-                <TextBlock
-                    x:Uid="Settings_Theme"
-                    Style="{StaticResource BodyTextStyle}"/>
-                <ToggleSwitch
-                    x:Uid="Settings_ThemeToggle"
-                    IsOn="{x:Bind ViewModel.IsLightThemeEnabled, Mode=OneWay}"
-                    Margin="0,4,0,0">
-                    <i:Interaction.Behaviors>
-                        <ic:EventTriggerBehavior EventName="Toggled">
-                            <ic:InvokeCommandAction Command="{x:Bind ViewModel.SwitchThemeCommand}"/>
-                        </ic:EventTriggerBehavior>
-                    </i:Interaction.Behaviors>
-                </ToggleSwitch>
-
                 <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
-                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" />
-
+                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
                 <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" />
+                <TextBlock Text="Note: PNG resolution will be affected by your screen DPI (e.g. 128px on 150% DPI will be 192px). This will be fixed in the future." TextWrapping="Wrap" Foreground="#666" />
 
-                <TextBlock Text="Note: PNG resolution will be affected by your screen DPI (e.g. 128px on 150% DPI will be 192px). This will be fixed in next release." TextWrapping="Wrap" Foreground="#666" />
-            </StackPanel>
-
-            <StackPanel Grid.Row="2" Margin="0,16,0,0">
                 <TextBlock
                     x:Uid="Settings_About"
-                    Style="{StaticResource BodyTextStyle}"/>
+                    Text="#Settings_About"
+                    Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,40,0,0"/>
                 <TextBlock
                     Text="{x:Bind ViewModel.AppDescription, Mode=OneWay}"
                     Style="{StaticResource BodyTextStyle}"
                     Margin="0,4,0,0"/>
                 <TextBlock
-                    x:Uid="Settings_AboutDescription"
+                    x:Uid="Settings_AboutDescription" Text="#Settings_AboutDescription"
                     Style="{StaticResource BodyTextStyle}"/>
-
-                <TextBlock Text="{Binding Publisher}" />
-                <TextBlock>
-                        <Run>Version</Run>
-                        <Run Text="{Binding Version}" /> (<Run Text="{Binding Architecture}" />)
-                </TextBlock>
 
                 <TextBlock Text="GitHub" Margin="0,10,0,0" />
                 <HyperlinkButton Content="https://github.com/EdiWang/UWP-CharacterMap" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
-                <TextBlock x:Uid="TxtAboutText" TextWrapping="Wrap" Margin="0,20,0,10" />
-                <HyperlinkButton x:Uid="LnkVisitBlog" Content="" NavigateUri="http://edi.wang" />
-
-                <TextBlock Text="Thanks" />
+                <HyperlinkButton x:Uid="LnkVisitBlog" Content="#LnkVisitBlog" NavigateUri="http://edi.wang" />
                 <HyperlinkButton NavigateUri="https://github.com/EdiWang/UWP-CharacterMap/graphs/contributors">Contributors</HyperlinkButton>
             </StackPanel>
         </Grid>

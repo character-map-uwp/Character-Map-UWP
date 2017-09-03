@@ -38,13 +38,9 @@ namespace CharacterMap.Views
                 {
                     return new Thickness(0, 0, 0, 0);
                 }
-                else
-                {
-                    //return new Thickness(0, 0, 140, 0);
-                    return FlowDirection == FlowDirection.LeftToRight ?
-                        new Thickness() { Left = _coreTitleBar.SystemOverlayLeftInset, Right = _coreTitleBar.SystemOverlayRightInset } :
-                        new Thickness() { Left = _coreTitleBar.SystemOverlayRightInset, Right = _coreTitleBar.SystemOverlayLeftInset };
-                }
+                return FlowDirection == FlowDirection.LeftToRight ?
+                    new Thickness { Left = _coreTitleBar.SystemOverlayLeftInset, Right = _coreTitleBar.SystemOverlayRightInset } :
+                    new Thickness { Left = _coreTitleBar.SystemOverlayRightInset, Right = _coreTitleBar.SystemOverlayLeftInset };
             }
         }
 
@@ -77,14 +73,18 @@ namespace CharacterMap.Views
 
             AppSettings = new AppSettings();
 
-            _coreTitleBar.ExtendViewIntoTitleBar = true;
-            Window.Current.SetTitleBar(TitleBarBackgroundElement);
-
             BorderFadeInStoryboard.Completed += async (o, _) =>
             {
                 await Task.Delay(1000);
                 BorderFadeOutStoryboard.Begin();
             };
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            _coreTitleBar.ExtendViewIntoTitleBar = true;
+            Window.Current.SetTitleBar(TitleBarBackgroundElement);
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)

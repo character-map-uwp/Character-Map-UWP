@@ -26,11 +26,8 @@ namespace CharacterMap.ViewModels
             set => Set(ref _appDescription, value);
         }
 
-        public ICommand SwitchThemeCommand { get; private set; }
-
         public SettingsViewModel()
         {
-            SwitchThemeCommand = new RelayCommand(async () => { await ThemeSelectorService.SwitchThemeAsync(); });
             CommandReview = new RelayCommand(async () => await Edi.UWP.Helpers.Tasks.OpenStoreReviewAsync());
         }
 

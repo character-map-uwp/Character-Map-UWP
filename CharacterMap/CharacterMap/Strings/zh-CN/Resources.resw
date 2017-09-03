@@ -135,12 +135,6 @@
   <data name="LnkVisitBlog.Content" xml:space="preserve">
     <value>访问作者博客</value>
   </data>
-  <data name="TxtAboutText.Text" xml:space="preserve">
-    <value>本应用可替换Windows系统自带的WIN32字符映射表。适配高DPI屏幕的设备。</value>
-  </data>
-  <data name="TxtAboutTitle.Text" xml:space="preserve">
-    <value>关于</value>
-  </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>保存PNG</value>
   </data>
@@ -158,5 +152,20 @@
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>已复制</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>本应用可替换Windows系统自带的WIN32字符映射表。适配高DPI屏幕的设备。</value>
+  </data>
+  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>隐私协议</value>
+  </data>
+  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
+    <value>http://edi.wang/docs/pp-general.html</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>设置</value>
   </data>
 </root>
