@@ -8,7 +8,7 @@ namespace CharacterMap.Core
     {
         public double PngSize
         {
-            get => ReadSettings(nameof(PngSize), 128.00d);
+            get => ReadSettings(nameof(PngSize), 256.00d);
             set
             {
                 SaveSettings(nameof(PngSize), value);
@@ -58,7 +58,7 @@ namespace CharacterMap.Core
 
         public int ImageWidthHeight
         {
-            get => ReadSettings(nameof(ImageWidthHeight), 900);
+            get => ReadSettings(nameof(ImageWidthHeight), 960);
             set
             {
                 SaveSettings(nameof(ImageWidthHeight), value);

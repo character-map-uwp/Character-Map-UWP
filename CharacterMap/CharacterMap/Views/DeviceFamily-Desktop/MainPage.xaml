@@ -20,7 +20,7 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="32" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Title Bar Grid-->
@@ -34,12 +34,16 @@
                 <TextBlock Grid.Row="0" Text="Character Map" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <ToggleSwitch RequestedTheme="Dark" Style="{StaticResource NiceToggleSwitchStyle}"
-                                  Margin="0" Padding="10" Width="100"
-                                  x:Uid="Settings_ThemeToggle" OnContent="Dark" OffContent="Light"
-                                  IsOn="{x:Bind MainViewModel.IsLightThemeEnabled, Mode=OneWay}">     
+                                  Margin="0,-5,0,0"
+                                  FontSize="13"
+                                  VerticalAlignment="Top"
+                                  HorizontalAlignment="Right"
+                                  HorizontalContentAlignment="Right"
+                                  x:Uid="Settings_ThemeToggle" OnContent="Light" OffContent="Dark"
+                                  IsOn="{x:Bind ViewModel.IsLightThemeEnabled, Mode=OneWay}">     
                         <interactivity:Interaction.Behaviors>
                             <core1:EventTriggerBehavior EventName="Toggled">
-                                <core1:InvokeCommandAction Command="{x:Bind MainViewModel.SwitchThemeCommand}"/>
+                                <core1:InvokeCommandAction Command="{x:Bind ViewModel.SwitchThemeCommand}"/>
                             </core1:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                     </ToggleSwitch>
@@ -351,15 +355,15 @@
 
                     <!--Column Grid Splitter-->
                     <controls1:GridSplitter
-            Width="11"
-            Background="{StaticResource SystemControlBackgroundBaseLowBrush}"
-            GripperCursor="Default"
-            HorizontalAlignment="Left"
-            Grid.Column="1"
-            ResizeDirection="Auto"
-            ResizeBehavior="BasedOnAlignment"
-            CursorBehavior="ChangeOnSplitterHover"
-            GripperForeground="White">
+                                Width="11"
+                                Background="{StaticResource SystemControlBackgroundBaseLowBrush}"
+                                GripperCursor="Default"
+                                HorizontalAlignment="Left"
+                                Grid.Column="1"
+                                ResizeDirection="Auto"
+                                ResizeBehavior="BasedOnAlignment"
+                                CursorBehavior="ChangeOnSplitterHover"
+                                GripperForeground="White">
                     </controls1:GridSplitter>
 
                 </Grid>

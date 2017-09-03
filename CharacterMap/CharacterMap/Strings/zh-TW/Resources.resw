@@ -135,20 +135,8 @@
   <data name="LnkVisitBlog.Content" xml:space="preserve">
     <value>訪問作者博客</value>
   </data>
-  <data name="TxtAboutText.Text" xml:space="preserve">
-    <value>本應用可替換Windows系統自帶的WIN32字元對應表。 適配高DPI螢幕的設備。</value>
-  </data>
-  <data name="TxtAboutTitle.Text" xml:space="preserve">
-    <value>關於</value>
-  </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>保存PNG</value>
-  </data>
-  <data name="ToggleTheme.OffContent" xml:space="preserve">
-    <value>淺色主題</value>
-  </data>
-  <data name="ToggleTheme.OnContent" xml:space="preserve">
-    <value>深色主題</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
     <value>顯示所有字體</value>
@@ -158,5 +146,26 @@
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>已復制</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>關於</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>本應用可替換Windows系統自帶的WIN32字元對應表。 適配高DPI螢幕的設備。</value>
+  </data>
+  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>隐私协议</value>
+  </data>
+  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
+    <value>http://edi.wang/docs/pp-general.html</value>
+  </data>
+  <data name="Settings_ThemeToggle.OffContent" xml:space="preserve">
+    <value>深色主題</value>
+  </data>
+  <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
+    <value>淺色主題</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>设置</value>
   </data>
 </root>

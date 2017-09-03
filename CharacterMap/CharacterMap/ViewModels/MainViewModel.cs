@@ -27,7 +27,7 @@ namespace CharacterMap.ViewModels
             DialogService = dialogService;
             AppSettings = new AppSettings();
             RefreshFontList();
-
+            IsLightThemeEnabled = ThemeSelectorService.IsLightThemeEnabled;
             SwitchThemeCommand = new RelayCommand(async () => { await ThemeSelectorService.SwitchThemeAsync(); });
         }
 
@@ -135,11 +135,6 @@ namespace CharacterMap.ViewModels
         {
             get => _isLightThemeEnabled;
             set => Set(ref _isLightThemeEnabled, value);
-        }
-
-        public void Initialize()
-        {
-            IsLightThemeEnabled = ThemeSelectorService.IsLightThemeEnabled;
         }
 
         private void RefreshFontList()

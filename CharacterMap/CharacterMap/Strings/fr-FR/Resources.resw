@@ -135,20 +135,8 @@
   <data name="LnkVisitBlog.Content" xml:space="preserve">
     <value>Visiter le blog du développeur</value>
   </data>
-  <data name="TxtAboutText.Text" xml:space="preserve">
-    <value>Cette application est conçue pour remplacer le programme Win32 "Table des caractères" intégré dans le système. Elle apporte un meilleur respect de la résolution sur des écrans de haute définition.</value>
-  </data>
-  <data name="TxtAboutTitle.Text" xml:space="preserve">
-    <value>À propos</value>
-  </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>Enregistrer en PNG</value>
-  </data>
-  <data name="ToggleTheme.OffContent" xml:space="preserve">
-    <value>Mode clair</value>
-  </data>
-  <data name="ToggleTheme.OnContent" xml:space="preserve">
-    <value>Mode sombre</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
     <value>Polices symboliques seules</value>
@@ -158,5 +146,26 @@
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Copier</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>Cette application est conçue pour remplacer le programme Win32 "Table des caractères" intégré dans le système. Elle apporte un meilleur respect de la résolution sur des écrans de haute définition.</value>
+  </data>
+  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
+    <value>Privacy Terms</value>
+  </data>
+  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
+    <value>http://edi.wang/docs/pp-general.html</value>
+  </data>
+  <data name="Settings_ThemeToggle.OffContent" xml:space="preserve">
+    <value>Mode sombre</value>
+  </data>
+  <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
+    <value>Mode clair</value>
+  </data>
+  <data name="Settings_Title.Text" xml:space="preserve">
+    <value>Settings</value>
   </data>
 </root>

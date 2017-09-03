@@ -22,7 +22,7 @@ namespace CharacterMap.Views
 {
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
-        public MainViewModel MainViewModel { get; set; }
+        public MainViewModel ViewModel { get; set; }
 
         public AppSettings AppSettings { get; set; }
 
@@ -68,7 +68,7 @@ namespace CharacterMap.Views
         public MainPage()
         {
             this.InitializeComponent();
-            this.MainViewModel = this.DataContext as MainViewModel;
+            this.ViewModel = this.DataContext as MainViewModel;
             this.NavigationCacheMode = NavigationCacheMode.Required;
 
             AppSettings = new AppSettings();
@@ -142,7 +142,7 @@ namespace CharacterMap.Views
             var unicodeIndex = SearchBoxUnicode.QueryText;
             int intIndex = Utils.ParseHexString(unicodeIndex);
 
-            var ch = MainViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
+            var ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
             if (null != ch)
             {
                 CharGrid.SelectedItem = ch;

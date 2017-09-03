@@ -138,12 +138,6 @@
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>Save PNG</value>
   </data>
-  <data name="ToggleTheme.OffContent" xml:space="preserve">
-    <value>Light Theme</value>
-  </data>
-  <data name="ToggleTheme.OnContent" xml:space="preserve">
-    <value>Dark Theme</value>
-  </data>
   <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
     <value>Show Symbol Fonts Only</value>
   </data>
@@ -167,5 +161,11 @@
   </data>
   <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>http://edi.wang/docs/pp-general.html</value>
+  </data>
+  <data name="Settings_ThemeToggle.OffContent" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
+    <value>Light</value>
   </data>
 </root>
