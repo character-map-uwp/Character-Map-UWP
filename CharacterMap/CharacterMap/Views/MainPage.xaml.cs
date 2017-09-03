@@ -69,7 +69,7 @@ namespace CharacterMap.Views
         {
             this.InitializeComponent();
             this.ViewModel = this.DataContext as MainViewModel;
-            this.NavigationCacheMode = NavigationCacheMode.Required;
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
 
             AppSettings = new AppSettings();
 
