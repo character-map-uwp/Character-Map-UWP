@@ -352,7 +352,7 @@
                     <!--Column Grid Splitter-->
                     <controls1:GridSplitter
             Width="11"
-            Background="#CCC"
+            Background="{StaticResource SystemControlBackgroundBaseLowBrush}"
             GripperCursor="Default"
             HorizontalAlignment="Left"
             Grid.Column="1"
