@@ -24,14 +24,14 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- Title Bar Grid-->
-        <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3">
+        <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3" RequestedTheme="Dark">
             <Rectangle x:Name="TitleBarBackgroundElement" Fill="{StaticResource SystemControlBackgroundAccentBrush}" />
             <Grid Padding="{x:Bind CoreTitleBarPadding, Mode=OneWay}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Text="Character Map (Windows 10 Universal)" Foreground="White" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
+                <TextBlock Grid.Row="0" Text="Character Map" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <ToggleSwitch RequestedTheme="Dark" Style="{StaticResource NiceToggleSwitchStyle}"
                                   Margin="0" Padding="10" Width="100"
@@ -44,8 +44,13 @@
                         </interactivity:Interaction.Behaviors>
                     </ToggleSwitch>
 
-                    <Button x:Name="BtnSettings" Click="BtnSettings_OnClick" Style="{StaticResource IconButtonStyle}" RequestedTheme="Dark">
-                        <SymbolIcon Symbol="Setting" />
+                    <Button x:Name="BtnSettings" Style="{StaticResource IconButtonStyle}">
+                        <interactivity:Interaction.Behaviors>
+                            <core1:EventTriggerBehavior EventName="Click" SourceObject="{Binding ElementName=BtnSettings}">
+                                <core1:NavigateToPageAction TargetPage="CharacterMap.Views.SettingsPage" />
+                            </core1:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE115;" FontSize="15" />
                     </Button>
                 </StackPanel>
             </Grid>
@@ -70,22 +75,6 @@
                         To="0" Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity" Duration="0:0:0.6" />
                 </Storyboard>
             </Grid.Resources>
-
-            <!-- Dialogs -->
-            <ContentDialog x:Name="DigSettings"
-                       Grid.Column="0" Grid.Row="0"
-                       Grid.ColumnSpan="2"
-                       FullSizeDesired="False"
-                       Title="Settings" IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
-                <StackPanel DataContext="{Binding Source={StaticResource Locator}, Path=Settings}">
-                    <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
-                    <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" />
-
-                    <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" />
-
-                    <TextBlock Text="Note: PNG resolution will be affected by your screen DPI (e.g. 128px on 150% DPI will be 192px). This will be fixed in next release." TextWrapping="Wrap" Foreground="#666" />
-                </StackPanel>
-            </ContentDialog>
 
             <!-- Font List Grid -->
             <Grid Grid.Column="0" Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">

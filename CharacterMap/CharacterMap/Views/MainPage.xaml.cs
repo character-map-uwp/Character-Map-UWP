@@ -180,9 +180,9 @@ namespace CharacterMap.Views
             BorderFadeInStoryboard.Begin();
         }
 
-        private async void BtnSettings_OnClick(object sender, RoutedEventArgs e)
+        private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
-            await DigSettings.ShowAsync();
+            Frame.Navigate(typeof(SettingsPage));
         }
 
         private void BtnSetDefault_OnClick(object sender, RoutedEventArgs e)

@@ -7,7 +7,12 @@
     DataContext="{Binding SettingsViewModel, Source={StaticResource Locator}}"
     xmlns:ic="using:Microsoft.Xaml.Interactions.Core"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:CharacterMap.Core"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <core:AppSettings x:Key="AppSettings" />
+    </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -46,6 +51,13 @@
                         </ic:EventTriggerBehavior>
                     </i:Interaction.Behaviors>
                 </ToggleSwitch>
+
+                <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
+                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" />
+
+                <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" />
+
+                <TextBlock Text="Note: PNG resolution will be affected by your screen DPI (e.g. 128px on 150% DPI will be 192px). This will be fixed in next release." TextWrapping="Wrap" Foreground="#666" />
             </StackPanel>
 
             <StackPanel Grid.Row="2" Margin="0,16,0,0">
