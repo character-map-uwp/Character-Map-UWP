@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using CharacterMap.Annotations;
@@ -25,6 +27,29 @@ namespace CharacterMap.Views
         public MainViewModel ViewModel { get; set; }
 
         public AppSettings AppSettings { get; set; }
+
+        private bool _isCtrlKeyPressed;
+
+        private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = false;
+        }
+
+        private async void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = true;
+            else if (_isCtrlKeyPressed)
+            {
+                switch (e.Key)
+                {
+                    case VirtualKey.C:
+                        if (CharGrid.SelectedItem is Character character)
+                            Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
+                        BorderFadeInStoryboard.Begin();
+                        break;
+                }
+            }
+        }
 
         #region Title Bar
 
@@ -100,11 +125,7 @@ namespace CharacterMap.Views
                     if (!string.IsNullOrEmpty(AppSettings.DefaultSelectedFontName))
                     {
                         var lastSelectedFont = LstFontFamily.Items.FirstOrDefault(
-                        (i =>
-                        {
-                            var installedFont = i as InstalledFont;
-                            return installedFont != null && installedFont.Name == AppSettings.DefaultSelectedFontName;
-                        }));
+                        (i => i is InstalledFont installedFont && installedFont.Name == AppSettings.DefaultSelectedFontName));
 
                         if (null != lastSelectedFont)
                         {
@@ -121,8 +142,7 @@ namespace CharacterMap.Views
 
         private void BtnCopy_OnClick(object sender, RoutedEventArgs e)
         {
-            var character = CharGrid.SelectedItem as Character;
-            if (character != null)
+            if (CharGrid.SelectedItem is Character character)
                 Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
             BorderFadeInStoryboard.Begin();
         }

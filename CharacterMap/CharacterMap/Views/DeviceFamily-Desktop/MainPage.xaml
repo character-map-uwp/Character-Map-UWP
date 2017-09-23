@@ -18,7 +18,7 @@
         <CollectionViewSource x:Name="GroupedFontList" x:Key="GroupedFontList" IsSourceGrouped="True" Source="{Binding GroupedFontList}"/>
     </Page.Resources>
 
-    <Grid>
+    <Grid KeyDown="LayoutRoot_KeyDown" KeyUp="LayoutRoot_KeyUp">
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition Height="*" />
@@ -317,7 +317,7 @@
                                         </Button.Content>
                                     </Button>
 
-                                    <Button x:Name="BtnSavePng" Grid.Column="2" x:Uid="BtnSavePng" HorizontalAlignment="Stretch" Click="BtnSavePng_OnClick" />
+                                    <Button x:Name="BtnSavePng" Grid.Column="2" Content="#BtnSavePng" x:Uid="BtnSavePng" HorizontalAlignment="Stretch" Click="BtnSavePng_OnClick" />
                                 </Grid>
 
                                 <Grid>
