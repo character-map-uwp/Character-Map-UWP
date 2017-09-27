@@ -46,9 +46,11 @@ namespace CharacterMap.Core
             }
         }
 
+        public int CharPreviewFontSize => GridSize / 2;
+
         public int GridSize
         {
-            get => ReadSettings(nameof(GridSize), 60);
+            get => ReadSettings(nameof(GridSize), 64);
             set
             {
                 SaveSettings(nameof(GridSize), value);

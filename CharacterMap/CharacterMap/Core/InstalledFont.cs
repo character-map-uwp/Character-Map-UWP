@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using SharpDX.DirectWrite;
 
@@ -59,7 +60,7 @@ namespace CharacterMap.Core
             var font = fontFamily.GetFont(Index);
 
             var characters = new List<Character>();
-            var count = 131071; //65535;
+            var count = 65536 * 4 - 1;
             for (var i = 0; i < count; i++)
             {
                 if (font.HasCharacter(i))
