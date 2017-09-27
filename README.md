@@ -7,10 +7,4 @@ Character Map, in UWP, only better! It also allows you to copy the selected char
 
 ## Screenshots
 
-Light Theme
-
-![Light Theme](https://raw.githubusercontent.com/EdiWang/UWP-CharacterMap/master/Screenshots/light.png)
-
-Dark Theme
-
-![Light Theme](https://raw.githubusercontent.com/EdiWang/UWP-CharacterMap/master/Screenshots/dark.png)
+![image](https://user-images.githubusercontent.com/3304703/30901725-95d78170-a39b-11e7-9e93-00c808307e9a.png)
