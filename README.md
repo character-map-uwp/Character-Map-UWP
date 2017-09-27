@@ -7,4 +7,6 @@ Character Map, in UWP, only better! It also allows you to copy the selected char
 
 ## Screenshots
 
-![image](https://user-images.githubusercontent.com/3304703/30901725-95d78170-a39b-11e7-9e93-00c808307e9a.png)
+![image](https://user-images.githubusercontent.com/3304703/30901790-c5b9d834-a39b-11e7-99c4-74e28c541bf0.png)
+
+![image](https://user-images.githubusercontent.com/3304703/30901816-d6554278-a39b-11e7-8d34-74c8d27ad787.png)
