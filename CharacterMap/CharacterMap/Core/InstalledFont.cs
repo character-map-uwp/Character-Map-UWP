@@ -14,17 +14,19 @@ namespace CharacterMap.Core
 
         public int Index { get; set; }
 
+        public static FontCollection FontCollection { get; set; }
+
         public static List<InstalledFont> GetFonts()
         {
             var fontList = new List<InstalledFont>();
 
             var factory = new Factory();
-            var fontCollection = factory.GetSystemFontCollection(false);
-            var familyCount = fontCollection.FontFamilyCount;
+            FontCollection = factory.GetSystemFontCollection(false);
+            var familyCount = FontCollection.FontFamilyCount;
 
             for (int i = 0; i < familyCount; i++)
             {
-                var fontFamily = fontCollection.GetFontFamily(i);
+                var fontFamily = FontCollection.GetFontFamily(i);
                 var familyNames = fontFamily.FamilyNames;
                 int index;
 
@@ -53,10 +55,7 @@ namespace CharacterMap.Core
 
         public List<Character> GetCharacters()
         {
-            var factory = new Factory();
-            var fontCollection = factory.GetSystemFontCollection(false);
-            var fontFamily = fontCollection.GetFontFamily(FamilyIndex);
-
+            var fontFamily = FontCollection.GetFontFamily(FamilyIndex);
             var font = fontFamily.GetFont(Index);
 
             var characters = new List<Character>();
@@ -65,7 +64,7 @@ namespace CharacterMap.Core
             {
                 if (font.HasCharacter(i))
                 {
-                    characters.Add(new Character()
+                    characters.Add(new Character
                     {
                         Char = char.ConvertFromUtf32(i),
                         UnicodeIndex = i
