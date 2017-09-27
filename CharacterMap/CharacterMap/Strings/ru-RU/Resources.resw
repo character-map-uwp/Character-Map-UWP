@@ -168,4 +168,7 @@
   <data name="Settings_Title.Text" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="AfterUpdate_Title.Text" xml:space="preserve">
+    <value>Новые</value>
+  </data>
 </root>

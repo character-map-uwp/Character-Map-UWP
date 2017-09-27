@@ -168,4 +168,7 @@
   <data name="Settings_Title.Text" xml:space="preserve">
     <value>设置</value>
   </data>
+  <data name="AfterUpdate_Title.Text" xml:space="preserve">
+    <value>新功能</value>
+  </data>
 </root>

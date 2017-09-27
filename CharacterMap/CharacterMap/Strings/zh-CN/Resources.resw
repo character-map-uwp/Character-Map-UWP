@@ -168,4 +168,7 @@
   <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
     <value>浅色主题</value>
   </data>
+  <data name="AfterUpdate_Title.Text" xml:space="preserve">
+    <value>新功能</value>
+  </data>
 </root>

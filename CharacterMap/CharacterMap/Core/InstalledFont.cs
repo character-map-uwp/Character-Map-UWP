@@ -59,7 +59,7 @@ namespace CharacterMap.Core
             var font = fontFamily.GetFont(Index);
 
             var characters = new List<Character>();
-            var count = 65535;
+            var count = 131071; //65535;
             for (var i = 0; i < count; i++)
             {
                 if (font.HasCharacter(i))

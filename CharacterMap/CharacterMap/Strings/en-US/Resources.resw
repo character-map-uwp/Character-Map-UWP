@@ -168,4 +168,7 @@
   <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
     <value>Light</value>
   </data>
+  <data name="AfterUpdate_Title.Text" xml:space="preserve">
+    <value>What's New</value>
+  </data>
 </root>

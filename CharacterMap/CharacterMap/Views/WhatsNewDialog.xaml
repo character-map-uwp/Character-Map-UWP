@@ -16,7 +16,7 @@
     <ScrollViewer>
         <StackPanel>
             <TextBlock x:Uid="AfterUpdate_Body" TextWrapping="WrapWholeWords">
-                
+                Expand Unicode range to include more characters in certain fonts
             </TextBlock>
         </StackPanel>
     </ScrollViewer>
