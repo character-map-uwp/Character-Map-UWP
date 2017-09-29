@@ -1,13 +1,23 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Foundation;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.UI;
+using Windows.UI.Popups;
+using Windows.UI.Xaml.Shapes;
 using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Services;
 using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
+using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Text;
 
 namespace CharacterMap.ViewModels
 {
@@ -21,19 +31,22 @@ namespace CharacterMap.ViewModels
         private Character _selectedChar;
         private InstalledFont _selectedFont;
         private string _xamlCode;
+        private string _symbolIcon;
 
         public MainViewModel(IDialogService dialogService)
         {
             DialogService = dialogService;
-            AppSettings = new AppSettings();
             RefreshFontList();
             IsLightThemeEnabled = ThemeSelectorService.IsLightThemeEnabled;
+            CommandSavePng = new RelayCommand(async () => await SavePng());
             SwitchThemeCommand = new RelayCommand(async () => { await ThemeSelectorService.SwitchThemeAsync(); });
         }
 
-        public AppSettings AppSettings { get; set; }
         public ICommand SwitchThemeCommand { get; }
+
         public IDialogService DialogService { get; set; }
+
+        public RelayCommand CommandSavePng { get; set; }
 
         public ObservableCollection<InstalledFont> FontList
         {
@@ -78,6 +91,7 @@ namespace CharacterMap.ViewModels
                     FontIcon = $@"<FontIcon FontFamily=""{SelectedFont.Name}"" Glyph=""&#x{
                             value.UnicodeIndex.ToString("x").ToUpper()
                         };"" />";
+                    SymbolIcon = $"(Symbol)0x{value.UnicodeIndex.ToString("x").ToUpper()}";
                 }
                 RaisePropertyChanged();
             }
@@ -93,6 +107,12 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        public string SymbolIcon
+        {
+            get => _symbolIcon;
+            set { _symbolIcon = value; RaisePropertyChanged(); }
+        }
+
         public string FontIcon
         {
             get => _fontIcon;
@@ -105,10 +125,10 @@ namespace CharacterMap.ViewModels
 
         public bool ShowSymbolFontsOnly
         {
-            get => AppSettings.ShowSymbolFontsOnly;
+            get => App.AppSettings.ShowSymbolFontsOnly;
             set
             {
-                AppSettings.ShowSymbolFontsOnly = value;
+                App.AppSettings.ShowSymbolFontsOnly = value;
                 RefreshFontList();
                 RaisePropertyChanged();
             }
@@ -162,6 +182,55 @@ namespace CharacterMap.ViewModels
             catch (Exception e)
             {
                 DialogService.ShowMessageBox(e.Message, "Error Loading Font Group");
+            }
+        }
+
+        private async Task SavePng()
+        {
+            try
+            {
+                var savePicker = new FileSavePicker
+                {
+                    SuggestedStartLocation = PickerLocationId.Desktop
+                };
+                savePicker.FileTypeChoices.Add("Png Image", new[] { ".png" });
+                savePicker.SuggestedFileName = $"CharacterMap_{DateTime.Now:yyyyMMddHHmmss}.png";
+                StorageFile file = await savePicker.PickSaveFileAsync();
+
+                if (null != file)
+                {
+                    CachedFileManager.DeferUpdates(file);
+                    CanvasDevice device = CanvasDevice.GetSharedDevice();
+                    var localDpi = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
+                    CanvasRenderTarget renderTarget = new CanvasRenderTarget(device, (float)App.AppSettings.PngSize, (float)App.AppSettings.PngSize, localDpi);
+
+                    using (var ds = renderTarget.CreateDrawingSession())
+                    {
+                        ds.Clear(Colors.Transparent);
+                        var d = App.AppSettings.PngSize;
+                        var r = App.AppSettings.PngSize / 2;
+
+                        var textColor = ThemeSelectorService.IsLightThemeEnabled ? Colors.White : Colors.Black;
+
+                        ds.DrawText(SelectedChar.Char, (float)r, 0, textColor, new CanvasTextFormat
+                        {
+                            FontFamily = SelectedFont.Name,
+                            FontSize = (float)d,
+                            HorizontalAlignment = CanvasHorizontalAlignment.Center
+                        });
+                    }
+
+                    using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                    {
+                        await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
+                    }
+
+                    await CachedFileManager.CompleteUpdatesAsync(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                await DialogService.ShowMessageBox(ex.Message, "Error Saving Image");
             }
         }
     }

@@ -2,6 +2,7 @@
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
+using CharacterMap.Core;
 using CharacterMap.Services;
 using Edi.UWP.Helpers;
 
@@ -12,9 +13,12 @@ namespace CharacterMap
         private Lazy<ActivationService> _activationService;
         private ActivationService ActivationService => _activationService.Value;
 
+        public static AppSettings AppSettings { get; set; }
+
         public App()
         {
             this.InitializeComponent();
+            AppSettings = new AppSettings();
             this.UnhandledException += OnUnhandledException;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
         }

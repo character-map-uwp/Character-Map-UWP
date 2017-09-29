@@ -2,19 +2,15 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
-using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.Popups;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using CharacterMap.Annotations;
 using CharacterMap.Core;
@@ -25,8 +21,6 @@ namespace CharacterMap.Views
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
         public MainViewModel ViewModel { get; set; }
-
-        public AppSettings AppSettings { get; set; }
 
         private bool _isCtrlKeyPressed;
 
@@ -96,8 +90,6 @@ namespace CharacterMap.Views
             this.ViewModel = this.DataContext as MainViewModel;
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
 
-            AppSettings = new AppSettings();
-
             BorderFadeInStoryboard.Completed += async (o, _) =>
             {
                 await Task.Delay(1000);
@@ -120,12 +112,12 @@ namespace CharacterMap.Views
 
             if (null != LstFontFamily.Items)
             {
-                if (AppSettings.UseDefaultSelection)
+                if (App.AppSettings.UseDefaultSelection)
                 {
-                    if (!string.IsNullOrEmpty(AppSettings.DefaultSelectedFontName))
+                    if (!string.IsNullOrEmpty(App.AppSettings.DefaultSelectedFontName))
                     {
                         var lastSelectedFont = LstFontFamily.Items.FirstOrDefault(
-                        (i => i is InstalledFont installedFont && installedFont.Name == AppSettings.DefaultSelectedFontName));
+                        (i => i is InstalledFont installedFont && installedFont.Name == App.AppSettings.DefaultSelectedFontName));
 
                         if (null != lastSelectedFont)
                         {
@@ -140,10 +132,19 @@ namespace CharacterMap.Views
             }
         }
 
-        private void BtnCopy_OnClick(object sender, RoutedEventArgs e)
+        private async void BtnCopy_OnClick(object sender, RoutedEventArgs e)
         {
             if (CharGrid.SelectedItem is Character character)
-                Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
+            {
+                //Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
+                var dp = new DataPackage
+                {
+                    RequestedOperation = DataPackageOperation.Copy,
+                };
+                dp.SetText(character.Char);
+                //dp.SetRtf(character.Char);
+                Clipboard.SetContent(dp);
+            }
             BorderFadeInStoryboard.Begin();
         }
 
@@ -169,25 +170,6 @@ namespace CharacterMap.Views
             }
         }
 
-        private async void BtnSavePng_OnClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var bitmap = new RenderTargetBitmap();
-                await bitmap.RenderAsync(GridRenderTarget);
-
-                IBuffer buffer = await bitmap.GetPixelsAsync();
-                var stream = buffer.AsStream();
-                var fileName = $"{DateTime.Now:yyyy-MM-dd-HHmmss}";
-                await Utils.SaveStreamToImage(PickerLocationId.PicturesLibrary, fileName, stream, bitmap.PixelWidth, bitmap.PixelHeight);
-            }
-            catch (Exception ex)
-            {
-                var dig = new MessageDialog($"{ex.Message}", "Failed to Save PNG File.");
-                await dig.ShowAsync();
-            }
-        }
-
         private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
@@ -207,7 +189,7 @@ namespace CharacterMap.Views
 
         private void BtnSetDefault_OnClick(object sender, RoutedEventArgs e)
         {
-            AppSettings.DefaultSelectedFontName = LstFontFamily.SelectedValue as string;
+            App.AppSettings.DefaultSelectedFontName = LstFontFamily.SelectedValue as string;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -216,6 +198,22 @@ namespace CharacterMap.Views
         private void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        //private void CharGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    TxtSelectedText.Text += ViewModel.SelectedChar.Char;
+        //}
+
+        private void TxtSymbolIcon_OnGotFocus(object sender, RoutedEventArgs e)
+        {
+            TxtSymbolIcon.SelectAll();
+        }
+
+        private void BtnCopySymbolIcon_OnClick(object sender, RoutedEventArgs e)
+        {
+            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtSymbolIcon.Text.Trim());
+            BorderFadeInStoryboard.Begin();
         }
     }
 }

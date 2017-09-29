@@ -37,10 +37,10 @@
 
             <StackPanel Grid.Row="1" Margin="0,16,0,0">
                 <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
-                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
-                <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" />
-                <TextBlock Text="Note: PNG resolution will be affected by your screen DPI (e.g. 128px on 150% DPI will be 192px). This will be fixed in the future." TextWrapping="Wrap" Foreground="#666" Margin="0,0,0,20" />
                 
+                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
+                <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" Margin="0,0,0,20" />
+               
                 <Slider Header="Character Preview Size (pixel)" x:Name="sldGridSize" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" Minimum="64" Maximum="256" StepFrequency="8" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
                 <TextBlock Text="Note: Require Restart App." TextWrapping="Wrap" Foreground="#666" Margin="0,0,0,20" />
                 
