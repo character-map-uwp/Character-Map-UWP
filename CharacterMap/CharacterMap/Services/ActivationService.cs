@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Navigation;
 using CharacterMap.Activation;
 using CharacterMap.Helpers;
 using Edi.UWP.Helpers;
+using GalaSoft.MvvmLight.Threading;
 
 namespace CharacterMap.Services
 {
@@ -66,6 +67,8 @@ namespace CharacterMap.Services
                 {
                     await defaultHandler.HandleAsync(activationArgs);
                 }
+
+                DispatcherHelper.Initialize();
 
                 // Ensure the current window is active
                 Window.Current.Activate();

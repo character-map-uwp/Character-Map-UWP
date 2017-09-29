@@ -82,7 +82,7 @@
             </Grid.Resources>
 
             <!-- Font List Grid -->
-            <Grid Grid.Column="0" Background="{ThemeResource SystemControlPageBackgroundListLowBrush}">
+            <Grid Grid.Column="0" Background="{ThemeResource SystemControlPageBackgroundChromeLowBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
@@ -244,36 +244,33 @@
                     </Grid.ColumnDefinitions>
 
                     <GridView x:Name="CharGrid" 
-                          ItemsSource="{Binding Chars}" 
+                          ItemsSource="{Binding Chars, Mode=OneWay}" 
                           SelectionMode="Single"
                           SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                           Grid.Column="0"
                           Margin="10,0,0,0"
-                          Padding="0,0,4,4">
+                          Padding="0,0,5,5">
                         <GridView.ItemTemplate>
                             <DataTemplate>
-                                <Border BorderThickness="1" 
-                                        BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
-                                        Height="{Binding Source={StaticResource AppSettings}, Path=GridSize}" 
-                                        Width="{Binding Source={StaticResource AppSettings}, Path=GridSize}">
-                                    <Grid>
-                                        <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
-                                           Text="{Binding Char}"
-                                           FontSize="{Binding Source={StaticResource AppSettings}, Path=CharPreviewFontSize}" 
+                                <Grid BorderThickness="1" 
+                                      BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
+                                      Height="{Binding Source={StaticResource AppSettings}, Path=GridSize}" 
+                                      Width="{Binding Source={StaticResource AppSettings}, Path=GridSize}">
+                                    <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
+                                               Text="{Binding Char}"
+                                               FontSize="{Binding Source={StaticResource AppSettings}, Path=CharPreviewFontSize}" 
+                                               Margin="0"
                                                VerticalAlignment="Center"
-                                               Margin="0,0,0,0"
-                                               HorizontalAlignment="Center" 
                                                TextAlignment="Center" />
 
-                                        <StackPanel Margin="2" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                                            <TextBlock Text="{Binding Path=UnicodeString}" 
-                                                   FontFamily="Consolas" 
-                                                   FontSize="12" 
-                                                   TextAlignment="Center" 
-                                                   Foreground="#888" />
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
+                                    <TextBlock VerticalAlignment="Bottom" 
+                                               Text="{Binding Path=UnicodeString}" 
+                                               FontFamily="Consolas" 
+                                               FontSize="12" 
+                                               Margin="0,0,2,0"
+                                               TextAlignment="Right" 
+                                               Foreground="#888" />
+                                </Grid>
                             </DataTemplate>
                         </GridView.ItemTemplate>
                     </GridView>
