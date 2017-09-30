@@ -171,4 +171,7 @@
   <data name="AfterUpdate_Title.Text" xml:space="preserve">
     <value>What's New</value>
   </data>
+  <data name="BtnCopy.Content" xml:space="preserve">
+    <value>Copy (Text Only)</value>
+  </data>
 </root>

@@ -3,20 +3,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
-using Windows.UI.Core;
-using Windows.UI.Popups;
-using Windows.UI.Xaml.Shapes;
 using CharacterMap.Core;
-using CharacterMap.Helpers;
 using CharacterMap.Services;
 using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Threading;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
@@ -41,7 +35,7 @@ namespace CharacterMap.ViewModels
             DialogService = dialogService;
             RefreshFontList();
             IsLightThemeEnabled = ThemeSelectorService.IsLightThemeEnabled;
-            CommandSavePng = new RelayCommand(async () => await SavePng());
+            CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
             SwitchThemeCommand = new RelayCommand(async () => { await ThemeSelectorService.SwitchThemeAsync(); });
         }
 
@@ -49,7 +43,7 @@ namespace CharacterMap.ViewModels
 
         public IDialogService DialogService { get; set; }
 
-        public RelayCommand CommandSavePng { get; set; }
+        public RelayCommand<bool> CommandSavePng { get; set; }
 
         public ObservableCollection<InstalledFont> FontList
         {
@@ -152,8 +146,6 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        //public Task LoadCharsTask { get; set; }
-
         public bool IsLightThemeEnabled
         {
             get => _isLightThemeEnabled;
@@ -200,7 +192,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private async Task SavePng()
+        private async Task SavePng(bool isBlackText)
         {
             try
             {
@@ -225,7 +217,7 @@ namespace CharacterMap.ViewModels
                         var d = App.AppSettings.PngSize;
                         var r = App.AppSettings.PngSize / 2;
 
-                        var textColor = ThemeSelectorService.IsLightThemeEnabled ? Colors.Black : Colors.White;
+                        var textColor = isBlackText ? Colors.Black : Colors.White;
 
                         ds.DrawText(SelectedChar.Char, (float)r, 0, textColor, new CanvasTextFormat
                         {

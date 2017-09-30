@@ -14,6 +14,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <x:Boolean x:Key="TrueValue">True</x:Boolean>
+        <x:Boolean x:Key="FalseValue">False</x:Boolean>
         <core:AppSettings x:Key="AppSettings" />
         <CollectionViewSource x:Name="GroupedFontList" x:Key="GroupedFontList" IsSourceGrouped="True" Source="{Binding GroupedFontList}"/>
     </Page.Resources>
@@ -22,7 +24,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition Height="*" />
-            <!--<RowDefinition Height="Auto" />-->
         </Grid.RowDefinitions>
         <!-- Title Bar Grid-->
         <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3" RequestedTheme="Dark">
@@ -34,6 +35,14 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Text="Character Map" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="BtnSettings" Style="{StaticResource IconButtonStyle}">
+                        <interactivity:Interaction.Behaviors>
+                            <core1:EventTriggerBehavior EventName="Click" SourceObject="{Binding ElementName=BtnSettings}">
+                                <core1:NavigateToPageAction TargetPage="CharacterMap.Views.SettingsPage" />
+                            </core1:EventTriggerBehavior>
+                        </interactivity:Interaction.Behaviors>
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE115;" FontSize="15" />
+                    </Button>
                     <ToggleSwitch RequestedTheme="Dark" Style="{StaticResource NiceToggleSwitchStyle}"
                                   Margin="0,-5,0,0"
                                   FontSize="13"
@@ -48,15 +57,6 @@
                             </core1:EventTriggerBehavior>
                         </interactivity:Interaction.Behaviors>
                     </ToggleSwitch>
-
-                    <Button x:Name="BtnSettings" Style="{StaticResource IconButtonStyle}">
-                        <interactivity:Interaction.Behaviors>
-                            <core1:EventTriggerBehavior EventName="Click" SourceObject="{Binding ElementName=BtnSettings}">
-                                <core1:NavigateToPageAction TargetPage="CharacterMap.Views.SettingsPage" />
-                            </core1:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE115;" FontSize="15" />
-                    </Button>
                 </StackPanel>
             </Grid>
         </Grid>
@@ -212,7 +212,7 @@
                 <Grid Grid.Row="0" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Height="50">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="7*" />
-                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="260" />
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0">
@@ -240,6 +240,7 @@
                 <Grid Grid.Row="1" Margin="0,10,0,10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="11" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
 
@@ -275,10 +276,8 @@
                         </GridView.ItemTemplate>
                     </GridView>
 
-                    <Border x:Name="PreviewPanel" Grid.Column="1" Margin="10,0,10,0" 
-                    Padding="10"
-                    BorderThickness="1,0,0,0" 
-                    BorderBrush="{ThemeResource SystemControlForegroundChromeDisabledLowBrush}">
+                    <Border x:Name="PreviewPanel" Grid.Column="2" Margin="10,0,10,0" 
+                    Padding="10">
                         <Grid VerticalAlignment="Stretch">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -308,12 +307,25 @@
                                         <ColumnDefinition />
                                     </Grid.ColumnDefinitions>
 
-                                    <Button Click="BtnCopy_OnClick" HorizontalAlignment="Stretch" Content="Copy (Text Only)" />
+                                    <Button Click="BtnCopy_OnClick" 
+                                            HorizontalAlignment="Stretch" x:Uid="BtnCopy"
+                                            Content="#BtnCopy" 
+                                            Background="{StaticResource SystemControlBackgroundAccentBrush}" Foreground="White" />
 
-                                    <Button x:Name="BtnSavePng" Grid.Column="2" Content="#BtnSavePng" x:Uid="BtnSavePng" HorizontalAlignment="Stretch" Command="{Binding CommandSavePng}" />
+                                    <Button x:Name="BtnSavePng" Grid.Column="2" Content="#BtnSavePng" 
+                                            Background="{StaticResource SystemControlBackgroundAccentBrush}" Foreground="White"
+                                            x:Uid="BtnSavePng" 
+                                            HorizontalAlignment="Stretch">
+                                        <Button.Flyout>
+                                            <MenuFlyout>
+                                                <MenuFlyoutItem Text="Black Text" Command="{Binding CommandSavePng}" CommandParameter="{StaticResource TrueValue}" />
+                                                <MenuFlyoutItem Text="White Text" Command="{Binding CommandSavePng}" CommandParameter="{StaticResource FalseValue}"/>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+                                    </Button>
                                 </Grid>
 
-                                <Grid>
+                                <Grid Margin="0,10,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
                                         <ColumnDefinition Width="10" />
@@ -364,11 +376,10 @@
                     <!--Column Grid Splitter-->
                     <controls1:GridSplitter
                                 Width="11"
-                                Background="{StaticResource SystemControlBackgroundBaseLowBrush}"
-                                GripperCursor="Default"
-                                HorizontalAlignment="Left"
+                                Background="{StaticResource SystemControlPageBackgroundBaseLowBrush}"
+                                GripperCursor="SizeWestEast"
                                 Grid.Column="1"
-                                ResizeDirection="Auto"
+                                ResizeDirection="Columns"
                                 ResizeBehavior="BasedOnAlignment"
                                 CursorBehavior="ChangeOnSplitterHover"
                                 GripperForeground="White">
@@ -377,15 +388,5 @@
                 </Grid>
             </Grid>
         </Grid>
-        <!--<Grid Grid.Row="2" Margin="10" BorderThickness="0,1,0,0" BorderBrush="#CECECE">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="TxtSelectedText" 
-                     PlaceholderText="Select a character to put it here." 
-                     FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" />
-            <Button x:Name="BtnCopySelectedText" Grid.Column="1" Content="Copy (Rich Format)" Margin="10,0,0,0" />
-        </Grid>-->
     </Grid>
 </Page>

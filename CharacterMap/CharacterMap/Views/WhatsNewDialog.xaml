@@ -16,7 +16,7 @@
     <ScrollViewer>
         <StackPanel>
             <TextBlock x:Uid="AfterUpdate_Body" TextWrapping="WrapWholeWords">
-                - Use Win2D to render images for saving <LineBreak />- Add Symbol Icon Text<LineBreak />- Drop Support for Windows Mobile
+                - Save PNG can select text color directly without requiring switch theme first. <LineBreak />- Enhance UI
             </TextBlock>
         </StackPanel>
     </ScrollViewer>
