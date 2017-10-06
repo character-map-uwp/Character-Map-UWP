@@ -243,6 +243,29 @@
                         <ColumnDefinition Width="11" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
+                    
+                    <Grid.Resources>
+                        <Style TargetType="Grid" x:Key="CharItemGridStyle">
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="BorderBrush" Value="{ThemeResource SystemControlDisabledChromeHighBrush}" />
+                            <Setter Property="Height" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize}" />
+                            <Setter Property="Width" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize}" />
+                        </Style>
+                        <Style TargetType="TextBlock" x:Key="CharItemCharStyle">
+                            <Setter Property="FontSize" Value="{Binding Source={StaticResource AppSettings}, Path=CharPreviewFontSize}" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="TextAlignment" Value="Center" />
+                        </Style>
+                        <Style TargetType="TextBlock" x:Key="CharItemUnicodeStyle">
+                            <Setter Property="FontFamily" Value="Consolas" />
+                            <Setter Property="VerticalAlignment" Value="Bottom" />
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="Margin" Value="0,0,2,0" />
+                            <Setter Property="TextAlignment" Value="Center" />
+                            <Setter Property="Foreground" Value="#888" />
+                        </Style>
+                    </Grid.Resources>
 
                     <GridView x:Name="CharGrid" 
                           ItemsSource="{Binding Chars, Mode=OneWay}" 
@@ -252,25 +275,16 @@
                           Margin="10,0,0,0"
                           Padding="0,0,5,5">
                         <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid BorderThickness="1" 
-                                      BorderBrush="{ThemeResource SystemControlDisabledChromeHighBrush}" 
-                                      Height="{Binding Source={StaticResource AppSettings}, Path=GridSize}" 
-                                      Width="{Binding Source={StaticResource AppSettings}, Path=GridSize}">
-                                    <TextBlock FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
-                                               Text="{Binding Char}"
-                                               FontSize="{Binding Source={StaticResource AppSettings}, Path=CharPreviewFontSize}" 
-                                               Margin="0"
-                                               VerticalAlignment="Center"
-                                               TextAlignment="Center" />
+                            <DataTemplate x:DataType="core:Character">
+                                <Grid Style="{StaticResource CharItemGridStyle}">
+                                    <TextBlock Style="{StaticResource CharItemCharStyle}" 
+                                               Text="{x:Bind Char}"
+                                               FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue}"
+                                               x:Phase="1" />
 
-                                    <TextBlock VerticalAlignment="Bottom" 
-                                               Text="{Binding Path=UnicodeString}" 
-                                               FontFamily="Consolas" 
-                                               FontSize="12" 
-                                               Margin="0,0,2,0"
-                                               TextAlignment="Right" 
-                                               Foreground="#888" />
+                                    <TextBlock Style="{StaticResource CharItemUnicodeStyle}" 
+                                               Text="{x:Bind UnicodeString}" 
+                                               x:Phase="2" />
                                 </Grid>
                             </DataTemplate>
                         </GridView.ItemTemplate>
