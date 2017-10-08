@@ -139,6 +139,7 @@ namespace CharacterMap.ViewModels
                 _selectedFont = value;
                 if (null != _selectedFont)
                 {
+                    App.AppSettings.DefaultSelectedFontName = value.Name;
                     LoadCharsAsync(_selectedFont);
                 }
 
@@ -209,7 +210,11 @@ namespace CharacterMap.ViewModels
                     CachedFileManager.DeferUpdates(file);
                     CanvasDevice device = CanvasDevice.GetSharedDevice();
                     var localDpi = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
-                    CanvasRenderTarget renderTarget = new CanvasRenderTarget(device, (float)App.AppSettings.PngSize, (float)App.AppSettings.PngSize, localDpi);
+
+                    var canvasH = (float) App.AppSettings.PngSize;
+                    var canvasW = (float) App.AppSettings.PngSize;
+
+                    CanvasRenderTarget renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
 
                     using (var ds = renderTarget.CreateDrawingSession())
                     {
@@ -219,10 +224,16 @@ namespace CharacterMap.ViewModels
 
                         var textColor = isBlackText ? Colors.Black : Colors.White;
 
+                        var fontSize = (float) d;
+                        if (SelectedFont.Name == "Segoe UI Emoji")
+                        {
+                            fontSize *= 0.75f;
+                        }
+
                         ds.DrawText(SelectedChar.Char, (float)r, 0, textColor, new CanvasTextFormat
                         {
                             FontFamily = SelectedFont.Name,
-                            FontSize = (float)d,
+                            FontSize = fontSize,
                             HorizontalAlignment = CanvasHorizontalAlignment.Center
                         });
                     }

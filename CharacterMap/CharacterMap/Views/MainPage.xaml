@@ -218,12 +218,19 @@
                     <Grid Grid.Column="0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" FontSize="23" FontWeight="Light" Foreground="White" Margin="10,8,10,10" />
-                        <TextBlock Grid.Column="1" Text="{Binding Chars.Count}" FontWeight="Light" Foreground="White" VerticalAlignment="Center" />
-                        <Button x:Name="BtnSetDefault" Grid.Column="2" Content="Set As Default" RequestedTheme="Dark" HorizontalAlignment="Right" Click="BtnSetDefault_OnClick" />
+                        <TextBlock Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
+                                   FontSize="23" 
+                                   FontWeight="Light" 
+                                   Foreground="White" 
+                                   Margin="10,8,10,10" />
+                        <TextBlock Grid.Column="1" 
+                                   Text="{Binding Chars.Count}"
+                                   FontWeight="Light" 
+                                   Foreground="White" 
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center" />
                     </Grid>
 
                     <SearchBox Grid.Column="1" x:Name="SearchBoxUnicode" 

@@ -29,7 +29,7 @@ namespace CharacterMap.Views
             if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = false;
         }
 
-        private async void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = true;
             else if (_isCtrlKeyPressed)
@@ -112,37 +112,28 @@ namespace CharacterMap.Views
 
             if (null != LstFontFamily.Items)
             {
-                if (App.AppSettings.UseDefaultSelection)
+                if (!string.IsNullOrEmpty(App.AppSettings.DefaultSelectedFontName))
                 {
-                    if (!string.IsNullOrEmpty(App.AppSettings.DefaultSelectedFontName))
-                    {
-                        var lastSelectedFont = LstFontFamily.Items.FirstOrDefault(
-                        (i => i is InstalledFont installedFont && installedFont.Name == App.AppSettings.DefaultSelectedFontName));
+                    var lastSelectedFont = LstFontFamily.Items.FirstOrDefault(
+                    (i => i is InstalledFont installedFont && installedFont.Name == App.AppSettings.DefaultSelectedFontName));
 
-                        if (null != lastSelectedFont)
-                        {
-                            LstFontFamily.SelectedItem = lastSelectedFont;
-                        }
+                    if (null != lastSelectedFont)
+                    {
+                        LstFontFamily.SelectedItem = lastSelectedFont;
                     }
-                }
-                else
-                {
-                    LstFontFamily.SelectedIndex = 0;
                 }
             }
         }
 
-        private async void BtnCopy_OnClick(object sender, RoutedEventArgs e)
+        private void BtnCopy_OnClick(object sender, RoutedEventArgs e)
         {
             if (CharGrid.SelectedItem is Character character)
             {
-                //Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
                 var dp = new DataPackage
                 {
                     RequestedOperation = DataPackageOperation.Copy,
                 };
                 dp.SetText(character.Char);
-                //dp.SetRtf(character.Char);
                 Clipboard.SetContent(dp);
             }
             BorderFadeInStoryboard.Begin();
@@ -182,16 +173,6 @@ namespace CharacterMap.Views
             BorderFadeInStoryboard.Begin();
         }
 
-        private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(SettingsPage));
-        }
-
-        private void BtnSetDefault_OnClick(object sender, RoutedEventArgs e)
-        {
-            App.AppSettings.DefaultSelectedFontName = LstFontFamily.SelectedValue as string;
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
@@ -199,11 +180,6 @@ namespace CharacterMap.Views
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        //private void CharGrid_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        //{
-        //    TxtSelectedText.Text += ViewModel.SelectedChar.Char;
-        //}
 
         private void TxtSymbolIcon_OnGotFocus(object sender, RoutedEventArgs e)
         {
