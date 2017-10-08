@@ -24,6 +24,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="24" />
         </Grid.RowDefinitions>
         <!-- Title Bar Grid-->
         <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3" RequestedTheme="Dark">
@@ -86,8 +87,6 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Background="{ThemeResource SystemControlBackgroundAccentBrush}">
@@ -197,15 +196,12 @@
                         </SemanticZoom.ZoomedOutView>
                     </SemanticZoom>
                 </Grid>
-
-                <Border Grid.Row="2" Height="1" Background="{ThemeResource AppBarSeparatorForegroundThemeBrush}" Margin="0,10,0,0" />
             </Grid>
 
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
                 <!-- Selected Font Title Grid -->
@@ -378,6 +374,10 @@
 
                 </Grid>
             </Grid>
+        </Grid>
+        <!-- Status Bar -->
+        <Grid Grid.Row="2" Background="{StaticResource SystemControlBackgroundAccentBrush}">
+            
         </Grid>
     </Grid>
 </Page>
