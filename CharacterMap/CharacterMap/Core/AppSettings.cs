@@ -16,16 +16,6 @@ namespace CharacterMap.Core
             }
         }
 
-        public bool UseDefaultSelection
-        {
-            get => ReadSettings(nameof(UseDefaultSelection), false);
-            set
-            {
-                SaveSettings(nameof(UseDefaultSelection), value);
-                NotifyPropertyChanged();
-            }
-        }
-
         public bool ShowSymbolFontsOnly
         {
             get => ReadSettings(nameof(ShowSymbolFontsOnly), false);

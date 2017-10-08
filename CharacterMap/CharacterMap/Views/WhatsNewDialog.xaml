@@ -16,7 +16,7 @@
     <ScrollViewer>
         <StackPanel>
             <TextBlock x:Uid="AfterUpdate_Body" TextWrapping="WrapWholeWords">
-                - Save PNG can select text color directly without requiring switch theme first. <LineBreak />- Enhance UI
+                - Auto Remember Last Selected Font <LineBreak />- Enhance Performance
             </TextBlock>
         </StackPanel>
     </ScrollViewer>

@@ -114,12 +114,18 @@ namespace CharacterMap.Views
             {
                 if (!string.IsNullOrEmpty(App.AppSettings.DefaultSelectedFontName))
                 {
-                    var lastSelectedFont = LstFontFamily.Items.FirstOrDefault(
-                    (i => i is InstalledFont installedFont && installedFont.Name == App.AppSettings.DefaultSelectedFontName));
+                    var lastSelectedFont = LstFontFamily.Items.FirstOrDefault((i => 
+                    i is InstalledFont installedFont && 
+                    installedFont.Name == App.AppSettings.DefaultSelectedFontName));
 
                     if (null != lastSelectedFont)
                     {
                         LstFontFamily.SelectedItem = lastSelectedFont;
+                        LstFontFamily.ScrollIntoView(lastSelectedFont);
+                    }
+                    else
+                    {
+                        LstFontFamily.SelectedIndex = 0;
                     }
                 }
             }
@@ -151,13 +157,14 @@ namespace CharacterMap.Views
 
         private void SearchBoxUnicode_OnQuerySubmitted(SearchBox sender, SearchBoxQuerySubmittedEventArgs args)
         {
-            var unicodeIndex = SearchBoxUnicode.QueryText;
+            var unicodeIndex = SearchBoxUnicode.QueryText.Trim();
             int intIndex = Utils.ParseHexString(unicodeIndex);
 
             var ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
             if (null != ch)
             {
                 CharGrid.SelectedItem = ch;
+                CharGrid.ScrollIntoView(ch);
             }
         }
 

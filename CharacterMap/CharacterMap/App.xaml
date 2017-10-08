@@ -6,6 +6,7 @@
     xmlns:converters="using:Edi.UWP.Helpers.Converters"
     xmlns:converters1="using:CharacterMap.Converters"
     xmlns:viewModels="using:CharacterMap.ViewModels"
+    xmlns:core="using:CharacterMap.Core"
     RequestedTheme="Light">
     <Application.Resources>
         <ResourceDictionary>
@@ -18,23 +19,26 @@
                     <converters1:CharGridSelectedItemToTextConverter x:Key="CharGridSelectedItemToTextConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>
-                    <Style TargetType="Grid" x:Name="TransitionalGrid">
-                        <Setter Property="Transitions">
-                            <Setter.Value>
-                                <TransitionCollection>
-                                    <ContentThemeTransition HorizontalOffset="50" VerticalOffset="0" />
-                                </TransitionCollection>
-                            </Setter.Value>
-                        </Setter>
+                    <core:AppSettings x:Key="AppSettings" />
+                    <Style TargetType="Grid" x:Key="CharItemGridStyle">
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlDisabledChromeHighBrush}" />
+                        <Setter Property="Height" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize}" />
+                        <Setter Property="Width" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize}" />
                     </Style>
-                    <Style TargetType="GridView">
-                        <Setter Property="ItemContainerTransitions">
-                            <Setter.Value>
-                                <TransitionCollection>
-                                    <EntranceThemeTransition IsStaggeringEnabled="False" FromHorizontalOffset="50" FromVerticalOffset="0" />
-                                </TransitionCollection>
-                            </Setter.Value>
-                        </Setter>
+                    <Style TargetType="TextBlock" x:Key="CharItemCharStyle">
+                        <Setter Property="FontSize" Value="{Binding Source={StaticResource AppSettings}, Path=CharPreviewFontSize}" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="TextAlignment" Value="Center" />
+                    </Style>
+                    <Style TargetType="TextBlock" x:Key="CharItemUnicodeStyle">
+                        <Setter Property="FontFamily" Value="Consolas" />
+                        <Setter Property="VerticalAlignment" Value="Bottom" />
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="Margin" Value="0,0,2,0" />
+                        <Setter Property="TextAlignment" Value="Center" />
+                        <Setter Property="Foreground" Value="#888" />
                     </Style>
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBlock.xaml"/>

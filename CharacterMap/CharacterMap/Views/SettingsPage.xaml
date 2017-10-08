@@ -36,8 +36,7 @@
                 Style="{StaticResource PageTitleStyle}" />
 
             <StackPanel Grid.Row="1" Margin="0,16,0,0">
-                <ToggleSwitch Header="Select Default Font on Start Up" OnContent="On" OffContent="Off" IsOn="{Binding Source={StaticResource AppSettings}, Path=UseDefaultSelection, Mode=TwoWay}" />
-                
+
                 <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
                 <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" Margin="0,0,0,20" />
                
