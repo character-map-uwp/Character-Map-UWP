@@ -127,6 +127,8 @@ namespace CharacterMap.Views
                     {
                         LstFontFamily.SelectedIndex = 0;
                     }
+
+                    CharGrid.SelectedIndex = 0;
                 }
             }
         }
