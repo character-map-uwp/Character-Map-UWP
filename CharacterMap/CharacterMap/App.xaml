@@ -40,6 +40,37 @@
                         <Setter Property="TextAlignment" Value="Center" />
                         <Setter Property="Foreground" Value="#888" />
                     </Style>
+                    <Style x:Key="FontListItemContainerStyle" TargetType="ListViewItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ListViewItemPresenter CheckBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" 
+                                                   ContentMargin="{TemplateBinding Padding}" 
+                                                   CheckMode="Inline" 
+                                                   ContentTransitions="{TemplateBinding ContentTransitions}" 
+                                                   CheckBoxBrush="{ThemeResource SystemControlForegroundBaseMediumHighBrush}" 
+                                                   DragForeground="{ThemeResource ListViewItemDragForegroundThemeBrush}" 
+                                                   DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}" 
+                                                   DragBackground="{ThemeResource ListViewItemDragBackgroundThemeBrush}" 
+                                                   DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}" 
+                                                   FocusBorderBrush="{ThemeResource SystemControlForegroundAltHighBrush}" 
+                                                   FocusSecondaryBorderBrush="{ThemeResource SystemControlForegroundBaseHighBrush}" 
+                                                   HorizontalContentAlignment="Stretch" 
+                                                   PointerOverForeground="{ThemeResource SystemControlHighlightAltBaseHighBrush}"
+                                                   PressedBackground="{ThemeResource SystemControlHighlightListMediumBrush}"
+                                                   PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                                                   PointerOverBackground="{ThemeResource SystemControlHighlightListLowBrush}"
+                                                   ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}" 
+                                                   SelectedPressedBackground="{ThemeResource SystemControlHighlightListAccentHighBrush}"
+                                                   SelectionCheckMarkVisualEnabled="True" 
+                                                   SelectedForeground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                   SelectedPointerOverBackground="{ThemeResource SystemControlHighlightListAccentMediumBrush}" 
+                                                   SelectedBackground="{ThemeResource SystemControlBackgroundAltHighBrush}"
+                                                   VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBlock.xaml"/>
                 <ResourceDictionary Source="/Styles/IconButtonStyle.xaml"/>

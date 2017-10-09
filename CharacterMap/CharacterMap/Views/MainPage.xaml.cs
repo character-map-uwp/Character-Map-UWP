@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using CharacterMap.Annotations;
 using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.ViewModels;
 
 namespace CharacterMap.Views
@@ -110,26 +111,9 @@ namespace CharacterMap.Views
             Window.Current.SizeChanged += OnWindowSizeChanged;
             UpdateLayoutMetrics();
 
-            if (null != LstFontFamily.Items)
+            if (null != LstFontFamily.SelectedItem)
             {
-                if (!string.IsNullOrEmpty(App.AppSettings.DefaultSelectedFontName))
-                {
-                    var lastSelectedFont = LstFontFamily.Items.FirstOrDefault((i => 
-                    i is InstalledFont installedFont && 
-                    installedFont.Name == App.AppSettings.DefaultSelectedFontName));
-
-                    if (null != lastSelectedFont)
-                    {
-                        LstFontFamily.SelectedItem = lastSelectedFont;
-                        LstFontFamily.ScrollIntoView(lastSelectedFont);
-                    }
-                    else
-                    {
-                        LstFontFamily.SelectedIndex = 0;
-                    }
-
-                    CharGrid.SelectedIndex = 0;
-                }
+                LstFontFamily.ScrollIntoView(LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
             }
         }
 

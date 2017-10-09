@@ -140,7 +140,7 @@ namespace CharacterMap.ViewModels
                 if (null != _selectedFont)
                 {
                     App.AppSettings.DefaultSelectedFontName = value.Name;
-                    LoadCharsAsync(_selectedFont);
+                    LoadChars(_selectedFont);
                 }
 
                 RaisePropertyChanged();
@@ -159,10 +159,14 @@ namespace CharacterMap.ViewModels
             set { _isBusy = value; RaisePropertyChanged(); }
         }
 
-        private void LoadCharsAsync(InstalledFont font)
+        private void LoadChars(InstalledFont font)
         {
             var chars = font.GetCharacters();
             Chars = chars.ToObservableCollection();
+            if (Chars.Any())
+            {
+                SelectedChar = Chars.FirstOrDefault();
+            }
         }
 
         private void RefreshFontList()
@@ -171,8 +175,8 @@ namespace CharacterMap.ViewModels
             {
                 var fontList = InstalledFont.GetFonts();
                 FontList = fontList.Where(f => f.IsSymbolFont || !ShowSymbolFontsOnly)
-                    .OrderBy(f => f.Name)
-                    .ToObservableCollection();
+                                   .OrderBy(f => f.Name)
+                                   .ToObservableCollection();
             }
             catch (Exception e)
             {
@@ -186,6 +190,25 @@ namespace CharacterMap.ViewModels
             {
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1), true);
                 GroupedFontList = list.ToObservableCollection();
+
+                if (!FontList.Any()) return;
+                if (!string.IsNullOrEmpty(App.AppSettings.DefaultSelectedFontName))
+                {
+                    var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == App.AppSettings.DefaultSelectedFontName));
+
+                    if (null != lastSelectedFont)
+                    {
+                        this.SelectedFont = lastSelectedFont;
+                    }
+                    else
+                    {
+                        SelectedFont = FontList.FirstOrDefault();
+                    }
+                }
+                else
+                {
+                    SelectedFont = FontList.FirstOrDefault();
+                }
             }
             catch (Exception e)
             {

@@ -16,7 +16,7 @@
     <ScrollViewer>
         <StackPanel>
             <TextBlock x:Uid="AfterUpdate_Body" TextWrapping="WrapWholeWords">
-                - Auto Remember Last Selected Font <LineBreak />- Enhance Performance
+                - Auto Remember Last Selected Font <LineBreak />- Add Status Bar
             </TextBlock>
         </StackPanel>
     </ScrollViewer>

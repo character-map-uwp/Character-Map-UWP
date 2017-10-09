@@ -172,6 +172,12 @@
     <Compile Include="Services\NavigationServiceEx.cs" />
     <Compile Include="Services\ToastNotificationsService.cs" />
     <Compile Include="Services\WhatsNewDisplayService.cs" />
+    <Compile Include="UserControls\DPIIndicator.xaml.cs">
+      <DependentUpon>DPIIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\StatusBarSeperator.xaml.cs">
+      <DependentUpon>StatusBarSeperator.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -254,6 +260,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="UserControls\DPIIndicator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\StatusBarSeperator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -292,9 +306,7 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UserControls\" />
-  </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
