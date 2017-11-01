@@ -16,7 +16,7 @@
     <ScrollViewer>
         <StackPanel>
             <TextBlock x:Uid="AfterUpdate_Body" TextWrapping="WrapWholeWords">
-                - Auto Remember Last Selected Font <LineBreak />- Add Status Bar
+                - Auto Remember Last Selected Character <LineBreak />- Fix Segoe UI Emoji Color When Saving PNG
             </TextBlock>
         </StackPanel>
     </ScrollViewer>

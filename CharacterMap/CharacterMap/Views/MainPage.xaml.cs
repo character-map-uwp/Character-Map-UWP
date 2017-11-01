@@ -114,6 +114,11 @@ namespace CharacterMap.Views
             if (null != LstFontFamily.SelectedItem)
             {
                 LstFontFamily.ScrollIntoView(LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+
+                if (null != CharGrid.SelectedItem)
+                {
+                    CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Leading);
+                }
             }
         }
 

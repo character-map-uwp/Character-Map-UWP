@@ -25,13 +25,23 @@ namespace CharacterMap.Core
                 NotifyPropertyChanged();
             }
         }
-        
-        public string DefaultSelectedFontName
+
+        public int LastSelectedCharIndex
         {
-            get => ReadSettings(nameof(DefaultSelectedFontName), string.Empty);
+            get => ReadSettings(nameof(LastSelectedCharIndex), 0);
             set
             {
-                SaveSettings(nameof(DefaultSelectedFontName), value);
+                SaveSettings(nameof(LastSelectedCharIndex), value);
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string LastSelectedFontName
+        {
+            get => ReadSettings(nameof(LastSelectedFontName), string.Empty);
+            set
+            {
+                SaveSettings(nameof(LastSelectedFontName), value);
                 NotifyPropertyChanged();
             }
         }

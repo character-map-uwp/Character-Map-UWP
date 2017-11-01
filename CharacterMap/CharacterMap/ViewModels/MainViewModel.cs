@@ -89,6 +89,8 @@ namespace CharacterMap.ViewModels
                             value.UnicodeIndex.ToString("x").ToUpper()
                         };"" />";
                     SymbolIcon = $"(Symbol)0x{value.UnicodeIndex.ToString("x").ToUpper()}";
+
+                    App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
                 }
                 RaisePropertyChanged();
             }
@@ -139,7 +141,7 @@ namespace CharacterMap.ViewModels
                 _selectedFont = value;
                 if (null != _selectedFont)
                 {
-                    App.AppSettings.DefaultSelectedFontName = value.Name;
+                    App.AppSettings.LastSelectedFontName = value.Name;
                     LoadChars(_selectedFont);
                 }
 
@@ -163,10 +165,6 @@ namespace CharacterMap.ViewModels
         {
             var chars = font.GetCharacters();
             Chars = chars.ToObservableCollection();
-            if (Chars.Any())
-            {
-                SelectedChar = Chars.FirstOrDefault();
-            }
         }
 
         private void RefreshFontList()
@@ -192,13 +190,19 @@ namespace CharacterMap.ViewModels
                 GroupedFontList = list.ToObservableCollection();
 
                 if (!FontList.Any()) return;
-                if (!string.IsNullOrEmpty(App.AppSettings.DefaultSelectedFontName))
+                if (!string.IsNullOrEmpty(App.AppSettings.LastSelectedFontName))
                 {
-                    var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == App.AppSettings.DefaultSelectedFontName));
+                    var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == App.AppSettings.LastSelectedFontName));
 
                     if (null != lastSelectedFont)
                     {
                         this.SelectedFont = lastSelectedFont;
+
+                        var lastSelectedChar = Chars.FirstOrDefault((i => i.UnicodeIndex == App.AppSettings.LastSelectedCharIndex));
+                        if (null != lastSelectedChar)
+                        {
+                            this.SelectedChar = lastSelectedChar;
+                        }
                     }
                     else
                     {
@@ -234,8 +238,8 @@ namespace CharacterMap.ViewModels
                     CanvasDevice device = CanvasDevice.GetSharedDevice();
                     var localDpi = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
-                    var canvasH = (float) App.AppSettings.PngSize;
-                    var canvasW = (float) App.AppSettings.PngSize;
+                    var canvasH = (float)App.AppSettings.PngSize;
+                    var canvasW = (float)App.AppSettings.PngSize;
 
                     CanvasRenderTarget renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
 
@@ -247,8 +251,10 @@ namespace CharacterMap.ViewModels
 
                         var textColor = isBlackText ? Colors.Black : Colors.White;
 
-                        var fontSize = (float) d;
-                        if (SelectedFont.Name == "Segoe UI Emoji")
+                        var fontSize = (float)d;
+
+                        bool isEmoji = SelectedFont.Name == "Segoe UI Emoji";
+                        if (isEmoji)
                         {
                             fontSize *= 0.75f;
                         }
@@ -257,7 +263,8 @@ namespace CharacterMap.ViewModels
                         {
                             FontFamily = SelectedFont.Name,
                             FontSize = fontSize,
-                            HorizontalAlignment = CanvasHorizontalAlignment.Center
+                            HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                            Options = isEmoji ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
                         });
                     }
 
