@@ -73,7 +73,7 @@ namespace CharacterMap.Services
                 // Ensure the current window is active
                 Window.Current.Activate();
 
-                var accentColor = UI.GetAccentColor();
+                var accentColor = Colors.Transparent;
                 var btnHoverColor = Color.FromArgb(128,
                     (byte)(accentColor.R + 30),
                     (byte)(accentColor.G + 30),
@@ -90,8 +90,6 @@ namespace CharacterMap.Services
                     Colors.LightGray, Colors.Gray);
 
                 UI.SetWindowLaunchSize(2560, 1440);
-
-                UI.SetWindowsMobileStatusBarColor(accentColor, Colors.White);
 
                 // Tasks after activation
                 await StartupAsync();
