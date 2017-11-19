@@ -73,13 +73,13 @@
 
                 <Grid Grid.Row="0" Background="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}" RequestedTheme="Dark">
                     <ToggleSwitch 
-                    Grid.Row="0"
-                    Margin="10,5,0,5"
-                    RequestedTheme="Dark"
-                    x:Name="ToggleSymbolFontsOnly"
-                    VerticalAlignment="Bottom"
-                    IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}"
-                    x:Uid="ToggleSymbolFontsOnly" Style="{StaticResource NiceToggleSwitchStyle}" />
+                        Margin="10,5,0,5"
+                        RequestedTheme="Dark"
+                        x:Name="ToggleSymbolFontsOnly"
+                        VerticalAlignment="Bottom"
+                        IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}"
+                        x:Uid="ToggleSymbolFontsOnly" 
+                        Style="{StaticResource NiceToggleSwitchStyle}" />
                 </Grid>
 
                 <SemanticZoom Grid.Row="1">
@@ -98,8 +98,13 @@
                                 <GroupStyle HidesIfEmpty="True">
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
-                                            <Border BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="2" Height="45" Width="45" Margin="0,0,0,0" HorizontalAlignment="Stretch">
-                                                <TextBlock Text="{Binding Key}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" FontSize="31" Padding="6,0,0,0" FontWeight="SemiLight" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                            <Border BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="2" 
+                                                    Height="45" Width="45" Margin="0,0,0,0" HorizontalAlignment="Stretch">
+                                                <TextBlock Text="{Binding Key}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                                                           FontSize="31" Padding="6,0,0,0" 
+                                                           FontWeight="Light" 
+                                                           HorizontalAlignment="Left" 
+                                                           VerticalAlignment="Center"/>
                                             </Border>
                                         </DataTemplate>
                                     </GroupStyle.HeaderTemplate>
@@ -108,12 +113,12 @@
 
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Border BorderThickness="2" 
-                                                BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                                                Height="36" />
-                                        <TextBlock Text="{Binding Name}" Padding="8,0,0,0" VerticalAlignment="Center" />
-                                    </StackPanel>
+                                    <Border BorderThickness="4,0,0,0" 
+                                            Padding="8,0,0,0"
+                                            BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                                            Height="36">
+                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                                    </Border>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
@@ -157,7 +162,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
-                                   Text="{Binding ElementName=LstFontFamily, Path=SelectedValue}" 
+                                   Text="{Binding SelectedFont.Name, Mode=OneWay}" 
                                    FontSize="24" 
                                    FontWeight="Light" 
                                    Margin="10,8,10,10" />
@@ -202,8 +207,7 @@
                         </GridView.ItemTemplate>
                     </GridView>
 
-                    <Border x:Name="PreviewPanel" Grid.Column="2" Margin="10,0,10,0" 
-                    Padding="10">
+                    <Border x:Name="PreviewPanel" Grid.Column="2" Padding="10,0,0,0">
                         <Grid VerticalAlignment="Stretch">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
@@ -254,45 +258,70 @@
                                 <Grid Margin="0,10,0,0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="35" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtXamlCode" Header="#TxtXamlCode" x:Uid="TxtXamlCode" GotFocus="TxtXamlCode_OnGotFocus" IsReadOnly="True" Text="{Binding XamlCode}" />
-                                    <Button Grid.Column="2" x:Name="BtnCopyXamlCode" Click="BtnCopyXamlCode_OnClick" VerticalAlignment="Bottom">
-                                        <Button.Content>
-                                            <SymbolIcon Symbol="Copy" />
-                                        </Button.Content>
+                                    <TextBox Grid.Column="0" 
+                                             Margin="0,5,0,0" 
+                                             x:Name="TxtXamlCode" 
+                                             Header="#TxtXamlCode"
+                                             x:Uid="TxtXamlCode" 
+                                             GotFocus="TxtXamlCode_OnGotFocus" 
+                                             IsReadOnly="True" 
+                                             FontSize="14"
+                                             FontFamily="Consolas"
+                                             Text="{Binding XamlCode}" />
+                                    <Button Grid.Column="2" x:Name="BtnCopyXamlCode" Click="BtnCopyXamlCode_OnClick" VerticalAlignment="Bottom"
+                                            Height="30" Width="35" FontSize="16"
+                                            Style="{StaticResource IconButtonStyle}">
+                                        <SymbolIcon Symbol="Copy" />
                                     </Button>
                                 </Grid>
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="35" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtFontIcon" Header="#TxtFontIcon" x:Uid="TxtFontIcon" GotFocus="TxtFontIcon_OnGotFocus" IsReadOnly="True" Text="{Binding FontIcon}"/>
-                                    <Button Grid.Column="2" x:Name="BtnCopyFontIcon" Click="BtnCopyFontIcon_OnClick" VerticalAlignment="Bottom">
-                                        <Button.Content>
-                                            <SymbolIcon Symbol="Copy" />
-                                        </Button.Content>
+                                    <TextBox Grid.Column="0" Margin="0,5,0,0" 
+                                             x:Name="TxtFontIcon" 
+                                             Header="#TxtFontIcon" x:Uid="TxtFontIcon" 
+                                             GotFocus="TxtFontIcon_OnGotFocus" 
+                                             IsReadOnly="True" 
+                                             FontSize="14"
+                                             FontFamily="Consolas"
+                                             Text="{Binding FontIcon}"/>
+                                    <Button Grid.Column="2" x:Name="BtnCopyFontIcon" Click="BtnCopyFontIcon_OnClick" VerticalAlignment="Bottom"
+                                            Height="30" Width="35" FontSize="16"
+                                            Style="{StaticResource IconButtonStyle}">
+                                        <SymbolIcon Symbol="Copy" />
                                     </Button>
                                 </Grid>
 
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition />
-                                        <ColumnDefinition Width="10" />
-                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="5" />
+                                        <ColumnDefinition Width="35" />
                                     </Grid.ColumnDefinitions>
 
-                                    <TextBox Grid.Column="0" Margin="0,5,0,0" x:Name="TxtSymbolIcon" Header="Symbol Icon" x:Uid="TxtSymbolIcon" GotFocus="TxtSymbolIcon_OnGotFocus" IsReadOnly="True" Text="{Binding SymbolIcon}"/>
-                                    <Button Grid.Column="2" x:Name="BtnCopySymbolIcon" Click="BtnCopySymbolIcon_OnClick" VerticalAlignment="Bottom">
-                                        <Button.Content>
-                                            <SymbolIcon Symbol="Copy" />
-                                        </Button.Content>
+                                    <TextBox Grid.Column="0" Margin="0,5,0,0" 
+                                             x:Name="TxtSymbolIcon" 
+                                             Header="Symbol Icon" 
+                                             x:Uid="TxtSymbolIcon" 
+                                             GotFocus="TxtSymbolIcon_OnGotFocus" 
+                                             IsReadOnly="True"
+                                             FontFamily="Consolas"
+                                             FontSize="14"
+                                             Text="{Binding SymbolIcon}"/>
+                                    <Button Grid.Column="2" x:Name="BtnCopySymbolIcon" 
+                                            Click="BtnCopySymbolIcon_OnClick" VerticalAlignment="Bottom"
+                                            Height="30" Width="35" FontSize="16"
+                                            Style="{StaticResource IconButtonStyle}">
+                                        <SymbolIcon Symbol="Copy" />
                                     </Button>
                                 </Grid>
                             </StackPanel>

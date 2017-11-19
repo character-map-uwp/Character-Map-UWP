@@ -47,9 +47,7 @@ namespace CharacterMap.Helpers
 
         public static async Task<T> ReadAsync<T>(this ApplicationDataContainer settings, string key)
         {
-            object obj = null;
-
-            if (settings.Values.TryGetValue(key, out obj))
+            if (settings.Values.TryGetValue(key, out var obj))
             {
                 return await Json.ToObjectAsync<T>((string)obj);
             }
