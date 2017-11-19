@@ -98,14 +98,12 @@ namespace CharacterMap.Services
 
         private async Task InitializeAsync()
         {
-            await ThemeSelectorService.InitializeAsync();
             await Task.CompletedTask;
         }
 
         private async Task StartupAsync()
         {
             await WhatsNewDisplayService.ShowIfAppropriateAsync();
-            ThemeSelectorService.SetRequestedTheme();
             await Task.CompletedTask;
         }
 

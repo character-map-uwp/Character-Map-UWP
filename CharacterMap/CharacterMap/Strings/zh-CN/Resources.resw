@@ -159,14 +159,8 @@
   <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>http://edi.wang/docs/pp-general.html</value>
   </data>
-  <data name="Settings_Title.Text" xml:space="preserve">
+  <data name="DigSettings.Title" xml:space="preserve">
     <value>设置</value>
-  </data>
-  <data name="Settings_ThemeToggle.OffContent" xml:space="preserve">
-    <value>深色主题</value>
-  </data>
-  <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
-    <value>浅色主题</value>
   </data>
   <data name="AfterUpdate_Title.Text" xml:space="preserve">
     <value>新功能</value>

@@ -147,12 +147,6 @@
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Kopiert</value>
   </data>
-  <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
-    <value>Helles Design</value>
-  </data>
-  <data name="Settings_ThemeToggle.OffContent" xml:space="preserve">
-    <value>Dunkles Design</value>
-  </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>Über</value>
   </data>
@@ -165,7 +159,7 @@
   <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>http://edi.wang/docs/pp-general.html</value>
   </data>
-  <data name="Settings_Title.Text" xml:space="preserve">
+  <data name="DigSettings.Title" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="AfterUpdate_Title.Text" xml:space="preserve">

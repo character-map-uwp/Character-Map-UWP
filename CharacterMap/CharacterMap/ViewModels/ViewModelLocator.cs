@@ -19,12 +19,9 @@ namespace CharacterMap.ViewModels
 
             SimpleIoc.Default.Register<MainViewModel>();
             Register<MainViewModel, MainPage>();
-            Register<SettingsViewModel, SettingsPage>();
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
-
-        public SettingsViewModel SettingsViewModel => ServiceLocator.Current.GetInstance<SettingsViewModel>();
 
         public void Register<VM, V>() where VM : class
         {

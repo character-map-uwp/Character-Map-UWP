@@ -159,13 +159,7 @@
   <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>http://edi.wang/docs/pp-general.html</value>
   </data>
-  <data name="Settings_ThemeToggle.OffContent" xml:space="preserve">
-    <value>Тёмный дизайн</value>
-  </data>
-  <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
-    <value>Яркий дизайн</value>
-  </data>
-  <data name="Settings_Title.Text" xml:space="preserve">
+  <data name="DigSettings.Title" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="AfterUpdate_Title.Text" xml:space="preserve">

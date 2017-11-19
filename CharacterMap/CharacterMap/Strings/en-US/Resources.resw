@@ -147,7 +147,7 @@
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Copied</value>
   </data>
-  <data name="Settings_Title.Text" xml:space="preserve">
+  <data name="DigSettings.Title" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
@@ -161,12 +161,6 @@
   </data>
   <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
     <value>http://edi.wang/docs/pp-general.html</value>
-  </data>
-  <data name="Settings_ThemeToggle.OffContent" xml:space="preserve">
-    <value>Dark</value>
-  </data>
-  <data name="Settings_ThemeToggle.OnContent" xml:space="preserve">
-    <value>Light</value>
   </data>
   <data name="AfterUpdate_Title.Text" xml:space="preserve">
     <value>What's New</value>

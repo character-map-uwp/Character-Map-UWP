@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -34,9 +35,33 @@ namespace CharacterMap.ViewModels
         {
             DialogService = dialogService;
             RefreshFontList();
-            IsLightThemeEnabled = ThemeSelectorService.IsLightThemeEnabled;
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
-            SwitchThemeCommand = new RelayCommand(async () => { await ThemeSelectorService.SwitchThemeAsync(); });
+            CommandReview = new RelayCommand(async () => await Edi.UWP.Helpers.Tasks.OpenStoreReviewAsync());
+        }
+
+        public void Initialize()
+        {
+            AppDescription = GetAppDescription();
+        }
+
+        private string GetAppDescription()
+        {
+            var package = Package.Current;
+            var packageId = package.Id;
+            var version = packageId.Version;
+
+            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+        }
+
+        public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
+
+        public RelayCommand CommandReview { get; set; }
+
+        private string _appDescription;
+        public string AppDescription
+        {
+            get => _appDescription;
+            set => Set(ref _appDescription, value);
         }
 
         public ICommand SwitchThemeCommand { get; }

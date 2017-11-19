@@ -189,5 +189,10 @@ namespace CharacterMap.Views
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtSymbolIcon.Text.Trim());
             BorderFadeInStoryboard.Begin();
         }
+
+        private async void BtnSettings_OnClick(object sender, RoutedEventArgs e)
+        {
+            await DigSettings.ShowAsync();
+        }
     }
 }

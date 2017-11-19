@@ -14,7 +14,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
                     <converters:StringFormatConverter x:Key="StringFormatConverter" />
-                    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
                     <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
                     <converters1:CharGridSelectedItemToTextConverter x:Key="CharGridSelectedItemToTextConverter" />
                 </ResourceDictionary>

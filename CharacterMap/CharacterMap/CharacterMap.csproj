@@ -103,9 +103,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AsyncStackTraceEx">
-      <Version>1.0.1.1</Version>
-    </PackageReference>
     <PackageReference Include="SharpDX">
       <Version>4.0.1</Version>
     </PackageReference>
@@ -178,18 +175,13 @@
     <Compile Include="UserControls\StatusBarSeperator.xaml.cs">
       <DependentUpon>StatusBarSeperator.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ThemeSelectorService.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
-    <Compile Include="Views\SettingsPage.xaml.cs">
-      <DependentUpon>SettingsPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\WhatsNewDialog.xaml.cs">
       <DependentUpon>WhatsNewDialog.xaml</DependentUpon>
     </Compile>
@@ -294,10 +286,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\_Thickness.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\SettingsPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

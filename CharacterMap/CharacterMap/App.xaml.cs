@@ -44,10 +44,9 @@ namespace CharacterMap
                 .ShowAsync();
         }
 
-        // https://github.com/ljw1004/async-exception-stacktrace
         private string GetExceptionDetailMessage(Exception ex)
         {
-            return $"{ex.Message}\r\n{ex.StackTraceEx()}";
+            return $"{ex.Message}\r\n{ex.StackTrace}";
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)

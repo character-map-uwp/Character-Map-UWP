@@ -37,28 +37,9 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Text="Character Map" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="BtnSettings" Style="{StaticResource IconButtonStyle}">
-                        <interactivity:Interaction.Behaviors>
-                            <core1:EventTriggerBehavior EventName="Click" SourceObject="{Binding ElementName=BtnSettings}">
-                                <core1:NavigateToPageAction TargetPage="CharacterMap.Views.SettingsPage" />
-                            </core1:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
+                    <Button x:Name="BtnSettings" Style="{StaticResource IconButtonStyle}" Click="BtnSettings_OnClick">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE115;" FontSize="15" />
                     </Button>
-                    <ToggleSwitch RequestedTheme="Dark" Style="{StaticResource NiceToggleSwitchStyle}"
-                                  Margin="0,-5,0,0"
-                                  FontSize="13"
-                                  VerticalAlignment="Top"
-                                  HorizontalAlignment="Right"
-                                  HorizontalContentAlignment="Right"
-                                  x:Uid="Settings_ThemeToggle" OnContent="Light" OffContent="Dark"
-                                  IsOn="{x:Bind ViewModel.IsLightThemeEnabled, Mode=OneWay}">
-                        <interactivity:Interaction.Behaviors>
-                            <core1:EventTriggerBehavior EventName="Toggled">
-                                <core1:InvokeCommandAction Command="{x:Bind ViewModel.SwitchThemeCommand}"/>
-                            </core1:EventTriggerBehavior>
-                        </interactivity:Interaction.Behaviors>
-                    </ToggleSwitch>
                 </StackPanel>
             </Grid>
         </Grid>
@@ -363,5 +344,33 @@
                 <TextBlock Text="{Binding SelectedChar.UnicodeString}" />
             </StackPanel>
         </Grid>
+
+        <ContentDialog Grid.Row="0" Grid.RowSpan="3" x:Name="DigSettings" x:Uid="DigSettings" Title="#DigSettings"
+                       IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
+            <StackPanel Margin="0,16,0,0">
+                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
+                <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" Margin="0,0,0,20" />
+
+                <Slider Header="Character Preview Size (pixel)" x:Name="sldGridSize" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" Minimum="64" Maximum="256" StepFrequency="8" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
+                <TextBlock Text="Note: Require Restart App." TextWrapping="Wrap" Foreground="#666" Margin="0,0,0,20" />
+
+                <TextBlock
+                    x:Uid="Settings_About"
+                    Text="#Settings_About"
+                    Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,40,0,0"/>
+                <TextBlock
+                    Text="{x:Bind ViewModel.AppDescription, Mode=OneWay}"
+                    Style="{StaticResource BodyTextStyle}"
+                    Margin="0,4,0,0"/>
+                <TextBlock
+                    x:Uid="Settings_AboutDescription" Text="#Settings_AboutDescription"
+                    Style="{StaticResource BodyTextStyle}"/>
+
+                <TextBlock Text="GitHub" Margin="0,10,0,0" />
+                <HyperlinkButton Content="https://github.com/EdiWang/UWP-CharacterMap" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
+                <HyperlinkButton x:Uid="LnkVisitBlog" Content="#LnkVisitBlog" NavigateUri="http://edi.wang" />
+                <HyperlinkButton NavigateUri="https://github.com/EdiWang/UWP-CharacterMap/graphs/contributors">Contributors</HyperlinkButton>
+            </StackPanel>
+        </ContentDialog>
     </Grid>
 </Page>
