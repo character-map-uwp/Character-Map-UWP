@@ -21,34 +21,41 @@ namespace CharacterMap.Core
         {
             var fontList = new List<InstalledFont>();
 
-            var factory = new Factory();
-            FontCollection = factory.GetSystemFontCollection(false);
-            var familyCount = FontCollection.FontFamilyCount;
-
-            for (int i = 0; i < familyCount; i++)
+            using (var factory = new Factory())
             {
-                var fontFamily = FontCollection.GetFontFamily(i);
-                var familyNames = fontFamily.FamilyNames;
-                int index;
+                FontCollection = factory.GetSystemFontCollection(false);
+                var familyCount = FontCollection.FontFamilyCount;
 
-                if (!familyNames.FindLocaleName(CultureInfo.CurrentCulture.Name, out index))
+                for (int i = 0; i < familyCount; i++)
                 {
-                    if (!familyNames.FindLocaleName("en-us", out index))
+                    try
                     {
-                        index = 0;
+                        using (var fontFamily = FontCollection.GetFontFamily(i))
+                        {
+                            var familyNames = fontFamily.FamilyNames;
+
+                            if (!familyNames.FindLocaleName(CultureInfo.CurrentCulture.Name, out var index))
+                            {
+                                familyNames.FindLocaleName("en-us", out index);
+                            }
+
+                            bool isSymbolFont = fontFamily.GetFont(index).IsSymbolFont;
+
+                            string name = familyNames.GetString(index);
+                            fontList.Add(new InstalledFont()
+                            {
+                                Name = name,
+                                FamilyIndex = i,
+                                Index = index,
+                                IsSymbolFont = isSymbolFont
+                            });
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        // Corrupted font files throw an exception
                     }
                 }
-
-                bool isSymbolFont = fontFamily.GetFont(index).IsSymbolFont;
-
-                string name = familyNames.GetString(index);
-                fontList.Add(new InstalledFont()
-                {
-                    Name = name,
-                    FamilyIndex = i,
-                    Index = index,
-                    IsSymbolFont = isSymbolFont
-                });
             }
 
             return fontList;
