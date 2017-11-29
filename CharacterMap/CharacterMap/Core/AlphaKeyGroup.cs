@@ -36,8 +36,6 @@ namespace CharacterMap.Core
                 string label = slg.Lookup(keySelector(item));
                 index = list.FindIndex(alphagroupkey => (alphagroupkey.Key.Equals(label, StringComparison.CurrentCulture)));
                 if (index > -1 && index < list.Count) list[index].Add(item);
-
-                Debug.WriteLine($"Added {(item as InstalledFont).Name} to {list[index].Key}(index {index}).");
             }
             return list;
         }
