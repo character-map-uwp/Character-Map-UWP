@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Windows.Globalization.Collation;
 
@@ -25,7 +26,7 @@ namespace CharacterMap.Core
                     .ToList();
         }
 
-        public static List<AlphaKeyGroup<T>> CreateGroups(IEnumerable<T> items, Func<T, string> keySelector, bool sort)
+        public static List<AlphaKeyGroup<T>> CreateGroups(IEnumerable<T> items, Func<T, string> keySelector)
         {
             CharacterGroupings slg = new CharacterGroupings();
             List<AlphaKeyGroup<T>> list = CreateDefaultGroups(slg);
@@ -35,13 +36,8 @@ namespace CharacterMap.Core
                 string label = slg.Lookup(keySelector(item));
                 index = list.FindIndex(alphagroupkey => (alphagroupkey.Key.Equals(label, StringComparison.CurrentCulture)));
                 if (index > -1 && index < list.Count) list[index].Add(item);
-            }
-            if (sort)
-            {
-                foreach (AlphaKeyGroup<T> group in list)
-                {
-                    group.Sort((c0, c1) => keySelector(c0).CompareTo(keySelector(c1)));
-                }
+
+                Debug.WriteLine($"Added {(item as InstalledFont).Name} to {list[index].Key}(index {index}).");
             }
             return list;
         }

@@ -211,7 +211,7 @@ namespace CharacterMap.ViewModels
         {
             try
             {
-                var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1), true);
+                var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
                 GroupedFontList = list.ToObservableCollection();
 
                 if (!FontList.Any()) return;
