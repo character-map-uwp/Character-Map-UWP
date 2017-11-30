@@ -196,7 +196,7 @@
                                 <Grid Style="{StaticResource CharItemGridStyle}">
                                     <TextBlock Style="{StaticResource CharItemCharStyle}" 
                                                Text="{x:Bind Char}"
-                                               FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue, Converter={StaticResource InstalledFontToFontFamilyConverter}}"
+                                               FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedItem, Converter={StaticResource InstalledFontToFontFamilyConverter}}"
                                                x:Phase="1" />
 
                                     <TextBlock Style="{StaticResource CharItemUnicodeStyle}" 
@@ -218,7 +218,7 @@
                                 <TextBlock x:Name="TxtPreview" 
                                            TextAlignment="Center"
                                            Text="{Binding SelectedChar.Char}"
-                                           FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedValue, Converter={StaticResource InstalledFontToFontFamilyConverter}}" />
+                                           FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedItem, Converter={StaticResource InstalledFontToFontFamilyConverter}}" />
                             </Viewbox>
 
                             <Border x:Name="BorderCopiedMessage" 
