@@ -46,6 +46,11 @@ namespace CharacterMap.Views
             }
         }
 
+        private async Task DoRestartRequest()
+        {
+            await CoreApplication.RequestRestartAsync(string.Empty);
+        }
+
         #region Title Bar
 
         private CoreApplicationViewTitleBar _coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
@@ -193,6 +198,11 @@ namespace CharacterMap.Views
         private async void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
             await DigSettings.ShowAsync();
+        }
+
+        private async void BtnRestart_OnClick(object sender, RoutedEventArgs e)
+        {
+            await DoRestartRequest();
         }
     }
 }

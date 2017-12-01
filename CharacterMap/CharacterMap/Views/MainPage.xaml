@@ -377,18 +377,20 @@
         <ContentDialog Grid.Row="0" Grid.RowSpan="3" x:Name="DigSettings" x:Uid="DigSettings" Title="#DigSettings"
                        IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
             <StackPanel Margin="0,16,0,0">
-                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
+                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" HorizontalAlignment="Left" />
                 <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" Margin="0,0,0,20" />
 
-                <Slider Header="Character Preview Size (pixel)" x:Name="sldGridSize" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" Minimum="64" Maximum="256" StepFrequency="8" IsThumbToolTipEnabled="True" TickPlacement="Outside" MaxWidth="400" HorizontalAlignment="Left" />
+                <Slider Header="Character Preview Size (pixel)" x:Name="sldGridSize" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" Minimum="64" Maximum="256" StepFrequency="8" IsThumbToolTipEnabled="True" TickPlacement="Outside" HorizontalAlignment="Left" />
                 <TextBlock Text="Note: Require Restart App." TextWrapping="Wrap" Foreground="#666" Margin="0,0,0,20" />
 
+                <Button x:Name="BtnRestart" Content="Restart Now" Click="BtnRestart_OnClick" />
+                
                 <TextBlock
                     x:Uid="Settings_About"
                     Text="#Settings_About"
                     Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,40,0,0"/>
                 <TextBlock
-                    Text="{x:Bind ViewModel.AppDescription, Mode=OneWay}"
+                    Text="{Binding AppDescription}"
                     Style="{StaticResource BodyTextStyle}"
                     Margin="0,4,0,0"/>
                 <TextBlock

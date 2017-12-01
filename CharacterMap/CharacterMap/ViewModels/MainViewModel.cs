@@ -2,13 +2,11 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
 using CharacterMap.Core;
-using CharacterMap.Services;
 using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -35,13 +33,9 @@ namespace CharacterMap.ViewModels
         {
             DialogService = dialogService;
             RefreshFontList();
+            AppDescription = GetAppDescription();
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
             CommandReview = new RelayCommand(async () => await Edi.UWP.Helpers.Tasks.OpenStoreReviewAsync());
-        }
-
-        public void Initialize()
-        {
-            AppDescription = GetAppDescription();
         }
 
         private string GetAppDescription()
@@ -63,8 +57,6 @@ namespace CharacterMap.ViewModels
             get => _appDescription;
             set => Set(ref _appDescription, value);
         }
-
-        public ICommand SwitchThemeCommand { get; }
 
         public IDialogService DialogService { get; set; }
 
