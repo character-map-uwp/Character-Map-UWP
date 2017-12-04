@@ -33,7 +33,7 @@ namespace CharacterMap.ViewModels
         {
             DialogService = dialogService;
             RefreshFontList();
-            AppDescription = GetAppDescription();
+            AppNameVersion = GetAppDescription();
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
             CommandReview = new RelayCommand(async () => await Edi.UWP.Helpers.Tasks.OpenStoreReviewAsync());
         }
@@ -51,11 +51,11 @@ namespace CharacterMap.ViewModels
 
         public RelayCommand CommandReview { get; set; }
 
-        private string _appDescription;
-        public string AppDescription
+        private string _appNameVersion;
+        public string AppNameVersion
         {
-            get => _appDescription;
-            set => Set(ref _appDescription, value);
+            get => _appNameVersion;
+            set => Set(ref _appNameVersion, value);
         }
 
         public IDialogService DialogService { get; set; }

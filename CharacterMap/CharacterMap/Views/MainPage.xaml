@@ -46,7 +46,7 @@
         <!-- Main UI Grid -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="265" />
+                <ColumnDefinition Width="256" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
@@ -72,37 +72,34 @@
                 </Grid.RowDefinitions>
 
                 <Grid Grid.Row="0" Background="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}" RequestedTheme="Dark">
-                    <ToggleSwitch 
-                        Margin="10,5,0,5"
-                        RequestedTheme="Dark"
-                        x:Name="ToggleSymbolFontsOnly"
-                        VerticalAlignment="Bottom"
-                        IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}"
-                        x:Uid="ToggleSymbolFontsOnly" 
-                        Style="{StaticResource NiceToggleSwitchStyle}" />
+                    <ToggleSwitch Margin="10,5,0,5" VerticalAlignment="Bottom" IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}" x:Uid="ToggleSymbolFontsOnly" />
                 </Grid>
 
                 <SemanticZoom Grid.Row="1">
                     <SemanticZoom.ZoomedInView>
                         <ListView x:Name="LstFontFamily" 
-                                      IsItemClickEnabled="False"
-                                      IsSwipeEnabled="False"
-                                      ItemsSource="{Binding Source={StaticResource GroupedFontList}}" 
-                                      SelectedItem="{Binding SelectedFont, Mode=TwoWay}" 
-                                      SelectionMode="Single"
-                                      SelectedValuePath="Name"
-                                      ItemContainerStyle="{StaticResource FontListItemContainerStyle}"
-                                      Margin="0">
+                                  IsItemClickEnabled="False"
+                                  IsSwipeEnabled="False"
+                                  ItemsSource="{Binding Source={StaticResource GroupedFontList}}" 
+                                  SelectedItem="{Binding SelectedFont, Mode=TwoWay}" 
+                                  SelectionMode="Single"
+                                  SelectedValuePath="Name"
+                                  ItemContainerStyle="{StaticResource FontListItemContainerStyle}"
+                                  Margin="0">
 
                             <ListView.GroupStyle>
                                 <GroupStyle HidesIfEmpty="True">
                                     <GroupStyle.HeaderTemplate>
                                         <DataTemplate>
-                                            <Border BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" BorderThickness="2" 
-                                                    Height="45" Width="45" Margin="0,0,0,0" HorizontalAlignment="Stretch">
-                                                <TextBlock Text="{Binding Key}" Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                                                           FontSize="31" Padding="6,0,0,0" 
-                                                           FontWeight="Light" 
+                                            <Border BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                                                    BorderThickness="2" 
+                                                    Height="45"
+                                                    Width="45"
+                                                    HorizontalAlignment="Left">
+                                                <TextBlock Text="{Binding Key}" 
+                                                           Foreground="{ThemeResource SystemControlBackgroundAccentBrush}" 
+                                                           FontSize="32" Padding="6,0,0,4" 
+                                                           FontWeight="SemiLight" 
                                                            HorizontalAlignment="Left" 
                                                            VerticalAlignment="Center"/>
                                             </Border>
@@ -113,12 +110,12 @@
 
                             <ListView.ItemTemplate>
                                 <DataTemplate>
-                                    <Border BorderThickness="4,0,0,0" 
+                                    <Grid BorderThickness="4,0,0,0" 
                                             Padding="8,0,0,0"
                                             BorderBrush="{ThemeResource SystemControlBackgroundAccentBrush}" 
-                                            Height="36">
+                                            Height="38">
                                         <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
-                                    </Border>
+                                    </Grid>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
@@ -136,7 +133,8 @@
                                                 Background="{Binding Group.Count,Converter={StaticResource ZoomBackgroundConverter}}">
                                             <TextBlock Text="{Binding Group.Key}" 
                                                Foreground="White" 
-                                               FontSize="33" 
+                                               FontSize="32" 
+                                               FontWeight="SemiLight"
                                                HorizontalAlignment="Center" 
                                                VerticalAlignment="Center"/>
                                         </Border>
@@ -374,33 +372,46 @@
             </StackPanel>
         </Grid>
 
-        <ContentDialog Grid.Row="0" Grid.RowSpan="3" x:Name="DigSettings" x:Uid="DigSettings" Title="#DigSettings"
-                       IsPrimaryButtonEnabled="True" PrimaryButtonText="OK">
-            <StackPanel Margin="0,16,0,0">
-                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" Minimum="128" Maximum="1024" StepFrequency="64" IsThumbToolTipEnabled="True" TickPlacement="Outside" HorizontalAlignment="Left" />
+        <ContentDialog Grid.Row="0"
+                       Grid.RowSpan="3" 
+                       x:Name="DigSettings"
+                       x:Uid="DigSettings" 
+                       Title="#DigSettings"
+                       IsPrimaryButtonEnabled="True" 
+                       PrimaryButtonText="OK">
+            <StackPanel Margin="0,10,0,0">
+                <Slider Header="PNG Resolution (pixel)" x:Name="sldResolution" Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" 
+                        Minimum="128" 
+                        Maximum="2048" 
+                        StepFrequency="64" 
+                        IsThumbToolTipEnabled="True" 
+                        TickPlacement="Outside" 
+                        TickFrequency="64"
+                        HorizontalAlignment="Stretch" />
                 <TextBlock Text="{Binding ElementName=sldResolution, Path=Value}" Margin="0,0,0,20" />
 
-                <Slider Header="Character Preview Size (pixel)" x:Name="sldGridSize" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" Minimum="64" Maximum="256" StepFrequency="8" IsThumbToolTipEnabled="True" TickPlacement="Outside" HorizontalAlignment="Left" />
-                <TextBlock Text="Note: Require Restart App." TextWrapping="Wrap" Foreground="#666" Margin="0,0,0,20" />
+                <Slider Header="Character Grid Size" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" 
+                        Minimum="64" 
+                        Maximum="192" 
+                        StepFrequency="8" 
+                        IsThumbToolTipEnabled="True" 
+                        TickPlacement="Outside" 
+                        TickFrequency="8"
+                        HorizontalAlignment="Stretch" />
+                <TextBlock Text="Require Restart App to Take Effect." TextWrapping="Wrap" Foreground="#666" Margin="0,0,0,10" />
 
-                <Button x:Name="BtnRestart" Content="Restart Now" Click="BtnRestart_OnClick" />
+                <Button x:Name="BtnRestart" Content="Restart Now" 
+                        Click="BtnRestart_OnClick" 
+                        Style="{StaticResource ButtonRevealStyle}" />
                 
                 <TextBlock
                     x:Uid="Settings_About"
-                    Text="#Settings_About"
-                    Style="{StaticResource SubtitleTextBlockStyle}" Margin="0,40,0,0"/>
-                <TextBlock
-                    Text="{Binding AppDescription}"
-                    Style="{StaticResource BodyTextStyle}"
-                    Margin="0,4,0,0"/>
-                <TextBlock
-                    x:Uid="Settings_AboutDescription" Text="#Settings_AboutDescription"
-                    Style="{StaticResource BodyTextStyle}"/>
-
-                <TextBlock Text="GitHub" Margin="0,10,0,0" />
-                <HyperlinkButton Content="https://github.com/EdiWang/UWP-CharacterMap" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
-                <HyperlinkButton x:Uid="LnkVisitBlog" Content="#LnkVisitBlog" NavigateUri="http://edi.wang" />
-                <HyperlinkButton NavigateUri="https://github.com/EdiWang/UWP-CharacterMap/graphs/contributors">Contributors</HyperlinkButton>
+                    Text="#Settings_About" 
+                    FontWeight="Bold"
+                    Margin="0,40,0,10"/>
+                <TextBlock Text="{Binding AppNameVersion}" FontSize="14" />
+                <TextBlock x:Uid="Settings_AboutDescription" Text="#Settings_AboutDescription" TextWrapping="Wrap" FontSize="14" />
+                <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
             </StackPanel>
         </ContentDialog>
     </Grid>

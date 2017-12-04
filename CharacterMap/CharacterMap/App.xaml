@@ -74,7 +74,6 @@
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBlock.xaml"/>
                 <ResourceDictionary Source="/Styles/IconButtonStyle.xaml"/>
-                <ResourceDictionary Source="/Styles/NiceToggleSwitchStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
