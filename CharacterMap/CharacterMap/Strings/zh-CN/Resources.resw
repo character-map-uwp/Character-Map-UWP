@@ -132,11 +132,8 @@
   <data name="AppName" xml:space="preserve">
     <value>字符映射表</value>
   </data>
-  <data name="LnkVisitBlog.Content" xml:space="preserve">
-    <value>访问作者博客</value>
-  </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
-    <value>保存PNG</value>
+    <value>保存 PNG</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
     <value>显示所有字体</value>
@@ -153,16 +150,16 @@
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>本应用可替换Windows系统自带的WIN32字符映射表。适配高DPI屏幕的设备。</value>
   </data>
-  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
-    <value>隐私协议</value>
-  </data>
-  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>http://edi.wang/docs/pp-general.html</value>
-  </data>
   <data name="DigSettings.Title" xml:space="preserve">
     <value>设置</value>
   </data>
-  <data name="AfterUpdate_Title.Text" xml:space="preserve">
-    <value>新功能</value>
+  <data name="BtnCopy.Content" xml:space="preserve">
+    <value>复制 (仅字符)</value>
+  </data>
+  <data name="TxtTitle.Text" xml:space="preserve">
+    <value>字符映射表</value>
+  </data>
+  <data name="TxtSymbolIcon.Header" xml:space="preserve">
+    <value>Symbol图标</value>
   </data>
 </root>

@@ -132,9 +132,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Character Map</value>
   </data>
-  <data name="LnkVisitBlog.Content" xml:space="preserve">
-    <value>Visit Author's Blog</value>
-  </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>Save PNG</value>
   </data>
@@ -156,16 +153,13 @@
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>This App is designed to replace Windows system win32 character map. It is more DPI aware on high DPI screens.</value>
   </data>
-  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
-    <value>Privacy Terms</value>
-  </data>
-  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>http://edi.wang/docs/pp-general.html</value>
-  </data>
-  <data name="AfterUpdate_Title.Text" xml:space="preserve">
-    <value>What's New</value>
-  </data>
   <data name="BtnCopy.Content" xml:space="preserve">
     <value>Copy (Text Only)</value>
+  </data>
+  <data name="TxtTitle.Text" xml:space="preserve">
+    <value>Character Map</value>
+  </data>
+  <data name="TxtSymbolIcon.Header" xml:space="preserve">
+    <value>Symbol Icon</value>
   </data>
 </root>

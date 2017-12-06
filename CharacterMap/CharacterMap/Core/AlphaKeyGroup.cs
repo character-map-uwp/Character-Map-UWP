@@ -15,21 +15,31 @@ namespace CharacterMap.Core
         {
             Key = key;
         }
-        private static List<AlphaKeyGroup<T>> CreateDefaultGroups(CharacterGroupings slg)
+
+        //private static List<AlphaKeyGroup<T>> CreateDefaultGroups(CharacterGroupings slg)
+        //{
+        //    return (from cg 
+        //            in slg
+        //            where cg.Label != string.Empty
+        //            select cg.Label == "..." ? 
+        //                new AlphaKeyGroup<T>(GlobeGroupKey) : 
+        //                new AlphaKeyGroup<T>(cg.Label))
+        //            .ToList();
+        //}
+
+        // Work around for Chinese version of Windows
+        // By default, Chinese lanugage group will create useless "拼音A-Z" groups.
+        private static List<AlphaKeyGroup<T>> CreateAZGroups()
         {
-            return (from cg 
-                    in slg
-                    where cg.Label != string.Empty
-                    select cg.Label == "..." ? 
-                        new AlphaKeyGroup<T>(GlobeGroupKey) : 
-                        new AlphaKeyGroup<T>(cg.Label))
-                    .ToList();
+            char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            var list = alpha.Select(c => new AlphaKeyGroup<T>(c.ToString())).ToList();
+            return list;
         }
 
         public static List<AlphaKeyGroup<T>> CreateGroups(IEnumerable<T> items, Func<T, string> keySelector)
         {
             CharacterGroupings slg = new CharacterGroupings();
-            List<AlphaKeyGroup<T>> list = CreateDefaultGroups(slg);
+            List<AlphaKeyGroup<T>> list = CreateAZGroups(); //CreateDefaultGroups(slg);
             foreach (T item in items)
             {
                 int index = 0;

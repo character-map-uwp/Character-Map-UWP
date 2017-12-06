@@ -132,9 +132,6 @@
   <data name="AppName" xml:space="preserve">
     <value>Таблица символов</value>
   </data>
-  <data name="LnkVisitBlog.Content" xml:space="preserve">
-    <value>Посетите блог разработчика</value>
-  </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
     <value>Бэкапить PNG</value>
   </data>
@@ -153,16 +150,7 @@
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>Это аппликация предназначено для замены встроенной карты символов Win32. Гораздо лучше с более высоким разрешением dpi.</value>
   </data>
-  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
-    <value>Privacy Terms</value>
-  </data>
-  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>http://edi.wang/docs/pp-general.html</value>
-  </data>
   <data name="DigSettings.Title" xml:space="preserve">
     <value>Settings</value>
-  </data>
-  <data name="AfterUpdate_Title.Text" xml:space="preserve">
-    <value>Новые</value>
   </data>
 </root>

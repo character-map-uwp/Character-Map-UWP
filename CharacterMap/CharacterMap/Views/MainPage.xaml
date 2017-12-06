@@ -35,7 +35,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Row="0" Text="Character Map" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
+                <TextBlock Grid.Row="0" x:Name="TxtTitle" x:Uid="TxtTitle" Text="#TxtTitle" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button x:Name="BtnSettings" Style="{StaticResource IconButtonStyle}" Click="BtnSettings_OnClick">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE115;" FontSize="15" />
@@ -308,7 +308,7 @@
 
                                     <TextBox Grid.Column="0" Margin="0,5,0,0" 
                                              x:Name="TxtSymbolIcon" 
-                                             Header="Symbol Icon" 
+                                             Header="#TxtSymbolIcon" 
                                              x:Uid="TxtSymbolIcon" 
                                              GotFocus="TxtSymbolIcon_OnGotFocus" 
                                              IsReadOnly="True"

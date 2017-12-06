@@ -132,11 +132,8 @@
   <data name="AppName" xml:space="preserve">
     <value>字元對應表</value>
   </data>
-  <data name="LnkVisitBlog.Content" xml:space="preserve">
-    <value>訪問作者博客</value>
-  </data>
   <data name="BtnSavePng.Content" xml:space="preserve">
-    <value>保存PNG</value>
+    <value>保存 PNG</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
     <value>顯示所有字體</value>
@@ -153,16 +150,16 @@
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>本應用可替換Windows系統自帶的WIN32字元對應表。 適配高DPI螢幕的設備。</value>
   </data>
-  <data name="Settings_PrivacyTermsLink.Content" xml:space="preserve">
-    <value>隐私协议</value>
-  </data>
-  <data name="Settings_PrivacyTermsLink.NavigateUri" xml:space="preserve">
-    <value>http://edi.wang/docs/pp-general.html</value>
-  </data>
   <data name="DigSettings.Title" xml:space="preserve">
-    <value>设置</value>
+    <value>設置</value>
   </data>
-  <data name="AfterUpdate_Title.Text" xml:space="preserve">
-    <value>新功能</value>
+  <data name="BtnCopy.Content" xml:space="preserve">
+    <value>復制</value>
+  </data>
+  <data name="TxtTitle.Text" xml:space="preserve">
+    <value>字元對應表</value>
+  </data>
+  <data name="TxtSymbolIcon.Header" xml:space="preserve">
+    <value>Symbol 圖示</value>
   </data>
 </root>
