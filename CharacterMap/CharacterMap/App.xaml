@@ -6,8 +6,7 @@
     xmlns:converters="using:Edi.UWP.Helpers.Converters"
     xmlns:converters1="using:CharacterMap.Converters"
     xmlns:viewModels="using:CharacterMap.ViewModels"
-    xmlns:core="using:CharacterMap.Core"
-    RequestedTheme="Light">
+    xmlns:core="using:CharacterMap.Core">
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" />
@@ -35,8 +34,7 @@
                     <Style TargetType="TextBlock" x:Key="CharItemUnicodeStyle">
                         <Setter Property="FontFamily" Value="Consolas" />
                         <Setter Property="VerticalAlignment" Value="Bottom" />
-                        <Setter Property="FontSize" Value="12" />
-                        <Setter Property="Margin" Value="0,0,2,0" />
+                        <Setter Property="FontSize" Value="11.5" />
                         <Setter Property="TextAlignment" Value="Center" />
                         <Setter Property="Foreground" Value="#888" />
                     </Style>

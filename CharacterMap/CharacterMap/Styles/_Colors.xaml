@@ -1,5 +1,26 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">    
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <AcrylicBrush x:Key="CMapUwpAcrylicBrush"
+                          BackgroundSource="HostBackdrop"
+                          TintColor="Black"
+                          TintOpacity="0.4"
+                          FallbackColor="{StaticResource SystemAccentColor}"/>
+        </ResourceDictionary>
 
+        <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="CMapUwpAcrylicBrush"
+                             Color="{ThemeResource SystemColorWindowColor}"/>
+        </ResourceDictionary>
+
+        <ResourceDictionary x:Key="Light">
+            <AcrylicBrush x:Key="CMapUwpAcrylicBrush"
+                          BackgroundSource="HostBackdrop"
+                          TintColor="Black"
+                          TintOpacity="0.4"
+                          FallbackColor="{StaticResource SystemAccentColor}"/>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

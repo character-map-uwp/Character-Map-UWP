@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -73,23 +74,11 @@ namespace CharacterMap.Services
                 // Ensure the current window is active
                 Window.Current.Activate();
 
-                var accentColor = Colors.Transparent;
-                var btnHoverColor = Color.FromArgb(128,
-                    (byte)(accentColor.R + 30),
-                    (byte)(accentColor.G + 30),
-                    (byte)(accentColor.B + 30));
-                UI.ApplyColorToTitleBar(
-                    accentColor,
-                    Colors.White,
-                    Colors.LightGray,
-                    Colors.Gray);
-                UI.ApplyColorToTitleButton(
-                    accentColor, Colors.White,
-                    btnHoverColor, Colors.White,
-                    accentColor, Colors.White,
-                    Colors.LightGray, Colors.Gray);
+                ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+                titleBar.ButtonBackgroundColor = Colors.Transparent;
+                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
-                UI.SetWindowLaunchSize(2560, 1440);
+                UI.SetWindowLaunchSize(3000, 2000);
 
                 // Tasks after activation
                 await StartupAsync();

@@ -28,7 +28,7 @@
             <RowDefinition Height="26" />
         </Grid.RowDefinitions>
         <!-- Title Bar Grid-->
-        <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3" RequestedTheme="Dark" Background="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}">
+        <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3" RequestedTheme="Dark" Background="{ThemeResource CMapUwpAcrylicBrush}">
             <Rectangle x:Name="TitleBarBackgroundElement" Fill="Transparent" />
             <Grid Padding="{x:Bind CoreTitleBarPadding, Mode=OneWay}">
                 <Grid.ColumnDefinitions>
@@ -71,7 +71,7 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Grid Grid.Row="0" Background="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}" RequestedTheme="Dark">
+                <Grid Grid.Row="0" Background="{ThemeResource CMapUwpAcrylicBrush}" RequestedTheme="Dark">
                     <ToggleSwitch Margin="10,5,0,5" VerticalAlignment="Bottom" IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}" x:Uid="ToggleSymbolFontsOnly" />
                 </Grid>
 
@@ -153,25 +153,27 @@
                 </Grid.RowDefinitions>
 
                 <!-- Selected Font Title Grid -->
-                <Grid Grid.Row="0" Background="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}" Height="50" RequestedTheme="Dark">
+                <Grid Grid.Row="0" Background="{ThemeResource CMapUwpAcrylicBrush}" Height="50" RequestedTheme="Dark">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="300" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
-                                   Text="{Binding SelectedFont.Name, Mode=OneWay}" 
-                                   FontSize="24" 
-                                   FontWeight="Light" 
-                                   Margin="10,8,10,10" />
+                               Text="{Binding SelectedFont.Name, Mode=OneWay}" 
+                               FontSize="24" 
+                               FontWeight="Light" 
+                               Margin="10,8,10,10" />
 
                     <TextBox Grid.Column="1" 
+                             Width="256"
                              RequestedTheme="Light"
-                             x:Name="SearchBoxUnicode" 
-                             PlaceholderText="Search Unicode e.g. 1F411" 
+                             x:Name="SearchBoxUnicode"
+                             x:Uid="SearchBoxUnicode" PlaceholderText="#SearchBoxUnicode" 
                              HorizontalAlignment="Stretch"
+                             BorderThickness="0"
+                             Margin="0,0,10,10"
                              VerticalAlignment="Bottom"
-                             Margin="10"
                              TextChanged="SearchBoxUnicode_OnTextChanged" />
                 </Grid>
 
@@ -179,8 +181,8 @@
                 <Grid Grid.Row="1" Margin="10">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="11" />
-                        <ColumnDefinition Width="350" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="400" />
                     </Grid.ColumnDefinitions>
                     <GridView x:Name="CharGrid" 
                               IsItemClickEnabled="False"
@@ -327,7 +329,7 @@
 
                     <!--Column Grid Splitter-->
                     <controls1:GridSplitter
-                                Width="11"
+                                Width="10"
                                 Background="{StaticResource SystemControlPageBackgroundBaseLowBrush}"
                                 GripperCursor="SizeWestEast"
                                 Grid.Column="1"
@@ -342,7 +344,11 @@
         </Grid>
 
         <!-- Status Bar -->
-        <Grid Grid.Row="2" Background="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}" RequestedTheme="Dark">
+        <Grid Grid.Row="2" Background="{ThemeResource CMapUwpAcrylicBrush}" RequestedTheme="Dark">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <Grid.Resources>
                 <Style TargetType="TextBlock">
                     <Setter Property="FontSize" Value="13" />
@@ -350,12 +356,7 @@
                 </Style>
             </Grid.Resources>
 
-            <StackPanel Orientation="Horizontal" Margin="5,0">
-                <TextBlock Text="DPI: " />
-                <userControls:DPIIndicator />
-
-                <userControls:StatusBarSeperator Margin="5,0" />
-
+            <StackPanel Orientation="Horizontal" Margin="10,0">
                 <TextBlock Text="Font Family Index: " />
                 <TextBlock Text="{Binding SelectedFont.FamilyIndex}"/>
 
@@ -363,10 +364,9 @@
 
                 <TextBlock Text="{Binding Chars.Count}" />
                 <TextBlock Text="Char(s)" />
+            </StackPanel>
 
-                <userControls:StatusBarSeperator Margin="5,0" />
-
-                <TextBlock Text="Unicode: " />
+            <StackPanel Orientation="Horizontal" Grid.Column="1" Margin="10,0">
                 <TextBlock Text="{Binding SelectedChar.UnicodeString}" />
             </StackPanel>
         </Grid>

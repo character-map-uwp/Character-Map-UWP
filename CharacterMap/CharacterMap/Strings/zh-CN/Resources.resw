@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="TxtUnicode.Header" xml:space="preserve">
-    <value>Unicode编码</value>
+    <value>Unicode 编码</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>选择</value>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>XAML转义代码</value>
+    <value>XAML 转义代码</value>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>字体图标</value>
@@ -148,7 +148,7 @@
     <value>关于</value>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>本应用可替换Windows系统自带的WIN32字符映射表。适配高DPI屏幕的设备。</value>
+    <value>本应用可替换 Windows 10 系统自带的 Win32字符映射表。适配高DPI屏幕的设备。</value>
   </data>
   <data name="DigSettings.Title" xml:space="preserve">
     <value>设置</value>
@@ -161,5 +161,8 @@
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol图标</value>
+  </data>
+  <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
+    <value>检索 Unicode 例: 1F411</value>
   </data>
 </root>
