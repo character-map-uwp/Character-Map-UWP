@@ -6,6 +6,7 @@ using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
+using Windows.UI.ViewManagement;
 using CharacterMap.Core;
 using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
@@ -35,7 +36,7 @@ namespace CharacterMap.ViewModels
             RefreshFontList();
             AppNameVersion = GetAppDescription();
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
-            CommandReview = new RelayCommand(async () => await Edi.UWP.Helpers.Tasks.OpenStoreReviewAsync());
+            CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
         }
 
         private string GetAppDescription()
@@ -49,7 +50,7 @@ namespace CharacterMap.ViewModels
 
         public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
 
-        public RelayCommand CommandReview { get; set; }
+        public RelayCommand CommandToggleFullScreen { get; set; }
 
         private string _appNameVersion;
         public string AppNameVersion
@@ -182,6 +183,15 @@ namespace CharacterMap.ViewModels
         {
             var chars = font.GetCharacters();
             Chars = chars.ToObservableCollection();
+        }
+
+        private void ToggleFullScreenMode()
+        {
+            var view = ApplicationView.GetForCurrentView();
+            if (view.IsFullScreenMode)
+                view.ExitFullScreenMode();
+            else
+                view.TryEnterFullScreenMode();
         }
 
         private void RefreshFontList()

@@ -37,6 +37,10 @@
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" x:Name="TxtTitle" x:Uid="TxtTitle" Text="#TxtTitle" Margin="10,5" HorizontalAlignment="Stretch" FontSize="13" />
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <ToggleButton Command="{Binding CommandToggleFullScreen}"
+                                  x:Uid="ToggleFullScreenModeButton" Background="Transparent">
+                        <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE740;" FontSize="15" />
+                    </ToggleButton>
                     <Button x:Name="BtnSettings" Style="{StaticResource IconButtonStyle}" Click="BtnSettings_OnClick">
                         <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE115;" FontSize="15" />
                     </Button>
