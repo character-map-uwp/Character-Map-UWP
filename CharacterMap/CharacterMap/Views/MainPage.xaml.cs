@@ -151,19 +151,6 @@ namespace CharacterMap.Views
             TxtXamlCode.SelectAll();
         }
 
-        private void SearchBoxUnicode_OnQuerySubmitted(SearchBox sender, SearchBoxQuerySubmittedEventArgs args)
-        {
-            var unicodeIndex = SearchBoxUnicode.QueryText.Trim();
-            int intIndex = Utils.ParseHexString(unicodeIndex);
-
-            var ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-            if (null != ch)
-            {
-                CharGrid.SelectedItem = ch;
-                CharGrid.ScrollIntoView(ch);
-            }
-        }
-
         private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
         {
             Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
@@ -203,6 +190,18 @@ namespace CharacterMap.Views
         private async void BtnRestart_OnClick(object sender, RoutedEventArgs e)
         {
             await DoRestartRequest();
+        }
+
+        private void SearchBoxUnicode_OnTextChanged(object sender, TextChangedEventArgs e)
+        {
+            var unicodeIndex = SearchBoxUnicode.Text.Trim();
+            int intIndex = Utils.ParseHexString(unicodeIndex);
+            var ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
+            if (null != ch)
+            {
+                CharGrid.SelectedItem = ch;
+                CharGrid.ScrollIntoView(ch);
+            }
         }
     }
 }

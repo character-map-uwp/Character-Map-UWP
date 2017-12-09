@@ -253,7 +253,7 @@ namespace CharacterMap.ViewModels
                 {
                     CachedFileManager.DeferUpdates(file);
                     CanvasDevice device = CanvasDevice.GetSharedDevice();
-                    var localDpi = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
+                    var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
                     var canvasH = (float)App.AppSettings.PngSize;
                     var canvasW = (float)App.AppSettings.PngSize;

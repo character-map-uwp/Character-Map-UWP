@@ -156,7 +156,7 @@
                 <Grid Grid.Row="0" Background="{ThemeResource SystemControlChromeHighAcrylicWindowMediumBrush}" Height="50" RequestedTheme="Dark">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="400" />
+                        <ColumnDefinition Width="300" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
@@ -165,23 +165,22 @@
                                    FontWeight="Light" 
                                    Margin="10,8,10,10" />
 
-                    <SearchBox Grid.Column="1" 
-                               x:Name="SearchBoxUnicode" 
-                               PlaceholderText="Unicode" 
-                               HorizontalAlignment="Stretch"
-                               VerticalAlignment="Bottom"
-                               BorderThickness="0"
-                               Margin="10"
-                               SearchHistoryEnabled="True" 
-                               QuerySubmitted="SearchBoxUnicode_OnQuerySubmitted" />
+                    <TextBox Grid.Column="1" 
+                             RequestedTheme="Light"
+                             x:Name="SearchBoxUnicode" 
+                             PlaceholderText="Search Unicode e.g. 1F411" 
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Bottom"
+                             Margin="10"
+                             TextChanged="SearchBoxUnicode_OnTextChanged" />
                 </Grid>
 
                 <!-- Char Browsing Grid -->
                 <Grid Grid.Row="1" Margin="10">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="11" />
-                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="350" />
                     </Grid.ColumnDefinitions>
                     <GridView x:Name="CharGrid" 
                               IsItemClickEnabled="False"
