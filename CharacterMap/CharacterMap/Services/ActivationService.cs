@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CharacterMap.Activation;
 using CharacterMap.Helpers;
+using CommonServiceLocator;
 using Edi.UWP.Helpers;
 using GalaSoft.MvvmLight.Threading;
 
@@ -22,7 +23,7 @@ namespace CharacterMap.Services
         private readonly UIElement _shell;
         private readonly Type _defaultNavItem;
 
-        private NavigationServiceEx NavigationService => Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<NavigationServiceEx>();
+        private NavigationServiceEx NavigationService => ServiceLocator.Current.GetInstance<NavigationServiceEx>();
 
 
         public ActivationService(App app, Type defaultNavItem, UIElement shell = null)

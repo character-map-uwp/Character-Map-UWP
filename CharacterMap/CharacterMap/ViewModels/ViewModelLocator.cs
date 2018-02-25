@@ -1,8 +1,8 @@
 using CharacterMap.Services;
 using CharacterMap.Views;
+using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Practices.ServiceLocation;
 
 namespace CharacterMap.ViewModels
 {

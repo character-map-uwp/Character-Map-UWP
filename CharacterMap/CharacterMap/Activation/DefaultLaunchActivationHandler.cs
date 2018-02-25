@@ -5,6 +5,7 @@ using CharacterMap.Helpers;
 using CharacterMap.Services;
 
 using Windows.ApplicationModel.Activation;
+using CommonServiceLocator;
 
 namespace CharacterMap.Activation
 {
@@ -12,7 +13,7 @@ namespace CharacterMap.Activation
     {
         private readonly string _navElement;
     
-        private NavigationServiceEx NavigationService => Microsoft.Practices.ServiceLocation.ServiceLocator.Current.GetInstance<NavigationServiceEx>();
+        private NavigationServiceEx NavigationService => ServiceLocator.Current.GetInstance<NavigationServiceEx>();
 
         public DefaultLaunchActivationHandler(Type navElement)
         {
