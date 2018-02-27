@@ -23,12 +23,12 @@
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" KeyDown="LayoutRoot_KeyDown" KeyUp="LayoutRoot_KeyUp">
         <Grid.RowDefinitions>
-            <RowDefinition Height="32" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="26" />
         </Grid.RowDefinitions>
         <!-- Title Bar Grid-->
-        <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" Canvas.ZIndex="3" RequestedTheme="Dark" Background="{ThemeResource CMapUwpAcrylicBrush}">
+        <Grid Grid.Row="0" Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}" RequestedTheme="Dark" Background="{ThemeResource CMapUwpAcrylicBrush}">
             <Rectangle x:Name="TitleBarBackgroundElement" Fill="Transparent" />
             <Grid Padding="{x:Bind CoreTitleBarPadding, Mode=OneWay}">
                 <Grid.ColumnDefinitions>
