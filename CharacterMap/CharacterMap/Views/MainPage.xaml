@@ -415,6 +415,8 @@
                 <TextBlock Text="{Binding AppNameVersion}" FontSize="14" />
                 <TextBlock x:Uid="Settings_AboutDescription" Text="#Settings_AboutDescription" TextWrapping="Wrap" FontSize="14" />
                 <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
+
+                <HyperlinkButton Content="Feedback" Command="{Binding CommandFeedback}" />
             </StackPanel>
         </ContentDialog>
     </Grid>
