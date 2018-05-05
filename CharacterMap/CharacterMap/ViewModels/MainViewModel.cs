@@ -37,6 +37,11 @@ namespace CharacterMap.ViewModels
             AppNameVersion = GetAppDescription();
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
+            CommandFeedback = new RelayCommand(async () =>
+            {
+                var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
+                await launcher.LaunchAsync();
+            });
         }
 
         private string GetAppDescription()
@@ -51,6 +56,8 @@ namespace CharacterMap.ViewModels
         public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
 
         public RelayCommand CommandToggleFullScreen { get; set; }
+
+        public RelayCommand CommandFeedback { get; set; }
 
         private string _appNameVersion;
         public string AppNameVersion

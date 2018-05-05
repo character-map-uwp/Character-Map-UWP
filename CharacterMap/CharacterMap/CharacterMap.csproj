@@ -103,6 +103,12 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
+      <Name>Microsoft Engagement Framework</Name>
+    </SDKReference>
+    <PackageReference Include="Microsoft.Services.Store.Engagement">
+      <Version>10.1711.28001</Version>
+    </PackageReference>
     <PackageReference Include="SharpDX">
       <Version>4.0.1</Version>
     </PackageReference>
