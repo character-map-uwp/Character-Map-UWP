@@ -198,7 +198,7 @@ namespace CharacterMap.ViewModels
         {
             try
             {
-                var fontList = InstalledFont.GetFonts();
+                var fontList = FontFinder.GetFonts();
                 FontList = fontList.Where(f => f.IsSymbolFont || !ShowSymbolFontsOnly)
                                    .OrderBy(f => f.Name)
                                    .ToObservableCollection();

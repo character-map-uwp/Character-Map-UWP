@@ -1,20 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using SharpDX.DirectWrite;
 
 namespace CharacterMap.Core
 {
-    public class InstalledFont
+    public class FontFinder
     {
-        public string Name { get; set; }
-
-        public int FamilyIndex { get; set; }
-
-        public bool IsSymbolFont { get; set; }
-
-        public int Index { get; set; }
-
         public static FontCollection FontCollection { get; set; }
 
         public static List<InstalledFont> GetFonts()
@@ -60,27 +53,51 @@ namespace CharacterMap.Core
 
             return fontList;
         }
+    }
+
+    public class InstalledFont
+    {
+        public string Name { get; set; }
+
+        public int FamilyIndex { get; set; }
+
+        public bool IsSymbolFont { get; set; }
+
+        public int Index { get; set; }
+
+        private List<Character> Characters { get; set; }
+
+        public InstalledFont()
+        {
+            Characters = new List<Character>();
+        }
 
         public List<Character> GetCharacters()
         {
-            var fontFamily = FontCollection.GetFontFamily(FamilyIndex);
-            var font = fontFamily.GetFont(Index);
-
-            var characters = new List<Character>();
-            var count = 65536 * 4 - 1;
-            for (var i = 0; i < count; i++)
+            if (!Characters.Any())
             {
-                if (font.HasCharacter(i))
+                var fontFamily = FontFinder.FontCollection.GetFontFamily(FamilyIndex);
+                var font = fontFamily.GetFont(Index);
+
+                var characters = new List<Character>();
+                var count = 65536 * 4 - 1;
+                for (var i = 0; i < count; i++)
                 {
-                    characters.Add(new Character
+                    if (font.HasCharacter(i))
                     {
-                        Char = char.ConvertFromUtf32(i),
-                        UnicodeIndex = i
-                    });
+                        characters.Add(new Character
+                        {
+                            Char = char.ConvertFromUtf32(i),
+                            UnicodeIndex = i
+                        });
+                    }
                 }
+
+                Characters = characters;
+                return characters;
             }
 
-            return characters;
+            return Characters;
         }
     }
 
