@@ -288,7 +288,7 @@ namespace CharacterMap.ViewModels
                         var fontSize = (float)d;
 
                         bool isEmoji = SelectedFont.Name == "Segoe UI Emoji";
-                        if (isEmoji)
+                        if (isEmoji || SelectedFont.Name == "Segoe UI Symbol")
                         {
                             fontSize *= 0.75f;
                         }
