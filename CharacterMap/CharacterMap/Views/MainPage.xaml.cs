@@ -38,9 +38,14 @@ namespace CharacterMap.Views
                 switch (e.Key)
                 {
                     case VirtualKey.C:
-                        if (CharGrid.SelectedItem is Character character)
+                        if (CharGrid.SelectedItem is Character character && 
+                            !TxtSymbolIcon.SelectedText.Any() && 
+                            !TxtFontIcon.SelectedText.Any() && 
+                            !TxtXamlCode.SelectedText.Any())
+                        {
                             Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
-                        BorderFadeInStoryboard.Begin();
+                            BorderFadeInStoryboard.Begin();
+                        }
                         break;
                 }
             }
