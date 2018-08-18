@@ -154,7 +154,7 @@
     <value>This App is designed to replace Windows system win32 character map. It is more DPI aware on high DPI screens.</value>
   </data>
   <data name="BtnCopy.Content" xml:space="preserve">
-    <value>Copy (Text Only)</value>
+    <value>Copy (Character Only)</value>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>Character Map</value>
