@@ -21,7 +21,7 @@
         <CollectionViewSource x:Name="GroupedFontList" x:Key="GroupedFontList" IsSourceGrouped="True" Source="{Binding GroupedFontList}"/>
     </Page.Resources>
 
-    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" KeyDown="LayoutRoot_KeyDown" KeyUp="LayoutRoot_KeyUp">
+    <Grid KeyDown="LayoutRoot_KeyDown" KeyUp="LayoutRoot_KeyUp">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
