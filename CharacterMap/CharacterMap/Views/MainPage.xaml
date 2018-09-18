@@ -260,238 +260,239 @@
                     IsHitTestVisible="False" />
 
                 <!--  Preview Grid  -->
-                <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
-                    <Grid x:Name="PreviewGrid" SizeChanged="PreviewGrid_SizeChanged">
+                <Grid
+                    x:Name="PreviewGrid"
+                    Grid.Column="2"
+                    SizeChanged="PreviewGrid_SizeChanged">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Viewbox
+                        MinHeight="200"
+                        Margin="30"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Stretch="Uniform"
+                        StretchDirection="Both">
+                        <TextBlock
+                            x:Name="TxtPreview"
+                            FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedItem, Converter={StaticResource InstalledFontToFontFamilyConverter}}"
+                            Text="{Binding SelectedChar.Char}"
+                            TextAlignment="Center" />
+                    </Viewbox>
+
+                    <Border
+                        x:Name="BorderCopiedMessage"
+                        Grid.Row="0"
+                        Margin="15"
+                        Padding="12"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Bottom"
+                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                        Opacity="0">
+                        <StackPanel Orientation="Horizontal">
+                            <FontIcon
+                                FontSize="21"
+                                Foreground="#ffffff"
+                                Glyph="&#xEC61;" />
+                            <TextBlock
+                                x:Name="TxtCopiedMessage"
+                                x:Uid="TxtCopiedMessage"
+                                Margin="8,0,0,0"
+                                Foreground="#ffffff"
+                                Text="#TxtCopiedMessage" />
+                        </StackPanel>
+                    </Border>
+
+                    <Grid Grid.Row="2">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
+                            <RowDefinition Height="2" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="2" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <Viewbox
-                            MinHeight="200"
-                            Margin="30"
+                        <Rectangle
+                            Height="2"
+                            Margin="15,0"
                             HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
-                            Stretch="Uniform"
-                            StretchDirection="Both">
-                            <TextBlock
-                                x:Name="TxtPreview"
-                                FontFamily="{Binding ElementName=LstFontFamily, Path=SelectedItem, Converter={StaticResource InstalledFontToFontFamilyConverter}}"
-                                Text="{Binding SelectedChar.Char}"
-                                TextAlignment="Center" />
-                        </Viewbox>
+                            Fill="{ThemeResource ApplicationForegroundThemeBrush}"
+                            Opacity="0.15" />
 
-                        <Border
-                            x:Name="BorderCopiedMessage"
-                            Grid.Row="0"
-                            Margin="15"
-                            Padding="12"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Bottom"
-                            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                            Opacity="0">
-                            <StackPanel Orientation="Horizontal">
-                                <FontIcon
-                                    FontSize="21"
-                                    Foreground="#ffffff"
-                                    Glyph="&#xEC61;" />
+                        <Button
+                            Grid.Row="1"
+                            Height="54"
+                            Click="BtnCopy_OnClick"
+                            Style="{ThemeResource TransparentButton}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE16F;" />
                                 <TextBlock
-                                    x:Name="TxtCopiedMessage"
-                                    x:Uid="TxtCopiedMessage"
-                                    Margin="8,0,0,0"
-                                    Foreground="#ffffff"
-                                    Text="#TxtCopiedMessage" />
-                            </StackPanel>
-                        </Border>
+                                    x:Uid="BtnCopy"
+                                    Grid.Column="1"
+                                    Margin="0,0,5,0"
+                                    Text="#BtnCopy"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                        </Button>
 
-                        <Grid Grid.Row="2">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="2" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="2" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
+                        <CommandBar
+                            x:Name="SaveAsCommandBar"
+                            Grid.Row="2"
+                            Grid.RowSpan="5"
+                            Height="54"
+                            VerticalAlignment="Top"
+                            Style="{ThemeResource SaveAsPNGCommandBar}">
+                            <CommandBar.SecondaryCommands>
+                                <AppBarButton
+                                    Background="Transparent"
+                                    Command="{Binding CommandSavePng}"
+                                    CommandParameter="{StaticResource TrueValue}"
+                                    Style="{ThemeResource TransparentButton}">
+                                    <AppBarButton.Content>
+                                        <TextBlock Margin="12,10" Text="Black text" />
+                                    </AppBarButton.Content>
+                                </AppBarButton>
+                                <AppBarButton
+                                    VerticalContentAlignment="Stretch"
+                                    Background="Transparent"
+                                    Command="{Binding CommandSavePng}"
+                                    CommandParameter="{StaticResource FalseValue}"
+                                    Style="{ThemeResource TransparentButton}">
+                                    <AppBarButton.Content>
+                                        <TextBlock Margin="12,10" Text="White text" />
+                                    </AppBarButton.Content>
+                                </AppBarButton>
+                            </CommandBar.SecondaryCommands>
+                        </CommandBar>
 
-                            <Rectangle
-                                Height="2"
-                                Margin="15,0"
-                                HorizontalAlignment="Stretch"
-                                Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                Opacity="0.15" />
-
-                            <Button
-                                Grid.Row="1"
-                                Height="54"
-                                Click="BtnCopy_OnClick"
-                                Style="{ThemeResource TransparentButton}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="50" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE16F;" />
-                                    <TextBlock
-                                        x:Uid="BtnCopy"
-                                        Grid.Column="1"
-                                        Margin="0,0,5,0"
-                                        Text="#BtnCopy"
-                                        TextTrimming="CharacterEllipsis" />
-                                </Grid>
-                            </Button>
-
-                            <CommandBar
-                                x:Name="SaveAsCommandBar"
-                                Grid.Row="2"
-                                Grid.RowSpan="5"
-                                Height="54"
-                                VerticalAlignment="Top"
-                                Style="{ThemeResource SaveAsPNGCommandBar}">
-                                <CommandBar.SecondaryCommands>
-                                    <AppBarButton
-                                        Background="Transparent"
-                                        Command="{Binding CommandSavePng}"
-                                        CommandParameter="{StaticResource TrueValue}"
-                                        Style="{ThemeResource TransparentButton}">
-                                        <AppBarButton.Content>
-                                            <TextBlock Margin="12,10" Text="Black text" />
-                                        </AppBarButton.Content>
-                                    </AppBarButton>
-                                    <AppBarButton
-                                        VerticalContentAlignment="Stretch"
-                                        Background="Transparent"
-                                        Command="{Binding CommandSavePng}"
-                                        CommandParameter="{StaticResource FalseValue}"
-                                        Style="{ThemeResource TransparentButton}">
-                                        <AppBarButton.Content>
-                                            <TextBlock Margin="12,10" Text="White text" />
-                                        </AppBarButton.Content>
-                                    </AppBarButton>
-                                </CommandBar.SecondaryCommands>
-                            </CommandBar>
-
-                            <Button
-                                Grid.Row="2"
-                                Height="54"
-                                Click="BtnSaveAs_OnClick"
-                                Style="{ThemeResource TransparentButton}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="50" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="50" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xEB9F;" />
-                                    <TextBlock
-                                        x:Uid="BtnSavePng"
-                                        Grid.Column="1"
-                                        Margin="0,0,5,0"
-                                        VerticalAlignment="Center"
-                                        Text="#BtnSavePng"
-                                        TextTrimming="CharacterEllipsis" />
-                                    <FontIcon
-                                        Grid.Column="2"
-                                        FontSize="13"
-                                        Glyph="&#xE972;" />
-                                </Grid>
-                            </Button>
-
-                            <Rectangle
-                                Grid.Row="3"
-                                Height="2"
-                                Margin="15,0"
-                                HorizontalAlignment="Stretch"
-                                Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                Opacity="0.15" />
-
-                            <Grid Grid.Row="4">
+                        <Button
+                            Grid.Row="2"
+                            Height="54"
+                            Click="BtnSaveAs_OnClick"
+                            Style="{ThemeResource TransparentButton}">
+                            <Grid>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="50" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBox
-                                    x:Name="TxtXamlCode"
-                                    x:Uid="TxtXamlCode"
-                                    Margin="0,15,0,0"
-                                    FontFamily="Consolas"
-                                    FontSize="14"
-                                    GotFocus="TxtXamlCode_OnGotFocus"
-                                    Header="#TxtXamlCode"
-                                    IsReadOnly="True"
-                                    Text="{Binding XamlCode}" />
-                                <AppBarButton
-                                    x:Name="BtnCopyXamlCode"
+                                <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xEB9F;" />
+                                <TextBlock
+                                    x:Uid="BtnSavePng"
                                     Grid.Column="1"
-                                    Width="50"
-                                    Height="50"
-                                    VerticalAlignment="Bottom"
-                                    Click="BtnCopyXamlCode_OnClick">
-                                    <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                                </AppBarButton>
+                                    Margin="0,0,5,0"
+                                    VerticalAlignment="Center"
+                                    Text="#BtnSavePng"
+                                    TextTrimming="CharacterEllipsis" />
+                                <FontIcon
+                                    Grid.Column="2"
+                                    FontSize="13"
+                                    Glyph="&#xE972;" />
                             </Grid>
+                        </Button>
 
-                            <Grid Grid.Row="5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="50" />
-                                </Grid.ColumnDefinitions>
+                        <Rectangle
+                            Grid.Row="3"
+                            Height="2"
+                            Margin="15,0"
+                            HorizontalAlignment="Stretch"
+                            Fill="{ThemeResource ApplicationForegroundThemeBrush}"
+                            Opacity="0.15" />
 
-                                <TextBox
-                                    x:Name="TxtFontIcon"
-                                    x:Uid="TxtFontIcon"
-                                    Margin="0,7,0,0"
-                                    FontFamily="Consolas"
-                                    FontSize="14"
-                                    GotFocus="TxtFontIcon_OnGotFocus"
-                                    Header="#TxtFontIcon"
-                                    IsReadOnly="True"
-                                    Text="{Binding FontIcon}" />
-                                <AppBarButton
-                                    x:Name="BtnCopyFontIcon"
-                                    Grid.Column="1"
-                                    Width="50"
-                                    Height="50"
-                                    VerticalAlignment="Bottom"
-                                    Click="BtnCopyFontIcon_OnClick">
-                                    <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                                </AppBarButton>
-                            </Grid>
+                        <Grid Grid.Row="4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
 
-                            <Grid Grid.Row="6">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="50" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBox
-                                    x:Name="TxtSymbolIcon"
-                                    x:Uid="TxtSymbolIcon"
-                                    Margin="0,7,0,0"
-                                    FontFamily="Consolas"
-                                    FontSize="14"
-                                    GotFocus="TxtSymbolIcon_OnGotFocus"
-                                    Header="#TxtSymbolIcon"
-                                    IsReadOnly="True"
-                                    Text="{Binding SymbolIcon}" />
-                                <AppBarButton
-                                    x:Name="BtnCopySymbolIcon"
-                                    Grid.Column="1"
-                                    Width="50"
-                                    Height="50"
-                                    VerticalAlignment="Bottom"
-                                    Click="BtnCopySymbolIcon_OnClick">
-                                    <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                                </AppBarButton>
-                            </Grid>
-
+                            <TextBox
+                                x:Name="TxtXamlCode"
+                                x:Uid="TxtXamlCode"
+                                Margin="0,15,0,0"
+                                FontFamily="Consolas"
+                                FontSize="14"
+                                GotFocus="TxtXamlCode_OnGotFocus"
+                                Header="#TxtXamlCode"
+                                IsReadOnly="True"
+                                Text="{Binding XamlCode}" />
+                            <AppBarButton
+                                x:Name="BtnCopyXamlCode"
+                                Grid.Column="1"
+                                Width="50"
+                                Height="50"
+                                VerticalAlignment="Bottom"
+                                Click="BtnCopyXamlCode_OnClick">
+                                <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                            </AppBarButton>
                         </Grid>
+
+                        <Grid Grid.Row="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox
+                                x:Name="TxtFontIcon"
+                                x:Uid="TxtFontIcon"
+                                Margin="0,7,0,0"
+                                FontFamily="Consolas"
+                                FontSize="14"
+                                GotFocus="TxtFontIcon_OnGotFocus"
+                                Header="#TxtFontIcon"
+                                IsReadOnly="True"
+                                Text="{Binding FontIcon}" />
+                            <AppBarButton
+                                x:Name="BtnCopyFontIcon"
+                                Grid.Column="1"
+                                Width="50"
+                                Height="50"
+                                VerticalAlignment="Bottom"
+                                Click="BtnCopyFontIcon_OnClick">
+                                <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                            </AppBarButton>
+                        </Grid>
+
+                        <Grid Grid.Row="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="50" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox
+                                x:Name="TxtSymbolIcon"
+                                x:Uid="TxtSymbolIcon"
+                                Margin="0,7,0,0"
+                                FontFamily="Consolas"
+                                FontSize="14"
+                                GotFocus="TxtSymbolIcon_OnGotFocus"
+                                Header="#TxtSymbolIcon"
+                                IsReadOnly="True"
+                                Text="{Binding SymbolIcon}" />
+                            <AppBarButton
+                                x:Name="BtnCopySymbolIcon"
+                                Grid.Column="1"
+                                Width="50"
+                                Height="50"
+                                VerticalAlignment="Bottom"
+                                Click="BtnCopySymbolIcon_OnClick">
+                                <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                            </AppBarButton>
+                        </Grid>
+
                     </Grid>
-                </ScrollViewer>
+                </Grid>
             </Grid>
         </Grid>
 
