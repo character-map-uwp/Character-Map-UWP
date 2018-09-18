@@ -14,7 +14,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 using CharacterMap.Annotations;
 using CharacterMap.Core;
-using CharacterMap.Helpers;
 using CharacterMap.ViewModels;
 
 namespace CharacterMap.Views
@@ -25,35 +24,27 @@ namespace CharacterMap.Views
 
         private bool _isCtrlKeyPressed;
 
-        private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
+        public MainPage()
         {
-            if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = false;
+            this.InitializeComponent();
+
+            SetTitleBar();
+
+            this.ViewModel = this.DataContext as MainViewModel;
+            this.NavigationCacheMode = NavigationCacheMode.Enabled;
         }
 
-        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = true;
-            else if (_isCtrlKeyPressed)
+            if (null != LstFontFamily.SelectedItem)
             {
-                switch (e.Key)
+                LstFontFamily.ScrollIntoView(LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+
+                if (null != CharGrid.SelectedItem)
                 {
-                    case VirtualKey.C:
-                        if (CharGrid.SelectedItem is Character character && 
-                            !TxtSymbolIcon.SelectedText.Any() && 
-                            !TxtFontIcon.SelectedText.Any() && 
-                            !TxtXamlCode.SelectedText.Any())
-                        {
-                            Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
-                            BorderFadeInStoryboard.Begin();
-                        }
-                        break;
+                    CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Leading);
                 }
             }
-        }
-
-        private async Task DoRestartRequest()
-        {
-            await CoreApplication.RequestRestartAsync(string.Empty);
         }
 
         #region Title Bar
@@ -93,44 +84,16 @@ namespace CharacterMap.Views
             OnPropertyChanged(nameof(CoreTitleBarPadding));
         }
 
-        #endregion
-
-        public MainPage()
+        private void SetTitleBar()
         {
-            this.InitializeComponent();
-            this.ViewModel = this.DataContext as MainViewModel;
-            this.NavigationCacheMode = NavigationCacheMode.Enabled;
-
-            BorderFadeInStoryboard.Completed += async (o, _) =>
-            {
-                await Task.Delay(1000);
-                BorderFadeOutStoryboard.Begin();
-            };
-        }
-
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-            _coreTitleBar.ExtendViewIntoTitleBar = true;
             Window.Current.SetTitleBar(TitleBarBackgroundElement);
-        }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
-        {
             _coreTitleBar.LayoutMetricsChanged += OnLayoutMetricsChanged;
             Window.Current.SizeChanged += OnWindowSizeChanged;
             UpdateLayoutMetrics();
-
-            if (null != LstFontFamily.SelectedItem)
-            {
-                LstFontFamily.ScrollIntoView(LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
-
-                if (null != CharGrid.SelectedItem)
-                {
-                    CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Leading);
-                }
-            }
         }
+
+        #endregion
 
         private void BtnCopy_OnClick(object sender, RoutedEventArgs e)
         {
@@ -144,6 +107,11 @@ namespace CharacterMap.Views
                 Clipboard.SetContent(dp);
             }
             BorderFadeInStoryboard.Begin();
+        }
+
+        private void BtnSaveAs_OnClick(object sender, RoutedEventArgs e)
+        {
+            SaveAsCommandBar.IsOpen = !SaveAsCommandBar.IsOpen;
         }
 
         private void TxtFontIcon_OnGotFocus(object sender, RoutedEventArgs e)
@@ -206,6 +174,53 @@ namespace CharacterMap.Views
             {
                 CharGrid.SelectedItem = ch;
                 CharGrid.ScrollIntoView(ch);
+            }
+        }
+
+        private void PreviewGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            var newSize = e.NewSize.Width - 2;
+
+            foreach (AppBarButton item in SaveAsCommandBar.SecondaryCommands.ToList())
+            {
+                item.Width = newSize;
+            }
+        }
+
+        private async Task DoRestartRequest()
+        {
+            await CoreApplication.RequestRestartAsync(string.Empty);
+        }
+
+        private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = false;
+        }
+
+        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Control)
+            {
+                _isCtrlKeyPressed = true;
+                return;
+            }
+
+            if (_isCtrlKeyPressed)
+            {
+                switch (e.Key)
+                {
+                    case VirtualKey.C:
+                        if (CharGrid.SelectedItem is Character character &&
+                            !TxtSymbolIcon.SelectedText.Any() &&
+                            !TxtFontIcon.SelectedText.Any() &&
+                            !TxtXamlCode.SelectedText.Any())
+                        {
+                            Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
+                            BorderFadeInStoryboard.Begin();
+                        }
+
+                        break;
+                }
             }
         }
     }

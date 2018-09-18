@@ -5,6 +5,7 @@ using Windows.UI.Xaml;
 using CharacterMap.Core;
 using CharacterMap.Services;
 using Edi.UWP.Helpers;
+using CharacterMap.Helpers;
 
 namespace CharacterMap
 {
@@ -21,6 +22,8 @@ namespace CharacterMap
             AppSettings = new AppSettings();
             this.UnhandledException += OnUnhandledException;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
+
+            this.FocusVisualKind = FocusVisualKind.HighVisibility;
         }
 
         private void RegisterExceptionHandlingSynchronizationContext()

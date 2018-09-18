@@ -1,26 +1,27 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
-            <AcrylicBrush x:Key="CMapUwpAcrylicBrush"
-                          BackgroundSource="HostBackdrop"
-                          TintColor="Black"
-                          TintOpacity="0.4"
-                          FallbackColor="{StaticResource SystemAccentColor}"/>
+            <AcrylicBrush
+                x:Key="CMapUwpAcrylicBrush"
+                BackgroundSource="HostBackdrop"
+                FallbackColor="#212121"
+                TintColor="#101010"
+                TintOpacity="0.5" />
+            <SolidColorBrush x:Key="FontListBrush" Color="#212121" />
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="HighContrast">
-            <SolidColorBrush x:Key="CMapUwpAcrylicBrush"
-                             Color="{ThemeResource SystemColorWindowColor}"/>
+            <SolidColorBrush x:Key="CMapUwpAcrylicBrush" Color="{ThemeResource SystemColorWindowColor}" />
         </ResourceDictionary>
 
         <ResourceDictionary x:Key="Light">
-            <AcrylicBrush x:Key="CMapUwpAcrylicBrush"
-                          BackgroundSource="HostBackdrop"
-                          TintColor="Black"
-                          TintOpacity="0.4"
-                          FallbackColor="{StaticResource SystemAccentColor}"/>
+            <AcrylicBrush
+                x:Key="CMapUwpAcrylicBrush"
+                BackgroundSource="HostBackdrop"
+                FallbackColor="#e3e3e3"
+                TintColor="#efefef"
+                TintOpacity="0.5" />
+            <SolidColorBrush x:Key="FontListBrush" Color="#e3e3e3" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 </ResourceDictionary>

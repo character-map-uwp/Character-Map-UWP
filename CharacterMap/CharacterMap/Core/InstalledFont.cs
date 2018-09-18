@@ -44,7 +44,7 @@ namespace CharacterMap.Core
                             });
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // Corrupted font files throw an exception
                     }
@@ -85,9 +85,11 @@ namespace CharacterMap.Core
                 {
                     if (font.HasCharacter(i))
                     {
+                        string character = char.ConvertFromUtf32(i);
+
                         characters.Add(new Character
                         {
-                            Char = char.ConvertFromUtf32(i),
+                            Char = character,
                             UnicodeIndex = i
                         });
                     }

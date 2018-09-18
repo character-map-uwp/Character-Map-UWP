@@ -132,7 +132,7 @@
   <data name="AppName" xml:space="preserve">
     <value>Таблица символов</value>
   </data>
-  <data name="BtnSavePng.Content" xml:space="preserve">
+  <data name="BtnSavePng.Text" xml:space="preserve">
     <value>Бэкапить PNG</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">

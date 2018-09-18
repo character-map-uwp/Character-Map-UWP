@@ -48,6 +48,10 @@ namespace CharacterMap.Services
                     Window.Current.Content = _shell;
                     NavigationService.Frame.NavigationFailed += (sender, e) => throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
                     NavigationService.Frame.Navigated += OnFrameNavigated;
+
+                    TitleBarHelper.ExtendTitleBar();
+                    TitleBarHelper.SetTitleBarColors();
+
                     if (SystemNavigationManager.GetForCurrentView() != null)
                     {
                         SystemNavigationManager.GetForCurrentView().BackRequested += OnAppViewBackButtonRequested;
@@ -74,10 +78,6 @@ namespace CharacterMap.Services
 
                 // Ensure the current window is active
                 Window.Current.Activate();
-
-                ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
-                titleBar.ButtonBackgroundColor = Colors.Transparent;
-                titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
                 UI.SetWindowLaunchSize(3000, 2000);
 
