@@ -87,11 +87,6 @@ namespace CharacterMap.Core
                     {
                         string character = char.ConvertFromUtf32(i);
 
-                        ////if (!char.IsWhiteSpace(char.Parse(character)))
-                        ////{
-                            
-                        ////}
-
                         characters.Add(new Character
                         {
                             Char = character,
