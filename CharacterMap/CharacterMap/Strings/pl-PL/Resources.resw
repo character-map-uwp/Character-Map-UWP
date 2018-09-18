@@ -118,51 +118,51 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AppName" xml:space="preserve">
-    <value>Character Map</value>
+    <value>Tablica znaków</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
-    <value>Copy (character only)</value>
+    <value>Kopiuj (tylko znak)</value>
   </data>
   <data name="BtnSavePng.Text" xml:space="preserve">
-    <value>Save as PNG</value>
+    <value>Zapisz jako PNG</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
-    <value>Select</value>
+    <value>Zaznacz</value>
   </data>
   <data name="DigSettings.Title" xml:space="preserve">
-    <value>Settings</value>
+    <value>Ustawienia</value>
   </data>
   <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
-    <value>Search Unicode e.g. 1F411</value>
+    <value>Szukaj Unicode np. E12B</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>About this application</value>
+    <value>O aplikacji</value>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>This App is designed to replace Windows system win32 character map. It is more DPI aware on high DPI screens.</value>
+    <value>Ta aplikacja została zaprojektowana by zastąpić domyślną Tablicę znaków dostępną w systemie Windows. Wyróżnia się lepszą obsługą DPI na ekranach wysokiej rozdzielczości.</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>All Fonts</value>
+    <value>Wszystkie czcionki</value>
   </data>
   <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>Show Symbol Fonts Only</value>
+    <value>Tylko czcionki z symbolami</value>
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
-    <value>Copied</value>
+    <value>Skopiowano</value>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>FontIcon</value>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
-    <value>Symbol Icon</value>
+    <value>SymbolIcon</value>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
-    <value>Character Map</value>
+    <value>Tablica znaków</value>
   </data>
   <data name="TxtUnicode.Header" xml:space="preserve">
     <value>Unicode</value>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>XAML Code</value>
+    <value>Kod XAML</value>
   </data>
 </root>

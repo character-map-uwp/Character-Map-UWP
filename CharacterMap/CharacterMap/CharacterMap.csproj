@@ -151,6 +151,7 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="CharacterMap_StoreKey.pfx" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
+    <PRIResource Include="Strings\pl-PL\Resources.resw" />
     <PRIResource Include="Strings\ru-RU\Resources.resw" />
     <PRIResource Include="Strings\fr-FR\Resources.resw" />
     <PRIResource Include="Strings\de-DE\Resources.resw" />
@@ -171,16 +172,13 @@
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\InstalledFont.cs" />
     <Compile Include="Helpers\Json.cs" />
-    <Compile Include="Helpers\ResourceExtensions.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Helpers\TitleBarHelper.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
     <Compile Include="Services\ToastNotificationsService.cs" />
-    <Compile Include="UserControls\StatusBarSeperator.xaml.cs">
-      <DependentUpon>StatusBarSeperator.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -256,9 +254,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="UserControls\StatusBarSeperator.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Styles\Button.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\CommandBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ContentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\TextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
