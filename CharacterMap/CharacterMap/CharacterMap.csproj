@@ -135,7 +135,7 @@
     </PackageReference>
     <!-- Nuget package references -->
     <PackageReference Include="MvvmLight">
-      <Version>5.4.1</Version>
+      <Version>5.4.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
       <Version>4.0.0</Version>
