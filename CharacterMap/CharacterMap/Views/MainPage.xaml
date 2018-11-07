@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:CharacterMap"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:CharacterMap.Converters"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     Loaded="MainPage_Loaded"
     mc:Ignorable="d">
@@ -15,6 +16,7 @@
         <x:Boolean x:Key="TrueValue">True</x:Boolean>
         <x:Boolean x:Key="FalseValue">False</x:Boolean>
         <core:AppSettings x:Key="AppSettings" />
+        <converters:SmartTextColorBasedOnAccentTypeConverter x:Key="SmartTextColorBasedOnAccentTypeConverter" />
         <CollectionViewSource
             x:Key="GroupedFontList"
             x:Name="GroupedFontList"
@@ -39,7 +41,8 @@
             Grid.Row="0"
             Grid.ColumnSpan="2"
             Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}"
-            Background="{StaticResource CMapUwpAcrylicBrush}">
+            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}">
 
             <Grid Padding="{x:Bind CoreTitleBarPadding, Mode=OneWay}">
                 <Grid.ColumnDefinitions>
@@ -70,9 +73,11 @@
 
         <!--  Commands Grid  -->
         <Grid
+            Grid.Column="0"
             Grid.Row="1"
             Grid.ColumnSpan="2"
-            Background="{StaticResource CMapUwpAcrylicBrush}">
+            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="290" />
                 <ColumnDefinition Width="*" />
@@ -114,15 +119,12 @@
         </Grid>
 
         <!--  Font List Grid  -->
-        <SemanticZoom Grid.Row="2" Background="{StaticResource FontListBrush}">
+        <SemanticZoom Grid.Column="0" Grid.Row="2" Background="{StaticResource FontListBrush}">
             <SemanticZoom.ZoomedInView>
                 <ListView
                     x:Name="LstFontFamily"
-                    Margin="0"
-                    Padding="0"
                     IsItemClickEnabled="False"
                     IsSwipeEnabled="False"
-                    ItemContainerStyle="{ThemeResource ListViewItemRevealStyle}"
                     ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
                     SelectedItem="{Binding SelectedFont, Mode=TwoWay}"
                     SelectedValuePath="Name"
@@ -138,8 +140,7 @@
                                         Padding="0"
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
-                                        IsHitTestVisible="True"
-                                        Style="{ThemeResource GridViewItemRevealStyle}">
+                                        IsHitTestVisible="True">
                                         <TextBlock
                                             Padding="15,8,0,10"
                                             HorizontalAlignment="Stretch"
@@ -159,13 +160,11 @@
                             <TextBlock
                                 Padding="5"
                                 VerticalAlignment="Center"
-                                FontWeight="SemiBold"
                                 Text="{Binding Name}" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </SemanticZoom.ZoomedInView>
-
             <SemanticZoom.ZoomedOutView>
                 <GridView
                     x:Name="ZoomGridView"
@@ -187,12 +186,10 @@
                     </GridView.ItemTemplate>
                 </GridView>
             </SemanticZoom.ZoomedOutView>
-
         </SemanticZoom>
 
         <!--  Main UI Grid  -->
         <Grid Grid.Row="2" Grid.Column="1">
-
             <Grid.Resources>
                 <Storyboard x:Name="BorderFadeInStoryboard">
                     <DoubleAnimationUsingKeyFrames
@@ -219,7 +216,6 @@
                     Grid.Column="0"
                     Padding="10"
                     IsItemClickEnabled="False"
-                    ItemContainerStyle="{ThemeResource GridViewItemRevealStyle}"
                     ItemsSource="{Binding Chars, Mode=OneWay}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single">
@@ -306,7 +302,7 @@
                         </StackPanel>
                     </Border>
 
-                    <Grid Grid.Row="2">
+                    <Grid Grid.Row="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="2" />
                             <RowDefinition Height="Auto" />
@@ -499,8 +495,12 @@
         <!--  Status Bar  -->
         <Grid
             Grid.Row="3"
+            Grid.Column="0"
             Grid.ColumnSpan="2"
-            Background="{StaticResource CMapUwpAcrylicBrush}">
+            RequestedTheme="{Binding IsDarkAccent, 
+           Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter},
+           Mode=OneWay}"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -543,6 +543,7 @@
             x:Uid="DigSettings"
             Title="#DigSettings"
             Grid.Row="0"
+            Grid.Column="0"
             Grid.RowSpan="3"
             IsPrimaryButtonEnabled="True"
             PrimaryButtonText="OK">
@@ -579,8 +580,7 @@
                 <Button
                     x:Name="BtnRestart"
                     Click="BtnRestart_OnClick"
-                    Content="Restart Now"
-                    Style="{StaticResource ButtonRevealStyle}" />
+                    Content="Restart Now" />
 
                 <TextBlock
                     x:Uid="Settings_About"

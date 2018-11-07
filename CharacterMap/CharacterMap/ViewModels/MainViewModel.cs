@@ -315,5 +315,21 @@ namespace CharacterMap.ViewModels
                 await DialogService.ShowMessageBox(ex.Message, "Error Saving Image");
             }
         }
+
+        private bool _isDarkAccent;
+
+        public bool IsDarkAccent
+        {
+            get => IsAccentColorDark();
+            set { _isDarkAccent = value; RaisePropertyChanged(); }
+        }
+
+        private bool IsAccentColorDark()
+        {
+            var uiSettings = new UISettings();
+            var c = uiSettings.GetColorValue(UIColorType.Accent);
+            bool isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
+            return isDark;
+        }
     }
 }
