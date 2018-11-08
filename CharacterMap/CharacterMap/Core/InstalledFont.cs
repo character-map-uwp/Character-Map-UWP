@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using SharpDX.DirectWrite;
+using FontFamily = Windows.UI.Xaml.Media.FontFamily;
 
 namespace CharacterMap.Core
 {
@@ -32,15 +33,16 @@ namespace CharacterMap.Core
                                 familyNames.FindLocaleName("en-us", out index);
                             }
 
-                            bool isSymbolFont = fontFamily.GetFont(index).IsSymbolFont;
+                            var font = fontFamily.GetFont(index);
+                            var name = familyNames.GetString(index);
 
-                            string name = familyNames.GetString(index);
-                            fontList.Add(new InstalledFont()
+                            fontList.Add(new InstalledFont
                             {
                                 Name = name,
                                 FamilyIndex = i,
                                 Index = index,
-                                IsSymbolFont = isSymbolFont
+                                IsSymbolFont = font.IsSymbolFont,
+                                FontWeight = font.Weight.ToString(),
                             });
                         }
                     }
@@ -59,6 +61,8 @@ namespace CharacterMap.Core
     {
         public string Name { get; set; }
 
+        public FontFamily XamlFontFamily => new FontFamily(Name);
+
         public int FamilyIndex { get; set; }
 
         public bool IsSymbolFont { get; set; }
@@ -66,6 +70,7 @@ namespace CharacterMap.Core
         public int Index { get; set; }
 
         private List<Character> Characters { get; set; }
+        public string FontWeight { get; set; }
 
         public InstalledFont()
         {

@@ -15,7 +15,6 @@
                     <converters:StringFormatConverter x:Key="StringFormatConverter" />
                     <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
                     <converters1:CharGridSelectedItemToTextConverter x:Key="CharGridSelectedItemToTextConverter" />
-                    <converters1:InstalledFontToFontFamilyConverter x:Key="InstalledFontToFontFamilyConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <core:AppSettings x:Key="AppSettings" />

@@ -166,7 +166,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\CharGridSelectedItemToTextConverter.cs" />
-    <Compile Include="Converters\InstalledFontToFontFamilyConverter.cs" />
     <Compile Include="Converters\SmartTextColorBasedOnAccentTypeConverter.cs" />
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
