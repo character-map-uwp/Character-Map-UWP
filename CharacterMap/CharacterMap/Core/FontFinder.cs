@@ -44,7 +44,6 @@ namespace CharacterMap.Core
                                         Index = index,
                                         IsSymbolFont = font.IsSymbolFont,
                                         FontWeight = font.Weight.ToString(),
-                                        Metrics = font.Metrics
                                     });
                                 }
                             }

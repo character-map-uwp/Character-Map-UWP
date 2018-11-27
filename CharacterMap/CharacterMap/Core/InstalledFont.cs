@@ -21,8 +21,6 @@ namespace CharacterMap.Core
 
         public string FontWeight { get; set; }
 
-        public FontMetrics Metrics { get; set; }
-
         public InstalledFont()
         {
             Characters = new List<Character>();
