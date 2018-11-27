@@ -110,7 +110,7 @@
       <Name>Microsoft Engagement Framework</Name>
     </SDKReference>
     <PackageReference Include="Microsoft.Services.Store.Engagement">
-      <Version>10.1711.28001</Version>
+      <Version>10.1810.16002</Version>
     </PackageReference>
     <PackageReference Include="SharpDX">
       <Version>4.2.0</Version>
