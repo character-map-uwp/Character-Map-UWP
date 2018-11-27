@@ -23,12 +23,10 @@ namespace CharacterMap.ViewModels
         private string _fontIcon;
         private ObservableCollection<InstalledFont> _fontList;
         private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
-        private bool _isLightThemeEnabled;
         private Character _selectedChar;
         private InstalledFont _selectedFont;
         private string _xamlCode;
         private string _symbolIcon;
-        private bool _isBusy;
 
         public MainViewModel(IDialogService dialogService)
         {
@@ -172,18 +170,6 @@ namespace CharacterMap.ViewModels
 
                 RaisePropertyChanged();
             }
-        }
-
-        public bool IsLightThemeEnabled
-        {
-            get => _isLightThemeEnabled;
-            set => Set(ref _isLightThemeEnabled, value);
-        }
-
-        public bool IsBusy
-        {
-            get => _isBusy;
-            set { _isBusy = value; RaisePropertyChanged(); }
         }
 
         private void LoadChars(InstalledFont font)
