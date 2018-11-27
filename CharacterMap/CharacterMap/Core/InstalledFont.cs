@@ -1,62 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
 using SharpDX.DirectWrite;
 using FontFamily = Windows.UI.Xaml.Media.FontFamily;
 
 namespace CharacterMap.Core
 {
-    public class FontFinder
-    {
-        public static FontCollection FontCollection { get; set; }
-
-        public static List<InstalledFont> GetFonts()
-        {
-            var fontList = new List<InstalledFont>();
-
-            using (var factory = new Factory())
-            {
-                FontCollection = factory.GetSystemFontCollection(false);
-                var familyCount = FontCollection.FontFamilyCount;
-
-                for (int i = 0; i < familyCount; i++)
-                {
-                    try
-                    {
-                        using (var fontFamily = FontCollection.GetFontFamily(i))
-                        {
-                            var familyNames = fontFamily.FamilyNames;
-
-                            if (!familyNames.FindLocaleName(CultureInfo.CurrentCulture.Name, out var index))
-                            {
-                                familyNames.FindLocaleName("en-us", out index);
-                            }
-
-                            var font = fontFamily.GetFont(index);
-                            var name = familyNames.GetString(index);
-
-                            fontList.Add(new InstalledFont
-                            {
-                                Name = name,
-                                FamilyIndex = i,
-                                Index = index,
-                                IsSymbolFont = font.IsSymbolFont,
-                                FontWeight = font.Weight.ToString(),
-                            });
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // Corrupted font files throw an exception
-                    }
-                }
-            }
-
-            return fontList;
-        }
-    }
-
     public class InstalledFont
     {
         public string Name { get; set; }
@@ -70,7 +18,10 @@ namespace CharacterMap.Core
         public int Index { get; set; }
 
         private List<Character> Characters { get; set; }
+
         public string FontWeight { get; set; }
+
+        public FontMetrics Metrics { get; set; }
 
         public InstalledFont()
         {
@@ -82,38 +33,30 @@ namespace CharacterMap.Core
             if (!Characters.Any())
             {
                 var fontFamily = FontFinder.FontCollection.GetFontFamily(FamilyIndex);
-                var font = fontFamily.GetFont(Index);
-
-                var characters = new List<Character>();
-                var count = 65536 * 4 - 1;
-                for (var i = 0; i < count; i++)
+                using (var font = fontFamily.GetFont(Index))
                 {
-                    if (font.HasCharacter(i))
+                    var characters = new List<Character>();
+                    var count = 65536 * 4 - 1;
+                    for (var i = 0; i < count; i++)
                     {
-                        string character = char.ConvertFromUtf32(i);
-
-                        characters.Add(new Character
+                        if (font.HasCharacter(i))
                         {
-                            Char = character,
-                            UnicodeIndex = i
-                        });
-                    }
-                }
+                            string character = char.ConvertFromUtf32(i);
 
-                Characters = characters;
-                return characters;
+                            characters.Add(new Character
+                            {
+                                Char = character,
+                                UnicodeIndex = i
+                            });
+                        }
+                    }
+
+                    Characters = characters;
+                    return characters;
+                } 
             }
 
             return Characters;
         }
-    }
-
-    public class Character
-    {
-        public string Char { get; set; }
-
-        public int UnicodeIndex { get; set; }
-
-        public string UnicodeString => "U+" + UnicodeIndex.ToString("x").ToUpper();
     }
 }

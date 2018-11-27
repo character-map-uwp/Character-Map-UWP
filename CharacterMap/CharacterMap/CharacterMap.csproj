@@ -170,6 +170,8 @@
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
+    <Compile Include="Core\Character.cs" />
+    <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\InstalledFont.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />

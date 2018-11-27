@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -250,18 +252,18 @@ namespace CharacterMap.ViewModels
                 };
                 savePicker.FileTypeChoices.Add("Png Image", new[] { ".png" });
                 savePicker.SuggestedFileName = $"CharacterMap_{DateTime.Now:yyyyMMddHHmmss}.png";
-                StorageFile file = await savePicker.PickSaveFileAsync();
+                var file = await savePicker.PickSaveFileAsync();
 
                 if (null != file)
                 {
                     CachedFileManager.DeferUpdates(file);
-                    CanvasDevice device = CanvasDevice.GetSharedDevice();
+                    var device = CanvasDevice.GetSharedDevice();
                     var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
                     var canvasH = (float)App.AppSettings.PngSize;
                     var canvasW = (float)App.AppSettings.PngSize;
 
-                    CanvasRenderTarget renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
+                    var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
 
                     using (var ds = renderTarget.CreateDrawingSession())
                     {
@@ -270,11 +272,15 @@ namespace CharacterMap.ViewModels
                         var r = App.AppSettings.PngSize / 2;
 
                         var textColor = isBlackText ? Colors.Black : Colors.White;
-
                         var fontSize = (float)d;
 
-                        bool isEmoji = SelectedFont.Name == "Segoe UI Emoji";
-                        if (isEmoji || SelectedFont.Name == "Segoe UI Symbol")
+                        // Ugly code here, need to use SharpDX way to find out it is color font or not
+                        var isEmoji = SelectedFont.Name == "Segoe UI Emoji";
+
+                        // Deal with character get cut off
+                        // Ugly code here, need to figure out a way to measure text render size
+                        var fontThatWillBeCutOff = new[] { "Segoe UI Emoji", "Segoe UI Symbol", "paint" };
+                        if (isEmoji || fontThatWillBeCutOff.Contains(SelectedFont.Name))
                         {
                             fontSize *= 0.75f;
                         }
@@ -284,7 +290,7 @@ namespace CharacterMap.ViewModels
                             FontFamily = SelectedFont.Name,
                             FontSize = fontSize,
                             HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                            Options = isEmoji ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
+                            Options = (isEmoji ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default)
                         });
                     }
 
@@ -314,7 +320,7 @@ namespace CharacterMap.ViewModels
         {
             var uiSettings = new UISettings();
             var c = uiSettings.GetColorValue(UIColorType.Accent);
-            bool isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
+            var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
             return isDark;
         }
     }
