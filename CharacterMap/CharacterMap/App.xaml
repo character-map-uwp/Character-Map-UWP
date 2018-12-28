@@ -19,8 +19,9 @@
                 <ResourceDictionary>
                     <core:AppSettings x:Key="AppSettings" />
                     <Style x:Key="CharItemGridStyle" TargetType="Grid">
-                        <Setter Property="BorderThickness" Value="2" />
+                        <Setter Property="BorderThickness" Value="0" />
                         <Setter Property="BorderBrush" Value="Transparent" />
+                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}" />
                         <Setter Property="Padding" Value="2" />
                         <Setter Property="Height" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize}" />
                         <Setter Property="Width" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize}" />
@@ -38,7 +39,20 @@
                         <Setter Property="TextAlignment" Value="Center" />
                         <Setter Property="Foreground" Value="#888" />
                     </Style>
-
+                    <SolidColorBrush x:Key="SystemControlTransparentRevealBackgroundBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="SystemControlTransparentRevealBorderBrush" Color="Transparent" />
+                    <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
+                    <Thickness x:Key="ListViewItemRevealBorderThemeThickness">0</Thickness>
+                    <Thickness x:Key="GridViewItemRevealBorderThemeThickness">0</Thickness>
+                    <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
+                    <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="GridViewItemRevealBackground" Color="Transparent" />
+                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundPointerOver" Color="Transparent" />
+                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundPressed" Color="Transparent" />
+                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundSelected" Color="Transparent" />
+                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundSelectedPointerOver" Color="Transparent" />
+                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
+                    <SolidColorBrush x:Key="GridViewItemRevealPlaceholderBackground" Color="Transparent" />
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBlock.xaml" />
                 <ResourceDictionary Source="/Styles/IconButtonStyle.xaml" />

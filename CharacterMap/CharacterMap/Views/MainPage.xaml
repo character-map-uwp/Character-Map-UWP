@@ -219,6 +219,12 @@
                     ItemsSource="{Binding Chars, Mode=OneWay}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single">
+                    <!--<GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="FocusVisualPrimaryBrush" Value="Transparent" />
+                            <Setter Property="FocusVisualSecondaryThickness" Value="0" />
+                        </Style>
+                    </GridView.ItemContainerStyle>-->
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="core:Character">
                             <Grid Style="{StaticResource CharItemGridStyle}">
