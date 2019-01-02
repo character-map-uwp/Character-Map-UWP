@@ -173,6 +173,7 @@
     <Compile Include="Core\Character.cs" />
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\InstalledFont.cs" />
+    <Compile Include="Core\MDL2DescriptionDict.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />

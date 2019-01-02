@@ -175,6 +175,19 @@ namespace CharacterMap.Views
                 CharGrid.SelectedItem = ch;
                 CharGrid.ScrollIntoView(ch);
             }
+            else if(ViewModel.SelectedFont.Name == "Segoe MDL2 Assets")    //Search for Segoe MDL2 Assets characters with description
+            {
+                if (MDL2Description.Dict.TryGetValue(SearchBoxUnicode.Text.ToLower().Replace(" ", string.Empty), out string unicodePoint))
+                {
+                    intIndex = Utils.ParseHexString(unicodePoint);
+                    ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
+                    if (null != ch)
+                    {
+                        CharGrid.SelectedItem = ch;
+                        CharGrid.ScrollIntoView(ch);
+                    }
+                }
+            }
         }
 
         private void PreviewGrid_SizeChanged(object sender, SizeChangedEventArgs e)
