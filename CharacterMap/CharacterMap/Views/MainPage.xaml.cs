@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Navigation;
 using CharacterMap.Annotations;
 using CharacterMap.Core;
 using CharacterMap.ViewModels;
+using System.Diagnostics;
 
 namespace CharacterMap.Views
 {
@@ -175,16 +176,37 @@ namespace CharacterMap.Views
                 CharGrid.SelectedItem = ch;
                 CharGrid.ScrollIntoView(ch);
             }
-            else if(ViewModel.SelectedFont.Name == "Segoe MDL2 Assets")    //Search for Segoe MDL2 Assets characters with description
+            else if (ViewModel.SelectedFont.Name == "Segoe MDL2 Assets")    //Search for Segoe MDL2 Assets characters with description
             {
-                if (MDL2Description.Dict.TryGetValue(SearchBoxUnicode.Text.ToLower().Replace(" ", string.Empty), out string unicodePoint))
+                string descriptionForSearch = SearchBoxUnicode.Text.ToLower().Replace(" ", string.Empty);
+
+                if (MDL2Description.Dict.TryGetValue(descriptionForSearch, out string unicodePoint))
                 {
+                    //Precise search
                     intIndex = Utils.ParseHexString(unicodePoint);
                     ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
                     if (null != ch)
                     {
                         CharGrid.SelectedItem = ch;
                         CharGrid.ScrollIntoView(ch);
+                    }
+                }
+                else
+                {
+                    //Fuzzy search
+                    string resultKey = MDL2Description.Dict.Keys.Where(key => key.Contains(descriptionForSearch)).ToList().FirstOrDefault();
+                    if (null != resultKey)
+                    {
+                        if(MDL2Description.Dict.TryGetValue(resultKey, out string unicodePointFuzzy))
+                        {
+                            intIndex = Utils.ParseHexString(unicodePointFuzzy);
+                            ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
+                            if (null != ch)
+                            {
+                                CharGrid.SelectedItem = ch;
+                                CharGrid.ScrollIntoView(ch);
+                            }
+                        }
                     }
                 }
             }
