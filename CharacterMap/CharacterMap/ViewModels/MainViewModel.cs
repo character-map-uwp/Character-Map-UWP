@@ -37,11 +37,6 @@ namespace CharacterMap.ViewModels
             AppNameVersion = GetAppDescription();
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
-            CommandFeedback = new RelayCommand(async () =>
-            {
-                var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
-                await launcher.LaunchAsync();
-            });
         }
 
         private string GetAppDescription()
@@ -50,20 +45,24 @@ namespace CharacterMap.ViewModels
             var packageId = package.Id;
             var version = packageId.Version;
 
-            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({Architecture})";
         }
 
         public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
 
         public RelayCommand CommandToggleFullScreen { get; set; }
 
-        public RelayCommand CommandFeedback { get; set; }
-
         private string _appNameVersion;
         public string AppNameVersion
         {
             get => _appNameVersion;
             set => Set(ref _appNameVersion, value);
+        }
+
+        public string TitlePrefix
+        {
+            get => _titlePrefix;
+            set { _titlePrefix = value; RaisePropertyChanged(); }
         }
 
         public IDialogService DialogService { get; set; }
@@ -166,6 +165,7 @@ namespace CharacterMap.ViewModels
                 _selectedFont = value;
                 if (null != _selectedFont)
                 {
+                    TitlePrefix = value.Name + " - ";
                     App.AppSettings.LastSelectedFontName = value.Name;
                     LoadChars(_selectedFont);
                 }
@@ -309,6 +309,7 @@ namespace CharacterMap.ViewModels
         }
 
         private bool _isDarkAccent;
+        private string _titlePrefix;
 
         public bool IsDarkAccent
         {

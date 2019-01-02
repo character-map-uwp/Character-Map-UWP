@@ -27,12 +27,12 @@
     <Grid KeyDown="LayoutRoot_KeyDown" KeyUp="LayoutRoot_KeyUp">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="45" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="32" />
+            <RowDefinition Height="26" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="290" />
+            <ColumnDefinition Width="256" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -47,18 +47,25 @@
             <Grid Padding="{x:Bind CoreTitleBarPadding, Mode=OneWay}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <ToggleButton
                     x:Uid="ToggleFullScreenModeButton"
                     Command="{Binding CommandToggleFullScreen}"
                     Style="{StaticResource IconToggleButtonStyle}">
-                    <FontIcon FontSize="15" Glyph="&#xE740;" />
+                    <FontIcon FontSize="14" Glyph="&#xE740;" />
                 </ToggleButton>
+                <TextBlock Grid.Column="1" x:Name="TxtTitlePrefix" 
+                           Margin="7,0,0,0"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Center"
+                           FontSize="12"
+                           Text="{Binding TitlePrefix}" />
                 <TextBlock
                     x:Name="TxtTitle"
                     x:Uid="TxtTitle"
-                    Grid.Column="1"
+                    Grid.Column="2"
                     Margin="7,0,0,0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
@@ -66,7 +73,7 @@
                     Text="#TxtTitle" />
                 <Rectangle
                     x:Name="TitleBarBackgroundElement"
-                    Grid.Column="1"
+                    Grid.Column="2"
                     Fill="Transparent" />
             </Grid>
         </Grid>
@@ -79,7 +86,7 @@
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="290" />
+                <ColumnDefinition Width="256" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
@@ -93,9 +100,9 @@
                 IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}" />
             <TextBlock
                 Grid.Column="1"
-                Margin="0,0,5,0"
+                Margin="10,0,5,0"
                 VerticalAlignment="Center"
-                FontSize="24"
+                FontSize="22"
                 FontWeight="SemiLight"
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
@@ -111,10 +118,12 @@
             <AppBarButton
                 x:Name="BtnSettings"
                 Grid.Column="3"
-                Width="50"
-                Height="50"
+                Width="45"
+                Height="45"
                 Click="BtnSettings_OnClick">
-                <FontIcon FontSize="15" Glyph="&#xE115;" />
+                <FontIcon FontSize="16" Glyph="&#xE115;" 
+                          VerticalAlignment="Center"
+                          HorizontalAlignment="Center" />
             </AppBarButton>
         </Grid>
 
@@ -141,14 +150,19 @@
                                         HorizontalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         IsHitTestVisible="True">
-                                        <TextBlock
-                                            Padding="15,8,0,10"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            FontSize="28"
-                                            FontWeight="SemiLight"
-                                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                            Text="{Binding Key}" />
+                                        <Border
+                                            Margin="15,0"
+                                            BorderThickness="0,0,0,1"
+                                            BorderBrush="#CCC">
+                                            <TextBlock
+                                                Padding="0,8,0,10"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                FontSize="30"
+                                                FontWeight="SemiLight"
+                                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                Text="{Binding Key}" />
+                                        </Border>
                                     </GridViewItem>
                                 </DataTemplate>
                             </GroupStyle.HeaderTemplate>
@@ -173,7 +187,7 @@
                     ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}">
                     <GridView.ItemTemplate>
                         <DataTemplate>
-                            <Border Width="65" Height="65">
+                            <Border Width="64" Height="64">
                                 <TextBlock
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
@@ -219,12 +233,6 @@
                     ItemsSource="{Binding Chars, Mode=OneWay}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single">
-                    <!--<GridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem">
-                            <Setter Property="FocusVisualPrimaryBrush" Value="Transparent" />
-                            <Setter Property="FocusVisualSecondaryThickness" Value="0" />
-                        </Style>
-                    </GridView.ItemContainerStyle>-->
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="core:Character">
                             <Grid Style="{StaticResource CharItemGridStyle}">
@@ -297,13 +305,13 @@
                         <StackPanel Orientation="Horizontal">
                             <FontIcon
                                 FontSize="21"
-                                Foreground="#ffffff"
+                                Foreground="White"
                                 Glyph="&#xEC61;" />
                             <TextBlock
                                 x:Name="TxtCopiedMessage"
                                 x:Uid="TxtCopiedMessage"
                                 Margin="8,0,0,0"
-                                Foreground="#ffffff"
+                                Foreground="White"
                                 Text="#TxtCopiedMessage" />
                         </StackPanel>
                     </Border>
@@ -557,7 +565,7 @@
             PrimaryButtonText="OK">
             <StackPanel Margin="0,10,0,0">
                 <Slider
-                    x:Name="sldResolution"
+                    x:Name="SldResolution"
                     HorizontalAlignment="Stretch"
                     Header="PNG Resolution (pixel)"
                     IsThumbToolTipEnabled="True"
@@ -567,7 +575,7 @@
                     TickFrequency="64"
                     TickPlacement="Outside"
                     Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" />
-                <TextBlock Margin="0,0,0,20" Text="{Binding ElementName=sldResolution, Path=Value}" />
+                <TextBlock Margin="0,0,0,20" Text="{Binding ElementName=SldResolution, Path=Value}" />
 
                 <Slider
                     HorizontalAlignment="Stretch"
@@ -602,8 +610,6 @@
                     Text="#Settings_AboutDescription"
                     TextWrapping="Wrap" />
                 <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
-
-                <HyperlinkButton Command="{Binding CommandFeedback}" Content="Feedback" />
             </StackPanel>
         </ContentDialog>
     </Grid>
