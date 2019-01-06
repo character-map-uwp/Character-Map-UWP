@@ -106,9 +106,9 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
-      <Name>Microsoft Engagement Framework</Name>
-    </SDKReference>
+    <!-- <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0"> -->
+      <!-- <Name>Microsoft Engagement Framework</Name> -->
+    <!-- </SDKReference> -->
     <PackageReference Include="Microsoft.Services.Store.Engagement">
       <Version>10.1810.16002</Version>
     </PackageReference>
