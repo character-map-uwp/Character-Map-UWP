@@ -220,14 +220,26 @@
 
             <!--  Char Grid  -->
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="8" />
                     <ColumnDefinition Width="330" />
                 </Grid.ColumnDefinitions>
+
+                <ComboBox x:Name="WeightSelector" 
+                          Margin="12"
+                          Header="Font Variants"
+                          VerticalAlignment="Top"
+                          ItemsSource="{Binding SelectedFont.Variants}" />
+
                 <GridView
                     x:Name="CharGrid"
                     Grid.Column="0"
+                    Grid.Row="1"
                     Padding="10"
                     IsItemClickEnabled="False"
                     ItemsSource="{Binding Chars, Mode=OneWay}"
@@ -239,6 +251,9 @@
                                 <TextBlock
                                     x:Phase="1"
                                     FontFamily="{Binding ElementName=CharGrid, Path=DataContext.SelectedFont.XamlFontFamily}"
+                                    FontWeight="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Weight}"
+                                    FontStyle="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Style}"
+                                    FontStretch="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Stretch}"
                                     Style="{StaticResource CharItemCharStyle}"
                                     Text="{x:Bind Char}" />
 
@@ -254,6 +269,7 @@
                 <!--  Column Grid Splitter  -->
                 <controls:GridSplitter
                     Grid.Column="1"
+                    Grid.RowSpan="2"
                     Width="8"
                     Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
                     CursorBehavior="ChangeOnSplitterHover"
@@ -263,6 +279,7 @@
                     ResizeDirection="Columns" />
 
                 <FontIcon
+                    Grid.RowSpan="2"
                     Grid.Column="1"
                     Margin="-6,0,0,0"
                     VerticalAlignment="Center"
@@ -272,6 +289,7 @@
                 <!--  Preview Grid  -->
                 <Grid
                     x:Name="PreviewGrid"
+                    Grid.RowSpan="2"
                     Grid.Column="2"
                     SizeChanged="PreviewGrid_SizeChanged">
                     <Grid.RowDefinitions>

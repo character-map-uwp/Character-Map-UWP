@@ -1,25 +1,44 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using SharpDX.DirectWrite;
+using Microsoft.Graphics.Canvas.Text;
+using Windows.UI.Text;
 using FontFamily = Windows.UI.Xaml.Media.FontFamily;
 
 namespace CharacterMap.Core
 {
+    public class FontVariant
+    {
+        public CanvasFontFace FontFace { get; }
+
+        public FontWeight Weight { get; }
+
+        public FontStyle Style { get; }
+
+        public FontVariant(CanvasFontFace face)
+        {
+            FontFace = face;
+        }
+
+        public override string ToString()
+        {
+            return $"{FontFace.Weight.Weight} {FontFace.Style} {FontFace.Stretch}";
+        }
+    }
+
+
     public class InstalledFont
     {
         public string Name { get; set; }
 
         public FontFamily XamlFontFamily => new FontFamily(Name);
 
-        public int FamilyIndex { get; set; }
+        public CanvasFontFace FontFace { get; set; }
 
         public bool IsSymbolFont { get; set; }
 
-        public int Index { get; set; }
-
         private List<Character> Characters { get; set; }
 
-        public string FontWeight { get; set; }
+        public List<FontVariant> Variants { get; set; }
 
         public InstalledFont()
         {
@@ -28,30 +47,37 @@ namespace CharacterMap.Core
 
         public List<Character> GetCharacters()
         {
-            if (!Characters.Any())
+            if (Characters.Count == 0)
             {
-                var fontFamily = FontFinder.FontCollection.GetFontFamily(FamilyIndex);
-                using (var font = fontFamily.GetFont(Index))
+                var characters = new List<Character>();
+
+                foreach (var range in FontFace.UnicodeRanges)
                 {
-                    var characters = new List<Character>();
-                    var count = 65536 * 4 - 1;
-                    for (var i = 0; i < count; i++)
+                    for (uint i = range.First; i <= range.Last; i++)
                     {
-                        if (font.HasCharacter(i))
+                        characters.Add(new Character
                         {
-                            string character = char.ConvertFromUtf32(i);
-
-                            characters.Add(new Character
-                            {
-                                Char = character,
-                                UnicodeIndex = i
-                            });
-                        }
+                            Char = char.ConvertFromUtf32((int)i),
+                            UnicodeIndex = (int)i
+                        });
                     }
+                }
 
-                    Characters = characters;
-                    return characters;
-                } 
+                //uint count = 65536 * 4 - 1;
+                //for (uint i = 0; i < count; i++)
+                //{
+                //    if (FontFace.HasCharacter(i))
+                //    {
+                            //characters.Add(new Character
+                            //{
+                            //    Char = char.ConvertFromUtf32((int)i),
+                            //    UnicodeIndex = (int)i
+                            //});
+                //    }
+                //}
+
+                Characters = characters;
+                return characters;
             }
 
             return Characters;

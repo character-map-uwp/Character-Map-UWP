@@ -1,62 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using SharpDX.DirectWrite;
+using System.Linq;
+using Microsoft.Graphics.Canvas.Text;
+using Windows.UI.Text;
 
 namespace CharacterMap.Core
 {
     public class FontFinder
     {
-        public static FontCollection FontCollection { get; set; }
+        public static CanvasFontSet FontCollection { get; set; }
 
         public static List<InstalledFont> GetFonts()
         {
-            var fontList = new List<InstalledFont>();
+            FontCollection = CanvasFontSet.GetSystemFontSet();
+            var familyCount = FontCollection.Fonts.Count;
 
-            using (var factory = new Factory())
+            Dictionary<string, InstalledFont> fontList = new Dictionary<string, InstalledFont>();
+
+            for (var i = 0; i < familyCount; i++)
             {
-                FontCollection = factory.GetSystemFontCollection(false);
-                var familyCount = FontCollection.FontFamilyCount;
-
-                for (var i = 0; i < familyCount; i++)
+                try
                 {
-                    try
+                    CanvasFontFace fontFace = FontCollection.Fonts[i];
+                    var familyNames = fontFace.FamilyNames;
+                    if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string key))
                     {
-                        using (var fontFamily = FontCollection.GetFontFamily(i))
+                        familyNames.TryGetValue("en-us", out key);
+                    }
+
+                    if (key != null)
+                    {
+                        if (fontList.TryGetValue(key, out InstalledFont font))
                         {
-                            var familyNames = fontFamily.FamilyNames;
-
-                            if (!familyNames.FindLocaleName(CultureInfo.CurrentCulture.Name, out var index))
+                            // add weight?
+                            font.Variants.Add(new FontVariant(fontFace));
+                        }
+                        else
+                        {
+                            fontList[key] = new InstalledFont
                             {
-                                familyNames.FindLocaleName("en-us", out index);
-                            }
-
-                            if (index >= 0)
-                            {
-                                var name = familyNames.GetString(index);
-
-                                using (var font = fontFamily.GetFont(index))
-                                {
-                                    fontList.Add(new InstalledFont
-                                    {
-                                        Name = name,
-                                        FamilyIndex = i,
-                                        Index = index,
-                                        IsSymbolFont = font.IsSymbolFont,
-                                        FontWeight = font.Weight.ToString(),
-                                    });
-                                }
-                            }
+                                Name = key,
+                                IsSymbolFont = fontFace.IsSymbolFont,
+                                FontFace = fontFace,
+                                Variants = new List<FontVariant> { new FontVariant(fontFace) }
+                            };
                         }
                     }
-                    catch (Exception)
-                    {
-                        // Corrupted font files throw an exception
-                    }
+
+                }
+                catch (Exception)
+                {
+                    // Corrupted font files throw an exception
                 }
             }
 
-            return fontList;
+            return fontList.OrderBy(f => f.Key).Select(f => f.Value).ToList();
         }
     }
 }
