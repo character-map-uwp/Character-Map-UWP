@@ -11,7 +11,7 @@
     <AssemblyName>CharacterMap</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.17134.0</TargetPlatformVersion>
+    <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
@@ -106,42 +106,42 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
-      <Name>Microsoft Engagement Framework</Name>
-    </SDKReference>
+    <!-- <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0"> -->
+    <!-- <Name>Microsoft Engagement Framework</Name> -->
+    <!-- </SDKReference> -->
     <PackageReference Include="Microsoft.Services.Store.Engagement">
-      <Version>10.1711.28001</Version>
+      <Version>10.1901.28001</Version>
     </PackageReference>
     <PackageReference Include="SharpDX">
-      <Version>4.1.0</Version>
+      <Version>4.2.0</Version>
     </PackageReference>
     <PackageReference Include="SharpDX.Direct2D1">
-      <Version>4.1.0</Version>
+      <Version>4.2.0</Version>
     </PackageReference>
     <PackageReference Include="SharpDX.DXGI">
-      <Version>4.1.0</Version>
+      <Version>4.2.0</Version>
     </PackageReference>
     <PackageReference Include="Edi.UWP.Helpers">
       <Version>2018.2.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.1.7</Version>
+      <Version>6.1.9</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
-      <Version>4.0.0</Version>
+      <Version>5.1.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.0</Version>
     </PackageReference>
     <!-- Nuget package references -->
     <PackageReference Include="MvvmLight">
-      <Version>5.4.1</Version>
+      <Version>5.4.1.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications">
-      <Version>4.0.0</Version>
+      <Version>5.1.0</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>11.0.2</Version>
+      <Version>12.0.1</Version>
     </PackageReference>
     <PackageReference Include="Win2d.uwp">
       <Version>1.23.0</Version>
@@ -151,6 +151,7 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <None Include="CharacterMap_StoreKey.pfx" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
+    <PRIResource Include="Strings\pl-PL\Resources.resw" />
     <PRIResource Include="Strings\ru-RU\Resources.resw" />
     <PRIResource Include="Strings\fr-FR\Resources.resw" />
     <PRIResource Include="Strings\de-DE\Resources.resw" />
@@ -165,25 +166,22 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\CharGridSelectedItemToTextConverter.cs" />
-    <Compile Include="Converters\InstalledFontToFontFamilyConverter.cs" />
+    <Compile Include="Converters\SmartTextColorBasedOnAccentTypeConverter.cs" />
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
+    <Compile Include="Core\Character.cs" />
+    <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\InstalledFont.cs" />
+    <Compile Include="Core\MDL2DescriptionDict.cs" />
     <Compile Include="Helpers\Json.cs" />
-    <Compile Include="Helpers\ResourceExtensions.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Helpers\TitleBarHelper.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
     <Compile Include="Services\ToastNotificationsService.cs" />
-    <Compile Include="UserControls\DPIIndicator.xaml.cs">
-      <DependentUpon>DPIIndicator.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\StatusBarSeperator.xaml.cs">
-      <DependentUpon>StatusBarSeperator.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -259,13 +257,25 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="UserControls\DPIIndicator.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Styles\Button.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\StatusBarSeperator.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Styles\CommandBar.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ContentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\TextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>

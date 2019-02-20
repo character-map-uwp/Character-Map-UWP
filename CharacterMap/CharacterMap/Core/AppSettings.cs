@@ -8,7 +8,7 @@ namespace CharacterMap.Core
     {
         public double PngSize
         {
-            get => ReadSettings(nameof(PngSize), 512.00d);
+            get => ReadSettings(nameof(PngSize), 1024.00d);
             set
             {
                 SaveSettings(nameof(PngSize), value);

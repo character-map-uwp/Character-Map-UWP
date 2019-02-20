@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -23,12 +25,10 @@ namespace CharacterMap.ViewModels
         private string _fontIcon;
         private ObservableCollection<InstalledFont> _fontList;
         private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
-        private bool _isLightThemeEnabled;
         private Character _selectedChar;
         private InstalledFont _selectedFont;
         private string _xamlCode;
         private string _symbolIcon;
-        private bool _isBusy;
 
         public MainViewModel(IDialogService dialogService)
         {
@@ -37,11 +37,6 @@ namespace CharacterMap.ViewModels
             AppNameVersion = GetAppDescription();
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
-            CommandFeedback = new RelayCommand(async () =>
-            {
-                var launcher = Microsoft.Services.Store.Engagement.StoreServicesFeedbackLauncher.GetDefault();
-                await launcher.LaunchAsync();
-            });
         }
 
         private string GetAppDescription()
@@ -50,20 +45,24 @@ namespace CharacterMap.ViewModels
             var packageId = package.Id;
             var version = packageId.Version;
 
-            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({Architecture})";
         }
 
         public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
 
         public RelayCommand CommandToggleFullScreen { get; set; }
 
-        public RelayCommand CommandFeedback { get; set; }
-
         private string _appNameVersion;
         public string AppNameVersion
         {
             get => _appNameVersion;
             set => Set(ref _appNameVersion, value);
+        }
+
+        public string TitlePrefix
+        {
+            get => _titlePrefix;
+            set { _titlePrefix = value; RaisePropertyChanged(); }
         }
 
         public IDialogService DialogService { get; set; }
@@ -166,24 +165,13 @@ namespace CharacterMap.ViewModels
                 _selectedFont = value;
                 if (null != _selectedFont)
                 {
+                    TitlePrefix = value.Name + " - ";
                     App.AppSettings.LastSelectedFontName = value.Name;
                     LoadChars(_selectedFont);
                 }
 
                 RaisePropertyChanged();
             }
-        }
-
-        public bool IsLightThemeEnabled
-        {
-            get => _isLightThemeEnabled;
-            set => Set(ref _isLightThemeEnabled, value);
-        }
-
-        public bool IsBusy
-        {
-            get => _isBusy;
-            set { _isBusy = value; RaisePropertyChanged(); }
         }
 
         private void LoadChars(InstalledFont font)
@@ -264,18 +252,18 @@ namespace CharacterMap.ViewModels
                 };
                 savePicker.FileTypeChoices.Add("Png Image", new[] { ".png" });
                 savePicker.SuggestedFileName = $"CharacterMap_{DateTime.Now:yyyyMMddHHmmss}.png";
-                StorageFile file = await savePicker.PickSaveFileAsync();
+                var file = await savePicker.PickSaveFileAsync();
 
                 if (null != file)
                 {
                     CachedFileManager.DeferUpdates(file);
-                    CanvasDevice device = CanvasDevice.GetSharedDevice();
+                    var device = CanvasDevice.GetSharedDevice();
                     var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
                     var canvasH = (float)App.AppSettings.PngSize;
                     var canvasW = (float)App.AppSettings.PngSize;
 
-                    CanvasRenderTarget renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
+                    var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
 
                     using (var ds = renderTarget.CreateDrawingSession())
                     {
@@ -284,11 +272,15 @@ namespace CharacterMap.ViewModels
                         var r = App.AppSettings.PngSize / 2;
 
                         var textColor = isBlackText ? Colors.Black : Colors.White;
-
                         var fontSize = (float)d;
 
-                        bool isEmoji = SelectedFont.Name == "Segoe UI Emoji";
-                        if (isEmoji || SelectedFont.Name == "Segoe UI Symbol")
+                        // Ugly code here, need to use SharpDX way to find out it is color font or not
+                        var isEmoji = SelectedFont.Name == "Segoe UI Emoji";
+
+                        // Deal with character get cut off
+                        // Ugly code here, need to figure out a way to measure text render size
+                        var fontThatWillBeCutOff = new[] { "Segoe UI Emoji", "Segoe UI Symbol", "paint" };
+                        if (isEmoji || fontThatWillBeCutOff.Contains(SelectedFont.Name))
                         {
                             fontSize *= 0.75f;
                         }
@@ -298,7 +290,7 @@ namespace CharacterMap.ViewModels
                             FontFamily = SelectedFont.Name,
                             FontSize = fontSize,
                             HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                            Options = isEmoji ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
+                            Options = (isEmoji ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default)
                         });
                     }
 
@@ -314,6 +306,23 @@ namespace CharacterMap.ViewModels
             {
                 await DialogService.ShowMessageBox(ex.Message, "Error Saving Image");
             }
+        }
+
+        private bool _isDarkAccent;
+        private string _titlePrefix;
+
+        public bool IsDarkAccent
+        {
+            get => IsAccentColorDark();
+            set { _isDarkAccent = value; RaisePropertyChanged(); }
+        }
+
+        private bool IsAccentColorDark()
+        {
+            var uiSettings = new UISettings();
+            var c = uiSettings.GetColorValue(UIColorType.Accent);
+            var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
+            return isDark;
         }
     }
 }
