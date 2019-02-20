@@ -258,5 +258,22 @@ namespace CharacterMap.Views
                 }
             }
         }
+
+        private void Grid_DragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+
+        private async void Grid_Drop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
+                if (await FontFinder.ImportFontsAsync(items))
+                {
+                    ViewModel.RefreshFontList();
+                }
+            }
+        }
     }
 }

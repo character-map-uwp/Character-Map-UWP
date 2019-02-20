@@ -24,7 +24,7 @@
             Source="{Binding GroupedFontList}" />
     </Page.Resources>
 
-    <Grid KeyDown="LayoutRoot_KeyDown" KeyUp="LayoutRoot_KeyUp">
+    <Grid KeyDown="LayoutRoot_KeyDown" KeyUp="LayoutRoot_KeyUp" AllowDrop="True" DragOver="Grid_DragOver" Drop="Grid_Drop">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="45" />
@@ -234,6 +234,7 @@
                           Margin="12"
                           Header="Font Variants"
                           VerticalAlignment="Top"
+                          SelectedItem="{Binding SelectedVariant,Mode=TwoWay}"
                           ItemsSource="{Binding SelectedFont.Variants}" />
 
                 <GridView
@@ -250,7 +251,7 @@
                             <Grid Style="{StaticResource CharItemGridStyle}">
                                 <TextBlock
                                     x:Phase="1"
-                                    FontFamily="{Binding ElementName=CharGrid, Path=DataContext.SelectedFont.XamlFontFamily}"
+                                    FontFamily="{Binding ElementName=WeightSelector, Path=SelectedItem.XamlFontFamily}"
                                     FontWeight="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Weight}"
                                     FontStyle="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Style}"
                                     FontStretch="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Stretch}"
@@ -306,7 +307,10 @@
                         StretchDirection="Both">
                         <TextBlock
                             x:Name="TxtPreview"
-                            FontFamily="{Binding SelectedFont.XamlFontFamily}"
+                            FontFamily="{Binding ElementName=WeightSelector, Path=SelectedItem.XamlFontFamily}"
+                            FontWeight="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Weight}"
+                            FontStyle="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Style}"
+                            FontStretch="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Stretch}"
                             Text="{Binding SelectedChar.Char}"
                             TextAlignment="Center" />
                     </Viewbox>

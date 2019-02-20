@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
+using Windows.UI.Text;
 
 namespace CharacterMap.ViewModels
 {
@@ -33,10 +34,11 @@ namespace CharacterMap.ViewModels
         public MainViewModel(IDialogService dialogService)
         {
             DialogService = dialogService;
-            RefreshFontList();
             AppNameVersion = GetAppDescription();
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
+
+            Load();
         }
 
         private string GetAppDescription()
@@ -68,6 +70,13 @@ namespace CharacterMap.ViewModels
         public IDialogService DialogService { get; set; }
 
         public RelayCommand<bool> CommandSavePng { get; set; }
+
+        private FontVariant _selectedVariant;
+        public FontVariant SelectedVariant
+        {
+            get => _selectedVariant;
+            set => Set(ref _selectedVariant, value);
+        }
 
         public ObservableCollection<InstalledFont> FontList
         {
@@ -171,7 +180,18 @@ namespace CharacterMap.ViewModels
                 }
 
                 RaisePropertyChanged();
+
+                if (null != _selectedFont)
+                {
+                    SelectedVariant = _selectedFont.DefaultVariant;
+                }
             }
+        }
+
+        private async void Load()
+        {
+            await FontFinder.LoadFontsAsync();
+            RefreshFontList();
         }
 
         private void LoadChars(InstalledFont font)
@@ -189,7 +209,7 @@ namespace CharacterMap.ViewModels
                 view.TryEnterFullScreenMode();
         }
 
-        private void RefreshFontList()
+        public void RefreshFontList()
         {
             try
             {

@@ -10,9 +10,7 @@ namespace CharacterMap.Core
     {
         public CanvasFontFace FontFace { get; }
 
-        public FontWeight Weight { get; }
-
-        public FontStyle Style { get; }
+        public FontFamily XamlFontFamily { get; set; }
 
         public FontVariant(CanvasFontFace face)
         {
@@ -21,7 +19,7 @@ namespace CharacterMap.Core
 
         public override string ToString()
         {
-            return $"{FontFace.Weight.Weight} {FontFace.Style} {FontFace.Stretch}";
+            return Utils.GetVariantDescription(FontFace);
         }
     }
 
@@ -29,8 +27,6 @@ namespace CharacterMap.Core
     public class InstalledFont
     {
         public string Name { get; set; }
-
-        public FontFamily XamlFontFamily => new FontFamily(Name);
 
         public CanvasFontFace FontFace { get; set; }
 
@@ -43,6 +39,18 @@ namespace CharacterMap.Core
         public InstalledFont()
         {
             Characters = new List<Character>();
+        }
+
+        public FontVariant DefaultVariant
+        {
+            get
+            {
+                return Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal && v.FontFace.Stretch == FontStretch.Normal) 
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal)
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Stretch == FontStretch.Normal)
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight)
+                    ?? Variants[0];
+            }
         }
 
         public List<Character> GetCharacters()
