@@ -10,11 +10,10 @@
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" />
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
-                    <converters:StringFormatConverter x:Key="StringFormatConverter" />
                     <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
-                    <converters1:CharGridSelectedItemToTextConverter x:Key="CharGridSelectedItemToTextConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>
                     <core:AppSettings x:Key="AppSettings" />
@@ -61,6 +60,7 @@
                 <ResourceDictionary Source="/Styles/ContentDialog.xaml" />
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/ListView.xaml" />
+                <ResourceDictionary Source="/Styles/ComboBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

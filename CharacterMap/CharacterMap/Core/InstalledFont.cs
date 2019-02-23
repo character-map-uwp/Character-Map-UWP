@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Microsoft.Graphics.Canvas.Text;
 using Windows.UI.Text;
@@ -12,14 +13,29 @@ namespace CharacterMap.Core
 
         public FontFamily XamlFontFamily { get; set; }
 
+        public string PreferredName { get; }
+
         public FontVariant(CanvasFontFace face)
         {
             FontFace = face;
+
+            if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string name))
+            {
+                if (!face.FaceNames.TryGetValue("en-us", out name))
+                {
+                    if (face.FaceNames.Any())
+                        name = face.FaceNames.FirstOrDefault().Value;
+                    else
+                        name = Utils.GetVariantDescription(face);
+                }
+            }
+
+            PreferredName = name;
         }
 
         public override string ToString()
         {
-            return Utils.GetVariantDescription(FontFace);
+            return PreferredName;
         }
     }
 
@@ -35,6 +51,8 @@ namespace CharacterMap.Core
         private List<Character> Characters { get; set; }
 
         public List<FontVariant> Variants { get; set; }
+
+        public bool HasVariants => Variants.Count > 1;
 
         public InstalledFont()
         {
@@ -53,7 +71,7 @@ namespace CharacterMap.Core
             }
         }
 
-        public List<Character> GetCharacters()
+        public IReadOnlyList<Character> GetCharacters()
         {
             if (Characters.Count == 0)
             {

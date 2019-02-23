@@ -17,12 +17,14 @@ using GalaSoft.MvvmLight.Views;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using Windows.UI.Text;
+using System.Collections.Generic;
+using System.Numerics;
 
 namespace CharacterMap.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private ObservableCollection<Character> _chars;
+        private IReadOnlyList<Character> _chars;
         private string _fontIcon;
         private ObservableCollection<InstalledFont> _fontList;
         private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
@@ -78,6 +80,20 @@ namespace CharacterMap.ViewModels
             set => Set(ref _selectedVariant, value);
         }
 
+        private bool _showColorGlyphs = true;
+        public bool ShowColorGlyphs
+        {
+            get => _showColorGlyphs;
+            set => Set(ref _showColorGlyphs, value);
+        }
+
+        private bool _isLoadingFonts;
+        public bool IsLoadingFonts
+        {
+            get => _isLoadingFonts;
+            set => Set(ref _isLoadingFonts, value);
+        }
+
         public ObservableCollection<InstalledFont> FontList
         {
             get => _fontList;
@@ -99,14 +115,10 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public ObservableCollection<Character> Chars
+        public IReadOnlyList<Character> Chars
         {
             get => _chars;
-            set
-            {
-                _chars = value;
-                RaisePropertyChanged();
-            }
+            set => Set(ref _chars, value);
         }
 
         public Character SelectedChar
@@ -190,14 +202,15 @@ namespace CharacterMap.ViewModels
 
         private async void Load()
         {
+            IsLoadingFonts = true;
             await FontFinder.LoadFontsAsync();
             RefreshFontList();
+            IsLoadingFonts = false;
         }
 
         private void LoadChars(InstalledFont font)
         {
-            var chars = font.GetCharacters();
-            Chars = chars.ToObservableCollection();
+            Chars = font.GetCharacters();
         }
 
         private void ToggleFullScreenMode()
@@ -294,24 +307,37 @@ namespace CharacterMap.ViewModels
                         var textColor = isBlackText ? Colors.Black : Colors.White;
                         var fontSize = (float)d;
 
-                        // Ugly code here, need to use SharpDX way to find out it is color font or not
-                        var isEmoji = SelectedFont.Name == "Segoe UI Emoji";
-
-                        // Deal with character get cut off
-                        // Ugly code here, need to figure out a way to measure text render size
-                        var fontThatWillBeCutOff = new[] { "Segoe UI Emoji", "Segoe UI Symbol", "paint" };
-                        if (isEmoji || fontThatWillBeCutOff.Contains(SelectedFont.Name))
+                        using (CanvasTextLayout layout = new CanvasTextLayout(device, SelectedChar.Char, new CanvasTextFormat
                         {
-                            fontSize *= 0.75f;
-                        }
-
-                        ds.DrawText(SelectedChar.Char, (float)r, 0, textColor, new CanvasTextFormat
-                        {
-                            FontFamily = SelectedFont.Name,
                             FontSize = fontSize,
+                            FontFamily = SelectedVariant.XamlFontFamily.Source,
+                            FontStretch = SelectedVariant.FontFace.Stretch,
+                            FontWeight = SelectedVariant.FontFace.Weight,
+                            FontStyle = SelectedVariant.FontFace.Style,
                             HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                            Options = (isEmoji ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default)
-                        });
+                            
+                        }, canvasW, canvasH))
+                        {
+                            // Deal with character get cut off
+                            //var fontThatWillBeCutOff = new[] { "Segoe UI Emoji", "Segoe UI Symbol", "paint" };
+                            //if (fontThatWillBeCutOff.Contains(SelectedFont.Name))
+                            //{
+                            //    fontSize *= 0.75f;
+                            //}
+
+                            // TODO : Replace the above with calculations based on the below two lines
+                            var dbounds = layout.DrawBounds;
+                            var lbounds = layout.LayoutBounds;
+
+                            layout.Options = ShowColorGlyphs ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
+
+                            if (lbounds.Width > canvasW)
+                            {
+                                ds.Transform = Matrix3x2.CreateScale(new Vector2((float)(canvasW / lbounds.Width)));
+                            }
+
+                            ds.DrawTextLayout(layout, new System.Numerics.Vector2((float)r, 0), textColor);
+                        }
                     }
 
                     using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
