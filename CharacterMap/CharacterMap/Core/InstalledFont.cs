@@ -17,6 +17,8 @@ namespace CharacterMap.Core
 
         public IReadOnlyList<Character> Characters { get; private set; }
 
+        public double CharacterHash { get; private set; }
+
         public FontVariant(CanvasFontFace face)
         {
             FontFace = face;
@@ -49,6 +51,9 @@ namespace CharacterMap.Core
 
                 foreach (var range in FontFace.UnicodeRanges)
                 {
+                    CharacterHash += range.First;
+                    CharacterHash += range.Last;
+
                     for (uint i = range.First; i <= range.Last; i++)
                     {
                         characters.Add(new Character

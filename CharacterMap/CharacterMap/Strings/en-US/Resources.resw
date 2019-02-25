@@ -120,11 +120,17 @@
   <data name="AppName" xml:space="preserve">
     <value>Character Map</value>
   </data>
+  <data name="BlackFill.Text" xml:space="preserve">
+    <value>Black Fill</value>
+  </data>
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>Copy (character only)</value>
   </data>
   <data name="BtnSavePng.Text" xml:space="preserve">
     <value>Save as PNG</value>
+  </data>
+  <data name="BtnSaveSvg.Text" xml:space="preserve">
+    <value>Save as SVG (monochrome only)</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Select</value>
@@ -200,5 +206,8 @@
   </data>
   <data name="WeightSelector.Header" xml:space="preserve">
     <value>Variants</value>
+  </data>
+  <data name="WhiteFill.Text" xml:space="preserve">
+    <value>White Fill</value>
   </data>
 </root>

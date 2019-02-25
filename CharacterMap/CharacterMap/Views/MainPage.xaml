@@ -520,6 +520,8 @@
                             <RowDefinition Height="2" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="2" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -557,7 +559,7 @@
                         <CommandBar
                             x:Name="SaveAsCommandBar"
                             Grid.Row="2"
-                            Grid.RowSpan="5"
+                            Grid.RowSpan="6"
                             Height="54"
                             VerticalAlignment="Top"
                             Style="{ThemeResource SaveAsPNGCommandBar}">
@@ -611,15 +613,72 @@
                             </Grid>
                         </Button>
 
-                        <Rectangle
+                        <CommandBar
+                            x:Name="SaveAsSvgCommandBar"
                             Grid.Row="3"
+                            Grid.RowSpan="6"
+                            Height="54"
+                            VerticalAlignment="Top"
+                            Style="{ThemeResource SaveAsPNGCommandBar}">
+                            <CommandBar.SecondaryCommands>
+                                <AppBarButton
+                                    Background="Transparent"
+                                    Command="{Binding CommandSaveSvg}"
+                                    CommandParameter="{StaticResource TrueValue}"
+                                    Style="{ThemeResource TransparentButton}">
+                                    <AppBarButton.Content>
+                                        <TextBlock Margin="12,10" x:Uid="BlackFill" />
+                                    </AppBarButton.Content>
+                                </AppBarButton>
+                                <AppBarButton
+                                    VerticalContentAlignment="Stretch"
+                                    Background="Transparent"
+                                    Command="{Binding CommandSaveSvg}"
+                                    CommandParameter="{StaticResource FalseValue}"
+                                    Style="{ThemeResource TransparentButton}">
+                                    <AppBarButton.Content>
+                                        <TextBlock Margin="12,10" x:Uid="WhiteFill" />
+                                    </AppBarButton.Content>
+                                </AppBarButton>
+                            </CommandBar.SecondaryCommands>
+                        </CommandBar>
+
+                        <Button
+                            Grid.Row="3"
+                            Height="54"
+                            Click="BtnSaveAsSvg_OnClick"
+                            Style="{ThemeResource TransparentButton}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="50" />
+                                </Grid.ColumnDefinitions>
+
+                                <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xEB9F;" />
+                                <TextBlock
+                                    x:Uid="BtnSaveSvg"
+                                    Grid.Column="1"
+                                    Margin="0,0,5,0"
+                                    VerticalAlignment="Center"
+                                    Text="#BtnSaveSvg"
+                                    TextTrimming="CharacterEllipsis" />
+                                <FontIcon
+                                    Grid.Column="2"
+                                    FontSize="13"
+                                    Glyph="&#xE972;" />
+                            </Grid>
+                        </Button>
+
+                        <Rectangle
+                            Grid.Row="5"
                             Height="2"
                             Margin="15,0"
                             HorizontalAlignment="Stretch"
                             Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                             Opacity="0.15" />
 
-                        <Grid Grid.Row="4">
+                        <Grid Grid.Row="6">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -646,7 +705,7 @@
                             </AppBarButton>
                         </Grid>
 
-                        <Grid Grid.Row="5">
+                        <Grid Grid.Row="7">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -673,7 +732,7 @@
                             </AppBarButton>
                         </Grid>
 
-                        <Grid Grid.Row="6">
+                        <Grid Grid.Row="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />

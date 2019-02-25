@@ -20,6 +20,7 @@ using Windows.UI.Text;
 using System.Collections.Generic;
 using System.Numerics;
 using Microsoft.Graphics.Canvas.Geometry;
+using Microsoft.Graphics.Canvas.Svg;
 
 namespace CharacterMap.ViewModels
 {
@@ -39,6 +40,7 @@ namespace CharacterMap.ViewModels
             DialogService = dialogService;
             AppNameVersion = GetAppDescription();
             CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
+            CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
 
             Load();
@@ -80,6 +82,8 @@ namespace CharacterMap.ViewModels
         public IDialogService DialogService { get; set; }
 
         public RelayCommand<bool> CommandSavePng { get; set; }
+
+        public RelayCommand<bool> CommandSaveSvg { get; set; }
 
         private FontVariant _selectedVariant;
         public FontVariant SelectedVariant
@@ -344,7 +348,87 @@ namespace CharacterMap.ViewModels
 
                     using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
                     {
+                        fileStream.Size = 0;
                         await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
+                    }
+
+                    await CachedFileManager.CompleteUpdatesAsync(file);
+                }
+            }
+            catch (Exception ex)
+            {
+                await DialogService.ShowMessageBox(ex.Message, "Error Saving Image");
+            }
+        }
+
+        private async Task SaveSvgAsync(bool isBlackText)
+        {
+            try
+            {
+                var savePicker = new FileSavePicker
+                {
+                    SuggestedStartLocation = PickerLocationId.Desktop
+                };
+                savePicker.FileTypeChoices.Add("SVG", new[] { ".svg" });
+                savePicker.SuggestedFileName = $"{SelectedFont.Name} - {SelectedVariant.PreferredName} - {SelectedChar.UnicodeString}.svg";
+                var file = await savePicker.PickSaveFileAsync();
+
+                if (null != file)
+                {
+                    CachedFileManager.DeferUpdates(file);
+                    var device = CanvasDevice.GetSharedDevice();
+
+                    var canvasH = (float)App.AppSettings.PngSize;
+                    var canvasW = (float)App.AppSettings.PngSize;
+
+                    var d = App.AppSettings.PngSize;
+                    var r = App.AppSettings.PngSize / 2;
+
+                    var textColor = isBlackText ? Colors.Black : Colors.White;
+                    var fontSize = (float)d;
+
+                    using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char} ", new CanvasTextFormat
+                    {
+                        FontSize = fontSize,
+                        FontFamily = SelectedVariant.XamlFontFamily.Source,
+                        FontStretch = SelectedVariant.FontFace.Stretch,
+                        FontWeight = SelectedVariant.FontFace.Weight,
+                        FontStyle = SelectedVariant.FontFace.Style,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Center,
+
+                    }, canvasW, canvasH))
+                    using (var geom = CanvasGeometry.CreateText(layout))
+                    {
+                        layout.Options = ShowColorGlyphs ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
+
+                        var db = layout.DrawBounds;
+                        double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
+                        var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
+                        var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
+
+                        var g = geom
+                            .Transform(Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y)))
+                            .Transform(Matrix3x2.CreateScale(new Vector2((float)scale)));
+
+                        /* 
+                         * Unfortunately this only constructs a black and white path, if we want color
+                         * I'm not sure Win2D exposes the neccessary API's to get the individual glyph
+                         * layers that make up a colour glyph
+                         */
+                        SVGPathReciever rc = new SVGPathReciever();
+                        g.SendPathTo(rc);
+
+                        string xml = $"<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 {canvasW} {canvasH}\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"{rc.GetPathData()}\" /></svg>";
+                        using (CanvasSvgDocument document = CanvasSvgDocument.LoadFromXml(device, xml))
+                        {
+                            ((CanvasSvgNamedElement)document.Root.FirstChild).SetColorAttribute("fill", textColor);
+
+                            using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
+                            {
+                                fileStream.Size = 0;
+                                await document.SaveAsync(fileStream);
+                            }
+                        }
                     }
 
                     await CachedFileManager.CompleteUpdatesAsync(file);

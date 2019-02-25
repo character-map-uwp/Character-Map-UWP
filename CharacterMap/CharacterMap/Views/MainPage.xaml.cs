@@ -115,6 +115,11 @@ namespace CharacterMap.Views
             SaveAsCommandBar.IsOpen = !SaveAsCommandBar.IsOpen;
         }
 
+        private void BtnSaveAsSvg_OnClick(object sender, RoutedEventArgs e)
+        {
+            SaveAsSvgCommandBar.IsOpen = !SaveAsSvgCommandBar.IsOpen;
+        }
+
         private void TxtFontIcon_OnGotFocus(object sender, RoutedEventArgs e)
         {
             TxtFontIcon.SelectAll();
@@ -216,7 +221,7 @@ namespace CharacterMap.Views
         {
             var newSize = e.NewSize.Width - 2;
 
-            foreach (AppBarButton item in SaveAsCommandBar.SecondaryCommands.ToList())
+            foreach (AppBarButton item in SaveAsCommandBar.SecondaryCommands.Concat(SaveAsSvgCommandBar.SecondaryCommands))
             {
                 item.Width = newSize;
             }
