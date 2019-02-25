@@ -39,7 +39,10 @@ namespace CharacterMap.Core
                         if (file == null)
                             variant.XamlFontFamily = font.Variants[0].XamlFontFamily;
                         else
+                        {
                             variant.XamlFontFamily = new Windows.UI.Xaml.Media.FontFamily($"{GetAppPath(file)}#{key}");
+                            font.HasImportedFiles = true;
+                        }
 
                         font.Variants.Add(variant);
                     }
@@ -56,6 +59,7 @@ namespace CharacterMap.Core
                         if (file != null)
                         {
                             f.Variants[0].XamlFontFamily = new Windows.UI.Xaml.Media.FontFamily($"{GetAppPath(file)}#{key}");
+                            f.HasImportedFiles = true;
                         }
                         else
                         {

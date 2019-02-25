@@ -54,6 +54,8 @@ namespace CharacterMap.Core
 
         public bool HasVariants => Variants.Count > 1;
 
+        public bool HasImportedFiles { get; set; }
+
         public InstalledFont()
         {
             Characters = new List<Character>();

@@ -19,6 +19,7 @@ using Microsoft.Graphics.Canvas.Text;
 using Windows.UI.Text;
 using System.Collections.Generic;
 using System.Numerics;
+using Microsoft.Graphics.Canvas.Geometry;
 
 namespace CharacterMap.ViewModels
 {
@@ -61,6 +62,13 @@ namespace CharacterMap.ViewModels
         {
             get => _appNameVersion;
             set => Set(ref _appNameVersion, value);
+        }
+
+        private int _fontListFilter;
+        public int FontListFilter
+        {
+            get => _fontListFilter;
+            set { if (Set(ref _fontListFilter, value)) RefreshFontList(); }
         }
 
         public string TitlePrefix
@@ -226,9 +234,14 @@ namespace CharacterMap.ViewModels
         {
             try
             {
-                var fontList = FontFinder.GetFonts();
-                FontList = fontList.Where(f => f.IsSymbolFont || !ShowSymbolFontsOnly)
-                                   .OrderBy(f => f.Name)
+                var fontList = FontFinder.GetFonts().AsEnumerable();
+
+                if (FontListFilter == 1)
+                    fontList = fontList.Where(f => f.IsSymbolFont);
+                else if (FontListFilter == 2)
+                    fontList = fontList.Where(f => f.HasImportedFiles);
+
+                FontList = fontList.OrderBy(f => f.Name)
                                    .ToObservableCollection();
             }
             catch (Exception e)
@@ -307,7 +320,7 @@ namespace CharacterMap.ViewModels
                         var textColor = isBlackText ? Colors.Black : Colors.White;
                         var fontSize = (float)d;
 
-                        using (CanvasTextLayout layout = new CanvasTextLayout(device, SelectedChar.Char, new CanvasTextFormat
+                        using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char} ", new CanvasTextFormat
                         {
                             FontSize = fontSize,
                             FontFamily = SelectedVariant.XamlFontFamily.Source,
@@ -315,28 +328,18 @@ namespace CharacterMap.ViewModels
                             FontWeight = SelectedVariant.FontFace.Weight,
                             FontStyle = SelectedVariant.FontFace.Style,
                             HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                            
+
                         }, canvasW, canvasH))
                         {
-                            // Deal with character get cut off
-                            //var fontThatWillBeCutOff = new[] { "Segoe UI Emoji", "Segoe UI Symbol", "paint" };
-                            //if (fontThatWillBeCutOff.Contains(SelectedFont.Name))
-                            //{
-                            //    fontSize *= 0.75f;
-                            //}
-
-                            // TODO : Replace the above with calculations based on the below two lines
-                            var dbounds = layout.DrawBounds;
-                            var lbounds = layout.LayoutBounds;
-
                             layout.Options = ShowColorGlyphs ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
 
-                            if (lbounds.Width > canvasW)
-                            {
-                                ds.Transform = Matrix3x2.CreateScale(new Vector2((float)(canvasW / lbounds.Width)));
-                            }
+                            var db = layout.DrawBounds;
+                            double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
+                            ds.Transform = Matrix3x2.CreateScale(new Vector2((float)scale));
 
-                            ds.DrawTextLayout(layout, new System.Numerics.Vector2((float)r, 0), textColor);
+                            var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
+                            var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
+                            ds.DrawTextLayout(layout, new Vector2((float)x, (float)y), textColor);
                         }
                     }
 
