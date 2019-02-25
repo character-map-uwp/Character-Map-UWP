@@ -85,7 +85,7 @@ namespace CharacterMap.ViewModels
         public FontVariant SelectedVariant
         {
             get => _selectedVariant;
-            set => Set(ref _selectedVariant, value);
+            set { if (Set(ref _selectedVariant, value)) LoadChars(value); }
         }
 
         private bool _showColorGlyphs = true;
@@ -196,7 +196,6 @@ namespace CharacterMap.ViewModels
                 {
                     TitlePrefix = value.Name + " - ";
                     App.AppSettings.LastSelectedFontName = value.Name;
-                    LoadChars(_selectedFont);
                 }
 
                 RaisePropertyChanged();
@@ -216,9 +215,9 @@ namespace CharacterMap.ViewModels
             IsLoadingFonts = false;
         }
 
-        private void LoadChars(InstalledFont font)
+        private void LoadChars(FontVariant variant)
         {
-            Chars = font.GetCharacters();
+            Chars = variant?.GetCharacters();
         }
 
         private void ToggleFullScreenMode()

@@ -15,9 +15,12 @@ namespace CharacterMap.Core
 
         public string PreferredName { get; }
 
+        public IReadOnlyList<Character> Characters { get; private set; }
+
         public FontVariant(CanvasFontFace face)
         {
             FontFace = face;
+            Characters = new List<Character>();
 
             if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string name))
             {
@@ -37,41 +40,6 @@ namespace CharacterMap.Core
         {
             return PreferredName;
         }
-    }
-
-
-    public class InstalledFont
-    {
-        public string Name { get; set; }
-
-        public CanvasFontFace FontFace { get; set; }
-
-        public bool IsSymbolFont { get; set; }
-
-        private List<Character> Characters { get; set; }
-
-        public List<FontVariant> Variants { get; set; }
-
-        public bool HasVariants => Variants.Count > 1;
-
-        public bool HasImportedFiles { get; set; }
-
-        public InstalledFont()
-        {
-            Characters = new List<Character>();
-        }
-
-        public FontVariant DefaultVariant
-        {
-            get
-            {
-                return Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal && v.FontFace.Stretch == FontStretch.Normal) 
-                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal)
-                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Stretch == FontStretch.Normal)
-                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight)
-                    ?? Variants[0];
-            }
-        }
 
         public IReadOnlyList<Character> GetCharacters()
         {
@@ -90,25 +58,45 @@ namespace CharacterMap.Core
                         });
                     }
                 }
-
-                //uint count = 65536 * 4 - 1;
-                //for (uint i = 0; i < count; i++)
-                //{
-                //    if (FontFace.HasCharacter(i))
-                //    {
-                            //characters.Add(new Character
-                            //{
-                            //    Char = char.ConvertFromUtf32((int)i),
-                            //    UnicodeIndex = (int)i
-                            //});
-                //    }
-                //}
-
                 Characters = characters;
                 return characters;
             }
 
             return Characters;
         }
+    }
+
+
+    public class InstalledFont
+    {
+        public string Name { get; set; }
+
+        public CanvasFontFace FontFace { get; set; }
+
+        public bool IsSymbolFont { get; set; }
+
+        public List<FontVariant> Variants { get; set; }
+
+        public bool HasVariants => Variants.Count > 1;
+
+        public bool HasImportedFiles { get; set; }
+
+        public InstalledFont()
+        {
+        }
+
+        public FontVariant DefaultVariant
+        {
+            get
+            {
+                return Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal && v.FontFace.Stretch == FontStretch.Normal) 
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal)
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Stretch == FontStretch.Normal)
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight)
+                    ?? Variants[0];
+            }
+        }
+
+        
     }
 }
