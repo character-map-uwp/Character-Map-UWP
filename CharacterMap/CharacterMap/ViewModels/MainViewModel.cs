@@ -21,9 +21,17 @@ using System.Collections.Generic;
 using System.Numerics;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Svg;
+using CharacterMapCX;
 
 namespace CharacterMap.ViewModels
 {
+    public enum SaveColor
+    {
+        Black,
+        White,
+        ColorGlyph
+    }
+
     public class MainViewModel : ViewModelBase
     {
         private IReadOnlyList<Character> _chars;
@@ -35,13 +43,21 @@ namespace CharacterMap.ViewModels
         private string _xamlCode;
         private string _symbolIcon;
 
+        private Interop _interop;
+
+        public SaveColor BlackColor { get; } = SaveColor.Black;
+        public SaveColor WhiteColor { get; } = SaveColor.White;
+        public SaveColor GlyphColor { get; } = SaveColor.ColorGlyph;
+
         public MainViewModel(IDialogService dialogService)
         {
             DialogService = dialogService;
             AppNameVersion = GetAppDescription();
-            CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
+            CommandSavePng = new RelayCommand<SaveColor>(async (b) => await SavePng(b));
             CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
+
+            _interop = new Interop(CanvasDevice.GetSharedDevice());
 
             Load();
         }
@@ -81,7 +97,7 @@ namespace CharacterMap.ViewModels
 
         public IDialogService DialogService { get; set; }
 
-        public RelayCommand<bool> CommandSavePng { get; set; }
+        public RelayCommand<SaveColor> CommandSavePng { get; set; }
 
         public RelayCommand<bool> CommandSaveSvg { get; set; }
 
@@ -104,6 +120,13 @@ namespace CharacterMap.ViewModels
         {
             get => _isLoadingFonts;
             set => Set(ref _isLoadingFonts, value);
+        }
+
+        private bool _glyphHasColorVariant;
+        public bool GlyphHasColorVariant
+        {
+            get => _glyphHasColorVariant;
+            set => Set(ref _glyphHasColorVariant, value);
         }
 
         public ObservableCollection<InstalledFont> FontList
@@ -150,6 +173,7 @@ namespace CharacterMap.ViewModels
                     App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
                 }
                 RaisePropertyChanged();
+                UpdateColor();
             }
         }
 
@@ -291,7 +315,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private async Task SavePng(bool isBlackText)
+        private async Task SavePng(SaveColor color)
         {
             try
             {
@@ -320,7 +344,7 @@ namespace CharacterMap.ViewModels
                         var d = App.AppSettings.PngSize;
                         var r = App.AppSettings.PngSize / 2;
 
-                        var textColor = isBlackText ? Colors.Black : Colors.White;
+                        var textColor = color == SaveColor.Black ? Colors.Black : Colors.White;
                         var fontSize = (float)d;
 
                         using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char} ", new CanvasTextFormat
@@ -331,10 +355,10 @@ namespace CharacterMap.ViewModels
                             FontWeight = SelectedVariant.FontFace.Weight,
                             FontStyle = SelectedVariant.FontFace.Style,
                             HorizontalAlignment = CanvasHorizontalAlignment.Center,
-
                         }, canvasW, canvasH))
                         {
-                            layout.Options = ShowColorGlyphs ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
+                            if (color == SaveColor.ColorGlyph)
+                                layout.Options = CanvasDrawTextOptions.EnableColorFont;
 
                             var db = layout.DrawBounds;
                             double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
@@ -387,7 +411,7 @@ namespace CharacterMap.ViewModels
                     var textColor = isBlackText ? Colors.Black : Colors.White;
                     var fontSize = (float)d;
 
-                    using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char} ", new CanvasTextFormat
+                    using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char}", new CanvasTextFormat
                     {
                         FontSize = fontSize,
                         FontFamily = SelectedVariant.XamlFontFamily.Source,
@@ -395,11 +419,16 @@ namespace CharacterMap.ViewModels
                         FontWeight = SelectedVariant.FontFace.Weight,
                         FontStyle = SelectedVariant.FontFace.Style,
                         HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                        Options = ShowColorGlyphs ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
 
                     }, canvasW, canvasH))
                     using (var geom = CanvasGeometry.CreateText(layout))
                     {
                         layout.Options = ShowColorGlyphs ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
+                        SvgGlyphCompositor sgc = new SvgGlyphCompositor();
+                        layout.DrawToTextRenderer(sgc, 0, 0);
+
+                        var util = new SharpDXColorGlyphUtil(layout.Device, layout);
 
                         var db = layout.DrawBounds;
                         double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
@@ -437,6 +466,31 @@ namespace CharacterMap.ViewModels
             catch (Exception ex)
             {
                 await DialogService.ShowMessageBox(ex.Message, "Error Saving Image");
+            }
+        }
+
+
+
+        private void UpdateColor()
+        {
+            if (SelectedChar == null)
+            {
+                GlyphHasColorVariant = false;
+                return;
+            }
+
+            using (CanvasTextLayout layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), $"{SelectedChar.Char}", new CanvasTextFormat
+            {
+                FontSize = 300,
+                FontFamily = SelectedVariant.XamlFontFamily.Source,
+                FontStretch = SelectedVariant.FontFace.Stretch,
+                FontWeight = SelectedVariant.FontFace.Weight,
+                FontStyle = SelectedVariant.FontFace.Style,
+                HorizontalAlignment = CanvasHorizontalAlignment.Center,
+            }, 1000, 1000))
+            {
+                layout.Options = CanvasDrawTextOptions.EnableColorFont;
+                GlyphHasColorVariant = _interop.HasColorGlyphs(layout);
             }
         }
 

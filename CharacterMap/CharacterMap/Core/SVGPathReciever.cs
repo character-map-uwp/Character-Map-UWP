@@ -64,7 +64,7 @@ namespace CharacterMap.Core
 
         public string GetPathData()
         {
-            return _builder.ToString().TrimEnd();
+            return _builder.ToString();
         }
     }
 }

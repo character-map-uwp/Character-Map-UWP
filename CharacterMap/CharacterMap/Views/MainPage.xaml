@@ -9,11 +9,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:CharacterMap"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     Loaded="MainPage_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
+    
         <x:Boolean x:Key="TrueValue">True</x:Boolean>
         <x:Boolean x:Key="FalseValue">False</x:Boolean>
         <core:AppSettings x:Key="AppSettings" />
@@ -567,20 +569,30 @@
                                 <AppBarButton
                                     Background="Transparent"
                                     Command="{Binding CommandSavePng}"
-                                    CommandParameter="{StaticResource TrueValue}"
+                                    CommandParameter="{x:Bind ViewModel.GlyphColor}"
+                                    Style="{ThemeResource TransparentButton}"
+                                    Visibility="{x:Bind ViewModel.GlyphHasColorVariant,Mode=OneWay}">
+                                    <AppBarButton.Content>
+                                        <TextBlock Margin="12,10" Text="Colored Glyph" />
+                                    </AppBarButton.Content>
+                                </AppBarButton>
+                                <AppBarButton
+                                    Background="Transparent"
+                                    Command="{Binding CommandSavePng}"
+                                    CommandParameter="{x:Bind ViewModel.BlackColor}"
                                     Style="{ThemeResource TransparentButton}">
                                     <AppBarButton.Content>
-                                        <TextBlock Margin="12,10" Text="Black text" />
+                                        <TextBlock Margin="12,10" x:Uid="BlackFill" />
                                     </AppBarButton.Content>
                                 </AppBarButton>
                                 <AppBarButton
                                     VerticalContentAlignment="Stretch"
                                     Background="Transparent"
                                     Command="{Binding CommandSavePng}"
-                                    CommandParameter="{StaticResource FalseValue}"
+                                    CommandParameter="{x:Bind ViewModel.WhiteColor}"
                                     Style="{ThemeResource TransparentButton}">
                                     <AppBarButton.Content>
-                                        <TextBlock Margin="12,10" Text="White text" />
+                                        <TextBlock Margin="12,10" x:Uid="WhiteFill" />
                                     </AppBarButton.Content>
                                 </AppBarButton>
                             </CommandBar.SecondaryCommands>
@@ -794,7 +806,7 @@
             <StackPanel Margin="12,0" Orientation="Horizontal">
                 <TextBlock Text="Font Family Index: " />
                 <TextBlock>&#160;</TextBlock>
-                <TextBlock Text="{Binding SelectedFont.FamilyIndex}" />
+                <TextBlock Text="{Binding GlyphHasColorVariant}" />
 
                 <Rectangle
                     Width="2"
