@@ -571,7 +571,7 @@
                                     Command="{Binding CommandSavePng}"
                                     CommandParameter="{x:Bind ViewModel.GlyphColor}"
                                     Style="{ThemeResource TransparentButton}"
-                                    Visibility="{x:Bind ViewModel.GlyphHasColorVariant,Mode=OneWay}">
+                                    Visibility="{x:Bind ViewModel.SelectedCharAnalysis.HasColorGlyphs, Mode=OneWay}">
                                     <AppBarButton.Content>
                                         <TextBlock Margin="12,10" Text="Colored Glyph" />
                                     </AppBarButton.Content>
@@ -580,6 +580,7 @@
                                     Background="Transparent"
                                     Command="{Binding CommandSavePng}"
                                     CommandParameter="{x:Bind ViewModel.BlackColor}"
+                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay}"
                                     Style="{ThemeResource TransparentButton}">
                                     <AppBarButton.Content>
                                         <TextBlock Margin="12,10" x:Uid="BlackFill" />
@@ -590,6 +591,7 @@
                                     Background="Transparent"
                                     Command="{Binding CommandSavePng}"
                                     CommandParameter="{x:Bind ViewModel.WhiteColor}"
+                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay}"
                                     Style="{ThemeResource TransparentButton}">
                                     <AppBarButton.Content>
                                         <TextBlock Margin="12,10" x:Uid="WhiteFill" />
@@ -659,6 +661,7 @@
                             Grid.Row="3"
                             Height="54"
                             Click="BtnSaveAsSvg_OnClick"
+                            IsEnabled="{Binding SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
                             Style="{ThemeResource TransparentButton}">
                             <Grid>
                                 <Grid.ColumnDefinitions>

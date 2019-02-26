@@ -10,9 +10,6 @@ namespace CharacterMap.Core
 {
     public class SharpDXColorGlyphUtil
     {
-        public SharpDXColorGlyphUtil(CanvasDevice device, CanvasTextLayout layout)
-        {
-           
-        }
+
     }
 }

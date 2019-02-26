@@ -5,6 +5,7 @@
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include "ColorTextAnalyzer.h"
+#include "CanvasTextLayoutAnalysis.h"
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -17,7 +18,7 @@ namespace CharacterMapCX
     {
     public:
         Interop(CanvasDevice^ device);
-		bool HasColorGlyphs(CanvasTextLayout^ layout);
+		CanvasTextLayoutAnalysis^ Analyze(CanvasTextLayout^ layout);
 
 	private:
 		Microsoft::WRL::ComPtr<IDWriteFactory4> m_dwriteFactory;

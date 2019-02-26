@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Interop.h"
+#include "CanvasTextLayoutAnalysis.h"
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
@@ -27,9 +28,9 @@ Interop::Interop(CanvasDevice^ device)
 	m_colorAnalyzer = new (std::nothrow) ColorTextAnalyzer(m_d2dFactory, m_dwriteFactory, m_d2dContext);
 }
 
-bool Interop::HasColorGlyphs(CanvasTextLayout^ layout)
+CanvasTextLayoutAnalysis^ Interop::Analyze(CanvasTextLayout^ layout)
 {
 	ComPtr<IDWriteTextLayout3> context = GetWrappedResource<IDWriteTextLayout3>(layout);
 	context->Draw(m_d2dContext.Get(), m_colorAnalyzer.Get(), 0, 0);
-	return  m_colorAnalyzer->HasColorGlyphs;
+	return ref new CanvasTextLayoutAnalysis(m_colorAnalyzer->HasColorGlyphs, m_colorAnalyzer->GlyphFormats);
 }

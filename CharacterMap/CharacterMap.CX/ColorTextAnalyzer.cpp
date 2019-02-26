@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ColorTextAnalyzer.h"
+#include "GlyphImageFormat.h"
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
@@ -29,6 +30,8 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 {
 	HRESULT hr = DWRITE_E_NOCOLOR;
 
+	GlyphFormats.resize(0);
+
 	D2D1_POINT_2F baselineOrigin = D2D1::Point2F(baselineOriginX, baselineOriginY);
 
 	DWRITE_GLYPH_IMAGE_FORMATS supportedFormats =
@@ -54,6 +57,27 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 	);
 
 	HasColorGlyphs = hr != DWRITE_E_NOCOLOR;
+
+	if (HasColorGlyphs)
+	{
+		for (;;)
+		{
+			BOOL haveRun;
+			ThrowIfFailed(glyphRunEnumerator->MoveNext(&haveRun));
+			if (!haveRun)
+				break;
+
+			DWRITE_COLOR_GLYPH_RUN1 const* colorRun;
+			ThrowIfFailed(glyphRunEnumerator->GetCurrentRun(&colorRun));
+
+			D2D1_POINT_2F currentBaselineOrigin = D2D1::Point2F(
+				colorRun->baselineOriginX,
+				colorRun->baselineOriginY
+			);
+
+			GlyphFormats.push_back(static_cast<GlyphImageFormat>(colorRun->glyphImageFormat));
+		}
+	}
 
 	return hr;
 }

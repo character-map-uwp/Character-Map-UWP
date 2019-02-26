@@ -267,11 +267,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CanvasTextLayoutAnalysis.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Interop.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
     <ClCompile Include="Interop.cpp" />
     <ClCompile Include="pch.cpp">

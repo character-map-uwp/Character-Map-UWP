@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -126,7 +126,9 @@ namespace CharacterMap.Core
                 if (!item.IsAvailable)
                     continue;
 
-                if (item.FileType.ToUpper().EndsWith("TTF") || item.FileType.ToUpper().EndsWith("OTF"))
+                if (item.FileType.ToUpper().EndsWith("TTF") 
+                    || item.FileType.ToUpper().EndsWith("OTF")
+                    || item.FileType.ToUpper().EndsWith("CCF"))
                 {
                     StorageFile fontFile = await item.CopyAsync(ApplicationData.Current.TemporaryFolder);
                     import = true;

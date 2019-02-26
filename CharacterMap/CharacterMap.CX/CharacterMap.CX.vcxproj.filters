@@ -10,11 +10,14 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
     <ClCompile Include="Interop.cpp" />
+    <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="GlyphImageFormat.h" />
+    <ClInclude Include="CanvasTextLayoutAnalysis.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

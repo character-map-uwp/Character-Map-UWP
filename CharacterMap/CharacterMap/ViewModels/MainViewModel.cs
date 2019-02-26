@@ -122,11 +122,11 @@ namespace CharacterMap.ViewModels
             set => Set(ref _isLoadingFonts, value);
         }
 
-        private bool _glyphHasColorVariant;
-        public bool GlyphHasColorVariant
+        private CanvasTextLayoutAnalysis _selectedCharAnalysis;
+        public CanvasTextLayoutAnalysis SelectedCharAnalysis
         {
-            get => _glyphHasColorVariant;
-            set => Set(ref _glyphHasColorVariant, value);
+            get => _selectedCharAnalysis;
+            set => Set(ref _selectedCharAnalysis, value);
         }
 
         public ObservableCollection<InstalledFont> FontList
@@ -347,7 +347,7 @@ namespace CharacterMap.ViewModels
                         var textColor = color == SaveColor.Black ? Colors.Black : Colors.White;
                         var fontSize = (float)d;
 
-                        using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char} ", new CanvasTextFormat
+                        using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char}", new CanvasTextFormat
                         {
                             FontSize = fontSize,
                             FontFamily = SelectedVariant.XamlFontFamily.Source,
@@ -362,11 +362,14 @@ namespace CharacterMap.ViewModels
 
                             var db = layout.DrawBounds;
                             double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
-                            ds.Transform = Matrix3x2.CreateScale(new Vector2((float)scale));
-
                             var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
                             var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
-                            ds.DrawTextLayout(layout, new Vector2((float)x, (float)y), textColor);
+
+                            ds.Transform = 
+                                Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
+                                * Matrix3x2.CreateScale(new Vector2((float)scale));
+                            
+                            ds.DrawTextLayout(layout, new Vector2(0), textColor);
                         }
                     }
 
@@ -428,8 +431,6 @@ namespace CharacterMap.ViewModels
                         SvgGlyphCompositor sgc = new SvgGlyphCompositor();
                         layout.DrawToTextRenderer(sgc, 0, 0);
 
-                        var util = new SharpDXColorGlyphUtil(layout.Device, layout);
-
                         var db = layout.DrawBounds;
                         double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
                         var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
@@ -475,7 +476,7 @@ namespace CharacterMap.ViewModels
         {
             if (SelectedChar == null)
             {
-                GlyphHasColorVariant = false;
+                SelectedCharAnalysis = new CanvasTextLayoutAnalysis();
                 return;
             }
 
@@ -490,7 +491,7 @@ namespace CharacterMap.ViewModels
             }, 1000, 1000))
             {
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
-                GlyphHasColorVariant = _interop.HasColorGlyphs(layout);
+                SelectedCharAnalysis = _interop.Analyze(layout);
             }
         }
 

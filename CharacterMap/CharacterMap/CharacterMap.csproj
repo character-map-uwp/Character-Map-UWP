@@ -165,6 +165,7 @@
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\Character.cs" />
+    <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\InstalledFont.cs" />
     <Compile Include="Core\MDL2DescriptionDict.cs" />

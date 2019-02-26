@@ -4,6 +4,7 @@
 #include <d2d1_2.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
+#include "GlyphImageFormat.h"
 
 namespace CharacterMapCX
 {
@@ -21,6 +22,8 @@ namespace CharacterMapCX
 		);
 
 		bool HasColorGlyphs;
+
+		std::vector<GlyphImageFormat> GlyphFormats;
 
 		IFACEMETHOD(IsPixelSnappingDisabled)(
 			_In_opt_ void* clientDrawingContext,
