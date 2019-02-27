@@ -349,12 +349,32 @@ namespace CharacterMap.ViewModels
 
         internal async void TryRemoveFont(InstalledFont font)
         {
-            SelectedFont = FontFinder.DefaultFont;
-            await Task.Delay(16); // Give UI time to react
             IsLoadingFonts = true;
-            await FontFinder.RemoveFontAsync(font);
+
+            /* Yes, this is hack. The UI needs to time to remove references to the 
+             * current Font otherwise we won't be able to delete it because the file will 
+             * be "in use". 16ms works fine on my test machines, but better safe than
+             * sorry - this isn't a fast operation in sum anyway because we reload
+             * all fonts, so extra 150ms is nothing...
+             */
+            SelectedFont = FontFinder.DefaultFont;
+            await Task.Delay(150);
+
+
+            bool result = await FontFinder.RemoveFontAsync(font);
             RefreshFontList();
+
             IsLoadingFonts = false;
+
+            if (!result)
+            {
+                /* looks like we couldn't delete some fonts :'(. 
+                 * We'll get em next time the app launches! */
+
+                _ = DialogService.ShowMessage(
+                    "Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.",
+                    "Notice");
+            }
         }
 
         private Task SavePngAsync(ExportStyle style)

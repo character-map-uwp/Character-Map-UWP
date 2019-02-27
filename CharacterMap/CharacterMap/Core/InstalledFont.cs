@@ -15,7 +15,7 @@ namespace CharacterMap.Core
 
         public FontFamily XamlFontFamily { get; set; }
 
-        public string PreferredName { get; }
+        public string PreferredName { get; private set; }
 
         public IReadOnlyList<Character> Characters { get; private set; }
 
@@ -82,6 +82,27 @@ namespace CharacterMap.Core
             return Characters;
         }
 
+        public static FontVariant CreateDefault(CanvasFontFace face)
+        {
+            return new FontVariant(face, null)
+            {
+                PreferredName = "",
+                Characters = new List<Character>
+                {
+                    new Character
+                    {
+                        Char = "",
+                        UnicodeIndex = 0
+                    }
+                }
+            };
+        }
+
+        public void SetAsDefault()
+        {
+            
+        }
+
         public void Dispose()
         {
             XamlFontFamily = null;
@@ -121,6 +142,16 @@ namespace CharacterMap.Core
             }
         }
 
+        public static InstalledFont CreateDefault()
+        {
+            InstalledFont font = new InstalledFont()
+            {
+                Name = "",
+                HasImportedFiles = false,
+            };
+
+            return font;
+        }
         
     }
 }

@@ -52,7 +52,8 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="FontsSemanticZoom.Visibility" Value="Collapsed" />
-                        <Setter Target="MainUIGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="MainUIGrid.Opacity" Value="0" />
+                        <Setter Target="MainUIGrid.IsHitTestVisible" Value="False" />
                         <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
                         <Setter Target="FontListFilter.IsEnabled" Value="False" />
                         <Setter Target="SearchBoxUnicode.IsEnabled" Value="False" />

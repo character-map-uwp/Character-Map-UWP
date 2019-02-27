@@ -25,16 +25,49 @@ namespace CharacterMap.Core
 
     public class FontFinder
     {
+        const string PENDING = nameof(PENDING);
+
+        /* If we can't delete a font during a session, we mark it here */
+        private static HashSet<string> _ignoredFonts { get; } = new HashSet<string>();
+
+        private static StorageFolder ImportFolder => ApplicationData.Current.LocalFolder;
+
         public static List<InstalledFont> Fonts { get; private set; }
 
         public static InstalledFont DefaultFont { get; private set; }
 
+
         public static async Task LoadFontsAsync()
         {
             Fonts = null;
-            var systemFonts = CanvasFontSet.GetSystemFontSet();
-            var familyCount = systemFonts.Fonts.Count;
+            
+            if (DefaultFont == null)
+            {
+                /* Don't do this in the same IF below. We need to do it before loading FontSets */
+                await CleanUpPendingDeletesAsync();
+            }
 
+            var systemFonts = CanvasFontSet.GetSystemFontSet();
+
+            if (DefaultFont == null)
+            {
+                /* Set default font */
+                var segoe = systemFonts.GetMatchingFonts("Segoe UI", FontWeights.Normal, FontStretch.Normal, FontStyle.Normal);
+                if (segoe != null && segoe.Fonts.Count > 0)
+                {
+                    DefaultFont = new InstalledFont
+                    {
+                        Name = "",
+                        FontFace = segoe.Fonts[0],
+                        Variants = new List<FontVariant> { FontVariant.CreateDefault(segoe.Fonts[0]) }
+                    };
+
+                    DefaultFont.DefaultVariant.SetAsDefault();
+                }
+            }
+            
+
+            var familyCount = systemFonts.Fonts.Count;
             Dictionary<string, InstalledFont> fontList = new Dictionary<string, InstalledFont>();
 
             /* 
@@ -101,16 +134,15 @@ namespace CharacterMap.Core
             for (var i = 0; i < familyCount; i++)
             {
                 AddFont(systemFonts.Fonts[i]);
-                if (i == 0)
-                {
-                    DefaultFont = fontList.First().Value;
-                }
             }
 
             /* Add imported fonts */
-            var files = await ApplicationData.Current.LocalFolder.GetFilesAsync();
+            var files = await ImportFolder.GetFilesAsync();
             foreach (var file in files.OfType<StorageFile>())
             {
+                if (_ignoredFonts.Contains(file.Name))
+                    continue;
+
                 foreach (var font in GetFontFacesFromFile(file))
                     AddFont(font, file);
             }
@@ -156,11 +188,16 @@ namespace CharacterMap.Core
                     continue;
                 }
 
+                if (_ignoredFonts.Contains(file.Name))
+                {
+                    _invalid.Add((item, "Existing font pending delete. Please restart app."));
+                }
+
                 if (file.FileType.ToUpper().EndsWith("TTF")
                     || file.FileType.ToUpper().EndsWith("OTF"))
                 {
                     // TODO : What do we do if a font with the same file name already exists?
-                    if (ApplicationData.Current.LocalFolder.TryGetItemAsync(item.Name) == null)
+                    if (ImportFolder.TryGetItemAsync(item.Name) == null)
                     {
                         StorageFile fontFile = await file.CopyAsync(ApplicationData.Current.LocalFolder);
                         _imported.Add(fontFile);
@@ -185,12 +222,20 @@ namespace CharacterMap.Core
             return new FontImportResult(_imported, _existing, _invalid);
         }
 
-        internal static async Task RemoveFontAsync(InstalledFont font)
+        /// <summary>
+        /// Returns true if all fonts were deleted.
+        /// Returns false is some failed - these will be deleted on next start up.
+        /// </summary>
+        /// <param name="font"></param>
+        /// <returns></returns>
+        internal static async Task<bool> RemoveFontAsync(InstalledFont font)
         {
             Fonts = null;
-
             font.FontFace = null;
             var variants = font.Variants.Where(v => v.IsImported).ToList();
+
+            bool success = true;
+
             foreach (var variant in variants)
             {
                 font.Variants.Remove(variant);
@@ -198,14 +243,64 @@ namespace CharacterMap.Core
 
                 GC.Collect(); // required to prevent "File in use" exception
 
-                if (await ApplicationData.Current.LocalFolder.TryGetItemAsync(variant.FileName)
-                    is StorageFile file)
+                try
                 {
-                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    if (await ImportFolder.TryGetItemAsync(variant.FileName)
+                                        is StorageFile file)
+                    {
+                        await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                    }
+                }
+                catch 
+                {
+                    _ignoredFonts.Add(variant.FileName);
+                    success = false;
                 }
             }
 
+            /* If we did get a "File In Use" or something similar, 
+             * make sure we delete the file during the next start up */
+            if (success == false)
+            {
+                var pending = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(PENDING, CreationCollisionOption.OpenIfExists);
+                await FileIO.WriteLinesAsync(pending, _ignoredFonts);
+            }
+
             await LoadFontsAsync();
+            return success;
         }
+
+
+        private static async Task CleanUpPendingDeletesAsync()
+        {
+            /* If we fail to delete a font at runtime, delete it now before we load anything */
+            if (await ApplicationData.Current.LocalCacheFolder.TryGetItemAsync(PENDING)
+                is StorageFile pendingFile)
+            {
+                var lines = (await FileIO.ReadLinesAsync(pendingFile)).ToList();
+
+                List<string> moreFails = new List<string>();
+                foreach (var line in lines)
+                {
+                    if (await ImportFolder.TryGetItemAsync(line) is StorageFile file)
+                    {
+                        try
+                        {
+                            await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                        }
+                        catch (Exception)
+                        {
+                            moreFails.Add(file.Name);
+                        }
+                    }
+                }
+
+                if (moreFails.Count > 0)
+                    await FileIO.WriteLinesAsync(pendingFile, moreFails);
+                else
+                    await pendingFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+            }
+        }
+
     }
 }
