@@ -25,7 +25,7 @@ using CharacterMapCX;
 
 namespace CharacterMap.ViewModels
 {
-    public enum SaveColor
+    public enum ExportStyle
     {
         Black,
         White,
@@ -36,24 +36,23 @@ namespace CharacterMap.ViewModels
     {
         private IReadOnlyList<Character> _chars;
         private string _fontIcon;
-        private ObservableCollection<InstalledFont> _fontList;
         private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
         private Character _selectedChar;
         private InstalledFont _selectedFont;
         private string _xamlCode;
         private string _symbolIcon;
 
-        private Interop _interop;
+        private Interop _interop { get; }
 
-        public SaveColor BlackColor { get; } = SaveColor.Black;
-        public SaveColor WhiteColor { get; } = SaveColor.White;
-        public SaveColor GlyphColor { get; } = SaveColor.ColorGlyph;
+        public ExportStyle BlackColor { get; } = ExportStyle.Black;
+        public ExportStyle WhiteColor { get; } = ExportStyle.White;
+        public ExportStyle GlyphColor { get; } = ExportStyle.ColorGlyph;
 
         public MainViewModel(IDialogService dialogService)
         {
             DialogService = dialogService;
             AppNameVersion = GetAppDescription();
-            CommandSavePng = new RelayCommand<SaveColor>(async (b) => await SavePng(b));
+            CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
 
@@ -92,12 +91,12 @@ namespace CharacterMap.ViewModels
         public string TitlePrefix
         {
             get => _titlePrefix;
-            set { _titlePrefix = value; RaisePropertyChanged(); }
+            set => Set(ref _titlePrefix, value);
         }
 
         public IDialogService DialogService { get; set; }
 
-        public RelayCommand<SaveColor> CommandSavePng { get; set; }
+        public RelayCommand<ExportStyle> CommandSavePng { get; set; }
 
         public RelayCommand<bool> CommandSaveSvg { get; set; }
 
@@ -129,25 +128,25 @@ namespace CharacterMap.ViewModels
             set => Set(ref _selectedCharAnalysis, value);
         }
 
-        public ObservableCollection<InstalledFont> FontList
+        private List<InstalledFont> _fontList;
+        public List<InstalledFont> FontList
         {
             get => _fontList;
             set
             {
-                _fontList = value;
-                CreateFontListGroup();
-                RaisePropertyChanged();
+                if (_fontList != value)
+                {
+                    _fontList = value;
+                    CreateFontListGroup();
+                    RaisePropertyChanged();
+                }
             }
         }
 
         public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
         {
             get => _groupedFontList;
-            set
-            {
-                _groupedFontList = value;
-                RaisePropertyChanged();
-            }
+            set => Set(ref _groupedFontList, value);
         }
 
         public IReadOnlyList<Character> Chars
@@ -173,34 +172,26 @@ namespace CharacterMap.ViewModels
                     App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
                 }
                 RaisePropertyChanged();
-                UpdateColor();
+                UpdateCharAnalysis();
             }
         }
 
         public string XamlCode
         {
             get => _xamlCode;
-            set
-            {
-                _xamlCode = value;
-                RaisePropertyChanged();
-            }
+            set => Set(ref _xamlCode, value);
         }
 
         public string SymbolIcon
         {
             get => _symbolIcon;
-            set { _symbolIcon = value; RaisePropertyChanged(); }
+            set => Set(ref _symbolIcon, value);
         }
 
         public string FontIcon
         {
             get => _fontIcon;
-            set
-            {
-                _fontIcon = value;
-                RaisePropertyChanged();
-            }
+            set => Set(ref _fontIcon, value);
         }
 
         public bool ShowSymbolFontsOnly
@@ -235,6 +226,25 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private bool _isDarkAccent;
+        private string _titlePrefix;
+
+        public bool IsDarkAccent
+        {
+            get => IsAccentColorDark();
+            set { _isDarkAccent = value; RaisePropertyChanged(); }
+        }
+
+        private bool IsAccentColorDark()
+        {
+            var uiSettings = new UISettings();
+            var c = uiSettings.GetColorValue(UIColorType.Accent);
+            var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
+            return isDark;
+        }
+
+
+
         private async void Load()
         {
             IsLoadingFonts = true;
@@ -261,15 +271,14 @@ namespace CharacterMap.ViewModels
         {
             try
             {
-                var fontList = FontFinder.GetFonts().AsEnumerable();
+                var fontList = FontFinder.Fonts.AsEnumerable();
 
                 if (FontListFilter == 1)
                     fontList = fontList.Where(f => f.IsSymbolFont);
                 else if (FontListFilter == 2)
                     fontList = fontList.Where(f => f.HasImportedFiles);
 
-                FontList = fontList.OrderBy(f => f.Name)
-                                   .ToObservableCollection();
+                FontList = fontList.ToList();
             }
             catch (Exception e)
             {
@@ -315,164 +324,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private async Task SavePng(SaveColor color)
-        {
-            try
-            {
-                var savePicker = new FileSavePicker
-                {
-                    SuggestedStartLocation = PickerLocationId.Desktop
-                };
-                savePicker.FileTypeChoices.Add("Png Image", new[] { ".png" });
-                savePicker.SuggestedFileName = $"CharacterMap_{DateTime.Now:yyyyMMddHHmmss}.png";
-                var file = await savePicker.PickSaveFileAsync();
-
-                if (null != file)
-                {
-                    CachedFileManager.DeferUpdates(file);
-                    var device = CanvasDevice.GetSharedDevice();
-                    var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
-
-                    var canvasH = (float)App.AppSettings.PngSize;
-                    var canvasW = (float)App.AppSettings.PngSize;
-
-                    var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
-
-                    using (var ds = renderTarget.CreateDrawingSession())
-                    {
-                        ds.Clear(Colors.Transparent);
-                        var d = App.AppSettings.PngSize;
-                        var r = App.AppSettings.PngSize / 2;
-
-                        var textColor = color == SaveColor.Black ? Colors.Black : Colors.White;
-                        var fontSize = (float)d;
-
-                        using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char}", new CanvasTextFormat
-                        {
-                            FontSize = fontSize,
-                            FontFamily = SelectedVariant.XamlFontFamily.Source,
-                            FontStretch = SelectedVariant.FontFace.Stretch,
-                            FontWeight = SelectedVariant.FontFace.Weight,
-                            FontStyle = SelectedVariant.FontFace.Style,
-                            HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                        }, canvasW, canvasH))
-                        {
-                            if (color == SaveColor.ColorGlyph)
-                                layout.Options = CanvasDrawTextOptions.EnableColorFont;
-
-                            var db = layout.DrawBounds;
-                            double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
-                            var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
-                            var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
-
-                            ds.Transform = 
-                                Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
-                                * Matrix3x2.CreateScale(new Vector2((float)scale));
-                            
-                            ds.DrawTextLayout(layout, new Vector2(0), textColor);
-                        }
-                    }
-
-                    using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        fileStream.Size = 0;
-                        await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
-                    }
-
-                    await CachedFileManager.CompleteUpdatesAsync(file);
-                }
-            }
-            catch (Exception ex)
-            {
-                await DialogService.ShowMessageBox(ex.Message, "Error Saving Image");
-            }
-        }
-
-        private async Task SaveSvgAsync(bool isBlackText)
-        {
-            try
-            {
-                var savePicker = new FileSavePicker
-                {
-                    SuggestedStartLocation = PickerLocationId.Desktop
-                };
-                savePicker.FileTypeChoices.Add("SVG", new[] { ".svg" });
-                savePicker.SuggestedFileName = $"{SelectedFont.Name} - {SelectedVariant.PreferredName} - {SelectedChar.UnicodeString}.svg";
-                var file = await savePicker.PickSaveFileAsync();
-
-                if (null != file)
-                {
-                    CachedFileManager.DeferUpdates(file);
-                    var device = CanvasDevice.GetSharedDevice();
-
-                    var canvasH = (float)App.AppSettings.PngSize;
-                    var canvasW = (float)App.AppSettings.PngSize;
-
-                    var d = App.AppSettings.PngSize;
-                    var r = App.AppSettings.PngSize / 2;
-
-                    var textColor = isBlackText ? Colors.Black : Colors.White;
-                    var fontSize = (float)d;
-
-                    using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{SelectedChar.Char}", new CanvasTextFormat
-                    {
-                        FontSize = fontSize,
-                        FontFamily = SelectedVariant.XamlFontFamily.Source,
-                        FontStretch = SelectedVariant.FontFace.Stretch,
-                        FontWeight = SelectedVariant.FontFace.Weight,
-                        FontStyle = SelectedVariant.FontFace.Style,
-                        HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                        Options = ShowColorGlyphs ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
-
-                    }, canvasW, canvasH))
-                    using (var geom = CanvasGeometry.CreateText(layout))
-                    {
-                        layout.Options = ShowColorGlyphs ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
-                        SvgGlyphCompositor sgc = new SvgGlyphCompositor();
-                        layout.DrawToTextRenderer(sgc, 0, 0);
-
-                        var db = layout.DrawBounds;
-                        double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
-                        var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
-                        var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
-
-                        var g = geom
-                            .Transform(Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y)))
-                            .Transform(Matrix3x2.CreateScale(new Vector2((float)scale)));
-
-                        /* 
-                         * Unfortunately this only constructs a black and white path, if we want color
-                         * I'm not sure Win2D exposes the neccessary API's to get the individual glyph
-                         * layers that make up a colour glyph
-                         */
-                        SVGPathReciever rc = new SVGPathReciever();
-                        g.SendPathTo(rc);
-
-                        string xml = $"<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 {canvasW} {canvasH}\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"{rc.GetPathData()}\" /></svg>";
-                        using (CanvasSvgDocument document = CanvasSvgDocument.LoadFromXml(device, xml))
-                        {
-                            ((CanvasSvgNamedElement)document.Root.FirstChild).SetColorAttribute("fill", textColor);
-
-                            using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                            {
-                                fileStream.Size = 0;
-                                await document.SaveAsync(fileStream);
-                            }
-                        }
-                    }
-
-                    await CachedFileManager.CompleteUpdatesAsync(file);
-                }
-            }
-            catch (Exception ex)
-            {
-                await DialogService.ShowMessageBox(ex.Message, "Error Saving Image");
-            }
-        }
-
-
-
-        private void UpdateColor()
+        private void UpdateCharAnalysis()
         {
             if (SelectedChar == null)
             {
@@ -482,34 +334,46 @@ namespace CharacterMap.ViewModels
 
             using (CanvasTextLayout layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), $"{SelectedChar.Char}", new CanvasTextFormat
             {
-                FontSize = 300,
+                FontSize = 20,
                 FontFamily = SelectedVariant.XamlFontFamily.Source,
                 FontStretch = SelectedVariant.FontFace.Stretch,
                 FontWeight = SelectedVariant.FontFace.Weight,
                 FontStyle = SelectedVariant.FontFace.Style,
                 HorizontalAlignment = CanvasHorizontalAlignment.Center,
-            }, 1000, 1000))
+            }, 100, 100))
             {
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
                 SelectedCharAnalysis = _interop.Analyze(layout);
             }
         }
 
-        private bool _isDarkAccent;
-        private string _titlePrefix;
-
-        public bool IsDarkAccent
+        internal async void TryRemoveFont(InstalledFont font)
         {
-            get => IsAccentColorDark();
-            set { _isDarkAccent = value; RaisePropertyChanged(); }
+            SelectedFont = FontFinder.DefaultFont;
+            await Task.Delay(16); // Give UI time to react
+            IsLoadingFonts = true;
+            await FontFinder.RemoveFontAsync(font);
+            RefreshFontList();
+            IsLoadingFonts = false;
         }
 
-        private bool IsAccentColorDark()
+        private Task SavePngAsync(ExportStyle style)
         {
-            var uiSettings = new UISettings();
-            var c = uiSettings.GetColorValue(UIColorType.Accent);
-            var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
-            return isDark;
+            return ExportManager.ExportPngAsync(
+                style,
+                SelectedFont,
+                SelectedVariant,
+                SelectedChar);
         }
+
+        private Task SaveSvgAsync(bool isBlackText)
+        {
+            return ExportManager.ExportSvgAsync(
+                isBlackText ? ExportStyle.Black : ExportStyle.White,
+                SelectedFont,
+                SelectedVariant,
+                SelectedChar);
+        }
+
     }
 }

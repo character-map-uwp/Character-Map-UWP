@@ -274,10 +274,44 @@ namespace CharacterMap.Views
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 var items = await e.DataView.GetStorageItemsAsync();
-                if (await FontFinder.ImportFontsAsync(items))
+                if (await FontFinder.ImportFontsAsync(items) is FontImportResult result
+                    && result.Imported.Count > 0)
                 {
                     ViewModel.RefreshFontList();
                 }
+            }
+        }
+
+        private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+            if (sender is Grid grid
+                && grid.DataContext is InstalledFont font
+                && font.HasImportedFiles
+                && grid.ContextFlyout != null)
+            {
+                grid.ContextFlyout.ShowAt(grid);
+            }
+        }
+
+        private void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item && item.Tag is InstalledFont font)
+            {
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    ViewModel.TryRemoveFont(font);
+                });
+            }
+        }
+
+        private void RemoveMenuFlyout_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout flyout 
+                && flyout.Items[0].Tag is InstalledFont font
+                && font.HasImportedFiles == false)
+            {
+                flyout.Hide();
             }
         }
     }

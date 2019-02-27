@@ -70,11 +70,6 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 			DWRITE_COLOR_GLYPH_RUN1 const* colorRun;
 			ThrowIfFailed(glyphRunEnumerator->GetCurrentRun(&colorRun));
 
-			D2D1_POINT_2F currentBaselineOrigin = D2D1::Point2F(
-				colorRun->baselineOriginX,
-				colorRun->baselineOriginY
-			);
-
 			GlyphFormats.push_back(static_cast<GlyphImageFormat>(colorRun->glyphImageFormat));
 		}
 	}

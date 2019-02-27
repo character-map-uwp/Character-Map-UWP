@@ -1,4 +1,6 @@
-﻿using Microsoft.Graphics.Canvas.Text;
+﻿using Microsoft.Graphics.Canvas;
+using Microsoft.Graphics.Canvas.Svg;
+using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +12,7 @@ using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
@@ -120,6 +123,44 @@ namespace CharacterMap.Core
                     return weight.Weight.ToString();
             }
 
+        }
+
+        public static CanvasSvgDocument GenerateSvgDocument(
+            ICanvasResourceCreator device,
+            double width,
+            double height,
+            SVGPathReciever path)
+        {
+            return GenerateSvgDocument(device, width, height, new List<SVGPathReciever> { path });
+        }
+
+        public static CanvasSvgDocument GenerateSvgDocument(
+            ICanvasResourceCreator device,
+            double width, 
+            double height, 
+            IList<SVGPathReciever> paths)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">", width, height);
+            foreach (var receiver in paths)
+            {
+                sb.AppendFormat("<path d=\"{0}\" />", receiver.GetPathData());
+            }
+            sb.Append("</svg>");
+
+            CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
+
+            // TODO : When we export colour SVGs we'll need to set all the correct path fills here
+
+            return doc;
+        }
+
+        public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<!-- Exported by Character Map UWP -->");
+            sb.Append(document.GetXml());
+            return FileIO.WriteTextAsync(file, sb.ToString()).AsTask();
         }
     }
 }

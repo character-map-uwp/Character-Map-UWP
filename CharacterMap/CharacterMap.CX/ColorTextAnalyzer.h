@@ -8,10 +8,6 @@
 
 namespace CharacterMapCX
 {
-	//  The IDWriteTextRenderer interface is an input parameter to
-	//  IDWriteTextLayout::Draw.  This interfaces defines a number of
-	//  callback functions that the client application implements for
-	//  custom text rendering.
 	class ColorTextAnalyzer : public IDWriteTextRenderer
 	{
 	public:

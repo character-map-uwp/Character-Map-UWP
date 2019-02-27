@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.Graphics.Canvas.Text;
+using Windows.Storage;
 using Windows.UI.Text;
 using FontFamily = Windows.UI.Xaml.Media.FontFamily;
 
 namespace CharacterMap.Core
 {
-    public class FontVariant
+    public class FontVariant: IDisposable
     {
-        public CanvasFontFace FontFace { get; }
+        public CanvasFontFace FontFace { get; private set; }
 
         public FontFamily XamlFontFamily { get; set; }
 
@@ -19,10 +21,20 @@ namespace CharacterMap.Core
 
         public double CharacterHash { get; private set; }
 
-        public FontVariant(CanvasFontFace face)
+        public bool IsImported { get; }
+
+        public string FileName { get; }
+
+        public FontVariant(CanvasFontFace face, StorageFile file)
         {
             FontFace = face;
             Characters = new List<Character>();
+
+            if (file != null)
+            {
+                IsImported = true;
+                FileName = file.Name;
+            }
 
             if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string name))
             {
@@ -68,6 +80,13 @@ namespace CharacterMap.Core
             }
 
             return Characters;
+        }
+
+        public void Dispose()
+        {
+            XamlFontFamily = null;
+            FontFace.Dispose();
+            FontFace = null;
         }
     }
 

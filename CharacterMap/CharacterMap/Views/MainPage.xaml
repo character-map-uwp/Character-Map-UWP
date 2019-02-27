@@ -15,7 +15,7 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-    
+
         <x:Boolean x:Key="TrueValue">True</x:Boolean>
         <x:Boolean x:Key="FalseValue">False</x:Boolean>
         <core:AppSettings x:Key="AppSettings" />
@@ -48,12 +48,13 @@
             <VisualStateGroup x:Name="LoadingStates">
                 <VisualState x:Name="FontsLoadingState">
                     <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{Binding IsLoadingFonts}" />
+                        <StateTrigger IsActive="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="FontsSemanticZoom.Visibility" Value="Collapsed" />
                         <Setter Target="MainUIGrid.Visibility" Value="Collapsed" />
-                        <Setter Target="ToggleSymbolFontsOnly.IsEnabled" Value="False" />
+                        <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
+                        <Setter Target="FontListFilter.IsEnabled" Value="False" />
                         <Setter Target="SearchBoxUnicode.IsEnabled" Value="False" />
                         <Setter Target="LoadingRing.IsActive" Value="True" />
                     </VisualState.Setters>
@@ -121,11 +122,12 @@
             </Grid.ColumnDefinitions>
 
             <ComboBox
-                Margin="0,0,0,3"
+                x:Name="FontListFilter"
                 Width="160"
+                Margin="0,0,0,3"
                 VerticalAlignment="Bottom"
-                SelectedIndex="{Binding FontListFilter, Mode=TwoWay}"
-                FontSize="16">
+                FontSize="16"
+                SelectedIndex="{Binding FontListFilter, Mode=TwoWay}">
                 <ComboBoxItem Content="All Fonts" />
                 <ComboBoxItem Content="Symbol Fonts" />
                 <ComboBoxItem Content="Imported Fonts" />
@@ -138,6 +140,7 @@
 
                 IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}" />-->
             <TextBlock
+                x:Name="FontTitleBlock"
                 Grid.Column="1"
                 Margin="10,0,5,0"
                 VerticalAlignment="Center"
@@ -223,7 +226,15 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="core:InstalledFont">
-                            <Grid ColumnSpacing="12">
+                            <Grid ColumnSpacing="12" Background="Transparent">
+                                <Grid.ContextFlyout>
+                                    <MenuFlyout Opening="RemoveMenuFlyout_Opening">
+                                        <MenuFlyoutItem
+                                            Click="RemoveMenuFlyoutItem_Click"
+                                            Tag="{x:Bind}"
+                                            Text="Remove Font" />
+                                    </MenuFlyout>
+                                </Grid.ContextFlyout>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
@@ -580,10 +591,10 @@
                                     Background="Transparent"
                                     Command="{Binding CommandSavePng}"
                                     CommandParameter="{x:Bind ViewModel.BlackColor}"
-                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay}"
-                                    Style="{ThemeResource TransparentButton}">
+                                    Style="{ThemeResource TransparentButton}"
+                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay}">
                                     <AppBarButton.Content>
-                                        <TextBlock Margin="12,10" x:Uid="BlackFill" />
+                                        <TextBlock x:Uid="BlackFill" Margin="12,10" />
                                     </AppBarButton.Content>
                                 </AppBarButton>
                                 <AppBarButton
@@ -591,10 +602,10 @@
                                     Background="Transparent"
                                     Command="{Binding CommandSavePng}"
                                     CommandParameter="{x:Bind ViewModel.WhiteColor}"
-                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay}"
-                                    Style="{ThemeResource TransparentButton}">
+                                    Style="{ThemeResource TransparentButton}"
+                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay}">
                                     <AppBarButton.Content>
-                                        <TextBlock Margin="12,10" x:Uid="WhiteFill" />
+                                        <TextBlock x:Uid="WhiteFill" Margin="12,10" />
                                     </AppBarButton.Content>
                                 </AppBarButton>
                             </CommandBar.SecondaryCommands>
@@ -641,7 +652,7 @@
                                     CommandParameter="{StaticResource TrueValue}"
                                     Style="{ThemeResource TransparentButton}">
                                     <AppBarButton.Content>
-                                        <TextBlock Margin="12,10" x:Uid="BlackFill" />
+                                        <TextBlock x:Uid="BlackFill" Margin="12,10" />
                                     </AppBarButton.Content>
                                 </AppBarButton>
                                 <AppBarButton
@@ -651,7 +662,7 @@
                                     CommandParameter="{StaticResource FalseValue}"
                                     Style="{ThemeResource TransparentButton}">
                                     <AppBarButton.Content>
-                                        <TextBlock Margin="12,10" x:Uid="WhiteFill" />
+                                        <TextBlock x:Uid="WhiteFill" Margin="12,10" />
                                     </AppBarButton.Content>
                                 </AppBarButton>
                             </CommandBar.SecondaryCommands>
