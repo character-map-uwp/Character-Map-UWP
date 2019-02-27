@@ -31,7 +31,7 @@ namespace CharacterMap.Core
         // By default, Chinese lanugage group will create useless "拼音A-Z" groups.
         private static List<AlphaKeyGroup<T>> CreateAZGroups()
         {
-            char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            char[] alpha = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ&".ToCharArray();
             var list = alpha.Select(c => new AlphaKeyGroup<T>(c.ToString())).ToList();
             return list;
         }
@@ -45,7 +45,10 @@ namespace CharacterMap.Core
                 int index = 0;
                 string label = slg.Lookup(keySelector(item));
                 index = list.FindIndex(alphagroupkey => (alphagroupkey.Key.Equals(label, StringComparison.CurrentCulture)));
-                if (index > -1 && index < list.Count) list[index].Add(item);
+                if (index > -1 && index < list.Count)
+                    list[index].Add(item);
+                else
+                    list.Last().Add(item);
             }
             return list;
         }
