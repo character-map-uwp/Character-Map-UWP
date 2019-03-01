@@ -34,3 +34,15 @@ CanvasTextLayoutAnalysis^ Interop::Analyze(CanvasTextLayout^ layout)
 	context->Draw(m_d2dContext.Get(), m_colorAnalyzer.Get(), 0, 0);
 	return ref new CanvasTextLayoutAnalysis(m_colorAnalyzer->HasColorGlyphs, m_colorAnalyzer->GlyphFormats);
 }
+
+bool Interop::HasValidFonts(Uri^ uri)
+{
+	/* 
+	   To avoid garbage collection issues with CanvasFontSet in C# preventing us from
+	   immediately deleting the StorageFile, we shall do this here in C++ 
+	   */
+	CanvasFontSet^ fontset = ref new CanvasFontSet(uri);
+	bool valid = fontset->Fonts->Size > 0;
+	delete fontset;
+	return valid;
+}

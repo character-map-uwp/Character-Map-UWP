@@ -11,9 +11,14 @@ namespace CharacterMap.Core
 {
     public class FontVariant: IDisposable
     {
-        public CanvasFontFace FontFace { get; private set; }
+        private string _fontConstructor = null;
 
-        public FontFamily XamlFontFamily { get; set; }
+        private FontFamily _xamlFontFamily { get; set; }
+
+        public FontFamily XamlFontFamily
+            => _xamlFontFamily ?? (_xamlFontFamily = new FontFamily(_fontConstructor));
+
+        public CanvasFontFace FontFace { get; private set; }
 
         public string PreferredName { get; private set; }
 
@@ -25,15 +30,23 @@ namespace CharacterMap.Core
 
         public string FileName { get; }
 
-        public FontVariant(CanvasFontFace face, StorageFile file)
+        public string FamilyName { get; }
+
+        public FontVariant(CanvasFontFace face, string familyName, StorageFile file)
         {
             FontFace = face;
             Characters = new List<Character>();
+            FamilyName = familyName;
 
             if (file != null)
             {
                 IsImported = true;
                 FileName = file.Name;
+                _fontConstructor = $"{FontFinder.GetAppPath(file)}#{familyName}";
+            }
+            else
+            {
+                _fontConstructor = familyName;
             }
 
             if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string name))
@@ -84,7 +97,7 @@ namespace CharacterMap.Core
 
         public static FontVariant CreateDefault(CanvasFontFace face)
         {
-            return new FontVariant(face, null)
+            return new FontVariant(face, "Segoe UI", null)
             {
                 PreferredName = "",
                 Characters = new List<Character>
@@ -105,7 +118,7 @@ namespace CharacterMap.Core
 
         public void Dispose()
         {
-            XamlFontFamily = null;
+            _xamlFontFamily = null;
             FontFace.Dispose();
             FontFace = null;
         }

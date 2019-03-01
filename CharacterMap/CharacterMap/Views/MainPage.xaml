@@ -703,9 +703,11 @@
                             Margin="15,0"
                             HorizontalAlignment="Stretch"
                             Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                            Opacity="0.15" />
+                            Opacity="0.15"
+                            Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}" />
 
-                        <Grid Grid.Row="6">
+
+                        <Grid Grid.Row="6" Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -732,7 +734,7 @@
                             </AppBarButton>
                         </Grid>
 
-                        <Grid Grid.Row="7">
+                        <Grid Grid.Row="7" Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -759,7 +761,7 @@
                             </AppBarButton>
                         </Grid>
 
-                        <Grid Grid.Row="8">
+                        <Grid Grid.Row="8" Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -854,54 +856,64 @@
             d:IsHidden="True"
             IsPrimaryButtonEnabled="True"
             PrimaryButtonText="OK">
-            <StackPanel Margin="0,10,0,0">
-                <Slider
-                    x:Name="SldResolution"
-                    HorizontalAlignment="Stretch"
-                    Header="PNG Resolution (pixel)"
-                    IsThumbToolTipEnabled="True"
-                    Maximum="2048"
-                    Minimum="128"
-                    StepFrequency="64"
-                    TickFrequency="64"
-                    TickPlacement="Outside"
-                    Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" />
-                <TextBlock Margin="0,0,0,20" Text="{Binding ElementName=SldResolution, Path=Value}" />
+            <ScrollViewer>
+                <StackPanel Margin="0,10,0,0">
+                    <Slider
+                        x:Name="SldResolution"
+                        HorizontalAlignment="Stretch"
+                        Header="PNG Resolution (pixel)"
+                        IsThumbToolTipEnabled="True"
+                        Maximum="2048"
+                        Minimum="128"
+                        StepFrequency="64"
+                        TickFrequency="64"
+                        TickPlacement="Outside"
+                        Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" />
+                    <TextBlock Margin="0,0,0,20" Text="{Binding ElementName=SldResolution, Path=Value}" />
 
-                <Slider
-                    HorizontalAlignment="Stretch"
-                    Header="Character Grid Size"
-                    IsThumbToolTipEnabled="True"
-                    Maximum="192"
-                    Minimum="64"
-                    StepFrequency="8"
-                    TickFrequency="8"
-                    TickPlacement="Outside"
-                    Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" />
-                <TextBlock
-                    Margin="0,0,0,10"
-                    Foreground="#666"
-                    Text="Require Restart App to Take Effect."
-                    TextWrapping="Wrap" />
+                    <Slider
+                        HorizontalAlignment="Stretch"
+                        Header="Character Grid Size"
+                        IsThumbToolTipEnabled="True"
+                        Maximum="192"
+                        Minimum="64"
+                        StepFrequency="8"
+                        TickFrequency="8"
+                        TickPlacement="Outside"
+                        Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" />
+                    <TextBlock
+                        Margin="0,0,0,10"
+                        Foreground="#666"
+                        Text="Require Restart App to Take Effect."
+                        TextWrapping="Wrap" />
 
-                <Button
-                    x:Name="BtnRestart"
-                    Click="BtnRestart_OnClick"
-                    Content="Restart Now" />
+                    <Button
+                        x:Name="BtnRestart"
+                        Click="BtnRestart_OnClick"
+                        Content="Restart Now" />
 
-                <TextBlock
-                    x:Uid="Settings_About"
-                    Margin="0,40,0,10"
-                    FontWeight="Bold"
-                    Text="#Settings_About" />
-                <TextBlock FontSize="14" Text="{Binding AppNameVersion}" />
-                <TextBlock
-                    x:Uid="Settings_AboutDescription"
-                    FontSize="14"
-                    Text="#Settings_AboutDescription"
-                    TextWrapping="Wrap" />
-                <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
-            </StackPanel>
+                    <!--  Reenable after sorting out export UI issues  -->
+                    <!--<TextBlock Margin="0 40 0 4" Text="Dev Utilities" />
+                <ToggleSwitch
+                    OnContent="Show dev utilities"
+                    OffContent="Hide dev utilities"
+                    IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />-->
+
+                    <TextBlock
+                        x:Uid="Settings_About"
+                        Margin="0,40,0,10"
+                        FontWeight="Bold"
+                        Text="#Settings_About" />
+                    <TextBlock FontSize="14" Text="{Binding AppNameVersion}" />
+                    <TextBlock
+                        x:Uid="Settings_AboutDescription"
+                        FontSize="14"
+                        Text="#Settings_AboutDescription"
+                        TextWrapping="Wrap" />
+                    <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
+                </StackPanel>
+
+            </ScrollViewer>
         </ContentDialog>
     </Grid>
 </Page>

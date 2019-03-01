@@ -68,6 +68,16 @@ namespace CharacterMap.Core
             }
         }
 
+        public bool ShowDevUtils
+        {
+            get => ReadSettings(nameof(ShowDevUtils), true);
+            set
+            {
+                SaveSettings(nameof(ShowDevUtils), value);
+                NotifyPropertyChanged();
+            }
+        }
+
         public ApplicationDataContainer LocalSettings { get; set; }
 
         public AppSettings()

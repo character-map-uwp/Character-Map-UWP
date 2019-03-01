@@ -22,6 +22,7 @@ using System.Numerics;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Svg;
 using CharacterMapCX;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace CharacterMap.ViewModels
 {
@@ -48,6 +49,7 @@ namespace CharacterMap.ViewModels
         public ExportStyle WhiteColor { get; } = ExportStyle.White;
         public ExportStyle GlyphColor { get; } = ExportStyle.ColorGlyph;
 
+
         public MainViewModel(IDialogService dialogService)
         {
             DialogService = dialogService;
@@ -56,7 +58,9 @@ namespace CharacterMap.ViewModels
             CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
 
-            _interop = new Interop(CanvasDevice.GetSharedDevice());
+            SimpleIoc.Default.Register(() => new Interop(CanvasDevice.GetSharedDevice()));
+            _interop = SimpleIoc.Default.GetInstance<Interop>();
+
 
             Load();
         }

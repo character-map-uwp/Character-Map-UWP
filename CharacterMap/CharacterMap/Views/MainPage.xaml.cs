@@ -21,7 +21,9 @@ namespace CharacterMap.Views
 {
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
-        public MainViewModel ViewModel { get; set; }
+        public MainViewModel ViewModel { get; }
+
+        public AppSettings Settings { get; }
 
         private bool _isCtrlKeyPressed;
 
@@ -30,6 +32,8 @@ namespace CharacterMap.Views
             this.InitializeComponent();
 
             SetTitleBar();
+
+            Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
 
             this.ViewModel = this.DataContext as MainViewModel;
             this.NavigationCacheMode = NavigationCacheMode.Enabled;

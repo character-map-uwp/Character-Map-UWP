@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CharacterMapCX;
+using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Graphics.Canvas.Text;
 using Windows.Storage;
 using Windows.UI.Text;
@@ -37,122 +40,114 @@ namespace CharacterMap.Core
         public static InstalledFont DefaultFont { get; private set; }
 
 
-        public static async Task LoadFontsAsync()
+        public static Task LoadFontsAsync()
         {
             Fonts = null;
-            
-            if (DefaultFont == null)
-            {
-                /* Don't do this in the same IF below. We need to do it before loading FontSets */
-                await CleanUpPendingDeletesAsync();
-            }
 
-            var systemFonts = CanvasFontSet.GetSystemFontSet();
-
-            if (DefaultFont == null)
+            return Task.Run(async () =>
             {
-                /* Set default font */
-                var segoe = systemFonts.GetMatchingFonts("Segoe UI", FontWeights.Normal, FontStretch.Normal, FontStyle.Normal);
-                if (segoe != null && segoe.Fonts.Count > 0)
+                if (DefaultFont == null)
                 {
-                    DefaultFont = new InstalledFont
-                    {
-                        Name = "",
-                        FontFace = segoe.Fonts[0],
-                        Variants = new List<FontVariant> { FontVariant.CreateDefault(segoe.Fonts[0]) }
-                    };
-
-                    DefaultFont.DefaultVariant.SetAsDefault();
+                    /* Don't do this in the same IF below. We need to do it before loading FontSets */
+                    await CleanUpPendingDeletesAsync();
                 }
-            }
-            
 
-            var familyCount = systemFonts.Fonts.Count;
-            Dictionary<string, InstalledFont> fontList = new Dictionary<string, InstalledFont>();
+                var systemFonts = CanvasFontSet.GetSystemFontSet();
 
-            /* 
-             * Helper method for adding fonts. Needs to be called on 
-             * UI Thread as we construct XAML FontFamily here 
-             */
-            void AddFont(CanvasFontFace fontFace, StorageFile file = null)
-            {
-                try
+                if (DefaultFont == null)
                 {
-                    var familyNames = fontFace.FamilyNames;
-                    if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string key))
+                    /* Set default font */
+                    var segoe = systemFonts.GetMatchingFonts("Segoe UI", FontWeights.Normal, FontStretch.Normal, FontStyle.Normal);
+                    if (segoe != null && segoe.Fonts.Count > 0)
                     {
-                        familyNames.TryGetValue("en-us", out key);
+                        DefaultFont = new InstalledFont
+                        {
+                            Name = "",
+                            FontFace = segoe.Fonts[0],
+                            Variants = new List<FontVariant> { FontVariant.CreateDefault(segoe.Fonts[0]) }
+                        };
+
+                        DefaultFont.DefaultVariant.SetAsDefault();
                     }
+                }
 
-                    if (key != null)
+
+                var familyCount = systemFonts.Fonts.Count;
+                Dictionary<string, InstalledFont> fontList = new Dictionary<string, InstalledFont>();
+
+                /* 
+                 * Helper method for adding fonts. 
+                 */
+                void AddFont(CanvasFontFace fontFace, StorageFile file = null)
+                {
+                    try
                     {
-                        if (fontList.TryGetValue(key, out InstalledFont font))
+                        var familyNames = fontFace.FamilyNames;
+                        if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string familyName))
                         {
-                            var variant = new FontVariant(fontFace, file);
-
-                            if (file == null)
-                                variant.XamlFontFamily = font.Variants[0].XamlFontFamily;
-                            else
-                            {
-                                variant.XamlFontFamily = new Windows.UI.Xaml.Media.FontFamily($"{GetAppPath(file)}#{key}");
-                                font.HasImportedFiles = true;
-                            }
-
-                            font.Variants.Add(variant);
+                            familyNames.TryGetValue("en-us", out familyName);
                         }
-                        else
-                        {
-                            var f = new InstalledFont
-                            {
-                                Name = key,
-                                IsSymbolFont = fontFace.IsSymbolFont,
-                                FontFace = fontFace,
-                                Variants = new List<FontVariant> { new FontVariant(fontFace, file) }
-                            };
 
-                            if (file != null)
+                        if (familyName != null)
+                        {
+                            /* Check if we already have a listing for this fontFamily */
+                            if (fontList.TryGetValue(familyName, out InstalledFont fontFamily))
                             {
-                                f.Variants[0].XamlFontFamily = new Windows.UI.Xaml.Media.FontFamily($"{GetAppPath(file)}#{key}");
-                                f.HasImportedFiles = true;
+                                var variant = new FontVariant(fontFace, familyName, file);
+                                if (file != null)
+                                    fontFamily.HasImportedFiles = true;
+
+                                fontFamily.Variants.Add(variant);
                             }
                             else
                             {
-                                f.Variants[0].XamlFontFamily = new Windows.UI.Xaml.Media.FontFamily(f.Name);
-                            }
+                                var family = new InstalledFont
+                                {
+                                    Name = familyName,
+                                    IsSymbolFont = fontFace.IsSymbolFont,
+                                    FontFace = fontFace,
+                                    Variants = new List<FontVariant> { new FontVariant(fontFace, familyName, file) }
+                                };
 
-                            fontList[key] = f;
+                                if (file != null)
+                                {
+                                    family.HasImportedFiles = true;
+                                }
+
+                                fontList[familyName] = family;
+                            }
                         }
                     }
+                    catch (Exception)
+                    {
+                        // Corrupted font files throw an exception
+                    }
                 }
-                catch (Exception)
+
+                /* Add all system fonts */
+                for (var i = 0; i < familyCount; i++)
                 {
-                    // Corrupted font files throw an exception
+                    AddFont(systemFonts.Fonts[i]);
                 }
-            }
 
-            /* Add all system fonts */
-            for (var i = 0; i < familyCount; i++)
-            {
-                AddFont(systemFonts.Fonts[i]);
-            }
+                /* Add imported fonts */
+                var files = await ImportFolder.GetFilesAsync();
+                foreach (var file in files.OfType<StorageFile>())
+                {
+                    if (_ignoredFonts.Contains(file.Name))
+                        continue;
 
-            /* Add imported fonts */
-            var files = await ImportFolder.GetFilesAsync();
-            foreach (var file in files.OfType<StorageFile>())
-            {
-                if (_ignoredFonts.Contains(file.Name))
-                    continue;
+                    foreach (var font in GetFontFacesFromFile(file))
+                        AddFont(font, file);
+                }
 
-                foreach (var font in GetFontFacesFromFile(file))
-                    AddFont(font, file);
-            }
-
-            /* Order everything appropriately */
-            Fonts = fontList.OrderBy(f => f.Key).Select(f =>
-            {
-                f.Value.Variants = f.Value.Variants.OrderBy(v => v.FontFace.Weight.Weight).ToList();
-                return f.Value;
-            }).ToList();
+                /* Order everything appropriately */
+                Fonts = fontList.OrderBy(f => f.Key).Select(f =>
+                {
+                    f.Value.Variants = f.Value.Variants.OrderBy(v => v.FontFace.Weight.Weight).ToList();
+                    return f.Value;
+                }).ToList();
+            });
         }
 
         private static List<CanvasFontFace> GetFontFacesFromFile(StorageFile file)
@@ -163,63 +158,82 @@ namespace CharacterMap.Core
             }
         }
 
-        private static string GetAppPath(StorageFile file)
+        internal static string GetAppPath(StorageFile file)
         {
             return $"ms-appdata:///local/{file.Name}";
         }
 
-        internal static async Task<FontImportResult> ImportFontsAsync(IReadOnlyList<IStorageItem> items)
+        internal static Task<FontImportResult> ImportFontsAsync(IReadOnlyList<IStorageItem> items)
         {
-            List<StorageFile> _imported = new List<StorageFile>();
-            List<StorageFile> _existing = new List<StorageFile>();
-            List<(IStorageItem, string)> _invalid = new List<(IStorageItem, string)>();
-
-            foreach (var item in items)
+            return Task.Run(async () =>
             {
-                if (!(item is StorageFile file))
-                {
-                    _invalid.Add((item, "Not a file"));
-                    continue;
-                }
+                List<StorageFile> _imported = new List<StorageFile>();
+                List<StorageFile> _existing = new List<StorageFile>();
+                List<(IStorageItem, string)> _invalid = new List<(IStorageItem, string)>();
 
-                if (!file.IsAvailable)
-                {
-                    _invalid.Add((item, "File not available"));
-                    continue;
-                }
+                Interop interop = SimpleIoc.Default.GetInstance<Interop>();
 
-                if (_ignoredFonts.Contains(file.Name))
+                foreach (var item in items)
                 {
-                    _invalid.Add((item, "Existing font pending delete. Please restart app."));
-                }
-
-                if (file.FileType.ToUpper().EndsWith("TTF")
-                    || file.FileType.ToUpper().EndsWith("OTF"))
-                {
-                    // TODO : What do we do if a font with the same file name already exists?
-                    if (ImportFolder.TryGetItemAsync(item.Name) == null)
+                    if (!(item is StorageFile file))
                     {
-                        StorageFile fontFile = await file.CopyAsync(ApplicationData.Current.LocalFolder);
-                        _imported.Add(fontFile);
+                        _invalid.Add((item, "Not a file"));
+                        continue;
+                    }
+
+                    if (!file.IsAvailable)
+                    {
+                        _invalid.Add((item, "File not available"));
+                        continue;
+                    }
+
+                    if (_ignoredFonts.Contains(file.Name))
+                    {
+                        _invalid.Add((item, "Existing font pending delete. Please restart app."));
+                        continue;
+                    }
+
+                    if (file.FileType.ToUpper().EndsWith("TTF")
+                        || file.FileType.ToUpper().EndsWith("OTF"))
+                    {
+                        // TODO : What do we do if a font with the same file name already exists?
+
+                        /* Explicilty not using StorageFile/Folder API's here because there
+                         * are some strange import bugs when checking a file exists */
+                        if (!File.Exists(Path.Combine(ImportFolder.Path, file.Name)))
+                        {
+                            /* Copy to local folder. We can only verify font file when it's inside
+                             * the App's Local folder due to CanvasFontSet file restrictions */
+                            StorageFile fontFile = await file.CopyAsync(ApplicationData.Current.LocalFolder);
+
+                            /* Avoid Garbage Collection (?) issue preventing immediate file deete 
+                             * by dropping to C++ */
+                            if (interop.HasValidFonts(new Uri(GetAppPath(fontFile))))
+                            {
+                                _imported.Add(fontFile);
+                            }
+                            else
+                            {
+                                _invalid.Add((file, "Unsupported Font Type"));
+                                await fontFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                            }
+                        }
+                        else
+                        {
+                            _existing.Add(file);
+                        }
                     }
                     else
-                    {
-                        _existing.Add(file);
-                    }
+                        _invalid.Add((file, "Unsupported File Type"));
                 }
-                else
-                    _invalid.Add((file, "Unsupported File Type"));
-            }
 
-            if (_imported.Count > 0)
-            {
-                await LoadFontsAsync();
-            }
+                if (_imported.Count > 0)
+                {
+                    await LoadFontsAsync();
+                }
 
-            // TODO : Should we actually verify these are legit font files
-            //        here by trying to open them?
-
-            return new FontImportResult(_imported, _existing, _invalid);
+                return new FontImportResult(_imported, _existing, _invalid);
+            });
         }
 
         /// <summary>

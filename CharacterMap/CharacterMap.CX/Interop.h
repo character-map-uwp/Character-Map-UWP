@@ -19,6 +19,7 @@ namespace CharacterMapCX
     public:
         Interop(CanvasDevice^ device);
 		CanvasTextLayoutAnalysis^ Analyze(CanvasTextLayout^ layout);
+		bool HasValidFonts(Uri^ uri);
 
 	private:
 		Microsoft::WRL::ComPtr<IDWriteFactory4> m_dwriteFactory;
