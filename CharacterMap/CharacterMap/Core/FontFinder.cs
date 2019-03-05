@@ -66,8 +66,6 @@ namespace CharacterMap.Core
                             FontFace = segoe.Fonts[0],
                             Variants = new List<FontVariant> { FontVariant.CreateDefault(segoe.Fonts[0]) }
                         };
-
-                        DefaultFont.DefaultVariant.SetAsDefault();
                     }
                 }
 

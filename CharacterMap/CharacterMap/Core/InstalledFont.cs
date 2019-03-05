@@ -11,7 +11,9 @@ namespace CharacterMap.Core
 {
     public class FontVariant: IDisposable
     {
-        private string _fontConstructor = null;
+        private string _fontConstructor { get; }
+
+        private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
 
         private FontFamily _xamlFontFamily { get; set; }
 
@@ -23,6 +25,9 @@ namespace CharacterMap.Core
         public string PreferredName { get; private set; }
 
         public IReadOnlyList<Character> Characters { get; private set; }
+
+        public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
+            => _typographyFeatures ?? (_typographyFeatures = TypographyAnalyzer.GetSupportedTypographyFeatures(this));
 
         public double CharacterHash { get; private set; }
 
@@ -95,6 +100,13 @@ namespace CharacterMap.Core
             return Characters;
         }
 
+        public void Dispose()
+        {
+            _xamlFontFamily = null;
+            FontFace.Dispose();
+            FontFace = null;
+        }
+
         public static FontVariant CreateDefault(CanvasFontFace face)
         {
             return new FontVariant(face, "Segoe UI", null)
@@ -111,17 +123,6 @@ namespace CharacterMap.Core
             };
         }
 
-        public void SetAsDefault()
-        {
-            
-        }
-
-        public void Dispose()
-        {
-            _xamlFontFamily = null;
-            FontFace.Dispose();
-            FontFace = null;
-        }
     }
 
 
