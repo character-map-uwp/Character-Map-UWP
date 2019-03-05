@@ -11,7 +11,7 @@ namespace CharacterMap.Core
 {
     public static class TypographyAnalyzer
     {
-        public static TypographyFeatureInfo[] GetSupportedTypographyFeatures(FontVariant variant)
+        public static List<TypographyFeatureInfo> GetSupportedTypographyFeatures(FontVariant variant)
         {
             Dictionary<string, TypographyFeatureInfo> features = new Dictionary<string, TypographyFeatureInfo>();
 
@@ -32,7 +32,7 @@ namespace CharacterMap.Core
                 }
             }
 
-            return features.Values.OrderBy(f => f.DisplayName).ToArray();
+            return features.Values.OrderBy(f => f.DisplayName).ToList();
         }
     }
 

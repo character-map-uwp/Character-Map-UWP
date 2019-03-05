@@ -62,13 +62,31 @@ namespace CharacterMap.Core
             {
                 _xamlDirect.SetEnumProperty(o, index, e);
             }
+            void SetI(XamlPropertyIndex index, bool val)
+            {
+                _xamlDirect.SetInt32Property(o, index, val ? 1 : 0);
+            }
 
+
+            /* TODO : ADD EASTASIAN TYPOGRAPY PROPERTIES */
 
             /* Set CAPTIAL SPACING */
-            Set(XamlPropertyIndex.Typography_CapitalSpacing, f == CanvasTypographyFeatureName.CapitalSpacing);
+            /* As Capital Spacing affects character spacing, it has no use when displaying single glyphs */
+            //Set(XamlPropertyIndex.Typography_CapitalSpacing, f == CanvasTypographyFeatureName.CapitalSpacing);
 
             /* Set KERNING */
-            Set(XamlPropertyIndex.Typography_Kerning, f == CanvasTypographyFeatureName.Kerning);
+            /* As Kerning affects character spacing, it has no use when displaying single glyphs */
+            //Set(XamlPropertyIndex.Typography_Kerning, f == CanvasTypographyFeatureName.Kerning);
+
+            /* Set SWASHES */
+            SetI(XamlPropertyIndex.Typography_StandardSwashes, f == CanvasTypographyFeatureName.Swash);
+            SetI(XamlPropertyIndex.Typography_ContextualSwashes, f == CanvasTypographyFeatureName.ContextualSwash);
+
+            /* Set ALTERNATES */
+            SetI(XamlPropertyIndex.Typography_AnnotationAlternates, f == CanvasTypographyFeatureName.AlternateAnnotationForms);
+            SetI(XamlPropertyIndex.Typography_StylisticAlternates, f == CanvasTypographyFeatureName.StylisticAlternates);
+            /* Contextual Alternates applies to combinations of characters, and as such has no purpose here yet */
+            Set(XamlPropertyIndex.Typography_ContextualAlternates, f == CanvasTypographyFeatureName.ContextualAlternates);
 
             /* Set MATHEMATICAL GREEK */
             Set(XamlPropertyIndex.Typography_MathematicalGreek, f == CanvasTypographyFeatureName.MathematicalGreek);
@@ -80,13 +98,13 @@ namespace CharacterMap.Core
 
             /* Set SLASHED ZERO */
             Set(XamlPropertyIndex.Typography_SlashedZero, f == CanvasTypographyFeatureName.SlashedZero);
-            Set(XamlPropertyIndex.Typography_ContextualAlternates, f == CanvasTypographyFeatureName.ContextualAlternates);
 
             /* Set LIGATURES */
-            Set(XamlPropertyIndex.Typography_StandardLigatures, f == CanvasTypographyFeatureName.StandardLigatures);
-            Set(XamlPropertyIndex.Typography_ContextualLigatures, f == CanvasTypographyFeatureName.ContextualLigatures);
-            Set(XamlPropertyIndex.Typography_HistoricalLigatures, f == CanvasTypographyFeatureName.HistoricalLigatures);
-            Set(XamlPropertyIndex.Typography_DiscretionaryLigatures, f == CanvasTypographyFeatureName.DiscretionaryLigatures);
+            /* Ligatures only apply to combinations of characters, and as such have no purpose here yet */
+            // Set(XamlPropertyIndex.Typography_StandardLigatures, f == CanvasTypographyFeatureName.StandardLigatures);
+            // Set(XamlPropertyIndex.Typography_ContextualLigatures, f == CanvasTypographyFeatureName.ContextualLigatures);
+            // Set(XamlPropertyIndex.Typography_HistoricalLigatures, f == CanvasTypographyFeatureName.HistoricalLigatures);
+            // Set(XamlPropertyIndex.Typography_DiscretionaryLigatures, f == CanvasTypographyFeatureName.DiscretionaryLigatures);
 
             /* Set CAPITALS */
             if (f == CanvasTypographyFeatureName.SmallCapitals)
@@ -105,12 +123,13 @@ namespace CharacterMap.Core
                 SetE(XamlPropertyIndex.Typography_Capitals, (uint)FontCapitals.Normal);
 
             /* Set NUMERAL ALIGNMENT */
-            if (f == CanvasTypographyFeatureName.ProportionalFigures)
-                SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Proportional);
-            else if (f == CanvasTypographyFeatureName.TabularFigures)
-                SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Tabular);
-            else
-                SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Normal);
+            /* Numeral Alignment only apply to combinations of characters, and as such have no purpose here yet */
+            //if (f == CanvasTypographyFeatureName.ProportionalFigures)
+            //    SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Proportional);
+            //else if (f == CanvasTypographyFeatureName.TabularFigures)
+            //    SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Tabular);
+            //else
+            SetE(XamlPropertyIndex.Typography_NumeralAlignment, (uint)FontNumeralAlignment.Normal);
 
             /* Set NUMERAL STYLE */
             if (f == CanvasTypographyFeatureName.OldStyleFigures)
@@ -185,33 +204,37 @@ namespace CharacterMap.Core
             CanvasTypographyFeatureName.StylisticSet18,
             CanvasTypographyFeatureName.StylisticSet19,
             CanvasTypographyFeatureName.StylisticSet20,
-            CanvasTypographyFeatureName.CapitalSpacing,
-            CanvasTypographyFeatureName.Kerning,
+            //CanvasTypographyFeatureName.Kerning,
+            //CanvasTypographyFeatureName.CapitalSpacing,
             CanvasTypographyFeatureName.MathematicalGreek,
             CanvasTypographyFeatureName.HistoricalForms,
             CanvasTypographyFeatureName.CaseSensitiveForms,
             CanvasTypographyFeatureName.ExpertForms,
             CanvasTypographyFeatureName.SlashedZero,
-            CanvasTypographyFeatureName.ContextualAlternates,
-            CanvasTypographyFeatureName.StandardLigatures,
-            CanvasTypographyFeatureName.ContextualLigatures,
-            CanvasTypographyFeatureName.HistoricalLigatures,
-            CanvasTypographyFeatureName.DiscretionaryLigatures,
+            //CanvasTypographyFeatureName.ContextualAlternates,
+            //CanvasTypographyFeatureName.StandardLigatures,
+            //CanvasTypographyFeatureName.ContextualLigatures,
+            //CanvasTypographyFeatureName.HistoricalLigatures,
+            //CanvasTypographyFeatureName.DiscretionaryLigatures,
             CanvasTypographyFeatureName.SmallCapitals,
             CanvasTypographyFeatureName.SmallCapitalsFromCapitals,
             CanvasTypographyFeatureName.PetiteCapitals,
             CanvasTypographyFeatureName.PetiteCapitalsFromCapitals,
             CanvasTypographyFeatureName.Titling,
             CanvasTypographyFeatureName.Unicase,
-            CanvasTypographyFeatureName.ProportionalFigures,
-            CanvasTypographyFeatureName.TabularFigures,
+            //CanvasTypographyFeatureName.ProportionalFigures,
+            //CanvasTypographyFeatureName.TabularFigures,
             CanvasTypographyFeatureName.OldStyleFigures,
             CanvasTypographyFeatureName.LiningFigures,
             CanvasTypographyFeatureName.Ordinals,
             CanvasTypographyFeatureName.Superscript,
             CanvasTypographyFeatureName.Subscript,
             CanvasTypographyFeatureName.RubyNotationForms,
-            CanvasTypographyFeatureName.ScientificInferiors
+            CanvasTypographyFeatureName.ScientificInferiors,
+            CanvasTypographyFeatureName.Swash,
+            CanvasTypographyFeatureName.ContextualSwash,
+            CanvasTypographyFeatureName.AlternateAnnotationForms,
+            CanvasTypographyFeatureName.StylisticAlternates
         };
 
         public static bool IsXamlSupported(CanvasTypographyFeatureName feature)

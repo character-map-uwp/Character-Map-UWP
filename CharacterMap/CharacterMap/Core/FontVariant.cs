@@ -39,6 +39,8 @@ namespace CharacterMap.Core
             }
         }
 
+        public bool HasXamlTypographyFeatures => XamlTypographyFeatures.Count > 0;
+
         public CanvasFontFace FontFace { get; private set; }
 
         public string PreferredName { get; private set; }
@@ -114,7 +116,11 @@ namespace CharacterMap.Core
         private void LoadTypographyFeatures()
         {
             _typographyFeatures = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
-            _xamlTypographyFeatures = _typographyFeatures.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
+            var xaml = _typographyFeatures.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
+            if (xaml.Count > 0)
+                xaml.Insert(0, new TypographyFeatureInfo(CanvasTypographyFeatureName.None));
+
+            _xamlTypographyFeatures = xaml;
         }
 
         public void Dispose()

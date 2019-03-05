@@ -355,6 +355,7 @@
                                                 VerticalAlignment="Bottom"
                                                 IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
                                             <TextBlock
+                                                Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}"
                                                 Margin="0 12 0 0"
                                                 FontWeight="Bold"
                                                 Text="Typography Variants" />
