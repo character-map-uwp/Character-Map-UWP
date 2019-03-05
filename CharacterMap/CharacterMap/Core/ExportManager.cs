@@ -42,7 +42,8 @@ namespace CharacterMap.Core
             ExportStyle style,
             InstalledFont selectedFont,
             FontVariant selectedVariant,
-            Character selectedChar)
+            Character selectedChar,
+            CanvasTypography typography)
         {
             try
             {
@@ -72,6 +73,8 @@ namespace CharacterMap.Core
                     }, canvasW, canvasH))
                     using (CanvasGeometry temp = CanvasGeometry.CreateText(layout))
                     {
+                        layout.SetTypography(0, 1, typography);
+
                         SvgGlyphCompositor sgc = new SvgGlyphCompositor();
                         layout.DrawToTextRenderer(sgc, 0, 0);
 
@@ -118,11 +121,13 @@ namespace CharacterMap.Core
             ExportStyle style,
             InstalledFont selectedFont,
             FontVariant selectedVariant,
-            Character selectedChar)
+            Character selectedChar,
+            CanvasTypography typography)
         {
             try
             {
-                if (await PickFileAsync($"CharacterMap_{DateTime.Now:yyyyMMddHHmmss}.png", "Png Image", new[] { ".png" }) 
+                string name = $"{selectedFont.Name} - {selectedVariant.PreferredName} - {selectedChar.UnicodeString}.png";
+                if (await PickFileAsync(name, "Png Image", new[] { ".png" }) 
                     is StorageFile file)
                 {
                     CachedFileManager.DeferUpdates(file);
@@ -155,6 +160,8 @@ namespace CharacterMap.Core
                         {
                             if (style == ExportStyle.ColorGlyph)
                                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
+
+                            layout.SetTypography(0, 1, typography);
 
                             var db = layout.DrawBounds;
                             double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));

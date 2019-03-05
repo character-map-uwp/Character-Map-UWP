@@ -7,6 +7,7 @@
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:CharacterMap"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
@@ -326,11 +327,48 @@
                         IsEnabled="{Binding SelectedFont.HasVariants}"
                         ItemsSource="{Binding SelectedFont.Variants}"
                         SelectedItem="{Binding SelectedVariant, Mode=TwoWay}" />
-                    <ToggleSwitch
-                        x:Name="ColorGlyphToggle"
-                        x:Uid="ColorGlyphToggle"
+
+                    <Button
+                        Width="44"
+                        Height="44"
+                        Margin="0 0 0 -8"
                         VerticalAlignment="Bottom"
-                        IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
+                        Style="{ThemeResource TransparentButton}"
+                        ToolTipService.ToolTip="Font Rendering Options">
+                        <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE890;" />
+                        <Button.Flyout>
+                            <Flyout Placement="Bottom">
+                                <ListView
+                                    Width="300"
+                                    Padding="0"
+                                    ItemsSource="{x:Bind ViewModel.SelectedVariant.XamlTypographyFeatures, Mode=OneWay}"
+                                    SelectedItem="{Binding SelectedTypography, Mode=TwoWay}"
+                                    SelectionMode="Single"
+                                    ShowsScrollingPlaceholders="False"
+                                    SingleSelectionFollowsFocus="True">
+                                    <ListView.Header>
+                                        <StackPanel Margin="12 4" Spacing="12">
+                                            <TextBlock FontWeight="Bold" Text="Font Display Options" />
+                                            <ToggleSwitch
+                                                x:Name="ColorGlyphToggle"
+                                                x:Uid="ColorGlyphToggle"
+                                                VerticalAlignment="Bottom"
+                                                IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
+                                            <TextBlock
+                                                Margin="0 12 0 0"
+                                                FontWeight="Bold"
+                                                Text="Typography Variants" />
+                                        </StackPanel>
+                                    </ListView.Header>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="core:TypographyFeatureInfo">
+                                            <TextBlock Text="{x:Bind DisplayName}" />
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
 
                     <Button
                         Width="44"
@@ -448,7 +486,11 @@
                                     FontWeight="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Weight}"
                                     IsColorFontEnabled="{Binding ElementName=ColorGlyphToggle, Path=IsOn}"
                                     Style="{StaticResource CharItemCharStyle}"
-                                    Text="{x:Bind Char}" />
+                                    Text="{x:Bind Char}">
+                                    <i:Interaction.Behaviors>
+                                        <core:TypographyBehavior TypographyFeature="{Binding ElementName=WeightSelector, Path=DataContext.SelectedTypography}" />
+                                    </i:Interaction.Behaviors>
+                                </TextBlock>
 
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{x:Bind UnicodeString}" />
 
@@ -503,7 +545,11 @@
                             FontWeight="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Weight}"
                             IsColorFontEnabled="{Binding ElementName=ColorGlyphToggle, Path=IsOn}"
                             Text="{Binding SelectedChar.Char}"
-                            TextAlignment="Center" />
+                            TextAlignment="Center">
+                            <i:Interaction.Behaviors>
+                                <core:TypographyBehavior TypographyFeature="{Binding SelectedTypography}" />
+                            </i:Interaction.Behaviors>
+                        </TextBlock>
                     </Viewbox>
 
                     <Border

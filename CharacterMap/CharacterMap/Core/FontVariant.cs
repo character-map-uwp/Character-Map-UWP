@@ -10,23 +10,40 @@ namespace CharacterMap.Core
 {
     public class FontVariant: IDisposable
     {
-        private string _fontConstructor { get; }
+        private string _xamlFontConstructor { get; }
 
+        private FontFamily _xamlFontFamily = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
-
-        private FontFamily _xamlFontFamily { get; set; }
+        private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
 
         public FontFamily XamlFontFamily
-            => _xamlFontFamily ?? (_xamlFontFamily = new FontFamily(_fontConstructor));
+            => _xamlFontFamily ?? (_xamlFontFamily = new FontFamily(_xamlFontConstructor));
+
+        public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
+        {
+            get
+            {
+                if (_typographyFeatures == null)
+                    LoadTypographyFeatures();
+                return _typographyFeatures;
+            }
+        }
+
+        public IReadOnlyList<TypographyFeatureInfo> XamlTypographyFeatures
+        {
+            get
+            {
+                if (_xamlTypographyFeatures == null)
+                    LoadTypographyFeatures();
+                return _xamlTypographyFeatures;
+            }
+        }
 
         public CanvasFontFace FontFace { get; private set; }
 
         public string PreferredName { get; private set; }
 
         public IReadOnlyList<Character> Characters { get; private set; }
-
-        public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
-            => _typographyFeatures ?? (_typographyFeatures = TypographyAnalyzer.GetSupportedTypographyFeatures(this));
 
         public double CharacterHash { get; private set; }
 
@@ -46,11 +63,11 @@ namespace CharacterMap.Core
             {
                 IsImported = true;
                 FileName = file.Name;
-                _fontConstructor = $"{FontFinder.GetAppPath(file)}#{familyName}";
+                _xamlFontConstructor = $"{FontFinder.GetAppPath(file)}#{familyName}";
             }
             else
             {
-                _fontConstructor = familyName;
+                _xamlFontConstructor = familyName;
             }
 
             if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string name))
@@ -65,11 +82,6 @@ namespace CharacterMap.Core
             }
 
             PreferredName = name;
-        }
-
-        public override string ToString()
-        {
-            return PreferredName;
         }
 
         public IReadOnlyList<Character> GetCharacters()
@@ -99,11 +111,22 @@ namespace CharacterMap.Core
             return Characters;
         }
 
+        private void LoadTypographyFeatures()
+        {
+            _typographyFeatures = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
+            _xamlTypographyFeatures = _typographyFeatures.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
+        }
+
         public void Dispose()
         {
             _xamlFontFamily = null;
             FontFace.Dispose();
             FontFace = null;
+        }
+
+        public override string ToString()
+        {
+            return PreferredName;
         }
 
         public static FontVariant CreateDefault(CanvasFontFace face)

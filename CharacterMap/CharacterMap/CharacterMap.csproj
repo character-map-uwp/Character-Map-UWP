@@ -109,6 +109,9 @@
     <!-- <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0"> -->
     <!-- <Name>Microsoft Engagement Framework</Name> -->
     <!-- </SDKReference> -->
+    <PackageReference Include="Humanizer.Core">
+      <Version>2.5.16</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.Services.Store.Engagement">
       <Version>10.1901.28001</Version>
     </PackageReference>
@@ -165,10 +168,13 @@
     <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\ExportManager.cs" />
     <Compile Include="Core\FontFinder.cs" />
+    <Compile Include="Core\FontVariant.cs" />
     <Compile Include="Core\InstalledFont.cs" />
     <Compile Include="Core\MDL2DescriptionDict.cs" />
     <Compile Include="Core\SvgGlyphCompositor.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
+    <Compile Include="Core\TypographerHandler.cs" />
+    <Compile Include="Core\TypographyBehavior.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />

@@ -230,6 +230,13 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private TypographyFeatureInfo _selectedTypography;
+        public TypographyFeatureInfo SelectedTypography
+        {
+            get => _selectedTypography;
+            set => Set(ref _selectedTypography, value);
+        }
+
         private bool _isDarkAccent;
         private string _titlePrefix;
 
@@ -347,6 +354,7 @@ namespace CharacterMap.ViewModels
             }, 100, 100))
             {
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
+                ApplyEffectiveTypography(layout);
                 SelectedCharAnalysis = _interop.Analyze(layout);
             }
         }
@@ -381,13 +389,32 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private CanvasTypography GetEffectiveTypography()
+        {
+            CanvasTypography typo = new CanvasTypography();
+            if (SelectedTypography != null && SelectedTypography.Feature != CanvasTypographyFeatureName.None)
+            {
+                typo.AddFeature(SelectedTypography.Feature, 1u);
+            }
+            return typo;
+        }
+
+        private void ApplyEffectiveTypography(CanvasTextLayout layout)
+        {
+            using (var type = GetEffectiveTypography())
+            {
+                layout.SetTypography(0, 1, type);
+            }
+        }
+
         private Task SavePngAsync(ExportStyle style)
         {
             return ExportManager.ExportPngAsync(
                 style,
                 SelectedFont,
                 SelectedVariant,
-                SelectedChar);
+                SelectedChar,
+                GetEffectiveTypography());
         }
 
         private Task SaveSvgAsync(bool isBlackText)
@@ -396,7 +423,8 @@ namespace CharacterMap.ViewModels
                 isBlackText ? ExportStyle.Black : ExportStyle.White,
                 SelectedFont,
                 SelectedVariant,
-                SelectedChar);
+                SelectedChar,
+                GetEffectiveTypography());
         }
 
     }

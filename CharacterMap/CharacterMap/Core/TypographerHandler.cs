@@ -38,29 +38,24 @@ namespace CharacterMap.Core
 
     public class TypographyHandler : ICanvasTextRenderer
     {
-        IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>> analyzedScript;
+        IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>> _analyzedScript { get; }
 
-        public List<TypographyFeatureInfo> TypographyOptions;
-        public CanvasTypographyFeatureName FeatureToHighlight;
-
-        public enum Mode { BuildTypographyList }
+        public List<TypographyFeatureInfo> TypographyOptions { get; }
 
         public TypographyHandler(string text)
         {
             var textAnalyzer = new CanvasTextAnalyzer(text, CanvasTextDirection.TopToBottomThenLeftToRight);
-            analyzedScript = textAnalyzer.GetScript();
+            _analyzedScript = textAnalyzer.GetScript();
 
             TypographyOptions = new List<TypographyFeatureInfo>
             {
                 new TypographyFeatureInfo(CanvasTypographyFeatureName.None)
             };
-
-            FeatureToHighlight = CanvasTypographyFeatureName.None;
         }
 
         private CanvasAnalyzedScript GetScript(uint textPosition)
         {
-            foreach (KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> range in analyzedScript)
+            foreach (KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> range in _analyzedScript)
             {
                 if (textPosition >= range.Key.CharacterIndex && textPosition < range.Key.CharacterIndex + range.Key.CharacterCount)
                 {
@@ -68,7 +63,7 @@ namespace CharacterMap.Core
                 }
             }
 
-            return analyzedScript[analyzedScript.Count - 1].Value;
+            return _analyzedScript[_analyzedScript.Count - 1].Value;
         }
 
         public void DrawGlyphRun(
