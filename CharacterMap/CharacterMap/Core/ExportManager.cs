@@ -11,6 +11,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -53,14 +54,11 @@ namespace CharacterMap.Core
                     CachedFileManager.DeferUpdates(file);
                     var device = CanvasDevice.GetSharedDevice();
 
-                    var canvasH = (float)App.AppSettings.PngSize;
-                    var canvasW = (float)App.AppSettings.PngSize;
-
-                    var d = App.AppSettings.PngSize;
-                    var r = App.AppSettings.PngSize / 2;
-
                     var textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
-                    var fontSize = (float)d;
+
+                    /* SVG Exports render at fixed size - but a) they're vectors, andb) they're
+                     * inside an auto-scaling viewport. So rendersize is *largely* pointless */
+                    float canvasH = 1024f, canvasW = 1024f, fontSize = 1024f;
 
                     using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
                     {
@@ -71,35 +69,34 @@ namespace CharacterMap.Core
                         FontStyle = selectedVariant.FontFace.Style,
                         HorizontalAlignment = CanvasHorizontalAlignment.Center
                     }, canvasW, canvasH))
-                    using (CanvasGeometry temp = CanvasGeometry.CreateText(layout))
                     {
                         layout.SetTypography(0, 1, typography);
 
-                        SvgGlyphCompositor sgc = new SvgGlyphCompositor();
-                        layout.DrawToTextRenderer(sgc, 0, 0);
-
                         var db = layout.DrawBounds;
                         double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
-                        var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
-                        var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
+                        var x = -db.Left;
+                        var y = -db.Top;
 
                         Matrix3x2 transform =
                             Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
                             * Matrix3x2.CreateScale(new Vector2((float)scale));
 
+                        using (CanvasGeometry temp = CanvasGeometry.CreateText(layout))
                         using (CanvasGeometry geom = temp.Transform(transform))
                         {
                             /* 
-                             * Unfortunately this only constructs a black and white path, if we want color
-                             * I'm not sure Win2D exposes the neccessary API's to get the individual glyph
+                             * Unfortunately this only constructs a monochrome path, if we want color
+                             * Win2D does not yet expose the neccessary API's to get the individual glyph
                              * layers that make up a colour glyph.
                              * 
                              * We'll need to handle this in C++/CX if we want to do this at some point.
                              */
+
                             SVGPathReciever rc = new SVGPathReciever();
                             geom.SendPathTo(rc);
 
-                            using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, canvasW, canvasH, rc))
+                            Rect bounds = geom.ComputeBounds();
+                            using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, bounds.Width, bounds.Height, rc))
                             {
                                 ((CanvasSvgNamedElement)document.Root.FirstChild).SetColorAttribute("fill", textColor);
                                 await Utils.WriteSvgAsync(document, file);
