@@ -355,10 +355,10 @@
                                                 VerticalAlignment="Bottom"
                                                 IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
                                             <TextBlock
-                                                Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}"
                                                 Margin="0 12 0 0"
                                                 FontWeight="Bold"
-                                                Text="Typography Variants" />
+                                                Text="Typography Variants"
+                                                Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}" />
                                         </StackPanel>
                                     </ListView.Header>
                                     <ListView.ItemTemplate>
@@ -382,9 +382,23 @@
                         <Button.Flyout>
                             <Flyout>
                                 <StackPanel
-                                    Width="300"
+                                    MinWidth="300"
+                                    MaxWidth="400"
                                     Padding="12"
                                     Spacing="12">
+                                    <Panel.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Opacity" Value="0.5" />
+                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                            <Setter Property="VerticalAlignment" Value="Top" />
+                                        </Style>
+                                        <Style x:Key="Value" TargetType="TextBlock">
+                                            <Setter Property="Opacity" Value="1" />
+                                            <Setter Property="Grid.Column" Value="1" />
+                                            <Setter Property="TextWrapping" Value="Wrap" />
+                                            <Setter Property="VerticalAlignment" Value="Top" />
+                                        </Style>
+                                    </Panel.Resources>
                                     <TextBlock x:Uid="FontPropTitle" FontWeight="Bold" />
                                     <Grid RowSpacing="8">
                                         <Grid.ColumnDefinitions>
@@ -401,15 +415,7 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
-                                        <Grid.Resources>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Opacity" Value="0.5" />
-                                            </Style>
-                                            <Style x:Key="Value" TargetType="TextBlock">
-                                                <Setter Property="Opacity" Value="1" />
-                                                <Setter Property="Grid.Column" Value="1" />
-                                            </Style>
-                                        </Grid.Resources>
+
 
                                         <TextBlock x:Uid="FontPropFamily" Grid.Row="0" />
                                         <TextBlock
@@ -458,10 +464,30 @@
                                             Grid.Row="7"
                                             Style="{StaticResource Value}"
                                             Text="{x:Bind ViewModel.SelectedVariant.FontFace.Weight.Weight.ToString(), Mode=OneWay}" />
-
                                     </Grid>
-                                </StackPanel>
 
+                                    <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <StackPanel Spacing="12" />
+                                            </ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Spacing="4">
+                                                    <TextBlock
+                                                        Opacity="0.5"
+                                                        Text="{Binding Key}" />
+                                                    <TextBlock
+                                                        IsTextSelectionEnabled="True"
+                                                        Style="{StaticResource Value}"
+                                                        Text="{Binding Value}" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                </StackPanel>
                             </Flyout>
                         </Button.Flyout>
                     </Button>

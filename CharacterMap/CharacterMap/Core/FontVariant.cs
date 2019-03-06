@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Humanizer;
 using Microsoft.Graphics.Canvas.Text;
 using Windows.Storage;
 using FontFamily = Windows.UI.Xaml.Media.FontFamily;
@@ -13,11 +14,15 @@ namespace CharacterMap.Core
         private string _xamlFontConstructor { get; }
 
         private FontFamily _xamlFontFamily = null;
+        private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
 
         public FontFamily XamlFontFamily
             => _xamlFontFamily ?? (_xamlFontFamily = new FontFamily(_xamlFontConstructor));
+
+        public IReadOnlyList<KeyValuePair<string, string>> FontInformation
+            => _fontInformation ?? (_fontInformation = LoadFontInformation());
 
         public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
         {
@@ -123,6 +128,26 @@ namespace CharacterMap.Core
             _xamlTypographyFeatures = xaml;
         }
 
+        private List<KeyValuePair<string, string>> LoadFontInformation()
+        {
+            KeyValuePair<string, string> Get(CanvasFontInformation info)
+            {
+                var infos = FontFace.GetInformationalStrings(info);
+                if (infos.Count == 0)
+                    return new KeyValuePair<string, string>();
+
+                var name = info.Humanize().Transform(To.TitleCase);
+                var dic = infos.ToDictionary(k => k.Key, k => k.Value);
+                if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
+                    || infos.TryGetValue("en-us", out value))
+                    return KeyValuePair.Create(name, value);
+                else
+                    return KeyValuePair.Create(name, infos.First().Value);
+            }
+
+            return INFORMATIONS.Select(Get).Where(s => s.Key != null).ToList();
+        }
+
         public void Dispose()
         {
             _xamlFontFamily = null;
@@ -151,5 +176,21 @@ namespace CharacterMap.Core
             };
         }
 
+
+
+        private static CanvasFontInformation[] INFORMATIONS { get; } = new[]
+        {
+            CanvasFontInformation.FullName,
+            CanvasFontInformation.Description,
+            CanvasFontInformation.Designer,
+            CanvasFontInformation.DesignerUrl,
+            CanvasFontInformation.VersionStrings,
+            CanvasFontInformation.FontVendorUrl,
+            CanvasFontInformation.Manufacturer,
+            CanvasFontInformation.Trademark,
+            CanvasFontInformation.CopyrightNotice,
+            CanvasFontInformation.LicenseInfoUrl,
+            CanvasFontInformation.LicenseDescription,
+        };
     }
 }
