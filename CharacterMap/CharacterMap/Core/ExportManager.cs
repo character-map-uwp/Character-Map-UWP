@@ -73,8 +73,6 @@ namespace CharacterMap.Core
                     {
                         layout.SetTypography(0, 1, typography);
 
-                        var db = layout.DrawBounds;
-
                         using (CanvasGeometry temp = CanvasGeometry.CreateText(layout))
                         {
                             var b = temp.ComputeBounds();
@@ -156,6 +154,7 @@ namespace CharacterMap.Core
                             FontWeight = selectedVariant.FontFace.Weight,
                             FontStyle = selectedVariant.FontFace.Style,
                             HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                            Options = style == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
                         }, canvasW, canvasH))
                         {
                             if (style == ExportStyle.ColorGlyph)
