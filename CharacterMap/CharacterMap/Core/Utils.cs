@@ -14,13 +14,29 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.Storage.Streams;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Core.Direct;
 
 namespace CharacterMap.Core
 {
     public class Utils
     {
+        private static Dictionary<int, XamlDirect> _xamlDirectCache { get; } = new Dictionary<int, XamlDirect>();
+
+        public static XamlDirect GetXamlDirectForWindow(CoreDispatcher dispatcher)
+        {
+            int hash = dispatcher.GetHashCode();
+            if (_xamlDirectCache.TryGetValue(hash, out XamlDirect d))
+                return d;
+
+            d = XamlDirect.GetDefault();
+            _xamlDirectCache[hash] = d;
+            return d;
+        }
+
+
         public static int ParseHexString(string hexNumber)
         {
             hexNumber = hexNumber.Replace("x", string.Empty);
@@ -47,6 +63,15 @@ namespace CharacterMap.Core
                     var localDpi = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
                     BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, fileStream);
+
+                    await encoder.BitmapContainerProperties.SetPropertiesAsync(new BitmapPropertySet
+                    {
+                        {
+                            "System.Comment",
+                            new BitmapTypedValue("Exported via Character Map UWP", Windows.Foundation.PropertyType.String)
+                        }
+                    });
+
                     Stream pixelStream = stream;
                     byte[] pixels = new byte[pixelStream.Length];
                     await pixelStream.ReadAsync(pixels, 0, pixels.Length);
@@ -140,6 +165,8 @@ namespace CharacterMap.Core
             double height, 
             IList<SVGPathReciever> paths)
         {
+            width = Math.Ceiling(width);
+            height = Math.Ceiling(height);
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">", width, height);
             foreach (var receiver in paths)

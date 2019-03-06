@@ -14,6 +14,8 @@ using CharacterMap.Helpers;
 using CommonServiceLocator;
 using Edi.UWP.Helpers;
 using GalaSoft.MvvmLight.Threading;
+using Windows.ApplicationModel.Core;
+using CharacterMap.Views;
 
 namespace CharacterMap.Services
 {
@@ -35,10 +37,33 @@ namespace CharacterMap.Services
 
         public async Task ActivateAsync(object activationArgs)
         {
-            if (IsInteractive(activationArgs))
+            if (IsActivation(activationArgs))
             {
                 // Initialize things like registering background task before the app is loaded
                 await InitializeAsync();
+
+                // We spawn a seperate Window for this.
+                if (activationArgs is FileActivatedEventArgs fileArgs)
+                {
+                    CoreApplicationView newView = CoreApplication.CreateNewView();
+                    int newViewId = 0;
+                    await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        FontMapView map = new FontMapView
+                        {
+                            IsStandalone = true
+                        };
+                        _ = map.ViewModel.LoadFromFileArgsAsync(fileArgs);
+
+                        // You have to activate the window in order to show it later.
+                        Window.Current.Content = map;
+                        Window.Current.Activate();
+
+                        newViewId = ApplicationView.GetForCurrentView().Id;
+                    });
+                    bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+                    return;
+                }
 
                 // Do not repeat app initialization when the Window already has content,
                 // just ensure that the window is active
@@ -66,7 +91,7 @@ namespace CharacterMap.Services
                 await activationHandler.HandleAsync(activationArgs);
             }
 
-            if (IsInteractive(activationArgs))
+            if (IsActivation(activationArgs))
             {
                 var defaultHandler = new DefaultLaunchActivationHandler(_defaultNavItem);
                 if (defaultHandler.CanHandle(activationArgs))
@@ -86,14 +111,14 @@ namespace CharacterMap.Services
             }
         }
 
-        private async Task InitializeAsync()
+        private Task InitializeAsync()
         {
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
-        private async Task StartupAsync()
+        private Task StartupAsync()
         {
-            await Task.CompletedTask;
+            return Task.CompletedTask;
         }
 
         private IEnumerable<ActivationHandler> GetActivationHandlers()
@@ -101,7 +126,7 @@ namespace CharacterMap.Services
             yield return Singleton<ToastNotificationsService>.Instance;
         }
 
-        private bool IsInteractive(object args)
+        private bool IsActivation(object args)
         {
             return args is IActivatedEventArgs;
         }

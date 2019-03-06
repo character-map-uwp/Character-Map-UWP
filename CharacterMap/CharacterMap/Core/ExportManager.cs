@@ -12,6 +12,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI;
@@ -73,33 +74,35 @@ namespace CharacterMap.Core
                         layout.SetTypography(0, 1, typography);
 
                         var db = layout.DrawBounds;
-                        double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
-                        var x = -db.Left;
-                        var y = -db.Top;
-
-                        Matrix3x2 transform =
-                            Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
-                            * Matrix3x2.CreateScale(new Vector2((float)scale));
 
                         using (CanvasGeometry temp = CanvasGeometry.CreateText(layout))
-                        using (CanvasGeometry geom = temp.Transform(transform))
                         {
-                            /* 
-                             * Unfortunately this only constructs a monochrome path, if we want color
-                             * Win2D does not yet expose the neccessary API's to get the individual glyph
-                             * layers that make up a colour glyph.
-                             * 
-                             * We'll need to handle this in C++/CX if we want to do this at some point.
-                             */
+                            var b = temp.ComputeBounds();
+                            double scale = Math.Min(1, Math.Min(canvasW / b.Width, canvasH / b.Height));
 
-                            SVGPathReciever rc = new SVGPathReciever();
-                            geom.SendPathTo(rc);
+                            Matrix3x2 transform =
+                                Matrix3x2.CreateTranslation(new Vector2((float)-b.Left, (float)-b.Top))
+                                * Matrix3x2.CreateScale(new Vector2((float)scale));
 
-                            Rect bounds = geom.ComputeBounds();
-                            using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, bounds.Width, bounds.Height, rc))
+                            using (CanvasGeometry geom = temp.Transform(transform))
                             {
-                                ((CanvasSvgNamedElement)document.Root.FirstChild).SetColorAttribute("fill", textColor);
-                                await Utils.WriteSvgAsync(document, file);
+                                /* 
+                                 * Unfortunately this only constructs a monochrome path, if we want color
+                                 * Win2D does not yet expose the neccessary API's to get the individual glyph
+                                 * layers that make up a colour glyph.
+                                 * 
+                                 * We'll need to handle this in C++/CX if we want to do this at some point.
+                                 */
+
+                                SVGPathReciever rc = new SVGPathReciever();
+                                geom.SendPathTo(rc);
+
+                                Rect bounds = geom.ComputeBounds();
+                                using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, bounds.Width, bounds.Height, rc))
+                                {
+                                    ((CanvasSvgNamedElement)document.Root.FirstChild).SetColorAttribute("fill", textColor);
+                                    await Utils.WriteSvgAsync(document, file);
+                                }
                             }
                         }
                     }

@@ -44,11 +44,7 @@ namespace CharacterMap.Views
             if (null != LstFontFamily.SelectedItem)
             {
                 LstFontFamily.ScrollIntoView(LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
-
-                if (null != CharGrid.SelectedItem)
-                {
-                    CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Leading);
-                }
+                FontMap.TryScrollSelectionIntoView();
             }
         }
 
@@ -100,51 +96,7 @@ namespace CharacterMap.Views
 
         #endregion
 
-        private void BtnCopy_OnClick(object sender, RoutedEventArgs e)
-        {
-            if (CharGrid.SelectedItem is Character character)
-            {
-                var dp = new DataPackage
-                {
-                    RequestedOperation = DataPackageOperation.Copy,
-                };
-                dp.SetText(character.Char);
-                Clipboard.SetContent(dp);
-            }
-            BorderFadeInStoryboard.Begin();
-        }
-
-        private void BtnSaveAs_OnClick(object sender, RoutedEventArgs e)
-        {
-            SaveAsCommandBar.IsOpen = !SaveAsCommandBar.IsOpen;
-        }
-
-        private void BtnSaveAsSvg_OnClick(object sender, RoutedEventArgs e)
-        {
-            SaveAsSvgCommandBar.IsOpen = !SaveAsSvgCommandBar.IsOpen;
-        }
-
-        private void TxtFontIcon_OnGotFocus(object sender, RoutedEventArgs e)
-        {
-            TxtFontIcon.SelectAll();
-        }
-
-        private void TxtXamlCode_OnGotFocus(object sender, RoutedEventArgs e)
-        {
-            TxtXamlCode.SelectAll();
-        }
-
-        private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
-        {
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
-            BorderFadeInStoryboard.Begin();
-        }
-
-        private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
-        {
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
-            BorderFadeInStoryboard.Begin();
-        }
+        
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -154,16 +106,7 @@ namespace CharacterMap.Views
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void TxtSymbolIcon_OnGotFocus(object sender, RoutedEventArgs e)
-        {
-            TxtSymbolIcon.SelectAll();
-        }
-
-        private void BtnCopySymbolIcon_OnClick(object sender, RoutedEventArgs e)
-        {
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtSymbolIcon.Text.Trim());
-            BorderFadeInStoryboard.Begin();
-        }
+        
 
         private async void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
@@ -179,11 +122,10 @@ namespace CharacterMap.Views
         {
             var unicodeIndex = SearchBoxUnicode.Text.Trim();
             int intIndex = Utils.ParseHexString(unicodeIndex);
-            var ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
+            var ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
             if (null != ch)
             {
-                CharGrid.SelectedItem = ch;
-                CharGrid.ScrollIntoView(ch);
+                FontMap.SelectCharacter(ch);
             }
             else if (ViewModel.SelectedFont.Name == "Segoe MDL2 Assets")    //Search for Segoe MDL2 Assets characters with description
             {
@@ -193,12 +135,8 @@ namespace CharacterMap.Views
                 {
                     //Precise search
                     intIndex = Utils.ParseHexString(unicodePoint);
-                    ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-                    if (null != ch)
-                    {
-                        CharGrid.SelectedItem = ch;
-                        CharGrid.ScrollIntoView(ch);
-                    }
+                    ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
+                    FontMap.SelectCharacter(ch);
                 }
                 else
                 {
@@ -209,25 +147,11 @@ namespace CharacterMap.Views
                         if(MDL2Description.Dict.TryGetValue(resultKey, out string unicodePointFuzzy))
                         {
                             intIndex = Utils.ParseHexString(unicodePointFuzzy);
-                            ch = ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-                            if (null != ch)
-                            {
-                                CharGrid.SelectedItem = ch;
-                                CharGrid.ScrollIntoView(ch);
-                            }
+                            ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
+                            FontMap.SelectCharacter(ch);
                         }
                     }
                 }
-            }
-        }
-
-        private void PreviewGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var newSize = e.NewSize.Width - 2;
-
-            foreach (AppBarButton item in SaveAsCommandBar.SecondaryCommands.Concat(SaveAsSvgCommandBar.SecondaryCommands))
-            {
-                item.Width = newSize;
             }
         }
 
@@ -254,15 +178,7 @@ namespace CharacterMap.Views
                 switch (e.Key)
                 {
                     case VirtualKey.C:
-                        if (CharGrid.SelectedItem is Character character &&
-                            !TxtSymbolIcon.SelectedText.Any() &&
-                            !TxtFontIcon.SelectedText.Any() &&
-                            !TxtXamlCode.SelectedText.Any())
-                        {
-                            Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
-                            BorderFadeInStoryboard.Begin();
-                        }
-
+                        FontMap.TryCopy();
                         break;
                 }
             }

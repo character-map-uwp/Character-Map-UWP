@@ -29,6 +29,7 @@ namespace CharacterMap.Core
     public class FontFinder
     {
         const string PENDING = nameof(PENDING);
+        const string TEMP = nameof(TEMP);
 
         /* If we can't delete a font during a session, we mark it here */
         private static HashSet<string> _ignoredFonts { get; } = new HashSet<string>();
@@ -71,61 +72,13 @@ namespace CharacterMap.Core
 
 
                 var familyCount = systemFonts.Fonts.Count;
-                Dictionary<string, InstalledFont> fontList = new Dictionary<string, InstalledFont>();
+                Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>();
 
-                /* 
-                 * Helper method for adding fonts. 
-                 */
-                void AddFont(CanvasFontFace fontFace, StorageFile file = null)
-                {
-                    try
-                    {
-                        var familyNames = fontFace.FamilyNames;
-                        if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string familyName))
-                        {
-                            familyNames.TryGetValue("en-us", out familyName);
-                        }
-
-                        if (familyName != null)
-                        {
-                            /* Check if we already have a listing for this fontFamily */
-                            if (fontList.TryGetValue(familyName, out InstalledFont fontFamily))
-                            {
-                                var variant = new FontVariant(fontFace, familyName, file);
-                                if (file != null)
-                                    fontFamily.HasImportedFiles = true;
-
-                                fontFamily.Variants.Add(variant);
-                            }
-                            else
-                            {
-                                var family = new InstalledFont
-                                {
-                                    Name = familyName,
-                                    IsSymbolFont = fontFace.IsSymbolFont,
-                                    FontFace = fontFace,
-                                    Variants = new List<FontVariant> { new FontVariant(fontFace, familyName, file) }
-                                };
-
-                                if (file != null)
-                                {
-                                    family.HasImportedFiles = true;
-                                }
-
-                                fontList[familyName] = family;
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // Corrupted font files throw an exception
-                    }
-                }
 
                 /* Add all system fonts */
                 for (var i = 0; i < familyCount; i++)
                 {
-                    AddFont(systemFonts.Fonts[i]);
+                    AddFont(resultList, systemFonts.Fonts[i]);
                 }
 
                 /* Add imported fonts */
@@ -136,16 +89,65 @@ namespace CharacterMap.Core
                         continue;
 
                     foreach (var font in GetFontFacesFromFile(file))
-                        AddFont(font, file);
+                        AddFont(resultList, font, file);
                 }
 
                 /* Order everything appropriately */
-                Fonts = fontList.OrderBy(f => f.Key).Select(f =>
+                Fonts = resultList.OrderBy(f => f.Key).Select(f =>
                 {
                     f.Value.Variants = f.Value.Variants.OrderBy(v => v.FontFace.Weight.Weight).ToList();
                     return f.Value;
                 }).ToList();
             });
+        }
+
+        /* 
+                 * Helper method for adding fonts. 
+                 */
+        private static void AddFont(Dictionary<string, InstalledFont> fontList, CanvasFontFace fontFace, StorageFile file = null)
+        {
+            try
+            {
+                var familyNames = fontFace.FamilyNames;
+                if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string familyName))
+                {
+                    familyNames.TryGetValue("en-us", out familyName);
+                }
+
+                if (familyName != null)
+                {
+                    /* Check if we already have a listing for this fontFamily */
+                    if (fontList.TryGetValue(familyName, out InstalledFont fontFamily))
+                    {
+                        var variant = new FontVariant(fontFace, familyName, file);
+                        if (file != null)
+                            fontFamily.HasImportedFiles = true;
+
+                        fontFamily.Variants.Add(variant);
+                    }
+                    else
+                    {
+                        var family = new InstalledFont
+                        {
+                            Name = familyName,
+                            IsSymbolFont = fontFace.IsSymbolFont,
+                            FontFace = fontFace,
+                            Variants = new List<FontVariant> { new FontVariant(fontFace, familyName, file) }
+                        };
+
+                        if (file != null)
+                        {
+                            family.HasImportedFiles = true;
+                        }
+
+                        fontList[familyName] = family;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Corrupted font files throw an exception
+            }
         }
 
         private static List<CanvasFontFace> GetFontFacesFromFile(StorageFile file)
@@ -158,7 +160,8 @@ namespace CharacterMap.Core
 
         internal static string GetAppPath(StorageFile file)
         {
-            return $"ms-appdata:///local/{file.Name}";
+            bool temp = Path.GetDirectoryName(file.Path).EndsWith(TEMP);
+            return $"ms-appdata:///local/{(temp ? $"{TEMP}/" :  string.Empty)}{file.Name}";
         }
 
         internal static Task<FontImportResult> ImportFontsAsync(IReadOnlyList<IStorageItem> items)
@@ -314,5 +317,19 @@ namespace CharacterMap.Core
             }
         }
 
+        internal static async Task<InstalledFont> LoadFromFileAsync(StorageFile file)
+        {
+            StorageFolder folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
+            StorageFile localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
+
+            Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>();
+            foreach (CanvasFontFace font in GetFontFacesFromFile(localFile))
+                AddFont(resultList, font, localFile);
+
+            if (resultList.Count > 0)
+                return resultList.First().Value;
+
+            return null;
+        }
     }
 }

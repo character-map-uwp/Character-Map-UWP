@@ -66,6 +66,12 @@ namespace CharacterMap
             await ActivationService.ActivateAsync(args);
         }
 
+        protected override async void OnFileActivated(FileActivatedEventArgs args)
+        {
+            base.OnFileActivated(args);
+            await ActivationService.ActivateAsync(args);
+        }
+
         private ActivationService CreateActivationService()
         {
             return new ActivationService(this, typeof(ViewModels.MainViewModel));

@@ -14,7 +14,7 @@ namespace CharacterMap.Core
 {
     public partial class TypographyBehavior : Behavior<TextBlock>
     {
-        private static XamlDirect _xamlDirect { get; } = XamlDirect.GetDefault();
+        private XamlDirect _xamlDirect { get; }
 
         public TypographyFeatureInfo TypographyFeature
         {
@@ -28,7 +28,10 @@ namespace CharacterMap.Core
                 ((TypographyBehavior)d).ApplyTypography();
             }));
 
-
+        public TypographyBehavior()
+        {
+            _xamlDirect = Utils.GetXamlDirectForWindow(Dispatcher);
+        }
 
         protected override void OnAttached()
         {

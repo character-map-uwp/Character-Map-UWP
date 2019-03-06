@@ -1,8 +1,10 @@
 using CharacterMap.Services;
 using CharacterMap.Views;
+using CharacterMapCX;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
+using Microsoft.Graphics.Canvas;
 
 namespace CharacterMap.ViewModels
 {
@@ -12,13 +14,17 @@ namespace CharacterMap.ViewModels
 
         public ViewModelLocator()
         {
-            ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+            if (!ServiceLocator.IsLocationProviderSet)
+            {
+                ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
-            SimpleIoc.Default.Register(() => _navigationService);
-            SimpleIoc.Default.Register<IDialogService, DialogService>();
+                SimpleIoc.Default.Register(() => _navigationService);
+                SimpleIoc.Default.Register<IDialogService, DialogService>();
+                SimpleIoc.Default.Register(() => new Interop(CanvasDevice.GetSharedDevice()));
 
-            SimpleIoc.Default.Register<MainViewModel>();
-            Register<MainViewModel, MainPage>();
+                SimpleIoc.Default.Register<MainViewModel>();
+                Register<MainViewModel, MainPage>();
+            }
         }
 
         public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
