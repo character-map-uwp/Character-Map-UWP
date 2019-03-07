@@ -31,7 +31,7 @@ namespace CharacterMap.Services
         public ActivationService(App app, Type defaultNavItem, UIElement shell = null)
         {
             _app = app;
-            _shell = shell ?? new Frame();
+            //_shell = shell ?? new Frame();
             _defaultNavItem = defaultNavItem;
         }
 
@@ -42,12 +42,11 @@ namespace CharacterMap.Services
                 // Initialize things like registering background task before the app is loaded
                 await InitializeAsync();
 
-                // We spawn a seperate Window for this.
+                // We spawn a seperate Window for files.
                 if (activationArgs is FileActivatedEventArgs fileArgs)
                 {
-                    CoreApplicationView newView = CoreApplication.CreateNewView();
-                    int newViewId = 0;
-                    await newView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    bool mainView = Window.Current.Content == null;
+                    void CreateView()
                     {
                         FontMapView map = new FontMapView
                         {
@@ -58,37 +57,59 @@ namespace CharacterMap.Services
                         // You have to activate the window in order to show it later.
                         Window.Current.Content = map;
                         Window.Current.Activate();
+                    }
 
-                        newViewId = ApplicationView.GetForCurrentView().Id;
-                    });
-                    bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+                    var view = await WindowService.CreateViewAsync(CreateView, false);
+                    await WindowService.TrySwitchToWindowAsync(view, mainView);
+
                     return;
                 }
 
                 // Do not repeat app initialization when the Window already has content,
                 // just ensure that the window is active
-                if (Window.Current.Content == null)
+                if (WindowService.MainWindow == null)
                 {
-                    // Create a Frame to act as the navigation context and navigate to the first page
-                    Window.Current.Content = _shell;
-                    NavigationService.Frame.NavigationFailed += (sender, e) => throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-                    NavigationService.Frame.Navigated += OnFrameNavigated;
-
-                    TitleBarHelper.ExtendTitleBar();
-                    TitleBarHelper.SetTitleBarColors();
-
-                    if (SystemNavigationManager.GetForCurrentView() != null)
+                    void CreateMainView()
                     {
-                        SystemNavigationManager.GetForCurrentView().BackRequested += OnAppViewBackButtonRequested;
+                        // Create a Frame to act as the navigation context and navigate to the first page
+                        Window.Current.Content = new Frame();
+                        NavigationService.Frame.NavigationFailed += (sender, e) => throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+                        NavigationService.Frame.Navigated += OnFrameNavigated;
+
+                        if (SystemNavigationManager.GetForCurrentView() != null)
+                            SystemNavigationManager.GetForCurrentView().BackRequested += OnAppViewBackButtonRequested;
                     }
+
+                    var view = await WindowService.CreateViewAsync(CreateMainView, true);
+                    await WindowService.TrySwitchToWindowAsync(view, true);
                 }
+                else
+                {
+                    /* Main Window exists, make it show */
+                    _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
+                    WindowService.MainWindow.CoreView.CoreWindow.Activate();
+                }
+
+
+                //else if (Window.Current.Visible == false
+                //    || WindowService.MainWindow.CoreView.CoreWindow.ActivationMode != CoreWindowActivationMode.ActivatedInForeground)
+                //{
+                //    _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
+                //    WindowService.MainWindow.CoreView.CoreWindow.Activate();
+                //}
             }
 
-            var activationHandler = GetActivationHandlers().FirstOrDefault(h => h.CanHandle(activationArgs));
-
-            if (activationHandler != null)
+            try
             {
-                await activationHandler.HandleAsync(activationArgs);
+                var activationHandler = GetActivationHandlers()?.FirstOrDefault(h => h.CanHandle(activationArgs));
+                if (activationHandler != null)
+                {
+                    await activationHandler.HandleAsync(activationArgs);
+                }
+            }
+            catch (Exception ex)
+            {
+
             }
 
             if (IsActivation(activationArgs))

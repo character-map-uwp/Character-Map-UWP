@@ -10,6 +10,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -61,7 +62,17 @@ namespace CharacterMap.Views
         {
             this.InitializeComponent();
             Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
+            this.Loaded += FontMapView_Loaded;
             ViewModel = new FontMapViewModel(ServiceLocator.Current.GetInstance<IDialogService>());
+        }
+
+        private void FontMapView_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (IsStandalone)
+            {
+                ApplicationView.GetForCurrentView()
+                    .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
+            }
         }
 
 

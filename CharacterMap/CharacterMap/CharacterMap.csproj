@@ -183,6 +183,8 @@
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
     <Compile Include="Services\ToastNotificationsService.cs" />
+    <Compile Include="Services\ViewLifetimeManager.cs" />
+    <Compile Include="Services\WindowService.cs" />
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Views\FontMapView.xaml.cs">
       <DependentUpon>FontMapView.xaml</DependentUpon>

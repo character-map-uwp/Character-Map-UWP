@@ -16,6 +16,7 @@ using CharacterMap.Annotations;
 using CharacterMap.Core;
 using CharacterMap.ViewModels;
 using System.Diagnostics;
+using CharacterMap.Helpers;
 
 namespace CharacterMap.Views
 {
@@ -30,9 +31,6 @@ namespace CharacterMap.Views
         public MainPage()
         {
             this.InitializeComponent();
-
-            SetTitleBar();
-
             Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
 
             this.ViewModel = this.DataContext as MainViewModel;
@@ -41,6 +39,10 @@ namespace CharacterMap.Views
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            TitleBarHelper.ExtendTitleBar();
+            TitleBarHelper.SetTitleBarColors();
+            SetTitleBar();
+
             if (null != LstFontFamily.SelectedItem)
             {
                 LstFontFamily.ScrollIntoView(LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
