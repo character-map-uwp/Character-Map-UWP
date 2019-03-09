@@ -19,6 +19,13 @@ using Windows.UI;
 
 namespace CharacterMap.Core
 {
+    public enum ExportStyle
+    {
+        Black,
+        White,
+        ColorGlyph
+    }
+
     public static class ExportManager
     {
         private static async Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values)
@@ -64,7 +71,7 @@ namespace CharacterMap.Core
                     using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
                     {
                         FontSize = fontSize,
-                        FontFamily = selectedVariant.XamlFontFamily.Source,
+                        FontFamily = selectedVariant.Source,
                         FontStretch = selectedVariant.FontFace.Stretch,
                         FontWeight = selectedVariant.FontFace.Weight,
                         FontStyle = selectedVariant.FontFace.Style,
@@ -149,7 +156,7 @@ namespace CharacterMap.Core
                         using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
                         {
                             FontSize = fontSize,
-                            FontFamily = selectedVariant.XamlFontFamily.Source,
+                            FontFamily = selectedVariant.Source,
                             FontStretch = selectedVariant.FontFace.Stretch,
                             FontWeight = selectedVariant.FontFace.Weight,
                             FontStyle = selectedVariant.FontFace.Style,

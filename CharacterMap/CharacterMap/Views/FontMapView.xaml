@@ -2,6 +2,7 @@
     x:Class="CharacterMap.Views.FontMapView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
@@ -14,6 +15,7 @@
 
     <Grid DataContext="{x:Bind ViewModel}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
@@ -47,9 +49,21 @@
             </VisualStateGroup>-->
         </VisualStateManager.VisualStateGroups>
 
+        <controls:XamlTitleBar x:Name="TitleBar" x:Load="{x:Bind IsStandalone}">
+            <TextBlock
+                IsHitTestVisible="False"
+                Margin="12 0 0 0"
+                VerticalAlignment="Center"
+                FontSize="12">
+                <Run Text="{Binding TitlePrefix}" />
+                <Run x:Uid="TxtTitle" />
+            </TextBlock>
+        </controls:XamlTitleBar>
+
         <Grid
             x:Name="TitleGrid"
             x:Load="{x:Bind IsStandalone}"
+            Grid.Row="1"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <TextBlock
                 x:Name="FontTitleBlock"
@@ -65,17 +79,17 @@
             <Button
                 Height="54"
                 HorizontalAlignment="Right"
-                Style="{ThemeResource TransparentButton}">
-                <Grid>
+                Style="{ThemeResource TransparentButton}"
+                Padding="12 0">
+                <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
                     <FontIcon Glyph="&#xE109;" />
                     <TextBlock
                         Grid.Column="1"
-                        Margin="0,0,5,0"
                         Text="Add to Collection"
                         TextTrimming="CharacterEllipsis" />
                 </Grid>

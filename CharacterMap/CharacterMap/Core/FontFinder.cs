@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CharacterMapCX;
 using GalaSoft.MvvmLight.Ioc;
@@ -31,6 +32,8 @@ namespace CharacterMap.Core
         const string PENDING = nameof(PENDING);
         const string TEMP = nameof(TEMP);
 
+        private static SemaphoreSlim _initSemaphore { get; } = new SemaphoreSlim(1,1);
+
         /* If we can't delete a font during a session, we mark it here */
         private static HashSet<string> _ignoredFonts { get; } = new HashSet<string>();
 
@@ -40,24 +43,18 @@ namespace CharacterMap.Core
 
         public static InstalledFont DefaultFont { get; private set; }
 
-
-        public static Task LoadFontsAsync()
+        public static async Task<CanvasFontSet> InitialiseAsync()
         {
-            Fonts = null;
+            await _initSemaphore.WaitAsync().ConfigureAwait(false);
+            var systemFonts = CanvasFontSet.GetSystemFontSet();
 
-            return Task.Run(async () =>
+            try
             {
                 if (DefaultFont == null)
                 {
-                    /* Don't do this in the same IF below. We need to do it before loading FontSets */
-                    await CleanUpPendingDeletesAsync();
-                }
+                    await CleanUpTempFolderAsync().ConfigureAwait(false);
+                    await CleanUpPendingDeletesAsync().ConfigureAwait(false);
 
-                var systemFonts = CanvasFontSet.GetSystemFontSet();
-
-                if (DefaultFont == null)
-                {
-                    /* Set default font */
                     var segoe = systemFonts.GetMatchingFonts("Segoe UI", FontWeights.Normal, FontStretch.Normal, FontStyle.Normal);
                     if (segoe != null && segoe.Fonts.Count > 0)
                     {
@@ -69,11 +66,24 @@ namespace CharacterMap.Core
                         };
                     }
                 }
+            }
+            finally
+            {
+                _initSemaphore.Release();
+            }
 
+            return systemFonts;
+        }
 
+        public static Task LoadFontsAsync()
+        {
+            Fonts = null;
+
+            return Task.Run(async () =>
+            {
+                var systemFonts = await InitialiseAsync();
                 var familyCount = systemFonts.Fonts.Count;
                 Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>();
-
 
                 /* Add all system fonts */
                 for (var i = 0; i < familyCount; i++)
@@ -317,10 +327,25 @@ namespace CharacterMap.Core
             }
         }
 
+        private static async Task CleanUpTempFolderAsync()
+        {
+            var files = (await ApplicationData.Current.TemporaryFolder.GetFilesAsync().AsTask().ConfigureAwait(false));
+            foreach (var file in files)
+            {
+                try
+                {
+                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete).AsTask().ConfigureAwait(false);
+                }
+                catch { }
+            }
+        }
+
         internal static async Task<InstalledFont> LoadFromFileAsync(StorageFile file)
         {
-            StorageFolder folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
-            StorageFile localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
+            await InitialiseAsync();
+
+            StorageFolder folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists);
+            StorageFile localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
 
             Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>();
             foreach (CanvasFontFace font in GetFontFacesFromFile(localFile))

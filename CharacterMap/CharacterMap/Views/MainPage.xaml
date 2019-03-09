@@ -2,8 +2,7 @@
     x:Class="CharacterMap.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:controls1="using:CharacterMap.Controls"
+    xmlns:controls="using:CharacterMap.Controls"
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -63,16 +62,12 @@
         </VisualStateManager.VisualStateGroups>
 
         <!--  Title Bar Grid  -->
-        <Grid
+        <controls:XamlTitleBar
             Grid.Row="0"
             Grid.ColumnSpan="2"
-            Height="{x:Bind CoreTitleBarHeight, Mode=OneWay}"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
-
-            <Grid Padding="{x:Bind CoreTitleBarPadding, Mode=OneWay}">
+            <Grid ColumnSpacing="7">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
@@ -83,28 +78,15 @@
                     <FontIcon FontSize="14" Glyph="&#xE740;" />
                 </ToggleButton>
                 <TextBlock
-                    x:Name="TxtTitlePrefix"
+                    IsHitTestVisible="False"
                     Grid.Column="1"
-                    Margin="7,0,0,0"
-                    HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    FontSize="12"
-                    Text="{Binding TitlePrefix}" />
-                <TextBlock
-                    x:Name="TxtTitle"
-                    x:Uid="TxtTitle"
-                    Grid.Column="2"
-                    Margin="7,0,0,0"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    FontSize="12"
-                    Text="#TxtTitle" />
-                <Rectangle
-                    x:Name="TitleBarBackgroundElement"
-                    Grid.Column="2"
-                    Fill="Transparent" />
+                    FontSize="12">
+                    <Run Text="{Binding TitlePrefix}" />
+                    <Run x:Uid="TxtTitle" />
+                </TextBlock>
             </Grid>
-        </Grid>
+        </controls:XamlTitleBar>
 
         <!--  Commands Grid  -->
         <Grid

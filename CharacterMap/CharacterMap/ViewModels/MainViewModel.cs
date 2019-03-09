@@ -1,65 +1,30 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Foundation;
-using Windows.Storage;
-using Windows.Storage.Pickers;
-using Windows.UI;
 using Windows.UI.ViewManagement;
 using CharacterMap.Core;
 using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Text;
-using Windows.UI.Text;
 using System.Collections.Generic;
-using System.Numerics;
-using Microsoft.Graphics.Canvas.Geometry;
-using Microsoft.Graphics.Canvas.Svg;
-using CharacterMapCX;
-using GalaSoft.MvvmLight.Ioc;
 
 namespace CharacterMap.ViewModels
 {
-    public enum ExportStyle
-    {
-        Black,
-        White,
-        ColorGlyph
-    }
 
     public class MainViewModel : ViewModelBase
     {
-        private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
-        private InstalledFont _selectedFont;
+        #region Properties
 
         public IDialogService DialogService { get; }
 
-        public MainViewModel(IDialogService dialogService)
-        {
-            DialogService = dialogService;
-            AppNameVersion = GetAppDescription();
-            CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
-            Load();
-        }
+        public RelayCommand CommandToggleFullScreen { get; set; }
 
-        private string GetAppDescription()
-        {
-            var package = Package.Current;
-            var packageId = package.Id;
-            var version = packageId.Version;
-
-            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({Architecture})";
-        }
+        public bool IsDarkAccent => IsAccentColorDark();
 
         public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
-
-        public RelayCommand CommandToggleFullScreen { get; set; }
 
         private string _appNameVersion;
         public string AppNameVersion
@@ -75,6 +40,7 @@ namespace CharacterMap.ViewModels
             set { if (Set(ref _fontListFilter, value)) RefreshFontList(); }
         }
 
+        private string _titlePrefix;
         public string TitlePrefix
         {
             get => _titlePrefix;
@@ -103,23 +69,14 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
         public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
         {
             get => _groupedFontList;
             set => Set(ref _groupedFontList, value);
         }
 
-        public bool ShowSymbolFontsOnly
-        {
-            get => App.AppSettings.ShowSymbolFontsOnly;
-            set
-            {
-                App.AppSettings.ShowSymbolFontsOnly = value;
-                RefreshFontList();
-                RaisePropertyChanged();
-            }
-        }
-
+        private InstalledFont _selectedFont;
         public InstalledFont SelectedFont
         {
             get => _selectedFont;
@@ -128,7 +85,7 @@ namespace CharacterMap.ViewModels
                 _selectedFont = value;
                 if (null != _selectedFont)
                 {
-                    TitlePrefix = value.Name + " - ";
+                    TitlePrefix = value.Name + " -";
                     App.AppSettings.LastSelectedFontName = value.Name;
                 }
 
@@ -136,14 +93,14 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        #endregion
 
-        private bool _isDarkAccent;
-        private string _titlePrefix;
-
-        public bool IsDarkAccent
+        public MainViewModel(IDialogService dialogService)
         {
-            get => IsAccentColorDark();
-            set { _isDarkAccent = value; RaisePropertyChanged(); }
+            DialogService = dialogService;
+            AppNameVersion = GetAppDescription();
+            CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
+            Load();
         }
 
         private bool IsAccentColorDark()
@@ -154,7 +111,14 @@ namespace CharacterMap.ViewModels
             return isDark;
         }
 
+        private string GetAppDescription()
+        {
+            var package = Package.Current;
+            var packageId = package.Id;
+            var version = packageId.Version;
 
+            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({Architecture})";
+        }
 
         private async void Load()
         {
@@ -163,8 +127,6 @@ namespace CharacterMap.ViewModels
             RefreshFontList();
             IsLoadingFonts = false;
         }
-
-        
 
         private void ToggleFullScreenMode()
         {
@@ -209,12 +171,6 @@ namespace CharacterMap.ViewModels
                     if (null != lastSelectedFont)
                     {
                         this.SelectedFont = lastSelectedFont;
-
-                        //var lastSelectedChar = Chars.FirstOrDefault((i => i.UnicodeIndex == App.AppSettings.LastSelectedCharIndex));
-                        //if (null != lastSelectedChar)
-                        //{
-                        //    this.SelectedChar = lastSelectedChar;
-                        //}
                     }
                     else
                     {
@@ -231,8 +187,6 @@ namespace CharacterMap.ViewModels
                 DialogService.ShowMessageBox(e.Message, "Error Loading Font Group");
             }
         }
-
-       
 
         internal async void TryRemoveFont(InstalledFont font)
         {
@@ -263,8 +217,6 @@ namespace CharacterMap.ViewModels
                     "Notice");
             }
         }
-
-        
 
     }
 }

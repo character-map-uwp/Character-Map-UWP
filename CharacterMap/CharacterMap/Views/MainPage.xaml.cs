@@ -17,6 +17,7 @@ using CharacterMap.Core;
 using CharacterMap.ViewModels;
 using System.Diagnostics;
 using CharacterMap.Helpers;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
@@ -39,9 +40,7 @@ namespace CharacterMap.Views
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            TitleBarHelper.ExtendTitleBar();
-            TitleBarHelper.SetTitleBarColors();
-            SetTitleBar();
+            //TitleBarHelper.SetTitleBarColors();
 
             if (null != LstFontFamily.SelectedItem)
             {
@@ -50,55 +49,9 @@ namespace CharacterMap.Views
             }
         }
 
-        #region Title Bar
-
-        private CoreApplicationViewTitleBar _coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
-
-        public Thickness CoreTitleBarPadding
-        {
-            get
-            {
-                if (ApplicationView.GetForCurrentView().IsFullScreenMode)
-                {
-                    return new Thickness(0, 0, 0, 0);
-                }
-                return FlowDirection == FlowDirection.LeftToRight ?
-                    new Thickness { Left = _coreTitleBar.SystemOverlayLeftInset, Right = _coreTitleBar.SystemOverlayRightInset } :
-                    new Thickness { Left = _coreTitleBar.SystemOverlayRightInset, Right = _coreTitleBar.SystemOverlayLeftInset };
-            }
-        }
-
-        public double CoreTitleBarHeight => _coreTitleBar.Height;
 
 
-        private void OnWindowSizeChanged(object sender, WindowSizeChangedEventArgs e)
-        {
-            UpdateLayoutMetrics();
-        }
 
-        void OnLayoutMetricsChanged(CoreApplicationViewTitleBar sender, object e)
-        {
-            UpdateLayoutMetrics();
-        }
-
-        void UpdateLayoutMetrics()
-        {
-            OnPropertyChanged(nameof(CoreTitleBarHeight));
-            OnPropertyChanged(nameof(CoreTitleBarPadding));
-        }
-
-        private void SetTitleBar()
-        {
-            Window.Current.SetTitleBar(TitleBarBackgroundElement);
-
-            _coreTitleBar.LayoutMetricsChanged += OnLayoutMetricsChanged;
-            Window.Current.SizeChanged += OnWindowSizeChanged;
-            UpdateLayoutMetrics();
-        }
-
-        #endregion
-
-        
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -107,8 +60,6 @@ namespace CharacterMap.Views
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        
 
         private async void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {

@@ -9,17 +9,15 @@ using FontFamily = Windows.UI.Xaml.Media.FontFamily;
 
 namespace CharacterMap.Core
 {
-    public class FontVariant: IDisposable
+    public partial class FontVariant: IDisposable
     {
-        private string _xamlFontConstructor { get; }
-
         private FontFamily _xamlFontFamily = null;
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
 
         public FontFamily XamlFontFamily
-            => _xamlFontFamily ?? (_xamlFontFamily = new FontFamily(_xamlFontConstructor));
+            => _xamlFontFamily ?? (_xamlFontFamily = new FontFamily(Source));
 
         public IReadOnlyList<KeyValuePair<string, string>> FontInformation
             => _fontInformation ?? (_fontInformation = LoadFontInformation());
@@ -60,6 +58,8 @@ namespace CharacterMap.Core
 
         public string FamilyName { get; }
 
+        public string Source { get; }
+
         public FontVariant(CanvasFontFace face, string familyName, StorageFile file)
         {
             FontFace = face;
@@ -70,11 +70,11 @@ namespace CharacterMap.Core
             {
                 IsImported = true;
                 FileName = file.Name;
-                _xamlFontConstructor = $"{FontFinder.GetAppPath(file)}#{familyName}";
+                Source = $"{FontFinder.GetAppPath(file)}#{familyName}";
             }
             else
             {
-                _xamlFontConstructor = familyName;
+                Source = familyName;
             }
 
             if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string name))
@@ -159,7 +159,11 @@ namespace CharacterMap.Core
         {
             return PreferredName;
         }
+    }
 
+
+    public partial class FontVariant
+    {
         public static FontVariant CreateDefault(CanvasFontFace face)
         {
             return new FontVariant(face, "Segoe UI", null)
@@ -175,8 +179,6 @@ namespace CharacterMap.Core
                 }
             };
         }
-
-
 
         private static CanvasFontInformation[] INFORMATIONS { get; } = new[]
         {

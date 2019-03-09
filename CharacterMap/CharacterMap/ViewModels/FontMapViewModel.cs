@@ -1,4 +1,5 @@
-﻿using CharacterMap.Core;
+using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMapCX;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -19,21 +20,11 @@ namespace CharacterMap.ViewModels
 {
     public class FontMapViewModel : ViewModelBase
     {
-        private IReadOnlyList<Character> _chars;
-        private string _fontIcon;
-        private Character _selectedChar;
-        private InstalledFont _selectedFont;
-
-        private string _xamlCode;
-        private string _symbolIcon;
-
-        private Interop _interop { get; }
+        private Interop Interop { get; }
 
         public ExportStyle BlackColor { get; } = ExportStyle.Black;
         public ExportStyle WhiteColor { get; } = ExportStyle.White;
         public ExportStyle GlyphColor { get; } = ExportStyle.ColorGlyph;
-
-
 
         public IDialogService DialogService { get; }
         public RelayCommand<ExportStyle> CommandSavePng { get; }
@@ -44,6 +35,13 @@ namespace CharacterMap.ViewModels
         {
             get => _isLoading;
             set => Set(ref _isLoading, value);
+        }
+
+        private string _titlePrefix;
+        public string TitlePrefix
+        {
+            get => _titlePrefix;
+            set => Set(ref _titlePrefix, value);
         }
 
         private FontVariant _selectedVariant;
@@ -67,12 +65,14 @@ namespace CharacterMap.ViewModels
             set => Set(ref _selectedCharAnalysis, value);
         }
 
+        private IReadOnlyList<Character> _chars;
         public IReadOnlyList<Character> Chars
         {
             get => _chars;
             set => Set(ref _chars, value);
         }
 
+        private Character _selectedChar;
         public Character SelectedChar
         {
             get => _selectedChar;
@@ -94,43 +94,52 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private string _xamlCode;
         public string XamlCode
         {
             get => _xamlCode;
             set => Set(ref _xamlCode, value);
         }
 
+        private string _symbolIcon;
         public string SymbolIcon
         {
             get => _symbolIcon;
             set => Set(ref _symbolIcon, value);
         }
 
+        private string _fontIcon;
         public string FontIcon
         {
             get => _fontIcon;
             set => Set(ref _fontIcon, value);
         }
 
+        private InstalledFont _selectedFont;
         public InstalledFont SelectedFont
         {
             get => _selectedFont;
             set
             {
-                _selectedFont = value;
-                if (null != _selectedFont)
+                if (value != _selectedFont)
                 {
-                    //ApplicationView.GetForCurrentView().Title = SelectedFont.Name;
-                }
+                    _selectedFont = value;
+                    RaisePropertyChanged();
+                    if (null != _selectedFont)
+                    {
+                        TitlePrefix = value.Name + " -";
+                        SelectedVariant = _selectedFont.DefaultVariant;
 
-                RaisePropertyChanged();
-                if (null != _selectedFont)
-                {
-                    SelectedVariant = _selectedFont.DefaultVariant;
+                        var lastSelectedChar = Chars.FirstOrDefault((i => i.UnicodeIndex == App.AppSettings.LastSelectedCharIndex));
+                        if (null != lastSelectedChar)
+                        {
+                            this.SelectedChar = lastSelectedChar;
+                        }
+                    }
                 }
+                
             }
         }
-
 
         private TypographyFeatureInfo _selectedTypography;
         public TypographyFeatureInfo SelectedTypography
@@ -145,7 +154,7 @@ namespace CharacterMap.ViewModels
             CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
 
-            _interop = SimpleIoc.Default.GetInstance<Interop>();
+            Interop = SimpleIoc.Default.GetInstance<Interop>();
 
             Load();
         }
@@ -171,7 +180,7 @@ namespace CharacterMap.ViewModels
             using (CanvasTextLayout layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), $"{SelectedChar.Char}", new CanvasTextFormat
             {
                 FontSize = 20,
-                FontFamily = SelectedVariant.XamlFontFamily.Source,
+                FontFamily = SelectedVariant.Source,
                 FontStretch = SelectedVariant.FontFace.Stretch,
                 FontWeight = SelectedVariant.FontFace.Weight,
                 FontStyle = SelectedVariant.FontFace.Style,
@@ -180,7 +189,7 @@ namespace CharacterMap.ViewModels
             {
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
                 ApplyEffectiveTypography(layout);
-                SelectedCharAnalysis = _interop.Analyze(layout);
+                SelectedCharAnalysis = Interop.Analyze(layout);
             }
         }
 
@@ -231,6 +240,7 @@ namespace CharacterMap.ViewModels
                     && await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                 {
                     SelectedFont = font;
+                    TitleBarHelper.SetTitle(font.Name);
                     return true;
                 }
 

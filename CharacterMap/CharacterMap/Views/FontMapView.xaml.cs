@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.ViewModels;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Views;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -23,6 +25,10 @@ namespace CharacterMap.Views
 {
     public sealed partial class FontMapView : UserControl
     {
+        #region Dependency Properties
+
+        #region Font
+
         public InstalledFont Font
         {
             get { return (InstalledFont)GetValue(FontProperty); }
@@ -32,8 +38,13 @@ namespace CharacterMap.Views
         public static readonly DependencyProperty FontProperty =
             DependencyProperty.Register(nameof(Font), typeof(InstalledFont), typeof(FontMapView), new PropertyMetadata(null, (d,e) =>
             {
-                ((FontMapView)d).ViewModel.SelectedFont = e.NewValue as InstalledFont;
+                if (d is FontMapView f)
+                    f.ViewModel.SelectedFont = e.NewValue as InstalledFont;
             }));
+
+        #endregion
+
+        #region IsStandalone
 
         public bool IsStandalone
         {
@@ -44,7 +55,9 @@ namespace CharacterMap.Views
         public static readonly DependencyProperty IsStandaloneProperty =
             DependencyProperty.Register(nameof(IsStandalone), typeof(bool), typeof(FontMapView), new PropertyMetadata(false));
 
+        #endregion
 
+        #region ViewModel
 
         public FontMapViewModel ViewModel
         {
@@ -55,18 +68,21 @@ namespace CharacterMap.Views
         public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register(nameof(ViewModel), typeof(FontMapViewModel), typeof(FontMapView), new PropertyMetadata(null));
 
+        #endregion
+
+        #endregion
 
         public AppSettings Settings { get; }
 
         public FontMapView()
         {
             this.InitializeComponent();
+            this.Loading += FontMapView_Loading;
             Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
-            this.Loaded += FontMapView_Loaded;
             ViewModel = new FontMapViewModel(ServiceLocator.Current.GetInstance<IDialogService>());
         }
 
-        private void FontMapView_Loaded(object sender, RoutedEventArgs e)
+        private void FontMapView_Loading(FrameworkElement sender, object args)
         {
             if (IsStandalone)
             {
@@ -74,6 +90,8 @@ namespace CharacterMap.Views
                     .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
             }
         }
+
+
 
 
         /* Public surface-area methods */
