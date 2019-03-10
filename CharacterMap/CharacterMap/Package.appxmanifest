@@ -31,6 +31,8 @@
             <uap:SupportedFileTypes>
               <!--<uap:FileType ContentType="application/x-font-ttf">.ttf</uap:FileType>-->
               <uap:FileType>.otf</uap:FileType>
+              <uap:FileType>.ttc</uap:FileType>
+              <uap:FileType>.otc</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Character Map</uap:DisplayName>
             <uap:InfoTip>Preview Font</uap:InfoTip>

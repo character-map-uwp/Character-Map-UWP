@@ -43,6 +43,11 @@ namespace CharacterMap.Core
 
         public static InstalledFont DefaultFont { get; private set; }
 
+        public static HashSet<string> SupportedFormats { get; } = new HashSet<string>
+        {
+            ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
+        };
+
         public static async Task<CanvasFontSet> InitialiseAsync()
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
@@ -204,8 +209,7 @@ namespace CharacterMap.Core
                         continue;
                     }
 
-                    if (file.FileType.ToUpper().EndsWith("TTF")
-                        || file.FileType.ToUpper().EndsWith("OTF"))
+                    if (SupportedFormats.Contains(file.FileType.ToLower()))
                     {
                         // TODO : What do we do if a font with the same file name already exists?
 
