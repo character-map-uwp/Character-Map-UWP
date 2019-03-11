@@ -34,7 +34,7 @@ namespace CharacterMap.Helpers
 
         internal static void SetTitle(string name)
         {
-            ApplicationView.GetForCurrentView().Title = name;
+            ApplicationView.GetForCurrentView().Title = name ?? string.Empty;
         }
     }
 }

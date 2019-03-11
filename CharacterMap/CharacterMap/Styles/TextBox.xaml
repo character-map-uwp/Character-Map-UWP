@@ -145,11 +145,12 @@
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver" />
                                 <VisualState x:Name="Focused">
-                                    <Storyboard>
+                                    <!-- This breaks text selection on dark theme for ReadOnly TextBox -->
+                                    <!--<Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="RequestedTheme">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Light" />
                                         </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    </Storyboard>-->
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ButtonStates">

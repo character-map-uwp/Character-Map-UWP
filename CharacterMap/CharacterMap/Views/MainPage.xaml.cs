@@ -146,11 +146,19 @@ namespace CharacterMap.Views
         {
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
-                var items = await e.DataView.GetStorageItemsAsync();
-                if (await FontFinder.ImportFontsAsync(items) is FontImportResult result
-                    && result.Imported.Count > 0)
+                ViewModel.IsLoadingFonts = true;
+                try
                 {
-                    ViewModel.RefreshFontList();
+                    var items = await e.DataView.GetStorageItemsAsync();
+                    if (await FontFinder.ImportFontsAsync(items) is FontImportResult result
+                        && result.Imported.Count > 0)
+                    {
+                        ViewModel.RefreshFontList();
+                    }
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
                 }
             }
         }
@@ -185,6 +193,15 @@ namespace CharacterMap.Views
                 && font.HasImportedFiles == false)
             {
                 flyout.Hide();
+            }
+        }
+
+        private void OpenInWindowFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item 
+                && item.DataContext is InstalledFont font)
+            {
+                _ = FontMapView.CreateNewViewForFontAsync(font);
             }
         }
     }

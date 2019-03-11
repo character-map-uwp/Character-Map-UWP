@@ -50,7 +50,7 @@ namespace CharacterMap.Services
                     {
                         FontMapView map = new FontMapView
                         {
-                            IsStandalone = true
+                            IsStandalone = true,
                         };
                         _ = map.ViewModel.LoadFromFileArgsAsync(fileArgs);
 

@@ -51,10 +51,10 @@
 
         <controls:XamlTitleBar x:Name="TitleBar" x:Load="{x:Bind IsStandalone}">
             <TextBlock
-                IsHitTestVisible="False"
                 Margin="12 0 0 0"
                 VerticalAlignment="Center"
-                FontSize="12">
+                FontSize="12"
+                IsHitTestVisible="False">
                 <Run Text="{Binding TitlePrefix}" />
                 <Run x:Uid="TxtTitle" />
             </TextBlock>
@@ -78,9 +78,10 @@
 
             <Button
                 Height="54"
+                Padding="12 0"
                 HorizontalAlignment="Right"
                 Style="{ThemeResource TransparentButton}"
-                Padding="12 0">
+                Visibility="{x:Bind ViewModel.IsExternalFile}">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -89,8 +90,8 @@
 
                     <FontIcon Glyph="&#xE109;" />
                     <TextBlock
+                        x:Uid="AddToCollectionHint"
                         Grid.Column="1"
-                        Text="Add to Collection"
                         TextTrimming="CharacterEllipsis" />
                 </Grid>
             </Button>
@@ -142,13 +143,16 @@
                         SelectedItem="{Binding SelectedVariant, Mode=TwoWay}" />
 
                     <Button
+                        x:Uid="FontOptionsButton"
                         Width="44"
                         Height="44"
                         Margin="0 0 0 -8"
                         VerticalAlignment="Bottom"
-                        Style="{ThemeResource TransparentButton}"
-                        ToolTipService.ToolTip="Font Rendering Options">
-                        <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE890;" />
+                        Style="{ThemeResource TransparentButton}">
+                        <FontIcon
+                            Margin="0 0 -2 0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xE890;" />
                         <Button.Flyout>
                             <Flyout Placement="Bottom">
                                 <ListView
@@ -161,16 +165,16 @@
                                     SingleSelectionFollowsFocus="True">
                                     <ListView.Header>
                                         <StackPanel Margin="12 4" Spacing="12">
-                                            <TextBlock FontWeight="Bold" Text="Font Display Options" />
+                                            <TextBlock x:Uid="FontDisplayHeader" FontWeight="Bold" />
                                             <ToggleSwitch
                                                 x:Name="ColorGlyphToggle"
                                                 x:Uid="ColorGlyphToggle"
                                                 VerticalAlignment="Bottom"
                                                 IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
                                             <TextBlock
+                                                x:Uid="TypographyVariantsHeader"
                                                 Margin="0 12 0 0"
                                                 FontWeight="Bold"
-                                                Text="Typography Variants"
                                                 Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}" />
                                         </StackPanel>
                                     </ListView.Header>
@@ -185,13 +189,17 @@
                     </Button>
 
                     <Button
+                        x:Uid="FontPropertiesButton"
                         Width="44"
                         Height="44"
                         Margin="0 0 0 -8"
                         VerticalAlignment="Bottom"
                         Style="{ThemeResource TransparentButton}"
                         ToolTipService.ToolTip="Font Face Properties">
-                        <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xE946;" />
+                        <FontIcon
+                            Margin="0 0 -2 0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xE946;" />
                         <Button.Flyout>
                             <Flyout>
                                 <StackPanel
@@ -318,15 +326,15 @@
                         <DataTemplate x:DataType="core:Character">
                             <Grid Style="{StaticResource CharItemGridStyle}">
                                 <TextBlock
-                                    FontFamily="{Binding ElementName=WeightSelector, Path=SelectedItem.XamlFontFamily}"
+                                    FontFamily="{Binding ElementName=CharGrid, Path=DataContext.FontFamily}"
                                     FontStretch="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Stretch}"
                                     FontStyle="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Style}"
                                     FontWeight="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Weight}"
-                                    IsColorFontEnabled="{Binding ElementName=ColorGlyphToggle, Path=IsOn}"
+                                    IsColorFontEnabled="{Binding ElementName=CharGrid, Path=DataContext.ShowColorGlyphs}"
                                     Style="{StaticResource CharItemCharStyle}"
                                     Text="{x:Bind Char}">
                                     <i:Interaction.Behaviors>
-                                        <core:TypographyBehavior TypographyFeature="{Binding ElementName=WeightSelector, Path=DataContext.SelectedTypography}" />
+                                        <core:TypographyBehavior TypographyFeature="{Binding ElementName=CharGrid, Path=DataContext.SelectedTypography}" />
                                     </i:Interaction.Behaviors>
                                 </TextBlock>
 
@@ -377,11 +385,11 @@
                         StretchDirection="Both">
                         <TextBlock
                             x:Name="TxtPreview"
-                            FontFamily="{Binding ElementName=WeightSelector, Path=SelectedItem.XamlFontFamily}"
-                            FontStretch="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Stretch}"
-                            FontStyle="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Style}"
-                            FontWeight="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Weight}"
-                            IsColorFontEnabled="{Binding ElementName=ColorGlyphToggle, Path=IsOn}"
+                            FontFamily="{Binding FontFamily}"
+                            FontStretch="{Binding SelectedVariant.FontFace.Stretch}"
+                            FontStyle="{Binding SelectedVariant.FontFace.Style}"
+                            FontWeight="{Binding SelectedVariant.FontFace.Weight}"
+                            IsColorFontEnabled="{Binding ShowColorGlyphs}"
                             Text="{Binding SelectedChar.Char}"
                             TextAlignment="Center">
                             <i:Interaction.Behaviors>
@@ -469,7 +477,7 @@
                                     Style="{ThemeResource TransparentButton}"
                                     Visibility="{x:Bind ViewModel.SelectedCharAnalysis.HasColorGlyphs, Mode=OneWay}">
                                     <AppBarButton.Content>
-                                        <TextBlock Margin="12,10" Text="Colored Glyph" />
+                                        <TextBlock x:Uid="ColoredGlyphLabel" Margin="12,10" />
                                     </AppBarButton.Content>
                                 </AppBarButton>
                                 <AppBarButton
@@ -591,7 +599,10 @@
                             Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}" />
 
 
-                        <Grid Grid.Row="6" Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
+                        <Grid
+                            Grid.Row="6"
+                            ColumnSpacing="8"
+                            Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -618,7 +629,10 @@
                             </AppBarButton>
                         </Grid>
 
-                        <Grid Grid.Row="7" Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
+                        <Grid
+                            Grid.Row="7"
+                            ColumnSpacing="8"
+                            Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -645,12 +659,14 @@
                             </AppBarButton>
                         </Grid>
 
-                        <Grid Grid.Row="8" Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
+                        <Grid
+                            Grid.Row="8"
+                            ColumnSpacing="8"
+                            Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
                             </Grid.ColumnDefinitions>
-
                             <TextBox
                                 x:Name="TxtSymbolIcon"
                                 x:Uid="TxtSymbolIcon"

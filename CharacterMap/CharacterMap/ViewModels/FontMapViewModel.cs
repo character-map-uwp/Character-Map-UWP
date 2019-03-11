@@ -17,6 +17,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels
 {
@@ -31,6 +32,8 @@ namespace CharacterMap.ViewModels
         public IDialogService DialogService { get; }
         public RelayCommand<ExportStyle> CommandSavePng { get; }
         public RelayCommand<bool> CommandSaveSvg { get; }
+
+        public bool IsExternalFile { get; set; }
 
         private bool _isLoading;
         public bool IsLoading
@@ -50,7 +53,24 @@ namespace CharacterMap.ViewModels
         public FontVariant SelectedVariant
         {
             get => _selectedVariant;
-            set { if (Set(ref _selectedVariant, value)) LoadChars(value); }
+            set
+            {
+                if (value != _selectedVariant)
+                {
+                    Chars = null;
+                    _selectedVariant = value;
+                    FontFamily = value == null ? null : new FontFamily(value.Source);
+                    LoadChars(value);
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        private FontFamily _fontFamily;
+        public FontFamily FontFamily
+        {
+            get => _fontFamily;
+            private set { Set(ref _fontFamily, value); }
         }
 
         private bool _showColorGlyphs = true;
@@ -80,19 +100,17 @@ namespace CharacterMap.ViewModels
             get => _selectedChar;
             set
             {
-                _selectedChar = value;
-                if (null != value)
+                if (_selectedChar != value)
                 {
-                    XamlCode = $"&#x{value.UnicodeIndex.ToString("x").ToUpper()};";
-                    FontIcon = $@"<FontIcon FontFamily=""{SelectedFont.Name}"" Glyph=""&#x{
-                            value.UnicodeIndex.ToString("x").ToUpper()
-                        };"" />";
-                    SymbolIcon = $"(Symbol)0x{value.UnicodeIndex.ToString("x").ToUpper()}";
-
-                    App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
+                    _selectedChar = value;
+                    if (null != value)
+                    {
+                        App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
+                    }
+                    RaisePropertyChanged();
+                    UpdateCharAnalysis();
+                    UpdateDevValues();
                 }
-                RaisePropertyChanged();
-                UpdateCharAnalysis();
             }
         }
 
@@ -126,6 +144,7 @@ namespace CharacterMap.ViewModels
                 if (value != _selectedFont)
                 {
                     _selectedFont = value;
+                    TitleBarHelper.SetTitle(value?.Name);
                     RaisePropertyChanged();
                     if (null != _selectedFont)
                     {
@@ -157,13 +176,6 @@ namespace CharacterMap.ViewModels
             CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
 
             Interop = SimpleIoc.Default.GetInstance<Interop>();
-
-            Load();
-        }
-
-        private void Load()
-        {
-
         }
 
         private void LoadChars(FontVariant variant)
@@ -213,6 +225,21 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private void UpdateDevValues()
+        {
+            if (SelectedVariant == null || SelectedChar == null)
+            {
+                XamlCode = FontIcon = SymbolIcon = null;
+            }
+            else
+            {
+                var uni = SelectedChar.UnicodeIndex.ToString("x").ToUpper();
+                XamlCode = $"&#x{uni};";
+                FontIcon = $@"<FontIcon FontFamily=""{SelectedVariant.XamlFontSource}"" Glyph=""&#x{uni};"" />";
+                SymbolIcon = $"(Symbol)0x{uni}";
+            }
+        }
+
         private Task SavePngAsync(ExportStyle style)
         {
             return ExportManager.ExportPngAsync(
@@ -235,6 +262,7 @@ namespace CharacterMap.ViewModels
 
         public async Task<bool> LoadFromFileArgsAsync(FileActivatedEventArgs args)
         {
+            IsExternalFile = true;
             IsLoading = true;
             try
             {
@@ -242,7 +270,6 @@ namespace CharacterMap.ViewModels
                     && await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                 {
                     SelectedFont = font;
-                    TitleBarHelper.SetTitle(font.Name);
                     return true;
                 }
 

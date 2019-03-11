@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -176,6 +176,7 @@
     <Compile Include="Core\TypographyHandler.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
     <Compile Include="Helpers\Json.cs" />
+    <Compile Include="Helpers\Localization.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />

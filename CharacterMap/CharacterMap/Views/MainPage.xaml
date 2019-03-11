@@ -78,10 +78,10 @@
                     <FontIcon FontSize="14" Glyph="&#xE740;" />
                 </ToggleButton>
                 <TextBlock
-                    IsHitTestVisible="False"
                     Grid.Column="1"
                     VerticalAlignment="Center"
-                    FontSize="12">
+                    FontSize="12"
+                    IsHitTestVisible="False">
                     <Run Text="{Binding TitlePrefix}" />
                     <Run x:Uid="TxtTitle" />
                 </TextBlock>
@@ -109,9 +109,9 @@
                 VerticalAlignment="Bottom"
                 FontSize="16"
                 SelectedIndex="{Binding FontListFilter, Mode=TwoWay}">
-                <ComboBoxItem Content="All Fonts" />
-                <ComboBoxItem Content="Symbol Fonts" />
-                <ComboBoxItem Content="Imported Fonts" />
+                <ComboBoxItem x:Uid="FilterAllFonts" />
+                <ComboBoxItem x:Uid="FilterSymbolFonts" />
+                <ComboBoxItem x:Uid="FilterImportedFonts" />
                 <!--<ComboBoxItem Content="Favorites" />-->
             </ComboBox>
 
@@ -169,7 +169,7 @@
                     SelectionMode="Single">
 
                     <ListView.Resources>
-                        <Style TargetType="ListViewItem">
+                        <Style BasedOn="{StaticResource ListViewItemRevealBackgroundShowsAboveContentStyle}" TargetType="ListViewItem">
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                         </Style>
@@ -209,11 +209,22 @@
                         <DataTemplate x:DataType="core:InstalledFont">
                             <Grid ColumnSpacing="12" Background="Transparent">
                                 <Grid.ContextFlyout>
-                                    <MenuFlyout Opening="RemoveMenuFlyout_Opening">
+                                    <MenuFlyout>
+                                        <MenuFlyoutItem x:Uid="OpenInNewWindow" Click="OpenInWindowFlyoutItem_Click">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                         <MenuFlyoutItem
+                                            x:Name="RemoveFontItem"
+                                            x:Uid="RemoveFontFlyout"
+                                            x:Load="{x:Bind HasImportedFiles}"
                                             Click="RemoveMenuFlyoutItem_Click"
-                                            Tag="{x:Bind}"
-                                            Text="Remove Font" />
+                                            Tag="{x:Bind}">
+                                            <MenuFlyoutItem.Icon>
+                                                <SymbolIcon Symbol="Delete" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
                                     </MenuFlyout>
                                 </Grid.ContextFlyout>
                                 <Grid.ColumnDefinitions>
@@ -235,7 +246,6 @@
                                     Text="{x:Bind Variants.Count}"
                                     Visibility="{x:Bind HasVariants}" />
                             </Grid>
-
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
@@ -298,26 +308,17 @@
             </Grid.Resources>
 
             <StackPanel Margin="12,0" Orientation="Horizontal">
-                <TextBlock Text="Font Family Index: " />
-                <TextBlock>&#160;</TextBlock>
-                <TextBlock Text="{Binding GlyphHasColorVariant}" />
-
-                <Rectangle
-                    Width="2"
-                    Margin="15,6"
-                    VerticalAlignment="Stretch"
-                    Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                    Opacity="0.15" />
-
-                <TextBlock Text="{Binding Chars.Count}" />
-                <TextBlock Text=" Char(s)" />
+                <TextBlock>
+                    <Run Text="{Binding FontList.Count}" />
+                    <Run x:Uid="FontsCountLabel" />
+                </TextBlock>
             </StackPanel>
 
             <StackPanel
                 Grid.Column="2"
                 Margin="12,0"
                 Orientation="Horizontal">
-                <TextBlock Text="{Binding SelectedChar.UnicodeString}" />
+                <TextBlock Text="{Binding ElementName=FontMap, Path=ViewModel.SelectedChar.UnicodeString}" />
             </StackPanel>
         </Grid>
 
@@ -337,8 +338,8 @@
                 <StackPanel Margin="0,10,0,0">
                     <Slider
                         x:Name="SldResolution"
+                        x:Uid="PngSlider"
                         HorizontalAlignment="Stretch"
-                        Header="PNG Resolution (pixel)"
                         IsThumbToolTipEnabled="True"
                         Maximum="2048"
                         Minimum="128"
@@ -349,8 +350,8 @@
                     <TextBlock Margin="0,0,0,20" Text="{Binding ElementName=SldResolution, Path=Value}" />
 
                     <Slider
+                        x:Uid="GridSlider"
                         HorizontalAlignment="Stretch"
-                        Header="Character Grid Size"
                         IsThumbToolTipEnabled="True"
                         Maximum="192"
                         Minimum="64"
@@ -359,15 +360,15 @@
                         TickPlacement="Outside"
                         Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" />
                     <TextBlock
+                        x:Uid="RestartHeader"
                         Margin="0,0,0,10"
                         Foreground="#666"
-                        Text="Require Restart App to Take Effect."
                         TextWrapping="Wrap" />
 
                     <Button
                         x:Name="BtnRestart"
-                        Click="BtnRestart_OnClick"
-                        Content="Restart Now" />
+                        x:Uid="RestartButton"
+                        Click="BtnRestart_OnClick" />
 
                     <!--  Reenable after sorting out export UI issues  -->
                     <!--<TextBlock Margin="0 40 0 4" Text="Dev Utilities" />

@@ -16,9 +16,6 @@ namespace CharacterMap.Core
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
 
-        public FontFamily XamlFontFamily
-            => _xamlFontFamily ?? (_xamlFontFamily = new FontFamily(Source));
-
         public IReadOnlyList<KeyValuePair<string, string>> FontInformation
             => _fontInformation ?? (_fontInformation = LoadFontInformation());
 
@@ -58,7 +55,13 @@ namespace CharacterMap.Core
 
         public string FamilyName { get; }
 
+        /// <summary>
+        /// File-system path for DWrite / Xaml to construct a font for use in this application
+        /// </summary>
         public string Source { get; }
+
+        public string XamlFontSource =>
+            (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 
         public FontVariant(CanvasFontFace face, string familyName, StorageFile file)
         {

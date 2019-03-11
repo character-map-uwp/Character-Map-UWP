@@ -333,7 +333,8 @@ namespace CharacterMap.Core
 
         private static async Task CleanUpTempFolderAsync()
         {
-            var files = (await ApplicationData.Current.TemporaryFolder.GetFilesAsync().AsTask().ConfigureAwait(false));
+            StorageFolder folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists);
+            var files = await folder.GetFilesAsync().AsTask().ConfigureAwait(false);
             foreach (var file in files)
             {
                 try

@@ -1,5 +1,6 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Views;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -195,7 +197,28 @@ namespace CharacterMap.Views
                 item.Width = newSize;
             }
         }
+    }
 
-        
+
+    public partial class FontMapView
+    {
+        public static async Task CreateNewViewForFontAsync(InstalledFont font)
+        {
+            void CreateView()
+            {
+                FontMapView map = new FontMapView
+                {
+                    IsStandalone = true,
+                };
+
+                map.ViewModel.SelectedFont = font;
+
+                Window.Current.Content = map;
+                Window.Current.Activate();
+            }
+
+            var view = await WindowService.CreateViewAsync(CreateView, false);
+            await WindowService.TrySwitchToWindowAsync(view, false);
+        }
     }
 }
