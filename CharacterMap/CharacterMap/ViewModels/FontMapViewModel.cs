@@ -1,5 +1,6 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Services;
 using CharacterMapCX;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -15,6 +16,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 
 namespace CharacterMap.ViewModels
 {
@@ -243,6 +245,12 @@ namespace CharacterMap.ViewModels
                     TitleBarHelper.SetTitle(font.Name);
                     return true;
                 }
+
+                await DialogService.ShowMessage(
+                    Localization.Get("InvalidFontMessage"), 
+                    Localization.Get("InvalidFontTitle"));
+
+                WindowService.CloseCurrent();
 
                 return false;
             }

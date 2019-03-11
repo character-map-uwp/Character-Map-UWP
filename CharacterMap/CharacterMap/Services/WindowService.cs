@@ -126,10 +126,31 @@ namespace CharacterMap.Services
             if (info == MainWindow)
                 CoreApplication.MainView.CoreWindow.Activate();
 
-            return CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            var view = CoreApplication.Views.FirstOrDefault(v => v != CoreApplication.MainView) ?? CoreApplication.MainView;
+            return view.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id, ViewSizePreference.Default);
             }).AsTask();
+        }
+
+        internal static void CloseCurrent()
+        {
+            var view = CoreApplication.GetCurrentView();
+
+            _ = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                if (CoreApplication.Views.Count == 1)
+                    Application.Current.Exit();
+                else if (CoreApplication.Views.Count == 2 && !CoreApplication.MainView.CoreWindow.Visible)
+                    Application.Current.Exit();
+                else
+                {
+                    _ = view.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+                    {
+                        Window.Current.Close();
+                    });
+                }
+            });
         }
     }
 }
