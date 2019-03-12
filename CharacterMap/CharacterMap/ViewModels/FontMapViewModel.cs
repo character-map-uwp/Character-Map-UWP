@@ -80,6 +80,20 @@ namespace CharacterMap.ViewModels
             set => Set(ref _showColorGlyphs, value);
         }
 
+        private bool _hasFontOptions = false;
+        public bool HasFontOptions
+        {
+            get => _hasFontOptions;
+            set => Set(ref _hasFontOptions, value);
+        }
+
+        private CanvasTextLayoutAnalysis _selectedVariantAnalysis;
+        public CanvasTextLayoutAnalysis SelectedVariantAnalysis
+        {
+            get => _selectedVariantAnalysis;
+            set => Set(ref _selectedVariantAnalysis, value);
+        }
+
         private CanvasTextLayoutAnalysis _selectedCharAnalysis;
         public CanvasTextLayoutAnalysis SelectedCharAnalysis
         {
@@ -181,6 +195,32 @@ namespace CharacterMap.ViewModels
         private void LoadChars(FontVariant variant)
         {
             Chars = variant?.GetCharacters();
+            if (variant != null)
+            {
+                using (CanvasTextLayout layout = new CanvasTextLayout(
+                    CanvasDevice.GetSharedDevice(),
+                    TypographyAnalyzer.GetCharString(variant), 
+                    new CanvasTextFormat
+                    {
+                        FontSize = 8,
+                        FontFamily = variant.Source,
+                        FontStretch = variant.FontFace.Stretch,
+                        FontWeight = variant.FontFace.Weight,
+                        FontStyle = variant.FontFace.Style,
+                        HorizontalAlignment = CanvasHorizontalAlignment.Left,
+                    }, 10000, 10000))
+                {
+                    layout.Options = CanvasDrawTextOptions.EnableColorFont;
+                    ApplyEffectiveTypography(layout);
+                    SelectedVariantAnalysis = Interop.Analyze(layout);
+                    HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
+                }
+            }
+            else
+            {
+                SelectedVariantAnalysis = new CanvasTextLayoutAnalysis();
+                HasFontOptions = false;
+            }
         }
 
         private void UpdateCharAnalysis()

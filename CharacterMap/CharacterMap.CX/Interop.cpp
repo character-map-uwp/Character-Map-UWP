@@ -30,9 +30,14 @@ Interop::Interop(CanvasDevice^ device)
 
 CanvasTextLayoutAnalysis^ Interop::Analyze(CanvasTextLayout^ layout)
 {
-	ComPtr<IDWriteTextLayout3> context = GetWrappedResource<IDWriteTextLayout3>(layout);
-	context->Draw(m_d2dContext.Get(), m_colorAnalyzer.Get(), 0, 0);
-	return ref new CanvasTextLayoutAnalysis(m_colorAnalyzer->HasColorGlyphs, m_colorAnalyzer->GlyphFormats);
+	ComPtr<IDWriteTextLayout3> context = GetWrappedResource<IDWriteTextLayout4>(layout);
+
+	ComPtr<ColorTextAnalyzer> ana = new (std::nothrow) ColorTextAnalyzer(m_d2dFactory, m_dwriteFactory, m_d2dContext);
+	context->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
+	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana->HasColorGlyphs, ana->GlyphFormats);
+
+	ana = nullptr;
+	return analysis;
 }
 
 bool Interop::HasValidFonts(Uri^ uri)

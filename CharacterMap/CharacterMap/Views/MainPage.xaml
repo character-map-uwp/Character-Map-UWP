@@ -62,10 +62,7 @@
         </VisualStateManager.VisualStateGroups>
 
         <!--  Title Bar Grid  -->
-        <controls:XamlTitleBar
-            Grid.Row="0"
-            Grid.ColumnSpan="2"
-            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+        <controls:XamlTitleBar Grid.Row="0" Grid.ColumnSpan="2">
             <Grid ColumnSpacing="7">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />

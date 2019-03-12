@@ -80,6 +80,7 @@
                 Height="54"
                 Padding="12 0"
                 HorizontalAlignment="Right"
+                RequestedTheme="Dark"
                 Style="{ThemeResource TransparentButton}"
                 Visibility="{x:Bind ViewModel.IsExternalFile}">
                 <Grid ColumnSpacing="12">
@@ -141,52 +142,6 @@
                         IsEnabled="{Binding SelectedFont.HasVariants}"
                         ItemsSource="{Binding SelectedFont.Variants}"
                         SelectedItem="{Binding SelectedVariant, Mode=TwoWay}" />
-
-                    <Button
-                        x:Uid="FontOptionsButton"
-                        Width="44"
-                        Height="44"
-                        Margin="0 0 0 -8"
-                        VerticalAlignment="Bottom"
-                        Style="{ThemeResource TransparentButton}">
-                        <FontIcon
-                            Margin="0 0 -2 0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xE890;" />
-                        <Button.Flyout>
-                            <Flyout Placement="Bottom">
-                                <ListView
-                                    Width="300"
-                                    Padding="0"
-                                    ItemsSource="{x:Bind ViewModel.SelectedVariant.XamlTypographyFeatures, Mode=OneWay}"
-                                    SelectedItem="{Binding SelectedTypography, Mode=TwoWay}"
-                                    SelectionMode="Single"
-                                    ShowsScrollingPlaceholders="False"
-                                    SingleSelectionFollowsFocus="True">
-                                    <ListView.Header>
-                                        <StackPanel Margin="12 4" Spacing="12">
-                                            <TextBlock x:Uid="FontDisplayHeader" FontWeight="Bold" />
-                                            <ToggleSwitch
-                                                x:Name="ColorGlyphToggle"
-                                                x:Uid="ColorGlyphToggle"
-                                                VerticalAlignment="Bottom"
-                                                IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
-                                            <TextBlock
-                                                x:Uid="TypographyVariantsHeader"
-                                                Margin="0 12 0 0"
-                                                FontWeight="Bold"
-                                                Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}" />
-                                        </StackPanel>
-                                    </ListView.Header>
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="core:TypographyFeatureInfo">
-                                            <TextBlock Text="{x:Bind DisplayName}" />
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
 
                     <Button
                         x:Uid="FontPropertiesButton"
@@ -310,6 +265,61 @@
                             </Flyout>
                         </Button.Flyout>
                     </Button>
+
+                    <Button
+                        x:Uid="FontOptionsButton"
+                        Width="44"
+                        Height="44"
+                        Margin="0 0 0 -8"
+                        VerticalAlignment="Bottom"
+                        IsEnabled="{Binding HasFontOptions}"
+                        Style="{ThemeResource TransparentButton}">
+                        <FontIcon
+                            Margin="0 0 -2 0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xE890;" />
+                        <Button.Flyout>
+                            <Flyout Placement="Bottom">
+                                <ListView
+                                    Width="300"
+                                    Padding="0"
+                                    ItemsSource="{x:Bind ViewModel.SelectedVariant.XamlTypographyFeatures, Mode=OneWay}"
+                                    SelectedItem="{Binding SelectedTypography, Mode=TwoWay}"
+                                    SelectionMode="Single"
+                                    ShowsScrollingPlaceholders="False"
+                                    SingleSelectionFollowsFocus="True">
+                                    <ListView.Header>
+                                        <StackPanel Margin="12 4" Spacing="12">
+                                            <TextBlock
+                                                x:Name="ColorHeader"
+                                                x:Uid="FontDisplayHeader"
+                                                Opacity="0.5"
+                                                x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
+                                                FontWeight="Bold" />
+                                            <ToggleSwitch
+                                                x:Name="ColorGlyphToggle"
+                                                x:Uid="ColorGlyphToggle"
+                                                x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
+                                                VerticalAlignment="Bottom"
+                                                IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
+                                            <TextBlock
+                                                x:Uid="TypographyVariantsHeader"
+                                                Opacity="0.5"
+                                                Margin="0 12 0 0"
+                                                FontWeight="Bold"
+                                                Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}" />
+                                        </StackPanel>
+                                    </ListView.Header>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="core:TypographyFeatureInfo">
+                                            <TextBlock Text="{x:Bind DisplayName}" />
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+
                 </StackPanel>
 
                 <GridView

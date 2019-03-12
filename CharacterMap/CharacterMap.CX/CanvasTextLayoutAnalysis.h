@@ -34,6 +34,11 @@ namespace CharacterMapCX
 			bool get() { return m_containsBitmapGlyphs; }
 		}
 
+		property bool ContainsVectorColorGlyphs
+		{
+			bool get() { return m_containsVectorColorGlyphs; }
+		}
+
 		property bool IsFullVectorBased
 		{
 			bool get() { return !m_containsBitmapGlyphs; }
@@ -50,6 +55,7 @@ namespace CharacterMapCX
 	private:
 		bool m_hasColorGlyphs = false;
 		bool m_containsBitmapGlyphs = false;
+		bool m_containsVectorColorGlyphs = false;
 		IVectorView<GlyphImageFormat>^ m_glyphFormats;
 	};
 }

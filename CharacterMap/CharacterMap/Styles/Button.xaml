@@ -79,9 +79,7 @@
 
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
-                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonRevealBackgroundDisabled}" />
-                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushDisabled}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundDisabled}" />
+                                        <Setter Target="RootGrid.Opacity" Value="0.5" />
                                     </VisualState.Setters>
                                 </VisualState>
 

@@ -11,7 +11,6 @@ namespace CharacterMap.Core
 {
     public partial class FontVariant: IDisposable
     {
-        private FontFamily _xamlFontFamily = null;
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
@@ -153,7 +152,6 @@ namespace CharacterMap.Core
 
         public void Dispose()
         {
-            _xamlFontFamily = null;
             FontFace.Dispose();
             FontFace = null;
         }

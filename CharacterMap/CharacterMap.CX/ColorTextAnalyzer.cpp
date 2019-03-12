@@ -18,6 +18,13 @@ ColorTextAnalyzer::ColorTextAnalyzer(
 	HasColorGlyphs = false;
 }
 
+ColorTextAnalyzer::~ColorTextAnalyzer()
+{
+	m_d2dDeviceContext = nullptr;
+	m_dwriteFactory = nullptr;
+	m_d2dFactory = nullptr;
+}
+
 HRESULT ColorTextAnalyzer::DrawGlyphRun(
 	_In_opt_ void* clientDrawingContext,
 	FLOAT baselineOriginX,
@@ -29,8 +36,6 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 )
 {
 	HRESULT hr = DWRITE_E_NOCOLOR;
-
-	GlyphFormats.resize(0);
 
 	D2D1_POINT_2F baselineOrigin = D2D1::Point2F(baselineOriginX, baselineOriginY);
 

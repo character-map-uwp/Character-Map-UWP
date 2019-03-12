@@ -17,6 +17,8 @@ namespace CharacterMapCX
 			Microsoft::WRL::ComPtr<ID2D1DeviceContext1> m_d2dContext
 		);
 
+		~ColorTextAnalyzer();
+
 		bool HasColorGlyphs;
 
 		std::vector<GlyphImageFormat> GlyphFormats;

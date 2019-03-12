@@ -159,10 +159,12 @@ namespace CharacterMap.Controls
                 Colors.Gray);
 
             Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
-                accentColor, Colors.White,
+                Colors.Transparent, Colors.White,
                 btnHoverColor, Colors.White,
                 accentColor, Colors.White,
                 Colors.Transparent, Colors.Gray);
+
+            this.RequestedTheme = !IsAccentColorDark() ? ElementTheme.Light : ElementTheme.Dark;
         }
 
         private void UpdateMetrics(CoreApplicationViewTitleBar bar)
@@ -184,6 +186,13 @@ namespace CharacterMap.Controls
             {
                 Window.Current.SetTitleBar(_backgroundElement);
             }
+        }
+
+        private bool IsAccentColorDark()
+        {
+            var c = _settings.GetColorValue(UIColorType.Accent);
+            var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
+            return isDark;
         }
     }
 }
