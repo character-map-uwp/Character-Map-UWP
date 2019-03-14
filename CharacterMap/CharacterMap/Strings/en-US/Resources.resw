@@ -142,7 +142,7 @@
     <value>Char(s)</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
-    <value>Colored Glyph</value>
+    <value>Colorization</value>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
     <value>Monochrome glyphs</value>
@@ -256,7 +256,7 @@
     <value>XAML Code</value>
   </data>
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
-    <value>Typography Variants</value>
+    <value>Glyph Variants</value>
   </data>
   <data name="WeightSelector.Header" xml:space="preserve">
     <value>Variants</value>
@@ -266,5 +266,23 @@
   </data>
   <data name="FontsCountLabel.Text" xml:space="preserve">
     <value>Fonts</value>
+  </data>
+  <data name="ImportNotAFile" xml:space="preserve">
+    <value>Not a file</value>
+  </data>
+  <data name="ImportPendingDelete" xml:space="preserve">
+    <value>Existing font pending delete. Please restart app.</value>
+  </data>
+  <data name="ImportUnavailableFile" xml:space="preserve">
+    <value>File not available</value>
+  </data>
+  <data name="ImportUnsupportedFileType" xml:space="preserve">
+    <value>Unsupported File Type</value>
+  </data>
+  <data name="ImportUnsupportedFontType" xml:space="preserve">
+    <value>Unsupported Font Type</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value />
   </data>
 </root>

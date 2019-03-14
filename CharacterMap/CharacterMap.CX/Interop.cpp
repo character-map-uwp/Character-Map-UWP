@@ -24,17 +24,29 @@ Interop::Interop(CanvasDevice^ device)
 	d2ddevice->CreateDeviceContext(
 		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
 		&m_d2dContext);
-
-	m_colorAnalyzer = new (std::nothrow) ColorTextAnalyzer(m_d2dFactory, m_dwriteFactory, m_d2dContext);
 }
 
-CanvasTextLayoutAnalysis^ Interop::Analyze(CanvasTextLayout^ layout)
+CanvasTextLayoutAnalysis^ Interop::AnalyzeFontLayout(CanvasTextLayout^ layout)
 {
 	ComPtr<IDWriteTextLayout3> context = GetWrappedResource<IDWriteTextLayout4>(layout);
 
 	ComPtr<ColorTextAnalyzer> ana = new (std::nothrow) ColorTextAnalyzer(m_d2dFactory, m_dwriteFactory, m_d2dContext);
 	context->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
-	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana->HasColorGlyphs, ana->GlyphFormats);
+	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana);
+
+	ana = nullptr;
+	return analysis;
+}
+
+CanvasTextLayoutAnalysis^ Interop::AnalyzeCharacterLayout(CanvasTextLayout^ layout)
+{
+	ComPtr<IDWriteTextLayout3> context = GetWrappedResource<IDWriteTextLayout4>(layout);
+
+	ComPtr<ColorTextAnalyzer> ana = new (std::nothrow) ColorTextAnalyzer(m_d2dFactory, m_dwriteFactory, m_d2dContext);
+	ana->IsCharacterAnalysisMode = true;
+	context->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
+
+	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana);
 
 	ana = nullptr;
 	return analysis;

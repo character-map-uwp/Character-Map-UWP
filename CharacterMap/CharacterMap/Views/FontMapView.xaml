@@ -149,8 +149,7 @@
                         Height="44"
                         Margin="0 0 0 -8"
                         VerticalAlignment="Bottom"
-                        Style="{ThemeResource TransparentButton}"
-                        ToolTipService.ToolTip="Font Face Properties">
+                        Style="{ThemeResource TransparentButton}">
                         <FontIcon
                             Margin="0 0 -2 0"
                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"

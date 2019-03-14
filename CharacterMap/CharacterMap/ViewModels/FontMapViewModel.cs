@@ -212,7 +212,7 @@ namespace CharacterMap.ViewModels
                 {
                     layout.Options = CanvasDrawTextOptions.EnableColorFont;
                     ApplyEffectiveTypography(layout);
-                    SelectedVariantAnalysis = Interop.Analyze(layout);
+                    SelectedVariantAnalysis = Interop.AnalyzeFontLayout(layout);
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                 }
             }
@@ -243,7 +243,7 @@ namespace CharacterMap.ViewModels
             {
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
                 ApplyEffectiveTypography(layout);
-                SelectedCharAnalysis = Interop.Analyze(layout);
+                SelectedCharAnalysis = Interop.AnalyzeCharacterLayout(layout);
             }
         }
 

@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using CharacterMap.Helpers;
 using CharacterMapCX;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Graphics.Canvas.Text;
@@ -193,19 +194,19 @@ namespace CharacterMap.Core
                 {
                     if (!(item is StorageFile file))
                     {
-                        _invalid.Add((item, "Not a file"));
+                        _invalid.Add((item, Localization.Get("ImportNotAFile")));
                         continue;
                     }
 
                     if (!file.IsAvailable)
                     {
-                        _invalid.Add((item, "File not available"));
+                        _invalid.Add((item, Localization.Get("ImportUnavailableFile")));
                         continue;
                     }
 
                     if (_ignoredFonts.Contains(file.Name))
                     {
-                        _invalid.Add((item, "Existing font pending delete. Please restart app."));
+                        _invalid.Add((item, Localization.Get("ImportPendingDelete")));
                         continue;
                     }
 
@@ -229,7 +230,7 @@ namespace CharacterMap.Core
                             }
                             else
                             {
-                                _invalid.Add((file, "Unsupported Font Type"));
+                                _invalid.Add((file, Localization.Get("ImportUnsupportedFontType")));
                                 await fontFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
                             }
                         }
@@ -239,7 +240,7 @@ namespace CharacterMap.Core
                         }
                     }
                     else
-                        _invalid.Add((file, "Unsupported File Type"));
+                        _invalid.Add((file, Localization.Get("ImportUnsupportedFileType")));
                 }
 
                 if (_imported.Count > 0)

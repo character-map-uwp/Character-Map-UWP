@@ -4,6 +4,8 @@
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
+using namespace Microsoft::Graphics::Canvas::Text;
+
 
 ColorTextAnalyzer::ColorTextAnalyzer(
 	ComPtr<ID2D1Factory> d2dFactory,
@@ -75,7 +77,19 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 			DWRITE_COLOR_GLYPH_RUN1 const* colorRun;
 			ThrowIfFailed(glyphRunEnumerator->GetCurrentRun(&colorRun));
 
-			GlyphFormats.push_back(static_cast<GlyphImageFormat>(colorRun->glyphImageFormat));
+			/*CanvasGlyph* g = new CanvasGlyph();
+			g->Index = colorRun->glyphRun.glyphIndices[0];*/
+
+			GlyphImageFormat format = static_cast<GlyphImageFormat>(colorRun->glyphImageFormat);
+			GlyphFormats.push_back(format);
+
+			if (IsCharacterAnalysisMode)
+			{
+				if ((format & GlyphImageFormat::Colr) == GlyphImageFormat::Colr)
+				{
+					GlyphLayerCount++;
+				}
+			}
 		}
 	}
 

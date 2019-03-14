@@ -18,13 +18,13 @@ namespace CharacterMapCX
     {
     public:
         Interop(CanvasDevice^ device);
-		CanvasTextLayoutAnalysis^ Analyze(CanvasTextLayout^ layout);
+		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout);
+		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
 		bool HasValidFonts(Uri^ uri);
 
 	private:
 		Microsoft::WRL::ComPtr<IDWriteFactory4> m_dwriteFactory;
 		Microsoft::WRL::ComPtr<ID2D1Factory5> m_d2dFactory;
 		Microsoft::WRL::ComPtr<ID2D1DeviceContext1> m_d2dContext;
-		Microsoft::WRL::ComPtr<ColorTextAnalyzer> m_colorAnalyzer;
     };
 }

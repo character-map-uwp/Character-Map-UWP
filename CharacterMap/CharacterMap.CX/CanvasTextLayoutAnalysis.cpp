@@ -5,10 +5,19 @@ using namespace Platform;
 using namespace Platform::Collections;
 using namespace Windows::Foundation::Collections;
 
-CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(bool hasColorGlyphs, std::vector<GlyphImageFormat> formats)
+CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer)
 {
-	m_hasColorGlyphs = hasColorGlyphs;
-	for (GlyphImageFormat t : formats)
+	m_hasColorGlyphs = analyzer->HasColorGlyphs;
+
+	auto vec = ref new Vector<GlyphImageFormat>(std::move(analyzer->GlyphFormats));
+	m_glyphFormats = vec->GetView();
+
+	if (analyzer->IsCharacterAnalysisMode)
+	{
+		m_glyphLayerCount = analyzer->GlyphLayerCount;
+	}
+
+	for (GlyphImageFormat t : analyzer->GlyphFormats)
 	{
 		if (t == GlyphImageFormat::Png
 			|| t == GlyphImageFormat::Jpeg
@@ -27,6 +36,5 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(bool hasColor
 			break;
 	}
 
-	auto vec = ref new Vector<GlyphImageFormat>(std::move(formats));
-	m_glyphFormats = vec->GetView();
+	
 }

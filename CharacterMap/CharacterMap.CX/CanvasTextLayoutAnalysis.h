@@ -19,10 +19,7 @@ namespace CharacterMapCX
 	public ref class CanvasTextLayoutAnalysis sealed
 	{
 	public:
-		inline CanvasTextLayoutAnalysis()
-		{
-
-		}
+		inline CanvasTextLayoutAnalysis() { }
 
 		property bool HasColorGlyphs
 		{
@@ -44,18 +41,29 @@ namespace CharacterMapCX
 			bool get() { return !m_containsBitmapGlyphs; }
 		}
 
+		property bool IsMultiLayerColorGlyph
+		{
+			bool get() { return m_glyphLayerCount > 1; }
+		}
+
+		property int GlyphLayerCount
+		{
+			int get() { return m_glyphLayerCount; }
+		}
+
 		property IVectorView<GlyphImageFormat>^ GlyphFormats
 		{
 			IVectorView<GlyphImageFormat>^ get() { return m_glyphFormats; }
 		}
 
 	internal:
-		CanvasTextLayoutAnalysis(bool hasColorGlyphs, std::vector<GlyphImageFormat> formats);
+		CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer);
 
 	private:
 		bool m_hasColorGlyphs = false;
 		bool m_containsBitmapGlyphs = false;
 		bool m_containsVectorColorGlyphs = false;
+		int m_glyphLayerCount = 1;
 		IVectorView<GlyphImageFormat>^ m_glyphFormats;
 	};
 }

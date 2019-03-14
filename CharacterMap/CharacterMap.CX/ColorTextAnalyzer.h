@@ -21,6 +21,10 @@ namespace CharacterMapCX
 
 		bool HasColorGlyphs;
 
+		bool IsCharacterAnalysisMode;
+
+		int GlyphLayerCount = 0;
+
 		std::vector<GlyphImageFormat> GlyphFormats;
 
 		IFACEMETHOD(IsPixelSnappingDisabled)(
