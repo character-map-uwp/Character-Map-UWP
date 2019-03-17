@@ -25,6 +25,21 @@
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
+      <Extensions>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="fontfile">
+            <uap:SupportedFileTypes>
+              <!--<uap:FileType ContentType="application/x-font-ttf">.ttf</uap:FileType>-->
+              <uap:FileType>.otf</uap:FileType>
+              <uap:FileType>.ttc</uap:FileType>
+              <uap:FileType>.otc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>Character Map</uap:DisplayName>
+            <uap:InfoTip>Preview Font</uap:InfoTip>
+            <uap:EditFlags OpenIsSafe="true"/>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>

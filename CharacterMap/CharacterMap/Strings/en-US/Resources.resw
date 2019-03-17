@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddToCollectionHint.Text" xml:space="preserve">
+    <value>Add to Collection</value>
+  </data>
   <data name="AppName" xml:space="preserve">
     <value>Character Map</value>
+  </data>
+  <data name="BlackFill.Text" xml:space="preserve">
+    <value>Black Fill</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>Copy (character only)</value>
@@ -126,11 +132,95 @@
   <data name="BtnSavePng.Text" xml:space="preserve">
     <value>Save as PNG</value>
   </data>
+  <data name="BtnSaveSvg.Text" xml:space="preserve">
+    <value>Save as SVG (monochrome only)</value>
+  </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Select</value>
   </data>
+  <data name="CharsLabel.Text" xml:space="preserve">
+    <value>Char(s)</value>
+  </data>
+  <data name="ColoredGlyphLabel.Text" xml:space="preserve">
+    <value>Colorization</value>
+  </data>
+  <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
+    <value>Monochrome glyphs</value>
+  </data>
+  <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
+    <value>Color glyphs</value>
+  </data>
   <data name="DigSettings.Title" xml:space="preserve">
     <value>Settings</value>
+  </data>
+  <data name="FilterAllFonts.Content" xml:space="preserve">
+    <value>All Fonts</value>
+  </data>
+  <data name="FilterImportedFonts.Content" xml:space="preserve">
+    <value>Imported Fonts</value>
+  </data>
+  <data name="FilterSymbolFonts.Content" xml:space="preserve">
+    <value>Symbol Fonts</value>
+  </data>
+  <data name="FontDisplayHeader.Text" xml:space="preserve">
+    <value>Font Display Options</value>
+  </data>
+  <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Font Rendering Options</value>
+  </data>
+  <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Font Face Properties</value>
+  </data>
+  <data name="FontPropFace.Text" xml:space="preserve">
+    <value>Face Name</value>
+  </data>
+  <data name="FontPropFamily.Text" xml:space="preserve">
+    <value>Family Name</value>
+  </data>
+  <data name="FontPropMonospaced.Text" xml:space="preserve">
+    <value>Is Monospaced</value>
+  </data>
+  <data name="FontPropStretch.Text" xml:space="preserve">
+    <value>Stretch</value>
+  </data>
+  <data name="FontPropStyle.Text" xml:space="preserve">
+    <value>Style</value>
+  </data>
+  <data name="FontPropSymbol.Text" xml:space="preserve">
+    <value>Is Symbol Font</value>
+  </data>
+  <data name="FontPropTitle.Text" xml:space="preserve">
+    <value>Font Face Properties</value>
+  </data>
+  <data name="FontPropType.Text" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="FontPropWeight.Text" xml:space="preserve">
+    <value>Weight</value>
+  </data>
+  <data name="GridSlider.Header" xml:space="preserve">
+    <value>Character Grid Size</value>
+  </data>
+  <data name="InvalidFontMessage" xml:space="preserve">
+    <value>Sorry, we couldn't find any supported font data in this file.</value>
+  </data>
+  <data name="InvalidFontTitle" xml:space="preserve">
+    <value>Unsupported File</value>
+  </data>
+  <data name="OpenInNewWindow.Text" xml:space="preserve">
+    <value>Open in New Window</value>
+  </data>
+  <data name="PngSlider.Header" xml:space="preserve">
+    <value>PNG Resolution (pixel)</value>
+  </data>
+  <data name="RemoveFontFlyout.Text" xml:space="preserve">
+    <value>Remove Font</value>
+  </data>
+  <data name="RestartButton.Content" xml:space="preserve">
+    <value>Restart</value>
+  </data>
+  <data name="RestartHeader.Text" xml:space="preserve">
+    <value>Requires application restart to take effect.</value>
   </data>
   <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
     <value>Search Unicode e.g. 1F411</value>
@@ -151,7 +241,7 @@
     <value>Copied</value>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
-    <value>FontIcon</value>
+    <value>Font Icon</value>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol Icon</value>
@@ -164,5 +254,47 @@
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
     <value>XAML Code</value>
+  </data>
+  <data name="TypographyVariantsHeader.Text" xml:space="preserve">
+    <value>Glyph Variants</value>
+  </data>
+  <data name="WeightSelector.Header" xml:space="preserve">
+    <value>Variants</value>
+  </data>
+  <data name="WhiteFill.Text" xml:space="preserve">
+    <value>White Fill</value>
+  </data>
+  <data name="FontsCountLabel.Text" xml:space="preserve">
+    <value>Fonts</value>
+  </data>
+  <data name="ImportNotAFile" xml:space="preserve">
+    <value>Not a file</value>
+  </data>
+  <data name="ImportPendingDelete" xml:space="preserve">
+    <value>Existing font pending delete. Please restart app.</value>
+  </data>
+  <data name="ImportUnavailableFile" xml:space="preserve">
+    <value>File not available</value>
+  </data>
+  <data name="ImportUnsupportedFileType" xml:space="preserve">
+    <value>Unsupported File Type</value>
+  </data>
+  <data name="ImportUnsupportedFontType" xml:space="preserve">
+    <value>Unsupported Font Type</value>
+  </data>
+  <data name="FontsClearedOnNextLaunchNotice" xml:space="preserve">
+    <value>Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.</value>
+  </data>
+  <data name="SaveImageError" xml:space="preserve">
+    <value>Sorry, something went wrong whilst we were trying to save the image.</value>
+  </data>
+  <data name="LoadingFontListError" xml:space="preserve">
+    <value>Error Loading Font List</value>
+  </data>
+  <data name="NoticeLabel.Text" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="ImportFileCopyFail" xml:space="preserve">
+    <value>Something went wrong. Please try again later.</value>
   </data>
 </root>

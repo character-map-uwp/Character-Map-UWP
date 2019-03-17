@@ -1,56 +1,36 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Foundation;
-using Windows.Storage;
-using Windows.Storage.Pickers;
-using Windows.UI;
 using Windows.UI.ViewManagement;
 using CharacterMap.Core;
 using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Graphics.Canvas;
-using Microsoft.Graphics.Canvas.Text;
+using System.Collections.Generic;
+using CharacterMap.Helpers;
+using Windows.Storage;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 
 namespace CharacterMap.ViewModels
 {
+
     public class MainViewModel : ViewModelBase
     {
-        private ObservableCollection<Character> _chars;
-        private string _fontIcon;
-        private ObservableCollection<InstalledFont> _fontList;
-        private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
-        private Character _selectedChar;
-        private InstalledFont _selectedFont;
-        private string _xamlCode;
-        private string _symbolIcon;
+        #region Properties
 
-        public MainViewModel(IDialogService dialogService)
-        {
-            DialogService = dialogService;
-            RefreshFontList();
-            AppNameVersion = GetAppDescription();
-            CommandSavePng = new RelayCommand<bool>(async (b) => await SavePng(b));
-            CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
-        }
+        public event EventHandler FontListCreated;
 
-        private string GetAppDescription()
-        {
-            var package = Package.Current;
-            var packageId = package.Id;
-            var version = packageId.Version;
+        private Task _initialLoad { get; }
 
-            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({Architecture})";
-        }
+        public IDialogService DialogService { get; }
 
-        public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
+        public RelayCommand CommandToggleFullScreen { get; }
 
-        public RelayCommand CommandToggleFullScreen { get; set; }
+        public bool IsDarkAccent => Utils.IsAccentColorDark();
 
         private string _appNameVersion;
         public string AppNameVersion
@@ -59,104 +39,50 @@ namespace CharacterMap.ViewModels
             set => Set(ref _appNameVersion, value);
         }
 
+        private int _fontListFilter;
+        public int FontListFilter
+        {
+            get => _fontListFilter;
+            set { if (Set(ref _fontListFilter, value)) RefreshFontList(); }
+        }
+
+        private string _titlePrefix;
         public string TitlePrefix
         {
             get => _titlePrefix;
-            set { _titlePrefix = value; RaisePropertyChanged(); }
+            set => Set(ref _titlePrefix, value);
         }
 
-        public IDialogService DialogService { get; set; }
+        private bool _isLoadingFonts;
+        public bool IsLoadingFonts
+        {
+            get => _isLoadingFonts;
+            set => Set(ref _isLoadingFonts, value);
+        }
 
-        public RelayCommand<bool> CommandSavePng { get; set; }
-
-        public ObservableCollection<InstalledFont> FontList
+        private List<InstalledFont> _fontList;
+        public List<InstalledFont> FontList
         {
             get => _fontList;
             set
             {
-                _fontList = value;
-                CreateFontListGroup();
-                RaisePropertyChanged();
+                if (_fontList != value)
+                {
+                    _fontList = value;
+                    CreateFontListGroup();
+                    RaisePropertyChanged();
+                }
             }
         }
 
+        private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
         public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
         {
             get => _groupedFontList;
-            set
-            {
-                _groupedFontList = value;
-                RaisePropertyChanged();
-            }
+            set => Set(ref _groupedFontList, value);
         }
 
-        public ObservableCollection<Character> Chars
-        {
-            get => _chars;
-            set
-            {
-                _chars = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public Character SelectedChar
-        {
-            get => _selectedChar;
-            set
-            {
-                _selectedChar = value;
-                if (null != value)
-                {
-                    XamlCode = $"&#x{value.UnicodeIndex.ToString("x").ToUpper()};";
-                    FontIcon = $@"<FontIcon FontFamily=""{SelectedFont.Name}"" Glyph=""&#x{
-                            value.UnicodeIndex.ToString("x").ToUpper()
-                        };"" />";
-                    SymbolIcon = $"(Symbol)0x{value.UnicodeIndex.ToString("x").ToUpper()}";
-
-                    App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
-                }
-                RaisePropertyChanged();
-            }
-        }
-
-        public string XamlCode
-        {
-            get => _xamlCode;
-            set
-            {
-                _xamlCode = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public string SymbolIcon
-        {
-            get => _symbolIcon;
-            set { _symbolIcon = value; RaisePropertyChanged(); }
-        }
-
-        public string FontIcon
-        {
-            get => _fontIcon;
-            set
-            {
-                _fontIcon = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public bool ShowSymbolFontsOnly
-        {
-            get => App.AppSettings.ShowSymbolFontsOnly;
-            set
-            {
-                App.AppSettings.ShowSymbolFontsOnly = value;
-                RefreshFontList();
-                RaisePropertyChanged();
-            }
-        }
-
+        private InstalledFont _selectedFont;
         public InstalledFont SelectedFont
         {
             get => _selectedFont;
@@ -165,19 +91,32 @@ namespace CharacterMap.ViewModels
                 _selectedFont = value;
                 if (null != _selectedFont)
                 {
-                    TitlePrefix = value.Name + " - ";
+                    TitlePrefix = value.Name + " -";
                     App.AppSettings.LastSelectedFontName = value.Name;
-                    LoadChars(_selectedFont);
                 }
 
                 RaisePropertyChanged();
             }
         }
 
-        private void LoadChars(InstalledFont font)
+        #endregion
+
+        public MainViewModel(IDialogService dialogService)
         {
-            var chars = font.GetCharacters();
-            Chars = chars.ToObservableCollection();
+            DialogService = dialogService;
+            AppNameVersion = Utils.GetAppDescription();
+            CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
+            MessengerInstance.Register<ImportMessage>(this, OnFontImportRequest);
+
+            _initialLoad = LoadAsync();
+        }
+
+        private async Task LoadAsync()
+        {
+            IsLoadingFonts = true;
+            await FontFinder.LoadFontsAsync();
+            RefreshFontList();
+            IsLoadingFonts = false;
         }
 
         private void ToggleFullScreenMode()
@@ -189,18 +128,23 @@ namespace CharacterMap.ViewModels
                 view.TryEnterFullScreenMode();
         }
 
-        private void RefreshFontList()
+        public void RefreshFontList()
         {
             try
             {
-                var fontList = FontFinder.GetFonts();
-                FontList = fontList.Where(f => f.IsSymbolFont || !ShowSymbolFontsOnly)
-                                   .OrderBy(f => f.Name)
-                                   .ToObservableCollection();
+                var fontList = FontFinder.Fonts.AsEnumerable();
+
+                if (FontListFilter == 1)
+                    fontList = fontList.Where(f => f.IsSymbolFont);
+                else if (FontListFilter == 2)
+                    fontList = fontList.Where(f => f.HasImportedFiles);
+
+                FontList = fontList.ToList();
             }
             catch (Exception e)
             {
-                DialogService.ShowMessageBox(e.Message, "Error Loading Font List");
+                DialogService.ShowMessageBox(
+                    e.Message, Localization.Get("LoadingFontListError"));
             }
         }
 
@@ -211,7 +155,9 @@ namespace CharacterMap.ViewModels
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
                 GroupedFontList = list.ToObservableCollection();
 
-                if (!FontList.Any()) return;
+                if (FontList.Count == 0)
+                    return;
+
                 if (!string.IsNullOrEmpty(App.AppSettings.LastSelectedFontName))
                 {
                     var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == App.AppSettings.LastSelectedFontName));
@@ -219,12 +165,6 @@ namespace CharacterMap.ViewModels
                     if (null != lastSelectedFont)
                     {
                         this.SelectedFont = lastSelectedFont;
-
-                        var lastSelectedChar = Chars.FirstOrDefault((i => i.UnicodeIndex == App.AppSettings.LastSelectedCharIndex));
-                        if (null != lastSelectedChar)
-                        {
-                            this.SelectedChar = lastSelectedChar;
-                        }
                     }
                     else
                     {
@@ -235,94 +175,82 @@ namespace CharacterMap.ViewModels
                 {
                     SelectedFont = FontList.FirstOrDefault();
                 }
+
+                FontListCreated?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception e)
             {
-                DialogService.ShowMessageBox(e.Message, "Error Loading Font Group");
+                DialogService.ShowMessageBox(
+                    e.Message, Localization.Get("LoadingFontListError"));
             }
         }
 
-        private async Task SavePng(bool isBlackText)
+        internal void TrySetSelectionFromImport(FontImportResult result)
         {
-            try
+            StorageFile file = result.Imported.FirstOrDefault() ?? result.Existing.FirstOrDefault();
+            if (file != null
+                && FontList.FirstOrDefault(f =>
+                f.HasImportedFiles && f.DefaultVariant.FileName == file.Name) is InstalledFont font)
             {
-                var savePicker = new FileSavePicker
+                SelectedFont = font;
+                FontListCreated?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
+        internal async void TryRemoveFont(InstalledFont font)
+        {
+            IsLoadingFonts = true;
+
+            /* Yes, this is hack. The UI needs to time to remove references to the 
+             * current Font otherwise we won't be able to delete it because the file will 
+             * be "in use". 16ms works fine on my test machines, but better safe than
+             * sorry - this isn't a fast operation in sum anyway because we reload
+             * all fonts, so extra 150ms is nothing...
+             */
+            SelectedFont = FontFinder.DefaultFont;
+            await Task.Delay(150);
+
+            bool result = await FontFinder.RemoveFontAsync(font);
+            RefreshFontList();
+
+            IsLoadingFonts = false;
+
+            if (!result)
+            {
+                /* looks like we couldn't delete some fonts :'(. 
+                 * We'll get em next time the app launches! */
+
+                _ = DialogService.ShowMessage(
+                    Localization.Get("FontsClearedOnNextLaunchNotice"),
+                    Localization.Get("NoticeLabel/Text"));
+            }
+        }
+
+        private void OnFontImportRequest(ImportMessage msg)
+        {
+            _ = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                IsLoadingFonts = true;
+                try
                 {
-                    SuggestedStartLocation = PickerLocationId.Desktop
-                };
-                savePicker.FileTypeChoices.Add("Png Image", new[] { ".png" });
-                savePicker.SuggestedFileName = $"CharacterMap_{DateTime.Now:yyyyMMddHHmmss}.png";
-                var file = await savePicker.PickSaveFileAsync();
-
-                if (null != file)
-                {
-                    CachedFileManager.DeferUpdates(file);
-                    var device = CanvasDevice.GetSharedDevice();
-                    var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
-
-                    var canvasH = (float)App.AppSettings.PngSize;
-                    var canvasW = (float)App.AppSettings.PngSize;
-
-                    var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
-
-                    using (var ds = renderTarget.CreateDrawingSession())
+                    if (_initialLoad.IsCompleted)
                     {
-                        ds.Clear(Colors.Transparent);
-                        var d = App.AppSettings.PngSize;
-                        var r = App.AppSettings.PngSize / 2;
-
-                        var textColor = isBlackText ? Colors.Black : Colors.White;
-                        var fontSize = (float)d;
-
-                        // Ugly code here, need to use SharpDX way to find out it is color font or not
-                        var isEmoji = SelectedFont.Name == "Segoe UI Emoji";
-
-                        // Deal with character get cut off
-                        // Ugly code here, need to figure out a way to measure text render size
-                        var fontThatWillBeCutOff = new[] { "Segoe UI Emoji", "Segoe UI Symbol", "paint" };
-                        if (isEmoji || fontThatWillBeCutOff.Contains(SelectedFont.Name))
-                        {
-                            fontSize *= 0.75f;
-                        }
-
-                        ds.DrawText(SelectedChar.Char, (float)r, 0, textColor, new CanvasTextFormat
-                        {
-                            FontFamily = SelectedFont.Name,
-                            FontSize = fontSize,
-                            HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                            Options = (isEmoji ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default)
-                        });
+                        RefreshFontList();
+                    }
+                    else
+                    {
+                        await _initialLoad;
+                        await Task.Delay(50);
                     }
 
-                    using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                    {
-                        await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
-                    }
-
-                    await CachedFileManager.CompleteUpdatesAsync(file);
+                    TrySetSelectionFromImport(msg.Result);
                 }
-            }
-            catch (Exception ex)
-            {
-                await DialogService.ShowMessageBox(ex.Message, "Error Saving Image");
-            }
+                finally
+                {
+                    IsLoadingFonts = false;
+                }
+            });
         }
 
-        private bool _isDarkAccent;
-        private string _titlePrefix;
-
-        public bool IsDarkAccent
-        {
-            get => IsAccentColorDark();
-            set { _isDarkAccent = value; RaisePropertyChanged(); }
-        }
-
-        private bool IsAccentColorDark()
-        {
-            var uiSettings = new UISettings();
-            var c = uiSettings.GetColorValue(UIColorType.Accent);
-            var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
-            return isDark;
-        }
     }
 }

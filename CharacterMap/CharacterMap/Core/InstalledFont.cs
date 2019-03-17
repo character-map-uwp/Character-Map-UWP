@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using SharpDX.DirectWrite;
-using FontFamily = Windows.UI.Xaml.Media.FontFamily;
+using Microsoft.Graphics.Canvas.Text;
+using Windows.UI.Text;
 
 namespace CharacterMap.Core
 {
@@ -9,52 +9,42 @@ namespace CharacterMap.Core
     {
         public string Name { get; set; }
 
-        public FontFamily XamlFontFamily => new FontFamily(Name);
-
-        public int FamilyIndex { get; set; }
+        public CanvasFontFace FontFace { get; set; }
 
         public bool IsSymbolFont { get; set; }
 
-        public int Index { get; set; }
+        public List<FontVariant> Variants { get; set; }
 
-        private List<Character> Characters { get; set; }
+        public bool HasVariants => Variants.Count > 1;
 
-        public string FontWeight { get; set; }
+        public bool HasImportedFiles { get; set; }
 
         public InstalledFont()
         {
-            Characters = new List<Character>();
         }
 
-        public List<Character> GetCharacters()
+        public FontVariant DefaultVariant
         {
-            if (!Characters.Any())
+            get
             {
-                var fontFamily = FontFinder.FontCollection.GetFontFamily(FamilyIndex);
-                using (var font = fontFamily.GetFont(Index))
-                {
-                    var characters = new List<Character>();
-                    var count = 65536 * 4 - 1;
-                    for (var i = 0; i < count; i++)
-                    {
-                        if (font.HasCharacter(i))
-                        {
-                            string character = char.ConvertFromUtf32(i);
-
-                            characters.Add(new Character
-                            {
-                                Char = character,
-                                UnicodeIndex = i
-                            });
-                        }
-                    }
-
-                    Characters = characters;
-                    return characters;
-                } 
+                return Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal && v.FontFace.Stretch == FontStretch.Normal) 
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal)
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Stretch == FontStretch.Normal)
+                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight)
+                    ?? Variants[0];
             }
-
-            return Characters;
         }
+
+        public static InstalledFont CreateDefault()
+        {
+            InstalledFont font = new InstalledFont()
+            {
+                Name = "",
+                HasImportedFiles = false,
+            };
+
+            return font;
+        }
+        
     }
 }

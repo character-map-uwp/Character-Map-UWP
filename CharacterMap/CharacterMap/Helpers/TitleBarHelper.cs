@@ -1,4 +1,5 @@
-﻿using Windows.ApplicationModel.Core;
+﻿using System;
+using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.ViewManagement;
 
@@ -29,6 +30,11 @@ namespace CharacterMap.Helpers
                 btnHoverColor, Colors.White,
                 accentColor, Colors.White,
                 Colors.LightGray, Colors.Gray);
+        }
+
+        internal static void SetTitle(string name)
+        {
+            ApplicationView.GetForCurrentView().Title = name ?? string.Empty;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
@@ -12,9 +12,11 @@ namespace CharacterMap
     sealed partial class App : Application
     {
         private Lazy<ActivationService> _activationService;
-        private ActivationService ActivationService => _activationService.Value;
+        internal ActivationService ActivationService => _activationService.Value;
 
         public static AppSettings AppSettings { get; set; }
+
+        public static new App Current { get; private set; }
 
         public App()
         {
@@ -22,6 +24,7 @@ namespace CharacterMap
             AppSettings = new AppSettings();
             this.UnhandledException += OnUnhandledException;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
+            Current = this;
 
             this.FocusVisualKind = FocusVisualKind.HighVisibility;
         }
@@ -63,6 +66,12 @@ namespace CharacterMap
         protected override async void OnActivated(IActivatedEventArgs args)
         {
             RegisterExceptionHandlingSynchronizationContext();
+            await ActivationService.ActivateAsync(args);
+        }
+
+        protected override async void OnFileActivated(FileActivatedEventArgs args)
+        {
+            base.OnFileActivated(args);
             await ActivationService.ActivateAsync(args);
         }
 
