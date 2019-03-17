@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -11,6 +12,19 @@ using Windows.UI.Xaml;
 
 namespace CharacterMap.Services
 {
+    public class FacadeLaunchArgs : ILaunchActivatedEventArgs
+    {
+        public ActivationKind Kind => ActivationKind.Launch;
+
+        public ApplicationExecutionState PreviousExecutionState => ApplicationExecutionState.Running;
+
+        public SplashScreen SplashScreen => null;
+
+        public string Arguments => string.Empty;
+
+        public string TileId => string.Empty;
+    }
+
     public class WindowInformation
     {
         private WindowInformation(CoreApplicationView coreView, ApplicationView view)
@@ -113,37 +127,49 @@ namespace CharacterMap.Services
             });
         }
 
-        public static Task TrySwitchToWindowAsync(WindowInformation info, bool main)
+        public static async Task TrySwitchToWindowAsync(WindowInformation info, bool main)
         {
             if (main && !CoreApplication.MainView.Dispatcher.HasThreadAccess)
             {
                 // Awaiter here is screwed without a *PROPER* dispatcher awaiter
-                return CoreApplication.MainView.Dispatcher.RunAsync(
+                await CoreApplication.MainView.Dispatcher.RunAsync(
                     CoreDispatcherPriority.Normal, () =>
                 {
                     _ = TrySwitchToWindowAsync(info, main);
                 }).AsTask();
+
+                return;
             }
 
             if (main && CoreApplication.MainView.CoreWindow.Visible)
             {
-                return ApplicationViewSwitcher.SwitchAsync(
+                await ApplicationViewSwitcher.SwitchAsync(
                     info.View.Id, 
                     ((WindowInformation)CoreApplication.MainView.Properties[nameof(MainWindow)]).View.Id, 
                     ApplicationViewSwitchingOptions.ConsolidateViews).AsTask();
+
+                return;
             }
 
             if (info == MainWindow)
-                CoreApplication.MainView.CoreWindow.Activate();
+                await ActivateMainWindowAsync();
 
             var view = CoreApplication.Views.FirstOrDefault(v => v != CoreApplication.MainView) ?? CoreApplication.MainView;
-            return view.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            await view.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id, ViewSizePreference.Default);
             }).AsTask();
         }
 
-        internal static void CloseCurrent()
+        public static Task ActivateMainWindowAsync()
+        {
+            return CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await App.Current.ActivationService.ActivateAsync(new FacadeLaunchArgs());
+            }).AsTask();
+        }
+
+        internal static void CloseForCurrentView()
         {
             var view = CoreApplication.GetCurrentView();
 

@@ -18,6 +18,9 @@ using CharacterMap.ViewModels;
 using System.Diagnostics;
 using CharacterMap.Helpers;
 using Windows.UI.Xaml.Media;
+using GalaSoft.MvvmLight.Messaging;
+using Windows.Storage;
+using System.Collections.Generic;
 
 namespace CharacterMap.Views
 {
@@ -39,6 +42,7 @@ namespace CharacterMap.Views
 
             this.Loaded += MainPage_Loaded;
             this.Unloaded += MainPage_Unloaded;
+
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -165,6 +169,7 @@ namespace CharacterMap.Views
                         && result.Imported.Count > 0)
                     {
                         ViewModel.RefreshFontList();
+                        ViewModel.TrySetSelectionFromImport(result);
                     }
                 }
                 finally
@@ -173,6 +178,10 @@ namespace CharacterMap.Views
                 }
             }
         }
+
+        
+
+        
 
         private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {

@@ -35,6 +35,7 @@ namespace CharacterMap.Core
         const string TEMP = nameof(TEMP);
 
         private static SemaphoreSlim _initSemaphore { get; } = new SemaphoreSlim(1,1);
+        private static SemaphoreSlim _loadSemaphore { get; } = new SemaphoreSlim(1,1);
 
         /* If we can't delete a font during a session, we mark it here */
         private static HashSet<string> _ignoredFonts { get; } = new HashSet<string>();
@@ -88,7 +89,11 @@ namespace CharacterMap.Core
 
             return Task.Run(async () =>
             {
+
                 var systemFonts = await InitialiseAsync();
+
+                await _loadSemaphore.WaitAsync();
+
                 var familyCount = systemFonts.Fonts.Count;
                 Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>();
 
@@ -115,6 +120,8 @@ namespace CharacterMap.Core
                     f.Value.Variants = f.Value.Variants.OrderBy(v => v.FontFace.Weight.Weight).ToList();
                     return f.Value;
                 }).ToList();
+
+                _loadSemaphore.Release();
             });
         }
 
@@ -219,9 +226,19 @@ namespace CharacterMap.Core
                          * are some strange import bugs when checking a file exists */
                         if (!File.Exists(Path.Combine(ImportFolder.Path, file.Name)))
                         {
-                            /* Copy to local folder. We can only verify font file when it's inside
-                             * the App's Local folder due to CanvasFontSet file restrictions */
-                            StorageFile fontFile = await file.CopyAsync(ApplicationData.Current.LocalFolder);
+                            StorageFile fontFile = null;
+                            try
+                            {
+                                /* Copy to local folder. We can only verify font file when it's inside
+                                * the App's Local folder due to CanvasFontSet file restrictions */
+                                fontFile = await file.CopyAsync(ImportFolder);
+                            }
+                            catch (Exception ex)
+                            {
+                                _invalid.Add((file, Localization.Get("ImportFileCopyFail")));
+                                continue;
+                            }
+                           
 
                             /* Avoid Garbage Collection (?) issue preventing immediate file deletion 
                              * by dropping to C++ */

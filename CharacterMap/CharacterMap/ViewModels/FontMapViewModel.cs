@@ -14,6 +14,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -80,6 +81,13 @@ namespace CharacterMap.ViewModels
         {
             get => _showColorGlyphs;
             set => Set(ref _showColorGlyphs, value);
+        }
+
+        private bool _importButtonEnabled = true;
+        public bool ImportButtonEnabled
+        {
+            get => _importButtonEnabled;
+            set => Set(ref _importButtonEnabled, value);
         }
 
         private bool _hasFontOptions = false;
@@ -320,7 +328,7 @@ namespace CharacterMap.ViewModels
                     Localization.Get("InvalidFontMessage"), 
                     Localization.Get("InvalidFontTitle"));
 
-                WindowService.CloseCurrent();
+                WindowService.CloseForCurrentView();
 
                 return false;
             }
@@ -330,10 +338,29 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public void ImportFile()
+        public async void ImportFile()
         {
-            WindowService.TrySwitchToWindowAsync(WindowService.MainWindow, true);
-            _ = FontFinder.ImportFontsAsync(new List<StorageFile> { _sourceFile });
+            ImportButtonEnabled = false;
+
+            IsLoading = true;
+            try
+            {
+                var items = new List<StorageFile> { _sourceFile };
+                if (await FontFinder.ImportFontsAsync(items) is FontImportResult result
+                    && (result.Imported.Count > 0 || result.Existing.Count > 0))
+                {
+                    await WindowService.ActivateMainWindowAsync();
+                    await Task.Delay(100);
+                    await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
+                    {
+                        MessengerInstance.Send(new ImportMessage(result));
+                    });
+                }
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
     }
 }

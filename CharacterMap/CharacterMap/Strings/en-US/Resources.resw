@@ -294,4 +294,7 @@
   <data name="NoticeLabel.Text" xml:space="preserve">
     <value>Notice</value>
   </data>
+  <data name="ImportFileCopyFail" xml:space="preserve">
+    <value>Something went wrong. Please try again later.</value>
+  </data>
 </root>

@@ -170,6 +170,7 @@
     <Compile Include="Core\ExportManager.cs" />
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\FontVariant.cs" />
+    <Compile Include="Core\ImportMessage.cs" />
     <Compile Include="Core\InstalledFont.cs" />
     <Compile Include="Core\MDL2DescriptionDict.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />

@@ -9,7 +9,7 @@ using CommonServiceLocator;
 
 namespace CharacterMap.Activation
 {
-    internal class DefaultLaunchActivationHandler : ActivationHandler<LaunchActivatedEventArgs>
+    internal class DefaultLaunchActivationHandler : ActivationHandler<ILaunchActivatedEventArgs>
     {
         private readonly string _navElement;
     
@@ -20,7 +20,7 @@ namespace CharacterMap.Activation
             _navElement = navElement.FullName;
         }
     
-        protected override async Task HandleInternalAsync(LaunchActivatedEventArgs args)
+        protected override async Task HandleInternalAsync(ILaunchActivatedEventArgs args)
         {
             // When the navigation stack isn't restored navigate to the first page,
             // configuring the new page by passing required information as a navigation
@@ -32,7 +32,7 @@ namespace CharacterMap.Activation
             await Task.CompletedTask;
         }
 
-        protected override bool CanHandleInternal(LaunchActivatedEventArgs args)
+        protected override bool CanHandleInternal(ILaunchActivatedEventArgs args)
         {
             // None of the ActivationHandlers has handled the app activation
             return NavigationService.Frame.Content == null;

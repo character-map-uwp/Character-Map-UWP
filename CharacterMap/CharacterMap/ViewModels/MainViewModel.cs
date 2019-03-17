@@ -11,6 +11,9 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using System.Collections.Generic;
 using CharacterMap.Helpers;
+using Windows.Storage;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 
 namespace CharacterMap.ViewModels
 {
@@ -20,6 +23,8 @@ namespace CharacterMap.ViewModels
         #region Properties
 
         public event EventHandler FontListCreated;
+
+        private Task _initialLoad { get; }
 
         public IDialogService DialogService { get; }
 
@@ -101,10 +106,12 @@ namespace CharacterMap.ViewModels
             DialogService = dialogService;
             AppNameVersion = Utils.GetAppDescription();
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
-            Load();
+            MessengerInstance.Register<ImportMessage>(this, OnFontImportRequest);
+
+            _initialLoad = LoadAsync();
         }
 
-        private async void Load()
+        private async Task LoadAsync()
         {
             IsLoadingFonts = true;
             await FontFinder.LoadFontsAsync();
@@ -178,6 +185,18 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        internal void TrySetSelectionFromImport(FontImportResult result)
+        {
+            StorageFile file = result.Imported.FirstOrDefault() ?? result.Existing.FirstOrDefault();
+            if (file != null
+                && FontList.FirstOrDefault(f =>
+                f.HasImportedFiles && f.DefaultVariant.FileName == file.Name) is InstalledFont font)
+            {
+                SelectedFont = font;
+                FontListCreated?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         internal async void TryRemoveFont(InstalledFont font)
         {
             IsLoadingFonts = true;
@@ -205,6 +224,32 @@ namespace CharacterMap.ViewModels
                     Localization.Get("FontsClearedOnNextLaunchNotice"),
                     Localization.Get("NoticeLabel/Text"));
             }
+        }
+
+        private void OnFontImportRequest(ImportMessage msg)
+        {
+            _ = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                IsLoadingFonts = true;
+                try
+                {
+                    if (_initialLoad.IsCompleted)
+                    {
+                        RefreshFontList();
+                    }
+                    else
+                    {
+                        await _initialLoad;
+                        await Task.Delay(50);
+                    }
+
+                    TrySetSelectionFromImport(msg.Result);
+                }
+                finally
+                {
+                    IsLoadingFonts = false;
+                }
+            });
         }
 
     }

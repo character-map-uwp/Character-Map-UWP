@@ -22,7 +22,6 @@ namespace CharacterMap.Services
     internal class ActivationService
     {
         private readonly App _app;
-        private readonly UIElement _shell;
         private readonly Type _defaultNavItem;
 
         private NavigationServiceEx NavigationService => ServiceLocator.Current.GetInstance<NavigationServiceEx>();
@@ -34,6 +33,8 @@ namespace CharacterMap.Services
             //_shell = shell ?? new Frame();
             _defaultNavItem = defaultNavItem;
         }
+
+
 
         public async Task ActivateAsync(object activationArgs)
         {
