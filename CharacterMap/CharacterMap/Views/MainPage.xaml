@@ -12,7 +12,6 @@
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
-    Loaded="MainPage_Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>

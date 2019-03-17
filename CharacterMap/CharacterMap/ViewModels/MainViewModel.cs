@@ -10,6 +10,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using System.Collections.Generic;
+using CharacterMap.Helpers;
 
 namespace CharacterMap.ViewModels
 {
@@ -18,13 +19,13 @@ namespace CharacterMap.ViewModels
     {
         #region Properties
 
+        public event EventHandler FontListCreated;
+
         public IDialogService DialogService { get; }
 
-        public RelayCommand CommandToggleFullScreen { get; set; }
+        public RelayCommand CommandToggleFullScreen { get; }
 
-        public bool IsDarkAccent => IsAccentColorDark();
-
-        public string Architecture => Edi.UWP.Helpers.Utils.Architecture;
+        public bool IsDarkAccent => Utils.IsAccentColorDark();
 
         private string _appNameVersion;
         public string AppNameVersion
@@ -98,26 +99,9 @@ namespace CharacterMap.ViewModels
         public MainViewModel(IDialogService dialogService)
         {
             DialogService = dialogService;
-            AppNameVersion = GetAppDescription();
+            AppNameVersion = Utils.GetAppDescription();
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
             Load();
-        }
-
-        private bool IsAccentColorDark()
-        {
-            var uiSettings = new UISettings();
-            var c = uiSettings.GetColorValue(UIColorType.Accent);
-            var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
-            return isDark;
-        }
-
-        private string GetAppDescription()
-        {
-            var package = Package.Current;
-            var packageId = package.Id;
-            var version = packageId.Version;
-
-            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({Architecture})";
         }
 
         private async void Load()
@@ -152,7 +136,8 @@ namespace CharacterMap.ViewModels
             }
             catch (Exception e)
             {
-                DialogService.ShowMessageBox(e.Message, "Error Loading Font List");
+                DialogService.ShowMessageBox(
+                    e.Message, Localization.Get("LoadingFontListError"));
             }
         }
 
@@ -163,7 +148,9 @@ namespace CharacterMap.ViewModels
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
                 GroupedFontList = list.ToObservableCollection();
 
-                if (!FontList.Any()) return;
+                if (FontList.Count == 0)
+                    return;
+
                 if (!string.IsNullOrEmpty(App.AppSettings.LastSelectedFontName))
                 {
                     var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == App.AppSettings.LastSelectedFontName));
@@ -181,10 +168,13 @@ namespace CharacterMap.ViewModels
                 {
                     SelectedFont = FontList.FirstOrDefault();
                 }
+
+                FontListCreated?.Invoke(this, EventArgs.Empty);
             }
             catch (Exception e)
             {
-                DialogService.ShowMessageBox(e.Message, "Error Loading Font Group");
+                DialogService.ShowMessageBox(
+                    e.Message, Localization.Get("LoadingFontListError"));
             }
         }
 
@@ -201,7 +191,6 @@ namespace CharacterMap.ViewModels
             SelectedFont = FontFinder.DefaultFont;
             await Task.Delay(150);
 
-
             bool result = await FontFinder.RemoveFontAsync(font);
             RefreshFontList();
 
@@ -213,8 +202,8 @@ namespace CharacterMap.ViewModels
                  * We'll get em next time the app launches! */
 
                 _ = DialogService.ShowMessage(
-                    "Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.",
-                    "Notice");
+                    Localization.Get("FontsClearedOnNextLaunchNotice"),
+                    Localization.Get("NoticeLabel/Text"));
             }
         }
 

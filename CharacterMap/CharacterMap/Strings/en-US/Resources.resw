@@ -282,7 +282,16 @@
   <data name="ImportUnsupportedFontType" xml:space="preserve">
     <value>Unsupported Font Type</value>
   </data>
-  <data name="String1" xml:space="preserve">
-    <value />
+  <data name="FontsClearedOnNextLaunchNotice" xml:space="preserve">
+    <value>Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.</value>
+  </data>
+  <data name="SaveImageError" xml:space="preserve">
+    <value>Sorry, something went wrong whilst we were trying to save the image.</value>
+  </data>
+  <data name="LoadingFontListError" xml:space="preserve">
+    <value>Error Loading Font List</value>
+  </data>
+  <data name="NoticeLabel.Text" xml:space="preserve">
+    <value>Notice</value>
   </data>
 </root>

@@ -36,20 +36,31 @@ namespace CharacterMap.Views
 
             this.ViewModel = this.DataContext as MainViewModel;
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
+
+            this.Loaded += MainPage_Loaded;
+            this.Unloaded += MainPage_Unloaded;
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            //TitleBarHelper.SetTitleBarColors();
-
-            if (null != LstFontFamily.SelectedItem)
-            {
-                LstFontFamily.ScrollIntoView(LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
-                FontMap.TryScrollSelectionIntoView();
-            }
+            this.ViewModel.FontListCreated -= ViewModel_FontListCreated;
+            this.ViewModel.FontListCreated += ViewModel_FontListCreated;
         }
 
+        private void ViewModel_FontListCreated(object sender, EventArgs e)
+        {
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+            {
+                await Task.Delay(50);
+                LstFontFamily.ScrollIntoView(
+                    LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+            });
+        }
 
+        private void MainPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            this.ViewModel.FontListCreated -= ViewModel_FontListCreated;
+        }
 
 
 

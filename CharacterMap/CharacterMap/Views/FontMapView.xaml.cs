@@ -82,6 +82,7 @@ namespace CharacterMap.Views
             this.Loading += FontMapView_Loading;
             Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
             ViewModel = new FontMapViewModel(ServiceLocator.Current.GetInstance<IDialogService>());
+            this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -90,6 +91,20 @@ namespace CharacterMap.Views
             {
                 ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
+            }
+        }
+
+        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.SelectedFont))
+            {
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
+                {
+                    if (null != CharGrid.SelectedItem)
+                    {
+                        CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Default);
+                    }
+                });
             }
         }
 
@@ -107,20 +122,12 @@ namespace CharacterMap.Views
             }
         }
 
-        public void TryScrollSelectionIntoView()
-        {
-            if (null != CharGrid.SelectedItem)
-            {
-                CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Leading);
-            }
-        }
-
         public void TryCopy()
         {
             if (CharGrid.SelectedItem is Character character &&
-                            !TxtSymbolIcon.SelectedText.Any() &&
-                            !TxtFontIcon.SelectedText.Any() &&
-                            !TxtXamlCode.SelectedText.Any())
+                !TxtSymbolIcon.SelectedText.Any() &&
+                !TxtFontIcon.SelectedText.Any() &&
+                !TxtXamlCode.SelectedText.Any())
             {
                 Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
                 BorderFadeInStoryboard.Begin();

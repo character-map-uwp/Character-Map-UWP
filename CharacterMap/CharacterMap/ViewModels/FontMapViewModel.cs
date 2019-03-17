@@ -25,6 +25,8 @@ namespace CharacterMap.ViewModels
     {
         private Interop Interop { get; }
 
+        private StorageFile _sourceFile { get; set; }
+
         public ExportStyle BlackColor { get; } = ExportStyle.Black;
         public ExportStyle WhiteColor { get; } = ExportStyle.White;
         public ExportStyle GlyphColor { get; } = ExportStyle.ColorGlyph;
@@ -198,7 +200,7 @@ namespace CharacterMap.ViewModels
             if (variant != null)
             {
                 using (CanvasTextLayout layout = new CanvasTextLayout(
-                    CanvasDevice.GetSharedDevice(),
+                    Utils.CanvasDevice,
                     TypographyAnalyzer.GetCharString(variant), 
                     new CanvasTextFormat
                     {
@@ -231,7 +233,7 @@ namespace CharacterMap.ViewModels
                 return;
             }
 
-            using (CanvasTextLayout layout = new CanvasTextLayout(CanvasDevice.GetSharedDevice(), $"{SelectedChar.Char}", new CanvasTextFormat
+            using (CanvasTextLayout layout = new CanvasTextLayout(Utils.CanvasDevice, $"{SelectedChar.Char}", new CanvasTextFormat
             {
                 FontSize = 20,
                 FontFamily = SelectedVariant.Source,
@@ -309,6 +311,7 @@ namespace CharacterMap.ViewModels
                 if (args.Files.FirstOrDefault() is StorageFile file
                     && await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                 {
+                    _sourceFile = file;
                     SelectedFont = font;
                     return true;
                 }
@@ -325,7 +328,12 @@ namespace CharacterMap.ViewModels
             {
                 IsLoading = false;
             }
-            
+        }
+
+        public void ImportFile()
+        {
+            WindowService.TrySwitchToWindowAsync(WindowService.MainWindow, true);
+            _ = FontFinder.ImportFontsAsync(new List<StorageFile> { _sourceFile });
         }
     }
 }

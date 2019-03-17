@@ -115,6 +115,16 @@ namespace CharacterMap.Services
 
         public static Task TrySwitchToWindowAsync(WindowInformation info, bool main)
         {
+            if (main && !CoreApplication.MainView.Dispatcher.HasThreadAccess)
+            {
+                // Awaiter here is screwed without a *PROPER* dispatcher awaiter
+                return CoreApplication.MainView.Dispatcher.RunAsync(
+                    CoreDispatcherPriority.Normal, () =>
+                {
+                    _ = TrySwitchToWindowAsync(info, main);
+                }).AsTask();
+            }
+
             if (main && CoreApplication.MainView.CoreWindow.Visible)
             {
                 return ApplicationViewSwitcher.SwitchAsync(

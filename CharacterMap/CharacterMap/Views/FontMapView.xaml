@@ -82,7 +82,8 @@
                 HorizontalAlignment="Right"
                 RequestedTheme="Dark"
                 Style="{ThemeResource TransparentButton}"
-                Visibility="{x:Bind ViewModel.IsExternalFile}">
+                Visibility="{x:Bind ViewModel.IsExternalFile}"
+                Click="{x:Bind ViewModel.ImportFile}">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />

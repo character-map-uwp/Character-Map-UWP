@@ -11,6 +11,7 @@ namespace CharacterMap.Core
 {
     public partial class FontVariant: IDisposable
     {
+
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;

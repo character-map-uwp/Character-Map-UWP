@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -118,8 +119,8 @@ namespace CharacterMap.Core
         }
 
         /* 
-                 * Helper method for adding fonts. 
-                 */
+         * Helper method for adding fonts. 
+         */
         private static void AddFont(Dictionary<string, InstalledFont> fontList, CanvasFontFace fontFace, StorageFile file = null)
         {
             try
@@ -222,7 +223,7 @@ namespace CharacterMap.Core
                              * the App's Local folder due to CanvasFontSet file restrictions */
                             StorageFile fontFile = await file.CopyAsync(ApplicationData.Current.LocalFolder);
 
-                            /* Avoid Garbage Collection (?) issue preventing immediate file deete 
+                            /* Avoid Garbage Collection (?) issue preventing immediate file deletion 
                              * by dropping to C++ */
                             if (interop.HasValidFonts(new Uri(GetAppPath(fontFile))))
                             {
@@ -301,57 +302,70 @@ namespace CharacterMap.Core
         }
 
 
-        private static async Task CleanUpPendingDeletesAsync()
+        private static Task CleanUpPendingDeletesAsync()
         {
-            /* If we fail to delete a font at runtime, delete it now before we load anything */
-            if (await ApplicationData.Current.LocalCacheFolder.TryGetItemAsync(PENDING)
-                is StorageFile pendingFile)
+            return Task.Run(() =>
             {
-                var lines = (await FileIO.ReadLinesAsync(pendingFile)).ToList();
-
-                List<string> moreFails = new List<string>();
-                foreach (var line in lines)
+                /* If we fail to delete a font at runtime, delete it now before we load anything */
+                var path = Path.Combine(ApplicationData.Current.LocalCacheFolder.Path, PENDING);
+                if (File.Exists(path))
                 {
-                    if (await ImportFolder.TryGetItemAsync(line) is StorageFile file)
+                    var lines = File.ReadAllLines(path);
+
+                    List<string> moreFails = new List<string>();
+                    foreach (var line in lines)
+                    {
+                        if (File.Exists(line))
+                        {
+                            try
+                            {
+                                File.Delete(line);
+                            }
+                            catch (Exception)
+                            {
+                                moreFails.Add(line);
+                            }
+                        }
+                    }
+
+                    if (moreFails.Count > 0)
+                        File.WriteAllLines(path, moreFails);
+                    else
+                        File.Delete(path);
+                }
+            });
+            
+        }
+
+        private static Task CleanUpTempFolderAsync()
+        {
+            return Task.Run(() =>
+            {
+                var path = Path.Combine(ImportFolder.Path, TEMP);
+                if (Directory.Exists(path))
+                {
+                    foreach (var file in Directory.GetFiles(path))
                     {
                         try
                         {
-                            await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
+                            File.Delete(file);
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
-                            moreFails.Add(file.Name);
+                            Debug.WriteLine(ex);
                         }
                     }
                 }
-
-                if (moreFails.Count > 0)
-                    await FileIO.WriteLinesAsync(pendingFile, moreFails);
-                else
-                    await pendingFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
-            }
-        }
-
-        private static async Task CleanUpTempFolderAsync()
-        {
-            StorageFolder folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists);
-            var files = await folder.GetFilesAsync().AsTask().ConfigureAwait(false);
-            foreach (var file in files)
-            {
-                try
-                {
-                    await file.DeleteAsync(StorageDeleteOption.PermanentDelete).AsTask().ConfigureAwait(false);
-                }
-                catch { }
-            }
+            });
+            
         }
 
         internal static async Task<InstalledFont> LoadFromFileAsync(StorageFile file)
         {
-            await InitialiseAsync();
+            await InitialiseAsync().ConfigureAwait(false);
 
-            StorageFolder folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists);
-            StorageFile localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
+            StorageFolder folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
+            StorageFile localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
 
             Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>();
             foreach (CanvasFontFace font in GetFontFacesFromFile(localFile))

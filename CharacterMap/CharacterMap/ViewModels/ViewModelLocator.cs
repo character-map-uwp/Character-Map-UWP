@@ -1,3 +1,4 @@
+using CharacterMap.Core;
 using CharacterMap.Services;
 using CharacterMap.Views;
 using CharacterMapCX;
@@ -20,7 +21,7 @@ namespace CharacterMap.ViewModels
 
                 SimpleIoc.Default.Register(() => _navigationService);
                 SimpleIoc.Default.Register<IDialogService, DialogService>();
-                SimpleIoc.Default.Register(() => new Interop(CanvasDevice.GetSharedDevice()));
+                SimpleIoc.Default.Register(() => new Interop(Utils.CanvasDevice));
 
                 SimpleIoc.Default.Register<MainViewModel>();
                 Register<MainViewModel, MainPage>();

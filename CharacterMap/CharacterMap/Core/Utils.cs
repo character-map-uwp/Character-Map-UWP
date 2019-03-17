@@ -23,6 +23,8 @@ namespace CharacterMap.Core
 {
     public class Utils
     {
+        public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
+
         private static Dictionary<int, XamlDirect> _xamlDirectCache { get; } = new Dictionary<int, XamlDirect>();
 
         public static XamlDirect GetXamlDirectForWindow(CoreDispatcher dispatcher)
@@ -43,6 +45,24 @@ namespace CharacterMap.Core
             int result = 0;
             int.TryParse(hexNumber, System.Globalization.NumberStyles.HexNumber, null, out result);
             return result;
+        }
+
+        public static bool IsAccentColorDark()
+        {
+            var uiSettings = new Windows.UI.ViewManagement.UISettings();
+            var c = uiSettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+            var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
+            return isDark;
+        }
+
+        public static string GetAppDescription()
+        {
+            var package = Windows.ApplicationModel.Package.Current;
+            var packageId = package.Id;
+            var version = packageId.Version;
+            var architecture = Edi.UWP.Helpers.Utils.Architecture;
+
+            return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({architecture})";
         }
 
         public static async Task<FileUpdateStatus> SaveStreamToImage(PickerLocationId location, string fileName, Stream stream, int pixelWidth, int pixelHeight)

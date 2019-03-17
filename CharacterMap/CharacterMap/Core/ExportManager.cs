@@ -1,4 +1,5 @@
-﻿using CharacterMap.ViewModels;
+﻿using CharacterMap.Helpers;
+using CharacterMap.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Graphics.Canvas;
@@ -60,11 +61,11 @@ namespace CharacterMap.Core
                 if (await PickFileAsync(name, "SVG", new[] { ".svg" }) is StorageFile file)
                 {
                     CachedFileManager.DeferUpdates(file);
-                    var device = CanvasDevice.GetSharedDevice();
+                    var device = Utils.CanvasDevice;
 
                     var textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
 
-                    /* SVG Exports render at fixed size - but a) they're vectors, andb) they're
+                    /* SVG Exports render at fixed size - but a) they're vectors, and b) they're
                      * inside an auto-scaling viewport. So rendersize is *largely* pointless */
                     float canvasH = 1024f, canvasW = 1024f, fontSize = 1024f;
 
@@ -118,7 +119,7 @@ namespace CharacterMap.Core
             catch (Exception ex)
             {
                 await SimpleIoc.Default.GetInstance<IDialogService>()
-                    .ShowMessageBox(ex.Message, "Error Saving Image");
+                    .ShowMessageBox(ex.Message, Localization.Get("SaveImageError"));
             }
         }
 
@@ -136,7 +137,7 @@ namespace CharacterMap.Core
                     is StorageFile file)
                 {
                     CachedFileManager.DeferUpdates(file);
-                    var device = CanvasDevice.GetSharedDevice();
+                    var device = Utils.CanvasDevice;
                     var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
                     var canvasH = (float)App.AppSettings.PngSize;
@@ -194,7 +195,7 @@ namespace CharacterMap.Core
             catch (Exception ex)
             {
                 await SimpleIoc.Default.GetInstance<IDialogService>()
-                    .ShowMessageBox(ex.Message, "Error Saving Image");
+                    .ShowMessageBox(ex.Message, Localization.Get("SaveImageError"));
             }
         }
 

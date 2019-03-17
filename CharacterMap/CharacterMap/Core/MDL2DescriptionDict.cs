@@ -4,7 +4,7 @@ namespace CharacterMap.Core
 {
     public static class MDL2Description
     {
-        public static Dictionary<string, string> Dict = new Dictionary<string, string>()
+        public static IReadOnlyDictionary<string, string> Dict { get; } = new Dictionary<string, string>()
         {
             {"globalnavigationbutton", "e700"},
             {"wifi", "e701"},
