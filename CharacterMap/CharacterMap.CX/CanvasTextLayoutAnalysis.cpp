@@ -9,9 +9,6 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 {
 	m_hasColorGlyphs = analyzer->HasColorGlyphs;
 
-	auto vec = ref new Vector<GlyphImageFormat>(std::move(analyzer->GlyphFormats));
-	m_glyphFormats = vec->GetView();
-
 	if (analyzer->IsCharacterAnalysisMode)
 	{
 		m_glyphLayerCount = analyzer->GlyphLayerCount;
@@ -36,5 +33,6 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 			break;
 	}
 
-	
+	auto vec = ref new Vector<GlyphImageFormat>(std::move(analyzer->GlyphFormats));
+	m_glyphFormats = vec->GetView();
 }
