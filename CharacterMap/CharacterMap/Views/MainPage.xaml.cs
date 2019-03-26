@@ -95,7 +95,7 @@ namespace CharacterMap.Views
             {
                 FontMap.SelectCharacter(ch);
             }
-            else if (ViewModel.SelectedFont.Name == "Segoe MDL2 Assets")    //Search for Segoe MDL2 Assets characters with description
+            else if (ViewModel.SelectedFont.Name.EndsWith("MDL2 Assets"))    //Search for Segoe MDL2 Assets characters with description
             {
                 string descriptionForSearch = SearchBoxUnicode.Text.ToLower().Replace(" ", string.Empty);
 
