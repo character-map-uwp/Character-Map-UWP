@@ -98,6 +98,8 @@ namespace CharacterMap.Views
         {
             if (e.PropertyName == nameof(ViewModel.SelectedFont))
             {
+                UpdateStates();
+
                 _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
                 {
                     if (null != CharGrid.SelectedItem)
@@ -108,7 +110,14 @@ namespace CharacterMap.Views
             }
         }
 
-
+        private void UpdateStates()
+        {
+            // Ideally should have been achieved with VisualState setters, buuuuut didn't work for some reason
+            if (ViewModel.SelectedFont == null)
+                VisualStateManager.GoToState(this, NoFontState.Name, true);
+            else
+                VisualStateManager.GoToState(this, HasFontState.Name, true);
+        }
 
 
         /* Public surface-area methods */

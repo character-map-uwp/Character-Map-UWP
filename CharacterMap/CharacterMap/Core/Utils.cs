@@ -4,19 +4,14 @@ using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
 using Windows.Graphics.Imaging;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
-using Windows.Storage.Streams;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Text;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Core.Direct;
 
 namespace CharacterMap.Core

@@ -60,6 +60,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _isLoadingFonts, value);
         }
 
+        private bool _hasFonts;
+        public bool HasFonts
+        {
+            get => _hasFonts;
+            set => Set(ref _hasFonts, value);
+        }
+
         private List<InstalledFont> _fontList;
         public List<InstalledFont> FontList
         {
@@ -94,6 +101,8 @@ namespace CharacterMap.ViewModels
                     TitlePrefix = value.Name + " -";
                     App.AppSettings.LastSelectedFontName = value.Name;
                 }
+                else
+                    TitlePrefix = string.Empty;
 
                 RaisePropertyChanged();
             }
@@ -154,9 +163,13 @@ namespace CharacterMap.ViewModels
             {
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
                 GroupedFontList = list.ToObservableCollection();
+                HasFonts = FontList.Count > 0;
 
                 if (FontList.Count == 0)
+                {
+                    SelectedFont = null;
                     return;
+                }
 
                 if (!string.IsNullOrEmpty(App.AppSettings.LastSelectedFontName))
                 {
