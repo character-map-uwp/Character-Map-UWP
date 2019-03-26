@@ -37,6 +37,7 @@
             <uap:DisplayName>Character Map</uap:DisplayName>
             <uap:InfoTip>Preview Font</uap:InfoTip>
             <uap:EditFlags OpenIsSafe="true"/>
+            <uap:Logo>Assets/FileAssociationTile.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>
