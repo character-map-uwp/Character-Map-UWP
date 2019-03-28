@@ -357,9 +357,7 @@ namespace CharacterMap.ViewModels
                     && await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                 {
                     _sourceFile = file;
-
                     IsLoading = false;
-                    await Task.Delay(32);
 
                     SelectedFont = font;
                     SetDefaultChar();

@@ -88,7 +88,7 @@ namespace CharacterMap.Services
                     view = CoreApplication.MainView;
             }
 
-            await view.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            void Create()
             {
                 a();
                 info = WindowInformation.CreateForCurrentView();
@@ -109,7 +109,13 @@ namespace CharacterMap.Services
                     if (mainView)
                         MainWindow = info;
                 }
-            });
+            }
+
+            if (view.Dispatcher.HasThreadAccess)
+                Create();
+            else
+                await view.Dispatcher.RunAsync(CoreDispatcherPriority.High, Create);
+
             return info;
         }
 
