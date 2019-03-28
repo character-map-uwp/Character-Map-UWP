@@ -16,5 +16,8 @@ namespace CharacterMap.Core
         public static Visibility FalseToVis(bool b) => !b ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility TrueToVis(bool b) => b ? Visibility.Visible : Visibility.Collapsed;
 
+        public static bool IsNull(object obj) => obj == null;
+        public static bool IsNotNull(object obj) => obj != null;
+
     }
 }

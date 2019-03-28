@@ -214,7 +214,7 @@
     <value>PNG Resolution (pixel)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
-    <value>Remove Font</value>
+    <value>Remove Font Family</value>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
     <value>Restart</value>
@@ -296,5 +296,8 @@
   </data>
   <data name="ImportFileCopyFail" xml:space="preserve">
     <value>Something went wrong. Please try again later.</value>
+  </data>
+  <data name="ImportFontHelpBlock.Text" xml:space="preserve">
+    <value>Drag fonts into the app to copy them to your collection.</value>
   </data>
 </root>

@@ -25,6 +25,7 @@
 
     <Grid
         AllowDrop="True"
+        Background="Transparent"
         DragOver="Grid_DragOver"
         Drop="Grid_Drop"
         KeyDown="LayoutRoot_KeyDown"
@@ -47,7 +48,7 @@
                         <StateTrigger IsActive="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="FontsSemanticZoom.Visibility" Value="Collapsed" />
+                        <Setter Target="FontListGrid.Visibility" Value="Collapsed" />
                         <Setter Target="FontMap.Opacity" Value="0" />
                         <Setter Target="FontMap.IsHitTestVisible" Value="False" />
                         <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
@@ -57,6 +58,17 @@
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FontsLoadedState" />
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="FontStates">
+                <VisualState x:Name="NoFontsState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind core:Converters.False(ViewModel.HasFonts), Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ImportFontHelpBlock.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="HasFontsState" />
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
@@ -149,132 +161,146 @@
         </Grid>
 
         <!--  Font List Grid  -->
-        <SemanticZoom
-            x:Name="FontsSemanticZoom"
+        <Grid
+            x:Name="FontListGrid"
             Grid.Row="2"
             Grid.Column="0"
             Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
-            <SemanticZoom.ZoomedInView>
-                <ListView
-                    x:Name="LstFontFamily"
-                    IsItemClickEnabled="False"
-                    IsSwipeEnabled="False"
-                    ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
-                    SelectedItem="{Binding SelectedFont, Mode=TwoWay}"
-                    SelectedValuePath="Name"
-                    SelectionMode="Single">
 
-                    <ListView.Resources>
-                        <Style BasedOn="{StaticResource ListViewItemRevealBackgroundShowsAboveContentStyle}" TargetType="ListViewItem">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.Resources>
+            <TextBlock
+                x:Name="ImportFontHelpBlock"
+                x:Uid="ImportFontHelpBlock"
+                Margin="12"
+                FontSize="13"
+                Opacity="0.7"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Text=""
+                Visibility="Collapsed" />
 
-                    <ListView.GroupStyle>
-                        <GroupStyle HeaderContainerStyle="{ThemeResource FontListHeaderItem}" HidesIfEmpty="True">
-                            <GroupStyle.HeaderTemplate>
-                                <DataTemplate>
-                                    <GridViewItem
-                                        x:Name="Root"
-                                        Margin="0"
-                                        Padding="0"
-                                        HorizontalAlignment="Stretch"
-                                        HorizontalContentAlignment="Stretch"
-                                        IsHitTestVisible="True">
-                                        <Border
-                                            Margin="15,0"
-                                            BorderBrush="#CCC"
-                                            BorderThickness="0,0,0,1">
-                                            <TextBlock
-                                                Padding="0,8,0,10"
-                                                HorizontalAlignment="Stretch"
-                                                VerticalAlignment="Stretch"
-                                                FontSize="30"
-                                                FontWeight="SemiLight"
-                                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                                Text="{Binding Key}" />
-                                        </Border>
-                                    </GridViewItem>
-                                </DataTemplate>
-                            </GroupStyle.HeaderTemplate>
-                        </GroupStyle>
-                    </ListView.GroupStyle>
+            <SemanticZoom x:Name="FontsSemanticZoom">
+                <SemanticZoom.ZoomedInView>
+                    <ListView
+                        x:Name="LstFontFamily"
+                        IsItemClickEnabled="False"
+                        IsSwipeEnabled="False"
+                        ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
+                        SelectedItem="{Binding SelectedFont, Mode=TwoWay}"
+                        SelectedValuePath="Name"
+                        SelectionMode="Single">
 
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="core:InstalledFont">
-                            <Grid ColumnSpacing="12" Background="Transparent">
-                                <Grid.ContextFlyout>
-                                    <MenuFlyout>
-                                        <MenuFlyoutItem x:Uid="OpenInNewWindow" Click="OpenInWindowFlyoutItem_Click">
-                                            <MenuFlyoutItem.Icon>
-                                                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                        <MenuFlyoutItem
-                                            x:Name="RemoveFontItem"
-                                            x:Uid="RemoveFontFlyout"
-                                            x:Load="{x:Bind HasImportedFiles}"
-                                            Click="RemoveMenuFlyoutItem_Click"
-                                            Tag="{x:Bind}">
-                                            <MenuFlyoutItem.Icon>
-                                                <SymbolIcon Symbol="Delete" />
-                                            </MenuFlyoutItem.Icon>
-                                        </MenuFlyoutItem>
-                                    </MenuFlyout>
-                                </Grid.ContextFlyout>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock
-                                    Padding="5"
-                                    VerticalAlignment="Center"
-                                    Text="{x:Bind Name}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap" />
-                                <TextBlock
-                                    Grid.Column="1"
-                                    Padding="5"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Opacity="0.5"
-                                    Text="{x:Bind Variants.Count}"
-                                    Visibility="{x:Bind HasVariants}" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </SemanticZoom.ZoomedInView>
-            <SemanticZoom.ZoomedOutView>
-                <GridView
-                    x:Name="ZoomGridView"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}">
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <Border Width="64" Height="64">
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontSize="32"
-                                    FontWeight="SemiLight"
-                                    Foreground="{Binding Group.Count, Converter={StaticResource ZoomBackgroundConverter}}"
-                                    Text="{Binding Group.Key}" />
-                            </Border>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                </GridView>
-            </SemanticZoom.ZoomedOutView>
-        </SemanticZoom>
+                        <ListView.Resources>
+                            <Style BasedOn="{StaticResource ListViewItemRevealBackgroundShowsAboveContentStyle}" TargetType="ListViewItem">
+                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.Resources>
+
+                        <ListView.GroupStyle>
+                            <GroupStyle HeaderContainerStyle="{ThemeResource FontListHeaderItem}" HidesIfEmpty="True">
+                                <GroupStyle.HeaderTemplate>
+                                    <DataTemplate>
+                                        <GridViewItem
+                                            x:Name="Root"
+                                            Margin="0"
+                                            Padding="0"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Stretch"
+                                            IsHitTestVisible="True">
+                                            <Border
+                                                Margin="15,0"
+                                                BorderBrush="#CCC"
+                                                BorderThickness="0,0,0,1">
+                                                <TextBlock
+                                                    Padding="0,8,0,10"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"
+                                                    FontSize="30"
+                                                    FontWeight="SemiLight"
+                                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                    Text="{Binding Key}" />
+                                            </Border>
+                                        </GridViewItem>
+                                    </DataTemplate>
+                                </GroupStyle.HeaderTemplate>
+                            </GroupStyle>
+                        </ListView.GroupStyle>
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="core:InstalledFont">
+                                <Grid ColumnSpacing="12" Background="Transparent">
+                                    <Grid.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem x:Uid="OpenInNewWindow" Click="OpenInWindowFlyoutItem_Click">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <MenuFlyoutItem
+                                                x:Name="RemoveFontItem"
+                                                x:Uid="RemoveFontFlyout"
+                                                x:Load="{x:Bind HasImportedFiles}"
+                                                Click="RemoveMenuFlyoutItem_Click"
+                                                Tag="{x:Bind}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <SymbolIcon Symbol="Delete" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                        </MenuFlyout>
+                                    </Grid.ContextFlyout>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Padding="5"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Bind Name}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        Padding="5"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Opacity="0.5"
+                                        Text="{x:Bind Variants.Count}"
+                                        Visibility="{x:Bind HasVariants}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </SemanticZoom.ZoomedInView>
+                <SemanticZoom.ZoomedOutView>
+                    <GridView
+                        x:Name="ZoomGridView"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}">
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="64" Height="64">
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="32"
+                                        FontWeight="SemiLight"
+                                        Foreground="{Binding Group.Count, Converter={StaticResource ZoomBackgroundConverter}}"
+                                        Text="{Binding Group.Key}" />
+                                </Border>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                </SemanticZoom.ZoomedOutView>
+            </SemanticZoom>
+
+        </Grid>
 
         <!--  Main UI Grid  -->
         <views:FontMapView
             x:Name="FontMap"
             Grid.Row="2"
             Grid.Column="1"
-            Font="{Binding SelectedFont}" />
+            Font="{x:Bind ViewModel.SelectedFont, Mode=OneWay}" />
 
         <!--  Loading Root  -->
         <ProgressRing
@@ -314,7 +340,7 @@
                 Grid.Column="2"
                 Margin="12,0"
                 Orientation="Horizontal">
-                <TextBlock Text="{Binding ElementName=FontMap, Path=ViewModel.SelectedChar.UnicodeString}" />
+                <TextBlock Text="{x:Bind FontMap.ViewModel.SelectedChar.UnicodeString, Mode=OneWay}" />
             </StackPanel>
         </Grid>
 

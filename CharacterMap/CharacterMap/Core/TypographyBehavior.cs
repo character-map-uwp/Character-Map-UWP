@@ -14,7 +14,7 @@ namespace CharacterMap.Core
 {
     public partial class TypographyBehavior : Behavior<TextBlock>
     {
-        private XamlDirect _xamlDirect { get; }
+        private XamlDirect _xamlDirect { get; set; }
 
         public TypographyFeatureInfo TypographyFeature
         {
@@ -30,7 +30,6 @@ namespace CharacterMap.Core
 
         public TypographyBehavior()
         {
-            _xamlDirect = Utils.GetXamlDirectForWindow(Dispatcher);
         }
 
         protected override void OnAttached()
@@ -50,6 +49,13 @@ namespace CharacterMap.Core
 
             if (AssociatedObject == null)
                 return;
+
+            // Hack to avoid XAML Direct crash
+            if (_xamlDirect == null && TypographyFeature == null)
+                return;
+
+            if (_xamlDirect == null)
+                _xamlDirect = Utils.GetXamlDirectForWindow(Dispatcher);
 
             /* Assign shorthands for use below */
             CanvasTypographyFeatureName f = TypographyFeature == null ? CanvasTypographyFeatureName.None : TypographyFeature.Feature;

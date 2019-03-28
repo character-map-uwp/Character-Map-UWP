@@ -34,19 +34,14 @@
                 </VisualState>
                 <VisualState x:Name="FontsLoadedState" />
             </VisualStateGroup>
-            <!--<VisualStateGroup x:Name="ViewStates">
-                <VisualState x:Name="StandaloneViewState">
-                    <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind IsStandalone}" />
-                    </VisualState.StateTriggers>
+            <VisualStateGroup x:Name="FontStateGroup">
+                <VisualState x:Name="NoFontState">
                     <VisualState.Setters>
-                        <Setter Target="MainUIGrid.Opacity" Value="0" />
-                        <Setter Target="MainUIGrid.IsHitTestVisible" Value="False" />
-                        <Setter Target="LoadingRing.IsActive" Value="True" />
+                        <Setter Target="MainUIGrid.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="ListingViewState" />
-            </VisualStateGroup>-->
+                <VisualState x:Name="HasFontState" />
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <controls:XamlTitleBar x:Name="TitleBar" x:Load="{x:Bind IsStandalone}">
@@ -80,11 +75,11 @@
                 Height="54"
                 Padding="12 0"
                 HorizontalAlignment="Right"
+                Click="{x:Bind ViewModel.ImportFile}"
+                IsEnabled="{Binding ImportButtonEnabled}"
                 RequestedTheme="Dark"
                 Style="{ThemeResource TransparentButton}"
-                Visibility="{x:Bind ViewModel.IsExternalFile}"
-                IsEnabled="{Binding ImportButtonEnabled}"
-                Click="{x:Bind ViewModel.ImportFile}">
+                Visibility="{x:Bind ViewModel.IsExternalFile}">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -133,6 +128,7 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel
+                    x:Name="OptionsPanel"
                     Margin="12"
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
@@ -146,6 +142,7 @@
                         SelectedItem="{Binding SelectedVariant, Mode=TwoWay}" />
 
                     <Button
+                        x:Name="FontPropertiesButton"
                         x:Uid="FontPropertiesButton"
                         Width="44"
                         Height="44"
@@ -294,9 +291,9 @@
                                             <TextBlock
                                                 x:Name="ColorHeader"
                                                 x:Uid="FontDisplayHeader"
-                                                Opacity="0.5"
                                                 x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
-                                                FontWeight="Bold" />
+                                                FontWeight="Bold"
+                                                Opacity="0.5" />
                                             <ToggleSwitch
                                                 x:Name="ColorGlyphToggle"
                                                 x:Uid="ColorGlyphToggle"
@@ -305,9 +302,9 @@
                                                 IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
                                             <TextBlock
                                                 x:Uid="TypographyVariantsHeader"
-                                                Opacity="0.5"
                                                 Margin="0 12 0 0"
                                                 FontWeight="Bold"
+                                                Opacity="0.5"
                                                 Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}" />
                                         </StackPanel>
                                     </ListView.Header>

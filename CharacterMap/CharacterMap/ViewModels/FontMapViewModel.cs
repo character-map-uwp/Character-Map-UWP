@@ -175,14 +175,14 @@ namespace CharacterMap.ViewModels
                         TitlePrefix = value.Name + " -";
                         SelectedVariant = _selectedFont.DefaultVariant;
 
-                        var lastSelectedChar = Chars.FirstOrDefault((i => i.UnicodeIndex == App.AppSettings.LastSelectedCharIndex));
-                        if (null != lastSelectedChar)
-                        {
-                            this.SelectedChar = lastSelectedChar;
-                        }
+                        SetDefaultChar();
+
+                    }
+                    else
+                    {
+                        SelectedVariant = null;
                     }
                 }
-                
             }
         }
 
@@ -204,13 +204,13 @@ namespace CharacterMap.ViewModels
 
         private void LoadChars(FontVariant variant)
         {
-            Chars = variant?.GetCharacters();
-            if (variant != null)
+            try
             {
-                using (CanvasTextLayout layout = new CanvasTextLayout(
-                    Utils.CanvasDevice,
-                    TypographyAnalyzer.GetCharString(variant), 
-                    new CanvasTextFormat
+                Chars = variant?.GetCharacters();
+                if (variant != null)
+                {
+                    var chars = TypographyAnalyzer.GetCharString(variant);
+                    using (CanvasTextFormat format = new CanvasTextFormat
                     {
                         FontSize = 8,
                         FontFamily = variant.Source,
@@ -218,19 +218,40 @@ namespace CharacterMap.ViewModels
                         FontWeight = variant.FontFace.Weight,
                         FontStyle = variant.FontFace.Style,
                         HorizontalAlignment = CanvasHorizontalAlignment.Left,
-                    }, 10000, 10000))
+                    })
+                    using (CanvasTextLayout layout = new CanvasTextLayout(
+                        Utils.CanvasDevice, chars, format, 1024, 1024))
+                    {
+                        layout.Options = CanvasDrawTextOptions.EnableColorFont;
+                        ApplyEffectiveTypography(layout);
+                        SelectedVariantAnalysis = Interop.AnalyzeFontLayout(layout);
+                        HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
+                    }
+                }
+                else
                 {
-                    layout.Options = CanvasDrawTextOptions.EnableColorFont;
-                    ApplyEffectiveTypography(layout);
-                    SelectedVariantAnalysis = Interop.AnalyzeFontLayout(layout);
-                    HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
+                    SelectedVariantAnalysis = new CanvasTextLayoutAnalysis();
+                    HasFontOptions = false;
+                    ShowColorGlyphs = false;
+                    ImportButtonEnabled = false;
                 }
             }
-            else
+            catch (Exception ex)
             {
-                SelectedVariantAnalysis = new CanvasTextLayoutAnalysis();
-                HasFontOptions = false;
+                /* 
+                 * Hack to avoid crash.
+                 * When launching the app by double clicking on a font file when the app is closed,
+                 * creating a CanvasTextLayout can fail for some unknown reason. So we retry it.
+                 * If we get caught in a never ending loop here, something horrible has occured.
+                 */
+                _ = Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, async () =>
+                {
+                    await Task.Delay(100);
+                    if (variant == SelectedVariant)
+                        LoadChars(variant);
+                });
             }
+            
         }
 
         private void UpdateCharAnalysis()
@@ -290,6 +311,22 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private void SetDefaultChar()
+        {
+            if (Chars.FirstOrDefault(i => i.UnicodeIndex == App.AppSettings.LastSelectedCharIndex)
+                            is Character lastSelectedChar
+                            && SelectedVariant.FontFace.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
+            {
+                this.SelectedChar = lastSelectedChar;
+            }
+            else
+            {
+                // Everything below 32 / u0020 are control characters and typically blank, so we
+                // try not to choose them as the defaults. 32 is "space", so don't bother with him either.
+                this.SelectedChar = Chars?.FirstOrDefault(c => c.UnicodeIndex > 32) ?? Chars.FirstOrDefault();
+            }
+        }
+
         private Task SavePngAsync(ExportStyle style)
         {
             return ExportManager.ExportPngAsync(
@@ -320,7 +357,10 @@ namespace CharacterMap.ViewModels
                     && await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                 {
                     _sourceFile = file;
+                    IsLoading = false;
+
                     SelectedFont = font;
+                    SetDefaultChar();
                     return true;
                 }
 
