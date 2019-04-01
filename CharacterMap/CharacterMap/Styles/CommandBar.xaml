@@ -645,7 +645,7 @@
                                                 <SplineDoubleKeyFrame
                                                     KeySpline="0.2,0 0,1"
                                                     KeyTime="0:0:0.167"
-                                                    Value="0}" />
+                                                    Value="0" />
                                             </DoubleAnimationUsingKeyFrames>
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverflowContentTransform" Storyboard.TargetProperty="Y">
                                                 <DiscreteDoubleKeyFrame KeyTime="0:0:0" Value="0" />
