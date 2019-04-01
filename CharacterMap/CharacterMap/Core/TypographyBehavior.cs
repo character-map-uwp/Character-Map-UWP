@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graphics.Canvas.Text;
+using Microsoft.UI.Xaml.Core.Direct;
 using Microsoft.Xaml.Interactivity;
 using System;
 using System.Collections.Generic;
@@ -7,14 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
 
 namespace CharacterMap.Core
 {
     public partial class TypographyBehavior : Behavior<TextBlock>
     {
-        private XamlDirect _xamlDirect { get; set; }
+        private IXamlDirect _xamlDirect { get; set; }
 
         public TypographyFeatureInfo TypographyFeature
         {
@@ -62,7 +62,7 @@ namespace CharacterMap.Core
             TextBlock t = AssociatedObject;
 
             /* XAML Direct Helpers. Using XD is faster than setting Dependency Properties */
-            IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(t);
+            object o = _xamlDirect.GetXamlDirectObject(t);
             void Set(XamlPropertyIndex index, bool value)
             {
                 _xamlDirect.SetBooleanProperty(o, index, value);

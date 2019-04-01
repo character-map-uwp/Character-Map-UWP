@@ -493,7 +493,7 @@
                                     Command="{Binding CommandSavePng}"
                                     CommandParameter="{x:Bind ViewModel.BlackColor}"
                                     Style="{ThemeResource TransparentButton}"
-                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay}">
+                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
                                     <AppBarButton.Content>
                                         <TextBlock x:Uid="BlackFill" Margin="12,10" />
                                     </AppBarButton.Content>
@@ -504,7 +504,7 @@
                                     Command="{Binding CommandSavePng}"
                                     CommandParameter="{x:Bind ViewModel.WhiteColor}"
                                     Style="{ThemeResource TransparentButton}"
-                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay}">
+                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
                                     <AppBarButton.Content>
                                         <TextBlock x:Uid="WhiteFill" Margin="12,10" />
                                     </AppBarButton.Content>

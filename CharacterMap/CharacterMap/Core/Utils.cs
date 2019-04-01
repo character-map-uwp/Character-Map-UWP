@@ -1,6 +1,7 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
+using Microsoft.UI.Xaml.Core.Direct;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,6 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.UI.Core;
 using Windows.UI.Text;
-using Windows.UI.Xaml.Core.Direct;
 
 namespace CharacterMap.Core
 {
@@ -20,12 +20,12 @@ namespace CharacterMap.Core
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
 
-        private static Dictionary<int, XamlDirect> _xamlDirectCache { get; } = new Dictionary<int, XamlDirect>();
+        private static Dictionary<int, IXamlDirect> _xamlDirectCache { get; } = new Dictionary<int, IXamlDirect>();
 
-        public static XamlDirect GetXamlDirectForWindow(CoreDispatcher dispatcher)
+        public static IXamlDirect GetXamlDirectForWindow(CoreDispatcher dispatcher)
         {
             int hash = dispatcher.GetHashCode();
-            if (_xamlDirectCache.TryGetValue(hash, out XamlDirect d))
+            if (_xamlDirectCache.TryGetValue(hash, out IXamlDirect d))
                 return d;
 
             d = XamlDirect.GetDefault();
