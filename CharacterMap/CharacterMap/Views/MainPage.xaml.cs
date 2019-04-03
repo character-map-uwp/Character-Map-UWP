@@ -21,6 +21,7 @@ using Windows.UI.Xaml.Media;
 using GalaSoft.MvvmLight.Messaging;
 using Windows.Storage;
 using System.Collections.Generic;
+using CharacterMap.Services;
 
 namespace CharacterMap.Views
 {
@@ -98,6 +99,8 @@ namespace CharacterMap.Views
             else if (ViewModel.SelectedFont.Name.EndsWith("MDL2 Assets"))    //Search for Segoe MDL2 Assets characters with description
             {
                 string descriptionForSearch = SearchBoxUnicode.Text.ToLower().Replace(" ", string.Empty);
+
+                GlyphService.Search(descriptionForSearch, FontMap.ViewModel.SelectedVariant);
 
                 if (MDL2Description.Dict.TryGetValue(descriptionForSearch, out string unicodePoint))
                 {

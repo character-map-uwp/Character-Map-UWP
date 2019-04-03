@@ -109,6 +109,9 @@
     <!-- <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0"> -->
     <!-- <Name>Microsoft Engagement Framework</Name> -->
     <!-- </SDKReference> -->
+    <PackageReference Include="Humanizer">
+      <Version>2.6.2</Version>
+    </PackageReference>
     <PackageReference Include="Humanizer.Core">
       <Version>2.6.2</Version>
     </PackageReference>
@@ -139,6 +142,9 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="SQLitePCLRaw.provider.winsqlite3.uwp10">
+      <Version>1.1.13</Version>
     </PackageReference>
     <PackageReference Include="Win2d.uwp">
       <Version>1.23.0</Version>
@@ -179,13 +185,19 @@
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
+    <Compile Include="Core\UnicodeGlyphData.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\Localization.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Helpers\Sqlite.cs" />
     <Compile Include="Helpers\TitleBarHelper.cs" />
+    <Compile Include="Provider\SQLiteGlyphProvider.cs" />
+    <Compile Include="Provider\SQLiteMDL2Provider.cs" />
+    <Compile Include="Provider\DictUnicodeProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
+    <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
     <Compile Include="Services\ToastNotificationsService.cs" />
     <Compile Include="Services\ViewLifetimeManager.cs" />
@@ -215,6 +227,8 @@
     <Content Include="Assets\BadgeLogo.scale-150.png" />
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
+    <Content Include="Assets\Data\UnicodeData.txt" />
+    <Content Include="Assets\Data\MDL2.xml" />
     <Content Include="Assets\NewStoreLogo.scale-100.png" />
     <Content Include="Assets\NewStoreLogo.scale-125.png" />
     <Content Include="Assets\NewStoreLogo.scale-150.png" />

@@ -251,7 +251,7 @@ namespace CharacterMap.ViewModels
                         LoadChars(variant);
                 });
             }
-            
+
         }
 
         private void UpdateCharAnalysis()
@@ -275,6 +275,12 @@ namespace CharacterMap.ViewModels
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
                 ApplyEffectiveTypography(layout);
                 SelectedCharAnalysis = Interop.AnalyzeCharacterLayout(layout);
+            }
+
+
+            if (SelectedVariant != null && SelectedVariant.FamilyName.Contains("MDL2 Assets"))
+            {
+                TitlePrefix = GlyphService.GetCharacterDescription(SelectedChar.UnicodeIndex, SelectedVariant);
             }
         }
 
@@ -325,6 +331,14 @@ namespace CharacterMap.ViewModels
                 // try not to choose them as the defaults. 32 is "space", so don't bother with him either.
                 this.SelectedChar = Chars?.FirstOrDefault(c => c.UnicodeIndex > 32) ?? Chars.FirstOrDefault();
             }
+        }
+
+        public string GetCharDescription(Character c)
+        {
+            if (SelectedVariant == null || c == null)
+                return null;
+
+            return GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant);
         }
 
         private Task SavePngAsync(ExportStyle style)
