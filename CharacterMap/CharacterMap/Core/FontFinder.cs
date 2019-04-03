@@ -135,10 +135,14 @@ namespace CharacterMap.Core
                 var familyNames = fontFace.FamilyNames;
                 if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string familyName))
                 {
-                    familyNames.TryGetValue("en-us", out familyName);
+                    if (!familyNames.TryGetValue("en-us", out familyName))
+                    {
+                        if (familyNames != null && familyName.Length > 0)
+                            familyName = familyNames.FirstOrDefault().Value;
+                    }
                 }
 
-                if (familyName != null)
+                if (!string.IsNullOrEmpty(familyName))
                 {
                     /* Check if we already have a listing for this fontFamily */
                     if (fontList.TryGetValue(familyName, out InstalledFont fontFamily))
@@ -151,20 +155,14 @@ namespace CharacterMap.Core
                     }
                     else
                     {
-                        var family = new InstalledFont
+                        fontList[familyName] = new InstalledFont
                         {
                             Name = familyName,
                             IsSymbolFont = fontFace.IsSymbolFont,
                             FontFace = fontFace,
-                            Variants = new List<FontVariant> { new FontVariant(fontFace, familyName, file) }
+                            Variants = new List<FontVariant> { new FontVariant(fontFace, familyName, file) },
+                            HasImportedFiles = file != null
                         };
-
-                        if (file != null)
-                        {
-                            family.HasImportedFiles = true;
-                        }
-
-                        fontList[familyName] = family;
                     }
                 }
             }
