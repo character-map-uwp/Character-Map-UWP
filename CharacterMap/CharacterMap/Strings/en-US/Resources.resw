@@ -300,4 +300,7 @@
   <data name="ImportFontHelpBlock.Text" xml:space="preserve">
     <value>Drag fonts into the app to copy them to your collection.</value>
   </data>
+  <data name="FontPropXaml.Text" xml:space="preserve">
+    <value>XAML FontFamily Source</value>
+  </data>
 </root>

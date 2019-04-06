@@ -188,6 +188,8 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
 
@@ -238,6 +240,21 @@
                                             Grid.Row="7"
                                             Style="{StaticResource Value}"
                                             Text="{x:Bind ViewModel.SelectedVariant.FontFace.Weight.Weight.ToString(), Mode=OneWay}" />
+
+                                        <TextBlock
+                                            x:Uid="FontPropXaml"
+                                            Grid.Row="8"
+                                            Margin="0 4 0 0"
+                                            Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
+                                        <TextBlock
+                                            Grid.Row="9"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            Margin="0 -4 0 0"
+                                            IsTextSelectionEnabled="True"
+                                            Style="{StaticResource Value}"
+                                            Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
+                                            Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
                                     </Grid>
 
                                     <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">

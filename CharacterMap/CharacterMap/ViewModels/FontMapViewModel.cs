@@ -138,6 +138,13 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private string _xamlPath;
+        public string XamlPath
+        {
+            get => _xamlPath;
+            set => Set(ref _xamlPath, value);
+        }
+
         private string _xamlCode;
         public string XamlCode
         {
@@ -306,11 +313,12 @@ namespace CharacterMap.ViewModels
         {
             if (SelectedVariant == null || SelectedChar == null)
             {
-                XamlCode = FontIcon = SymbolIcon = null;
+                XamlPath = XamlCode = FontIcon = SymbolIcon = null;
             }
             else
             {
                 var uni = SelectedChar.UnicodeIndex.ToString("x").ToUpper();
+                XamlPath = $"<FontFamily>{SelectedVariant.XamlFontSource}</FontFamily>";
                 XamlCode = $"&#x{uni};";
                 FontIcon = $@"<FontIcon FontFamily=""{SelectedVariant.XamlFontSource}"" Glyph=""&#x{uni};"" />";
                 SymbolIcon = $"(Symbol)0x{uni}";
