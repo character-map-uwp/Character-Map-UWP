@@ -347,6 +347,9 @@
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowsScrollingPlaceholders="False">
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection />
+                    </GridView.ItemContainerTransitions>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="core:Character">
                             <Grid Style="{StaticResource CharItemGridStyle}">

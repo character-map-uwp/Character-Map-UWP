@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Helpers;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
@@ -57,7 +58,7 @@ namespace CharacterMap.Core
         {
             try
             {
-                string name = $"{selectedFont.Name} - {selectedVariant.PreferredName} - {selectedChar.UnicodeString}.svg";
+                string name = GetFileName(selectedFont, selectedVariant, selectedChar, "svg");
                 if (await PickFileAsync(name, "SVG", new[] { ".svg" }) is StorageFile file)
                 {
                     CachedFileManager.DeferUpdates(file);
@@ -132,7 +133,7 @@ namespace CharacterMap.Core
         {
             try
             {
-                string name = $"{selectedFont.Name} - {selectedVariant.PreferredName} - {selectedChar.UnicodeString}.png";
+                string name = GetFileName(selectedFont, selectedVariant, selectedChar, "png");
                 if (await PickFileAsync(name, "Png Image", new[] { ".png" }) 
                     is StorageFile file)
                 {
@@ -199,7 +200,15 @@ namespace CharacterMap.Core
             }
         }
 
-
+        private static string GetFileName(
+            InstalledFont selectedFont,
+            FontVariant selectedVariant,
+            Character selectedChar,
+            string ext)
+        {
+            var chr = GlyphService.GetCharacterDescription(selectedChar.UnicodeIndex, selectedVariant) ?? selectedChar.UnicodeString;
+            return $"{selectedFont.Name} {selectedVariant.PreferredName} - {chr}.{ext}";
+        }
 
 
 

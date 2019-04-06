@@ -30,7 +30,7 @@ namespace CharacterMap.Services
     public interface IGlyphDataProvider
     {
         Task InitialiseAsync();
-        string GetCharacterDescription(int unicodeIndex);
+        string GetCharacterDescription(int unicodeIndex, FontVariant variant);
     }
 
     public static partial class GlyphService
@@ -68,17 +68,12 @@ namespace CharacterMap.Services
             //    $"select * from {SEARCH_TABLE} where {nameof(GlyphDescription.Description)} LIKE %?%", query);
         }
 
-        internal static string GetCharacterDescription(int unicodeIndex, FontVariant selectedVariant)
+        internal static string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
-            if (selectedVariant == null)
+            if (variant == null)
                 return null;
 
-            if (!selectedVariant.FontFace.IsSymbolFont)
-                return _provider.GetCharacterDescription(unicodeIndex);
-            else
-            {
-                return null;
-            }
+            return _provider.GetCharacterDescription(unicodeIndex, variant);
 
             //if (selectedVariant.FamilyName.Contains("MDL2 Assets"))
             //    return _mdl2Provider.GetCharacterDescription(unicodeIndex);

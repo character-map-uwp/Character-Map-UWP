@@ -109,9 +109,6 @@
     <!-- <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0"> -->
     <!-- <Name>Microsoft Engagement Framework</Name> -->
     <!-- </SDKReference> -->
-    <PackageReference Include="Humanizer">
-      <Version>2.6.2</Version>
-    </PackageReference>
     <PackageReference Include="Humanizer.Core">
       <Version>2.6.2</Version>
     </PackageReference>
@@ -152,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="Assets\Data\GlyphData.db" />
     <None Include="CharacterMap_StoreKey.pfx" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
     <PRIResource Include="Strings\pl-PL\Resources.resw" />
@@ -194,8 +192,6 @@
     <Compile Include="Helpers\Sqlite.cs" />
     <Compile Include="Helpers\TitleBarHelper.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
-    <Compile Include="Provider\SQLiteMDL2Provider.cs" />
-    <Compile Include="Provider\DictUnicodeProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
@@ -227,8 +223,6 @@
     <Content Include="Assets\BadgeLogo.scale-150.png" />
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
-    <Content Include="Assets\Data\UnicodeData.txt" />
-    <Content Include="Assets\Data\MDL2.xml" />
     <Content Include="Assets\NewStoreLogo.scale-100.png" />
     <Content Include="Assets\NewStoreLogo.scale-125.png" />
     <Content Include="Assets\NewStoreLogo.scale-150.png" />
@@ -279,6 +273,10 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <Content Include="Assets\Data\UnicodeData.txt" />
+    <Content Include="Assets\Data\MDL2.xml" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

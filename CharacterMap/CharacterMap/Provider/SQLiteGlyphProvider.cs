@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
@@ -24,6 +25,10 @@ namespace CharacterMap.Provider
         {
             SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_winsqlite3());
 
+            var path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Data", "GlyphData.db");
+            _connection = new SQLiteConnection(new SQLiteConnectionString(path));
+            return Task.CompletedTask;
+
 #if DEBUG
             return InitialiseDebugAsync();
 #else
@@ -31,8 +36,14 @@ namespace CharacterMap.Provider
 #endif
         }
 
-        public string GetCharacterDescription(int unicodeIndex)
+        public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
+            if (FontFinder.IsMDL2(variant))
+                return _connection.Get<GlyphDescription>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+
+            if (variant.FontFace.IsSymbolFont)
+                return null;
+
             return _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;
         }
     }
@@ -57,6 +68,12 @@ namespace CharacterMap.Provider
 
                 await PopulateMDL2Async(connection).ConfigureAwait(false);
                 await PopulateUnicodeAsync(connection).ConfigureAwait(false);
+
+                using (SQLiteConnection con = new SQLiteConnection(connection))
+                {
+                    con.Execute("VACUUM \"main\"");
+                    con.Execute("VACUUM \"temp\"");
+                }
 
                 _connection = new SQLiteConnection(connection);
             });
@@ -112,17 +129,21 @@ namespace CharacterMap.Provider
                         using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
                         using (var reader = new StreamReader(stream))
                         {
+                            string ctrl = "<control>";
                             string[] parts;
                             List<UnicodeGlyphData> data = new List<UnicodeGlyphData>();
                             while (!reader.EndOfStream)
                             {
-                                parts = reader.ReadLine().Split(";", 4, StringSplitOptions.None);
+                                parts = reader.ReadLine().Split(";", StringSplitOptions.None);
 
                                 string hex = parts[0];
+                                string desc = parts[1] == ctrl ? parts[10] : parts[1];
+                                if (string.IsNullOrWhiteSpace(desc))
+                                    desc = parts[1]; // some controls characters are unlabeled
                                 int code = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
                                 data.Add(new UnicodeGlyphData
                                 {
-                                    Description = parts[1].Transform(To.LowerCase, To.TitleCase),
+                                    Description = desc.Transform(To.LowerCase, To.TitleCase),
                                     UnicodeGroup = parts[2],
                                     UnicodeHex = hex,
                                     UnicodeIndex = code
