@@ -16,8 +16,10 @@
     <Grid DataContext="{x:Bind ViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="45" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="26" />
+
         </Grid.RowDefinitions>
 
         <VisualStateManager.VisualStateGroups>
@@ -63,7 +65,7 @@
             <TextBlock
                 x:Name="FontTitleBlock"
                 Grid.Column="1"
-                Margin="12,12,12,12"
+                Margin="12 0"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
@@ -72,7 +74,7 @@
                 TextTrimming="CharacterEllipsis" />
 
             <Button
-                Height="54"
+                Height="45"
                 Padding="12 0"
                 HorizontalAlignment="Right"
                 Click="{x:Bind ViewModel.ImportFile}"
@@ -728,6 +730,31 @@
             Grid.ColumnSpan="2"
             Width="50"
             Height="50" />
+
+        <Grid
+            x:Name="StatusBar"
+            x:Load="{x:Bind IsStandalone}"
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+            </Grid.Resources>
+            <TextBlock
+                Grid.Column="2"
+                Margin="12,0"
+                Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
+        </Grid>
 
     </Grid>
 

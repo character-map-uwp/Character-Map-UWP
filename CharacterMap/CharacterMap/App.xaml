@@ -13,6 +13,7 @@
 
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary>
+                    <converters1:SmartTextColorBasedOnAccentTypeConverter x:Key="SmartTextColorBasedOnAccentTypeConverter" />
                     <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
                 </ResourceDictionary>
                 <ResourceDictionary>

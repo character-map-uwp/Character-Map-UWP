@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="CharacterMap.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -15,7 +15,6 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:SmartTextColorBasedOnAccentTypeConverter x:Key="SmartTextColorBasedOnAccentTypeConverter" />
         <CollectionViewSource
             x:Key="GroupedFontList"
             x:Name="GroupedFontList"
@@ -336,16 +335,10 @@
                 </TextBlock>
             </StackPanel>
 
-            <StackPanel
+            <TextBlock
                 Grid.Column="2"
                 Margin="12,0"
-                Orientation="Horizontal">
-                <TextBlock >
-                    <Run Text="{x:Bind FontMap.ViewModel.GetCharDescription(FontMap.ViewModel.SelectedChar), Mode=OneWay, TargetNullValue='', FallbackValue=''}" />
-                    <Run Text="-" />
-                    <Run Text="{x:Bind FontMap.ViewModel.SelectedChar.UnicodeString, Mode=OneWay}" />
-                </TextBlock>
-            </StackPanel>
+                Text="{x:Bind FontMap.ViewModel.GetCharDescription(FontMap.ViewModel.SelectedChar), Mode=OneWay}" />
         </Grid>
 
         <!--  Settings ContentDialog  -->

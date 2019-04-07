@@ -36,6 +36,8 @@ namespace CharacterMap.ViewModels
         public RelayCommand<ExportStyle> CommandSavePng { get; }
         public RelayCommand<bool> CommandSaveSvg { get; }
 
+        public bool IsDarkAccent => Utils.IsAccentColorDark();
+
         public bool IsExternalFile { get; set; }
 
         private bool _isLoading;
@@ -346,7 +348,11 @@ namespace CharacterMap.ViewModels
             if (SelectedVariant == null || c == null)
                 return null;
 
-            return GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant);
+            string desc = GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant);
+            if (!string.IsNullOrEmpty(desc))
+                return $"{desc} - {c.UnicodeString}";
+
+            return c.UnicodeString;
         }
 
         private Task SavePngAsync(ExportStyle style)

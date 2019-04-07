@@ -26,14 +26,15 @@ namespace CharacterMap.Provider
             SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_winsqlite3());
 
             var path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Data", "GlyphData.db");
-            _connection = new SQLiteConnection(new SQLiteConnectionString(path));
+            _connection = new SQLiteConnection(new SQLiteConnectionString(path, SQLiteOpenFlags.ReadOnly, true));
             return Task.CompletedTask;
 
-#if DEBUG
-            return InitialiseDebugAsync();
-#else
-            return Task.CompletedTask;
-#endif
+            /* 
+             * If you update the dataset and wish to generate a NEW dataset
+             * run the code below
+             */
+
+            //return InitialiseDebugAsync();
         }
 
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
@@ -49,6 +50,12 @@ namespace CharacterMap.Provider
     }
 
 
+    /* 
+     * These are DEV time only methods to create a new database when data changes.
+     * After creating a new database copy it to the Assets/Data/ folder to ship it with
+     * the app
+     */
+#if DEBUG
     public partial class SQLiteGlyphProvider 
     {
         public Task InitialiseDebugAsync()
@@ -169,4 +176,5 @@ namespace CharacterMap.Provider
                 $"VALUES (new.{nameof(GlyphDescription.UnicodePoint)}, new.{nameof(GlyphDescription.Description)}); END;");
         }
     }
+#endif
 }
