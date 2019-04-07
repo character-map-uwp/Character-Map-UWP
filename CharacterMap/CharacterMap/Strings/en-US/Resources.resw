@@ -303,4 +303,7 @@
   <data name="FontPropXaml.Text" xml:space="preserve">
     <value>XAML FontFamily Source</value>
   </data>
+  <data name="FilePickerConfirm" xml:space="preserve">
+    <value>Import</value>
+  </data>
 </root>

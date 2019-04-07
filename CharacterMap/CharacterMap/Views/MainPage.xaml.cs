@@ -22,6 +22,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Windows.Storage;
 using System.Collections.Generic;
 using CharacterMap.Services;
+using Windows.Storage.Pickers;
 
 namespace CharacterMap.Views
 {
@@ -225,6 +226,33 @@ namespace CharacterMap.Views
                 && item.DataContext is InstalledFont font)
             {
                 _ = FontMapView.CreateNewViewForFontAsync(font);
+            }
+        }
+
+        private async void PickFonts()
+        {
+            var picker = new FileOpenPicker();
+            foreach (var format in FontFinder.SupportedFormats)
+                picker.FileTypeFilter.Add(format);
+
+            picker.CommitButtonText = Localization.Get("FilePickerConfirm");
+            var files = await picker.PickMultipleFilesAsync();
+            if (files.Any())
+            {
+                ViewModel.IsLoadingFonts = true;
+                try
+                {
+                    if (await FontFinder.ImportFontsAsync(files.ToList()) is FontImportResult result
+                        && result.Imported.Count > 0)
+                    {
+                        ViewModel.RefreshFontList();
+                        ViewModel.TrySetSelectionFromImport(result);
+                    }
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
+                }
             }
         }
     }
