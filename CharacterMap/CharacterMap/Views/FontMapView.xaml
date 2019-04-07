@@ -16,9 +16,9 @@
     <Grid DataContext="{x:Bind ViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="45" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="26" />
+            <RowDefinition Height="Auto" />
 
         </Grid.RowDefinitions>
 
@@ -61,6 +61,7 @@
             x:Name="TitleGrid"
             x:Load="{x:Bind IsStandalone}"
             Grid.Row="1"
+            Height="45"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <TextBlock
                 x:Name="FontTitleBlock"
@@ -737,6 +738,7 @@
             Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="2"
+            Height="26"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
