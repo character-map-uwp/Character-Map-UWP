@@ -54,6 +54,7 @@
                         <Setter Target="FontListFilter.IsEnabled" Value="False" />
                         <Setter Target="SearchBoxUnicode.IsEnabled" Value="False" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
+                        <Setter Target="OpenFontButton.IsEnabled" Value="False" />
                         <Setter Target="LoadingRing.IsActive" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
@@ -114,14 +115,16 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="8" />
                 </Grid.ColumnDefinitions>
                 <ComboBox
                     x:Name="FontListFilter"
-                    HorizontalAlignment="Stretch"
+                    Height="45"
                     Margin="0,0,0,0"
+                    HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     FontSize="16"
-                    Height="45"
                     SelectedIndex="{Binding FontListFilter, Mode=TwoWay}">
                     <ComboBoxItem x:Uid="FilterAllFonts" />
                     <ComboBoxItem x:Uid="FilterSymbolFonts" />
@@ -129,13 +132,32 @@
                     <!--<ComboBoxItem Content="Favorites" />-->
                 </ComboBox>
                 <AppBarButton
+                    x:Uid="ImportFontsButton"
                     x:Name="ImportFontsButton"
-                    Click="{x:Bind PickFonts}"
                     Grid.Column="1"
                     Width="45"
                     Height="45"
-                    VerticalAlignment="Bottom">
-                    <FontIcon FontSize="11" Opacity="0.8" Glyph="&#xE109;" />
+                    VerticalAlignment="Bottom"
+                    Click="{x:Bind PickFonts}">
+                    <FontIcon
+                        FontSize="16"
+                        Glyph="&#xE109;"
+                        Opacity="0.8" />
+                </AppBarButton>
+                <AppBarButton
+                    x:Name="OpenFontButton"
+                    x:Uid="OpenFontButton"
+                    Grid.Column="2"
+                    Width="45"
+                    Height="45"
+                    VerticalAlignment="Bottom"
+                    Click="{x:Bind OpenFont}">
+                    <Path
+                        Height="16"
+                        Data="M896,320L1012,320L788,768L0,768L0,128L338.5,128L466.5,0L896,0ZM64,192L64,632.5L220.5,320L832,320L832,64L493.5,64L365.5,192ZM748,704L908,384L260,384L99.5,704Z"
+                        Fill="White"
+                        Opacity="0.8"
+                        Stretch="Uniform" />
                 </AppBarButton>
             </Grid>
 

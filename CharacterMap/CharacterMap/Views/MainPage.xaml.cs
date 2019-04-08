@@ -255,5 +255,31 @@ namespace CharacterMap.Views
                 }
             }
         }
+
+        private async void OpenFont()
+        {
+            var picker = new FileOpenPicker();
+            foreach (var format in FontFinder.SupportedFormats)
+                picker.FileTypeFilter.Add(format);
+
+            picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    ViewModel.IsLoadingFonts = true;
+
+                    if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
+                    {
+                        await FontMapView.CreateNewViewForFontAsync(font);
+                    }
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
+                }
+            }
+        }
     }
 }
