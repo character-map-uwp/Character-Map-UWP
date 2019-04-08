@@ -1,4 +1,4 @@
-﻿using CharacterMap.Core;
+using CharacterMap.Core;
 using CharacterMap.Services;
 using Humanizer;
 using SQLite;
@@ -62,7 +62,7 @@ namespace CharacterMap.Provider
         {
             return Task.Run(async () =>
             {
-                var path = Path.Combine(ApplicationData.Current.LocalFolder.Path, "GlyphData.db");
+                var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "GlyphData.db");
                 if (File.Exists(path))
                     File.Delete(path);
 
@@ -109,6 +109,38 @@ namespace CharacterMap.Provider
                     if (!datas.Any(d => d.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
                         datas.Add((((int)e).ToString("X"), name));
                 }
+
+
+                /* read fabric mdl2 listing */
+                var fabric = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FabricMDL2.txt")).AsTask().ConfigureAwait(false);
+                using (var stream = await fabric.OpenStreamForReadAsync().ConfigureAwait(false))
+                using (var reader = new StreamReader(stream))
+                {
+                    string[] parts;
+                    while (!reader.EndOfStream)
+                    {
+                        parts = reader.ReadLine().Split(":", StringSplitOptions.None);
+
+                        if (!datas.Any(d => d.code.Equals(parts[1], StringComparison.OrdinalIgnoreCase)))
+                            datas.Add((parts[1], parts[0]));
+                    }
+                }
+
+                /* read manually created full mdl2 listings */
+                var manual = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FullMDL2ManualList.txt")).AsTask().ConfigureAwait(false);
+                using (var stream = await manual.OpenStreamForReadAsync().ConfigureAwait(false))
+                using (var reader = new StreamReader(stream))
+                {
+                    string[] parts;
+                    while (!reader.EndOfStream)
+                    {
+                        parts = reader.ReadLine().Split(":", StringSplitOptions.None);
+
+                        if (!datas.Any(d => d.code.Equals(parts[1], StringComparison.OrdinalIgnoreCase)))
+                            datas.Add((parts[1], parts[0]));
+                    }
+                }
+
 
                 using (var c = new SQLiteConnection(connection))
                 {

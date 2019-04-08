@@ -35,8 +35,6 @@ namespace CharacterMap.Services
 
     public static partial class GlyphService
     {
-        //private static IGlyphDataProvider _mdl2Provider { get; set; }
-        //private static IGlyphDataProvider _unicodeProvider { get; set; }
         private static IGlyphDataProvider _provider { get; set; }
 
         private static Task _init { get; set; }
@@ -51,21 +49,11 @@ namespace CharacterMap.Services
 
         private static Task InitializeInternalAsync()
         {
-            //_mdl2Provider = new SQLiteMDL2Provider();
-            //_unicodeProvider = new DictUnicodeProvider();
             _provider = new SQLiteGlyphProvider();
 
             return Task.WhenAll(
                 _provider.InitialiseAsync()
-                //_mdl2Provider.InitialiseAsync(),
-                //_unicodeProvider.InitialiseAsync()
                 );
-        }
-
-        public static void Search(string query, FontVariant selectedVariant)
-        {
-            //var matches = _searchConnection.Query(_searchMapping, 
-            //    $"select * from {SEARCH_TABLE} where {nameof(GlyphDescription.Description)} LIKE %?%", query);
         }
 
         internal static string GetCharacterDescription(int unicodeIndex, FontVariant variant)
@@ -74,11 +62,6 @@ namespace CharacterMap.Services
                 return null;
 
             return _provider.GetCharacterDescription(unicodeIndex, variant);
-
-            //if (selectedVariant.FamilyName.Contains("MDL2 Assets"))
-            //    return _mdl2Provider.GetCharacterDescription(unicodeIndex);
-
-            //return _unicodeProvider.GetCharacterDescription(unicodeIndex);
         }
     }
 }

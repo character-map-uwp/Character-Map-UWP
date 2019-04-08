@@ -277,6 +277,8 @@
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Content Include="Assets\Data\UnicodeData.txt" />
     <Content Include="Assets\Data\MDL2.xml" />
+    <Content Include="Assets\Data\FabricMDL2.txt" />
+    <Content Include="Assets\Data\FullMDL2ManualList.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
