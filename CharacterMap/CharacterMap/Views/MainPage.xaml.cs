@@ -37,6 +37,9 @@ namespace CharacterMap.Views
             this.InitializeComponent();
             Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
 
+            if (Settings.ShowGlyphNames)
+                GlyphNameDatabase.LoadDatabase();
+
             this.ViewModel = this.DataContext as MainViewModel;
             this.NavigationCacheMode = NavigationCacheMode.Enabled;
 

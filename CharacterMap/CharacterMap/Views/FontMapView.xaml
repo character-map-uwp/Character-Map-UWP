@@ -348,6 +348,7 @@
 
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{x:Bind UnicodeString}" />
 
+                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Margin="0,0,0,12" Text="{x:Bind Name}"/>
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>

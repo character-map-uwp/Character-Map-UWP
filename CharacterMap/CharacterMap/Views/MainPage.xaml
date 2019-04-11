@@ -399,6 +399,12 @@
                     OffContent="Hide dev utilities"
                     IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />-->
 
+                    <TextBlock Margin="0 10 0 4" Text="Show glyph names" />
+                <ToggleSwitch
+                    OnContent="Show glyph name on font grid"
+                    OffContent="Don't show glyph nane on font grid"
+                    IsOn="{x:Bind Settings.ShowGlyphNames, Mode=TwoWay}" />
+                    
                     <TextBlock
                         x:Uid="Settings_About"
                         Margin="0,40,0,10"
