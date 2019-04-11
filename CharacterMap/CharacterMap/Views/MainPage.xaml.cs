@@ -93,6 +93,11 @@ namespace CharacterMap.Views
         {
             if (!Settings.EnableInstantSearch)
                 return;
+            BeginSearch();
+        }
+
+        private void BeginSearch()
+        {
             var unicodeIndex = SearchBoxUnicode.Text.Trim();
             int intIndex = Utils.ParseHexString(unicodeIndex);
             var ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
@@ -117,7 +122,7 @@ namespace CharacterMap.Views
                     string resultKey = MDL2Description.Dict.Keys.Where(key => key.Contains(descriptionForSearch)).ToList().FirstOrDefault();
                     if (null != resultKey)
                     {
-                        if(MDL2Description.Dict.TryGetValue(resultKey, out string unicodePointFuzzy))
+                        if (MDL2Description.Dict.TryGetValue(resultKey, out string unicodePointFuzzy))
                         {
                             intIndex = Utils.ParseHexString(unicodePointFuzzy);
                             ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
@@ -130,7 +135,7 @@ namespace CharacterMap.Views
 
         private void BtnSearch_Click(object sender, RoutedEventArgs e)
         {
-            SearchBoxUnicode_OnTextChanged(null, null);
+            BeginSearch();
         }
 
         private async Task DoRestartRequest()
