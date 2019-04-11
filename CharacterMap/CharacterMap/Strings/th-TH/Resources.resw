@@ -127,7 +127,7 @@
     <value>เติมสีดำ</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
-    <value>คักลอกตัวอักษรนี้</value>
+    <value>คัดลอกตัวอักษรนี้</value>
   </data>
   <data name="BtnSavePng.Text" xml:space="preserve">
     <value>บันทึกเป็นภาพ PNG</value>
