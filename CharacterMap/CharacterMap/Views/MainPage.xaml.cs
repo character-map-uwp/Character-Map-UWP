@@ -131,6 +131,19 @@ namespace CharacterMap.Views
                     }
                 }
             }
+            else if (Settings.SearchGlyphName && GlyphNameDatabase.GlyphDictionary != null)
+            {
+                string descriptionForSearch = SearchBoxUnicode.Text.ToLower().Replace(" ", string.Empty);
+
+                foreach (var c in FontMap.ViewModel.Chars)
+                {
+                    if (c.Name.Contains(descriptionForSearch))
+                    {
+                        FontMap.SelectCharacter(c);
+                        return;
+                    }
+                }
+            }
         }
 
         private void BtnSearch_Click(object sender, RoutedEventArgs e)

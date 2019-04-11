@@ -98,6 +98,16 @@ namespace CharacterMap.Core
             }
         }
 
+        public bool SearchGlyphName
+        {
+            get => ReadSettings(nameof(SearchGlyphName), false);
+            set
+            {
+                SaveSettings(nameof(SearchGlyphName), value);
+                NotifyPropertyChanged();
+            }
+        }
+
         public ApplicationDataContainer LocalSettings { get; set; }
 
         public AppSettings()

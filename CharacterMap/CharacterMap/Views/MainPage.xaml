@@ -159,6 +159,13 @@
                                 OffContent="Search after pressed search button"
                                 IsOn="{x:Bind Settings.EnableInstantSearch, Mode=TwoWay}" />
 
+                            <TextBlock Margin="0 10 0 4" Text="Search by name" />
+                            <ToggleSwitch
+                                IsEnabled="{x:Bind Settings.ShowGlyphNames}"
+                                OnContent="Searching glyph by unicode and name"
+                                OffContent="Searching glyph by unicode only"
+                                IsOn="{x:Bind Settings.SearchGlyphName, Mode=TwoWay}" />
+
                         </StackPanel>
                     </Flyout>
                 </TextBox.ContextFlyout>
