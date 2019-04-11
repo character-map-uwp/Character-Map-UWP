@@ -78,6 +78,16 @@ namespace CharacterMap.Core
             }
         }
 
+        public bool ShowGlyphNames
+        {
+            get => ReadSettings(nameof(ShowGlyphNames), false);
+            set
+            {
+                SaveSettings(nameof(ShowGlyphNames), value);
+                NotifyPropertyChanged();
+            }
+        }
+
         public ApplicationDataContainer LocalSettings { get; set; }
 
         public AppSettings()
