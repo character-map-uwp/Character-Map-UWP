@@ -88,6 +88,16 @@ namespace CharacterMap.Core
             }
         }
 
+        public bool EnableInstantSearch
+        {
+            get => ReadSettings(nameof(EnableInstantSearch), true);
+            set
+            {
+                SaveSettings(nameof(EnableInstantSearch), value);
+                NotifyPropertyChanged();
+            }
+        }
+
         public ApplicationDataContainer LocalSettings { get; set; }
 
         public AppSettings()

@@ -91,6 +91,8 @@ namespace CharacterMap.Views
 
         private void SearchBoxUnicode_OnTextChanged(object sender, TextChangedEventArgs e)
         {
+            if (!Settings.EnableInstantSearch)
+                return;
             var unicodeIndex = SearchBoxUnicode.Text.Trim();
             int intIndex = Utils.ParseHexString(unicodeIndex);
             var ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
@@ -124,6 +126,11 @@ namespace CharacterMap.Views
                     }
                 }
             }
+        }
+
+        private void BtnSearch_Click(object sender, RoutedEventArgs e)
+        {
+            SearchBoxUnicode_OnTextChanged(null, null);
         }
 
         private async Task DoRestartRequest()
