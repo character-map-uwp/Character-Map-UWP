@@ -109,6 +109,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <ComboBox
@@ -146,13 +147,30 @@
                 VerticalAlignment="Center"
                 PlaceholderText="#SearchBoxUnicode"
                 Style="{StaticResource SearchTextBox}"
-                TextChanged="SearchBoxUnicode_OnTextChanged">
-                <!-- Please use TextBox.SelectionFlyout if upgrade minimum SDK to 17134-->
-                <TextBox.ContextFlyout>
+                TextChanged="SearchBoxUnicode_OnTextChanged"/>
+            <AppBarButton
+                x:Name="BtnSearch"
+                Grid.Column="3"
+                Width="45"
+                Height="45"
+                Icon="Find"
+                Click="BtnSearch_Click"
+                Visibility="{x:Bind core:Converters.FalseToVis(Settings.EnableInstantSearch), Mode=OneWay}"/>
+            <AppBarButton
+                x:Name="BtnSearchOption"
+                Grid.Column="4"
+                Width="45"
+                Height="45">
+                <FontIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    Glyph="&#xE773;" />
+                <AppBarButton.Flyout>
                     <Flyout Placement="BottomEdgeAlignedRight">
                         <StackPanel>
                             <TextBlock Text="Search option" Style="{ThemeResource TitleTextBlockStyle}" />
-                            
+
                             <TextBlock Margin="0 10 0 4" Text="Instant search" />
                             <ToggleSwitch
                                 OnContent="Search when typing"
@@ -168,19 +186,11 @@
 
                         </StackPanel>
                     </Flyout>
-                </TextBox.ContextFlyout>
-            </TextBox>
-            <AppBarButton
-                x:Name="BtnSearch"
-                Grid.Column="3"
-                Width="45"
-                Height="45"
-                Icon="Find"
-                Click="BtnSearch_Click"
-                Visibility="{x:Bind core:Converters.FalseToVis(Settings.EnableInstantSearch), Mode=OneWay}"/>
+                </AppBarButton.Flyout>
+            </AppBarButton>
             <AppBarButton
                 x:Name="BtnSettings"
-                Grid.Column="4"
+                Grid.Column="5"
                 Width="45"
                 Height="45"
                 Click="BtnSettings_OnClick">
