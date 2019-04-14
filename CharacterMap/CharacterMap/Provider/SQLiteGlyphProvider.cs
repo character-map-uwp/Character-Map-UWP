@@ -1,3 +1,5 @@
+﻿//#define GENERATE_DATABASE
+
 using CharacterMap.Core;
 using CharacterMap.Services;
 using Humanizer;
@@ -17,7 +19,9 @@ namespace CharacterMap.Provider
 {
     public partial class SQLiteGlyphProvider : IGlyphDataProvider
     {
-        private const string SEARCH_TABLE = "mdl2search";
+        internal const string MDL2_SEARCH_TABLE = "mdl2search";
+        internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
+        const int SEARCH_LIMIT = 10;
 
         SQLiteConnection _connection { get; set; }
 
@@ -25,16 +29,18 @@ namespace CharacterMap.Provider
         {
             SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_winsqlite3());
 
-            var path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Data", "GlyphData.db");
-            _connection = new SQLiteConnection(new SQLiteConnectionString(path, SQLiteOpenFlags.ReadOnly, true));
-            return Task.CompletedTask;
-
+#if GENERATE_DATABASE
             /* 
              * If you update the dataset and wish to generate a NEW dataset
              * run the code below
              */
 
-            //return InitialiseDebugAsync();
+            return InitialiseDebugAsync();
+#endif
+
+            var path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Data", "GlyphData.db");
+            _connection = new SQLiteConnection(new SQLiteConnectionString(path, SQLiteOpenFlags.ReadOnly, true));
+            return Task.CompletedTask;
         }
 
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
@@ -47,166 +53,90 @@ namespace CharacterMap.Provider
 
             return _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;
         }
-    }
 
-
-    /* 
-     * These are DEV time only methods to create a new database when data changes.
-     * After creating a new database copy it to the Assets/Data/ folder to ship it with
-     * the app
-     */
-#if DEBUG
-    public partial class SQLiteGlyphProvider 
-    {
-        public Task InitialiseDebugAsync()
+        public Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant)
         {
-            return Task.Run(async () =>
+            if (string.IsNullOrWhiteSpace(query))
+                return Task.FromResult(GlyphService.EMPTY_SEARCH);
+
+            /* MDL2 has special dataset */
+            if (FontFinder.IsMDL2(variant))
+                return SearchMDL2Async(query, variant);
+
+            /* In the future, FontAwesome can have a special dataset */
+
+            /* We don't label symbol fonts in the main app, so for the most case we don't allow search of them */
+            /* If symbol font, go home now */
+            if (variant.FontFace.IsSymbolFont)
+                return Task.FromResult(GlyphService.EMPTY_SEARCH);
+
+            return SearchUnicodeAsync(query, variant);
+        }
+
+        private Task<IReadOnlyList<IGlyphData>> SearchUnicodeAsync(string query, FontVariant variant)
+        {
+            return InternalSearchAsync(UNICODE_SEARCH_TABLE, nameof(UnicodeGlyphData), query, variant);
+        }
+
+        private Task<IReadOnlyList<IGlyphData>> SearchMDL2Async(string query, FontVariant variant)
+        {
+            return InternalSearchAsync(MDL2_SEARCH_TABLE, nameof(GlyphDescription), query, variant);
+        }
+
+        private Task<IReadOnlyList<IGlyphData>> InternalSearchAsync(string ftsTable, string table, string query, FontVariant variant)
+        {
+            return Task.Run<IReadOnlyList<IGlyphData>>(() =>
             {
-                var path = Path.Combine(ApplicationData.Current.TemporaryFolder.Path, "GlyphData.db");
-                if (File.Exists(path))
-                    File.Delete(path);
+                /* Step 1: Use FTS4 (Full-text-search) on SQLite to get full-string matches
+                 * Then, if we still have room, do a partial like match 
+                 */
 
-                SQLiteConnectionString connection = new SQLiteConnectionString(path);
-
-                using (SQLiteConnection con = new SQLiteConnection(connection))
+                // 1. Create the base query filter
+                StringBuilder sb = new StringBuilder();
+                bool next = false;
+                foreach ((int, int) range in variant.UnicodeRanges)
                 {
-                    PrepareDatabase(con);
+                    if (next)
+                        sb.AppendFormat(" OR UnicodeIndex BETWEEN {0} AND {1}", range.Item1, range.Item2);
+                    else
+                    {
+                        next = true;
+                        sb.AppendFormat("WHERE (UnicodeIndex BETWEEN {0} AND {1}", range.Item1, range.Item2);
+                    }
+                }
+                sb.Append(")");
+
+                // 2. Perform an FTS4 search
+                string sql = $"SELECT * FROM {ftsTable} {sb.ToString()} AND Description MATCH '{query}' LIMIT {SEARCH_LIMIT}";
+                var results = _connection.Query<GlyphDescription>(sql, query)?.Cast<IGlyphData>()?.ToList();
+
+                // 3. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
+                if (results != null && results.Count == SEARCH_LIMIT)
+                    return results;
+
+                // 4. Perform a partial search. Only search for what we need.
+                //    This means limit the amount of results, and exclude anything we've already matched
+                int limit = results == null ? SEARCH_LIMIT : SEARCH_LIMIT - results.Count;
+
+                if (limit != SEARCH_LIMIT)
+                {
+                    // 4.1. We need to exclude anything already found above
+                    sb.AppendFormat("AND UnicodeIndex NOT IN ({0})",
+                        string.Join(", ", results.Select(r => r.UnicodeIndex)));
                 }
 
-                await PopulateMDL2Async(connection).ConfigureAwait(false);
-                await PopulateUnicodeAsync(connection).ConfigureAwait(false);
+                // 5. Execute on the non FTS tables
+                string sql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE '%{query}%' LIMIT {limit}";
+                var results2 = _connection.Query<GlyphDescription>(sql2, query)?.Cast<IGlyphData>()?.ToList();
 
-                using (SQLiteConnection con = new SQLiteConnection(connection))
+                if (results != null)
                 {
-                    con.Execute("VACUUM \"main\"");
-                    con.Execute("VACUUM \"temp\"");
+                    results.AddRange(results2);
+                    return results.AsReadOnly();
                 }
-
-                _connection = new SQLiteConnection(connection);
+                else
+                    return results2;
             });
         }
-
-
-        private Task PopulateMDL2Async(SQLiteConnectionString connection)
-        {
-            return Task.Run(async () =>
-            {
-                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/MDL2.xml")).AsTask().ConfigureAwait(false);
-                var xml = await XmlDocument.LoadFromFileAsync(file).AsTask().ConfigureAwait(false);
-
-                List<(string code, string name)> datas =
-                    xml.ChildNodes[0].ChildNodes.Where(n => n.NodeType == NodeType.ElementNode && n.NodeName.Equals("tr")).Select(child =>
-                    {
-                        var trs = child.ChildNodes.Where(n => n.NodeType == NodeType.ElementNode && n.NodeName.Equals("td")).ToList();
-                        return (trs[1].InnerText, trs[2].InnerText);
-                    }).ToList();
-
-                // Add any missing types from XAML symbol enum
-                var type = typeof(Symbol);
-                foreach (var e in Enum.GetValues(type))
-                {
-                    var name = Enum.GetName(type, e);
-                    if (!datas.Any(d => d.name.Equals(name, StringComparison.OrdinalIgnoreCase)))
-                        datas.Add((((int)e).ToString("X"), name));
-                }
-
-
-                /* read fabric mdl2 listing */
-                var fabric = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FabricMDL2.txt")).AsTask().ConfigureAwait(false);
-                using (var stream = await fabric.OpenStreamForReadAsync().ConfigureAwait(false))
-                using (var reader = new StreamReader(stream))
-                {
-                    string[] parts;
-                    while (!reader.EndOfStream)
-                    {
-                        parts = reader.ReadLine().Split(":", StringSplitOptions.None);
-
-                        if (!datas.Any(d => d.code.Equals(parts[1], StringComparison.OrdinalIgnoreCase)))
-                            datas.Add((parts[1], parts[0]));
-                    }
-                }
-
-                /* read manually created full mdl2 listings */
-                var manual = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FullMDL2ManualList.txt")).AsTask().ConfigureAwait(false);
-                using (var stream = await manual.OpenStreamForReadAsync().ConfigureAwait(false))
-                using (var reader = new StreamReader(stream))
-                {
-                    string[] parts;
-                    while (!reader.EndOfStream)
-                    {
-                        parts = reader.ReadLine().Split(":", StringSplitOptions.None);
-
-                        if (!datas.Any(d => d.code.Equals(parts[1], StringComparison.OrdinalIgnoreCase)))
-                            datas.Add((parts[1], parts[0]));
-                    }
-                }
-
-
-                using (var c = new SQLiteConnection(connection))
-                {
-                    c.RunInTransaction(() =>
-                    {
-                        c.InsertAll(datas.Select(d => new GlyphDescription
-                        {
-                            Description = d.name.Humanize(LetterCasing.Title),
-                            UnicodeIndex = int.Parse(d.code, System.Globalization.NumberStyles.HexNumber),
-                            UnicodePoint = d.code
-                        }));
-                    });
-                }
-            });
-        }
-
-        private Task PopulateUnicodeAsync(SQLiteConnectionString connection)
-        {
-                return Task.Run(async () =>
-                {
-                    using (var c = new SQLiteConnection(connection))
-                    {
-                        var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/UnicodeData.txt")).AsTask().ConfigureAwait(false);
-
-                        using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
-                        using (var reader = new StreamReader(stream))
-                        {
-                            string ctrl = "<control>";
-                            string[] parts;
-                            List<UnicodeGlyphData> data = new List<UnicodeGlyphData>();
-                            while (!reader.EndOfStream)
-                            {
-                                parts = reader.ReadLine().Split(";", StringSplitOptions.None);
-
-                                string hex = parts[0];
-                                string desc = parts[1] == ctrl ? parts[10] : parts[1];
-                                if (string.IsNullOrWhiteSpace(desc))
-                                    desc = parts[1]; // some controls characters are unlabeled
-                                int code = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
-                                data.Add(new UnicodeGlyphData
-                                {
-                                    Description = desc.Transform(To.LowerCase, To.TitleCase),
-                                    UnicodeGroup = parts[2],
-                                    UnicodeHex = hex,
-                                    UnicodeIndex = code
-                                });
-                            }
-
-                            c.RunInTransaction(() => c.InsertAll(data));
-                        }
-                    }
-                });
-        }
-
-        private static void PrepareDatabase(SQLiteConnection con)
-        {
-            con.CreateTable<GlyphDescription>();
-            con.CreateTable<UnicodeGlyphData>();
-
-            con.Execute($"CREATE VIRTUAL TABLE mdl2search USING " +
-                $"fts4({nameof(GlyphDescription.UnicodePoint)}, {nameof(GlyphDescription.Description)})");
-
-            con.Execute($"CREATE TRIGGER insert_trigger AFTER INSERT ON {nameof(GlyphDescription)} " +
-                $"BEGIN INSERT INTO mdl2search({nameof(GlyphDescription.UnicodePoint)}, {nameof(GlyphDescription.Description)}) " +
-                $"VALUES (new.{nameof(GlyphDescription.UnicodePoint)}, new.{nameof(GlyphDescription.Description)}); END;");
-        }
     }
-#endif
 }

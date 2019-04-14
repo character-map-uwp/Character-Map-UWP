@@ -9,6 +9,7 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:CharacterMap"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:CharacterMap.Services"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
@@ -55,6 +56,7 @@
                         <Setter Target="SearchBoxUnicode.IsEnabled" Value="False" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.IsEnabled" Value="False" />
+                        <Setter Target="OpenFontButton.Opacity" Value="0.5" />
                         <Setter Target="LoadingRing.IsActive" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
@@ -116,7 +118,6 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="8" />
                 </Grid.ColumnDefinitions>
                 <ComboBox
                     x:Name="FontListFilter"
@@ -132,8 +133,8 @@
                     <!--<ComboBoxItem Content="Favorites" />-->
                 </ComboBox>
                 <AppBarButton
-                    x:Uid="ImportFontsButton"
                     x:Name="ImportFontsButton"
+                    x:Uid="ImportFontsButton"
                     Grid.Column="1"
                     Width="45"
                     Height="45"
@@ -170,21 +171,51 @@
             <TextBlock
                 x:Name="FontTitleBlock"
                 Grid.Column="1"
-                Margin="10,0,5,0"
+                Margin="24,0,5,0"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
-            <TextBox
+            <AutoSuggestBox
                 x:Name="SearchBoxUnicode"
                 x:Uid="SearchBoxUnicode"
                 Grid.Column="2"
                 Width="290"
                 VerticalAlignment="Center"
+                GotFocus="SearchBoxUnicode_GotFocus"
+                ItemsSource="{x:Bind FontMap.ViewModel.SearchResults, Mode=OneWay}"
                 PlaceholderText="#SearchBoxUnicode"
+                SuggestionChosen="SearchBoxUnicode_SuggestionChosen"
+                Text="{Binding ElementName=FontMap, Path=ViewModel.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextMemberPath="Description"
+                UpdateTextOnSelect="False">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate x:DataType="services:IGlyphData">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon
+                                Margin="4 0 0 0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontFamily="{Binding ElementName=FontMap, Path=ViewModel.FontFamily}"
+                                FontSize="16"
+                                Glyph="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Description}" />
+                        </Grid>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
+            <!--<TextBox
+
                 Style="{StaticResource SearchTextBox}"
-                TextChanged="SearchBoxUnicode_OnTextChanged" />
+                />-->
             <AppBarButton
                 x:Name="BtnSettings"
                 Grid.Column="3"

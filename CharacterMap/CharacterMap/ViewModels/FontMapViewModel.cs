@@ -28,6 +28,10 @@ namespace CharacterMap.ViewModels
 
         private StorageFile _sourceFile { get; set; }
 
+        private Debouncer _searchDebouncer { get; }
+
+        private ConcurrencyToken.ConcurrencyTokenGenerator _searchTokenFactory { get; }
+
         public ExportStyle BlackColor { get; } = ExportStyle.Black;
         public ExportStyle WhiteColor { get; } = ExportStyle.White;
         public ExportStyle GlyphColor { get; } = ExportStyle.ColorGlyph;
@@ -39,6 +43,7 @@ namespace CharacterMap.ViewModels
         public bool IsDarkAccent => Utils.IsAccentColorDark();
 
         public bool IsExternalFile { get; set; }
+
 
         private bool _isLoading;
         public bool IsLoading
@@ -52,6 +57,13 @@ namespace CharacterMap.ViewModels
         {
             get => _titlePrefix;
             set => Set(ref _titlePrefix, value);
+        }
+
+        private IReadOnlyList<IGlyphData> _searchResults;
+        public IReadOnlyList<IGlyphData> SearchResults
+        {
+            get => _searchResults;
+            set => Set(ref _searchResults, value);
         }
 
         private FontVariant _selectedVariant;
@@ -202,6 +214,17 @@ namespace CharacterMap.ViewModels
             set => Set(ref _selectedTypography, value);
         }
 
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                if (Set(ref _searchQuery, value))
+                    DebounceSearch(value); }
+
+        }
+
         public FontMapViewModel(IDialogService dialogService)
         {
             DialogService = dialogService;
@@ -209,6 +232,9 @@ namespace CharacterMap.ViewModels
             CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
 
             Interop = SimpleIoc.Default.GetInstance<Interop>();
+
+            _searchDebouncer = new Debouncer();
+            _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
         }
 
         private void LoadChars(FontVariant variant)
@@ -244,6 +270,9 @@ namespace CharacterMap.ViewModels
                     ShowColorGlyphs = false;
                     ImportButtonEnabled = false;
                 }
+
+                SearchResults = null;
+                DebounceSearch(SearchQuery, 100);
             }
             catch (Exception ex)
             {
@@ -251,7 +280,7 @@ namespace CharacterMap.ViewModels
                  * Hack to avoid crash.
                  * When launching the app by double clicking on a font file when the app is closed,
                  * creating a CanvasTextLayout can fail for some unknown reason. So we retry it.
-                 * If we get caught in a never ending loop here, something horrible has occured.
+                 * If we get caught in a never ending loop here, something horrible has occurred.
                  */
                 _ = Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, async () =>
                 {
@@ -320,7 +349,7 @@ namespace CharacterMap.ViewModels
             else
             {
                 var uni = SelectedChar.UnicodeIndex.ToString("x").ToUpper();
-                XamlPath = $"<FontFamily>{SelectedVariant.XamlFontSource}</FontFamily>";
+                XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
                 XamlCode = $"&#x{uni};";
                 FontIcon = $@"<FontIcon FontFamily=""{SelectedVariant.XamlFontSource}"" Glyph=""&#x{uni};"" />";
                 SymbolIcon = $"(Symbol)0x{uni}";
@@ -353,6 +382,21 @@ namespace CharacterMap.ViewModels
                 return $"{desc} - {c.UnicodeString}";
 
             return c.UnicodeString;
+        }
+
+        public void DebounceSearch(string query, int delayMilliseconds = 500)
+        {
+            _searchDebouncer.Debounce(delayMilliseconds, () => Search(query));
+        }
+
+        private async void Search(string query)
+        {
+            var token = _searchTokenFactory.GenerateToken();
+            if (await GlyphService.SearchAsync(query, SelectedVariant) is IReadOnlyList<IGlyphData> results
+                && token.IsValid())
+            {
+                SearchResults = results;
+            }
         }
 
         private Task SavePngAsync(ExportStyle style)

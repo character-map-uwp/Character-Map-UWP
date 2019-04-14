@@ -184,6 +184,8 @@
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
     <Compile Include="Core\UnicodeGlyphData.cs" />
+    <Compile Include="Helpers\ConcurrencyToken.cs" />
+    <Compile Include="Helpers\Debouncer.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\Localization.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
@@ -192,6 +194,7 @@
     <Compile Include="Helpers\Sqlite.cs" />
     <Compile Include="Helpers\TitleBarHelper.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
+    <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />

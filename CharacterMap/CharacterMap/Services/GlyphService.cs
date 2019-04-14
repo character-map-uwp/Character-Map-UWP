@@ -15,14 +15,21 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Services
 {
-    public class GlyphDescription
+    public interface IGlyphData
+    {
+        int UnicodeIndex { get; }
+        string UnicodeHex { get; }
+        string Description { get; }
+    }
+
+    public class GlyphDescription : IGlyphData
     {
         [PrimaryKey]
         public int UnicodeIndex { get; set; }
 
         [Indexed]
         [MaxLength(5)]
-        public string UnicodePoint { get; set; }
+        public string UnicodeHex { get; set; }
 
         public string Description { get; set; }
     }
@@ -31,6 +38,7 @@ namespace CharacterMap.Services
     {
         Task InitialiseAsync();
         string GetCharacterDescription(int unicodeIndex, FontVariant variant);
+        Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant);
     }
 
     public static partial class GlyphService
@@ -38,6 +46,8 @@ namespace CharacterMap.Services
         private static IGlyphDataProvider _provider { get; set; }
 
         private static Task _init { get; set; }
+
+        public static IReadOnlyList<IGlyphData> EMPTY_SEARCH = new List<IGlyphData>();
 
         public static Task InitializeAsync()
         {
@@ -62,6 +72,14 @@ namespace CharacterMap.Services
                 return null;
 
             return _provider.GetCharacterDescription(unicodeIndex, variant);
+        }
+
+        internal static Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant)
+        {
+            if (variant == null)
+                return Task.FromResult(EMPTY_SEARCH);
+
+            return _provider.SearchAsync(query, variant);
         }
     }
 }

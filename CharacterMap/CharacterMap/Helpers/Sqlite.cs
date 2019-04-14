@@ -870,7 +870,7 @@ namespace SQLite
         /// The fully escaped SQL.
         /// </param>
         /// <param name="ps">
-        /// Arguments to substitute for the occurences of '?' in the command text.
+        /// Arguments to substitute for the occurrences of '?' in the command text.
         /// </param>
         /// <returns>
         /// A <see cref="SQLiteCommand"/>

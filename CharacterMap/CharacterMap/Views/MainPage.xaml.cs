@@ -44,7 +44,6 @@ namespace CharacterMap.Views
 
             this.Loaded += MainPage_Loaded;
             this.Unloaded += MainPage_Unloaded;
-
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -86,45 +85,6 @@ namespace CharacterMap.Views
         private async void BtnRestart_OnClick(object sender, RoutedEventArgs e)
         {
             await DoRestartRequest();
-        }
-
-        private void SearchBoxUnicode_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            var unicodeIndex = SearchBoxUnicode.Text.Trim();
-            int intIndex = Utils.ParseHexString(unicodeIndex);
-            var ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-            if (null != ch)
-            {
-                FontMap.SelectCharacter(ch);
-            }
-            else if (ViewModel.SelectedFont.Name.EndsWith("MDL2 Assets"))    //Search for Segoe MDL2 Assets characters with description
-            {
-                string descriptionForSearch = SearchBoxUnicode.Text.ToLower().Replace(" ", string.Empty);
-
-                GlyphService.Search(descriptionForSearch, FontMap.ViewModel.SelectedVariant);
-
-                if (MDL2Description.Dict.TryGetValue(descriptionForSearch, out string unicodePoint))
-                {
-                    //Precise search
-                    intIndex = Utils.ParseHexString(unicodePoint);
-                    ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-                    FontMap.SelectCharacter(ch);
-                }
-                else
-                {
-                    //Fuzzy search
-                    string resultKey = MDL2Description.Dict.Keys.Where(key => key.Contains(descriptionForSearch)).ToList().FirstOrDefault();
-                    if (null != resultKey)
-                    {
-                        if(MDL2Description.Dict.TryGetValue(resultKey, out string unicodePointFuzzy))
-                        {
-                            intIndex = Utils.ParseHexString(unicodePointFuzzy);
-                            ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-                            FontMap.SelectCharacter(ch);
-                        }
-                    }
-                }
-            }
         }
 
         private async Task DoRestartRequest()
@@ -280,6 +240,22 @@ namespace CharacterMap.Views
                     ViewModel.IsLoadingFonts = false;
                 }
             }
+        }
+
+        private void SearchBoxUnicode_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            if (args.SelectedItem is IGlyphData data)
+            {
+                FontMap.SelectCharacter(FontMap.ViewModel.Chars.First(c => c.UnicodeIndex == data.UnicodeIndex));
+            }
+        }
+
+        private void SearchBoxUnicode_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (FontMap.ViewModel.SearchResults != null && FontMap.ViewModel.SearchResults.Count > 0)
+                SearchBoxUnicode.IsSuggestionListOpen = true;
+            else
+                FontMap.ViewModel.DebounceSearch(FontMap.ViewModel.SearchQuery);
         }
     }
 }

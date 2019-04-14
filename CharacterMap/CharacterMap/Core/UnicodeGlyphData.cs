@@ -1,5 +1,6 @@
 using CharacterMap.Core;
 using CharacterMap.Provider;
+using CharacterMap.Services;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Core
 {
-    public class UnicodeGlyphData
+    public class UnicodeGlyphData : IGlyphData
     {
         [PrimaryKey]
         public int UnicodeIndex { get; set; }
