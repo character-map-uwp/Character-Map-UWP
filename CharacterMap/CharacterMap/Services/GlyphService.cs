@@ -1,4 +1,6 @@
-﻿using CharacterMap.Core;
+﻿//#define GENERATE_DATA
+
+using CharacterMap.Core;
 using CharacterMap.Provider;
 using SQLite;
 using System;
@@ -36,7 +38,7 @@ namespace CharacterMap.Services
 
     public interface IGlyphDataProvider
     {
-        Task InitialiseAsync();
+        void Initialise();
         string GetCharacterDescription(int unicodeIndex, FontVariant variant);
         Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant);
     }
@@ -49,6 +51,12 @@ namespace CharacterMap.Services
 
         public static IReadOnlyList<IGlyphData> EMPTY_SEARCH = new List<IGlyphData>();
 
+        static GlyphService()
+        {
+            _provider = new SQLiteGlyphProvider();
+            _provider.Initialise();
+        }
+
         public static Task InitializeAsync()
         {
             if (_init == null)
@@ -59,16 +67,18 @@ namespace CharacterMap.Services
 
         private static Task InitializeInternalAsync()
         {
-            _provider = new SQLiteGlyphProvider();
-
-            return Task.WhenAll(
-                _provider.InitialiseAsync()
-                );
+#if DEBUG && GENERATE_DATA
+            if (_provider is SQLiteGlyphProvider p)
+            {
+                return p.InitialiseDatabaseAsync();
+            }
+#endif
+            return Task.CompletedTask;
         }
 
         internal static string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
-            if (variant == null)
+            if (variant == null || _provider == null)
                 return null;
 
             return _provider.GetCharacterDescription(unicodeIndex, variant);

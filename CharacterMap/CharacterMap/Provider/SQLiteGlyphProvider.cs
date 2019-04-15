@@ -1,6 +1,4 @@
-﻿//#define GENERATE_DATABASE
-
-using CharacterMap.Core;
+﻿using CharacterMap.Core;
 using CharacterMap.Services;
 using Humanizer;
 using SQLite;
@@ -25,24 +23,25 @@ namespace CharacterMap.Provider
 
         private SQLiteConnection _connection { get; set; }
 
-        public Task InitialiseAsync()
+        public void Initialise()
         {
             SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_winsqlite3());
+            var path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Data", "GlyphData.db");
+            _connection = new SQLiteConnection(new SQLiteConnectionString(path, SQLiteOpenFlags.ReadOnly, true));
+        }
 
-#if GENERATE_DATABASE && DEBUG
+#if DEBUG
+        public Task InitialiseDatabaseAsync()
+        {
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_winsqlite3());
             /* 
              * If you update the dataset and wish to generate a NEW dataset
              * run the code below
              */
 
             return InitialiseDebugAsync();
-#endif
-
-            var path = Path.Combine(Package.Current.InstalledLocation.Path, "Assets", "Data", "GlyphData.db");
-            _connection = new SQLiteConnection(new SQLiteConnectionString(path, SQLiteOpenFlags.ReadOnly, true));
-            return Task.CompletedTask;
         }
-
+#endif
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
             if (FontFinder.IsMDL2(variant))
@@ -65,11 +64,8 @@ namespace CharacterMap.Provider
 
             /* In the future, FontAwesome can have a special dataset */
 
-            /* We don't label symbol fonts in the main app, so for the most case we don't allow search of them */
-            /* If symbol font, go home now */
-            if (variant.FontFace.IsSymbolFont)
-                return Task.FromResult(GlyphService.EMPTY_SEARCH);
 
+            /* Search */
             return SearchUnicodeAsync(query, variant);
         }
 
@@ -96,7 +92,7 @@ namespace CharacterMap.Provider
                 // 1. Decide if hex or FTS4 search
                 // 1.1. If hex, search the main table (UnicodeIndex column is indexed)
                 GlyphDescription hexResult = null;
-                bool ambiguous = IsAmbiguousQuery(query);
+                bool ambiguous = !variant.FontFace.IsSymbolFont && IsAmbiguousQuery(query);
                 if (Utils.TryParseHexString(query, out int hex))
                 {
                     // 1.2. To be more efficient, first check if the font actually contains the UnicodeIndex.
@@ -136,11 +132,16 @@ namespace CharacterMap.Provider
 
                     // 1.4. If the search is ambiguous we should still search for description matches,
                     //      otherwise we can return right now with no hex results
+                    //      If we are a generic symbol font, that's all folks. Time to leave.
                     if (!ambiguous)
                     {
                         return GlyphService.EMPTY_SEARCH;
                     }
                 }
+
+                // 1.5. If we are a generic symbol font, we don't match by character name so time to go home.
+                if (variant.FontFace.IsSymbolFont)
+                    return GlyphService.EMPTY_SEARCH;
 
                 // 2. If we're performing SQL, create the base query filter
                 StringBuilder sb = new StringBuilder();
