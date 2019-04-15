@@ -87,30 +87,19 @@ namespace CharacterMap.Provider
         {
             return Task.Run<IReadOnlyList<IGlyphData>>(() =>
             {
-                /* Step 1: Use FTS4 (Full-text-search) on SQLite to get full-string matches
-                 * Then, if we still have room, do a partial like match 
+                /* 
+                 * Step 1: Perform single-result Hex Search if hex
+                 * Step 2: Perform FTS search if not hex or ambiguous
+                 * Step 3: Perform LIKE search if still space for results
                  */
 
-                // 1. Create the base query filter
-                StringBuilder sb = new StringBuilder();
-                bool next = false;
-                foreach ((int, int) range in variant.UnicodeRanges)
-                {
-                    if (next)
-                        sb.AppendFormat(" OR UnicodeIndex BETWEEN {0} AND {1}", range.Item1, range.Item2);
-                    else
-                    {
-                        next = true;
-                        sb.AppendFormat("WHERE (UnicodeIndex BETWEEN {0} AND {1}", range.Item1, range.Item2);
-                    }
-                }
-                sb.Append(")");
-
-                // 2. Decide if hex or FTS4 search
-                // 2.1. If hex, search the main table (UnicodeIndex column is indexed)
+                // 1. Decide if hex or FTS4 search
+                // 1.1. If hex, search the main table (UnicodeIndex column is indexed)
+                GlyphDescription hexResult = null;
+                bool ambiguous = IsAmbiguousQuery(query);
                 if (Utils.TryParseHexString(query, out int hex))
                 {
-                    // 2.2. To be more efficient, first check if the font actually contains the UnicodeIndex.
+                    // 1.2. To be more efficient, first check if the font actually contains the UnicodeIndex.
                     //      If it does then we ask the database, otherwise we can return without query.
                     foreach (var range in variant.UnicodeRanges)
                     {
@@ -131,12 +120,49 @@ namespace CharacterMap.Provider
                                     }
                                 };
                             }
-
-                            return hexresults;
+                            
+                            // 1.3. If the search is ambiguous we should still search for description matches,
+                            //      otherwise we can return right now
+                            if (!ambiguous)
+                                return hexresults;
+                            else
+                            {
+                                hexResult = hexresults.Cast<GlyphDescription>().FirstOrDefault();
+                                break;
+                            }
+                                
                         }
                     }
 
-                    return GlyphService.EMPTY_SEARCH;
+                    // 1.4. If the search is ambiguous we should still search for description matches,
+                    //      otherwise we can return right now with no hex results
+                    if (!ambiguous)
+                    {
+                        return GlyphService.EMPTY_SEARCH;
+                    }
+                }
+
+                // 2. If we're performing SQL, create the base query filter
+                StringBuilder sb = new StringBuilder();
+                bool next = false;
+                foreach ((int, int) range in variant.UnicodeRanges)
+                {
+                    if (next)
+                        sb.AppendFormat(" OR UnicodeIndex BETWEEN {0} AND {1}", range.Item1, range.Item2);
+                    else
+                    {
+                        next = true;
+                        sb.AppendFormat("WHERE (UnicodeIndex BETWEEN {0} AND {1}", range.Item1, range.Item2);
+                    }
+                }
+                sb.Append(")");
+
+                // 2.1. A helper method to inject the hex result for ambiguous searches
+                List<IGlyphData> InsertHex(List<IGlyphData> list)
+                {
+                    if (hexResult != null)
+                        list.Insert(0, hexResult);
+                    return list;
                 }
 
                 // 3. Otherwise, perform a multi-step text search. First perform an FTS4 search
@@ -145,7 +171,9 @@ namespace CharacterMap.Provider
 
                 // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
                 if (results != null && results.Count == SEARCH_LIMIT)
-                    return results;
+                {
+                    return InsertHex(results);
+                }
 
                 // 5. Perform a partial search on non-FTS table. Only search for what we need.
                 //    This means limit the amount of results, and exclude anything we've already matched.
@@ -164,11 +192,18 @@ namespace CharacterMap.Provider
                 if (results != null)
                 {
                     results.AddRange(results2);
-                    return results.AsReadOnly();
+                    return InsertHex(results);
                 }
                 else
-                    return results2;
+                    return InsertHex(results2);
             });
+        }
+
+        bool IsAmbiguousQuery(string s)
+        {
+            // We need to check the possibility this could be either HEX or NAME search.
+            // For example, "ed" could return hex or a partial text result
+            return s.Length <= 7 && !s.Any(c => char.IsLetter(c) == false);
         }
     }
 }
