@@ -23,13 +23,13 @@ namespace CharacterMap.Provider
         internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
         const int SEARCH_LIMIT = 10;
 
-        SQLiteConnection _connection { get; set; }
+        private SQLiteConnection _connection { get; set; }
 
         public Task InitialiseAsync()
         {
             SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_winsqlite3());
 
-#if GENERATE_DATABASE
+#if GENERATE_DATABASE && DEBUG
             /* 
              * If you update the dataset and wish to generate a NEW dataset
              * run the code below
@@ -106,26 +106,58 @@ namespace CharacterMap.Provider
                 }
                 sb.Append(")");
 
-                // 2. Perform an FTS4 search
+                // 2. Decide if hex or FTS4 search
+                // 2.1. If hex, search the main table (UnicodeIndex column is indexed)
+                if (Utils.TryParseHexString(query, out int hex))
+                {
+                    // 2.2. To be more efficient, first check if the font actually contains the UnicodeIndex.
+                    //      If it does then we ask the database, otherwise we can return without query.
+                    foreach (var range in variant.UnicodeRanges)
+                    {
+                        if (hex >= range.Item1 && hex <= range.Item2)
+                        {
+                            string hexsql = $"SELECT * FROM {table} WHERE UnicodeIndex == {hex} LIMIT 1";
+                            var hexresults = _connection.Query<GlyphDescription>(hexsql, query)?.Cast<IGlyphData>()?.ToList();
+                            if (hexresults == null || hexresults.Count == 0)
+                            {
+                                var label = hex.ToString("X");
+                                hexresults = new List<IGlyphData>()
+                                {
+                                    new GlyphDescription
+                                    {
+                                         UnicodeIndex = hex,
+                                         UnicodeHex = label,
+                                         Description = label
+                                    }
+                                };
+                            }
+
+                            return hexresults;
+                        }
+                    }
+
+                    return GlyphService.EMPTY_SEARCH;
+                }
+
+                // 3. Otherwise, perform a multi-step text search. First perform an FTS4 search
                 string sql = $"SELECT * FROM {ftsTable} {sb.ToString()} AND Description MATCH '{query}' LIMIT {SEARCH_LIMIT}";
                 var results = _connection.Query<GlyphDescription>(sql, query)?.Cast<IGlyphData>()?.ToList();
 
-                // 3. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
+                // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
                 if (results != null && results.Count == SEARCH_LIMIT)
                     return results;
 
-                // 4. Perform a partial search. Only search for what we need.
-                //    This means limit the amount of results, and exclude anything we've already matched
+                // 5. Perform a partial search on non-FTS table. Only search for what we need.
+                //    This means limit the amount of results, and exclude anything we've already matched.
                 int limit = results == null ? SEARCH_LIMIT : SEARCH_LIMIT - results.Count;
-
                 if (limit != SEARCH_LIMIT)
                 {
-                    // 4.1. We need to exclude anything already found above
+                    // 5.1. We need to exclude anything already found above
                     sb.AppendFormat("AND UnicodeIndex NOT IN ({0})",
                         string.Join(", ", results.Select(r => r.UnicodeIndex)));
                 }
 
-                // 5. Execute on the non FTS tables
+                // 6. Execute on the non FTS tables
                 string sql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE '%{query}%' LIMIT {limit}";
                 var results2 = _connection.Query<GlyphDescription>(sql2, query)?.Cast<IGlyphData>()?.ToList();
 

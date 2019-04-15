@@ -56,7 +56,7 @@
                         <Setter Target="SearchBoxUnicode.IsEnabled" Value="False" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.IsEnabled" Value="False" />
-                        <Setter Target="OpenFontButton.Opacity" Value="0.5" />
+                        <Setter Target="OpenFontButton.Opacity" Value="0.4" />
                         <Setter Target="LoadingRing.IsActive" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
