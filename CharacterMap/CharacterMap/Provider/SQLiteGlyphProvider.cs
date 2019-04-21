@@ -18,6 +18,7 @@ namespace CharacterMap.Provider
     public partial class SQLiteGlyphProvider : IGlyphDataProvider
     {
         internal const string MDL2_SEARCH_TABLE = "mdl2search";
+        internal const string FONTAWESOME_SEARCH_TABLE = "fontawesomesearch";
         internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
         const int SEARCH_LIMIT = 10;
 
@@ -42,16 +43,29 @@ namespace CharacterMap.Provider
             return InitialiseDebugAsync();
         }
 #endif
+
+
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
             if (FontFinder.IsMDL2(variant))
-                return _connection.Get<GlyphDescription>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+                return _connection.Get<MDL2Glyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+
+            if (IsFontAwesome(variant))
+                return _connection.Get<FontAwesomeGlyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
 
             if (variant.FontFace.IsSymbolFont)
                 return null;
 
             return _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;
         }
+
+        private bool IsFontAwesome(FontVariant variant)
+        {
+            return variant.FamilyName.StartsWith("Font Awesome");
+        }
+
+
+        #region SEARCH
 
         public Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant)
         {
@@ -62,10 +76,11 @@ namespace CharacterMap.Provider
             if (FontFinder.IsMDL2(variant))
                 return SearchMDL2Async(query, variant);
 
-            /* In the future, FontAwesome can have a special dataset */
+            /* FontAwesome has special dataset */
+            if (IsFontAwesome(variant))
+                return SearchFontAwesomeAsync(query, variant);
 
-
-            /* Search */
+            /* Generic Unicode Search */
             return SearchUnicodeAsync(query, variant);
         }
 
@@ -76,7 +91,12 @@ namespace CharacterMap.Provider
 
         private Task<IReadOnlyList<IGlyphData>> SearchMDL2Async(string query, FontVariant variant)
         {
-            return InternalSearchAsync(MDL2_SEARCH_TABLE, nameof(GlyphDescription), query, variant);
+            return InternalSearchAsync(MDL2_SEARCH_TABLE, nameof(MDL2Glyph), query, variant);
+        }
+
+        private Task<IReadOnlyList<IGlyphData>> SearchFontAwesomeAsync(string query, FontVariant variant)
+        {
+            return InternalSearchAsync(FONTAWESOME_SEARCH_TABLE, nameof(FontAwesomeGlyph), query, variant);
         }
 
         private Task<IReadOnlyList<IGlyphData>> InternalSearchAsync(string ftsTable, string table, string query, FontVariant variant)
@@ -140,7 +160,7 @@ namespace CharacterMap.Provider
                 }
 
                 // 1.5. If we are a generic symbol font, we don't match by character name so time to go home.
-                if (variant.FontFace.IsSymbolFont)
+                if (!FontFinder.IsMDL2(variant) && !IsFontAwesome(variant) && variant.FontFace.IsSymbolFont)
                     return GlyphService.EMPTY_SEARCH;
 
                 // 2. If we're performing SQL, create the base query filter
@@ -206,5 +226,7 @@ namespace CharacterMap.Provider
             // For example, "ed" could return hex or a partial text result
             return s.Length <= 7 && !s.Any(c => char.IsLetter(c) == false);
         }
+
+        #endregion
     }
 }

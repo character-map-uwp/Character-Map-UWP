@@ -40,6 +40,7 @@ namespace CharacterMap.Provider
 
                 await PopulateMDL2Async(connection).ConfigureAwait(false);
                 await PopulateUnicodeAsync(connection).ConfigureAwait(false);
+                await PopulateFontAwesomeAsync(connection).ConfigureAwait(false);
 
                 using (SQLiteConnection con = new SQLiteConnection(connection))
                 {
@@ -109,7 +110,7 @@ namespace CharacterMap.Provider
                     }
                 }
 
-                var data = datas.Select(d => new GlyphDescription
+                var data = datas.Select(d => new MDL2Glyph
                 {
                     Description = d.name.Humanize(LetterCasing.Title),
                     UnicodeIndex = int.Parse(d.code, System.Globalization.NumberStyles.HexNumber),
@@ -164,25 +165,72 @@ namespace CharacterMap.Provider
             });
         }
 
+        private Task PopulateFontAwesomeAsync(SQLiteConnectionString connection)
+        {
+            return Task.Run(async () =>
+            {
+                using (var c = new SQLiteConnection(connection))
+                {
+                    var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FontAwesome.txt")).AsTask().ConfigureAwait(false);
+
+                    using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
+                    using (var reader = new StreamReader(stream))
+                    {
+                        string[] parts;
+                        List<FontAwesomeGlyph> data = new List<FontAwesomeGlyph>();
+                        while (!reader.EndOfStream)
+                        {
+                            parts = reader.ReadLine().Split("	", StringSplitOptions.None);
+
+                            string desc = parts[1];
+                            string hex = parts[2];
+                            int code = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+
+                            data.Add(new FontAwesomeGlyph
+                            {
+                                Description = desc.Humanize(LetterCasing.Title),
+                                UnicodeHex = hex,
+                                UnicodeIndex = code
+                            });
+                        }
+
+                        c.RunInTransaction(() => c.InsertAll(data));
+                    }
+                }
+            });
+        }
+
         private static void PrepareDatabase(SQLiteConnection con)
         {
-            con.CreateTable<GlyphDescription>();
+            con.CreateTable<MDL2Glyph>();
             con.CreateTable<UnicodeGlyphData>();
+            con.CreateTable<FontAwesomeGlyph>();
 
+            /* MDL2 SEARCH */
             con.Execute($"CREATE VIRTUAL TABLE {MDL2_SEARCH_TABLE} USING " +
                 $"fts4({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)})");
 
-            con.Execute($"CREATE TRIGGER insert_trigger AFTER INSERT ON {nameof(GlyphDescription)} " +
+            con.Execute($"CREATE TRIGGER insert_trigger AFTER INSERT ON {nameof(MDL2Glyph)} " +
                 $"BEGIN INSERT INTO {MDL2_SEARCH_TABLE}({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)}) " +
                 $"VALUES (new.{nameof(IGlyphData.UnicodeIndex)}, new.{nameof(IGlyphData.UnicodeHex)}, new.{nameof(IGlyphData.Description)}); END;");
 
 
 
+            /* FONT AWESOME SEARCH */
+            con.Execute($"CREATE VIRTUAL TABLE {FONTAWESOME_SEARCH_TABLE} USING " +
+                $"fts4({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)})");
 
+            con.Execute($"CREATE TRIGGER insert_trigger_fa AFTER INSERT ON {nameof(FontAwesomeGlyph)} " +
+                $"BEGIN INSERT INTO {FONTAWESOME_SEARCH_TABLE}({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)}) " +
+                $"VALUES (new.{nameof(IGlyphData.UnicodeIndex)}, new.{nameof(IGlyphData.UnicodeHex)}, new.{nameof(IGlyphData.Description)}); END;");
+
+
+
+            /* UNICODE SEARCH */
             con.Execute($"CREATE VIRTUAL TABLE {UNICODE_SEARCH_TABLE} USING " +
                 $"fts4({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)})");
 
-            con.Execute($"CREATE TRIGGER insert_trigger2 AFTER INSERT ON {nameof(UnicodeGlyphData)} " +
+            con.Execute($"CREATE TRIGGER insert_trigger_uni AFTER INSERT ON {nameof(UnicodeGlyphData)} " +
                 $"BEGIN INSERT INTO {UNICODE_SEARCH_TABLE}({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)}) " +
                 $"VALUES (new.{nameof(IGlyphData.UnicodeIndex)}, new.{nameof(IGlyphData.UnicodeHex)}, new.{nameof(IGlyphData.Description)}); END;");
         }

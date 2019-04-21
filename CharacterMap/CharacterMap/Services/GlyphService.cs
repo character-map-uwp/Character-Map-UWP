@@ -36,6 +36,10 @@ namespace CharacterMap.Services
         public string Description { get; set; }
     }
 
+    public class MDL2Glyph : GlyphDescription { }
+
+    public class FontAwesomeGlyph : GlyphDescription { }
+
     public interface IGlyphDataProvider
     {
         void Initialise();
