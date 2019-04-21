@@ -8,6 +8,7 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:CharacterMap.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:CharacterMap.Services"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -62,19 +63,26 @@
             x:Load="{x:Bind IsStandalone}"
             Grid.Row="1"
             Height="45"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="FontTitleBlock"
-                Grid.Column="1"
+                Grid.Column="0"
                 Margin="12 0"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
-                Foreground="White"
                 Text="{Binding SelectedFont.Name}"
-                TextTrimming="CharacterEllipsis" />
+                TextTrimming="CharacterEllipsis"
+                ToolTipService.ToolTip="{Binding SelectedFont.Name}" />
 
             <Button
+                Grid.Column="1"
                 Height="45"
                 Padding="12 0"
                 HorizontalAlignment="Right"
@@ -96,6 +104,43 @@
                         TextTrimming="CharacterEllipsis" />
                 </Grid>
             </Button>
+
+            <AutoSuggestBox
+                x:Name="SearchBoxUnicode"
+                x:Uid="SearchBoxUnicode"
+                Grid.Column="2"
+                Width="290"
+                Margin="6 0 6 0"
+                VerticalAlignment="Center"
+                GotFocus="SearchBoxUnicode_GotFocus"
+                ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                PlaceholderText="#SearchBoxUnicode"
+                SuggestionChosen="SearchBoxUnicode_SuggestionChosen"
+                Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextMemberPath="Description"
+                UpdateTextOnSelect="False">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate x:DataType="services:IGlyphData">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon
+                                Margin="4 0 0 0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontFamily="{Binding ElementName=SearchBoxUnicode, Path=DataContext.FontFamily}"
+                                FontSize="16"
+                                Glyph="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Description}" />
+                        </Grid>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
         </Grid>
 
 

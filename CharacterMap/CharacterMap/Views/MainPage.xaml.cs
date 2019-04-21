@@ -244,18 +244,12 @@ namespace CharacterMap.Views
 
         private void SearchBoxUnicode_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            if (args.SelectedItem is IGlyphData data)
-            {
-                FontMap.SelectCharacter(FontMap.ViewModel.Chars.First(c => c.UnicodeIndex == data.UnicodeIndex));
-            }
+            FontMap.SearchBoxUnicode_SuggestionChosen(sender, args);
         }
 
         private void SearchBoxUnicode_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (FontMap.ViewModel.SearchResults != null && FontMap.ViewModel.SearchResults.Count > 0)
-                SearchBoxUnicode.IsSuggestionListOpen = true;
-            else
-                FontMap.ViewModel.DebounceSearch(FontMap.ViewModel.SearchQuery);
+            FontMap.SearchBoxUnicode_GotFocus(sender, e);
         }
     }
 }

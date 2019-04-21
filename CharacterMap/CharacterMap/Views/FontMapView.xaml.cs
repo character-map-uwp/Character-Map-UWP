@@ -213,6 +213,22 @@ namespace CharacterMap.Views
                 item.Width = newSize;
             }
         }
+
+        internal void SearchBoxUnicode_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            if (args.SelectedItem is IGlyphData data)
+            {
+                SelectCharacter(ViewModel.Chars.First(c => c.UnicodeIndex == data.UnicodeIndex));
+            }
+        }
+
+        internal void SearchBoxUnicode_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
+                SearchBoxUnicode.IsSuggestionListOpen = true;
+            else
+                ViewModel.DebounceSearch(ViewModel.SearchQuery);
+        }
     }
 
 

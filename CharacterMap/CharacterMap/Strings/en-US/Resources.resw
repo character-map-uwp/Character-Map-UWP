@@ -223,7 +223,7 @@
     <value>Requires application restart to take effect.</value>
   </data>
   <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
-    <value>Search Unicode e.g. 1F411</value>
+    <value>Search character name or unicode hex</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>
