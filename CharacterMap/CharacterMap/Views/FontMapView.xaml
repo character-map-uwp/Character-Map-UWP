@@ -106,16 +106,16 @@
             </Button>
 
             <AutoSuggestBox
-                x:Name="SearchBoxUnicode"
-                x:Uid="SearchBoxUnicode"
+                x:Name="SearchBox"
+                x:Uid="SearchBox"
                 Grid.Column="2"
                 Width="290"
                 Margin="6 0 6 0"
                 VerticalAlignment="Center"
-                GotFocus="SearchBoxUnicode_GotFocus"
+                GotFocus="SearchBox_GotFocus"
                 ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
-                PlaceholderText="#SearchBoxUnicode"
-                SuggestionChosen="SearchBoxUnicode_SuggestionChosen"
+                PlaceholderText="#SearchBox"
+                SuggestionChosen="SearchBox_SuggestionChosen"
                 Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
@@ -130,7 +130,7 @@
                                 Margin="4 0 0 0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
-                                FontFamily="{Binding ElementName=SearchBoxUnicode, Path=DataContext.FontFamily}"
+                                FontFamily="{Binding ElementName=SearchBox, Path=DataContext.FontFamily}"
                                 FontSize="16"
                                 Glyph="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
                             <TextBlock

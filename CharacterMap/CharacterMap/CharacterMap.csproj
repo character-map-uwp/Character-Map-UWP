@@ -179,7 +179,6 @@
     <Compile Include="Core\FontVariant.cs" />
     <Compile Include="Core\ImportMessage.cs" />
     <Compile Include="Core\InstalledFont.cs" />
-    <Compile Include="Core\MDL2DescriptionDict.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />

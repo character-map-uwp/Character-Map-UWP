@@ -242,14 +242,14 @@ namespace CharacterMap.Views
             }
         }
 
-        private void SearchBoxUnicode_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            FontMap.SearchBoxUnicode_SuggestionChosen(sender, args);
+            FontMap.SearchBox_SuggestionChosen(sender, args);
         }
 
-        private void SearchBoxUnicode_GotFocus(object sender, RoutedEventArgs e)
+        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            FontMap.SearchBoxUnicode_GotFocus(sender, e);
+            FontMap.OnSearchBoxGotFocus(SearchBox);
         }
     }
 }

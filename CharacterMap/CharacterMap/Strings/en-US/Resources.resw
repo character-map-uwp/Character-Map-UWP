@@ -222,7 +222,7 @@
   <data name="RestartHeader.Text" xml:space="preserve">
     <value>Requires application restart to take effect.</value>
   </data>
-  <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
     <value>Search character name or unicode hex</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">

@@ -53,7 +53,7 @@
                         <Setter Target="FontMap.IsHitTestVisible" Value="False" />
                         <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
                         <Setter Target="FontListFilter.IsEnabled" Value="False" />
-                        <Setter Target="SearchBoxUnicode.IsEnabled" Value="False" />
+                        <Setter Target="SearchBox.IsEnabled" Value="False" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.Opacity" Value="0.4" />
@@ -178,15 +178,15 @@
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
             <AutoSuggestBox
-                x:Name="SearchBoxUnicode"
-                x:Uid="SearchBoxUnicode"
+                x:Name="SearchBox"
+                x:Uid="SearchBox"
                 Grid.Column="2"
                 Width="290"
                 VerticalAlignment="Center"
-                GotFocus="SearchBoxUnicode_GotFocus"
+                GotFocus="SearchBox_GotFocus"
                 ItemsSource="{x:Bind FontMap.ViewModel.SearchResults, Mode=OneWay}"
-                PlaceholderText="#SearchBoxUnicode"
-                SuggestionChosen="SearchBoxUnicode_SuggestionChosen"
+                PlaceholderText="#SearchBox"
+                SuggestionChosen="SearchBox_SuggestionChosen"
                 Text="{Binding ElementName=FontMap, Path=ViewModel.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">

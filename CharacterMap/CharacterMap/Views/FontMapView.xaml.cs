@@ -214,7 +214,15 @@ namespace CharacterMap.Views
             }
         }
 
-        internal void SearchBoxUnicode_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        internal void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
+        {
+            if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
+                searchBox.IsSuggestionListOpen = true;
+            else
+                ViewModel.DebounceSearch(ViewModel.SearchQuery);
+        }
+
+        internal void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             if (args.SelectedItem is IGlyphData data)
             {
@@ -222,12 +230,9 @@ namespace CharacterMap.Views
             }
         }
 
-        internal void SearchBoxUnicode_GotFocus(object sender, RoutedEventArgs e)
+        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
-                SearchBoxUnicode.IsSuggestionListOpen = true;
-            else
-                ViewModel.DebounceSearch(ViewModel.SearchQuery);
+            OnSearchBoxGotFocus(SearchBox);
         }
     }
 
