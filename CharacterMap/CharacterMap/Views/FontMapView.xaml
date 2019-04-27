@@ -115,6 +115,7 @@
                 GotFocus="SearchBox_GotFocus"
                 ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
                 PlaceholderText="#SearchBox"
+                PreviewKeyDown="SearchBox_PreviewKeyDown"
                 SuggestionChosen="SearchBox_SuggestionChosen"
                 Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextMemberPath="Description"

@@ -14,6 +14,7 @@ using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -233,6 +234,12 @@ namespace CharacterMap.Views
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
         {
             OnSearchBoxGotFocus(SearchBox);
+        }
+
+        private void SearchBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+                e.Handled = true;
         }
     }
 

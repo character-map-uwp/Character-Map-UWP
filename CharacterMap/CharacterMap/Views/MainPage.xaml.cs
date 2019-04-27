@@ -251,5 +251,11 @@ namespace CharacterMap.Views
         {
             FontMap.OnSearchBoxGotFocus(SearchBox);
         }
+
+        private void SearchBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+                e.Handled = true;
+        }
     }
 }

@@ -184,6 +184,7 @@
                 Width="290"
                 VerticalAlignment="Center"
                 GotFocus="SearchBox_GotFocus"
+                PreviewKeyDown="SearchBox_PreviewKeyDown"
                 ItemsSource="{x:Bind FontMap.ViewModel.SearchResults, Mode=OneWay}"
                 PlaceholderText="#SearchBox"
                 SuggestionChosen="SearchBox_SuggestionChosen"
