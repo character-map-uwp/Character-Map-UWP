@@ -78,6 +78,36 @@ namespace CharacterMap.Core
             }
         }
 
+        public bool UseInstantSearch
+        {
+            get => ReadSettings(nameof(UseInstantSearch), true);
+            set
+            {
+                SaveSettings(nameof(UseInstantSearch), value);
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int InstantSearchDelay
+        {
+            get => ReadSettings(nameof(InstantSearchDelay), 500);
+            set
+            {
+                SaveSettings(nameof(InstantSearchDelay), value);
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int MaxSearchResult
+        {
+            get => ReadSettings(nameof(MaxSearchResult), 10);
+            set
+            {
+                SaveSettings(nameof(MaxSearchResult), value);
+                NotifyPropertyChanged();
+            }
+        }
+
         public ApplicationDataContainer LocalSettings { get; set; }
 
         public AppSettings()

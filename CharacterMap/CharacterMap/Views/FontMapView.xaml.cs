@@ -220,7 +220,14 @@ namespace CharacterMap.Views
             if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
                 searchBox.IsSuggestionListOpen = true;
             else
-                ViewModel.DebounceSearch(ViewModel.SearchQuery);
+            {
+                searchBox.ContextFlyout.ShowAt(searchBox, new FlyoutShowOptions()
+                {
+                    Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
+                    ShowMode = FlyoutShowMode.Transient
+                });
+                ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay);
+            }
         }
 
         internal void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
@@ -241,8 +248,13 @@ namespace CharacterMap.Views
             if (e.Key == VirtualKey.Enter)
                 e.Handled = true;
         }
-    }
 
+        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            SearchBox.IsSuggestionListOpen = true;
+            ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay, SearchSource.ManualSubmit);
+        }
+    }
 
     public partial class FontMapView
     {

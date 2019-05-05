@@ -116,10 +116,38 @@
                 ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
                 PlaceholderText="#SearchBox"
                 PreviewKeyDown="SearchBox_PreviewKeyDown"
+                QuerySubmitted="SearchBox_QuerySubmitted"
                 SuggestionChosen="SearchBox_SuggestionChosen"
                 Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
+                <AutoSuggestBox.QueryIcon>
+                    <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
+                </AutoSuggestBox.QueryIcon>
+                <AutoSuggestBox.ContextFlyout>
+                    <Flyout x:Name="SearchOptionFlyout">
+                        <StackPanel>
+                            <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
+                                          Margin="0 4"
+                                          OnContent="Enabled instant search"
+                                          OffContent="Disabled instant search">
+                            </ToggleSwitch>
+                            <Slider Header="Delay before search (ms)" 
+                                    Minimum="250" 
+                                    Margin="0 4"
+                                    Maximum="3000"
+                                    TickFrequency="50"
+                                    Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}"
+                                    Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
+                            <Slider Header="Maximum preview search result" 
+                                    Minimum="5" 
+                                    Margin="0 4"
+                                    Maximum="100" 
+                                    TickFrequency="1"
+                                    Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}"/>                            
+                        </StackPanel>
+                    </Flyout>
+                </AutoSuggestBox.ContextFlyout>
                 <AutoSuggestBox.ItemTemplate>
                     <DataTemplate x:DataType="services:IGlyphData">
                         <Grid>

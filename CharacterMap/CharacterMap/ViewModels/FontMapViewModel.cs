@@ -24,6 +24,8 @@ namespace CharacterMap.ViewModels
 {
     public class FontMapViewModel : ViewModelBase
     {
+        private AppSettings Settings { get; }
+
         private Interop Interop { get; }
 
         private StorageFile _sourceFile { get; set; }
@@ -221,8 +223,8 @@ namespace CharacterMap.ViewModels
             set
             {
                 if (Set(ref _searchQuery, value))
-                    DebounceSearch(value); }
-
+                    DebounceSearch(value, Settings.InstantSearchDelay, SearchSource.AutoProperty);
+            }
         }
 
         public FontMapViewModel(IDialogService dialogService)
@@ -274,7 +276,7 @@ namespace CharacterMap.ViewModels
                 SearchResults = null;
                 DebounceSearch(SearchQuery, 100);
             }
-            catch (Exception ex)
+            catch
             {
                 /* 
                  * Hack to avoid crash.
@@ -384,8 +386,10 @@ namespace CharacterMap.ViewModels
             return c.UnicodeString;
         }
 
-        public void DebounceSearch(string query, int delayMilliseconds = 500)
+        public void DebounceSearch(string query, int delayMilliseconds = 500, SearchSource from = SearchSource.AutoProperty)
         {
+            if (from == SearchSource.AutoProperty && !Settings.UseInstantSearch)
+                return;
             _searchDebouncer.Debounce(delayMilliseconds, () => Search(query));
         }
 
@@ -474,5 +478,11 @@ namespace CharacterMap.ViewModels
                 IsLoading = false;
             }
         }
+    }
+
+    public enum SearchSource
+    {
+        AutoProperty,
+        ManualSubmit
     }
 }
