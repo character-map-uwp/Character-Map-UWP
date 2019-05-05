@@ -14,6 +14,7 @@ using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -212,6 +213,33 @@ namespace CharacterMap.Views
             {
                 item.Width = newSize;
             }
+        }
+
+        internal void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
+        {
+            if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
+                searchBox.IsSuggestionListOpen = true;
+            else
+                ViewModel.DebounceSearch(ViewModel.SearchQuery);
+        }
+
+        internal void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            if (args.SelectedItem is IGlyphData data)
+            {
+                SelectCharacter(ViewModel.Chars.First(c => c.UnicodeIndex == data.UnicodeIndex));
+            }
+        }
+
+        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            OnSearchBoxGotFocus(SearchBox);
+        }
+
+        private void SearchBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+                e.Handled = true;
         }
     }
 

@@ -140,12 +140,16 @@
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.1</Version>
     </PackageReference>
+    <PackageReference Include="SQLitePCLRaw.provider.winsqlite3.uwp10">
+      <Version>1.1.13</Version>
+    </PackageReference>
     <PackageReference Include="Win2d.uwp">
       <Version>1.23.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <Content Include="Assets\Data\GlyphData.db" />
     <None Include="CharacterMap_StoreKey.pfx" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
     <PRIResource Include="Strings\pl-PL\Resources.resw" />
@@ -175,17 +179,23 @@
     <Compile Include="Core\FontVariant.cs" />
     <Compile Include="Core\ImportMessage.cs" />
     <Compile Include="Core\InstalledFont.cs" />
-    <Compile Include="Core\MDL2DescriptionDict.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
+    <Compile Include="Core\UnicodeGlyphData.cs" />
+    <Compile Include="Helpers\ConcurrencyToken.cs" />
+    <Compile Include="Helpers\Debouncer.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\Localization.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
+    <Compile Include="Helpers\Sqlite.cs" />
     <Compile Include="Helpers\TitleBarHelper.cs" />
+    <Compile Include="Provider\SQLiteGlyphProvider.cs" />
+    <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
     <Compile Include="Services\ActivationService.cs" />
+    <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
     <Compile Include="Services\ToastNotificationsService.cs" />
     <Compile Include="Services\ViewLifetimeManager.cs" />
@@ -265,6 +275,13 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <Content Include="Assets\Data\UnicodeData.txt" />
+    <Content Include="Assets\Data\FontAwesome.txt" />
+    <Content Include="Assets\Data\MDL2.xml" />
+    <Content Include="Assets\Data\FabricMDL2.txt" />
+    <Content Include="Assets\Data\FullMDL2ManualList.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">

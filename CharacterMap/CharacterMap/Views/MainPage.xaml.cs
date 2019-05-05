@@ -21,6 +21,8 @@ using Windows.UI.Xaml.Media;
 using GalaSoft.MvvmLight.Messaging;
 using Windows.Storage;
 using System.Collections.Generic;
+using CharacterMap.Services;
+using Windows.Storage.Pickers;
 
 namespace CharacterMap.Views
 {
@@ -42,7 +44,6 @@ namespace CharacterMap.Views
 
             this.Loaded += MainPage_Loaded;
             this.Unloaded += MainPage_Unloaded;
-
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -84,43 +85,6 @@ namespace CharacterMap.Views
         private async void BtnRestart_OnClick(object sender, RoutedEventArgs e)
         {
             await DoRestartRequest();
-        }
-
-        private void SearchBoxUnicode_OnTextChanged(object sender, TextChangedEventArgs e)
-        {
-            var unicodeIndex = SearchBoxUnicode.Text.Trim();
-            int intIndex = Utils.ParseHexString(unicodeIndex);
-            var ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-            if (null != ch)
-            {
-                FontMap.SelectCharacter(ch);
-            }
-            else if (ViewModel.SelectedFont.Name.EndsWith("MDL2 Assets"))    //Search for Segoe MDL2 Assets characters with description
-            {
-                string descriptionForSearch = SearchBoxUnicode.Text.ToLower().Replace(" ", string.Empty);
-
-                if (MDL2Description.Dict.TryGetValue(descriptionForSearch, out string unicodePoint))
-                {
-                    //Precise search
-                    intIndex = Utils.ParseHexString(unicodePoint);
-                    ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-                    FontMap.SelectCharacter(ch);
-                }
-                else
-                {
-                    //Fuzzy search
-                    string resultKey = MDL2Description.Dict.Keys.Where(key => key.Contains(descriptionForSearch)).ToList().FirstOrDefault();
-                    if (null != resultKey)
-                    {
-                        if(MDL2Description.Dict.TryGetValue(resultKey, out string unicodePointFuzzy))
-                        {
-                            intIndex = Utils.ParseHexString(unicodePointFuzzy);
-                            ch = FontMap.ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == intIndex);
-                            FontMap.SelectCharacter(ch);
-                        }
-                    }
-                }
-            }
         }
 
         private async Task DoRestartRequest()
@@ -223,6 +187,75 @@ namespace CharacterMap.Views
             {
                 _ = FontMapView.CreateNewViewForFontAsync(font);
             }
+        }
+
+        private async void PickFonts()
+        {
+            var picker = new FileOpenPicker();
+            foreach (var format in FontFinder.SupportedFormats)
+                picker.FileTypeFilter.Add(format);
+
+            picker.CommitButtonText = Localization.Get("FilePickerConfirm");
+            var files = await picker.PickMultipleFilesAsync();
+            if (files.Any())
+            {
+                ViewModel.IsLoadingFonts = true;
+                try
+                {
+                    if (await FontFinder.ImportFontsAsync(files.ToList()) is FontImportResult result
+                        && result.Imported.Count > 0)
+                    {
+                        ViewModel.RefreshFontList();
+                        ViewModel.TrySetSelectionFromImport(result);
+                    }
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
+                }
+            }
+        }
+
+        private async void OpenFont()
+        {
+            var picker = new FileOpenPicker();
+            foreach (var format in FontFinder.SupportedFormats)
+                picker.FileTypeFilter.Add(format);
+
+            picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    ViewModel.IsLoadingFonts = true;
+
+                    if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
+                    {
+                        await FontMapView.CreateNewViewForFontAsync(font);
+                    }
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
+                }
+            }
+        }
+
+        private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        {
+            FontMap.SearchBox_SuggestionChosen(sender, args);
+        }
+
+        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            FontMap.OnSearchBoxGotFocus(SearchBox);
+        }
+
+        private void SearchBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Enter)
+                e.Handled = true;
         }
     }
 }

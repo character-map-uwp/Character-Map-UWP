@@ -20,13 +20,13 @@ namespace CharacterMap
 
         public App()
         {
+            this.FocusVisualKind = FocusVisualKind.Reveal;
             this.InitializeComponent();
             AppSettings = new AppSettings();
             this.UnhandledException += OnUnhandledException;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
             Current = this;
 
-            this.FocusVisualKind = FocusVisualKind.HighVisibility;
         }
 
         private void RegisterExceptionHandlingSynchronizationContext()

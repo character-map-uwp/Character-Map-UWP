@@ -386,10 +386,14 @@ namespace CharacterMap.Core
             foreach (CanvasFontFace font in GetFontFacesFromFile(localFile))
                 AddFont(resultList, font, localFile);
 
+            GC.Collect();
+
             if (resultList.Count > 0)
                 return resultList.First().Value;
 
             return null;
         }
+
+        public static bool IsMDL2(FontVariant variant) => variant.FamilyName.Contains("MDL2 Assets");
     }
 }

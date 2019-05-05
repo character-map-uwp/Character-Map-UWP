@@ -9,13 +9,13 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:CharacterMap"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:CharacterMap.Services"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:SmartTextColorBasedOnAccentTypeConverter x:Key="SmartTextColorBasedOnAccentTypeConverter" />
         <CollectionViewSource
             x:Key="GroupedFontList"
             x:Name="GroupedFontList"
@@ -53,7 +53,10 @@
                         <Setter Target="FontMap.IsHitTestVisible" Value="False" />
                         <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
                         <Setter Target="FontListFilter.IsEnabled" Value="False" />
-                        <Setter Target="SearchBoxUnicode.IsEnabled" Value="False" />
+                        <Setter Target="SearchBox.IsEnabled" Value="False" />
+                        <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
+                        <Setter Target="OpenFontButton.IsEnabled" Value="False" />
+                        <Setter Target="OpenFontButton.Opacity" Value="0.4" />
                         <Setter Target="LoadingRing.IsActive" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
@@ -110,18 +113,55 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <ComboBox
-                x:Name="FontListFilter"
-                Width="160"
-                Margin="0,0,0,3"
-                VerticalAlignment="Bottom"
-                FontSize="16"
-                SelectedIndex="{Binding FontListFilter, Mode=TwoWay}">
-                <ComboBoxItem x:Uid="FilterAllFonts" />
-                <ComboBoxItem x:Uid="FilterSymbolFonts" />
-                <ComboBoxItem x:Uid="FilterImportedFonts" />
-                <!--<ComboBoxItem Content="Favorites" />-->
-            </ComboBox>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox
+                    x:Name="FontListFilter"
+                    Height="45"
+                    Margin="0,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontSize="16"
+                    SelectedIndex="{Binding FontListFilter, Mode=TwoWay}">
+                    <ComboBoxItem x:Uid="FilterAllFonts" />
+                    <ComboBoxItem x:Uid="FilterSymbolFonts" />
+                    <ComboBoxItem x:Uid="FilterImportedFonts" />
+                    <!--<ComboBoxItem Content="Favorites" />-->
+                </ComboBox>
+                <AppBarButton
+                    x:Name="ImportFontsButton"
+                    x:Uid="ImportFontsButton"
+                    Grid.Column="1"
+                    Width="45"
+                    Height="45"
+                    VerticalAlignment="Bottom"
+                    Click="{x:Bind PickFonts}">
+                    <FontIcon
+                        FontSize="16"
+                        Glyph="&#xE109;"
+                        Opacity="0.8" />
+                </AppBarButton>
+                <AppBarButton
+                    x:Name="OpenFontButton"
+                    x:Uid="OpenFontButton"
+                    Grid.Column="2"
+                    Width="45"
+                    Height="45"
+                    VerticalAlignment="Bottom"
+                    Click="{x:Bind OpenFont}">
+                    <Path
+                        Height="16"
+                        Data="M896,320L1012,320L788,768L0,768L0,128L338.5,128L466.5,0L896,0ZM64,192L64,632.5L220.5,320L832,320L832,64L493.5,64L365.5,192ZM748,704L908,384L260,384L99.5,704Z"
+                        Fill="White"
+                        Opacity="0.8"
+                        Stretch="Uniform" />
+                </AppBarButton>
+            </Grid>
+
 
             <!--<ToggleSwitch
                 x:Name="ToggleSymbolFontsOnly"
@@ -131,21 +171,52 @@
             <TextBlock
                 x:Name="FontTitleBlock"
                 Grid.Column="1"
-                Margin="10,0,5,0"
+                Margin="24,0,5,0"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
-            <TextBox
-                x:Name="SearchBoxUnicode"
-                x:Uid="SearchBoxUnicode"
+            <AutoSuggestBox
+                x:Name="SearchBox"
+                x:Uid="SearchBox"
                 Grid.Column="2"
                 Width="290"
                 VerticalAlignment="Center"
-                PlaceholderText="#SearchBoxUnicode"
+                GotFocus="SearchBox_GotFocus"
+                PreviewKeyDown="SearchBox_PreviewKeyDown"
+                ItemsSource="{x:Bind FontMap.ViewModel.SearchResults, Mode=OneWay}"
+                PlaceholderText="#SearchBox"
+                SuggestionChosen="SearchBox_SuggestionChosen"
+                Text="{Binding ElementName=FontMap, Path=ViewModel.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextMemberPath="Description"
+                UpdateTextOnSelect="False">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate x:DataType="services:IGlyphData">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon
+                                Margin="4 0 0 0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontFamily="{Binding ElementName=FontMap, Path=ViewModel.FontFamily}"
+                                FontSize="16"
+                                Glyph="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Description}" />
+                        </Grid>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
+            <!--<TextBox
+
                 Style="{StaticResource SearchTextBox}"
-                TextChanged="SearchBoxUnicode_OnTextChanged" />
+                />-->
             <AppBarButton
                 x:Name="BtnSettings"
                 Grid.Column="3"
@@ -336,12 +407,10 @@
                 </TextBlock>
             </StackPanel>
 
-            <StackPanel
+            <TextBlock
                 Grid.Column="2"
                 Margin="12,0"
-                Orientation="Horizontal">
-                <TextBlock Text="{x:Bind FontMap.ViewModel.SelectedChar.UnicodeString, Mode=OneWay}" />
-            </StackPanel>
+                Text="{x:Bind FontMap.ViewModel.GetCharDescription(FontMap.ViewModel.SelectedChar), Mode=OneWay}" />
         </Grid>
 
         <!--  Settings ContentDialog  -->

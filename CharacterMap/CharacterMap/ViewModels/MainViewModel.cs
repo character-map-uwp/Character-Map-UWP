@@ -14,6 +14,7 @@ using CharacterMap.Helpers;
 using Windows.Storage;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
+using CharacterMap.Services;
 
 namespace CharacterMap.ViewModels
 {
@@ -123,7 +124,11 @@ namespace CharacterMap.ViewModels
         private async Task LoadAsync()
         {
             IsLoadingFonts = true;
-            await FontFinder.LoadFontsAsync();
+
+            await Task.WhenAll(
+                GlyphService.InitializeAsync(),
+                FontFinder.LoadFontsAsync());
+
             RefreshFontList();
             IsLoadingFonts = false;
         }

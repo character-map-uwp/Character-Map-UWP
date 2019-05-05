@@ -8,6 +8,7 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:CharacterMap.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:CharacterMap.Services"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -18,6 +19,8 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+
         </Grid.RowDefinitions>
 
         <VisualStateManager.VisualStateGroups>
@@ -59,20 +62,28 @@
             x:Name="TitleGrid"
             x:Load="{x:Bind IsStandalone}"
             Grid.Row="1"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+            Height="45"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="FontTitleBlock"
-                Grid.Column="1"
-                Margin="12,12,12,12"
+                Grid.Column="0"
+                Margin="12 0"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
-                Foreground="White"
                 Text="{Binding SelectedFont.Name}"
-                TextTrimming="CharacterEllipsis" />
+                TextTrimming="CharacterEllipsis"
+                ToolTipService.ToolTip="{Binding SelectedFont.Name}" />
 
             <Button
-                Height="54"
+                Grid.Column="1"
+                Height="45"
                 Padding="12 0"
                 HorizontalAlignment="Right"
                 Click="{x:Bind ViewModel.ImportFile}"
@@ -93,6 +104,44 @@
                         TextTrimming="CharacterEllipsis" />
                 </Grid>
             </Button>
+
+            <AutoSuggestBox
+                x:Name="SearchBox"
+                x:Uid="SearchBox"
+                Grid.Column="2"
+                Width="290"
+                Margin="6 0 6 0"
+                VerticalAlignment="Center"
+                GotFocus="SearchBox_GotFocus"
+                ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                PlaceholderText="#SearchBox"
+                PreviewKeyDown="SearchBox_PreviewKeyDown"
+                SuggestionChosen="SearchBox_SuggestionChosen"
+                Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextMemberPath="Description"
+                UpdateTextOnSelect="False">
+                <AutoSuggestBox.ItemTemplate>
+                    <DataTemplate x:DataType="services:IGlyphData">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="30" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <FontIcon
+                                Margin="4 0 0 0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                FontFamily="{Binding ElementName=SearchBox, Path=DataContext.FontFamily}"
+                                FontSize="16"
+                                Glyph="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind Description}" />
+                        </Grid>
+                    </DataTemplate>
+                </AutoSuggestBox.ItemTemplate>
+            </AutoSuggestBox>
         </Grid>
 
 
@@ -188,6 +237,8 @@
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
                                             <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
                                         </Grid.RowDefinitions>
 
 
@@ -238,6 +289,21 @@
                                             Grid.Row="7"
                                             Style="{StaticResource Value}"
                                             Text="{x:Bind ViewModel.SelectedVariant.FontFace.Weight.Weight.ToString(), Mode=OneWay}" />
+
+                                        <TextBlock
+                                            x:Uid="FontPropXaml"
+                                            Grid.Row="8"
+                                            Margin="0 4 0 0"
+                                            Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
+                                        <TextBlock
+                                            Grid.Row="9"
+                                            Grid.Column="0"
+                                            Grid.ColumnSpan="2"
+                                            Margin="0 -4 0 0"
+                                            IsTextSelectionEnabled="True"
+                                            Style="{StaticResource Value}"
+                                            Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
+                                            Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
                                     </Grid>
 
                                     <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">
@@ -330,6 +396,9 @@
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowsScrollingPlaceholders="False">
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection />
+                    </GridView.ItemContainerTransitions>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="core:Character">
                             <Grid Style="{StaticResource CharItemGridStyle}">
@@ -708,6 +777,32 @@
             Grid.ColumnSpan="2"
             Width="50"
             Height="50" />
+
+        <Grid
+            x:Name="StatusBar"
+            x:Load="{x:Bind IsStandalone}"
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Height="26"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="VerticalAlignment" Value="Center" />
+                </Style>
+            </Grid.Resources>
+            <TextBlock
+                Grid.Column="2"
+                Margin="12,0"
+                Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
+        </Grid>
 
     </Grid>
 

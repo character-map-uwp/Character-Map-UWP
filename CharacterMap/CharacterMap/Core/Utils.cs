@@ -34,12 +34,16 @@ namespace CharacterMap.Core
         }
 
 
-        public static int ParseHexString(string hexNumber)
+        public static bool TryParseHexString(string hexNumber, out int hex)
         {
             hexNumber = hexNumber.Replace("x", string.Empty);
-            int result = 0;
-            int.TryParse(hexNumber, System.Globalization.NumberStyles.HexNumber, null, out result);
-            return result;
+            if (int.TryParse(hexNumber, System.Globalization.NumberStyles.HexNumber, null, out int result))
+            {
+                hex = result;
+                return true;
+            }
+            hex = 0;
+            return false;
         }
 
         public static bool IsAccentColorDark()

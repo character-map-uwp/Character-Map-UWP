@@ -222,8 +222,8 @@
   <data name="RestartHeader.Text" xml:space="preserve">
     <value>Requires application restart to take effect.</value>
   </data>
-  <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
-    <value>Search Unicode e.g. 1F411</value>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Search character name or unicode hex</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>
@@ -299,5 +299,20 @@
   </data>
   <data name="ImportFontHelpBlock.Text" xml:space="preserve">
     <value>Drag fonts into the app to copy them to your collection.</value>
+  </data>
+  <data name="FontPropXaml.Text" xml:space="preserve">
+    <value>XAML FontFamily Source</value>
+  </data>
+  <data name="FilePickerConfirm" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Import Fonts</value>
+  </data>
+  <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open Font</value>
+  </data>
+  <data name="OpenFontPickerConfirm" xml:space="preserve">
+    <value>Open</value>
   </data>
 </root>
