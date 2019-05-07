@@ -221,11 +221,8 @@ namespace CharacterMap.Views
                 searchBox.IsSuggestionListOpen = true;
             else
             {
-                searchBox.ContextFlyout.ShowAt(searchBox, new FlyoutShowOptions()
-                {
-                    Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
-                    ShowMode = FlyoutShowMode.Transient
-                });
+                if (!SearchOptionFlyout.IsOpen && ViewModel.SearchQuery == null)
+                    searchBox.ContextFlyout.ShowAt(searchBox);
                 ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay);
             }
         }

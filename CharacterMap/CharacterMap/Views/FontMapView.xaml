@@ -10,6 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="using:CharacterMap.Services"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:w10v1803="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 6)"
+    xmlns:w10v1809="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
     d:DesignHeight="300"
     d:DesignWidth="400"
     mc:Ignorable="d">
@@ -69,6 +71,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <win10v1803:ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="FontTitleBlock"
@@ -125,7 +128,7 @@
                     <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
                 </AutoSuggestBox.QueryIcon>
                 <AutoSuggestBox.ContextFlyout>
-                    <Flyout x:Name="SearchOptionFlyout">
+                    <Flyout x:Name="SearchOptionFlyout" Placement="BottomEdgeAlignedLeft" w10v1809:ShowMode="Transient" >
                         <StackPanel>
                             <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
                                           Margin="0 4"
@@ -170,6 +173,43 @@
                     </DataTemplate>
                 </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
+
+            <win10v1803:Button
+                Grid.Column="3"
+                Height="45"
+                Padding="12 0"
+                HorizontalAlignment="Right"
+                RequestedTheme="Dark"
+                Style="{ThemeResource TransparentButton}">
+                <Grid>
+                    <FontIcon Glyph="&#xE11A;" />
+                    <FontIcon Glyph="&#xE115;" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="7" Margin="0 3 3 0" />
+                </Grid>
+                <AutoSuggestBox.ContextFlyout>
+                    <Flyout Placement="Bottom">
+                        <StackPanel>
+                            <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
+                                          Margin="0 4"
+                                          OnContent="Enabled instant search"
+                                          OffContent="Disabled instant search">
+                            </ToggleSwitch>
+                            <Slider Header="Delay before search (ms)" 
+                                    Minimum="250" 
+                                    Margin="0 4"
+                                    Maximum="3000"
+                                    TickFrequency="50"
+                                    Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}"
+                                    Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
+                            <Slider Header="Maximum preview search result" 
+                                    Minimum="5" 
+                                    Margin="0 4"
+                                    Maximum="100" 
+                                    TickFrequency="1"
+                                    Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Flyout>
+                </AutoSuggestBox.ContextFlyout>
+            </win10v1803:Button>
         </Grid>
 
 
