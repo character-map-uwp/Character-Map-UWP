@@ -71,7 +71,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <win10v1803:ColumnDefinition Width="Auto" />
+                <w10v1803:ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="FontTitleBlock"
@@ -174,7 +174,7 @@
                 </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
 
-            <win10v1803:Button
+            <w10v1803:Button
                 Grid.Column="3"
                 Height="45"
                 Padding="12 0"
@@ -209,7 +209,7 @@
                         </StackPanel>
                     </Flyout>
                 </AutoSuggestBox.ContextFlyout>
-            </win10v1803:Button>
+            </w10v1803:Button>
         </Grid>
 
 
