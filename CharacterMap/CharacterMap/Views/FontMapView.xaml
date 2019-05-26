@@ -10,8 +10,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="using:CharacterMap.Services"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:w10v1803="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 6)"
-    xmlns:w10v1809="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 7)"
     d:DesignHeight="300"
     d:DesignWidth="400"
     mc:Ignorable="d">
@@ -71,7 +69,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <w10v1803:ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{x:Bind core:Converters.GridLengthAorB(core:Utils.IsSystemOnWin10v1809OrNewer, '0', 'Auto')}" />
             </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="FontTitleBlock"
@@ -128,8 +126,8 @@
                     <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
                 </AutoSuggestBox.QueryIcon>
                 <AutoSuggestBox.ContextFlyout>
-                    <Flyout x:Name="SearchOptionFlyout" Placement="BottomEdgeAlignedLeft" w10v1809:ShowMode="Transient" >
-                        <StackPanel>
+                    <Flyout>
+                        <StackPanel Width="260">
                             <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
                                           Margin="0 4"
                                           OnContent="Enabled instant search"
@@ -174,18 +172,18 @@
                 </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
 
-            <w10v1803:Button
+            <AppBarButton
+                x:Name="SearchOptionButton"
+                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
+                Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}"
                 Grid.Column="3"
-                Height="45"
-                Padding="12 0"
-                HorizontalAlignment="Right"
-                RequestedTheme="Dark"
-                Style="{ThemeResource TransparentButton}">
+                Width="45"
+                Height="45">
                 <Grid>
                     <FontIcon Glyph="&#xE11A;" />
                     <FontIcon Glyph="&#xE115;" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="7" Margin="0 3 3 0" />
                 </Grid>
-                <AutoSuggestBox.ContextFlyout>
+                <AppBarButton.ContextFlyout>
                     <Flyout Placement="Bottom">
                         <StackPanel>
                             <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
@@ -208,8 +206,8 @@
                                     Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}"/>
                         </StackPanel>
                     </Flyout>
-                </AutoSuggestBox.ContextFlyout>
-            </w10v1803:Button>
+                </AppBarButton.ContextFlyout>
+            </AppBarButton>
         </Grid>
 
 

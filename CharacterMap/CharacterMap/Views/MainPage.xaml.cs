@@ -257,5 +257,10 @@ namespace CharacterMap.Views
             if (e.Key == VirtualKey.Enter)
                 e.Handled = true;
         }
+
+        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            FontMap.OnSearchBoxSubmittedQuery(SearchBox);
+        }
     }
 }

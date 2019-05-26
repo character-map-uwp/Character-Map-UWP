@@ -20,5 +20,21 @@ namespace CharacterMap.Core
         public static bool IsNotNull(object obj) => obj != null;
 
         public static char ToHex(int i) => (char)i;
+
+        public static GridLength GridLengthAorB(bool input, string a, string b) 
+            => input ? ReadFromString(a) : ReadFromString(b);
+
+        private static GridLength ReadFromString(string s)
+        {
+            if (s == Auto)
+                return new GridLength(1, GridUnitType.Auto);
+            else if (s == Star)
+                return new GridLength(1, GridUnitType.Star);
+            else
+                return new GridLength(double.Parse(s), GridUnitType.Pixel);
+        }
+
+        public const string Auto = "Auto";
+        public const string Star = "*";
     }
 }

@@ -24,7 +24,7 @@ namespace CharacterMap.ViewModels
 {
     public class FontMapViewModel : ViewModelBase
     {
-        private AppSettings Settings { get; }
+        private AppSettings Settings { get; } = new AppSettings();
 
         private Interop Interop { get; }
 

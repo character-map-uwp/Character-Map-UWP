@@ -110,6 +110,7 @@
                 <ColumnDefinition Width="256" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="{x:Bind core:Converters.GridLengthAorB(core:Utils.IsSystemOnWin10v1809OrNewer, '0', 'Auto')}" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -188,9 +189,37 @@
                 ItemsSource="{x:Bind FontMap.ViewModel.SearchResults, Mode=OneWay}"
                 PlaceholderText="#SearchBox"
                 SuggestionChosen="SearchBox_SuggestionChosen"
+                QuerySubmitted="SearchBox_QuerySubmitted"
                 Text="{Binding ElementName=FontMap, Path=ViewModel.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
+                <AutoSuggestBox.QueryIcon>
+                    <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
+                </AutoSuggestBox.QueryIcon>
+                <AutoSuggestBox.ContextFlyout>
+                    <Flyout>
+                        <StackPanel Width="260">
+                            <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
+                                          Margin="0 4"
+                                          OnContent="Enabled instant search"
+                                          OffContent="Disabled instant search">
+                            </ToggleSwitch>
+                            <Slider Header="Delay before search (ms)" 
+                                    Minimum="250" 
+                                    Margin="0 4"
+                                    Maximum="3000"
+                                    TickFrequency="50"
+                                    Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}"
+                                    Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
+                            <Slider Header="Maximum preview search result" 
+                                    Minimum="5" 
+                                    Margin="0 4"
+                                    Maximum="100" 
+                                    TickFrequency="1"
+                                    Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Flyout>
+                </AutoSuggestBox.ContextFlyout>
                 <AutoSuggestBox.ItemTemplate>
                     <DataTemplate x:DataType="services:IGlyphData">
                         <Grid>
@@ -213,13 +242,47 @@
                     </DataTemplate>
                 </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
-            <!--<TextBox
-
-                Style="{StaticResource SearchTextBox}"
-                />-->
+            
+            <AppBarButton
+                x:Name="SearchOptionButton"
+                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
+                Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}"
+                Grid.Column="3"
+                Width="45"
+                Height="45">
+                <Grid>
+                    <FontIcon Glyph="&#xE11A;" />
+                    <FontIcon Glyph="&#xE115;" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="7" Margin="0 3 3 0" />
+                </Grid>
+                <AppBarButton.ContextFlyout>
+                    <Flyout Placement="Bottom">
+                        <StackPanel>
+                            <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
+                                          Margin="0 4"
+                                          OnContent="Enabled instant search"
+                                          OffContent="Disabled instant search">
+                            </ToggleSwitch>
+                            <Slider Header="Delay before search (ms)" 
+                                    Minimum="250" 
+                                    Margin="0 4"
+                                    Maximum="3000"
+                                    TickFrequency="50"
+                                    Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}"
+                                    Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
+                            <Slider Header="Maximum preview search result" 
+                                    Minimum="5" 
+                                    Margin="0 4"
+                                    Maximum="100" 
+                                    TickFrequency="1"
+                                    Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.ContextFlyout>
+            </AppBarButton>
+            
             <AppBarButton
                 x:Name="BtnSettings"
-                Grid.Column="3"
+                Grid.Column="4"
                 Width="45"
                 Height="45"
                 Click="BtnSettings_OnClick">

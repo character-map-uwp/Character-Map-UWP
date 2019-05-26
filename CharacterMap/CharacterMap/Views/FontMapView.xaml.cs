@@ -221,10 +221,23 @@ namespace CharacterMap.Views
                 searchBox.IsSuggestionListOpen = true;
             else
             {
-                if (!SearchOptionFlyout.IsOpen && ViewModel.SearchQuery == null)
-                    searchBox.ContextFlyout.ShowAt(searchBox);
+                if (Core.Utils.IsSystemOnWin10v1809OrNewer)
+                {
+                    if (!searchBox.ContextFlyout.IsOpen && ViewModel.SearchQuery == null)
+                        searchBox.ContextFlyout.ShowAt(searchBox, new FlyoutShowOptions()
+                        {
+                            Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
+                            ShowMode = FlyoutShowMode.Transient
+                        });
+                }
                 ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay);
             }
+        }
+
+        internal void OnSearchBoxSubmittedQuery(AutoSuggestBox searchBox)
+        {
+            searchBox.IsSuggestionListOpen = true;
+            ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay, SearchSource.ManualSubmit);
         }
 
         internal void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
@@ -248,8 +261,7 @@ namespace CharacterMap.Views
 
         private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            SearchBox.IsSuggestionListOpen = true;
-            ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay, SearchSource.ManualSubmit);
+            OnSearchBoxSubmittedQuery(SearchBox);
         }
     }
 
