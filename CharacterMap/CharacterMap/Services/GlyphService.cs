@@ -3,17 +3,8 @@
 using CharacterMap.Core;
 using CharacterMap.Provider;
 using SQLite;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Data.Xml.Dom;
-using Windows.Storage;
-using Windows.System;
-using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Services
 {
@@ -47,7 +38,7 @@ namespace CharacterMap.Services
         Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant);
     }
 
-    public static partial class GlyphService
+    public static class GlyphService
     {
         private static IGlyphDataProvider _provider { get; set; }
 
@@ -63,10 +54,7 @@ namespace CharacterMap.Services
 
         public static Task InitializeAsync()
         {
-            if (_init == null)
-                _init = InitializeInternalAsync();
-
-            return _init;
+            return _init ?? (_init = InitializeInternalAsync());
         }
 
         private static Task InitializeInternalAsync()

@@ -1,28 +1,17 @@
 ﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Views;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
 {
@@ -34,12 +23,12 @@ namespace CharacterMap.Views
 
         public InstalledFont Font
         {
-            get { return (InstalledFont)GetValue(FontProperty); }
-            set { SetValue(FontProperty, value); }
+            get => (InstalledFont)GetValue(FontProperty);
+            set => SetValue(FontProperty, value);
         }
 
         public static readonly DependencyProperty FontProperty =
-            DependencyProperty.Register(nameof(Font), typeof(InstalledFont), typeof(FontMapView), new PropertyMetadata(null, (d,e) =>
+            DependencyProperty.Register(nameof(Font), typeof(InstalledFont), typeof(FontMapView), new PropertyMetadata(null, (d, e) =>
             {
                 if (d is FontMapView f)
                     f.ViewModel.SelectedFont = e.NewValue as InstalledFont;
@@ -51,8 +40,8 @@ namespace CharacterMap.Views
 
         public bool IsStandalone
         {
-            get { return (bool)GetValue(IsStandaloneProperty); }
-            set { SetValue(IsStandaloneProperty, value); }
+            get => (bool)GetValue(IsStandaloneProperty);
+            set => SetValue(IsStandaloneProperty, value);
         }
 
         public static readonly DependencyProperty IsStandaloneProperty =
@@ -64,8 +53,8 @@ namespace CharacterMap.Views
 
         public FontMapViewModel ViewModel
         {
-            get { return (FontMapViewModel)GetValue(ViewModelProperty); }
-            private set { SetValue(ViewModelProperty, value); }
+            get => (FontMapViewModel)GetValue(ViewModelProperty);
+            private set => SetValue(ViewModelProperty, value);
         }
 
         public static readonly DependencyProperty ViewModelProperty =
@@ -79,11 +68,11 @@ namespace CharacterMap.Views
 
         public FontMapView()
         {
-            this.InitializeComponent();
-            this.Loading += FontMapView_Loading;
+            InitializeComponent();
+            Loading += FontMapView_Loading;
             Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
             ViewModel = new FontMapViewModel(ServiceLocator.Current.GetInstance<IDialogService>());
-            this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -114,12 +103,9 @@ namespace CharacterMap.Views
         private void UpdateStates()
         {
             // Ideally should have been achieved with VisualState setters, buuuuut didn't work for some reason
-            if (ViewModel.SelectedFont == null)
-                VisualStateManager.GoToState(this, NoFontState.Name, true);
-            else
-                VisualStateManager.GoToState(this, HasFontState.Name, true);
+            VisualStateManager.GoToState(this, ViewModel.SelectedFont == null ? NoFontState.Name : HasFontState.Name,
+                true);
         }
-
 
         /* Public surface-area methods */
 
@@ -218,9 +204,38 @@ namespace CharacterMap.Views
         internal void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
         {
             if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
+            {
                 searchBox.IsSuggestionListOpen = true;
+            }
             else
-                ViewModel.DebounceSearch(ViewModel.SearchQuery);
+            {
+                if (Utils.IsSystemOnWin10v1809OrNewer)
+                {
+                    if (!searchBox.ContextFlyout.IsOpen && string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
+                    {
+                        searchBox.ContextFlyout.ShowAt(searchBox, new FlyoutShowOptions
+                        {
+                            Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
+                            ShowMode = FlyoutShowMode.Transient
+                        });
+                    }
+                }
+
+                if (!string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
+                {
+                    ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay);
+                }
+            }
+        }
+
+        internal void OnSearchBoxSubmittedQuery(AutoSuggestBox searchBox)
+        {
+            // commented below line because it will keep search result list open even when user selected an item in search result
+            // searchBox.IsSuggestionListOpen = true;
+            if (!string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
+            {
+                ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay, SearchSource.ManualSubmit);
+            }
         }
 
         internal void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
@@ -241,8 +256,12 @@ namespace CharacterMap.Views
             if (e.Key == VirtualKey.Enter)
                 e.Handled = true;
         }
-    }
 
+        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            OnSearchBoxSubmittedQuery(SearchBox);
+        }
+    }
 
     public partial class FontMapView
     {
@@ -250,13 +269,7 @@ namespace CharacterMap.Views
         {
             void CreateView()
             {
-                FontMapView map = new FontMapView
-                {
-                    IsStandalone = true,
-                };
-
-                map.ViewModel.SelectedFont = font;
-
+                FontMapView map = new FontMapView { IsStandalone = true, ViewModel = { SelectedFont = font } };
                 Window.Current.Content = map;
                 Window.Current.Activate();
             }

@@ -18,14 +18,13 @@ using CharacterMap.Services;
 
 namespace CharacterMap.ViewModels
 {
-
     public class MainViewModel : ViewModelBase
     {
         #region Properties
 
         public event EventHandler FontListCreated;
 
-        private Task _initialLoad { get; }
+        private Task InitialLoad { get; }
 
         public IDialogService DialogService { get; }
 
@@ -118,7 +117,7 @@ namespace CharacterMap.ViewModels
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
             MessengerInstance.Register<ImportMessage>(this, OnFontImportRequest);
 
-            _initialLoad = LoadAsync();
+            InitialLoad = LoadAsync();
         }
 
         private async Task LoadAsync()
@@ -179,15 +178,7 @@ namespace CharacterMap.ViewModels
                 if (!string.IsNullOrEmpty(App.AppSettings.LastSelectedFontName))
                 {
                     var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == App.AppSettings.LastSelectedFontName));
-
-                    if (null != lastSelectedFont)
-                    {
-                        this.SelectedFont = lastSelectedFont;
-                    }
-                    else
-                    {
-                        SelectedFont = FontList.FirstOrDefault();
-                    }
+                    SelectedFont = lastSelectedFont ?? FontList.FirstOrDefault();
                 }
                 else
                 {
@@ -251,13 +242,13 @@ namespace CharacterMap.ViewModels
                 IsLoadingFonts = true;
                 try
                 {
-                    if (_initialLoad.IsCompleted)
+                    if (InitialLoad.IsCompleted)
                     {
                         RefreshFontList();
                     }
                     else
                     {
-                        await _initialLoad;
+                        await InitialLoad;
                         await Task.Delay(50);
                     }
 

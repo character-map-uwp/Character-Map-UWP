@@ -7,7 +7,6 @@ using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -15,13 +14,7 @@ using Windows.UI.Xaml.Navigation;
 using CharacterMap.Annotations;
 using CharacterMap.Core;
 using CharacterMap.ViewModels;
-using System.Diagnostics;
 using CharacterMap.Helpers;
-using Windows.UI.Xaml.Media;
-using GalaSoft.MvvmLight.Messaging;
-using Windows.Storage;
-using System.Collections.Generic;
-using CharacterMap.Services;
 using Windows.Storage.Pickers;
 
 namespace CharacterMap.Views
@@ -36,20 +29,20 @@ namespace CharacterMap.Views
 
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
 
-            this.ViewModel = this.DataContext as MainViewModel;
-            this.NavigationCacheMode = NavigationCacheMode.Enabled;
+            ViewModel = DataContext as MainViewModel;
+            NavigationCacheMode = NavigationCacheMode.Enabled;
 
-            this.Loaded += MainPage_Loaded;
-            this.Unloaded += MainPage_Unloaded;
+            Loaded += MainPage_Loaded;
+            Unloaded += MainPage_Unloaded;
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            this.ViewModel.FontListCreated -= ViewModel_FontListCreated;
-            this.ViewModel.FontListCreated += ViewModel_FontListCreated;
+            ViewModel.FontListCreated -= ViewModel_FontListCreated;
+            ViewModel.FontListCreated += ViewModel_FontListCreated;
         }
 
         private void ViewModel_FontListCreated(object sender, EventArgs e)
@@ -64,7 +57,7 @@ namespace CharacterMap.Views
 
         private void MainPage_Unloaded(object sender, RoutedEventArgs e)
         {
-            this.ViewModel.FontListCreated -= ViewModel_FontListCreated;
+            ViewModel.FontListCreated -= ViewModel_FontListCreated;
         }
 
 
@@ -152,10 +145,9 @@ namespace CharacterMap.Views
             e.Handled = true;
             if (sender is Grid grid
                 && grid.DataContext is InstalledFont font
-                && font.HasImportedFiles
-                && grid.ContextFlyout != null)
+                && font.HasImportedFiles)
             {
-                grid.ContextFlyout.ShowAt(grid);
+                grid.ContextFlyout?.ShowAt(grid);
             }
         }
 
@@ -256,6 +248,11 @@ namespace CharacterMap.Views
         {
             if (e.Key == VirtualKey.Enter)
                 e.Handled = true;
+        }
+
+        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            FontMap.OnSearchBoxSubmittedQuery(SearchBox);
         }
     }
 }

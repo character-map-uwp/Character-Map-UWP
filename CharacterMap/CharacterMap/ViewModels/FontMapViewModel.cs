@@ -6,17 +6,14 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -26,11 +23,11 @@ namespace CharacterMap.ViewModels
     {
         private Interop Interop { get; }
 
-        private StorageFile _sourceFile { get; set; }
+        private StorageFile SourceFile { get; set; }
 
-        private Debouncer _searchDebouncer { get; }
+        private Debouncer SearchDebouncer { get; }
 
-        private ConcurrencyToken.ConcurrencyTokenGenerator _searchTokenFactory { get; }
+        private ConcurrencyToken.ConcurrencyTokenGenerator SearchTokenFactory { get; }
 
         public ExportStyle BlackColor { get; } = ExportStyle.Black;
         public ExportStyle WhiteColor { get; } = ExportStyle.White;
@@ -87,7 +84,7 @@ namespace CharacterMap.ViewModels
         public FontFamily FontFamily
         {
             get => _fontFamily;
-            private set { Set(ref _fontFamily, value); }
+            private set => Set(ref _fontFamily, value);
         }
 
         private bool _showColorGlyphs = true;
@@ -138,17 +135,15 @@ namespace CharacterMap.ViewModels
             get => _selectedChar;
             set
             {
-                if (_selectedChar != value)
+                if (_selectedChar == value) return;
+                _selectedChar = value;
+                if (null != value)
                 {
-                    _selectedChar = value;
-                    if (null != value)
-                    {
-                        App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
-                    }
-                    RaisePropertyChanged();
-                    UpdateCharAnalysis();
-                    UpdateDevValues();
+                    App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
                 }
+                RaisePropertyChanged();
+                UpdateCharAnalysis();
+                UpdateDevValues();
             }
         }
 
@@ -186,23 +181,19 @@ namespace CharacterMap.ViewModels
             get => _selectedFont;
             set
             {
-                if (value != _selectedFont)
+                if (value == _selectedFont) return;
+                _selectedFont = value;
+                TitleBarHelper.SetTitle(value?.Name);
+                RaisePropertyChanged();
+                if (null != _selectedFont)
                 {
-                    _selectedFont = value;
-                    TitleBarHelper.SetTitle(value?.Name);
-                    RaisePropertyChanged();
-                    if (null != _selectedFont)
-                    {
-                        TitlePrefix = value.Name + " -";
-                        SelectedVariant = _selectedFont.DefaultVariant;
-
-                        SetDefaultChar();
-
-                    }
-                    else
-                    {
-                        SelectedVariant = null;
-                    }
+                    if (value != null) TitlePrefix = value.Name + " -";
+                    SelectedVariant = _selectedFont.DefaultVariant;
+                    SetDefaultChar();
+                }
+                else
+                {
+                    SelectedVariant = null;
                 }
             }
         }
@@ -221,8 +212,8 @@ namespace CharacterMap.ViewModels
             set
             {
                 if (Set(ref _searchQuery, value))
-                    DebounceSearch(value); }
-
+                    DebounceSearch(value, App.AppSettings.InstantSearchDelay, SearchSource.AutoProperty);
+            }
         }
 
         public FontMapViewModel(IDialogService dialogService)
@@ -233,8 +224,8 @@ namespace CharacterMap.ViewModels
 
             Interop = SimpleIoc.Default.GetInstance<Interop>();
 
-            _searchDebouncer = new Debouncer();
-            _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
+            SearchDebouncer = new Debouncer();
+            SearchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
         }
 
         private void LoadChars(FontVariant variant)
@@ -274,7 +265,7 @@ namespace CharacterMap.ViewModels
                 SearchResults = null;
                 DebounceSearch(SearchQuery, 100);
             }
-            catch (Exception ex)
+            catch
             {
                 /* 
                  * Hack to avoid crash.
@@ -362,13 +353,13 @@ namespace CharacterMap.ViewModels
                             is Character lastSelectedChar
                             && SelectedVariant.FontFace.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
             {
-                this.SelectedChar = lastSelectedChar;
+                SelectedChar = lastSelectedChar;
             }
             else
             {
                 // Everything below 32 / u0020 are control characters and typically blank, so we
                 // try not to choose them as the defaults. 32 is "space", so don't bother with him either.
-                this.SelectedChar = Chars?.FirstOrDefault(c => c.UnicodeIndex > 32) ?? Chars.FirstOrDefault();
+                SelectedChar = Chars?.FirstOrDefault(c => c.UnicodeIndex > 32) ?? Chars.FirstOrDefault();
             }
         }
 
@@ -384,14 +375,18 @@ namespace CharacterMap.ViewModels
             return c.UnicodeString;
         }
 
-        public void DebounceSearch(string query, int delayMilliseconds = 500)
+        public void DebounceSearch(string query, int delayMilliseconds = 500, SearchSource from = SearchSource.AutoProperty)
         {
-            _searchDebouncer.Debounce(delayMilliseconds, () => Search(query));
+            if (from == SearchSource.AutoProperty && !App.AppSettings.UseInstantSearch)
+            {
+                return;
+            }
+            SearchDebouncer.Debounce(delayMilliseconds, () => Search(query));
         }
 
         private async void Search(string query)
         {
-            var token = _searchTokenFactory.GenerateToken();
+            var token = SearchTokenFactory.GenerateToken();
             if (await GlyphService.SearchAsync(query, SelectedVariant) is IReadOnlyList<IGlyphData> results
                 && token.IsValid())
             {
@@ -428,7 +423,7 @@ namespace CharacterMap.ViewModels
                 if (args.Files.FirstOrDefault() is StorageFile file
                     && await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                 {
-                    _sourceFile = file;
+                    SourceFile = file;
                     IsLoading = false;
 
                     SelectedFont = font;
@@ -437,7 +432,7 @@ namespace CharacterMap.ViewModels
                 }
 
                 await DialogService.ShowMessage(
-                    Localization.Get("InvalidFontMessage"), 
+                    Localization.Get("InvalidFontMessage"),
                     Localization.Get("InvalidFontTitle"));
 
                 WindowService.CloseForCurrentView();
@@ -457,7 +452,7 @@ namespace CharacterMap.ViewModels
             IsLoading = true;
             try
             {
-                var items = new List<StorageFile> { _sourceFile };
+                var items = new List<StorageFile> { SourceFile };
                 if (await FontFinder.ImportFontsAsync(items) is FontImportResult result
                     && (result.Imported.Count > 0 || result.Existing.Count > 0))
                 {
@@ -474,5 +469,11 @@ namespace CharacterMap.ViewModels
                 IsLoading = false;
             }
         }
+    }
+
+    public enum SearchSource
+    {
+        AutoProperty,
+        ManualSubmit
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
-using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -14,7 +13,6 @@ using CharacterMap.Helpers;
 using CommonServiceLocator;
 using Edi.UWP.Helpers;
 using GalaSoft.MvvmLight.Threading;
-using Windows.ApplicationModel.Core;
 using CharacterMap.Views;
 
 namespace CharacterMap.Services

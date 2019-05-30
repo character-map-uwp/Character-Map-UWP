@@ -1,19 +1,10 @@
-﻿using CharacterMap.Helpers;
-using GalaSoft.MvvmLight;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using GalaSoft.MvvmLight;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls
 {
@@ -43,25 +34,25 @@ namespace CharacterMap.Controls
 
     public sealed class XamlTitleBar : ContentControl
     {
-        private UISettings _settings = null;
-        private CoreApplicationViewTitleBar _titleBar = null;
-        private CoreWindow _window = null;
-        private FrameworkElement _backgroundElement = null;
+        private UISettings _settings;
+        private CoreApplicationViewTitleBar _titleBar;
+        private CoreWindow _window;
+        private FrameworkElement _backgroundElement;
 
         public XamlTitleBarTemplateSettings TemplateSettings { get; } = new XamlTitleBarTemplateSettings();
 
         public XamlTitleBar()
         {
-            this.DefaultStyleKey = typeof(XamlTitleBar);
-            this.Loaded += XamlTitleBar_Loaded;
-            this.Unloaded += XamlTitleBar_Unloaded;
+            DefaultStyleKey = typeof(XamlTitleBar);
+            Loaded += XamlTitleBar_Loaded;
+            Unloaded += XamlTitleBar_Unloaded;
         }
 
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
 
-            if (this.GetTemplateChild("BackgroundElement") is FrameworkElement e)
+            if (GetTemplateChild("BackgroundElement") is FrameworkElement e)
             {
                 _backgroundElement = e;
                 UpdateDragElement();
@@ -139,14 +130,7 @@ namespace CharacterMap.Controls
         {
             bool active = _window.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
 
-            if (active)
-            {
-                TemplateSettings.BackgroundColor = _settings.GetColorValue(UIColorType.Accent);
-            }
-            else
-            {
-                TemplateSettings.BackgroundColor = _settings.GetColorValue(UIColorType.AccentDark1);
-            }
+            TemplateSettings.BackgroundColor = _settings.GetColorValue(active ? UIColorType.Accent : UIColorType.AccentDark1);
 
             var accentColor = _settings.GetColorValue(UIColorType.Accent);
             var darkAccent = _settings.GetColorValue(UIColorType.AccentDark1);
@@ -164,19 +148,19 @@ namespace CharacterMap.Controls
                 accentColor, Colors.White,
                 Colors.Transparent, Colors.Gray);
 
-            this.RequestedTheme = !IsAccentColorDark() ? ElementTheme.Light : ElementTheme.Dark;
+            RequestedTheme = !IsAccentColorDark() ? ElementTheme.Light : ElementTheme.Dark;
         }
 
         private void UpdateMetrics(CoreApplicationViewTitleBar bar)
         {
             bool ltr = FlowDirection == FlowDirection.LeftToRight;
 
-            this.Height = bar.Height;
+            Height = bar.Height;
 
-            this.TemplateSettings.LeftColumnWidth 
+            TemplateSettings.LeftColumnWidth 
                 = new GridLength(ltr ? bar.SystemOverlayLeftInset : bar.SystemOverlayRightInset);
 
-            this.TemplateSettings.RightColumnWidth 
+            TemplateSettings.RightColumnWidth 
                 = new GridLength(ltr ? bar.SystemOverlayRightInset : bar.SystemOverlayLeftInset);
         }
 

@@ -208,5 +208,21 @@ namespace CharacterMap.Core
             sb.Append(document.GetXml());
             return FileIO.WriteTextAsync(file, sb.ToString()).AsTask();
         }
+
+        private static bool? isOn1809OrNewer = null;
+        /// <summary>
+        /// Use to check if App is on Windows 10 October or not.
+        /// To prevent app on older system running into unsupport code (Eg. FlyoutOptions)
+        /// </summary>
+        public static bool IsSystemOnWin10v1809OrNewer
+        {
+            get
+            {
+                if (isOn1809OrNewer is null)
+                    isOn1809OrNewer = Windows.Foundation.Metadata.
+                        ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7);
+                return isOn1809OrNewer.Value;
+            }
+        }
     }
 }

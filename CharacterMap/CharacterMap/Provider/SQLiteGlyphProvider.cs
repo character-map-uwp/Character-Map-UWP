@@ -20,7 +20,7 @@ namespace CharacterMap.Provider
         internal const string MDL2_SEARCH_TABLE = "mdl2search";
         internal const string FONTAWESOME_SEARCH_TABLE = "fontawesomesearch";
         internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
-        const int SEARCH_LIMIT = 10;
+        private int SEARCH_LIMIT = new AppSettings().MaxSearchResult;
 
         private SQLiteConnection _connection { get; set; }
 
