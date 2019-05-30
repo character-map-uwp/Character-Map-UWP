@@ -6,6 +6,7 @@ using CommonServiceLocator;
 using GalaSoft.MvvmLight.Views;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -39,7 +40,7 @@ namespace CharacterMap.Views
         }
 
         public static readonly DependencyProperty FontProperty =
-            DependencyProperty.Register(nameof(Font), typeof(InstalledFont), typeof(FontMapView), new PropertyMetadata(null, (d,e) =>
+            DependencyProperty.Register(nameof(Font), typeof(InstalledFont), typeof(FontMapView), new PropertyMetadata(null, (d, e) =>
             {
                 if (d is FontMapView f)
                     f.ViewModel.SelectedFont = e.NewValue as InstalledFont;
@@ -79,11 +80,11 @@ namespace CharacterMap.Views
 
         public FontMapView()
         {
-            this.InitializeComponent();
-            this.Loading += FontMapView_Loading;
+            InitializeComponent();
+            Loading += FontMapView_Loading;
             Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
             ViewModel = new FontMapViewModel(ServiceLocator.Current.GetInstance<IDialogService>());
-            this.ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -218,26 +219,39 @@ namespace CharacterMap.Views
         internal void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
         {
             if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
+            {
                 searchBox.IsSuggestionListOpen = true;
+            }
             else
             {
                 if (Core.Utils.IsSystemOnWin10v1809OrNewer)
+                if (Utils.IsSystemOnWin10v1809OrNewer)
                 {
-                    if (!searchBox.ContextFlyout.IsOpen && ViewModel.SearchQuery == null)
-                        searchBox.ContextFlyout.ShowAt(searchBox, new FlyoutShowOptions()
+                    if (!searchBox.ContextFlyout.IsOpen && string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
+                    {
+                        searchBox.ContextFlyout.ShowAt(searchBox, new FlyoutShowOptions
                         {
                             Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
                             ShowMode = FlyoutShowMode.Transient
                         });
+                    }
                 }
-                ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay);
+
+                if (!string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
+                {
+                    ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay);
+                }
             }
         }
 
         internal void OnSearchBoxSubmittedQuery(AutoSuggestBox searchBox)
         {
-            searchBox.IsSuggestionListOpen = true;
-            ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay, SearchSource.ManualSubmit);
+            // commented below line because it will keep search result list open even when user selected an item in search result
+            // searchBox.IsSuggestionListOpen = true;
+            if (!string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
+            {
+                ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay, SearchSource.ManualSubmit);
+            }
         }
 
         internal void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
