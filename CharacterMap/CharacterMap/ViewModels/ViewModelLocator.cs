@@ -5,13 +5,12 @@ using CharacterMapCX;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Graphics.Canvas;
 
 namespace CharacterMap.ViewModels
 {
     public class ViewModelLocator
     {
-        NavigationServiceEx _navigationService = new NavigationServiceEx();
+        private readonly NavigationServiceEx _navigationService = new NavigationServiceEx();
 
         public ViewModelLocator()
         {
@@ -33,7 +32,6 @@ namespace CharacterMap.ViewModels
         public void Register<VM, V>() where VM : class
         {
             SimpleIoc.Default.Register<VM>();
-
             _navigationService.Configure(typeof(VM).FullName, typeof(V));
         }
 
