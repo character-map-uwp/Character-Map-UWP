@@ -11,12 +11,13 @@
     <AssemblyName>CharacterMap</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.17134.0</TargetPlatformMinVersion>
+    <TargetPlatformVersion>10.0.18362.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>CharacterMap_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>
+    </PackageCertificateKeyFile>
     <SccProjectName>
     </SccProjectName>
     <SccLocalPath>
@@ -25,13 +26,17 @@
     </SccAuxPath>
     <SccProvider>
     </SccProvider>
-    <PackageCertificateThumbprint>936FCCD71B971E551ABF284F61C67A3EF0D2644C</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>C9B09DBF2F88B0AAAF9CD6167920B9A89563CE19</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -110,7 +115,7 @@
     <!-- <Name>Microsoft Engagement Framework</Name> -->
     <!-- </SDKReference> -->
     <PackageReference Include="Humanizer.Core">
-      <Version>2.6.2</Version>
+      <Version>2.7.9</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Services.Store.Engagement">
       <Version>10.1901.28001</Version>
@@ -119,7 +124,7 @@
       <Version>2018.2.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.8</Version>
+      <Version>6.2.9</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>5.1.1</Version>
@@ -128,7 +133,7 @@
       <Version>2.0.190315001-prerelease</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
-      <Version>2.0.0</Version>
+      <Version>2.0.1</Version>
     </PackageReference>
     <!-- Nuget package references -->
     <PackageReference Include="MvvmLight">
@@ -138,10 +143,10 @@
       <Version>5.1.1</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.1</Version>
+      <Version>12.0.2</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.provider.winsqlite3.uwp10">
-      <Version>1.1.13</Version>
+      <Version>1.1.14</Version>
     </PackageReference>
     <PackageReference Include="Win2d.uwp">
       <Version>1.23.0</Version>
@@ -150,8 +155,6 @@
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\Data\GlyphData.db" />
-    <None Include="CharacterMap_StoreKey.pfx" />
-    <None Include="CharacterMap_TemporaryKey.pfx" />
     <PRIResource Include="Strings\pl-PL\Resources.resw" />
     <PRIResource Include="Strings\ru-RU\Resources.resw" />
     <PRIResource Include="Strings\fr-FR\Resources.resw" />

@@ -2,6 +2,7 @@
 <StoreAssociation xmlns="http://schemas.microsoft.com/appx/2010/storeassociation">
   <Publisher>CN=DB299AFD-CD90-4B49-8407-33F11AF0C784</Publisher>
   <PublisherDisplayName>Edi Wang</PublisherDisplayName>
+  <DeveloperAccountType>MSA</DeveloperAccountType>
   <GeneratePackageHash>http://www.w3.org/2001/04/xmlenc#sha256</GeneratePackageHash>
   <SupportedLocales>
     <Language Code="af" InMinimumRequirementSet="true" />
@@ -240,6 +241,8 @@
     <Language Code="no-no" InMinimumRequirementSet="true" />
     <Language Code="nso" InMinimumRequirementSet="true" />
     <Language Code="nso-za" InMinimumRequirementSet="true" />
+    <Language Code="om" InMinimumRequirementSet="false" />
+    <Language Code="om-et" InMinimumRequirementSet="false" />
     <Language Code="or" InMinimumRequirementSet="true" />
     <Language Code="or-in" InMinimumRequirementSet="true" />
     <Language Code="pa" InMinimumRequirementSet="true" />
@@ -374,12 +377,13 @@
     <MainPackageIdentityName>58027.diaosbook</MainPackageIdentityName>
     <MainPackageIdentityName>58027.FontAwesome</MainPackageIdentityName>
     <MainPackageIdentityName>58027.GUIDGeneratorUWP</MainPackageIdentityName>
-    <MainPackageIdentityName>58027.149565FD8B0DE</MainPackageIdentityName>
     <MainPackageIdentityName>58027.IPList</MainPackageIdentityName>
-    <MainPackageIdentityName>58027.97489EDE08D6</MainPackageIdentityName>
-    <MainPackageIdentityName>58027.3438822B1737D</MainPackageIdentityName>
-    <MainPackageIdentityName>58027.RegExToolkit</MainPackageIdentityName>
     <MainPackageIdentityName>58027.5420172B3A1CA</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.97489EDE08D6</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.OCRBoard</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.3438822B1737D</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.580483F4489E3</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.RegExToolkit</MainPackageIdentityName>
     <MainPackageIdentityName>58027.ShanghaiMetro</MainPackageIdentityName>
     <MainPackageIdentityName>58027.SimpleQRCodeCreator</MainPackageIdentityName>
     <MainPackageIdentityName>58027.46065A98EEF3D</MainPackageIdentityName>
@@ -389,12 +393,80 @@
     <MainPackageIdentityName>58027.XAMLPad</MainPackageIdentityName>
     <MainPackageIdentityName>58027.2184C78DA306</MainPackageIdentityName>
     <MainPackageIdentityName>58027.36491A292B406</MainPackageIdentityName>
+    <MainPackageIdentityName>58027.149565FD8B0DE</MainPackageIdentityName>
     <MainPackageIdentityName>58027.30134295D7AC7</MainPackageIdentityName>
     <MainPackageIdentityName>58027.WalmartMoneyCardUWP</MainPackageIdentityName>
-    <MainPackageIdentityName>58027.580483F4489E3</MainPackageIdentityName>
     <MainPackageIdentityName>58027.219435AB2C12</MainPackageIdentityName>
     <MainPackageIdentityName>58027.6157856FB1D01</MainPackageIdentityName>
     <MainPackageIdentityName>58027.896369447195</MainPackageIdentityName>
   </AccountPackageIdentityNames>
-  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9WZDNCRDXF41" />
+  <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9WZDNCRDXF41">
+    <BundleInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>X86</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>X64</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Arm</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+      <PackageInfo>
+        <OsMinVersion>0.0.0.0</OsMinVersion>
+        <PackageArchitecture>Neutral</PackageArchitecture>
+        <PackageMaxArchitectureVersion>2019.6.0.0</PackageMaxArchitectureVersion>
+      </PackageInfo>
+    </BundleInfo>
+  </PackageInfoList>
 </StoreAssociation>
