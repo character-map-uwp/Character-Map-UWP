@@ -2,6 +2,7 @@
     x:Class="CharacterMap.Views.FontMapView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -23,30 +24,6 @@
 
         </Grid.RowDefinitions>
 
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="LoadingStates">
-                <VisualState x:Name="FontsLoadingState">
-                    <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="MainUIGrid.Opacity" Value="0" />
-                        <Setter Target="MainUIGrid.IsHitTestVisible" Value="False" />
-                        <Setter Target="LoadingRing.IsActive" Value="True" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="FontsLoadedState" />
-            </VisualStateGroup>
-            <VisualStateGroup x:Name="FontStateGroup">
-                <VisualState x:Name="NoFontState">
-                    <VisualState.Setters>
-                        <Setter Target="MainUIGrid.Visibility" Value="Collapsed" />
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="HasFontState" />
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
-
         <controls:XamlTitleBar x:Name="TitleBar" x:Load="{x:Bind IsStandalone}">
             <TextBlock
                 Margin="12 0 0 0"
@@ -60,9 +37,9 @@
 
         <Grid
             x:Name="TitleGrid"
-            x:Load="{x:Bind IsStandalone}"
             Grid.Row="1"
             Height="45"
+            x:Load="{x:Bind IsStandalone}"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
@@ -123,29 +100,31 @@
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
                 <AutoSuggestBox.QueryIcon>
-                    <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
+                    <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}" />
                 </AutoSuggestBox.QueryIcon>
                 <AutoSuggestBox.ContextFlyout>
                     <Flyout>
                         <StackPanel Width="260">
-                            <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
-                                          Margin="0 4"
-                                          OnContent="Enabled instant search"
-                                          OffContent="Disabled instant search">
-                            </ToggleSwitch>
-                            <Slider Header="Delay before search (ms)" 
-                                    Minimum="250" 
-                                    Margin="0 4"
-                                    Maximum="3000"
-                                    TickFrequency="50"
-                                    Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}"
-                                    Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
-                            <Slider Header="Maximum preview search result" 
-                                    Minimum="5" 
-                                    Margin="0 4"
-                                    Maximum="100" 
-                                    TickFrequency="1"
-                                    Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}"/>                            
+                            <ToggleSwitch
+                                Margin="0 4"
+                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}"
+                                OffContent="Disabled instant search"
+                                OnContent="Enabled instant search" />
+                            <Slider
+                                Margin="0 4"
+                                Header="Delay before search (ms)"
+                                Maximum="3000"
+                                Minimum="250"
+                                TickFrequency="50"
+                                Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
+                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
+                            <Slider
+                                Margin="0 4"
+                                Header="Maximum preview search result"
+                                Maximum="100"
+                                Minimum="5"
+                                TickFrequency="1"
+                                Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
                         </StackPanel>
                     </Flyout>
                 </AutoSuggestBox.ContextFlyout>
@@ -174,36 +153,43 @@
 
             <AppBarButton
                 x:Name="SearchOptionButton"
-                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
-                Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}"
                 Grid.Column="3"
                 Width="45"
-                Height="45">
+                Height="45"
+                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
+                Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}">
                 <Grid>
                     <FontIcon Glyph="&#xE11A;" />
-                    <FontIcon Glyph="&#xE115;" HorizontalAlignment="Right" VerticalAlignment="Top" FontSize="7" Margin="0 3 3 0" />
+                    <FontIcon
+                        Margin="0 3 3 0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        FontSize="7"
+                        Glyph="&#xE115;" />
                 </Grid>
                 <AppBarButton.ContextFlyout>
                     <Flyout Placement="Bottom">
                         <StackPanel>
-                            <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" 
-                                          Margin="0 4"
-                                          OnContent="Enabled instant search"
-                                          OffContent="Disabled instant search">
-                            </ToggleSwitch>
-                            <Slider Header="Delay before search (ms)" 
-                                    Minimum="250" 
-                                    Margin="0 4"
-                                    Maximum="3000"
-                                    TickFrequency="50"
-                                    Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}"
-                                    Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"/>
-                            <Slider Header="Maximum preview search result" 
-                                    Minimum="5" 
-                                    Margin="0 4"
-                                    Maximum="100" 
-                                    TickFrequency="1"
-                                    Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}"/>
+                            <ToggleSwitch
+                                Margin="0 4"
+                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}"
+                                OffContent="Disabled instant search"
+                                OnContent="Enabled instant search" />
+                            <Slider
+                                Margin="0 4"
+                                Header="Delay before search (ms)"
+                                Maximum="3000"
+                                Minimum="250"
+                                TickFrequency="50"
+                                Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
+                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
+                            <Slider
+                                Margin="0 4"
+                                Header="Maximum preview search result"
+                                Maximum="100"
+                                Minimum="5"
+                                TickFrequency="1"
+                                Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
                         </StackPanel>
                     </Flyout>
                 </AppBarButton.ContextFlyout>
@@ -429,8 +415,8 @@
                                             <ToggleSwitch
                                                 x:Name="ColorGlyphToggle"
                                                 x:Uid="ColorGlyphToggle"
-                                                x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
                                                 VerticalAlignment="Bottom"
+                                                x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
                                                 IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
                                             <TextBlock
                                                 x:Uid="TypographyVariantsHeader"
@@ -457,6 +443,7 @@
                     Grid.Row="1"
                     Grid.Column="0"
                     Padding="10"
+                    animations:ReorderGridAnimation.Duration="300"
                     IsItemClickEnabled="False"
                     ItemsSource="{Binding Chars, Mode=OneWay}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
@@ -467,8 +454,9 @@
                     </GridView.ItemContainerTransitions>
                     <GridView.ItemTemplate>
                         <DataTemplate x:DataType="core:Character">
-                            <Grid Style="{StaticResource CharItemGridStyle}">
+                            <Grid Padding="4" Style="{StaticResource CharItemGridStyle}">
                                 <TextBlock
+                                    Padding="0,0,0,8"
                                     FontFamily="{Binding ElementName=CharGrid, Path=DataContext.FontFamily}"
                                     FontStretch="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Stretch}"
                                     FontStyle="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Style}"
@@ -846,11 +834,11 @@
 
         <Grid
             x:Name="StatusBar"
-            x:Load="{x:Bind IsStandalone}"
             Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Height="26"
+            x:Load="{x:Bind IsStandalone}"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
@@ -870,6 +858,29 @@
                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
         </Grid>
 
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LoadingStates">
+                <VisualState x:Name="FontsLoadingState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind ViewModel.IsLoading, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="MainUIGrid.Opacity" Value="0" />
+                        <Setter Target="MainUIGrid.IsHitTestVisible" Value="False" />
+                        <Setter Target="LoadingRing.IsActive" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FontsLoadedState" />
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="FontStateGroup">
+                <VisualState x:Name="NoFontState">
+                    <VisualState.Setters>
+                        <Setter Target="MainUIGrid.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="HasFontState" />
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 
 </UserControl>
