@@ -443,7 +443,6 @@
                     Grid.Row="1"
                     Grid.Column="0"
                     Padding="10"
-                    animations:ReorderGridAnimation.Duration="300"
                     IsItemClickEnabled="False"
                     ItemsSource="{Binding Chars, Mode=OneWay}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
