@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddToCollectionHint.Text" xml:space="preserve">
-    <value>Add to Collection</value>
+    <value>Add to Library</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Character Map</value>
@@ -298,7 +298,7 @@
     <value>Something went wrong. Please try again later.</value>
   </data>
   <data name="ImportFontHelpBlock.Text" xml:space="preserve">
-    <value>Drag fonts into the app to copy them to your collection.</value>
+    <value>Drag fonts into the app to copy them to your library.</value>
   </data>
   <data name="FontPropXaml.Text" xml:space="preserve">
     <value>XAML FontFamily Source</value>

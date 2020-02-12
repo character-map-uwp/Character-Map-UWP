@@ -24,7 +24,7 @@ namespace CharacterMap.Services
     public class UserCollectionsService
     {
         public UserFontCollection SymbolCollection { get; private set; }
-        public ObservableCollection<UserFontCollection> Items { get; } = new ObservableCollection<UserFontCollection>();
+        public List<UserFontCollection> Items { get; private set; } = new List<UserFontCollection>();
 
         public async Task LoadCollectionsAsync()
         {
@@ -48,10 +48,13 @@ namespace CharacterMap.Services
                         SymbolCollection = collection;
                     }
                 }
+
                 if (SymbolCollection == null)
                 {
-                    SymbolCollection = await CreateCollectionAsync("Symbol", "Symbol");
+                    SymbolCollection = await CreateCollectionAsync("Symbol", "Symbol").ConfigureAwait(false);
                 }
+
+                collections = collections.OrderBy(c => c.Name).ToList();
             });
             
             foreach (var item in collections)
@@ -70,18 +73,26 @@ namespace CharacterMap.Services
 
         public async Task<UserFontCollection> CreateCollectionAsync(string name, string fileName = null)
         {
-            var folder = await GetCollectionsFolderAsync();
-            var file = await folder.CreateFileAsync($"{fileName ?? Guid.NewGuid().ToString()}.json");
+            var folder = await GetCollectionsFolderAsync().AsTask().ConfigureAwait(false);
+            var file = await folder.CreateFileAsync($"{fileName ?? Guid.NewGuid().ToString()}.json").AsTask().ConfigureAwait(false);
             var collection = new UserFontCollection { Name = name, File = file };
-            await SaveCollectionAsync(collection);
+            await SaveCollectionAsync(collection).ConfigureAwait(false);
             Items.Add(collection);
+            Items = Items.OrderBy(i => i.Name).ToList();
             return collection;
         }
 
         public async Task DeleteCollectionAsync(UserFontCollection collection)
         {
-            await collection.File.DeleteAsync();
+            await collection.File.DeleteAsync().AsTask().ConfigureAwait(false);
             Items.Remove(collection);
+        }
+
+        public async Task RenameCollectionAsync(string name, UserFontCollection collection)
+        {
+            collection.Name = name;
+            await SaveCollectionAsync(collection).ConfigureAwait(false);
+            Items = Items.OrderBy(i => i.Name).ToList();
         }
 
         public Task SaveCollectionAsync(UserFontCollection collection)
@@ -94,6 +105,16 @@ namespace CharacterMap.Services
             if (!collection.Fonts.Contains(font.Name))
             {
                 collection.Fonts.Add(font.Name);
+                return SaveCollectionAsync(collection);
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveFontCollectionAsync(InstalledFont font, UserFontCollection collection)
+        {
+            if (collection.Fonts.Remove(font.Name))
+            {
                 return SaveCollectionAsync(collection);
             }
 

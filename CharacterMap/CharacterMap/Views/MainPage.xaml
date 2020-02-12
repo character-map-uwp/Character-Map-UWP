@@ -406,14 +406,6 @@
                                                     <SymbolIcon Symbol="Delete" />
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
-                                            <!--<MenuFlyoutItem
-                                                x:Name="RemoveFromCollectionItem"
-                                                x:Uid="RemoveFromCollectionItem"
-                                                Tag="{x:Bind}">
-                                                <MenuFlyoutItem.Icon>
-                                                    <SymbolIcon Symbol="Remove" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>-->
                                             <MenuFlyoutSubItem Text="Add to Collection">
                                                 <MenuFlyoutSubItem.Icon>
                                                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE71D;" />
@@ -430,6 +422,17 @@
                                                     Text="Symbol Fonts" />
                                                 <MenuFlyoutSeparator />
                                             </MenuFlyoutSubItem>
+                                            <MenuFlyoutItem
+                                                x:Name="RemoveFromCollectionItem"
+                                                x:Uid="RemoveFromCollectionItem"
+                                                Click="RemoveFromCollectionItem_Click"
+                                                Tag="{x:Bind}"
+                                                Text="Remove from Collection"
+                                                Visibility="Collapsed">
+                                                <MenuFlyoutItem.Icon>
+                                                    <SymbolIcon Symbol="Remove" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
                                         </MenuFlyout>
                                     </Grid.ContextFlyout>
                                     <Grid.ColumnDefinitions>

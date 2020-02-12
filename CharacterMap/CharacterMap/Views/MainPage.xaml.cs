@@ -284,30 +284,42 @@ namespace CharacterMap.Views
         {
             if (sender is MenuFlyout menu && menu.Target.DataContext is InstalledFont font)
             {
-                MenuFlyoutSubItem coll = menu.Items.Last() as MenuFlyoutSubItem;
+                MenuFlyoutSubItem coll = menu.Items.LastOrDefault(m => m is MenuFlyoutSubItem) as MenuFlyoutSubItem;
 
                 while (coll.Items.Count > 4)
                     coll.Items.RemoveAt(4);
 
-                if (font.IsSymbolFont)
+                if (coll.Items.FirstOrDefault(i => i.Name == "SymbolFontItem") is MenuFlyoutItemBase fontItem)
                 {
-                    if (coll.Items.FirstOrDefault(i => i.Name == "SymbolFontItem") is FrameworkElement fontItem)
+                    if (font.IsSymbolFont)
                     {
                         fontItem.Visibility = Visibility.Collapsed;
-                        coll.Items[1].Visibility = Visibility.Collapsed;// Remove the related seperator
+                        coll.Items[1].Visibility = Visibility.Collapsed; // Remove the related seperator
                     }
+                    else
+                    {
+                        fontItem.IsEnabled = !ViewModel.FontCollections.SymbolCollection.Fonts.Contains(font.Name);
+                    }
+                }
+
+                if (menu.Items.FirstOrDefault(i => i.Name == "RemoveFromCollectionItem") is MenuFlyoutItemBase b)
+                {
+                    b.Visibility = ViewModel.SelectedCollection == null ? Visibility.Collapsed : Visibility.Visible;
                 }
 
                 if (ViewModel.FontCollections.Items.Count > 0)
                 {
                     foreach (var item in ViewModel.FontCollections.Items)
                     {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name };
-                        m.Click += async (s, a) =>
+                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, IsEnabled = !item.Fonts.Contains(font.Name) };
+                        if (m.IsEnabled)
                         {
-                            await ViewModel.FontCollections.AddToCollectionAsync(
-                                font, (UserFontCollection)(((FrameworkElement)s).DataContext));
-                        };
+                            m.Click += async (s, a) =>
+                            {
+                                await ViewModel.FontCollections.AddToCollectionAsync(
+                                    font, (UserFontCollection)(((FrameworkElement)s).DataContext));
+                            };
+                        }
                         coll.Items.Add(m);
                     }
                 }
@@ -317,8 +329,19 @@ namespace CharacterMap.Views
         private void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f && f.DataContext is InstalledFont font)
-            _ = ViewModel.FontCollections.AddToCollectionAsync(
-                                font, ViewModel.FontCollections.SymbolCollection);
+            {
+                _ = ViewModel.FontCollections.AddToCollectionAsync(
+                               font, ViewModel.FontCollections.SymbolCollection);
+            }
+        }
+
+        private async void RemoveFromCollectionItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is InstalledFont font)
+            {
+                await ViewModel.FontCollections.RemoveFontCollectionAsync(font, ViewModel.SelectedCollection);
+                ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+            }
         }
 
         private void CreateFontCollection_Click(object sender, RoutedEventArgs e)
@@ -367,8 +390,7 @@ namespace CharacterMap.Views
         private async void DigRenameCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             var d = args.GetDeferral();
-            ViewModel.SelectedCollection.Name = ViewModel.CollectionTitle;
-            await ViewModel.FontCollections.SaveCollectionAsync(ViewModel.SelectedCollection);
+            await ViewModel.FontCollections.RenameCollectionAsync(ViewModel.CollectionTitle, ViewModel.SelectedCollection);
             ViewModel.RefreshFontList(ViewModel.SelectedCollection);
             d.Complete();
         }
