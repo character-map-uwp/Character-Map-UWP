@@ -1,6 +1,7 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Services;
+using CharacterMap.Views;
 using CharacterMapCX;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -467,6 +468,14 @@ namespace CharacterMap.ViewModels
             finally
             {
                 IsLoading = false;
+            }
+        }
+
+        public void OpenSelectedFontInWindow(object sender, RoutedEventArgs e)
+        {
+            if (SelectedFont is InstalledFont font)
+            {
+                _ = FontMapView.CreateNewViewForFontAsync(font);
             }
         }
     }

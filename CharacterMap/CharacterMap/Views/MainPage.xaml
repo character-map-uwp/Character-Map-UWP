@@ -86,19 +86,37 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <ComboBox
-                    x:Name="FontListFilter"
+                <DropDownButton
                     Height="45"
                     Margin="0,0,0,0"
+                    Padding="12,6"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    FontSize="16"
-                    SelectedIndex="{Binding FontListFilter, Mode=TwoWay}">
-                    <ComboBoxItem x:Uid="FilterAllFonts" />
-                    <ComboBoxItem x:Uid="FilterSymbolFonts" />
-                    <ComboBoxItem x:Uid="FilterImportedFonts" />
-                    <!--<ComboBoxItem Content="Favorites" />-->
-                </ComboBox>
+                    HorizontalContentAlignment="Left"
+                    Background="Transparent"
+                    Content="{x:Bind ViewModel.FilterTitle, Mode=OneWay}"
+                    FontSize="16">
+                    <DropDownButton.Flyout>
+                        <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
+                            <MenuFlyoutItem
+                                x:Uid="OptionAllFonts"
+                                Click="Filter_Click"
+                                Tag="0"
+                                Text="All Fonts" />
+                            <MenuFlyoutItem
+                                x:Uid="OptionSymbolFonts"
+                                Click="Filter_Click"
+                                Tag="1"
+                                Text="Symbol Fonts" />
+                            <MenuFlyoutItem
+                                x:Uid="OptionImportedFonts"
+                                Click="Filter_Click"
+                                Tag="2"
+                                Text="Imported Fonts" />
+                        </MenuFlyout>
+                    </DropDownButton.Flyout>
+                </DropDownButton>
+
                 <AppBarButton
                     x:Name="ImportFontsButton"
                     x:Uid="ImportFontsButton"
@@ -166,12 +184,12 @@
                     <Flyout>
                         <StackPanel Width="260">
                             <ToggleSwitch
-                                Margin="0 4"
+                                Margin="0,4"
                                 IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}"
                                 OffContent="Disabled instant search"
                                 OnContent="Enabled instant search" />
                             <Slider
-                                Margin="0 4"
+                                Margin="0,4"
                                 Header="Delay before search (ms)"
                                 Maximum="3000"
                                 Minimum="250"
@@ -179,7 +197,7 @@
                                 Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
                                 Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
                             <Slider
-                                Margin="0 4"
+                                Margin="0,4"
                                 Header="Maximum preview search result"
                                 Maximum="100"
                                 Minimum="5"
@@ -196,7 +214,7 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
                             <FontIcon
-                                Margin="4 0 0 0"
+                                Margin="4,0,0,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 FontFamily="{Binding ElementName=FontMap, Path=ViewModel.FontFamily}"
@@ -221,7 +239,7 @@
                 <Grid>
                     <FontIcon Glyph="&#xE11A;" />
                     <FontIcon
-                        Margin="0 3 3 0"
+                        Margin="0,3,3,0"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         FontSize="7"
@@ -231,12 +249,12 @@
                     <Flyout Placement="Bottom">
                         <StackPanel>
                             <ToggleSwitch
-                                Margin="0 4"
+                                Margin="0,4"
                                 IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}"
                                 OffContent="Disabled instant search"
                                 OnContent="Enabled instant search" />
                             <Slider
-                                Margin="0 4"
+                                Margin="0,4"
                                 Header="Delay before search (ms)"
                                 Maximum="3000"
                                 Minimum="250"
@@ -244,7 +262,7 @@
                                 Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
                                 Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
                             <Slider
-                                Margin="0 4"
+                                Margin="0,4"
                                 Header="Maximum preview search result"
                                 Maximum="100"
                                 Minimum="5"
@@ -276,9 +294,43 @@
             Grid.Column="0"
             Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
 
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border x:Name="CollectionControlRow" x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay, TargetNullValue=False, FallbackValue=False}">
+                <Border.Background>
+                    <SolidColorBrush Opacity="0.4" Color="{ThemeResource SystemAccentColor}" />
+                </Border.Background>
+                <StackPanel
+                    Padding="0,0"
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="12">
+
+                    <AppBarButton
+                        x:Uid="RenameCollectionButton"
+                        Height="48"
+                        Click="RenameFontCollection_Click"
+                        Icon="Rename"
+                        ToolTipService.Placement="Bottom" />
+                    <AppBarButton
+                        x:Uid="DeleteCollectionButton"
+                        Height="48"
+                        Click="DeleteCollection_Click"
+                        Icon="Delete"
+                        ToolTipService.Placement="Bottom" />
+                </StackPanel>
+
+            </Border>
+
+
+
             <TextBlock
                 x:Name="ImportFontHelpBlock"
                 x:Uid="ImportFontHelpBlock"
+                Grid.Row="1"
                 Margin="12"
                 FontSize="13"
                 Opacity="0.7"
@@ -286,7 +338,7 @@
                 Text=""
                 Visibility="Collapsed" />
 
-            <SemanticZoom x:Name="FontsSemanticZoom">
+            <SemanticZoom x:Name="FontsSemanticZoom" Grid.Row="1">
                 <SemanticZoom.ZoomedInView>
                     <ListView
                         x:Name="LstFontFamily"
@@ -338,7 +390,7 @@
                             <DataTemplate x:DataType="core:InstalledFont">
                                 <Grid Background="Transparent" ColumnSpacing="12">
                                     <Grid.ContextFlyout>
-                                        <MenuFlyout>
+                                        <MenuFlyout Opening="FontContextFlyout_Opening">
                                             <MenuFlyoutItem x:Uid="OpenInNewWindow" Click="OpenInWindowFlyoutItem_Click">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
@@ -354,6 +406,30 @@
                                                     <SymbolIcon Symbol="Delete" />
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
+                                            <!--<MenuFlyoutItem
+                                                x:Name="RemoveFromCollectionItem"
+                                                x:Uid="RemoveFromCollectionItem"
+                                                Tag="{x:Bind}">
+                                                <MenuFlyoutItem.Icon>
+                                                    <SymbolIcon Symbol="Remove" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>-->
+                                            <MenuFlyoutSubItem Text="Add to Collection">
+                                                <MenuFlyoutSubItem.Icon>
+                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE71D;" />
+                                                </MenuFlyoutSubItem.Icon>
+                                                <MenuFlyoutItem Click="CreateFontCollection_Click" Text="New Collection">
+                                                    <MenuFlyoutItem.Icon>
+                                                        <SymbolIcon Symbol="Add" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                                <MenuFlyoutSeparator />
+                                                <MenuFlyoutItem
+                                                    x:Name="SymbolFontItem"
+                                                    Click="AddToSymbolFonts_Click"
+                                                    Text="Symbol Fonts" />
+                                                <MenuFlyoutSeparator />
+                                            </MenuFlyoutSubItem>
                                         </MenuFlyout>
                                     </Grid.ContextFlyout>
                                     <Grid.ColumnDefinitions>
@@ -522,6 +598,57 @@
 
             </ScrollViewer>
         </ContentDialog>
+
+        <ContentDialog
+            x:Name="DigCreateCollection"
+            x:Uid="DigCreateCollection"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            d:IsHidden="True"
+            IsPrimaryButtonEnabled="{x:Bind ViewModel.IsCollectionTitleValid, Mode=OneWay}"
+            PrimaryButtonClick="DigCreateCollection_PrimaryButtonClick"
+            SecondaryButtonClick="{x:Bind DigCreateCollection.Hide}">
+            <TextBox
+                x:Uid="CreateCollectionEntryBox"
+                Margin="-14,0"
+                DataContext="{x:Bind ViewModel}"
+                Header="Collection Name"
+                Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </ContentDialog>
+        <ContentDialog
+            x:Name="DigRenameCollection"
+            x:Uid="DigRenameCollection"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            d:IsHidden="True"
+            IsPrimaryButtonEnabled="{x:Bind ViewModel.IsCollectionTitleValid, Mode=OneWay}"
+            IsSecondaryButtonEnabled="True"
+            PrimaryButtonClick="DigRenameCollection_PrimaryButtonClick"
+            SecondaryButtonClick="{x:Bind DigRenameCollection.Hide}">
+            <TextBox
+                x:Uid="CreateCollectionEntryBox"
+                Margin="-14,0"
+                DataContext="{x:Bind ViewModel}"
+                Header="Collection Name"
+                Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </ContentDialog>
+        <ContentDialog
+            x:Name="DigDeleteCollection"
+            x:Uid="DigDeleteCollection"
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            d:IsHidden="True"
+            IsPrimaryButtonEnabled="True"
+            IsSecondaryButtonEnabled="True"
+            PrimaryButtonClick="DigDeleteCollection_PrimaryButtonClick"
+            SecondaryButtonClick="{x:Bind DigDeleteCollection.Hide}" />
+
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LoadingStates">

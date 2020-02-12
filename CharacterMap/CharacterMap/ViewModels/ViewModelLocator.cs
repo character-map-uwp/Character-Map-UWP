@@ -23,6 +23,7 @@ namespace CharacterMap.ViewModels
                 SimpleIoc.Default.Register(() => new Interop(Utils.CanvasDevice));
 
                 SimpleIoc.Default.Register<MainViewModel>();
+                SimpleIoc.Default.Register<UserCollectionsService>();
                 Register<MainViewModel, MainPage>();
             }
         }
