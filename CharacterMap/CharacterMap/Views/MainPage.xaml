@@ -87,6 +87,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <DropDownButton
+                    x:Name="FontListFilter"
                     Height="45"
                     Margin="0,0,0,0"
                     Padding="12,6"
@@ -109,6 +110,19 @@
                                 Tag="1"
                                 Text="Symbol Fonts" />
                             <MenuFlyoutItem
+                                x:Uid="OptionMonospacedFonts"
+                                Click="Filter_Click"
+                                Tag="3" />
+                            <MenuFlyoutItem
+                                x:Uid="OptionSerifFonts"
+                                Click="Filter_Click"
+                                Tag="4" />
+                            <MenuFlyoutItem
+                                x:Uid="OptionSansSerifFonts"
+                                Click="Filter_Click"
+                                Tag="5" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem
                                 x:Uid="OptionImportedFonts"
                                 Click="Filter_Click"
                                 Tag="2"
@@ -124,7 +138,8 @@
                     Width="45"
                     Height="45"
                     VerticalAlignment="Bottom"
-                    Click="{x:Bind PickFonts}">
+                    Click="{x:Bind PickFonts}"
+                    Visibility="Collapsed">
                     <FontIcon
                         FontSize="16"
                         Glyph="&#xE109;"

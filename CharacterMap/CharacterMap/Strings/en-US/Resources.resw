@@ -360,4 +360,13 @@
   <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Rename Collection</value>
   </data>
+  <data name="OptionMonospacedFonts.Text" xml:space="preserve">
+    <value>Monospaced Fonts</value>
+  </data>
+  <data name="OptionSansSerifFonts.Text" xml:space="preserve">
+    <value>Sans Serif Fonts</value>
+  </data>
+  <data name="OptionSerifFonts.Text" xml:space="preserve">
+    <value>Serif Fonts</value>
+  </data>
 </root>

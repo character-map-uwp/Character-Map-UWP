@@ -198,6 +198,21 @@ namespace CharacterMap.ViewModels
                         fontList = fontList.Where(f => f.HasImportedFiles);
                         FilterTitle = Localization.Get("OptionImportedFonts/Text");
                     }
+                    else if (FontListFilter == 3)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.FontFace.IsMonospaced);
+                        FilterTitle = Localization.Get("OptionMonospacedFonts/Text");
+                    }
+                    else if (FontListFilter == 4)
+                    {
+                        fontList = fontList.Where(f => !f.DefaultVariant.IsSansSerif);
+                        FilterTitle = Localization.Get("OptionSerifFonts/Text");
+                    }
+                    else if (FontListFilter == 5)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.IsSansSerif);
+                        FilterTitle = Localization.Get("OptionSansSerifFonts/Text");
+                    }
                     else
                         FilterTitle = Localization.Get("OptionAllFonts/Text");
                 }

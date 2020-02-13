@@ -260,9 +260,14 @@ namespace CharacterMap.Views
         {
             if (sender is MenuFlyout menu)
             {
-                while (menu.Items.Count > 3)
-                    menu.Items.RemoveAt(3);
+                // Reset to default menu
+                while (menu.Items.Count > 7)
+                    menu.Items.RemoveAt(7);
 
+                // force menu width to match the source button
+                menu.Items.OfType<MenuFlyoutSeparator>().Last().Width = FontListFilter.ActualWidth;
+
+                // add users collections 
                 if (ViewModel.FontCollections.Items.Count > 0)
                 {
                     menu.Items.Add(new MenuFlyoutSeparator());
