@@ -360,6 +360,15 @@
   <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Rename Collection</value>
   </data>
+  <data name="FontListDisplayHeader.Text" xml:space="preserve">
+    <value>Fonts List Display</value>
+  </data>
+  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
+    <value>Show Font names using System default font</value>
+  </data>
+  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
+    <value>Show Font names using actual font</value>
+  </data>
   <data name="OptionMonospacedFonts.Text" xml:space="preserve">
     <value>Monospaced Fonts</value>
   </data>

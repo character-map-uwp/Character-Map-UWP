@@ -457,6 +457,8 @@
                                     <TextBlock
                                         Padding="5"
                                         VerticalAlignment="Center"
+                                        FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
+                                        FontSize="16"
                                         Text="{x:Bind Name}"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="NoWrap" />
@@ -592,6 +594,9 @@
                         x:Name="BtnRestart"
                         x:Uid="RestartButton"
                         Click="BtnRestart_OnClick" />
+
+                    <TextBlock x:Uid="FontListDisplayHeader" Margin="0,40,0,4" />
+                    <ToggleSwitch x:Uid="FontListDisplayToggle" IsOn="{x:Bind Settings.UseFontForPreview, Mode=TwoWay}" />
 
                     <!--  Reenable after sorting out export UI issues  -->
                     <!--<TextBlock Margin="0 40 0 4" Text="Dev Utilities" />

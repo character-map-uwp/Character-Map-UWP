@@ -1,9 +1,12 @@
-﻿using System;
+﻿using CharacterMap.Services;
+using CommonServiceLocator;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core
 {
@@ -36,5 +39,24 @@ namespace CharacterMap.Core
 
         public const string Auto = "Auto";
         public const string Star = "*";
+
+        private static AppSettings _settings;
+        private static UserCollectionsService _userCollections;
+
+        public static FontFamily GetPreviewFontSource(FontVariant variant)
+        {
+            if (_settings == null)
+            {
+                _settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
+                _userCollections = ServiceLocator.Current.GetInstance<UserCollectionsService>();
+            }
+
+            if (_settings.UseFontForPreview
+                && !variant.FontFace.IsSymbolFont
+                && !_userCollections.SymbolCollection.Fonts.Contains(variant.FamilyName))
+                return new FontFamily(variant.Source);
+
+            return FontFamily.XamlAutoFontFamily;
+        }
     }
 }

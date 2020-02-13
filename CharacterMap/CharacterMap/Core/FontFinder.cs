@@ -396,6 +396,5 @@ namespace CharacterMap.Core
 
         public static bool IsMDL2(FontVariant variant) => variant.FamilyName.Contains("MDL2 Assets");
 
-        
     }
 }

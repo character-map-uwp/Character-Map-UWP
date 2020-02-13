@@ -78,6 +78,16 @@ namespace CharacterMap.Core
             }
         }
 
+        public bool UseFontForPreview
+        {
+            get => ReadSettings(nameof(UseFontForPreview), false);
+            set
+            {
+                SaveSettings(nameof(UseFontForPreview), value);
+                NotifyPropertyChanged();
+            }
+        }
+
         public bool UseInstantSearch
         {
             get => ReadSettings(nameof(UseInstantSearch), true);
