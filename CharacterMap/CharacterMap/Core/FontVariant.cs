@@ -59,8 +59,6 @@ namespace CharacterMap.Core
 
         public Panose Panose { get; }
 
-        public bool IsSansSerif { get; }
-
         /// <summary>
         /// File-system path for DWrite / Xaml to construct a font for use in this application
         /// </summary>
@@ -100,7 +98,6 @@ namespace CharacterMap.Core
             UnicodeRanges = face.UnicodeRanges.Select(r => (r.First, r.Last)).ToArray();
             PreferredName = name;
             Panose = PanoseParser.Parse(face);
-            IsSansSerif = PanoseParser.IsSansSerif(Panose.Style);
         }
 
         public IReadOnlyList<Character> GetCharacters()

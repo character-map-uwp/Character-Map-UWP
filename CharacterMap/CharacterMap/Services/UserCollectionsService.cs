@@ -26,26 +26,35 @@ namespace CharacterMap.Services
         public UserFontCollection SymbolCollection { get; private set; }
         public List<UserFontCollection> Items { get; private set; } = new List<UserFontCollection>();
 
+        private StorageFolder _collectionsFolder;
+
         public async Task LoadCollectionsAsync()
         {
             List<UserFontCollection> collections = new List<UserFontCollection>();
 
             await Task.Run(async () =>
             {
-                var folder = await GetCollectionsFolderAsync().AsTask().ConfigureAwait(false);
+                var folder = _collectionsFolder = await GetCollectionsFolderAsync().AsTask().ConfigureAwait(false);
                 var files = await folder.GetFilesAsync().AsTask().ConfigureAwait(false);
 
                 foreach (var file in files)
                 {
-                    UserFontCollection collection = await Json.ReadAsync<UserFontCollection>(file).ConfigureAwait(false);
-                    collection.File = file;
-                    if (file.DisplayName != "Symbol")
+                    try
                     {
-                        collections.Add(collection);
+                        UserFontCollection collection = await Json.ReadAsync<UserFontCollection>(file).ConfigureAwait(false);
+                        collection.File = file;
+                        if (file.DisplayName != "Symbol")
+                        {
+                            collections.Add(collection);
+                        }
+                        else
+                        {
+                            SymbolCollection = collection;
+                        }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        SymbolCollection = collection;
+                        // Possibly corrupted. What to do? Delete file?
                     }
                 }
 
@@ -73,8 +82,8 @@ namespace CharacterMap.Services
 
         public async Task<UserFontCollection> CreateCollectionAsync(string name, string fileName = null)
         {
-            var folder = await GetCollectionsFolderAsync().AsTask().ConfigureAwait(false);
-            var file = await folder.CreateFileAsync($"{fileName ?? Guid.NewGuid().ToString()}.json").AsTask().ConfigureAwait(false);
+            var file = await _collectionsFolder.CreateFileAsync(
+                $"{fileName ?? Guid.NewGuid().ToString()}.json", CreationCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
             var collection = new UserFontCollection { Name = name, File = file };
             await SaveCollectionAsync(collection).ConfigureAwait(false);
             Items.Add(collection);
@@ -111,7 +120,7 @@ namespace CharacterMap.Services
             return Task.CompletedTask;
         }
 
-        public Task RemoveFontCollectionAsync(InstalledFont font, UserFontCollection collection)
+        public Task RemoveFromCollectionAsync(InstalledFont font, UserFontCollection collection)
         {
             if (collection.Fonts.Remove(font.Name))
             {
@@ -119,6 +128,18 @@ namespace CharacterMap.Services
             }
 
             return Task.CompletedTask;
+        }
+
+        public async Task RemoveFromAllCollectionsAsync(InstalledFont font)
+        {
+            if (SymbolCollection.Fonts.Contains(font.Name))
+                await RemoveFromCollectionAsync(font, SymbolCollection).ConfigureAwait(false);
+
+            foreach (var collection in Items)
+            {
+                if (collection.Fonts.Contains(font.Name))
+                    await RemoveFromCollectionAsync(font, collection).ConfigureAwait(false);
+            }
         }
 
         private IAsyncOperation<StorageFolder> GetCollectionsFolderAsync()

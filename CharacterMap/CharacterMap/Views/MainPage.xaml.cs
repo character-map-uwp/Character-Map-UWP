@@ -225,7 +225,7 @@ namespace CharacterMap.Views
 
                     if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                     {
-                        await FontMapView.CreateNewViewForFontAsync(font);
+                        await FontMapView.CreateNewViewForFontAsync(font, file);
                     }
                 }
                 finally
@@ -258,6 +258,9 @@ namespace CharacterMap.Views
 
         private void MenuFlyout_Opening(object sender, object e)
         {
+            // Handles forming the flyout when opening the main FontFilter 
+            // drop down menu.
+
             if (sender is MenuFlyout menu)
             {
                 // Reset to default menu
@@ -289,31 +292,71 @@ namespace CharacterMap.Views
         {
             if (sender is MenuFlyout menu && menu.Target.DataContext is InstalledFont font)
             {
-                MenuFlyoutSubItem coll = menu.Items.LastOrDefault(m => m is MenuFlyoutSubItem) as MenuFlyoutSubItem;
+                MenuFlyoutSubItem org = menu.Items.LastOrDefault(m => m is MenuFlyoutSubItem) as MenuFlyoutSubItem;
+                MenuFlyoutSubItem coll = null;
 
-                while (coll.Items.Count > 4)
-                    coll.Items.RemoveAt(4);
+                {  // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
+                   // render, meaning we can't dynamically update items. Instead we need to make an entirely
+                   // new one.
+                    menu.Items.Remove(org);
 
-                if (coll.Items.FirstOrDefault(i => i.Name == "SymbolFontItem") is MenuFlyoutItemBase fontItem)
-                {
-                    if (font.IsSymbolFont)
+                    MenuFlyoutSubItem newColl = new MenuFlyoutSubItem
                     {
-                        fontItem.Visibility = Visibility.Collapsed;
-                        coll.Items[1].Visibility = Visibility.Collapsed; // Remove the related seperator
-                    }
-                    else
+                        Text = org.Text,
+                        Icon = new SymbolIcon
+                        {
+                            Symbol = Symbol.AllApps
+                        }
+                    };
+
+                    // Create New Collection Item
+                    var newCollection = new MenuFlyoutItem
                     {
-                        fontItem.IsEnabled = !ViewModel.FontCollections.SymbolCollection.Fonts.Contains(font.Name);
+                        Text = Localization.Get("NewCollectionItem/Text"),
+                        Icon = new SymbolIcon
+                        {
+                            Symbol = Symbol.Add
+                        }
+                    };
+                    newCollection.Click += CreateFontCollection_Click;
+                    newColl.Items.Add(newCollection);
+
+                    // Create Symbol Font Icon
+                    if (!font.IsSymbolFont)
+                    {
+                        newColl.Items.Add(new MenuFlyoutSeparator());
+
+                        var symb = new MenuFlyoutItem
+                        {
+                            Text = Localization.Get("OptionSymbolFonts/Text"),
+                            IsEnabled = !ViewModel.FontCollections.SymbolCollection.Fonts.Contains(font.Name)
+                        };
+                        symb.Click += AddToSymbolFonts_Click;
+                        newColl.Items.Add(symb);
                     }
+                    
+                    coll = newColl;
+                    menu.Items.Insert(menu.Items.Count - 1, coll);
                 }
-
+                
                 if (menu.Items.FirstOrDefault(i => i.Name == "RemoveFromCollectionItem") is MenuFlyoutItemBase b)
                 {
-                    b.Visibility = ViewModel.SelectedCollection == null ? Visibility.Collapsed : Visibility.Visible;
+                    // Only show the "Remove from Collection" menu item if:
+                    //  -- we are in a custom collection
+                    //  OR 
+                    //  -- we are in the Symbol Font collection, and this is a font that 
+                    //     the user has manually tagged as a symbol font
+                    if (ViewModel.SelectedCollection != null || 
+                        (ViewModel.FontListFilter == 1 && !font.FontFace.IsSymbolFont))
+                        b.Visibility = Visibility.Visible;
+                    else
+                        b.Visibility = Visibility.Collapsed;
                 }
 
                 if (ViewModel.FontCollections.Items.Count > 0)
                 {
+                    coll.Items.Add(new MenuFlyoutSeparator());
+
                     foreach (var item in ViewModel.FontCollections.Items)
                     {
                         var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, IsEnabled = !item.Fonts.Contains(font.Name) };
@@ -331,12 +374,14 @@ namespace CharacterMap.Views
             }
         }
 
-        private void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
+        private async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f && f.DataContext is InstalledFont font)
             {
-                _ = ViewModel.FontCollections.AddToCollectionAsync(
+                await ViewModel.FontCollections.AddToCollectionAsync(
                                font, ViewModel.FontCollections.SymbolCollection);
+
+                ViewModel.RefreshFontList(ViewModel.SelectedCollection);
             }
         }
 
@@ -344,7 +389,11 @@ namespace CharacterMap.Views
         {
             if (sender is FrameworkElement f && f.DataContext is InstalledFont font)
             {
-                await ViewModel.FontCollections.RemoveFontCollectionAsync(font, ViewModel.SelectedCollection);
+                UserFontCollection collection = (ViewModel.SelectedCollection == null && ViewModel.FontListFilter == 1)
+                    ? ViewModel.FontCollections.SymbolCollection
+                    : ViewModel.SelectedCollection;
+
+                await ViewModel.FontCollections.RemoveFromCollectionAsync(font, collection);
                 ViewModel.RefreshFontList(ViewModel.SelectedCollection);
             }
         }
@@ -414,6 +463,14 @@ namespace CharacterMap.Views
         private void DigDeleteCollection_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             sender.Hide();
+        }
+
+        private void FontListDisplayToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.InitialLoad.IsCompleted)
+            {
+                ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+            }
         }
     }
 }

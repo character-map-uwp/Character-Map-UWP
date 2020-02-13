@@ -17,21 +17,21 @@ namespace CharacterMap.Core
         /// </summary>
         NoFit = 1,
         /// <summary>
-        /// No fit appearance of the serif text.
+        /// Cove appearance of the serif text.
         /// </summary>
         Cove = 2,
         /// <summary>
-        /// No fit appearance of the serif text.
+        /// Obtuse Cove appearance of the serif text.
         /// </summary>
         ObtuseCove = 3,
         /// <summary>
-        /// No fit appearance of the serif text.
+        /// Square cove appearance of the serif text.
         /// </summary>
         SquareCove = 4,
         /// <summary>
-        /// No fit appearance of the serif text.
+        /// Obtuse square cove appearance of the serif text.
         /// </summary>
-        ObtuseSquareCore = 5,
+        ObtuseSquareCove = 5,
         /// <summary>
         /// Square appearance of the serif text.
         /// </summary>

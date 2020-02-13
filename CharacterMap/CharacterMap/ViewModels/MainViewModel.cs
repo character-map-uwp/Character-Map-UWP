@@ -25,7 +25,7 @@ namespace CharacterMap.ViewModels
 
         public event EventHandler FontListCreated;
 
-        private Task InitialLoad { get; }
+        public Task InitialLoad { get; }
 
         public IDialogService DialogService { get; }
 
@@ -205,12 +205,12 @@ namespace CharacterMap.ViewModels
                     }
                     else if (FontListFilter == 4)
                     {
-                        fontList = fontList.Where(f => !f.DefaultVariant.IsSansSerif);
+                        fontList = fontList.Where(f => !f.DefaultVariant.Panose.IsSansSerifStyle);
                         FilterTitle = Localization.Get("OptionSerifFonts/Text");
                     }
                     else if (FontListFilter == 5)
                     {
-                        fontList = fontList.Where(f => f.DefaultVariant.IsSansSerif);
+                        fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSansSerifStyle);
                         FilterTitle = Localization.Get("OptionSansSerifFonts/Text");
                     }
                     else
@@ -285,6 +285,10 @@ namespace CharacterMap.ViewModels
             await Task.Delay(150);
 
             bool result = await FontFinder.RemoveFontAsync(font);
+            if (result)
+            {
+                _ = FontCollections.RemoveFromAllCollectionsAsync(font);
+            }
             RefreshFontList(SelectedCollection);
 
             IsLoadingFonts = false;

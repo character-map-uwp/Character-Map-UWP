@@ -9,6 +9,7 @@ namespace CharacterMap.Core
 {
     public class Panose
     {
+        public bool IsSansSerifStyle { get; }
         public SerifStyle Style { get; }
         public PanoseFamily Family { get; }
 
@@ -16,6 +17,7 @@ namespace CharacterMap.Core
         {
             Family = family;
             Style = style;
+            IsSansSerifStyle = PanoseParser.IsSansSerif(Style);
         }
     }
 
@@ -25,13 +27,22 @@ namespace CharacterMap.Core
         {
             byte[] panose = fontFace.Panose;
 
+            // The contents of the Panose byte array depends on the value of the first byte. 
+            // See https://docs.microsoft.com/en-us/windows/win32/api/dwrite_1/ns-dwrite_1-dwrite_panose 
+            // for how the Family value changes the meaning of the following 9 bytes.
             PanoseFamily family = (PanoseFamily)panose[0];
-            SerifStyle style = SerifStyle.Any;
 
+            // Only fonts in TextDisplay family will identify their serif style
+            SerifStyle style = SerifStyle.Any;
             if (family == PanoseFamily.TextDisplay)
             {
                 style = (SerifStyle)panose[1];
             }
+
+            // Warning - not all fonts store correct values for Panose information. 
+            // If expanding PanoseParser in the future to read all values, direct casting
+            // enums may lead to errors - safer parsing may be needed to take into account
+            // faulty panose classifications.
 
             return new Panose(family, style);
         }

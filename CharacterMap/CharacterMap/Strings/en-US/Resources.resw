@@ -369,6 +369,9 @@
   <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
     <value>Show Font names using actual font</value>
   </data>
+  <data name="FontPropCount.Text" xml:space="preserve">
+    <value>Glyph Count</value>
+  </data>
   <data name="OptionMonospacedFonts.Text" xml:space="preserve">
     <value>Monospaced Fonts</value>
   </data>
@@ -377,5 +380,11 @@
   </data>
   <data name="OptionSerifFonts.Text" xml:space="preserve">
     <value>Serif Fonts</value>
+  </data>
+  <data name="NewCollectionItem.Text" xml:space="preserve">
+    <value>New Collection</value>
+  </data>
+  <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
+    <value>Remove from Collection</value>
   </data>
 </root>

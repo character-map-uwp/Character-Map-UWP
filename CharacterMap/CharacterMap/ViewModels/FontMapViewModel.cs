@@ -24,7 +24,7 @@ namespace CharacterMap.ViewModels
     {
         private Interop Interop { get; }
 
-        private StorageFile SourceFile { get; set; }
+        public StorageFile SourceFile { get; set; }
 
         private Debouncer SearchDebouncer { get; }
 

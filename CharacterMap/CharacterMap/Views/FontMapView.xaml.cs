@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight.Views;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -265,11 +266,13 @@ namespace CharacterMap.Views
 
     public partial class FontMapView
     {
-        public static async Task CreateNewViewForFontAsync(InstalledFont font)
+        public static async Task CreateNewViewForFontAsync(InstalledFont font, StorageFile sourceFile = null)
         {
             void CreateView()
             {
-                FontMapView map = new FontMapView { IsStandalone = true, ViewModel = { SelectedFont = font } };
+                FontMapView map = new FontMapView { 
+                    IsStandalone = true, 
+                    ViewModel = { SelectedFont = font, IsExternalFile = sourceFile != null, SourceFile = sourceFile } }; 
                 Window.Current.Content = map;
                 Window.Current.Activate();
             }

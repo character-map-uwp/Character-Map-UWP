@@ -298,6 +298,7 @@
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
                                                 <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
 
 
@@ -313,49 +314,55 @@
                                                 Style="{StaticResource Value}"
                                                 Text="{Binding SelectedVariant.PreferredName}" />
 
-                                            <TextBlock x:Uid="FontPropType" Grid.Row="2" />
+                                            <TextBlock x:Uid="FontPropCount" Grid.Row="2" />
                                             <TextBlock
                                                 Grid.Row="2"
                                                 Style="{StaticResource Value}"
-                                                Text="{Binding SelectedVariant.FontFace.FileFormatType}" />
+                                                Text="{x:Bind ViewModel.SelectedVariant.FontFace.GlyphCount, Mode=OneWay}" />
 
-                                            <TextBlock x:Uid="FontPropSymbol" Grid.Row="3" />
+                                            <TextBlock x:Uid="FontPropType" Grid.Row="3" />
                                             <TextBlock
                                                 Grid.Row="3"
                                                 Style="{StaticResource Value}"
-                                                Text="{Binding SelectedVariant.FontFace.IsSymbolFont}" />
+                                                Text="{Binding SelectedVariant.FontFace.FileFormatType}" />
 
-                                            <TextBlock x:Uid="FontPropMonospaced" Grid.Row="4" />
+                                            <TextBlock x:Uid="FontPropSymbol" Grid.Row="4" />
                                             <TextBlock
                                                 Grid.Row="4"
                                                 Style="{StaticResource Value}"
-                                                Text="{Binding SelectedVariant.FontFace.IsMonospaced}" />
+                                                Text="{Binding SelectedVariant.FontFace.IsSymbolFont}" />
 
-                                            <TextBlock x:Uid="FontPropStyle" Grid.Row="5" />
+                                            <TextBlock x:Uid="FontPropMonospaced" Grid.Row="5" />
                                             <TextBlock
                                                 Grid.Row="5"
                                                 Style="{StaticResource Value}"
-                                                Text="{Binding SelectedVariant.FontFace.Style}" />
+                                                Text="{Binding SelectedVariant.FontFace.IsMonospaced}" />
 
-                                            <TextBlock x:Uid="FontPropStretch" Grid.Row="6" />
+                                            <TextBlock x:Uid="FontPropStyle" Grid.Row="6" />
                                             <TextBlock
                                                 Grid.Row="6"
                                                 Style="{StaticResource Value}"
-                                                Text="{Binding SelectedVariant.FontFace.Stretch}" />
+                                                Text="{Binding SelectedVariant.FontFace.Style}" />
 
-                                            <TextBlock x:Uid="FontPropWeight" Grid.Row="7" />
+                                            <TextBlock x:Uid="FontPropStretch" Grid.Row="7" />
                                             <TextBlock
                                                 Grid.Row="7"
+                                                Style="{StaticResource Value}"
+                                                Text="{Binding SelectedVariant.FontFace.Stretch}" />
+
+                                            <TextBlock x:Uid="FontPropWeight" Grid.Row="8" />
+                                            <TextBlock
+                                                Grid.Row="8"
                                                 Style="{StaticResource Value}"
                                                 Text="{x:Bind ViewModel.SelectedVariant.FontFace.Weight.Weight.ToString(), Mode=OneWay}" />
 
                                             <TextBlock
                                                 x:Uid="FontPropXaml"
-                                                Grid.Row="8"
+                                                Grid.Row="9"
                                                 Margin="0,4,0,0"
                                                 Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
                                             <TextBlock
-                                                Grid.Row="9"
+                                                Grid.Row="10"
                                                 Grid.Column="0"
                                                 Grid.ColumnSpan="2"
                                                 Margin="0,-4,0,0"
@@ -363,6 +370,7 @@
                                                 Style="{StaticResource Value}"
                                                 Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
                                                 Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
+
                                         </Grid>
 
                                         <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">

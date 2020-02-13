@@ -421,22 +421,7 @@
                                                     <SymbolIcon Symbol="Delete" />
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
-                                            <MenuFlyoutSubItem Text="Add to Collection">
-                                                <MenuFlyoutSubItem.Icon>
-                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE71D;" />
-                                                </MenuFlyoutSubItem.Icon>
-                                                <MenuFlyoutItem Click="CreateFontCollection_Click" Text="New Collection">
-                                                    <MenuFlyoutItem.Icon>
-                                                        <SymbolIcon Symbol="Add" />
-                                                    </MenuFlyoutItem.Icon>
-                                                </MenuFlyoutItem>
-                                                <MenuFlyoutSeparator />
-                                                <MenuFlyoutItem
-                                                    x:Name="SymbolFontItem"
-                                                    Click="AddToSymbolFonts_Click"
-                                                    Text="Symbol Fonts" />
-                                                <MenuFlyoutSeparator />
-                                            </MenuFlyoutSubItem>
+                                            <MenuFlyoutSubItem Text="Add to Collection" />
                                             <MenuFlyoutItem
                                                 x:Name="RemoveFromCollectionItem"
                                                 x:Uid="RemoveFromCollectionItem"
@@ -596,7 +581,10 @@
                         Click="BtnRestart_OnClick" />
 
                     <TextBlock x:Uid="FontListDisplayHeader" Margin="0,40,0,4" />
-                    <ToggleSwitch x:Uid="FontListDisplayToggle" IsOn="{x:Bind Settings.UseFontForPreview, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        x:Uid="FontListDisplayToggle"
+                        IsOn="{x:Bind Settings.UseFontForPreview, Mode=TwoWay}"
+                        Toggled="FontListDisplayToggleSwitch_Toggled" />
 
                     <!--  Reenable after sorting out export UI issues  -->
                     <!--<TextBlock Margin="0 40 0 4" Text="Dev Utilities" />
@@ -656,7 +644,6 @@
                 x:Uid="CreateCollectionEntryBox"
                 Margin="-14,0"
                 DataContext="{x:Bind ViewModel}"
-                Header="Collection Name"
                 Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </ContentDialog>
         <ContentDialog
@@ -684,7 +671,8 @@
                         <Setter Target="FontMap.Opacity" Value="0" />
                         <Setter Target="FontMap.IsHitTestVisible" Value="False" />
                         <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
-                        <Setter Target="FontListFilter.IsEnabled" Value="False" />
+                        <Setter Target="FontListFilter.IsHitTestVisible" Value="False" />
+                        <Setter Target="FontListFilter.Opacity" Value="0.4" />
                         <Setter Target="SearchBox.IsEnabled" Value="False" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.IsEnabled" Value="False" />
