@@ -75,7 +75,7 @@ namespace CharacterMap.Helpers
                 {
                     _ = MainPage.MainDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
-                        main.TryRemoveFont(font);
+                        main.TryRemoveFont(fnt);
                     });
                 }
             }
