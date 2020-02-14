@@ -214,7 +214,7 @@
     <value>PNG Resolution (pixel)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
-    <value>Remove Font Family</value>
+    <value>Delete Font Family</value>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
     <value>Restart</value>
@@ -386,5 +386,17 @@
   </data>
   <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
     <value>Remove from Collection</value>
+  </data>
+  <data name="AddToCollectionFlyout.Text" xml:space="preserve">
+    <value>Add to Collection</value>
+  </data>
+  <data name="InstantSearchToggle.OffContent" xml:space="preserve">
+    <value>Instant search disabled</value>
+  </data>
+  <data name="InstantSearchToggle.OnContent" xml:space="preserve">
+    <value>Instant search enabled</value>
+  </data>
+  <data name="SearchResultsSlider.Header" xml:space="preserve">
+    <value>Maximum search results</value>
   </data>
 </root>

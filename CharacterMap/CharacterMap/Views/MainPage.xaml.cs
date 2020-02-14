@@ -17,6 +17,7 @@ using CharacterMap.ViewModels;
 using CharacterMap.Helpers;
 using Windows.Storage.Pickers;
 using CharacterMap.Services;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace CharacterMap.Views
 {
@@ -28,6 +29,8 @@ namespace CharacterMap.Views
 
         private bool _isCtrlKeyPressed;
 
+        public static CoreDispatcher MainDispatcher { get; private set; }
+
         public MainPage()
         {
             InitializeComponent();
@@ -38,6 +41,9 @@ namespace CharacterMap.Views
 
             Loaded += MainPage_Loaded;
             Unloaded += MainPage_Unloaded;
+
+            MainDispatcher = Dispatcher;
+            Messenger.Default.Register<CollectionsUpdatedMessage>(this, OnCollectionsUpdated);
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -137,10 +143,6 @@ namespace CharacterMap.Views
             }
         }
 
-        
-
-        
-
         private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             e.Handled = true;
@@ -179,6 +181,22 @@ namespace CharacterMap.Views
                 && item.DataContext is InstalledFont font)
             {
                 _ = FontMapView.CreateNewViewForFontAsync(font);
+            }
+        }
+
+        void OnCollectionsUpdated(CollectionsUpdatedMessage msg)
+        {
+            if (ViewModel.InitialLoad.IsCompleted)
+            {
+                if (Dispatcher.HasThreadAccess)
+                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                else
+                {
+                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                    });
+                }
             }
         }
 
@@ -292,85 +310,11 @@ namespace CharacterMap.Views
         {
             if (sender is MenuFlyout menu && menu.Target.DataContext is InstalledFont font)
             {
-                MenuFlyoutSubItem org = menu.Items.LastOrDefault(m => m is MenuFlyoutSubItem) as MenuFlyoutSubItem;
-                MenuFlyoutSubItem coll = null;
-
-                {  // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
-                   // render, meaning we can't dynamically update items. Instead we need to make an entirely
-                   // new one.
-                    menu.Items.Remove(org);
-
-                    MenuFlyoutSubItem newColl = new MenuFlyoutSubItem
-                    {
-                        Text = org.Text,
-                        Icon = new SymbolIcon
-                        {
-                            Symbol = Symbol.AllApps
-                        }
-                    };
-
-                    // Create New Collection Item
-                    var newCollection = new MenuFlyoutItem
-                    {
-                        Text = Localization.Get("NewCollectionItem/Text"),
-                        Icon = new SymbolIcon
-                        {
-                            Symbol = Symbol.Add
-                        }
-                    };
-                    newCollection.Click += CreateFontCollection_Click;
-                    newColl.Items.Add(newCollection);
-
-                    // Create Symbol Font Icon
-                    if (!font.IsSymbolFont)
-                    {
-                        newColl.Items.Add(new MenuFlyoutSeparator());
-
-                        var symb = new MenuFlyoutItem
-                        {
-                            Text = Localization.Get("OptionSymbolFonts/Text"),
-                            IsEnabled = !ViewModel.FontCollections.SymbolCollection.Fonts.Contains(font.Name)
-                        };
-                        symb.Click += AddToSymbolFonts_Click;
-                        newColl.Items.Add(symb);
-                    }
-                    
-                    coll = newColl;
-                    menu.Items.Insert(menu.Items.Count - 1, coll);
-                }
-                
-                if (menu.Items.FirstOrDefault(i => i.Name == "RemoveFromCollectionItem") is MenuFlyoutItemBase b)
-                {
-                    // Only show the "Remove from Collection" menu item if:
-                    //  -- we are in a custom collection
-                    //  OR 
-                    //  -- we are in the Symbol Font collection, and this is a font that 
-                    //     the user has manually tagged as a symbol font
-                    if (ViewModel.SelectedCollection != null || 
-                        (ViewModel.FontListFilter == 1 && !font.FontFace.IsSymbolFont))
-                        b.Visibility = Visibility.Visible;
-                    else
-                        b.Visibility = Visibility.Collapsed;
-                }
-
-                if (ViewModel.FontCollections.Items.Count > 0)
-                {
-                    coll.Items.Add(new MenuFlyoutSeparator());
-
-                    foreach (var item in ViewModel.FontCollections.Items)
-                    {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, IsEnabled = !item.Fonts.Contains(font.Name) };
-                        if (m.IsEnabled)
-                        {
-                            m.Click += async (s, a) =>
-                            {
-                                await ViewModel.FontCollections.AddToCollectionAsync(
-                                    font, (UserFontCollection)(((FrameworkElement)s).DataContext));
-                            };
-                        }
-                        coll.Items.Add(m);
-                    }
-                }
+                FlyoutHelper.CreateMenu(
+                    menu, 
+                    font, 
+                    false,
+                    DigCreateCollection);
             }
         }
 

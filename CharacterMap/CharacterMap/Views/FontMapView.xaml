@@ -37,9 +37,9 @@
 
         <Grid
             x:Name="TitleGrid"
+            x:Load="{x:Bind IsStandalone}"
             Grid.Row="1"
             Height="45"
-            x:Load="{x:Bind IsStandalone}"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
@@ -74,7 +74,6 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
                     <FontIcon Glyph="&#xE109;" />
                     <TextBlock
                         x:Uid="AddToCollectionHint"
@@ -106,10 +105,9 @@
                     <Flyout>
                         <StackPanel Width="260">
                             <ToggleSwitch
+                                x:Uid="InstantSearchToggle"
                                 Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}"
-                                OffContent="Disabled instant search"
-                                OnContent="Enabled instant search" />
+                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
                             <Slider
                                 Margin="0,4"
                                 Header="Delay before search (ms)"
@@ -119,8 +117,8 @@
                                 Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
                                 Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
                             <Slider
+                                x:Uid="SearchResultsSlider"
                                 Margin="0,4"
-                                Header="Maximum preview search result"
                                 Maximum="100"
                                 Minimum="5"
                                 TickFrequency="1"
@@ -153,10 +151,10 @@
 
             <AppBarButton
                 x:Name="SearchOptionButton"
+                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
                 Grid.Column="3"
                 Width="45"
                 Height="45"
-                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
                 Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}">
                 <Grid>
                     <FontIcon Glyph="&#xE11A;" />
@@ -430,8 +428,8 @@
                                                 <ToggleSwitch
                                                     x:Name="ColorGlyphToggle"
                                                     x:Uid="ColorGlyphToggle"
-                                                    VerticalAlignment="Bottom"
                                                     x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
+                                                    VerticalAlignment="Bottom"
                                                     IsOn="{Binding ShowColorGlyphs, Mode=TwoWay}" />
                                                 <TextBlock
                                                     x:Uid="TypographyVariantsHeader"
@@ -454,21 +452,17 @@
                     </StackPanel>
 
                     <Button
+                        x:Name="MoreOptionsButton"
+                        x:Load="{x:Bind core:Converters.False(ViewModel.IsExternalFile)}"
                         Grid.Column="1"
                         Width="44"
                         Height="44"
                         Margin="0,0,0,-8"
                         VerticalAlignment="Bottom"
-                        Style="{ThemeResource TransparentButton}"
-                        Visibility="{x:Bind core:Converters.FalseToVis(IsStandalone)}">
+                        DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
+                        Style="{ThemeResource TransparentButton}">
                         <Button.Flyout>
-                            <MenuFlyout Placement="Bottom">
-                                <MenuFlyoutItem x:Uid="OpenInNewWindow" Click="{x:Bind ViewModel.OpenSelectedFontInWindow}">
-                                    <MenuFlyoutItem.Icon>
-                                        <FontIcon Margin="0,0,-2,0" Glyph="&#xE2B4;" />
-                                    </MenuFlyoutItem.Icon>
-                                </MenuFlyoutItem>
-                            </MenuFlyout>
+                            <MenuFlyout Opening="MenuFlyout_Opening" Placement="Bottom" />
                         </Button.Flyout>
                         <FontIcon
                             Margin="0,0,-2,0"
@@ -874,11 +868,11 @@
 
         <Grid
             x:Name="StatusBar"
+            x:Load="{x:Bind IsStandalone}"
             Grid.Row="3"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Height="26"
-            x:Load="{x:Bind IsStandalone}"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
@@ -897,6 +891,14 @@
                 Margin="12,0"
                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
         </Grid>
+
+        <controls:CreateCollectionDialog
+            x:Name="DlgCreateCollection"
+            Grid.Row="0"
+            Grid.RowSpan="10"
+            Grid.Column="0"
+            Grid.ColumnSpan="10"
+            d:IsHidden="True" />
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LoadingStates">

@@ -289,6 +289,7 @@ namespace CharacterMap.ViewModels
             {
                 _ = FontCollections.RemoveFromAllCollectionsAsync(font);
             }
+
             RefreshFontList(SelectedCollection);
 
             IsLoadingFonts = false;

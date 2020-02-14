@@ -102,13 +102,11 @@
                             <MenuFlyoutItem
                                 x:Uid="OptionAllFonts"
                                 Click="Filter_Click"
-                                Tag="0"
-                                Text="All Fonts" />
+                                Tag="0" />
                             <MenuFlyoutItem
                                 x:Uid="OptionSymbolFonts"
                                 Click="Filter_Click"
-                                Tag="1"
-                                Text="Symbol Fonts" />
+                                Tag="1" />
                             <MenuFlyoutItem
                                 x:Uid="OptionMonospacedFonts"
                                 Click="Filter_Click"
@@ -125,8 +123,7 @@
                             <MenuFlyoutItem
                                 x:Uid="OptionImportedFonts"
                                 Click="Filter_Click"
-                                Tag="2"
-                                Text="Imported Fonts" />
+                                Tag="2" />
                         </MenuFlyout>
                     </DropDownButton.Flyout>
                 </DropDownButton>
@@ -199,10 +196,9 @@
                     <Flyout>
                         <StackPanel Width="260">
                             <ToggleSwitch
+                                x:Uid="InstantSearchToggle"
                                 Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}"
-                                OffContent="Disabled instant search"
-                                OnContent="Enabled instant search" />
+                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
                             <Slider
                                 Margin="0,4"
                                 Header="Delay before search (ms)"
@@ -212,8 +208,8 @@
                                 Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
                                 Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
                             <Slider
+                                x:Uid="SearchResultsSlider"
                                 Margin="0,4"
-                                Header="Maximum preview search result"
                                 Maximum="100"
                                 Minimum="5"
                                 TickFrequency="1"
@@ -264,10 +260,9 @@
                     <Flyout Placement="Bottom">
                         <StackPanel>
                             <ToggleSwitch
+                                x:Uid="InstantSearchToggle"
                                 Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}"
-                                OffContent="Disabled instant search"
-                                OnContent="Enabled instant search" />
+                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
                             <Slider
                                 Margin="0,4"
                                 Header="Delay before search (ms)"
@@ -277,8 +272,8 @@
                                 Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
                                 Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
                             <Slider
+                                x:Uid="SearchResultsSlider"
                                 Margin="0,4"
-                                Header="Maximum preview search result"
                                 Maximum="100"
                                 Minimum="5"
                                 TickFrequency="1"
@@ -405,35 +400,8 @@
                             <DataTemplate x:DataType="core:InstalledFont">
                                 <Grid Background="Transparent" ColumnSpacing="12">
                                     <Grid.ContextFlyout>
-                                        <MenuFlyout Opening="FontContextFlyout_Opening">
-                                            <MenuFlyoutItem x:Uid="OpenInNewWindow" Click="OpenInWindowFlyoutItem_Click">
-                                                <MenuFlyoutItem.Icon>
-                                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE2B4;" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutItem
-                                                x:Name="RemoveFontItem"
-                                                x:Uid="RemoveFontFlyout"
-                                                x:Load="{x:Bind HasImportedFiles}"
-                                                Click="RemoveMenuFlyoutItem_Click"
-                                                Tag="{x:Bind}">
-                                                <MenuFlyoutItem.Icon>
-                                                    <SymbolIcon Symbol="Delete" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                            <MenuFlyoutSubItem Text="Add to Collection" />
-                                            <MenuFlyoutItem
-                                                x:Name="RemoveFromCollectionItem"
-                                                x:Uid="RemoveFromCollectionItem"
-                                                Click="RemoveFromCollectionItem_Click"
-                                                Tag="{x:Bind}"
-                                                Text="Remove from Collection"
-                                                Visibility="Collapsed">
-                                                <MenuFlyoutItem.Icon>
-                                                    <SymbolIcon Symbol="Remove" />
-                                                </MenuFlyoutItem.Icon>
-                                            </MenuFlyoutItem>
-                                        </MenuFlyout>
+                                        <!--  Menu content created dynamically  -->
+                                        <MenuFlyout Opening="FontContextFlyout_Opening" />
                                     </Grid.ContextFlyout>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -610,24 +578,14 @@
             </ScrollViewer>
         </ContentDialog>
 
-        <ContentDialog
+        <controls:CreateCollectionDialog
             x:Name="DigCreateCollection"
-            x:Uid="DigCreateCollection"
             Grid.Row="0"
             Grid.RowSpan="3"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            d:IsHidden="True"
-            IsPrimaryButtonEnabled="{x:Bind ViewModel.IsCollectionTitleValid, Mode=OneWay}"
-            PrimaryButtonClick="DigCreateCollection_PrimaryButtonClick"
-            SecondaryButtonClick="{x:Bind DigCreateCollection.Hide}">
-            <TextBox
-                x:Uid="CreateCollectionEntryBox"
-                Margin="-14,0"
-                DataContext="{x:Bind ViewModel}"
-                Header="Collection Name"
-                Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </ContentDialog>
+            d:IsHidden="True" />
+
         <ContentDialog
             x:Name="DigRenameCollection"
             x:Uid="DigRenameCollection"
@@ -646,6 +604,7 @@
                 DataContext="{x:Bind ViewModel}"
                 Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </ContentDialog>
+
         <ContentDialog
             x:Name="DigDeleteCollection"
             x:Uid="DigDeleteCollection"

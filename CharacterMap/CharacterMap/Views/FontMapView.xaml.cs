@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CommonServiceLocator;
@@ -261,6 +262,18 @@ namespace CharacterMap.Views
         private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             OnSearchBoxSubmittedQuery(SearchBox);
+        }
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout menu && ViewModel.SelectedFont is InstalledFont font)
+            {
+                FlyoutHelper.CreateMenu(
+                    menu,
+                    font,
+                    IsStandalone,
+                    DlgCreateCollection);
+            }
         }
     }
 
