@@ -31,6 +31,8 @@ namespace CharacterMap.Views
 
         public static CoreDispatcher MainDispatcher { get; private set; }
 
+        private Debouncer _fontListDebouncer { get; } = new Debouncer();
+
         public MainPage()
         {
             InitializeComponent();
@@ -413,7 +415,10 @@ namespace CharacterMap.Views
         {
             if (ViewModel.InitialLoad.IsCompleted)
             {
-                ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                _fontListDebouncer.Debounce(16, () =>
+                {
+                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                });
             }
         }
     }
