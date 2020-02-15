@@ -403,7 +403,7 @@ namespace SQLite
         /// </summary>
         public TimeSpan BusyTimeout
         {
-            get { return _busyTimeout; }
+            get => _busyTimeout;
             set
             {
                 _busyTimeout = value;
@@ -1238,10 +1238,7 @@ namespace SQLite
         /// <summary>
         /// Whether <see cref="BeginTransaction"/> has been called and the database is waiting for a <see cref="Commit"/>.
         /// </summary>
-        public bool IsInTransaction
-        {
-            get { return _transactionDepth > 0; }
-        }
+        public bool IsInTransaction => _transactionDepth > 0;
 
         /// <summary>
         /// Begins a new transaction. Call <see cref="Commit"/> to end the transaction.
@@ -2412,7 +2409,7 @@ namespace SQLite
     {
         public override bool Unique
         {
-            get { return true; }
+            get => true;
             set { /* throw?  */ }
         }
     }
@@ -2566,21 +2563,9 @@ namespace SQLite
             }
         }
 
-        public Column[] InsertColumns
-        {
-            get
-            {
-                return _insertColumns;
-            }
-        }
+        public Column[] InsertColumns => _insertColumns;
 
-        public Column[] InsertOrReplaceColumns
-        {
-            get
-            {
-                return _insertOrReplaceColumns;
-            }
-        }
+        public Column[] InsertOrReplaceColumns => _insertOrReplaceColumns;
 
         public Column FindColumnWithPropertyName(string propertyName)
         {
@@ -2602,7 +2587,7 @@ namespace SQLite
 
             public PropertyInfo PropertyInfo => _prop;
 
-            public string PropertyName { get { return _prop.Name; } }
+            public string PropertyName => _prop.Name;
 
             public Type ColumnType { get; private set; }
 

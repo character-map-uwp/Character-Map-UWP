@@ -95,7 +95,7 @@ namespace CharacterMap.Core
                 await _loadSemaphore.WaitAsync();
 
                 var familyCount = systemFonts.Fonts.Count;
-                Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>();
+                var resultList = new Dictionary<string, InstalledFont>();
 
                 /* Add all system fonts */
                 for (var i = 0; i < familyCount; i++)
@@ -128,12 +128,12 @@ namespace CharacterMap.Core
         /* 
          * Helper method for adding fonts. 
          */
-        private static void AddFont(Dictionary<string, InstalledFont> fontList, CanvasFontFace fontFace, StorageFile file = null)
+        private static void AddFont(IDictionary<string, InstalledFont> fontList, CanvasFontFace fontFace, StorageFile file = null)
         {
             try
             {
                 var familyNames = fontFace.FamilyNames;
-                if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string familyName))
+                if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out var familyName))
                 {
                     if (!familyNames.TryGetValue("en-us", out familyName))
                     {
@@ -145,7 +145,7 @@ namespace CharacterMap.Core
                 if (!string.IsNullOrEmpty(familyName))
                 {
                     /* Check if we already have a listing for this fontFamily */
-                    if (fontList.TryGetValue(familyName, out InstalledFont fontFamily))
+                    if (fontList.TryGetValue(familyName, out var fontFamily))
                     {
                         var variant = new FontVariant(fontFace, familyName, file);
                         if (file != null)
@@ -172,9 +172,9 @@ namespace CharacterMap.Core
             }
         }
 
-        private static List<CanvasFontFace> GetFontFacesFromFile(StorageFile file)
+        private static IEnumerable<CanvasFontFace> GetFontFacesFromFile(StorageFile file)
         {
-            using (CanvasFontSet set = new CanvasFontSet(new Uri(GetAppPath(file))))
+            using (var set = new CanvasFontSet(new Uri(GetAppPath(file))))
             {
                 return set.Fonts.ToList();
             }
@@ -182,7 +182,7 @@ namespace CharacterMap.Core
 
         internal static string GetAppPath(StorageFile file)
         {
-            bool temp = Path.GetDirectoryName(file.Path).EndsWith(TEMP);
+            var temp = Path.GetDirectoryName(file.Path).EndsWith(TEMP);
             return $"ms-appdata:///local/{(temp ? $"{TEMP}/" :  string.Empty)}{file.Name}";
         }
 
@@ -190,29 +190,29 @@ namespace CharacterMap.Core
         {
             return Task.Run(async () =>
             {
-                List<StorageFile> _imported = new List<StorageFile>();
-                List<StorageFile> _existing = new List<StorageFile>();
-                List<(IStorageItem, string)> _invalid = new List<(IStorageItem, string)>();
+                var imported = new List<StorageFile>();
+                var existing = new List<StorageFile>();
+                var invalid = new List<(IStorageItem, string)>();
 
-                Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+                var interop = SimpleIoc.Default.GetInstance<Interop>();
 
                 foreach (var item in items)
                 {
                     if (!(item is StorageFile file))
                     {
-                        _invalid.Add((item, Localization.Get("ImportNotAFile")));
+                        invalid.Add((item, Localization.Get("ImportNotAFile")));
                         continue;
                     }
 
                     if (!file.IsAvailable)
                     {
-                        _invalid.Add((item, Localization.Get("ImportUnavailableFile")));
+                        invalid.Add((item, Localization.Get("ImportUnavailableFile")));
                         continue;
                     }
 
                     if (_ignoredFonts.Contains(file.Name))
                     {
-                        _invalid.Add((item, Localization.Get("ImportPendingDelete")));
+                        invalid.Add((item, Localization.Get("ImportPendingDelete")));
                         continue;
                     }
 
@@ -224,16 +224,16 @@ namespace CharacterMap.Core
                          * are some strange import bugs when checking a file exists */
                         if (!File.Exists(Path.Combine(ImportFolder.Path, file.Name)))
                         {
-                            StorageFile fontFile = null;
+                            StorageFile fontFile;
                             try
                             {
                                 /* Copy to local folder. We can only verify font file when it's inside
                                 * the App's Local folder due to CanvasFontSet file restrictions */
                                 fontFile = await file.CopyAsync(ImportFolder);
                             }
-                            catch (Exception ex)
+                            catch (Exception)
                             {
-                                _invalid.Add((file, Localization.Get("ImportFileCopyFail")));
+                                invalid.Add((file, Localization.Get("ImportFileCopyFail")));
                                 continue;
                             }
                            
@@ -242,29 +242,29 @@ namespace CharacterMap.Core
                              * by dropping to C++ */
                             if (interop.HasValidFonts(new Uri(GetAppPath(fontFile))))
                             {
-                                _imported.Add(fontFile);
+                                imported.Add(fontFile);
                             }
                             else
                             {
-                                _invalid.Add((file, Localization.Get("ImportUnsupportedFontType")));
+                                invalid.Add((file, Localization.Get("ImportUnsupportedFontType")));
                                 await fontFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
                             }
                         }
                         else
                         {
-                            _existing.Add(file);
+                            existing.Add(file);
                         }
                     }
                     else
-                        _invalid.Add((file, Localization.Get("ImportUnsupportedFileType")));
+                        invalid.Add((file, Localization.Get("ImportUnsupportedFileType")));
                 }
 
-                if (_imported.Count > 0)
+                if (imported.Count > 0)
                 {
                     await LoadFontsAsync();
                 }
 
-                return new FontImportResult(_imported, _existing, _invalid);
+                return new FontImportResult(imported, existing, invalid);
             });
         }
 
@@ -280,7 +280,7 @@ namespace CharacterMap.Core
             font.FontFace = null;
             var variants = font.Variants.Where(v => v.IsImported).ToList();
 
-            bool success = true;
+            var success = true;
 
             foreach (var variant in variants)
             {
@@ -327,7 +327,7 @@ namespace CharacterMap.Core
                 {
                     var lines = File.ReadAllLines(path);
 
-                    List<string> moreFails = new List<string>();
+                    var moreFails = new List<string>();
                     foreach (var line in lines)
                     {
                         if (File.Exists(line))
@@ -379,19 +379,16 @@ namespace CharacterMap.Core
         {
             await InitialiseAsync().ConfigureAwait(false);
 
-            StorageFolder folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
-            StorageFile localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
+            var folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
+            var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
 
-            Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>();
-            foreach (CanvasFontFace font in GetFontFacesFromFile(localFile))
+            var resultList = new Dictionary<string, InstalledFont>();
+            foreach (var font in GetFontFacesFromFile(localFile))
                 AddFont(resultList, font, localFile);
 
             GC.Collect();
 
-            if (resultList.Count > 0)
-                return resultList.First().Value;
-
-            return null;
+            return resultList.Count > 0 ? resultList.First().Value : null;
         }
 
         public static bool IsMDL2(FontVariant variant) => variant.FamilyName.Contains("MDL2 Assets");

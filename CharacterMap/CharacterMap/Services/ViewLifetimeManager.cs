@@ -135,26 +135,14 @@ namespace CharacterMap.Services
         }
 
         // Necessary to communicate with the window
-        public CoreDispatcher Dispatcher
-        {
-            get
-            {
-                // This property never changes, so there's no need to lock
-                return dispatcher;
-            }
-        }
+        // This property never changes, so there's no need to lock
+        public CoreDispatcher Dispatcher => dispatcher;
 
         // Each view has a unique Id, found using the ApplicationView.Id property or
         // ApplicationView.GetApplicationViewIdForCoreWindow method. This id is used in all of the ApplicationViewSwitcher
         // and ProjectionManager APIs. 
-        public int Id
-        {
-            get
-            {
-                // This property never changes, so there's no need to lock
-                return viewId;
-            }
-        }
+        // This property never changes, so there's no need to lock
+        public int Id => viewId;
 
         // Signals that the view is being interacted with by another view,
         // so it shouldn't be closed even if it becomes "consolidated"

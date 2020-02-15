@@ -136,9 +136,9 @@ namespace CharacterMap.Core
         {
         }
 
-        public float Dpi { get { return 96; } }
-        public bool PixelSnappingDisabled { get { return false; } }
-        public Matrix3x2 Transform { get { return System.Numerics.Matrix3x2.Identity; } }
+        public float Dpi => 96;
+        public bool PixelSnappingDisabled => false;
+        public Matrix3x2 Transform => System.Numerics.Matrix3x2.Identity;
     }
 
     public class TypographyFeatureInfo

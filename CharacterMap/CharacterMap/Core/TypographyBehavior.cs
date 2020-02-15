@@ -18,8 +18,8 @@ namespace CharacterMap.Core
 
         public TypographyFeatureInfo TypographyFeature
         {
-            get { return (TypographyFeatureInfo)GetValue(TypographyFeatureProperty); }
-            set { SetValue(TypographyFeatureProperty, value); }
+            get => (TypographyFeatureInfo)GetValue(TypographyFeatureProperty);
+            set => SetValue(TypographyFeatureProperty, value);
         }
 
         public static readonly DependencyProperty TypographyFeatureProperty =

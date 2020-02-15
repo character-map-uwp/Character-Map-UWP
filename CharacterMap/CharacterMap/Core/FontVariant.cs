@@ -9,7 +9,7 @@ using FontFamily = Windows.UI.Xaml.Media.FontFamily;
 
 namespace CharacterMap.Core
 {
-    public partial class FontVariant: IDisposable
+    public partial class FontVariant : IDisposable
     {
 
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
@@ -55,7 +55,7 @@ namespace CharacterMap.Core
 
         public string FamilyName { get; }
 
-        public (uint,uint)[] UnicodeRanges { get; }
+        public (uint, uint)[] UnicodeRanges { get; }
 
         public Panose Panose { get; }
 
@@ -84,14 +84,13 @@ namespace CharacterMap.Core
                 Source = familyName;
             }
 
-            if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out string name))
+            if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out var name))
             {
                 if (!face.FaceNames.TryGetValue("en-us", out name))
                 {
-                    if (face.FaceNames.Any())
-                        name = face.FaceNames.FirstOrDefault().Value;
-                    else
-                        name = Utils.GetVariantDescription(face);
+                    name = face.FaceNames.Any() ?
+                        face.FaceNames.FirstOrDefault().Value :
+                        Utils.GetVariantDescription(face);
                 }
             }
 
@@ -150,8 +149,7 @@ namespace CharacterMap.Core
                 if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
                     || infos.TryGetValue("en-us", out value))
                     return KeyValuePair.Create(name, value);
-                else
-                    return KeyValuePair.Create(name, infos.First().Value);
+                return KeyValuePair.Create(name, infos.First().Value);
             }
 
             return INFORMATIONS.Select(Get).Where(s => s.Key != null).ToList();
@@ -188,8 +186,7 @@ namespace CharacterMap.Core
             };
         }
 
-        private static CanvasFontInformation[] INFORMATIONS { get; } = new[]
-        {
+        private static CanvasFontInformation[] INFORMATIONS { get; } = {
             CanvasFontInformation.FullName,
             CanvasFontInformation.Description,
             CanvasFontInformation.Designer,
