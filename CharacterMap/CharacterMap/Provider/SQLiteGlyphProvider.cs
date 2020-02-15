@@ -187,7 +187,7 @@ namespace CharacterMap.Provider
                 }
 
                 // 3. Otherwise, perform a multi-step text search. First perform an FTS4 search
-                string sql = $"SELECT * FROM {ftsTable} {sb.ToString()} AND Description MATCH '{query}' LIMIT {SEARCH_LIMIT}";
+                string sql = $"SELECT * FROM {ftsTable} {sb.ToString()} AND Description MATCH ? LIMIT {SEARCH_LIMIT}";
                 var results = _connection.Query<GlyphDescription>(sql, query)?.Cast<IGlyphData>()?.ToList();
 
                 // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
@@ -207,8 +207,8 @@ namespace CharacterMap.Provider
                 }
 
                 // 6. Execute on the non FTS tables
-                string sql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE '%{query}%' LIMIT {limit}";
-                var results2 = _connection.Query<GlyphDescription>(sql2, query)?.Cast<IGlyphData>()?.ToList();
+                string sql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE ? LIMIT {limit}";
+                var results2 = _connection.Query<GlyphDescription>(sql2, $"%{query}%")?.Cast<IGlyphData>()?.ToList();
 
                 if (results != null)
                 {
