@@ -1,0 +1,19 @@
+﻿<ContentDialog
+    x:Class="CharacterMap.Controls.CreateCollectionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Uid="DigCreateCollection"
+    IsPrimaryButtonEnabled="{x:Bind TemplateSettings.IsCollectionTitleValid, Mode=OneWay}"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="{x:Bind Hide}"
+    mc:Ignorable="d">
+
+    <TextBox
+        x:Uid="CreateCollectionEntryBox"
+        Margin="-14,0"
+        DataContext="{x:Bind TemplateSettings}"
+        Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+</ContentDialog>

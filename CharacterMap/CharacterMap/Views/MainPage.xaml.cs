@@ -16,6 +16,8 @@ using CharacterMap.Core;
 using CharacterMap.ViewModels;
 using CharacterMap.Helpers;
 using Windows.Storage.Pickers;
+using CharacterMap.Services;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace CharacterMap.Views
 {
@@ -27,6 +29,10 @@ namespace CharacterMap.Views
 
         private bool _isCtrlKeyPressed;
 
+        public static CoreDispatcher MainDispatcher { get; private set; }
+
+        private Debouncer _fontListDebouncer { get; } = new Debouncer();
+
         public MainPage()
         {
             InitializeComponent();
@@ -37,6 +43,9 @@ namespace CharacterMap.Views
 
             Loaded += MainPage_Loaded;
             Unloaded += MainPage_Unloaded;
+
+            MainDispatcher = Dispatcher;
+            Messenger.Default.Register<CollectionsUpdatedMessage>(this, OnCollectionsUpdated);
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -136,10 +145,6 @@ namespace CharacterMap.Views
             }
         }
 
-        
-
-        
-
         private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             e.Handled = true;
@@ -178,6 +183,22 @@ namespace CharacterMap.Views
                 && item.DataContext is InstalledFont font)
             {
                 _ = FontMapView.CreateNewViewForFontAsync(font);
+            }
+        }
+
+        void OnCollectionsUpdated(CollectionsUpdatedMessage msg)
+        {
+            if (ViewModel.InitialLoad.IsCompleted)
+            {
+                if (Dispatcher.HasThreadAccess)
+                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                else
+                {
+                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                    });
+                }
             }
         }
 
@@ -224,7 +245,7 @@ namespace CharacterMap.Views
 
                     if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                     {
-                        await FontMapView.CreateNewViewForFontAsync(font);
+                        await FontMapView.CreateNewViewForFontAsync(font, file);
                     }
                 }
                 finally
@@ -253,6 +274,152 @@ namespace CharacterMap.Views
         private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             FontMap.OnSearchBoxSubmittedQuery(SearchBox);
+        }
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            // Handles forming the flyout when opening the main FontFilter 
+            // drop down menu.
+
+            if (sender is MenuFlyout menu)
+            {
+                // Reset to default menu
+                while (menu.Items.Count > 7)
+                    menu.Items.RemoveAt(7);
+
+                // force menu width to match the source button
+                menu.Items.OfType<MenuFlyoutSeparator>().Last().Width = FontListFilter.ActualWidth;
+
+                // add users collections 
+                if (ViewModel.FontCollections.Items.Count > 0)
+                {
+                    menu.Items.Add(new MenuFlyoutSeparator());
+                    foreach (var item in ViewModel.FontCollections.Items)
+                    {
+                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name };
+                        m.Click += (s, a) =>
+                        {
+                            if (m.DataContext is UserFontCollection u)
+                                ViewModel.SelectedCollection = u;
+                        };
+                        menu.Items.Add(m);
+                    }
+                }
+            }
+        }
+
+        private void FontContextFlyout_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout menu && menu.Target.DataContext is InstalledFont font)
+            {
+                FlyoutHelper.CreateMenu(
+                    menu, 
+                    font, 
+                    false,
+                    DigCreateCollection);
+            }
+        }
+
+        private async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is InstalledFont font)
+            {
+                await ViewModel.FontCollections.AddToCollectionAsync(
+                               font, ViewModel.FontCollections.SymbolCollection);
+
+                ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+            }
+        }
+
+        private async void RemoveFromCollectionItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is InstalledFont font)
+            {
+                UserFontCollection collection = (ViewModel.SelectedCollection == null && ViewModel.FontListFilter == 1)
+                    ? ViewModel.FontCollections.SymbolCollection
+                    : ViewModel.SelectedCollection;
+
+                await ViewModel.FontCollections.RemoveFromCollectionAsync(font, collection);
+                ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+            }
+        }
+
+        private void CreateFontCollection_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CollectionTitle = null;
+            DigCreateCollection.DataContext = (sender as FrameworkElement)?.DataContext;
+            _ = DigCreateCollection.ShowAsync();
+        }
+
+        private void RenameFontCollection_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CollectionTitle = ViewModel.SelectedCollection.Name;
+            _ = DigRenameCollection.ShowAsync();
+        }
+
+        private void SetFilter(object filter)
+        {
+            ViewModel.FontListFilter = (int)filter;
+        }
+
+        private void Filter_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f)
+            {
+                var filter = Convert.ToInt32(f.Tag.ToString(), 10);
+                if (filter == ViewModel.FontListFilter)
+                    ViewModel.RefreshFontList();
+                else
+                    ViewModel.FontListFilter = filter;
+            }
+        }
+
+        private void DeleteCollection_Click(object sender, RoutedEventArgs e)
+        {
+            _ = DigDeleteCollection.ShowAsync();
+        }
+
+        private async void DigCreateCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var d = args.GetDeferral();
+            var collection = await ViewModel.FontCollections.CreateCollectionAsync(ViewModel.CollectionTitle);
+            await ViewModel.FontCollections.AddToCollectionAsync(sender.DataContext as InstalledFont, collection);
+            d.Complete();
+        }
+
+        private async void DigRenameCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var d = args.GetDeferral();
+            await ViewModel.FontCollections.RenameCollectionAsync(ViewModel.CollectionTitle, ViewModel.SelectedCollection);
+            ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+            d.Complete();
+        }
+
+        private void DigRenameCollection_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            sender.Hide();
+        }
+
+        private async void DigDeleteCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            await ViewModel.FontCollections.DeleteCollectionAsync(ViewModel.SelectedCollection);
+            ViewModel.RefreshFontList();
+        }
+
+        private void DigDeleteCollection_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            sender.Hide();
+        }
+
+        private void FontListDisplayToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (ViewModel.InitialLoad.IsCompleted)
+            {
+                _fontListDebouncer.Debounce(16, () =>
+                {
+                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                });
+            }
         }
     }
 }

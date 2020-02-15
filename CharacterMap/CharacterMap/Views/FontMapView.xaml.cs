@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CommonServiceLocator;
@@ -6,6 +7,7 @@ using GalaSoft.MvvmLight.Views;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -261,15 +263,29 @@ namespace CharacterMap.Views
         {
             OnSearchBoxSubmittedQuery(SearchBox);
         }
+
+        private void MenuFlyout_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout menu && ViewModel.SelectedFont is InstalledFont font)
+            {
+                FlyoutHelper.CreateMenu(
+                    menu,
+                    font,
+                    IsStandalone,
+                    DlgCreateCollection);
+            }
+        }
     }
 
     public partial class FontMapView
     {
-        public static async Task CreateNewViewForFontAsync(InstalledFont font)
+        public static async Task CreateNewViewForFontAsync(InstalledFont font, StorageFile sourceFile = null)
         {
             void CreateView()
             {
-                FontMapView map = new FontMapView { IsStandalone = true, ViewModel = { SelectedFont = font } };
+                FontMapView map = new FontMapView { 
+                    IsStandalone = true, 
+                    ViewModel = { SelectedFont = font, IsExternalFile = sourceFile != null, SourceFile = sourceFile } }; 
                 Window.Current.Content = map;
                 Window.Current.Activate();
             }

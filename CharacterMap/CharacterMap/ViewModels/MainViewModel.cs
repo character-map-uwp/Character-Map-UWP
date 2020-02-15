@@ -15,6 +15,7 @@ using Windows.Storage;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using CharacterMap.Services;
+using CommonServiceLocator;
 
 namespace CharacterMap.ViewModels
 {
@@ -24,7 +25,7 @@ namespace CharacterMap.ViewModels
 
         public event EventHandler FontListCreated;
 
-        private Task InitialLoad { get; }
+        public Task InitialLoad { get; }
 
         public IDialogService DialogService { get; }
 
@@ -46,11 +47,39 @@ namespace CharacterMap.ViewModels
             set { if (Set(ref _fontListFilter, value)) RefreshFontList(); }
         }
 
+        private UserFontCollection _selectedCollection;
+        public UserFontCollection SelectedCollection
+        {
+            get => _selectedCollection;
+            set { if (Set(ref _selectedCollection, value)) if (value != null) RefreshFontList(value); }
+        }
+
         private string _titlePrefix;
         public string TitlePrefix
         {
             get => _titlePrefix;
             set => Set(ref _titlePrefix, value);
+        }
+
+        private string _collectionTitle;
+        public string CollectionTitle
+        {
+            get => _collectionTitle;
+            set { if (Set(ref _collectionTitle, value)) OnCollectionTitleChanged(); }
+        }
+
+        private string _filterTitle;
+        public string FilterTitle
+        {
+            get => _filterTitle;
+            set => Set(ref _filterTitle, value); 
+        }
+
+        private bool _isCollectionTitleValid;
+        public bool IsCollectionTitleValid
+        {
+            get => _isCollectionTitleValid;
+            set => Set(ref _isCollectionTitleValid, value);
         }
 
         private bool _isLoadingFonts;
@@ -108,6 +137,8 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        public UserCollectionsService FontCollections { get; }
+
         #endregion
 
         public MainViewModel(IDialogService dialogService)
@@ -117,6 +148,7 @@ namespace CharacterMap.ViewModels
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
             MessengerInstance.Register<ImportMessage>(this, OnFontImportRequest);
 
+            FontCollections = ServiceLocator.Current.GetInstance<UserCollectionsService>();
             InitialLoad = LoadAsync();
         }
 
@@ -126,7 +158,8 @@ namespace CharacterMap.ViewModels
 
             await Task.WhenAll(
                 GlyphService.InitializeAsync(),
-                FontFinder.LoadFontsAsync());
+                FontFinder.LoadFontsAsync(),
+                ServiceLocator.Current.GetInstance<UserCollectionsService>().LoadCollectionsAsync());
 
             RefreshFontList();
             IsLoadingFonts = false;
@@ -141,16 +174,48 @@ namespace CharacterMap.ViewModels
                 view.TryEnterFullScreenMode();
         }
 
-        public void RefreshFontList()
+        public void RefreshFontList(UserFontCollection collection = null)
         {
             try
             {
                 var fontList = FontFinder.Fonts.AsEnumerable();
 
-                if (FontListFilter == 1)
-                    fontList = fontList.Where(f => f.IsSymbolFont);
-                else if (FontListFilter == 2)
-                    fontList = fontList.Where(f => f.HasImportedFiles);
+                if (collection != null)
+                {
+                    FilterTitle = collection.Name;
+                    fontList = fontList.Where(f => collection.Fonts.Contains(f.Name));
+                }
+                else
+                {
+                    SelectedCollection = null;
+                    if (FontListFilter == 1)
+                    {
+                        fontList = fontList.Where(f => f.IsSymbolFont || FontCollections.SymbolCollection.Fonts.Contains(f.Name));
+                        FilterTitle = Localization.Get("OptionSymbolFonts/Text");
+                    }
+                    else if (FontListFilter == 2)
+                    {
+                        fontList = fontList.Where(f => f.HasImportedFiles);
+                        FilterTitle = Localization.Get("OptionImportedFonts/Text");
+                    }
+                    else if (FontListFilter == 3)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.FontFace.IsMonospaced);
+                        FilterTitle = Localization.Get("OptionMonospacedFonts/Text");
+                    }
+                    else if (FontListFilter == 4)
+                    {
+                        fontList = fontList.Where(f => !f.DefaultVariant.Panose.IsSansSerifStyle);
+                        FilterTitle = Localization.Get("OptionSerifFonts/Text");
+                    }
+                    else if (FontListFilter == 5)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSansSerifStyle);
+                        FilterTitle = Localization.Get("OptionSansSerifFonts/Text");
+                    }
+                    else
+                        FilterTitle = Localization.Get("OptionAllFonts/Text");
+                }
 
                 FontList = fontList.ToList();
             }
@@ -220,7 +285,12 @@ namespace CharacterMap.ViewModels
             await Task.Delay(150);
 
             bool result = await FontFinder.RemoveFontAsync(font);
-            RefreshFontList();
+            if (result)
+            {
+                _ = FontCollections.RemoveFromAllCollectionsAsync(font);
+            }
+
+            RefreshFontList(SelectedCollection);
 
             IsLoadingFonts = false;
 
@@ -259,6 +329,11 @@ namespace CharacterMap.ViewModels
                     IsLoadingFonts = false;
                 }
             });
+        }
+
+        private void OnCollectionTitleChanged()
+        {
+            IsCollectionTitleValid = !string.IsNullOrWhiteSpace(CollectionTitle);
         }
 
     }

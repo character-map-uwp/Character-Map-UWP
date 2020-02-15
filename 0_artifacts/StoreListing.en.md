@@ -10,4 +10,5 @@ A modern, native UWP replacement for the Win32 Character Map and Windows Font Vi
 - Copy XAML code for Characters for FontIcon, SymbolIcon and text properties
 - Export Characters as PNG and SVG files
 - Search for unicode characters and Segoe MDL2 Assets
+- Create and manage custom font collections
 - Use as your default font file application to preview font files

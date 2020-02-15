@@ -173,18 +173,26 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
+      <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Converters\CharGridSelectedItemToTextConverter.cs" />
     <Compile Include="Converters\SmartTextColorBasedOnAccentTypeConverter.cs" />
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\Character.cs" />
+    <Compile Include="Core\CollectionsUpdatedMessage.cs" />
     <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\ExportManager.cs" />
+    <Compile Include="Helpers\FlyoutHelper.cs" />
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\FontVariant.cs" />
     <Compile Include="Core\ImportMessage.cs" />
     <Compile Include="Core\InstalledFont.cs" />
+    <Compile Include="Core\PanoseFamily.cs" />
+    <Compile Include="Core\PanoseParser.cs" />
+    <Compile Include="Core\SerifStyle.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
@@ -193,6 +201,7 @@
     <Compile Include="Helpers\Debouncer.cs" />
     <Compile Include="Helpers\Json.cs" />
     <Compile Include="Helpers\Localization.cs" />
+    <Compile Include="Helpers\ResourceHelper.cs" />
     <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
@@ -201,6 +210,7 @@
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
     <Compile Include="Services\ActivationService.cs" />
+    <Compile Include="Services\UserCollectionsService.cs" />
     <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
     <Compile Include="Services\ToastNotificationsService.cs" />
@@ -299,6 +309,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\CreateCollectionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\Button.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
