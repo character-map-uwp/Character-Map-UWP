@@ -10,6 +10,7 @@ namespace CharacterMap.Core
     public class Panose
     {
         public bool IsSansSerifStyle { get; }
+        public bool IsSerifStyle { get; }
         public SerifStyle Style { get; }
         public PanoseFamily Family { get; }
 
@@ -18,6 +19,13 @@ namespace CharacterMap.Core
             Family = family;
             Style = style;
             IsSansSerifStyle = PanoseParser.IsSansSerif(Style);
+            IsSerifStyle = 
+                Style != SerifStyle.Any 
+                && Style != SerifStyle.NoFit
+                && Family != PanoseFamily.NoFit
+                && Family != PanoseFamily.Script
+                && Family != PanoseFamily.Decorative
+                && !IsSansSerifStyle;
         }
     }
 
@@ -49,11 +57,7 @@ namespace CharacterMap.Core
 
         public static bool IsSansSerif(SerifStyle style)
         {
-            return
-                style == SerifStyle.NormalSans ||
-                style == SerifStyle.ObtuseSans ||
-                style == SerifStyle.PerpendicularSans ||
-                style == SerifStyle.PerpSans;
+            return style >= SerifStyle.NormalSans;
         }
     }
 }

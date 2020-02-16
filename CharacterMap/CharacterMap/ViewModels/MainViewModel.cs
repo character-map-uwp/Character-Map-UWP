@@ -205,7 +205,7 @@ namespace CharacterMap.ViewModels
                     }
                     else if (FontListFilter == 4)
                     {
-                        fontList = fontList.Where(f => !f.DefaultVariant.Panose.IsSansSerifStyle);
+                        fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSerifStyle);
                         FilterTitle = Localization.Get("OptionSerifFonts/Text");
                     }
                     else if (FontListFilter == 5)
