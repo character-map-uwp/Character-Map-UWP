@@ -113,9 +113,7 @@ namespace CharacterMap.Core
                     {
                         characters.Add(new Character
                         {
-                            // This will break 'Segoe UI Emoji' display a part of its characters
-                            // Char = new string((char)i, 1),
-                            Char = TryConvertChar(i),
+                            Char = (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1),
                             UnicodeIndex = (int)i
                         });
                     }
@@ -125,22 +123,6 @@ namespace CharacterMap.Core
             }
 
             return Characters;
-        }
-
-        // Workaround #61 
-        private string TryConvertChar(uint i)
-        {
-            try
-            {
-                var ch = char.ConvertFromUtf32((int)i);
-                return ch;
-            }
-            catch (Exception)
-            {
-                // Using try catch isn't good practise, but keep the app working for now
-                var fallbackChar = new string((char)i, 1);
-                return fallbackChar;
-            }
         }
 
         private void LoadTypographyFeatures()
