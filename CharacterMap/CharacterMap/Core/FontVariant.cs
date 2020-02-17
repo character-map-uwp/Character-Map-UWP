@@ -104,7 +104,6 @@ namespace CharacterMap.Core
             if (Characters.Count == 0)
             {
                 var characters = new List<Character>();
-
                 foreach (var range in FontFace.UnicodeRanges)
                 {
                     CharacterHash += range.First;
@@ -114,7 +113,7 @@ namespace CharacterMap.Core
                     {
                         characters.Add(new Character
                         {
-                            Char = char.ConvertFromUtf32((int)i),
+                            Char = new string((char)i, 1),
                             UnicodeIndex = (int)i
                         });
                     }

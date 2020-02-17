@@ -300,7 +300,12 @@ namespace CharacterMap.Views
                         m.Click += (s, a) =>
                         {
                             if (m.DataContext is UserFontCollection u)
+                            {
+                                if (!FontsSemanticZoom.IsZoomedInViewActive)
+                                    FontsSemanticZoom.IsZoomedInViewActive = true;
+
                                 ViewModel.SelectedCollection = u;
+                            }
                         };
                         menu.Items.Add(m);
                     }
@@ -366,6 +371,9 @@ namespace CharacterMap.Views
         {
             if (sender is FrameworkElement f)
             {
+                if (!FontsSemanticZoom.IsZoomedInViewActive)
+                    FontsSemanticZoom.IsZoomedInViewActive = true;
+
                 var filter = Convert.ToInt32(f.Tag.ToString(), 10);
                 if (filter == ViewModel.FontListFilter)
                     ViewModel.RefreshFontList();
