@@ -54,7 +54,9 @@ namespace CharacterMap.Core
         public static async Task<CanvasFontSet> InitialiseAsync()
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
-            var systemFonts = CanvasFontSet.GetSystemFontSet();
+
+            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+            CanvasFontSet systemFonts = interop.GetSystemFonts(true);
 
             try
             {
