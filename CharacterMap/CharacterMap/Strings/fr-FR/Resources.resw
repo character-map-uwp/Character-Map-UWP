@@ -156,8 +156,8 @@
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>Copier (caractère uniquement)</value>
   </data>
-  <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
-    <value>rechercher Unicode e.g. 1F411</value>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>rechercher Unicode</value>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol Icon</value>

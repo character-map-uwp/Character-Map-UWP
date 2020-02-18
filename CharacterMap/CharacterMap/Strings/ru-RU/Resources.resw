@@ -162,7 +162,7 @@
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>Копировать (только символ)</value>
   </data>
-  <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
     <value>Поиск в Юникоде, например 1F411</value>
   </data>
 </root>

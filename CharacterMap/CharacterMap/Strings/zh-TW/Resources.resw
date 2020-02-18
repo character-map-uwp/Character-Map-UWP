@@ -162,7 +162,7 @@
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol 圖示</value>
   </data>
-  <data name="SearchBoxUnicode.PlaceholderText" xml:space="preserve">
-    <value>檢索 Unicode 例: 1F411</value>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>檢索字元或 Unicode HEX</value>
   </data>
 </root>
