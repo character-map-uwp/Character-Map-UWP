@@ -207,4 +207,55 @@
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>重命名收藏</value>
   </data>
+  <data name="BtnSaveSvg.Text" xml:space="preserve">
+    <value>保存 SVG (仅单色)</value>
+  </data>
+  <data name="ColoredGlyphLabel.Text" xml:space="preserve">
+    <value>颜色选择</value>
+  </data>
+  <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
+    <value>单色字符</value>
+  </data>
+  <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
+    <value>着色字符</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>收藏名称</value>
+  </data>
+  <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>删除收藏</value>
+  </data>
+  <data name="FilePickerConfirm" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="FilterAllFonts.Content" xml:space="preserve">
+    <value>所有字体</value>
+  </data>
+  <data name="FilterImportedFonts.Content" xml:space="preserve">
+    <value>导入的字体</value>
+  </data>
+  <data name="FilterSymbolFonts.Content" xml:space="preserve">
+    <value>符号字体</value>
+  </data>
+  <data name="FontDisplayHeader.Text" xml:space="preserve">
+    <value>字体显示选项</value>
+  </data>
+  <data name="FontListDisplayHeader.Text" xml:space="preserve">
+    <value>字体显示</value>
+  </data>
+  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
+    <value>使用系统默认字体显示字体名称</value>
+  </data>
+  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
+    <value>使用字体本身显示字体名称</value>
+  </data>
+  <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>字体渲染选项</value>
+  </data>
+  <data name="FontPropCount.Text" xml:space="preserve">
+    <value>字符数量</value>
+  </data>
+  <data name="RestartHeader.Text" xml:space="preserve">
+    <value>需要重启应用生效</value>
+  </data>
 </root>
