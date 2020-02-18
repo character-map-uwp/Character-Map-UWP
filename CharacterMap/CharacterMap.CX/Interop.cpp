@@ -26,6 +26,16 @@ Interop::Interop(CanvasDevice^ device)
 		&m_d2dContext);
 }
 
+CanvasFontSet^ Interop::GetSystemFonts(bool includeDownloadableFonts)
+{
+	ComPtr<IDWriteFontCollection1> fontCollection;
+	ComPtr<IDWriteFontSet> fontSet;
+	ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(includeDownloadableFonts, &fontCollection, true));
+	fontCollection->GetFontSet(&fontSet);
+	fontCollection = nullptr;
+	return GetOrCreate<CanvasFontSet>(fontSet.Get());
+}
+
 CanvasTextLayoutAnalysis^ Interop::AnalyzeFontLayout(CanvasTextLayout^ layout)
 {
 	ComPtr<IDWriteTextLayout3> context = GetWrappedResource<IDWriteTextLayout4>(layout);

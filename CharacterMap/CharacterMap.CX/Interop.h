@@ -21,6 +21,7 @@ namespace CharacterMapCX
 		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout);
 		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
 		bool HasValidFonts(Uri^ uri);
+		CanvasFontSet^ GetSystemFonts(bool includeDownloadableFonts);
 
 	private:
 		Microsoft::WRL::ComPtr<IDWriteFactory4> m_dwriteFactory;
