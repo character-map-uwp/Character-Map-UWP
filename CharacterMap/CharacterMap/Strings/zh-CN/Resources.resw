@@ -333,4 +333,70 @@
   <data name="GridSlider.Header" xml:space="preserve">
     <value>字符网格尺寸</value>
   </data>
+  <data name="ImportFileCopyFail" xml:space="preserve">
+    <value>有奇怪的东西出错了，请稍后再试</value>
+  </data>
+  <data name="ImportFontHelpBlock.Text" xml:space="preserve">
+    <value>将字体文件拖拽到应用里以加入库</value>
+  </data>
+  <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>导入的字体</value>
+  </data>
+  <data name="ImportNotAFile" xml:space="preserve">
+    <value>不是一个文件</value>
+  </data>
+  <data name="ImportPendingDelete" xml:space="preserve">
+    <value>现有字体正在被删除，请重启应用</value>
+  </data>
+  <data name="ImportUnavailableFile" xml:space="preserve">
+    <value>文件不可用</value>
+  </data>
+  <data name="ImportUnsupportedFileType" xml:space="preserve">
+    <value>不支持的文件类型</value>
+  </data>
+  <data name="ImportUnsupportedFontType" xml:space="preserve">
+    <value>不支持的字体类型</value>
+  </data>
+  <data name="InstantSearchToggle.OffContent" xml:space="preserve">
+    <value>即时搜索已关闭</value>
+  </data>
+  <data name="InstantSearchToggle.OnContent" xml:space="preserve">
+    <value>即时搜索已启用</value>
+  </data>
+  <data name="InvalidFontMessage" xml:space="preserve">
+    <value>抱歉，我们无法在该文件中找到支持的字体</value>
+  </data>
+  <data name="InvalidFontTitle" xml:space="preserve">
+    <value>不支持的文件</value>
+  </data>
+  <data name="LoadingFontListError" xml:space="preserve">
+    <value>加载字体列表出错</value>
+  </data>
+  <data name="NewCollectionItem.Text" xml:space="preserve">
+    <value>新收藏</value>
+  </data>
+  <data name="NoticeLabel.Text" xml:space="preserve">
+    <value>注意</value>
+  </data>
+  <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开字体</value>
+  </data>
+  <data name="OpenFontPickerConfirm" xml:space="preserve">
+    <value>打开</value>
+  </data>
+  <data name="OpenInNewWindow.Text" xml:space="preserve">
+    <value>在新窗口中打开</value>
+  </data>
+  <data name="PngSlider.Header" xml:space="preserve">
+    <value>PNG 分辨率(像素)</value>
+  </data>
+  <data name="RemoveFontFlyout.Text" xml:space="preserve">
+    <value>删除字体全家</value>
+  </data>
+  <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
+    <value>从收藏中删除</value>
+  </data>
+  <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>重命名收藏</value>
+  </data>
 </root>
