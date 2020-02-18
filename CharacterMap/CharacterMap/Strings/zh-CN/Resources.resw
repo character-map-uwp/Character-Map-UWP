@@ -165,4 +165,46 @@
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
     <value>检索字符名称或 Unicode HEX</value>
   </data>
+  <data name="AddToCollectionFlyout.Text" xml:space="preserve">
+    <value>添加到收藏</value>
+  </data>
+  <data name="AddToCollectionHint.Text" xml:space="preserve">
+    <value>添加到库</value>
+  </data>
+  <data name="BlackFill.Text" xml:space="preserve">
+    <value>黑色填充</value>
+  </data>
+  <data name="CharsLabel.Text" xml:space="preserve">
+    <value>个字符</value>
+  </data>
+  <data name="WhiteFill.Text" xml:space="preserve">
+    <value>白色填充</value>
+  </data>
+  <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
+    <value>创建</value>
+  </data>
+  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="DigCreateCollection.Title" xml:space="preserve">
+    <value>创建收藏</value>
+  </data>
+  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="DigDeleteCollection.Title" xml:space="preserve">
+    <value>确定要删除该收藏吗？</value>
+  </data>
+  <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="DigRenameCollection.Title" xml:space="preserve">
+    <value>重命名收藏</value>
+  </data>
 </root>
