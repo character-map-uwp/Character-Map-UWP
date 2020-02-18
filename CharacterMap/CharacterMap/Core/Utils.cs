@@ -64,51 +64,6 @@ namespace CharacterMap.Core
             return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({architecture})";
         }
 
-        public static async Task<FileUpdateStatus> SaveStreamToImage(PickerLocationId location, string fileName, Stream stream, int pixelWidth, int pixelHeight)
-        {
-            var savePicker = new FileSavePicker
-            {
-                SuggestedStartLocation = location
-            };
-            savePicker.FileTypeChoices.Add("Png Image", new[] { ".png" });
-            savePicker.SuggestedFileName = fileName;
-            StorageFile sFile = await savePicker.PickSaveFileAsync();
-            if (sFile != null)
-            {
-                CachedFileManager.DeferUpdates(sFile);
-
-                using (var fileStream = await sFile.OpenAsync(FileAccessMode.ReadWrite))
-                {
-                    var localDpi = Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
-
-                    BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, fileStream);
-
-                    await encoder.BitmapContainerProperties.SetPropertiesAsync(new BitmapPropertySet
-                    {
-                        {
-                            "System.Comment",
-                            new BitmapTypedValue("Exported via Character Map UWP", Windows.Foundation.PropertyType.String)
-                        }
-                    });
-
-                    Stream pixelStream = stream;
-                    byte[] pixels = new byte[pixelStream.Length];
-                    await pixelStream.ReadAsync(pixels, 0, pixels.Length);
-                    encoder.SetPixelData(BitmapPixelFormat.Bgra8, BitmapAlphaMode.Straight,
-                              (uint)pixelWidth,
-                              (uint)pixelHeight,
-                              localDpi,
-                              localDpi,
-                              pixels);
-                    await encoder.FlushAsync();
-                }
-
-                FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(sFile);
-                return status;
-            }
-            return FileUpdateStatus.Failed;
-        }
-
         public static string GetVariantDescription(CanvasFontFace fontFace)
         {
             StringBuilder s = new StringBuilder();
@@ -123,7 +78,7 @@ namespace CharacterMap.Core
             return s.ToString();
         }
 
-        private static string GetWeightName(FontWeight weight)
+        public static string GetWeightName(FontWeight weight)
         {
             switch (weight.Weight)
             {
@@ -203,9 +158,14 @@ namespace CharacterMap.Core
 
         public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)
         {
+            return WriteSvgAsync(document.GetXml(), file);
+        }
+
+        public static Task WriteSvgAsync(string xml, IStorageFile file)
+        {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("<!-- Exported by Character Map UWP -->");
-            sb.Append(document.GetXml());
+            sb.Append(xml);
             return FileIO.WriteTextAsync(file, sb.ToString()).AsTask();
         }
 

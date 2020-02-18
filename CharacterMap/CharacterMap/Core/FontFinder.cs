@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CharacterMap.Helpers;
@@ -40,23 +41,27 @@ namespace CharacterMap.Core
         /* If we can't delete a font during a session, we mark it here */
         private static HashSet<string> _ignoredFonts { get; } = new HashSet<string>();
 
-        private static StorageFolder ImportFolder => ApplicationData.Current.LocalFolder;
+        private static StorageFolder _importFolder => ApplicationData.Current.LocalFolder;
 
         public static List<InstalledFont> Fonts { get; private set; }
 
         public static InstalledFont DefaultFont { get; private set; }
+
+        public static bool HasAppxFonts                { get; private set; }
+                
+        public static bool HasRemoteFonts              { get; private set; }
 
         public static HashSet<string> SupportedFormats { get; } = new HashSet<string>
         {
             ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
         };
 
-        public static async Task<CanvasFontSet> InitialiseAsync()
+        public static async Task<DWriteFontSet> InitialiseAsync()
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
 
             Interop interop = SimpleIoc.Default.GetInstance<Interop>();
-            CanvasFontSet systemFonts = interop.GetSystemFonts(true);
+            DWriteFontSet systemFonts = interop.GetSystemFonts();
 
             try
             {
@@ -65,14 +70,21 @@ namespace CharacterMap.Core
                     await CleanUpTempFolderAsync().ConfigureAwait(false);
                     await CleanUpPendingDeletesAsync().ConfigureAwait(false);
 
-                    var segoe = systemFonts.GetMatchingFonts("Segoe UI", FontWeights.Normal, FontStretch.Normal, FontStyle.Normal);
-                    if (segoe != null && segoe.Fonts.Count > 0)
+                    var segoe = systemFonts.Fonts.FirstOrDefault(f =>
+                    {
+                        return f.FontFace.FamilyNames.Values.Contains("Segoe UI")
+                                && f.FontFace.Weight.Weight == FontWeights.Normal.Weight
+                                && f.FontFace.Stretch == FontStretch.Normal
+                                && f.FontFace.Style == FontStyle.Normal;
+                    });
+
+                    if (segoe != null)
                     {
                         DefaultFont = new InstalledFont
                         {
                             Name = "",
-                            FontFace = segoe.Fonts[0],
-                            Variants = new List<FontVariant> { FontVariant.CreateDefault(segoe.Fonts[0]) }
+                            FontFace = segoe.FontFace,
+                            Variants = new List<FontVariant> { FontVariant.CreateDefault(segoe.FontFace) }
                         };
                     }
                 }
@@ -91,29 +103,33 @@ namespace CharacterMap.Core
 
             return Task.Run(async () =>
             {
+                DWriteFontSet systemFonts = await InitialiseAsync().ConfigureAwait(false);
+                UpdateMeta(systemFonts);
 
-                var systemFonts = await InitialiseAsync();
+                await _loadSemaphore.WaitAsync().ConfigureAwait(false);
 
-                await _loadSemaphore.WaitAsync();
-
-                var familyCount = systemFonts.Fonts.Count;
-                var resultList = new Dictionary<string, InstalledFont>();
+                Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+                Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
 
                 /* Add all system fonts */
-                for (var i = 0; i < familyCount; i++)
+                foreach(DWriteFontFace font in systemFonts.Fonts)
                 {
-                    AddFont(resultList, systemFonts.Fonts[i]);
+                    AddFont(resultList, font, interop);
                 }
 
                 /* Add imported fonts */
-                var files = await ImportFolder.GetFilesAsync();
+                var files = await _importFolder.GetFilesAsync().AsTask().ConfigureAwait(false);
                 foreach (var file in files.OfType<StorageFile>())
                 {
                     if (_ignoredFonts.Contains(file.Name))
                         continue;
 
-                    foreach (var font in GetFontFacesFromFile(file))
-                        AddFont(resultList, font, file);
+                    DWriteFontSet importedFonts = interop.GetFonts(new Uri(GetAppPath(file)));
+                    UpdateMeta(importedFonts);
+                    foreach (DWriteFontFace font in importedFonts.Fonts)
+                    {
+                        AddFont(resultList, font, interop, file);
+                    }
                 }
 
                 /* Order everything appropriately */
@@ -127,29 +143,32 @@ namespace CharacterMap.Core
             });
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void UpdateMeta(DWriteFontSet set)
+        {
+            HasRemoteFonts = HasRemoteFonts || set.CloudFontCount > 0;
+            HasAppxFonts = HasAppxFonts || set.AppxFontCount > 0;
+        }
+
         /* 
          * Helper method for adding fonts. 
          */
-        private static void AddFont(IDictionary<string, InstalledFont> fontList, CanvasFontFace fontFace, StorageFile file = null)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void AddFont(
+            IDictionary<string, InstalledFont> fontList,
+            DWriteFontFace font,
+            Interop interop = null,
+            StorageFile file = null)
         {
             try
             {
-                var familyNames = fontFace.FamilyNames;
-                if (!familyNames.TryGetValue(CultureInfo.CurrentCulture.Name, out var familyName))
-                {
-                    if (!familyNames.TryGetValue("en-us", out familyName))
-                    {
-                        if (familyNames != null && familyName.Length > 0)
-                            familyName = familyNames.FirstOrDefault().Value;
-                    }
-                }
-
+                var familyName = font.Properties.FamilyName;
                 if (!string.IsNullOrEmpty(familyName))
                 {
                     /* Check if we already have a listing for this fontFamily */
                     if (fontList.TryGetValue(familyName, out var fontFamily))
                     {
-                        var variant = new FontVariant(fontFace, familyName, file);
+                        var variant = new FontVariant(font.FontFace, file, font.Properties);
                         if (file != null)
                             fontFamily.HasImportedFiles = true;
 
@@ -160,12 +179,16 @@ namespace CharacterMap.Core
                         fontList[familyName] = new InstalledFont
                         {
                             Name = familyName,
-                            IsSymbolFont = fontFace.IsSymbolFont,
-                            FontFace = fontFace,
-                            Variants = new List<FontVariant> { new FontVariant(fontFace, familyName, file) },
+                            IsSymbolFont = font.FontFace.IsSymbolFont,
+                            FontFace = font.FontFace,
+                            Variants = new List<FontVariant> { new FontVariant(font.FontFace, file, font.Properties) },
                             HasImportedFiles = file != null
                         };
                     }
+                }
+                else
+                {
+
                 }
             }
             catch (Exception)
@@ -174,14 +197,8 @@ namespace CharacterMap.Core
             }
         }
 
-        private static IEnumerable<CanvasFontFace> GetFontFacesFromFile(StorageFile file)
-        {
-            using (var set = new CanvasFontSet(new Uri(GetAppPath(file))))
-            {
-                return set.Fonts.ToList();
-            }
-        }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetAppPath(StorageFile file)
         {
             var temp = Path.GetDirectoryName(file.Path).EndsWith(TEMP);
@@ -196,7 +213,7 @@ namespace CharacterMap.Core
                 var existing = new List<StorageFile>();
                 var invalid = new List<(IStorageItem, string)>();
 
-                var interop = SimpleIoc.Default.GetInstance<Interop>();
+                Interop interop = SimpleIoc.Default.GetInstance<Interop>();
 
                 foreach (var item in items)
                 {
@@ -224,14 +241,14 @@ namespace CharacterMap.Core
 
                         /* Explicilty not using StorageFile/Folder API's here because there
                          * are some strange import bugs when checking a file exists */
-                        if (!File.Exists(Path.Combine(ImportFolder.Path, file.Name)))
+                        if (!File.Exists(Path.Combine(_importFolder.Path, file.Name)))
                         {
                             StorageFile fontFile;
                             try
                             {
                                 /* Copy to local folder. We can only verify font file when it's inside
                                 * the App's Local folder due to CanvasFontSet file restrictions */
-                                fontFile = await file.CopyAsync(ImportFolder);
+                                fontFile = await file.CopyAsync(_importFolder);
                             }
                             catch (Exception)
                             {
@@ -293,7 +310,7 @@ namespace CharacterMap.Core
 
                 try
                 {
-                    if (await ImportFolder.TryGetItemAsync(variant.FileName)
+                    if (await _importFolder.TryGetItemAsync(variant.FileName)
                                         is StorageFile file)
                     {
                         await file.DeleteAsync(StorageDeleteOption.PermanentDelete);
@@ -318,25 +335,36 @@ namespace CharacterMap.Core
             return success;
         }
 
+        private static async Task<StorageFile> TryGetFileAsync(string path)
+        {
+            try
+            {
+                return await StorageFile.GetFileFromPathAsync(path).AsTask().ConfigureAwait(false);
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
         private static Task CleanUpPendingDeletesAsync()
         {
-            return Task.Run(() =>
+            return Task.Run(async() =>
             {
                 /* If we fail to delete a font at runtime, delete it now before we load anything */
                 var path = Path.Combine(ApplicationData.Current.LocalCacheFolder.Path, PENDING);
-                if (File.Exists(path))
+                if (File.Exists(path) && await TryGetFileAsync(path).ConfigureAwait(false) is StorageFile file)
                 {
-                    var lines = File.ReadAllLines(path);
+                    var lines = await FileIO.ReadLinesAsync(file).AsTask().ConfigureAwait(false);
 
                     var moreFails = new List<string>();
                     foreach (var line in lines)
                     {
-                        if (File.Exists(line))
+                        if (await TryGetFileAsync(line).ConfigureAwait(false) is StorageFile deleteFile)
                         {
                             try
                             {
-                                File.Delete(line);
+                                await deleteFile.DeleteAsync().AsTask().ConfigureAwait(false);
                             }
                             catch (Exception)
                             {
@@ -346,9 +374,9 @@ namespace CharacterMap.Core
                     }
 
                     if (moreFails.Count > 0)
-                        File.WriteAllLines(path, moreFails);
+                        await FileIO.WriteLinesAsync(file, moreFails).AsTask().ConfigureAwait(false);
                     else
-                        File.Delete(path);
+                        await file.DeleteAsync().AsTask().ConfigureAwait(false);
                 }
             });
             
@@ -356,16 +384,17 @@ namespace CharacterMap.Core
 
         private static Task CleanUpTempFolderAsync()
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
-                var path = Path.Combine(ImportFolder.Path, TEMP);
+                var path = Path.Combine(_importFolder.Path, TEMP);
                 if (Directory.Exists(path))
                 {
-                    foreach (var file in Directory.GetFiles(path))
+                    var folder = await StorageFolder.GetFolderFromPathAsync(path).AsTask().ConfigureAwait(false);
+                    foreach (var file in await folder.GetFilesAsync().AsTask().ConfigureAwait(false))
                     {
                         try
                         {
-                            File.Delete(file);
+                            await file.DeleteAsync().AsTask().ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
@@ -381,15 +410,19 @@ namespace CharacterMap.Core
         {
             await InitialiseAsync().ConfigureAwait(false);
 
-            var folder = await ImportFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
+            var folder = await _importFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
             var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
 
             var resultList = new Dictionary<string, InstalledFont>();
-            foreach (var font in GetFontFacesFromFile(localFile))
-                AddFont(resultList, font, localFile);
+
+            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+            DWriteFontSet fontSet = interop.GetFonts(new Uri(GetAppPath(localFile)));
+            foreach (DWriteFontFace font in fontSet.Fonts)
+            {
+                AddFont(resultList, font, interop, localFile);
+            }
 
             GC.Collect();
-
             return resultList.Count > 0 ? resultList.First().Value : null;
         }
 

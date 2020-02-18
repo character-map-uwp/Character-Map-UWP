@@ -18,6 +18,7 @@ using CharacterMap.Helpers;
 using Windows.Storage.Pickers;
 using CharacterMap.Services;
 using GalaSoft.MvvmLight.Messaging;
+using System.Collections.Generic;
 
 namespace CharacterMap.Views
 {
@@ -255,6 +256,22 @@ namespace CharacterMap.Views
             }
         }
 
+        private string UpdateFontCountLabel(List<InstalledFont> fontList)
+        {
+            if (fontList != null)
+                return Localization.Get("StatusBarFontCount", fontList.Count);
+
+            return string.Empty;
+        }
+
+        public string UpdateCharacterCountLabel(FontVariant variant)
+        {
+            if (variant != null)
+                return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
+
+            return string.Empty;
+        }
+
         private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
             FontMap.SearchBox_SuggestionChosen(sender, args);
@@ -280,7 +297,6 @@ namespace CharacterMap.Views
         {
             // Handles forming the flyout when opening the main FontFilter 
             // drop down menu.
-
             if (sender is MenuFlyout menu)
             {
                 // Reset to default menu
@@ -288,7 +304,8 @@ namespace CharacterMap.Views
                     menu.Items.RemoveAt(7);
 
                 // force menu width to match the source button
-                menu.Items.OfType<MenuFlyoutSeparator>().Last().Width = FontListFilter.ActualWidth;
+                foreach (var sep in menu.Items.OfType<MenuFlyoutSeparator>())
+                    sep.MinWidth = FontListFilter.ActualWidth;
 
                 // add users collections 
                 if (ViewModel.FontCollections.Items.Count > 0)
@@ -309,6 +326,17 @@ namespace CharacterMap.Views
                         };
                         menu.Items.Add(m);
                     }
+                }
+
+                if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
+                {
+                    FontSourceSeperator.Visibility = CloudFontsOption.Visibility = AppxOption.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    FontSourceSeperator.Visibility = Visibility.Visible;
+                    CloudFontsOption.Visibility = FontFinder.HasRemoteFonts ? Visibility.Visible : Visibility.Collapsed;
+                    AppxOption.Visibility = FontFinder.HasAppxFonts ? Visibility.Visible : Visibility.Collapsed;
                 }
             }
         }

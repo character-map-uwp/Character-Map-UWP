@@ -99,18 +99,15 @@
                     FontSize="16">
                     <DropDownButton.Flyout>
                         <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style TargetType="MenuFlyoutPresenter">
+                                    <Setter Property="RequestedTheme" Value="Default" />
+                                </Style>
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
                             <MenuFlyoutItem
                                 x:Uid="OptionAllFonts"
                                 Click="Filter_Click"
                                 Tag="0" />
-                            <MenuFlyoutItem
-                                x:Uid="OptionSymbolFonts"
-                                Click="Filter_Click"
-                                Tag="1" />
-                            <MenuFlyoutItem
-                                x:Uid="OptionMonospacedFonts"
-                                Click="Filter_Click"
-                                Tag="3" />
                             <MenuFlyoutItem
                                 x:Uid="OptionSerifFonts"
                                 Click="Filter_Click"
@@ -119,6 +116,52 @@
                                 x:Uid="OptionSansSerifFonts"
                                 Click="Filter_Click"
                                 Tag="5" />
+                            <MenuFlyoutItem
+                                x:Uid="OptionSymbolFonts"
+                                Click="Filter_Click"
+                                Tag="1" />
+                            <MenuFlyoutSubItem x:Uid="OptionMoreFilters">
+                                <MenuFlyoutItem
+                                    x:Uid="OptionColorFonts"
+                                    Click="Filter_Click"
+                                    Tag="10" />
+                                <MenuFlyoutItem
+                                    x:Uid="OptionDecorativeFonts"
+                                    Click="Filter_Click"
+                                    Tag="8" />
+                                <MenuFlyoutItem
+                                    x:Uid="OptionScriptFonts"
+                                    Click="Filter_Click"
+                                    Tag="9" />
+                                <MenuFlyoutItem
+                                    x:Uid="OptionMonospacedFonts"
+                                    Click="Filter_Click"
+                                    Tag="3" />
+                                <!--<MenuFlyoutSeparator />
+                                <MenuFlyoutItem
+                                    Text="Normal Fonts"
+                                    Click="Filter_Click"
+                                    Tag="11" />
+                                <MenuFlyoutItem
+                                    Text="Italic Fonts"
+                                    Click="Filter_Click"
+                                    Tag="12" />
+                                <MenuFlyoutItem
+                                    Text="Oblique Fonts"
+                                    Click="Filter_Click"
+                                    Tag="13" />-->
+                                <MenuFlyoutSeparator x:Name="FontSourceSeperator" />
+                                <MenuFlyoutItem
+                                    x:Name="CloudFontsOption"
+                                    x:Uid="OptionCloudFonts"
+                                    Click="Filter_Click"
+                                    Tag="7" />
+                                <MenuFlyoutItem
+                                    x:Name="AppxOption"
+                                    x:Uid="OptionAppxFonts"
+                                    Click="Filter_Click"
+                                    Tag="6" />
+                            </MenuFlyoutSubItem>
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem
                                 x:Uid="OptionImportedFonts"
@@ -242,10 +285,10 @@
 
             <AppBarButton
                 x:Name="SearchOptionButton"
+                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
                 Grid.Column="3"
                 Width="45"
                 Height="45"
-                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
                 Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}">
                 <Grid>
                     <FontIcon Glyph="&#xE11A;" />
@@ -318,7 +361,6 @@
                     HorizontalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="12">
-
                     <AppBarButton
                         x:Uid="RenameCollectionButton"
                         Height="48"
@@ -332,10 +374,7 @@
                         Icon="Delete"
                         ToolTipService.Placement="Bottom" />
                 </StackPanel>
-
             </Border>
-
-
 
             <TextBlock
                 x:Name="ImportFontHelpBlock"
@@ -398,7 +437,7 @@
 
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="core:InstalledFont">
-                                <Grid Background="Transparent" ColumnSpacing="12">
+                                <Grid ColumnSpacing="12" Background="Transparent">
                                     <Grid.ContextFlyout>
                                         <!--  Menu content created dynamically  -->
                                         <MenuFlyout Opening="FontContextFlyout_Opening" />
@@ -476,7 +515,7 @@
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="256" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
@@ -487,12 +526,8 @@
                 </Style>
             </Grid.Resources>
 
-            <StackPanel Margin="12,0" Orientation="Horizontal">
-                <TextBlock>
-                    <Run Text="{Binding FontList.Count}" />
-                    <Run x:Uid="FontsCountLabel" />
-                </TextBlock>
-            </StackPanel>
+            <TextBlock Margin="12,0" Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList), Mode=OneWay}" />
+            <TextBlock Margin="12,0" Grid.Column="1" Text="{x:Bind UpdateCharacterCountLabel(FontMap.ViewModel.SelectedVariant), Mode=OneWay}" />
 
             <TextBlock
                 Grid.Column="2"
@@ -511,6 +546,7 @@
             Grid.ColumnSpan="2"
             d:IsHidden="True"
             IsPrimaryButtonEnabled="True"
+            PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
             PrimaryButtonText="OK">
             <ScrollViewer>
                 <StackPanel Margin="0,10,0,0">
@@ -546,7 +582,8 @@
                     <Button
                         x:Name="BtnRestart"
                         x:Uid="RestartButton"
-                        Click="BtnRestart_OnClick" />
+                        Click="BtnRestart_OnClick"
+                        Style="{StaticResource ButtonRevealStyle}" />
 
                     <TextBlock x:Uid="FontListDisplayHeader" Margin="0,40,0,4" />
                     <ToggleSwitch
@@ -556,10 +593,10 @@
 
                     <!--  Reenable after sorting out export UI issues  -->
                     <!--<TextBlock Margin="0 40 0 4" Text="Dev Utilities" />
-                <ToggleSwitch
-                    OnContent="Show dev utilities"
-                    OffContent="Hide dev utilities"
-                    IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />-->
+                    <ToggleSwitch
+                        OnContent="Show dev utilities"
+                        OffContent="Hide dev utilities"
+                        IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />-->
 
                     <TextBlock
                         x:Uid="Settings_About"
@@ -597,7 +634,9 @@
             IsPrimaryButtonEnabled="{x:Bind ViewModel.IsCollectionTitleValid, Mode=OneWay}"
             IsSecondaryButtonEnabled="True"
             PrimaryButtonClick="DigRenameCollection_PrimaryButtonClick"
-            SecondaryButtonClick="{x:Bind DigRenameCollection.Hide}">
+            PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
+            SecondaryButtonClick="{x:Bind DigRenameCollection.Hide}"
+            SecondaryButtonStyle="{StaticResource ButtonRevealStyle}">
             <TextBox
                 x:Uid="CreateCollectionEntryBox"
                 Margin="-14,0"
@@ -616,7 +655,9 @@
             IsPrimaryButtonEnabled="True"
             IsSecondaryButtonEnabled="True"
             PrimaryButtonClick="DigDeleteCollection_PrimaryButtonClick"
-            SecondaryButtonClick="{x:Bind DigDeleteCollection.Hide}" />
+            PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
+            SecondaryButtonClick="{x:Bind DigDeleteCollection.Hide}"
+            SecondaryButtonStyle="{StaticResource ButtonRevealStyle}" />
 
 
         <VisualStateManager.VisualStateGroups>

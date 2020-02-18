@@ -16,6 +16,7 @@ namespace CharacterMap.Core
         public static bool FalseFalse(bool b, bool c) => !b && !c;
         public static bool True(bool b) => b;
 
+        public static Visibility InvertVis(Visibility b) => b == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility FalseToVis(bool b) => !b ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility TrueToVis(bool b) => b ? Visibility.Visible : Visibility.Collapsed;
 
@@ -23,6 +24,11 @@ namespace CharacterMap.Core
         public static bool IsNotNull(object obj) => obj != null;
 
         public static char ToHex(int i) => (char)i;
+
+        public static string GetWeightName(Windows.UI.Text.FontWeight weight)
+        {
+            return $"{Utils.GetWeightName(weight)} - {weight.Weight}";
+        }
 
         public static GridLength GridLengthAorB(bool input, string a, string b) 
             => input ? ReadFromString(a) : ReadFromString(b);
@@ -57,6 +63,16 @@ namespace CharacterMap.Core
                 return new FontFamily(variant.Source);
 
             return FontFamily.XamlAutoFontFamily;
+        }
+
+        public static string GetFileSize(int fileSize)
+        {
+            double size = (double)fileSize / 1024;
+            if (size < 600)
+                return $"{size:0.00} KB";
+
+            size = size / 1024;
+            return $"{size:0.00} MB";
         }
     }
 }

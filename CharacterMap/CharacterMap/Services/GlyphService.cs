@@ -68,12 +68,21 @@ namespace CharacterMap.Services
             return Task.CompletedTask;
         }
 
-        internal static string GetCharacterDescription(int unicodeIndex, FontVariant variant)
+        internal static string GetCharacterDescription(int unicodeIndex, FontVariant variant, bool includeKeystroke = false)
         {
             if (variant == null || _provider == null)
                 return null;
 
-            return _provider.GetCharacterDescription(unicodeIndex, variant);
+            string description = _provider.GetCharacterDescription(unicodeIndex, variant);
+
+            if (includeKeystroke)
+            {
+                // Add Unicode keystroke details
+                if (unicodeIndex >= 128 && unicodeIndex <= 255)
+                    description += $" - Alt + {unicodeIndex:0000}";
+            }
+
+            return description;
         }
 
         internal static Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant)

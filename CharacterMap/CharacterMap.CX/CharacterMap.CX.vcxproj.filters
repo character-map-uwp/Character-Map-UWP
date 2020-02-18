@@ -18,6 +18,12 @@
     <ClInclude Include="ColorTextAnalyzer.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
+    <ClInclude Include="DWriteFontSource.h" />
+    <ClInclude Include="DWriteProperties.h" />
+    <ClInclude Include="DWHelpers.h" />
+    <ClInclude Include="SVGGeometrySink.h" />
+    <ClInclude Include="DWriteFontFace.h" />
+    <ClInclude Include="DWriteFontSet.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

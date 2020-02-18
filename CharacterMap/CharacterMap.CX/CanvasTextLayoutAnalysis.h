@@ -13,6 +13,7 @@ using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
+using namespace Platform;
 
 namespace CharacterMapCX
 {
@@ -46,9 +47,30 @@ namespace CharacterMapCX
 			bool get() { return m_glyphLayerCount > 1; }
 		}
 
+		/// <summary>
+		/// The number of glyphs that make up this rendered character. For
+		/// COLR fonts this defines the number of glyphs composited together
+		/// to create the color version of the glyph.
+		/// </summary>
 		property int GlyphLayerCount
 		{
 			int get() { return m_glyphLayerCount; }
+		}
+
+		/// <summary>
+		/// Size of the underlying font file in bytes
+		/// </summary>
+		property int FileSize
+		{
+			int get() { return m_fileSize; }
+		}
+
+		/// <summary>
+		/// Absolute path to the underlying font file
+		/// </summary>
+		property Platform::String^ FilePath
+		{
+			Platform::String^ get() { return m_filePath; }
 		}
 
 		property IVectorView<GlyphImageFormat>^ GlyphFormats
@@ -56,14 +78,28 @@ namespace CharacterMapCX
 			IVectorView<GlyphImageFormat>^ get() { return m_glyphFormats; }
 		}
 
+		property Array<Windows::UI::Color>^ Colors
+		{
+			Array<Windows::UI::Color>^ get() { return m_colors; }
+		}
+
+		property Array<IVectorView<uint16>^>^ Indicies
+		{
+			Array<IVectorView<uint16>^>^ get() { return m_indicies; }
+		}
+
 	internal:
-		CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer);
+		CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> layout);
 
 	private:
 		bool m_hasColorGlyphs = false;
 		bool m_containsBitmapGlyphs = false;
 		bool m_containsVectorColorGlyphs = false;
 		int m_glyphLayerCount = 1;
+		int m_fileSize = 0;
+		Platform::String^ m_filePath = nullptr;
 		IVectorView<GlyphImageFormat>^ m_glyphFormats;
+		Array<Windows::UI::Color>^ m_colors;
+		Array<IVectorView<uint16>^>^ m_indicies;
 	};
 }

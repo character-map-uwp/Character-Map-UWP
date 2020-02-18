@@ -22,13 +22,13 @@ namespace CharacterMap.ViewModels
 {
     public class FontMapViewModel : ViewModelBase
     {
-        private Interop Interop { get; }
+        private Interop _interop { get; }
+
+        private Debouncer _searchDebouncer { get; }
+
+        private ConcurrencyToken.ConcurrencyTokenGenerator _searchTokenFactory { get; }
 
         public StorageFile SourceFile { get; set; }
-
-        private Debouncer SearchDebouncer { get; }
-
-        private ConcurrencyToken.ConcurrencyTokenGenerator SearchTokenFactory { get; }
 
         public ExportStyle BlackColor { get; } = ExportStyle.Black;
         public ExportStyle WhiteColor { get; } = ExportStyle.White;
@@ -107,6 +107,13 @@ namespace CharacterMap.ViewModels
         {
             get => _hasFontOptions;
             set => Set(ref _hasFontOptions, value);
+        }
+
+        private bool _isSvgChar = false;
+        public bool IsSvgChar
+        {
+            get => _isSvgChar;
+            set => Set(ref _isSvgChar, value);
         }
 
         private CanvasTextLayoutAnalysis _selectedVariantAnalysis;
@@ -223,10 +230,10 @@ namespace CharacterMap.ViewModels
             CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
 
-            Interop = SimpleIoc.Default.GetInstance<Interop>();
+            _interop = SimpleIoc.Default.GetInstance<Interop>();
 
-            SearchDebouncer = new Debouncer();
-            SearchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
+            _searchDebouncer = new Debouncer();
+            _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
         }
 
         private void LoadChars(FontVariant variant)
@@ -251,9 +258,10 @@ namespace CharacterMap.ViewModels
                     {
                         layout.Options = CanvasDrawTextOptions.EnableColorFont;
                         ApplyEffectiveTypography(layout);
-                        SelectedVariantAnalysis = Interop.AnalyzeFontLayout(layout);
+                        SelectedVariantAnalysis = _interop.AnalyzeFontLayout(layout, variant.FontFace);
                         HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     }
+                    ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
                 }
                 else
                 {
@@ -289,6 +297,7 @@ namespace CharacterMap.ViewModels
             if (SelectedChar == null)
             {
                 SelectedCharAnalysis = new CanvasTextLayoutAnalysis();
+                IsSvgChar = false;
                 return;
             }
 
@@ -304,10 +313,10 @@ namespace CharacterMap.ViewModels
             {
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
                 ApplyEffectiveTypography(layout);
-                SelectedCharAnalysis = Interop.AnalyzeCharacterLayout(layout);
+                SelectedCharAnalysis = _interop.AnalyzeCharacterLayout(layout);
             }
 
-
+            IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
             if (SelectedVariant != null && SelectedVariant.FamilyName.Contains("MDL2 Assets"))
             {
                 TitlePrefix = GlyphService.GetCharacterDescription(SelectedChar.UnicodeIndex, SelectedVariant);
@@ -369,7 +378,7 @@ namespace CharacterMap.ViewModels
             if (SelectedVariant == null || c == null)
                 return null;
 
-            string desc = GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant);
+            string desc = GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant, true);
             if (!string.IsNullOrEmpty(desc))
                 return $"{desc} - {c.UnicodeString}";
 
@@ -382,12 +391,12 @@ namespace CharacterMap.ViewModels
             {
                 return;
             }
-            SearchDebouncer.Debounce(delayMilliseconds, () => Search(query));
+            _searchDebouncer.Debounce(delayMilliseconds, () => Search(query));
         }
 
         private async void Search(string query)
         {
-            var token = SearchTokenFactory.GenerateToken();
+            var token = _searchTokenFactory.GenerateToken();
             if (await GlyphService.SearchAsync(query, SelectedVariant) is IReadOnlyList<IGlyphData> results
                 && token.IsValid())
             {
@@ -402,6 +411,7 @@ namespace CharacterMap.ViewModels
                 SelectedFont,
                 SelectedVariant,
                 SelectedChar,
+                SelectedCharAnalysis,
                 GetEffectiveTypography());
         }
 
@@ -412,6 +422,7 @@ namespace CharacterMap.ViewModels
                 SelectedFont,
                 SelectedVariant,
                 SelectedChar,
+                SelectedCharAnalysis,
                 GetEffectiveTypography());
         }
 
