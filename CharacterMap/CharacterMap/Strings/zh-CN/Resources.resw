@@ -258,4 +258,37 @@
   <data name="RestartHeader.Text" xml:space="preserve">
     <value>需要重启应用生效</value>
   </data>
+  <data name="TypographyVariantsHeader.Text" xml:space="preserve">
+    <value>字符变体</value>
+  </data>
+  <data name="WeightSelector.Header" xml:space="preserve">
+    <value>变体</value>
+  </data>
+  <data name="SearchResultsSlider.Header" xml:space="preserve">
+    <value>最大搜索结果数量</value>
+  </data>
+  <data name="SaveImageError" xml:space="preserve">
+    <value>抱歉，尝试保存图片时候有什么奇怪的东西出错了</value>
+  </data>
+  <data name="OptionAllFonts.Text" xml:space="preserve">
+    <value>所有字体</value>
+  </data>
+  <data name="OptionImportedFonts.Text" xml:space="preserve">
+    <value>导入的字体</value>
+  </data>
+  <data name="OptionMonospacedFonts.Text" xml:space="preserve">
+    <value>等宽字体</value>
+  </data>
+  <data name="OptionSansSerifFonts.Text" xml:space="preserve">
+    <value>无衬线字体</value>
+  </data>
+  <data name="OptionSerifFonts.Text" xml:space="preserve">
+    <value>衬线字体</value>
+  </data>
+  <data name="OptionSymbolFonts.Text" xml:space="preserve">
+    <value>符号字体</value>
+  </data>
+  <data name="RestartButton.Content" xml:space="preserve">
+    <value>重启应用</value>
+  </data>
 </root>
