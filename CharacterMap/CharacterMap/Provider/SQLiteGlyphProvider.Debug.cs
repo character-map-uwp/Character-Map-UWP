@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Services;
 using Humanizer;
 using SQLite;
@@ -21,6 +22,13 @@ namespace CharacterMap.Provider
      * the app
      */
 #if DEBUG
+
+    internal class FabricGlyph
+    {
+        public string Name { get; set; }
+        public string Unicode { get; set; }
+    }
+
     public partial class SQLiteGlyphProvider
     {
         public Task InitialiseDebugAsync()
@@ -81,18 +89,12 @@ namespace CharacterMap.Provider
 
 
                 /* read fabric mdl2 listing */
-                var fabric = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FabricMDL2.txt")).AsTask().ConfigureAwait(false);
-                using (var stream = await fabric.OpenStreamForReadAsync().ConfigureAwait(false))
-                using (var reader = new StreamReader(stream))
+                var fabric = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FabricMDL2.json")).AsTask().ConfigureAwait(false);
+                List<FabricGlyph> glyphs = await Json.ReadAsync<List<FabricGlyph>>(fabric);
+                foreach (var glyph in glyphs)
                 {
-                    string[] parts;
-                    while (!reader.EndOfStream)
-                    {
-                        parts = reader.ReadLine().Split(":", StringSplitOptions.None);
-
-                        if (!datas.Any(d => d.code.Equals(parts[1], StringComparison.OrdinalIgnoreCase)))
-                            datas.Add((parts[1], parts[0]));
-                    }
+                    if (!datas.Any(d => d.code.Equals(glyph.Unicode)))
+                        datas.Add((glyph.Unicode, glyph.Name));
                 }
 
                 /* read manually created full mdl2 listings */
@@ -208,31 +210,31 @@ namespace CharacterMap.Provider
 
             /* MDL2 SEARCH */
             con.Execute($"CREATE VIRTUAL TABLE {MDL2_SEARCH_TABLE} USING " +
-                $"fts4({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)})");
+                $"fts4(Ix, Hx, {nameof(IGlyphData.Description)})");
 
             con.Execute($"CREATE TRIGGER insert_trigger AFTER INSERT ON {nameof(MDL2Glyph)} " +
-                $"BEGIN INSERT INTO {MDL2_SEARCH_TABLE}({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)}) " +
-                $"VALUES (new.{nameof(IGlyphData.UnicodeIndex)}, new.{nameof(IGlyphData.UnicodeHex)}, new.{nameof(IGlyphData.Description)}); END;");
+                $"BEGIN INSERT INTO {MDL2_SEARCH_TABLE}(Ix, Hx, {nameof(IGlyphData.Description)}) " +
+                $"VALUES (new.Ix, new.Hx, new.{nameof(IGlyphData.Description)}); END;");
 
 
 
             /* FONT AWESOME SEARCH */
             con.Execute($"CREATE VIRTUAL TABLE {FONTAWESOME_SEARCH_TABLE} USING " +
-                $"fts4({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)})");
+                $"fts4(Ix, Hx, {nameof(IGlyphData.Description)})");
 
             con.Execute($"CREATE TRIGGER insert_trigger_fa AFTER INSERT ON {nameof(FontAwesomeGlyph)} " +
-                $"BEGIN INSERT INTO {FONTAWESOME_SEARCH_TABLE}({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)}) " +
-                $"VALUES (new.{nameof(IGlyphData.UnicodeIndex)}, new.{nameof(IGlyphData.UnicodeHex)}, new.{nameof(IGlyphData.Description)}); END;");
+                $"BEGIN INSERT INTO {FONTAWESOME_SEARCH_TABLE}(Ix, Hx, {nameof(IGlyphData.Description)}) " +
+                $"VALUES (new.Ix, new.Hx, new.{nameof(IGlyphData.Description)}); END;");
 
 
 
             /* UNICODE SEARCH */
             con.Execute($"CREATE VIRTUAL TABLE {UNICODE_SEARCH_TABLE} USING " +
-                $"fts4({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)})");
+                $"fts4(Ix, Hx, {nameof(IGlyphData.Description)})");
 
             con.Execute($"CREATE TRIGGER insert_trigger_uni AFTER INSERT ON {nameof(UnicodeGlyphData)} " +
-                $"BEGIN INSERT INTO {UNICODE_SEARCH_TABLE}({nameof(IGlyphData.UnicodeIndex)}, {nameof(IGlyphData.UnicodeHex)}, {nameof(IGlyphData.Description)}) " +
-                $"VALUES (new.{nameof(IGlyphData.UnicodeIndex)}, new.{nameof(IGlyphData.UnicodeHex)}, new.{nameof(IGlyphData.Description)}); END;");
+                $"BEGIN INSERT INTO {UNICODE_SEARCH_TABLE}(Ix, Hx, {nameof(IGlyphData.Description)}) " +
+                $"VALUES (new.Ix, new.Hx, new.{nameof(IGlyphData.Description)}); END;");
         }
     }
 #endif

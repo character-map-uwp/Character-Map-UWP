@@ -20,7 +20,7 @@ namespace CharacterMap.Provider
         internal const string MDL2_SEARCH_TABLE = "mdl2search";
         internal const string FONTAWESOME_SEARCH_TABLE = "fontawesomesearch";
         internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
-        private int SEARCH_LIMIT = new AppSettings().MaxSearchResult;
+        private int SEARCH_LIMIT => new AppSettings().MaxSearchResult;
 
         private SQLiteConnection _connection { get; set; }
 
@@ -47,21 +47,24 @@ namespace CharacterMap.Provider
 
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
+            string desc = null;
             if (FontFinder.IsMDL2(variant))
             {
-                string desc = _connection.Get<MDL2Glyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+                desc = _connection.Get<MDL2Glyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
                 if (string.IsNullOrWhiteSpace(desc) && Enum.IsDefined(typeof(Symbol), unicodeIndex))
                     return ((Symbol)unicodeIndex).ToString().Humanize(LetterCasing.Title);
                 return desc;
             }
 
             if (IsFontAwesome(variant))
-                return _connection.Get<FontAwesomeGlyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+            {
+                desc = _connection.Get<FontAwesomeGlyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+            }
 
-            if (variant.FontFace.IsSymbolFont)
-                return null;
+            if (string.IsNullOrEmpty(desc))
+                desc = _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;
 
-            return _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;
+            return desc;
         }
 
         private bool IsFontAwesome(FontVariant variant)
@@ -126,7 +129,7 @@ namespace CharacterMap.Provider
                     {
                         if (hex >= range.Item1 && hex <= range.Item2)
                         {
-                            string hexsql = $"SELECT * FROM {table} WHERE UnicodeIndex == {hex} LIMIT 1";
+                            string hexsql = $"SELECT * FROM {table} WHERE Ix == {hex} LIMIT 1";
                             var hexresults = _connection.Query<GlyphDescription>(hexsql, query)?.Cast<IGlyphData>()?.ToList();
                             if (hexresults == null || hexresults.Count == 0)
                             {
@@ -174,11 +177,11 @@ namespace CharacterMap.Provider
                 foreach ((int, int) range in variant.UnicodeRanges)
                 {
                     if (next)
-                        sb.AppendFormat(" OR UnicodeIndex BETWEEN {0} AND {1}", range.Item1, range.Item2);
+                        sb.AppendFormat(" OR Ix BETWEEN {0} AND {1}", range.Item1, range.Item2);
                     else
                     {
                         next = true;
-                        sb.AppendFormat("WHERE (UnicodeIndex BETWEEN {0} AND {1}", range.Item1, range.Item2);
+                        sb.AppendFormat("WHERE (Ix BETWEEN {0} AND {1}", range.Item1, range.Item2);
                     }
                 }
                 sb.Append(")");
@@ -207,7 +210,7 @@ namespace CharacterMap.Provider
                 if (limit != SEARCH_LIMIT)
                 {
                     // 5.1. We need to exclude anything already found above
-                    sb.AppendFormat("AND UnicodeIndex NOT IN ({0})",
+                    sb.AppendFormat("AND Ix NOT IN ({0})",
                         string.Join(", ", results.Select(r => r.UnicodeIndex)));
                 }
 

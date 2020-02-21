@@ -10,18 +10,19 @@ namespace CharacterMap.Services
 {
     public interface IGlyphData
     {
+        [Column("Ix")]
         int UnicodeIndex { get; }
+        [Column("Hx")]
         string UnicodeHex { get; }
         string Description { get; }
     }
 
     public class GlyphDescription : IGlyphData
     {
-        [PrimaryKey]
+        [PrimaryKey, Column("Ix")]
         public int UnicodeIndex { get; set; }
 
-        [Indexed]
-        [MaxLength(5)]
+        [Indexed, MaxLength(5), Column("Hx")]
         public string UnicodeHex { get; set; }
 
         public string Description { get; set; }
@@ -59,7 +60,7 @@ namespace CharacterMap.Services
 
         private static Task InitializeInternalAsync()
         {
-#if DEBUG && GENERATE_DATA
+#if DEBUG && GENERATE_DATABASE
             if (_provider is SQLiteGlyphProvider p)
             {
                 return p.InitialiseDatabaseAsync();
