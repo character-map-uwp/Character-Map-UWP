@@ -393,7 +393,7 @@ namespace CharacterMap.Core
             return resultList.Count > 0 ? resultList.First().Value : null;
         }
 
-        public static bool IsMDL2(FontVariant variant) => variant.FamilyName.Contains("MDL2 Assets");
+        public static bool IsMDL2(FontVariant variant) => variant.FamilyName.Contains("MDL2");
 
     }
 }

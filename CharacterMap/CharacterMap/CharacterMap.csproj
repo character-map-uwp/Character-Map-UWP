@@ -235,6 +235,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\Data\FabricMDL2.json" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\BadgeLogo.scale-100.png" />
@@ -301,7 +302,6 @@
     <Content Include="Assets\Data\UnicodeData.txt" />
     <Content Include="Assets\Data\FontAwesome.txt" />
     <Content Include="Assets\Data\MDL2.xml" />
-    <Content Include="Assets\Data\FabricMDL2.txt" />
     <Content Include="Assets\Data\FullMDL2ManualList.txt" />
   </ItemGroup>
   <ItemGroup>
