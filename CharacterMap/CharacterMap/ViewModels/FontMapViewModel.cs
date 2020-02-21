@@ -16,6 +16,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels
@@ -353,7 +354,10 @@ namespace CharacterMap.ViewModels
                 XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
                 XamlCode = $"&#x{uni};";
                 FontIcon = $@"<FontIcon FontFamily=""{SelectedVariant.XamlFontSource}"" Glyph=""&#x{uni};"" />";
-                SymbolIcon = $"(Symbol)0x{uni}";
+                if (Enum.IsDefined(typeof(Symbol), SelectedChar.UnicodeIndex))
+                    SymbolIcon = $@"<SymbolIcon Symbol=""{(Symbol)SelectedChar.UnicodeIndex}"" />";
+                else
+                    SymbolIcon = $"(Symbol)0x{uni}";
             }
         }
 

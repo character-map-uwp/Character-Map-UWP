@@ -48,7 +48,12 @@ namespace CharacterMap.Provider
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
             if (FontFinder.IsMDL2(variant))
-                return _connection.Get<MDL2Glyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+            {
+                string desc = _connection.Get<MDL2Glyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+                if (string.IsNullOrWhiteSpace(desc) && Enum.IsDefined(typeof(Symbol), unicodeIndex))
+                    return ((Symbol)unicodeIndex).ToString().Humanize(LetterCasing.Title);
+                return desc;
+            }
 
             if (IsFontAwesome(variant))
                 return _connection.Get<FontAwesomeGlyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
