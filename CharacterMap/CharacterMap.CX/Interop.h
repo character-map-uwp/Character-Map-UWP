@@ -6,26 +6,46 @@
 #include <dwrite_3.h>
 #include "ColorTextAnalyzer.h"
 #include "CanvasTextLayoutAnalysis.h"
+#include "DWriteFontSource.h"
+#include "DWriteProperties.h"
+#include "DWriteFontFace.h"
+#include "DWriteFontSet.h"
+
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
+using namespace Windows::Storage::Streams;
 
 namespace CharacterMapCX
 {
+	ref class Interop;
+	public delegate void SystemFontSetInvalidated(Interop^ sender, Platform::Object^ args);
+
     public ref class Interop sealed
     {
     public:
+		event SystemFontSetInvalidated^ FontSetInvalidated;
+
         Interop(CanvasDevice^ device);
-		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout);
-		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
 		bool HasValidFonts(Uri^ uri);
-		CanvasFontSet^ GetSystemFonts(bool includeDownloadableFonts);
+		IBuffer^ GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, UINT imageType);
+		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace);
+		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
+		Platform::String^ GetPathGeometry(CanvasTextLayoutAnalysis^ analysis, CanvasFontFace^ set);
+
+		DWriteFontSet^ GetSystemFonts();
+		DWriteFontSet^ GetFonts(Uri^ uri);
 
 	private:
-		Microsoft::WRL::ComPtr<IDWriteFactory4> m_dwriteFactory;
-		Microsoft::WRL::ComPtr<ID2D1Factory5> m_d2dFactory;
-		Microsoft::WRL::ComPtr<ID2D1DeviceContext1> m_d2dContext;
+		__inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
+		__inline DWriteProperties^ GetDWriteProperties(ComPtr<IDWriteFontSet3> fontSet, UINT index, ComPtr<IDWriteFontFaceReference1> faceRef, int ls, wchar_t* locale);
+		__inline String^ GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale);
+		__inline DWriteProperties^ GetDWriteProperties(CanvasFontSet^ fontSet, UINT index);
+
+		ComPtr<IDWriteFactory7> m_dwriteFactory;
+		ComPtr<ID2D1Factory5> m_d2dFactory;
+		ComPtr<ID2D1DeviceContext1> m_d2dContext;
     };
 }

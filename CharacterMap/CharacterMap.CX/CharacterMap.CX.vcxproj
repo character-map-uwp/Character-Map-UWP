@@ -269,9 +269,15 @@
   <ItemGroup>
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="DWHelpers.h" />
+    <ClInclude Include="DWriteFontFace.h" />
+    <ClInclude Include="DWriteFontSet.h" />
+    <ClInclude Include="DWriteFontSource.h" />
+    <ClInclude Include="DWriteProperties.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Interop.h" />
+    <ClInclude Include="SVGGeometrySink.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />

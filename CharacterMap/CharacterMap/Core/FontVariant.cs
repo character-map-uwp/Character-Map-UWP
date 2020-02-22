@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using CharacterMap.Helpers;
+using CharacterMapCX;
+using GalaSoft.MvvmLight.Ioc;
 using Humanizer;
 using Microsoft.Graphics.Canvas.Text;
 using Windows.Storage;
@@ -59,6 +62,8 @@ namespace CharacterMap.Core
 
         public Panose Panose { get; }
 
+        public DWriteProperties DirectWriteProperties { get; }
+
         /// <summary>
         /// File-system path for DWrite / Xaml to construct a font for use in this application
         /// </summary>
@@ -67,36 +72,42 @@ namespace CharacterMap.Core
         public string XamlFontSource =>
             (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 
-        public FontVariant(CanvasFontFace face, string familyName, StorageFile file)
+        public FontVariant(CanvasFontFace face, StorageFile file, DWriteProperties dwProps)
         {
             FontFace = face;
             Characters = new List<Character>();
-            FamilyName = familyName;
+            FamilyName = dwProps.FamilyName;
 
             if (file != null)
             {
                 IsImported = true;
                 FileName = file.Name;
-                Source = $"{FontFinder.GetAppPath(file)}#{familyName}";
+                Source = $"{FontFinder.GetAppPath(file)}#{dwProps.FamilyName}";
             }
             else
             {
-                Source = familyName;
+                Source = dwProps.FamilyName;
             }
 
-            if (!face.FaceNames.TryGetValue(CultureInfo.CurrentCulture.Name, out var name))
-            {
-                if (!face.FaceNames.TryGetValue("en-us", out name))
-                {
-                    name = face.FaceNames.Any() ?
-                        face.FaceNames.FirstOrDefault().Value :
-                        Utils.GetVariantDescription(face);
-                }
-            }
+            string name = dwProps.FaceName;
+            if (String.IsNullOrEmpty(name))
+                name = Utils.GetVariantDescription(face);
 
+            DirectWriteProperties = dwProps;
             UnicodeRanges = face.UnicodeRanges.Select(r => (r.First, r.Last)).ToArray();
             PreferredName = name;
             Panose = PanoseParser.Parse(face);
+        }
+
+        public string GetProviderName()
+        {
+            //if (!String.IsNullOrEmpty(DirectWriteProperties.RemoteProviderName))
+            //    return DirectWriteProperties.RemoteProviderName;
+
+            if (IsImported)
+                return Localization.Get("InstallTypeImported");
+
+            return Localization.Get($"DWriteSource{DirectWriteProperties.Source.ToString()}");
         }
 
         public IReadOnlyList<Character> GetCharacters()
@@ -113,6 +124,7 @@ namespace CharacterMap.Core
                     {
                         characters.Add(new Character
                         {
+                            Index = i,
                             Char = (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1),
                             UnicodeIndex = (int)i
                         });
@@ -171,7 +183,7 @@ namespace CharacterMap.Core
     {
         public static FontVariant CreateDefault(CanvasFontFace face)
         {
-            return new FontVariant(face, "Segoe UI", null)
+            return new FontVariant(face, null, DWriteProperties.CreateDefault())
             {
                 PreferredName = "",
                 Characters = new List<Character>

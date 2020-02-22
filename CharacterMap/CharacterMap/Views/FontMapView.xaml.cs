@@ -5,6 +5,7 @@ using CharacterMap.ViewModels;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Views;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
@@ -132,7 +133,13 @@ namespace CharacterMap.Views
             }
         }
 
+        public string UpdateStatusBarLabel(FontVariant variant)
+        {
+            if (variant == null)
+                return string.Empty;
 
+            return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
+        }
 
         /* UI Event Handlers */
 
@@ -274,6 +281,14 @@ namespace CharacterMap.Views
                     IsStandalone,
                     DlgCreateCollection);
             }
+        }
+
+        private Visibility ShowFilePath(string filePath, bool isImported)
+        {
+            if (!isImported && !string.IsNullOrWhiteSpace(filePath))
+                return Visibility.Visible;
+
+            return Visibility.Collapsed;
         }
     }
 
