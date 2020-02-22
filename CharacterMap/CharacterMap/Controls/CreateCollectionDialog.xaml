@@ -7,7 +7,9 @@
     x:Uid="DigCreateCollection"
     IsPrimaryButtonEnabled="{x:Bind TemplateSettings.IsCollectionTitleValid, Mode=OneWay}"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
     SecondaryButtonClick="{x:Bind Hide}"
+    SecondaryButtonStyle="{StaticResource ButtonRevealStyle}"
     mc:Ignorable="d">
 
     <TextBox

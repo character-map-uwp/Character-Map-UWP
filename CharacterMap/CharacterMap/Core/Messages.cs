@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.Storage;
 
 namespace CharacterMap.Core
 {
@@ -15,5 +14,9 @@ namespace CharacterMap.Core
         }
 
         public FontImportResult Result { get; }
+    }
+
+    public class CollectionsUpdatedMessage
+    {
     }
 }

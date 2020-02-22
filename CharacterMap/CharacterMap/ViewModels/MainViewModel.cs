@@ -16,6 +16,7 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using CharacterMap.Services;
 using CommonServiceLocator;
+using System.Text;
 
 namespace CharacterMap.ViewModels
 {
@@ -213,6 +214,31 @@ namespace CharacterMap.ViewModels
                         fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSansSerifStyle);
                         FilterTitle = Localization.Get("OptionSansSerifFonts/Text");
                     }
+                    else if (FontListFilter == 6)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.AppxPackage);
+                        FilterTitle = "From Microsoft Store";
+                    }
+                    else if (FontListFilter == 7)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.RemoteFontProvider);
+                        FilterTitle = "Cloud-based Fonts";
+                    }
+                    else if (FontListFilter == 8)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Decorative);
+                        FilterTitle = "Decorative Fonts";
+                    }
+                    else if (FontListFilter == 9)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Script);
+                        FilterTitle = "Script Fonts";
+                    }
+                    else if (FontListFilter == 10)
+                    {
+                        fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.IsColorFont);
+                        FilterTitle = "Color Fonts";
+                    }
                     else
                         FilterTitle = Localization.Get("OptionAllFonts/Text");
                 }
@@ -230,6 +256,9 @@ namespace CharacterMap.ViewModels
         {
             try
             {
+                // cache last selected now as setting GroupedFontList can change it.
+                string lastSelected = App.AppSettings.LastSelectedFontName;
+
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
                 GroupedFontList = list.ToObservableCollection();
                 HasFonts = FontList.Count > 0;
@@ -240,9 +269,9 @@ namespace CharacterMap.ViewModels
                     return;
                 }
 
-                if (!string.IsNullOrEmpty(App.AppSettings.LastSelectedFontName))
+                if (!string.IsNullOrEmpty(lastSelected))
                 {
-                    var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == App.AppSettings.LastSelectedFontName));
+                    var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == lastSelected));
                     SelectedFont = lastSelectedFont ?? FontList.FirstOrDefault();
                 }
                 else
@@ -335,6 +364,5 @@ namespace CharacterMap.ViewModels
         {
             IsCollectionTitleValid = !string.IsNullOrWhiteSpace(CollectionTitle);
         }
-
     }
 }

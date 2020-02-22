@@ -182,13 +182,12 @@
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\Character.cs" />
-    <Compile Include="Core\CollectionsUpdatedMessage.cs" />
+    <Compile Include="Core\Messages.cs" />
     <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\ExportManager.cs" />
     <Compile Include="Helpers\FlyoutHelper.cs" />
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\FontVariant.cs" />
-    <Compile Include="Core\ImportMessage.cs" />
     <Compile Include="Core\InstalledFont.cs" />
     <Compile Include="Core\PanoseFamily.cs" />
     <Compile Include="Core\PanoseParser.cs" />
@@ -297,6 +296,7 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <PRIResource Include="Strings\en-GB\Resources.resw" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Content Include="Assets\Data\UnicodeData.txt" />

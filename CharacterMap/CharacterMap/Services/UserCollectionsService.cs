@@ -86,8 +86,13 @@ namespace CharacterMap.Services
                 $"{fileName ?? Guid.NewGuid().ToString()}.json", CreationCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
             var collection = new UserFontCollection { Name = name, File = file };
             await SaveCollectionAsync(collection).ConfigureAwait(false);
-            Items.Add(collection);
-            Items = Items.OrderBy(i => i.Name).ToList();
+
+            if (fileName == null)
+            {
+                Items.Add(collection);
+                Items = Items.OrderBy(i => i.Name).ToList();
+            }
+            
             return collection;
         }
 

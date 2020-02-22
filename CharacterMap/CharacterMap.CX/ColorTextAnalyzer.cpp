@@ -67,6 +67,7 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 
 	if (HasColorGlyphs)
 	{
+
 		for (;;)
 		{
 			BOOL haveRun;
@@ -77,6 +78,9 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 			DWRITE_COLOR_GLYPH_RUN1 const* colorRun;
 			ThrowIfFailed(glyphRunEnumerator->GetCurrentRun(&colorRun));
 
+			auto arr = new uint16[colorRun->glyphRun.glyphCount];
+			
+
 			/*CanvasGlyph* g = new CanvasGlyph();
 			g->Index = colorRun->glyphRun.glyphIndices[0];*/
 
@@ -85,6 +89,16 @@ HRESULT ColorTextAnalyzer::DrawGlyphRun(
 
 			if (IsCharacterAnalysisMode)
 			{
+				RunColors.push_back(colorRun->runColor);
+
+				auto arr = new uint16[colorRun->glyphRun.glyphCount];
+				for (unsigned int a = 0; a < colorRun->glyphRun.glyphCount; a = a + 1)
+				{
+					arr[a] = colorRun->glyphRun.glyphIndices[a];
+				}
+
+				GlyphIndicies.push_back(arr);
+
 				if ((format & GlyphImageFormat::Colr) == GlyphImageFormat::Colr)
 				{
 					GlyphLayerCount++;
