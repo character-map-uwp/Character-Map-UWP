@@ -19,10 +19,12 @@ namespace CharacterMap.Core
     public class UnicodeGlyphData : IGlyphData
     {
         [PrimaryKey]
+        [Column("Ix")]
         public int UnicodeIndex { get; set; }
 
         [Indexed]
         [MaxLength(5)]
+        [Column("Hx")]
         public string UnicodeHex { get; set; }
 
         [Indexed]

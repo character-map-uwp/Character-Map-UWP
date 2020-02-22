@@ -237,6 +237,11 @@
                 </AutoSuggestBox.QueryIcon>
                 <AutoSuggestBox.ContextFlyout>
                     <Flyout>
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style TargetType="FlyoutPresenter">
+                                <Setter Property="RequestedTheme" Value="Default" />
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
                         <StackPanel Width="260">
                             <ToggleSwitch
                                 x:Uid="InstantSearchToggle"
