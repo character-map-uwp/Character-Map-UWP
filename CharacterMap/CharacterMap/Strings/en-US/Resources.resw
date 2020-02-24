@@ -231,9 +231,6 @@
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>This App is designed to replace Windows system win32 character map. It is more DPI aware on high DPI screens.</value>
   </data>
-  <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>All Fonts</value>
-  </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Copied</value>
   </data>
@@ -452,5 +449,14 @@
   </data>
   <data name="StatusBarCharacterCount" xml:space="preserve">
     <value>{0} Characters</value>
+  </data>
+  <data name="SearchDelaySelector.Header" xml:space="preserve">
+    <value>Delay before search (ms)</value>
+  </data>
+  <data name="DigSettings.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
+    <value>Character Search</value>
   </data>
 </root>

@@ -19,11 +19,13 @@ namespace CharacterMap.Core
         public static Visibility InvertVis(Visibility b) => b == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility FalseToVis(bool b) => !b ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility TrueToVis(bool b) => b ? Visibility.Visible : Visibility.Collapsed;
+        public static Visibility IsNotNullToVis(object obj) => obj != null ? Visibility.Visible : Visibility.Collapsed;
+
 
         public static bool IsNull(object obj) => obj == null;
         public static bool IsNotNull(object obj) => obj != null;
 
-        public static char ToHex(int i) => (char)i;
+        public static string ToHex(int i) => (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1);
 
         public static string GetWeightName(Windows.UI.Text.FontWeight weight)
         {

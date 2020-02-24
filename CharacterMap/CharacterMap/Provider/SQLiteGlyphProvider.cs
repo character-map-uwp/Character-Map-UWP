@@ -17,9 +17,16 @@ namespace CharacterMap.Provider
 {
     public partial class SQLiteGlyphProvider : IGlyphDataProvider
     {
-        internal const string MDL2_SEARCH_TABLE = "mdl2search";
         internal const string FONTAWESOME_SEARCH_TABLE = "fontawesomesearch";
+        internal const string ICOFONT_SEARCH_TABLE = "icfsearch";
+        internal const string MATERIAL_DESIGN_ICONS_SEARCH_TABLE = "mdisearch";
+        internal const string MDL2_SEARCH_TABLE = "mdl2search";
         internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
+        internal const string WEBDINGS_SEARCH_TABLE = "wbdsearch";
+        internal const string WINGDINGS_SEARCH_TABLE = "wngsearch";
+        internal const string WINGDINGS2_SEARCH_TABLE = "wng2search";
+        internal const string WINGDINGS3_SEARCH_TABLE = "wng3search";
+
         private int SEARCH_LIMIT => new AppSettings().MaxSearchResult;
 
         private SQLiteConnection _connection { get; set; }
@@ -48,6 +55,8 @@ namespace CharacterMap.Provider
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
             string desc = null;
+
+            // MDL2 has it's own special logic
             if (FontFinder.IsMDL2(variant))
             {
                 desc = _connection.Get<MDL2Glyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
@@ -56,11 +65,19 @@ namespace CharacterMap.Provider
                 return desc;
             }
 
-            if (IsFontAwesome(variant))
+            // Otherwise check if we have a search table for this font
+            foreach (var target in SearchTarget.KnownTargets)
             {
-                desc = _connection.Get<FontAwesomeGlyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
-            }
+                if (target.IsTarget(variant))
+                {
+                    var map = _connection.GetMapping(target.TargetType);
+                    var items = _connection.Query(map, $"SELECT * FROM {target.SearchTable} WHERE Ix = ? LIMIT 1", unicodeIndex);
+                    desc = (items.FirstOrDefault() as GlyphDescription)?.Description;
 
+                    break;
+                }
+            }
+            // Otherwise get a fallback value
             if (string.IsNullOrEmpty(desc))
                 desc = _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;
 
@@ -71,7 +88,6 @@ namespace CharacterMap.Provider
         {
             return variant.FamilyName.StartsWith("Font Awesome");
         }
-
 
         #region SEARCH
 
@@ -84,9 +100,11 @@ namespace CharacterMap.Provider
             if (FontFinder.IsMDL2(variant))
                 return SearchMDL2Async(query, variant);
 
-            /* FontAwesome has special dataset */
-            if (IsFontAwesome(variant))
-                return SearchFontAwesomeAsync(query, variant);
+            foreach (SearchTarget target in SearchTarget.KnownTargets)
+            {
+                if (target.IsTarget(variant))
+                    return InternalSearchAsync(target.SearchTable, target.TargetType.Name, query, variant);
+            }
 
             /* Generic Unicode Search */
             return SearchUnicodeAsync(query, variant);
@@ -100,11 +118,6 @@ namespace CharacterMap.Provider
         private Task<IReadOnlyList<IGlyphData>> SearchMDL2Async(string query, FontVariant variant)
         {
             return InternalSearchAsync(MDL2_SEARCH_TABLE, nameof(MDL2Glyph), query, variant);
-        }
-
-        private Task<IReadOnlyList<IGlyphData>> SearchFontAwesomeAsync(string query, FontVariant variant)
-        {
-            return InternalSearchAsync(FONTAWESOME_SEARCH_TABLE, nameof(FontAwesomeGlyph), query, variant);
         }
 
         private Task<IReadOnlyList<IGlyphData>> InternalSearchAsync(string ftsTable, string table, string query, FontVariant variant)
@@ -133,7 +146,7 @@ namespace CharacterMap.Provider
                             var hexresults = _connection.Query<GlyphDescription>(hexsql, query)?.Cast<IGlyphData>()?.ToList();
                             if (hexresults == null || hexresults.Count == 0)
                             {
-                                var label = hex.ToString("X");
+                                var label = hex.ToString("x4");
                                 hexresults = new List<IGlyphData>()
                                 {
                                     new GlyphDescription
@@ -167,14 +180,16 @@ namespace CharacterMap.Provider
                     }
                 }
 
-                // 1.5. If we are a generic symbol font, we don't match by character name so time to go home.
-                if (!FontFinder.IsMDL2(variant) && !IsFontAwesome(variant) && variant.FontFace.IsSymbolFont)
-                    return GlyphService.EMPTY_SEARCH;
-
                 // 2. If we're performing SQL, create the base query filter
                 StringBuilder sb = new StringBuilder();
                 bool next = false;
-                foreach ((int, int) range in variant.UnicodeRanges)
+
+                /// Note: SQLite only supports expression trees upto 1000 items, so we need to limit the range
+                /// of Unicode ranges we search through. Very rare for any font to hit this - especially one with
+                /// any useful search results. MS Office Symbol is an example of such a font (with no useful search
+                /// results anyway). Certain complex asain script fonts **may** theoretically hit this limit.
+                /// We don't want to throw an exception if we ever hit this case, we'll just do our best.
+                foreach ((int, int) range in variant.UnicodeRanges.Take(995)) 
                 {
                     if (next)
                         sb.AppendFormat(" OR Ix BETWEEN {0} AND {1}", range.Item1, range.Item2);

@@ -6,31 +6,27 @@
     xmlns:converters1="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
     xmlns:local="using:CharacterMap"
-    xmlns:viewModels="using:CharacterMap.ViewModels">
+    xmlns:styles="using:CharacterMap.Styles"
+    xmlns:viewModels="using:CharacterMap.ViewModels"
+    xmlns:services="using:CharacterMap.Services">
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" />
 
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <styles:ItemTemplates />
                 <ResourceDictionary>
+                    <core:AppSettings x:Key="AppSettings" />
                     <converters1:SmartTextColorBasedOnAccentTypeConverter x:Key="SmartTextColorBasedOnAccentTypeConverter" />
                     <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
-                </ResourceDictionary>
-                <ResourceDictionary>
                     <x:Boolean x:Key="TrueValue">True</x:Boolean>
                     <x:Boolean x:Key="FalseValue">False</x:Boolean>
-                    <core:AppSettings x:Key="AppSettings" />
                     <Style x:Key="CharItemGridStyle" TargetType="Grid">
-                        <!--<Setter Property="BorderThickness" Value="1" />
-                        <Setter Property="BorderBrush" Value="#CCC" />-->
                         <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}" />
-                        <Setter Property="Height" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize}" />
-                        <Setter Property="Width" Value="{Binding Source={StaticResource AppSettings}, Path=GridSize}" />
                         <Setter Property="Margin" Value="0" />
                     </Style>
                     <Style x:Key="CharItemCharStyle" TargetType="TextBlock">
-                        <Setter Property="FontSize" Value="{Binding Source={StaticResource AppSettings}, Path=CharPreviewFontSize}" />
                         <Setter Property="Margin" Value="0,-2,0,0" />
                         <Setter Property="VerticalAlignment" Value="Center" />
                         <Setter Property="TextAlignment" Value="Center" />
@@ -65,6 +61,7 @@
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/ListView.xaml" />
                 <ResourceDictionary Source="/Styles/ComboBox.xaml" />
+                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

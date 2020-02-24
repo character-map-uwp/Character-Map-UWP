@@ -87,116 +87,25 @@
                 x:Uid="SearchBox"
                 Grid.Column="2"
                 Width="290"
-                Margin="6,0,6,0"
+                Margin="6 0 6 0"
                 VerticalAlignment="Center"
                 GotFocus="SearchBox_GotFocus"
+                ItemTemplate="{StaticResource SearchResultTemplate}"
                 ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
                 PlaceholderText="#SearchBox"
                 PreviewKeyDown="SearchBox_PreviewKeyDown"
                 QuerySubmitted="SearchBox_QuerySubmitted"
                 SuggestionChosen="SearchBox_SuggestionChosen"
+                TextChanged="SearchBox_TextChanged"
+                Tag="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
                 Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
                 <AutoSuggestBox.QueryIcon>
-                    <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}" />
+                    <SymbolIcon Symbol="Find" />
                 </AutoSuggestBox.QueryIcon>
-                <AutoSuggestBox.ContextFlyout>
-                    <Flyout>
-                        <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
-                                <Setter Property="RequestedTheme" Value="Default" />
-                            </Style>
-                        </Flyout.FlyoutPresenterStyle>
-                        <StackPanel Width="260">
-                            <ToggleSwitch
-                                x:Uid="InstantSearchToggle"
-                                Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
-                            <Slider
-                                Margin="0,4"
-                                Header="Delay before search (ms)"
-                                Maximum="3000"
-                                Minimum="250"
-                                TickFrequency="50"
-                                Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
-                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
-                            <Slider
-                                x:Uid="SearchResultsSlider"
-                                Margin="0,4"
-                                Maximum="100"
-                                Minimum="5"
-                                TickFrequency="1"
-                                Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
-                        </StackPanel>
-                    </Flyout>
-                </AutoSuggestBox.ContextFlyout>
-                <AutoSuggestBox.ItemTemplate>
-                    <DataTemplate x:DataType="services:IGlyphData">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <FontIcon
-                                Margin="4,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                FontFamily="{Binding ElementName=SearchBox, Path=DataContext.FontFamily}"
-                                FontSize="16"
-                                Glyph="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
-                            <TextBlock
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                Text="{x:Bind Description}" />
-                        </Grid>
-                    </DataTemplate>
-                </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
 
-            <AppBarButton
-                x:Name="SearchOptionButton"
-                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
-                Grid.Column="3"
-                Width="45"
-                Height="45"
-                Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}">
-                <Grid>
-                    <FontIcon Glyph="&#xE11A;" />
-                    <FontIcon
-                        Margin="0,3,3,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        FontSize="7"
-                        Glyph="&#xE115;" />
-                </Grid>
-                <AppBarButton.ContextFlyout>
-                    <Flyout Placement="Bottom">
-                        <StackPanel>
-                            <ToggleSwitch
-                                Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}"
-                                OffContent="Disabled instant search"
-                                OnContent="Enabled instant search" />
-                            <Slider
-                                Margin="0,4"
-                                Header="Delay before search (ms)"
-                                Maximum="3000"
-                                Minimum="250"
-                                TickFrequency="50"
-                                Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
-                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
-                            <Slider
-                                Margin="0,4"
-                                Header="Maximum preview search result"
-                                Maximum="100"
-                                Minimum="5"
-                                TickFrequency="1"
-                                Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
-                        </StackPanel>
-                    </Flyout>
-                </AppBarButton.ContextFlyout>
-            </AppBarButton>
         </Grid>
 
 
@@ -207,9 +116,7 @@
             Grid.Column="1">
             <Grid.Resources>
                 <Storyboard x:Name="BorderFadeInStoryboard">
-                    <DoubleAnimationUsingKeyFrames
-                        Storyboard.TargetName="BorderCopiedMessage"
-                        Storyboard.TargetProperty="Opacity">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity">
                         <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                         <LinearDoubleKeyFrame KeyTime="0:0:0.6" Value="1" />
                         <LinearDoubleKeyFrame KeyTime="0:0:1.6" Value="1" />
@@ -243,7 +150,7 @@
                         x:Name="OptionsPanel"
                         Orientation="Horizontal"
                         Spacing="24">
-                        
+
                         <ComboBox
                             x:Name="WeightSelector"
                             x:Uid="WeightSelector"
@@ -519,6 +426,7 @@
                     Grid.Row="1"
                     Grid.Column="0"
                     Padding="10"
+                    ContainerContentChanging="CharGrid_ContainerContentChanging"
                     IsItemClickEnabled="False"
                     ItemsSource="{Binding Chars, Mode=OneWay}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
@@ -528,23 +436,11 @@
                         <TransitionCollection />
                     </GridView.ItemContainerTransitions>
                     <GridView.ItemTemplate>
-                        <DataTemplate x:DataType="core:Character">
+                        <DataTemplate>
+                            <!--  For performance reasons, all bindings are done in C#  -->
                             <Grid Padding="4" Style="{StaticResource CharItemGridStyle}">
-                                <TextBlock
-                                    Padding="0,0,0,8"
-                                    FontFamily="{Binding ElementName=CharGrid, Path=DataContext.FontFamily}"
-                                    FontStretch="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Stretch}"
-                                    FontStyle="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Style}"
-                                    FontWeight="{Binding ElementName=WeightSelector, Path=SelectedItem.FontFace.Weight}"
-                                    IsColorFontEnabled="{Binding ElementName=CharGrid, Path=DataContext.ShowColorGlyphs}"
-                                    Style="{StaticResource CharItemCharStyle}"
-                                    Text="{x:Bind Char}">
-                                    <i:Interaction.Behaviors>
-                                        <core:TypographyBehavior TypographyFeature="{Binding ElementName=CharGrid, Path=DataContext.SelectedTypography}" />
-                                    </i:Interaction.Behaviors>
-                                </TextBlock>
-
-                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{x:Bind UnicodeString}" />
+                                <TextBlock Padding="0,0,0,8" Style="{StaticResource CharItemCharStyle}" />
+                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
@@ -576,55 +472,62 @@
                     Grid.RowSpan="2"
                     Grid.Column="2"
                     SizeChanged="PreviewGrid_SizeChanged">
+                    <Grid.ChildrenTransitions>
+                        <RepositionThemeTransition IsStaggeringEnabled="False" />
+                    </Grid.ChildrenTransitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <Viewbox
-                        MinHeight="200"
-                        Margin="30"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        Stretch="Uniform"
-                        StretchDirection="Both">
-                        <TextBlock
-                            x:Name="TxtPreview"
-                            FontFamily="{Binding FontFamily}"
-                            FontStretch="{Binding SelectedVariant.FontFace.Stretch}"
-                            FontStyle="{Binding SelectedVariant.FontFace.Style}"
-                            FontWeight="{Binding SelectedVariant.FontFace.Weight}"
-                            IsColorFontEnabled="{Binding ShowColorGlyphs}"
-                            Text="{Binding SelectedChar.Char}"
-                            TextAlignment="Center">
-                            <i:Interaction.Behaviors>
-                                <core:TypographyBehavior TypographyFeature="{Binding SelectedTypography}" />
-                            </i:Interaction.Behaviors>
-                        </TextBlock>
-                    </Viewbox>
-
-                    <Border
-                        x:Name="BorderCopiedMessage"
-                        Grid.Row="0"
-                        Margin="15"
-                        Padding="12"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Bottom"
-                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                        Opacity="0">
-                        <StackPanel Orientation="Horizontal">
-                            <FontIcon
-                                FontSize="21"
-                                Foreground="White"
-                                Glyph="&#xEC61;" />
+                    <Grid>
+                        <Viewbox
+                            MinHeight="200"
+                            Margin="30"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            Stretch="Uniform"
+                            StretchDirection="Both">
                             <TextBlock
-                                x:Name="TxtCopiedMessage"
-                                x:Uid="TxtCopiedMessage"
-                                Margin="8,0,0,0"
-                                Foreground="White"
-                                Text="#TxtCopiedMessage" />
-                        </StackPanel>
-                    </Border>
+                                x:Name="TxtPreview"
+                                FontFamily="{Binding FontFamily}"
+                                FontStretch="{Binding SelectedVariant.FontFace.Stretch}"
+                                FontStyle="{Binding SelectedVariant.FontFace.Style}"
+                                FontWeight="{Binding SelectedVariant.FontFace.Weight}"
+                                IsColorFontEnabled="{Binding ShowColorGlyphs}"
+                                Text="{Binding SelectedChar.Char}"
+                                TextAlignment="Center">
+                                <i:Interaction.Behaviors>
+                                    <core:TypographyBehavior TypographyFeature="{Binding SelectedTypography}" />
+                                </i:Interaction.Behaviors>
+                            </TextBlock>
+                        </Viewbox>
+
+                        <Border
+                            x:Name="BorderCopiedMessage"
+                            Grid.Row="0"
+                            Margin="15"
+                            Padding="12"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                            Opacity="0">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon
+                                    FontSize="21"
+                                    Foreground="White"
+                                    Glyph="&#xEC61;" />
+                                <TextBlock
+                                    x:Name="TxtCopiedMessage"
+                                    x:Uid="TxtCopiedMessage"
+                                    Margin="8,0,0,0"
+                                    Foreground="White"
+                                    Text="#TxtCopiedMessage" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+
 
                     <Grid Grid.Row="1">
                         <Grid.RowDefinitions>
@@ -650,7 +553,7 @@
                             Grid.Row="1"
                             Height="54"
                             BorderThickness="0 1"
-                            Click="BtnCopy_OnClick"
+                            Click="{x:Bind TryCopyInternal}"
                             Style="{ThemeResource TransparentButton}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -830,13 +733,13 @@
                             HorizontalAlignment="Stretch"
                             Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                             Opacity="0.15"
-                            Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}" />
+                            Visibility="{x:Bind ViewModel.Settings.ShowDevUtils, Mode=OneWay}" />
 
 
                         <Grid
                             Grid.Row="6"
                             ColumnSpacing="8"
-                            Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
+                            Visibility="{x:Bind ViewModel.Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -866,7 +769,7 @@
                         <Grid
                             Grid.Row="7"
                             ColumnSpacing="8"
-                            Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
+                            Visibility="{x:Bind ViewModel.Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -896,7 +799,7 @@
                         <Grid
                             Grid.Row="8"
                             ColumnSpacing="8"
-                            Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
+                            Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SymbolIcon), Mode=OneWay, FallbackValue=Collapsed}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -955,11 +858,9 @@
                     <Setter Property="VerticalAlignment" Value="Center" />
                 </Style>
             </Grid.Resources>
-            
-            <TextBlock
-                Margin="12,0"
-                Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant), Mode=OneWay}" />
-            
+
+            <TextBlock Margin="12,0" Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant), Mode=OneWay}" />
+
             <TextBlock
                 Grid.Column="2"
                 Margin="12,0"
@@ -995,6 +896,21 @@
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="HasFontState" />
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="SearchStatesGroup">
+                <VisualState x:Name="InstantSearchState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind ViewModel.Settings.UseInstantSearch, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SearchBox.QueryIcon" Value="{x:Null}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ManualSearchState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind core:Converters.False(ViewModel.Settings.UseInstantSearch), Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

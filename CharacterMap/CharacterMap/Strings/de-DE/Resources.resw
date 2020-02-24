@@ -135,12 +135,6 @@
   <data name="BtnSavePng.Text" xml:space="preserve">
     <value>Als PNG speichern</value>
   </data>
-  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>Nur Symbol-Schriftarten anzeigen</value>
-  </data>
-  <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>Alle Schriftarten</value>
-  </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Kopiert</value>
   </data>

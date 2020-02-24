@@ -366,12 +366,6 @@
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>本應用可替換 Windows 10 系統自帶的 Win32字符映射表。適配高DPI屏幕的設備。</value>
   </data>
-  <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>顯示所有字體</value>
-  </data>
-  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>僅顯示圖標字體</value>
-  </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>已復制</value>
   </data>

@@ -1,4 +1,7 @@
-﻿using System.ComponentModel;
+﻿using CharacterMap.Helpers;
+using GalaSoft.MvvmLight.Messaging;
+using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.Storage;
 
@@ -8,146 +11,106 @@ namespace CharacterMap.Core
     {
         public double PngSize
         {
-            get => ReadSettings(nameof(PngSize), 1024.00d);
-            set
-            {
-                SaveSettings(nameof(PngSize), value);
-                NotifyPropertyChanged();
-            }
-        }
-
-        public bool ShowSymbolFontsOnly
-        {
-            get => ReadSettings(nameof(ShowSymbolFontsOnly), false);
-            set
-            {
-                SaveSettings(nameof(ShowSymbolFontsOnly), value);
-                NotifyPropertyChanged();
-            }
+            get => Read(1024.00d);
+            set => SaveAndNotify(value);
         }
 
         public int LastSelectedCharIndex
         {
-            get => ReadSettings(nameof(LastSelectedCharIndex), 0);
-            set
-            {
-                SaveSettings(nameof(LastSelectedCharIndex), value);
-                NotifyPropertyChanged();
-            }
+            get => Read(0);
+            set => SaveAndNotify(value);
         }
 
         public string LastSelectedFontName
         {
-            get => ReadSettings(nameof(LastSelectedFontName), string.Empty);
-            set
-            {
-                SaveSettings(nameof(LastSelectedFontName), value);
-                NotifyPropertyChanged();
-            }
+            get => Read(string.Empty);
+            set => SaveAndNotify(value);
         }
-
-        public int CharPreviewFontSize => GridSize / 2;
 
         public int GridSize
         {
-            get => ReadSettings(nameof(GridSize), 64);
+            get => Read(96);
             set
             {
-                SaveSettings(nameof(GridSize), value);
-                NotifyPropertyChanged();
-            }
-        }
-
-        public int ImageWidthHeight
-        {
-            get => ReadSettings(nameof(ImageWidthHeight), 960);
-            set
-            {
-                SaveSettings(nameof(ImageWidthHeight), value);
-                NotifyPropertyChanged();
+                SaveAndNotify(value);
+                DebounceGrid();
             }
         }
 
         public bool ShowDevUtils
         {
-            get => ReadSettings(nameof(ShowDevUtils), true);
-            set
-            {
-                SaveSettings(nameof(ShowDevUtils), value);
-                NotifyPropertyChanged();
-            }
+            get => Read(true);
+            set => SaveAndNotify(value);
         }
 
         public bool UseFontForPreview
         {
-            get => ReadSettings(nameof(UseFontForPreview), false);
-            set
-            {
-                SaveSettings(nameof(UseFontForPreview), value);
-                NotifyPropertyChanged();
-            }
+            get => Read(false);
+            set => SaveAndNotify(value);
         }
 
         public bool UseInstantSearch
         {
-            get => ReadSettings(nameof(UseInstantSearch), true);
-            set
-            {
-                SaveSettings(nameof(UseInstantSearch), value);
-                NotifyPropertyChanged();
-            }
+            get => Read(true);
+            set => SaveAndNotify(value);
         }
 
         public int InstantSearchDelay
         {
-            get => ReadSettings(nameof(InstantSearchDelay), 500);
-            set
-            {
-                SaveSettings(nameof(InstantSearchDelay), value);
-                NotifyPropertyChanged();
-            }
+            get => Read(500);
+            set => SaveAndNotify(value);
         }
 
         public int MaxSearchResult
         {
-            get => ReadSettings(nameof(MaxSearchResult), 10);
-            set
-            {
-                SaveSettings(nameof(MaxSearchResult), value);
-                NotifyPropertyChanged();
-            }
+            get => Read(15);
+            set => SaveAndNotify(value);
         }
 
-        public ApplicationDataContainer LocalSettings { get; set; }
+
+
+
+        /* INFRASTRUCTURE */
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private Debouncer _gridDebouncer { get; } = new Debouncer();
+
+        public ApplicationDataContainer LocalSettings { get; }
 
         public AppSettings()
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
         }
 
-        private void SaveSettings(string key, object value)
+        private void SaveAndNotify(object value, [CallerMemberName]string key = null)
         {
             LocalSettings.Values[key] = value;
+            NotifyPropertyChanged(key);
         }
 
-        private T ReadSettings<T>(string key, T defaultValue)
+        private T Read<T>(T defaultValue, [CallerMemberName]string key = null)
         {
-            if (LocalSettings.Values.ContainsKey(key))
-            {
-                return (T)LocalSettings.Values[key];
-            }
-            if (null != defaultValue)
-            {
-                return defaultValue;
-            }
-            return default(T);
-        }
+            if (LocalSettings.Values.TryGetValue(key, out object value))
+                return (T)value;
 
-        public event PropertyChangedEventHandler PropertyChanged;
+            if (defaultValue != null)
+                return defaultValue;
+
+           return default;
+        }
 
         protected void NotifyPropertyChanged([CallerMemberName]string propName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
+
+        private void DebounceGrid()
+        {
+            _gridDebouncer.Debounce(1000, () =>
+            {
+                Messenger.Default.Send(new GridSizeUpdatedMessage());
+            });
         }
     }
 }

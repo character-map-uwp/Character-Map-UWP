@@ -9,6 +9,7 @@
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:CharacterMap"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:services="using:CharacterMap.Services"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
@@ -217,119 +218,29 @@
                 FontWeight="SemiLight"
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
+
             <AutoSuggestBox
                 x:Name="SearchBox"
                 x:Uid="SearchBox"
                 Grid.Column="2"
                 Width="290"
                 VerticalAlignment="Center"
-                GotFocus="SearchBox_GotFocus"
+                GotFocus="{x:Bind FontMap.SearchBox_GotFocus}"
+                ItemTemplate="{StaticResource SearchResultTemplate}"
                 ItemsSource="{x:Bind FontMap.ViewModel.SearchResults, Mode=OneWay}"
                 PlaceholderText="#SearchBox"
-                PreviewKeyDown="SearchBox_PreviewKeyDown"
-                QuerySubmitted="SearchBox_QuerySubmitted"
-                SuggestionChosen="SearchBox_SuggestionChosen"
+                PreviewKeyDown="{x:Bind FontMap.SearchBox_PreviewKeyDown}"
+                QuerySubmitted="{x:Bind FontMap.SearchBox_QuerySubmitted}"
+                SuggestionChosen="{x:Bind FontMap.SearchBox_SuggestionChosen}"
+                Tag="{Binding ElementName=FontMap, Path=ViewModel.FontFamily}"
                 Text="{Binding ElementName=FontMap, Path=ViewModel.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextChanged="{x:Bind FontMap.SearchBox_TextChanged}"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
                 <AutoSuggestBox.QueryIcon>
-                    <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}" />
+                    <SymbolIcon Symbol="Find" />
                 </AutoSuggestBox.QueryIcon>
-                <AutoSuggestBox.ContextFlyout>
-                    <Flyout>
-                        <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
-                                <Setter Property="RequestedTheme" Value="Default" />
-                            </Style>
-                        </Flyout.FlyoutPresenterStyle>
-                        <StackPanel Width="260">
-                            <ToggleSwitch
-                                x:Uid="InstantSearchToggle"
-                                Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
-                            <Slider
-                                Margin="0,4"
-                                Header="Delay before search (ms)"
-                                Maximum="3000"
-                                Minimum="250"
-                                TickFrequency="50"
-                                Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
-                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
-                            <Slider
-                                x:Uid="SearchResultsSlider"
-                                Margin="0,4"
-                                Maximum="100"
-                                Minimum="5"
-                                TickFrequency="1"
-                                Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
-                        </StackPanel>
-                    </Flyout>
-                </AutoSuggestBox.ContextFlyout>
-                <AutoSuggestBox.ItemTemplate>
-                    <DataTemplate x:DataType="services:IGlyphData">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <FontIcon
-                                Margin="4,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                FontFamily="{Binding ElementName=FontMap, Path=ViewModel.FontFamily}"
-                                FontSize="16"
-                                Glyph="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
-                            <TextBlock
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                Text="{x:Bind Description}" />
-                        </Grid>
-                    </DataTemplate>
-                </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
-
-            <AppBarButton
-                x:Name="SearchOptionButton"
-                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
-                Grid.Column="3"
-                Width="45"
-                Height="45"
-                Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}">
-                <Grid>
-                    <FontIcon Glyph="&#xE11A;" />
-                    <FontIcon
-                        Margin="0,3,3,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        FontSize="7"
-                        Glyph="&#xE115;" />
-                </Grid>
-                <AppBarButton.ContextFlyout>
-                    <Flyout Placement="Bottom">
-                        <StackPanel>
-                            <ToggleSwitch
-                                x:Uid="InstantSearchToggle"
-                                Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
-                            <Slider
-                                Margin="0,4"
-                                Header="Delay before search (ms)"
-                                Maximum="3000"
-                                Minimum="250"
-                                TickFrequency="50"
-                                Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
-                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
-                            <Slider
-                                x:Uid="SearchResultsSlider"
-                                Margin="0,4"
-                                Maximum="100"
-                                Minimum="5"
-                                TickFrequency="1"
-                                Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
-                        </StackPanel>
-                    </Flyout>
-                </AppBarButton.ContextFlyout>
-            </AppBarButton>
 
             <AppBarButton
                 x:Name="BtnSettings"
@@ -389,7 +300,6 @@
                 FontSize="13"
                 Opacity="0.7"
                 Style="{StaticResource CaptionTextBlockStyle}"
-                Text=""
                 Visibility="Collapsed" />
 
             <SemanticZoom x:Name="FontsSemanticZoom" Grid.Row="1">
@@ -532,7 +442,10 @@
             </Grid.Resources>
 
             <TextBlock Margin="12,0" Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList), Mode=OneWay}" />
-            <TextBlock Margin="12,0" Grid.Column="1" Text="{x:Bind UpdateCharacterCountLabel(FontMap.ViewModel.SelectedVariant), Mode=OneWay}" />
+            <TextBlock
+                Grid.Column="1"
+                Margin="12,0"
+                Text="{x:Bind UpdateCharacterCountLabel(FontMap.ViewModel.SelectedVariant), Mode=OneWay}" />
 
             <TextBlock
                 Grid.Column="2"
@@ -551,10 +464,9 @@
             Grid.ColumnSpan="2"
             d:IsHidden="True"
             IsPrimaryButtonEnabled="True"
-            PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
-            PrimaryButtonText="OK">
+            PrimaryButtonStyle="{StaticResource ButtonRevealStyle}">
             <ScrollViewer>
-                <StackPanel Margin="0,10,0,0">
+                <StackPanel Margin="0,8,24,0">
                     <Slider
                         x:Name="SldResolution"
                         x:Uid="PngSlider"
@@ -565,8 +477,8 @@
                         StepFrequency="64"
                         TickFrequency="64"
                         TickPlacement="Outside"
-                        Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" />
-                    <TextBlock Margin="0,0,0,20" Text="{Binding ElementName=SldResolution, Path=Value}" />
+                        Value="{x:Bind Settings.PngSize, Mode=TwoWay}" />
+                    <TextBlock Margin="0,0,0,16" Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
 
                     <Slider
                         x:Uid="GridSlider"
@@ -577,25 +489,53 @@
                         StepFrequency="8"
                         TickFrequency="8"
                         TickPlacement="Outside"
-                        Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" />
+                        Value="{x:Bind Settings.GridSize, Mode=TwoWay}" />
+
                     <TextBlock
-                        x:Uid="RestartHeader"
-                        Margin="0,0,0,10"
-                        Foreground="#666"
-                        TextWrapping="Wrap" />
-
-                    <Button
-                        x:Name="BtnRestart"
-                        x:Uid="RestartButton"
-                        Click="BtnRestart_OnClick"
-                        Style="{StaticResource ButtonRevealStyle}" />
-
-                    <TextBlock x:Uid="FontListDisplayHeader" Margin="0,40,0,4" />
+                        x:Uid="FontListDisplayHeader"
+                        Margin="0,28,0,0"
+                        FontWeight="Bold" />
                     <ToggleSwitch
                         x:Uid="FontListDisplayToggle"
                         IsOn="{x:Bind Settings.UseFontForPreview, Mode=TwoWay}"
                         Toggled="FontListDisplayToggleSwitch_Toggled" />
 
+                    <TextBlock
+                        x:Uid="InstantSearchToggleHeader"
+                        Margin="0,28,0,0"
+                        FontWeight="Bold" />
+                    <ToggleSwitch x:Uid="InstantSearchToggle" IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
+
+                    <Grid ColumnSpacing="12" Margin="0 4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <muxc:NumberBox
+                            x:Uid="SearchDelaySelector"
+                            AcceptsExpression="False"
+                            BorderThickness="1"
+                            IsEnabled="{x:Bind Settings.UseInstantSearch, Mode=OneWay}"
+                            LargeChange="50"
+                            Maximum="2000"
+                            Minimum="250"
+                            SmallChange="10"
+                            SpinButtonPlacementMode="Compact"
+                            Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
+
+                        <muxc:NumberBox
+                            x:Uid="SearchResultsSlider"
+                            Grid.Column="1"
+                            AcceptsExpression="False"
+                            LargeChange="10"
+                            Maximum="100"
+                            Minimum="5"
+                            SmallChange="5"
+                            SpinButtonPlacementMode="Compact"
+                            Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
+                    </Grid>
+                    
                     <!--  Reenable after sorting out export UI issues  -->
                     <!--<TextBlock Margin="0 40 0 4" Text="Dev Utilities" />
                     <ToggleSwitch
@@ -605,10 +545,10 @@
 
                     <TextBlock
                         x:Uid="Settings_About"
-                        Margin="0,40,0,10"
+                        Margin="0,28,0,10"
                         FontWeight="Bold"
                         Text="#Settings_About" />
-                    <TextBlock FontSize="14" Text="{Binding AppNameVersion}" />
+                    <TextBlock FontSize="14" Text="{x:Bind ViewModel.AppNameVersion}" />
                     <TextBlock
                         x:Uid="Settings_AboutDescription"
                         FontSize="14"
@@ -697,6 +637,21 @@
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="HasFontsState" />
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="SearchStatesGroup">
+                <VisualState x:Name="InstantSearchState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind Settings.UseInstantSearch, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SearchBox.QueryIcon" Value="{x:Null}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ManualSearchState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind core:Converters.False(Settings.UseInstantSearch), Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

@@ -14,19 +14,16 @@ namespace CharacterMap
         private Lazy<ActivationService> _activationService;
         internal ActivationService ActivationService => _activationService.Value;
 
-        public static AppSettings AppSettings { get; set; }
-
         public static new App Current { get; private set; }
 
         public App()
         {
             this.FocusVisualKind = FocusVisualKind.Reveal;
             this.InitializeComponent();
-            AppSettings = new AppSettings();
+
             this.UnhandledException += OnUnhandledException;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
             Current = this;
-
         }
 
         private void RegisterExceptionHandlingSynchronizationContext()

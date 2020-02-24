@@ -24,20 +24,20 @@ namespace CharacterMap.Views
 {
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
+        public static CoreDispatcher MainDispatcher { get; private set; }
+
         public MainViewModel ViewModel { get; }
 
         public AppSettings Settings { get; }
 
-        private bool _isCtrlKeyPressed;
-
-        public static CoreDispatcher MainDispatcher { get; private set; }
-
         private Debouncer _fontListDebouncer { get; } = new Debouncer();
+        
+        private bool _isCtrlKeyPressed;
 
         public MainPage()
         {
             InitializeComponent();
-            Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
+            Settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
 
             ViewModel = DataContext as MainViewModel;
             NavigationCacheMode = NavigationCacheMode.Enabled;
@@ -85,19 +85,10 @@ namespace CharacterMap.Views
             await DigSettings.ShowAsync();
         }
 
-        private async void BtnRestart_OnClick(object sender, RoutedEventArgs e)
-        {
-            await DoRestartRequest();
-        }
-
-        private async Task DoRestartRequest()
-        {
-            await CoreApplication.RequestRestartAsync(string.Empty);
-        }
-
         private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = false;
+            if (e.Key == VirtualKey.Control) 
+                _isCtrlKeyPressed = false;
         }
 
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -270,27 +261,6 @@ namespace CharacterMap.Views
                 return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
 
             return string.Empty;
-        }
-
-        private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
-        {
-            FontMap.SearchBox_SuggestionChosen(sender, args);
-        }
-
-        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            FontMap.OnSearchBoxGotFocus(SearchBox);
-        }
-
-        private void SearchBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Enter)
-                e.Handled = true;
-        }
-
-        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            FontMap.OnSearchBoxSubmittedQuery(SearchBox);
         }
 
         private void MenuFlyout_Opening(object sender, object e)

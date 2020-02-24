@@ -28,6 +28,8 @@ namespace CharacterMap.ViewModels
 
         public Task InitialLoad { get; }
 
+        public AppSettings Settings { get; }
+
         public IDialogService DialogService { get; }
 
         public RelayCommand CommandToggleFullScreen { get; }
@@ -129,7 +131,7 @@ namespace CharacterMap.ViewModels
                 if (null != _selectedFont)
                 {
                     TitlePrefix = value.Name + " -";
-                    App.AppSettings.LastSelectedFontName = value.Name;
+                    Settings.LastSelectedFontName = value.Name;
                 }
                 else
                     TitlePrefix = string.Empty;
@@ -142,9 +144,11 @@ namespace CharacterMap.ViewModels
 
         #endregion
 
-        public MainViewModel(IDialogService dialogService)
+        public MainViewModel(IDialogService dialogService, AppSettings settings)
         {
             DialogService = dialogService;
+            Settings = settings;
+
             AppNameVersion = Utils.GetAppDescription();
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
             MessengerInstance.Register<ImportMessage>(this, OnFontImportRequest);
@@ -257,7 +261,7 @@ namespace CharacterMap.ViewModels
             try
             {
                 // cache last selected now as setting GroupedFontList can change it.
-                string lastSelected = App.AppSettings.LastSelectedFontName;
+                string lastSelected = Settings.LastSelectedFontName;
 
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
                 GroupedFontList = list.ToObservableCollection();

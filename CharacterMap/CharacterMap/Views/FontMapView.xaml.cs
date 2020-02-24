@@ -3,18 +3,26 @@ using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CommonServiceLocator;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
+using Microsoft.Graphics.Canvas.Text;
+using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Core.Direct;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 
 namespace CharacterMap.Views
 {
@@ -67,23 +75,33 @@ namespace CharacterMap.Views
 
         #endregion
 
-        public AppSettings Settings { get; }
+        private XamlDirect _xamlDirect { get; set; }
 
         public FontMapView()
         {
             InitializeComponent();
             Loading += FontMapView_Loading;
-            Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
-            ViewModel = new FontMapViewModel(ServiceLocator.Current.GetInstance<IDialogService>());
+
+            ViewModel = new FontMapViewModel(
+                ServiceLocator.Current.GetInstance<IDialogService>(), 
+                ResourceHelper.Get<AppSettings>(nameof(AppSettings)));
+
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
+            Messenger.Default.Register<GridSizeUpdatedMessage>(this, _ => UpdateDisplay());
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
         {
+            _xamlDirect = XamlDirect.GetDefault();
+
             if (IsStandalone)
             {
                 ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
+
+                Window.Current.Activate();
             }
         }
 
@@ -100,6 +118,14 @@ namespace CharacterMap.Views
                         CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Default);
                     }
                 });
+            }
+            else if (e.PropertyName == nameof(ViewModel.ShowColorGlyphs))
+            {
+                UpdateColorsFonts(ViewModel.ShowColorGlyphs);
+            }
+            else if (e.PropertyName == nameof(ViewModel.SelectedTypography))
+            {
+                UpdateTypographies(ViewModel.SelectedTypography);
             }
         }
 
@@ -121,18 +147,6 @@ namespace CharacterMap.Views
             }
         }
 
-        public void TryCopy()
-        {
-            if (CharGrid.SelectedItem is Character character &&
-                !TxtSymbolIcon.SelectedText.Any() &&
-                !TxtFontIcon.SelectedText.Any() &&
-                !TxtXamlCode.SelectedText.Any())
-            {
-                Edi.UWP.Helpers.Utils.CopyToClipBoard(character.Char);
-                BorderFadeInStoryboard.Begin();
-            }
-        }
-
         public string UpdateStatusBarLabel(FontVariant variant)
         {
             if (variant == null)
@@ -141,21 +155,53 @@ namespace CharacterMap.Views
             return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
         }
 
-        /* UI Event Handlers */
+        public void TryCopy()
+        {
+            if (CharGrid.SelectedItem is Character character &&
+                !TxtSymbolIcon.SelectedText.Any() &&
+                !TxtFontIcon.SelectedText.Any() &&
+                !TxtXamlCode.SelectedText.Any())
+            {
+                TryCopyInternal();
+            }
+        }
 
-        private void BtnCopy_OnClick(object sender, RoutedEventArgs e)
+        private void TryCopyInternal()
         {
             if (CharGrid.SelectedItem is Character character)
             {
-                var dp = new DataPackage
+                DataPackage dp = new DataPackage
                 {
                     RequestedOperation = DataPackageOperation.Copy,
                 };
                 dp.SetText(character.Char);
+
+                if (!ViewModel.SelectedVariant.IsImported)
+                {
+                    // We can allow users to also copy the glyph with the font metadata included,
+                    // so when they paste into a supported program like Microsoft Word or 
+                    // Adobe Photoshop the correct font is automatically applied to the paste.
+                    // To do so we need to create a RichTextFormat document, and we use the 
+                    // RichEditBox as a proxy to do this (otherwise the syntax is arkane).
+                    // This won't include any Typographic variations unfortunately.
+                    RichEditBox r = new RichEditBox();
+                    ITextCharacterFormat format = r.TextDocument.GetDefaultCharacterFormat();
+                    format.Size = 12;
+                    format.Name = ViewModel.FontFamily.Source;
+                    r.TextDocument.SetDefaultCharacterFormat(format);
+                    r.TextDocument.SetText(TextSetOptions.None, character.Char);
+                    r.TextDocument.GetText(TextGetOptions.FormatRtf, out string doc);
+
+                    dp.SetRtf(doc);
+                    dp.SetHtmlFormat($"<p style=\"font-family:'{ViewModel.FontFamily.Source}'; \">{character.Char}</p>");
+                }
+
                 Clipboard.SetContent(dp);
             }
             BorderFadeInStoryboard.Begin();
         }
+
+        /* UI Event Handlers */
 
         private void BtnSaveAs_OnClick(object sender, RoutedEventArgs e)
         {
@@ -210,31 +256,12 @@ namespace CharacterMap.Views
             }
         }
 
-        internal void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
+        private void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
         {
             if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
-            {
                 searchBox.IsSuggestionListOpen = true;
-            }
             else
-            {
-                if (Utils.IsSystemOnWin10v1809OrNewer)
-                {
-                    if (!searchBox.ContextFlyout.IsOpen && string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
-                    {
-                        searchBox.ContextFlyout.ShowAt(searchBox, new FlyoutShowOptions
-                        {
-                            Placement = FlyoutPlacementMode.BottomEdgeAlignedLeft,
-                            ShowMode = FlyoutShowMode.Transient
-                        });
-                    }
-                }
-
-                if (!string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
-                {
-                    ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay);
-                }
-            }
+                ViewModel.DebounceSearch(ViewModel.SearchQuery, ViewModel.Settings.InstantSearchDelay);
         }
 
         internal void OnSearchBoxSubmittedQuery(AutoSuggestBox searchBox)
@@ -243,7 +270,22 @@ namespace CharacterMap.Views
             // searchBox.IsSuggestionListOpen = true;
             if (!string.IsNullOrWhiteSpace(ViewModel.SearchQuery))
             {
-                ViewModel.DebounceSearch(ViewModel.SearchQuery, Settings.InstantSearchDelay, SearchSource.ManualSubmit);
+                ViewModel.DebounceSearch(ViewModel.SearchQuery, ViewModel.Settings.InstantSearchDelay, SearchSource.ManualSubmit);
+            }
+            else
+            {
+                ViewModel.SearchResults = null;
+            }
+        }
+
+        internal void SearchBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.UserInput
+                && args.CheckCurrent()
+                && string.IsNullOrEmpty(sender.Text)
+                && !ViewModel.Settings.UseInstantSearch)
+            {
+                ViewModel.DebounceSearch(sender.Text, 0, SearchSource.ManualSubmit);
             }
         }
 
@@ -255,20 +297,20 @@ namespace CharacterMap.Views
             }
         }
 
-        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
+        internal void SearchBox_GotFocus(object sender, RoutedEventArgs e)
         {
-            OnSearchBoxGotFocus(SearchBox);
+            OnSearchBoxGotFocus(sender as AutoSuggestBox);
         }
 
-        private void SearchBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
+        public void SearchBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Enter)
+            if (ViewModel.Settings.UseInstantSearch && e.Key == VirtualKey.Enter)
                 e.Handled = true;
         }
 
-        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        internal void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            OnSearchBoxSubmittedQuery(SearchBox);
+            OnSearchBoxSubmittedQuery(sender);
         }
 
         private void MenuFlyout_Opening(object sender, object e)
@@ -290,7 +332,112 @@ namespace CharacterMap.Views
 
             return Visibility.Collapsed;
         }
+
+        private void UpdateDisplay()
+        {
+            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                if (!this.IsLoaded)
+                    return;
+
+                CharGrid.ItemsSource = null;
+                await Task.Yield();
+                CharGrid.SetBinding(GridView.ItemsSourceProperty, new Binding
+                {
+                    Source = ViewModel,
+                    Path = new PropertyPath(nameof(ViewModel.Chars))
+                });
+            });
+        }
+
+        private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (args.InRecycleQueue)
+                return;
+
+            if (args.ItemContainer is GridViewItem item)
+            {
+                Character c = ((Character)args.Item);
+                UpdateContainer(item, c);
+                args.Handled = true;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void UpdateContainer(GridViewItem item, Character c)
+        {
+            XamlBindingHelper.SuspendRendering(item);
+
+            double size = ViewModel.Settings.GridSize;
+            Grid g = (Grid)item.ContentTemplateRoot;
+            IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(g);
+
+            _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Width, size);
+            _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Height, size);
+
+            TextBlock tb = (TextBlock)g.Children[0];
+            IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
+
+            _xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, ViewModel.FontFamily);
+            _xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStretch, (uint)ViewModel.SelectedVariant.FontFace.Stretch);
+            _xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStyle, (uint)ViewModel.SelectedVariant.FontFace.Style);
+            _xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontWeight, ViewModel.SelectedVariant.FontFace.Weight);
+            _xamlDirect.SetBooleanProperty(o, XamlPropertyIndex.TextBlock_IsColorFontEnabled, ViewModel.ShowColorGlyphs);
+            _xamlDirect.SetDoubleProperty(o, XamlPropertyIndex.TextBlock_FontSize, size / 2d);
+
+            UpdateColorFont(tb, o, ViewModel.ShowColorGlyphs);
+            UpdateTypography(o, ViewModel.SelectedTypography);
+
+            _xamlDirect.SetStringProperty(o, XamlPropertyIndex.TextBlock_Text, c.Char);
+            ((TextBlock)g.Children[1]).Text = c.UnicodeString;
+
+            XamlBindingHelper.ResumeRendering(item);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void UpdateColorFont(TextBlock block, IXamlDirectObject xd, bool value)
+        {
+            if (xd != null)
+                _xamlDirect.SetBooleanProperty(xd, XamlPropertyIndex.TextBlock_IsColorFontEnabled, value);
+            else
+                block.IsColorFontEnabled = value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void UpdateTypography(IXamlDirectObject o, TypographyFeatureInfo info)
+        {
+            CanvasTypographyFeatureName f = info == null ? CanvasTypographyFeatureName.None : info.Feature;
+            TypographyBehavior.SetTypography(o, f, _xamlDirect);
+        }
+
+        void UpdateColorsFonts(bool value)
+        {
+            if (ViewModel.IsLoadingCharacters || CharGrid.ItemsSource == null || CharGrid.ItemsPanelRoot == null)
+                return;
+
+            foreach (GridViewItem item in CharGrid.ItemsPanelRoot.Children.Cast<GridViewItem>())
+            {
+                Grid g = (Grid)item.ContentTemplateRoot;
+                TextBlock tb = (TextBlock)g.Children[0];
+                UpdateColorFont(tb, null, value);
+            }
+        }
+
+        void UpdateTypographies(TypographyFeatureInfo info)
+        {
+            if (ViewModel.IsLoadingCharacters || CharGrid.ItemsSource == null || CharGrid.ItemsPanelRoot == null)
+                return;
+
+            foreach (GridViewItem item in CharGrid.ItemsPanelRoot.Children.Cast<GridViewItem>())
+            {
+                Grid g = (Grid)item.ContentTemplateRoot;
+                TextBlock tb = (TextBlock)g.Children[0];
+                IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
+                UpdateTypography(o, info);
+            }
+        }
     }
+
 
     public partial class FontMapView
     {

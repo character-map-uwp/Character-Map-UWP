@@ -141,12 +141,6 @@
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>Ta aplikacja została zaprojektowana by zastąpić domyślną Tablicę znaków dostępną w systemie Windows. Wyróżnia się lepszą obsługą DPI na ekranach wysokiej rozdzielczości.</value>
   </data>
-  <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>Wszystkie czcionki</value>
-  </data>
-  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>Tylko czcionki z symbolami</value>
-  </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Skopiowano</value>
   </data>

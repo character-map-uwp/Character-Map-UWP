@@ -135,12 +135,6 @@
   <data name="BtnSavePng.Text" xml:space="preserve">
     <value>Бэкапить PNG</value>
   </data>
-  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>Показывать только шрифты значков</value>
-  </data>
-  <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>Все шрифты</value>
-  </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Скопирован</value>
   </data>

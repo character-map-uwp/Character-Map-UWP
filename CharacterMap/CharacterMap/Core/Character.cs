@@ -8,6 +8,6 @@
 
         public int UnicodeIndex { get; set; }
 
-        public string UnicodeString => "U+" + UnicodeIndex.ToString("x").ToUpper();
+        public string UnicodeString => "U+" + UnicodeIndex.ToString("x4").ToUpper();
     }
 }

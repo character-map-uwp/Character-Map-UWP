@@ -1,5 +1,4 @@
 ﻿using Microsoft.Graphics.Canvas.Text;
-using Microsoft.UI.Xaml.Core.Direct;
 using Microsoft.Xaml.Interactivity;
 using System;
 using System.Collections.Generic;
@@ -8,13 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
 
 namespace CharacterMap.Core
 {
     public partial class TypographyBehavior : Behavior<TextBlock>
     {
-        private IXamlDirect _xamlDirect { get; set; }
+        private XamlDirect _xamlDirect { get; set; }
 
         public TypographyFeatureInfo TypographyFeature
         {
@@ -55,14 +55,20 @@ namespace CharacterMap.Core
                 return;
 
             if (_xamlDirect == null)
-                _xamlDirect = Utils.GetXamlDirectForWindow(Dispatcher);
+                _xamlDirect = XamlDirect.GetDefault();
 
-            /* Assign shorthands for use below */
+            /* Get args */
             CanvasTypographyFeatureName f = TypographyFeature == null ? CanvasTypographyFeatureName.None : TypographyFeature.Feature;
             TextBlock t = AssociatedObject;
+            IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(t);
 
+            // Update typography
+            SetTypography(o, f, _xamlDirect);
+        }
+
+        public static void SetTypography(IXamlDirectObject o, CanvasTypographyFeatureName f, XamlDirect _xamlDirect)
+        {
             /* XAML Direct Helpers. Using XD is faster than setting Dependency Properties */
-            object o = _xamlDirect.GetXamlDirectObject(t);
             void Set(XamlPropertyIndex index, bool value)
             {
                 _xamlDirect.SetBooleanProperty(o, index, value);
@@ -75,7 +81,6 @@ namespace CharacterMap.Core
             {
                 _xamlDirect.SetInt32Property(o, index, val ? 1 : 0);
             }
-
 
             /* TODO : ADD EASTASIAN TYPOGRAPY PROPERTIES */
 

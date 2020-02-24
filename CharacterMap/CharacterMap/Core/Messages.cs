@@ -19,4 +19,8 @@ namespace CharacterMap.Core
     public class CollectionsUpdatedMessage
     {
     }
+
+    public class GridSizeUpdatedMessage
+    {
+    }
 }

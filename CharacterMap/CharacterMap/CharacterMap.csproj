@@ -132,9 +132,6 @@
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.3.200213001</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.UI.Xaml.Core.Direct">
-      <Version>2.0.190315001-prerelease</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
     </PackageReference>
@@ -206,6 +203,7 @@
     <Compile Include="Core\Utils.cs" />
     <Compile Include="Helpers\Sqlite.cs" />
     <Compile Include="Helpers\TitleBarHelper.cs" />
+    <Compile Include="Provider\SearchTarget.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
     <Compile Include="Services\ActivationService.cs" />
@@ -215,6 +213,9 @@
     <Compile Include="Services\ToastNotificationsService.cs" />
     <Compile Include="Services\ViewLifetimeManager.cs" />
     <Compile Include="Services\WindowService.cs" />
+    <Compile Include="Styles\ItemTemplates.xaml.cs">
+      <DependentUpon>ItemTemplates.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Views\FontMapView.xaml.cs">
       <DependentUpon>FontMapView.xaml</DependentUpon>
@@ -242,6 +243,12 @@
     <Content Include="Assets\BadgeLogo.scale-150.png" />
     <Content Include="Assets\BadgeLogo.scale-200.png" />
     <Content Include="Assets\BadgeLogo.scale-400.png" />
+    <Content Include="Assets\Data\icofont.txt" />
+    <Content Include="Assets\Data\materialdesignicons.txt" />
+    <Content Include="Assets\Data\Webdings.txt" />
+    <Content Include="Assets\Data\Wingdings.txt" />
+    <Content Include="Assets\Data\Wingdings2.txt" />
+    <Content Include="Assets\Data\Wingdings3.txt" />
     <Content Include="Assets\new-character-map-uwp-logo.png" />
     <Content Include="Assets\NewStoreLogo.scale-100.png" />
     <Content Include="Assets\NewStoreLogo.scale-125.png" />
@@ -326,6 +333,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\ContentDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ItemTemplates.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -232,7 +232,8 @@ namespace CharacterMap.Core
             FontVariant selectedVariant,
             Character selectedChar,
             CanvasTextLayoutAnalysis analysis,
-            CanvasTypography typography)
+            CanvasTypography typography,
+            AppSettings settings)
         {
             try
             {
@@ -251,16 +252,16 @@ namespace CharacterMap.Core
                         var device = Utils.CanvasDevice;
                         var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
-                        var canvasH = (float)App.AppSettings.PngSize;
-                        var canvasW = (float)App.AppSettings.PngSize;
+                        var canvasH = (float)settings.PngSize;
+                        var canvasW = (float)settings.PngSize;
 
                         var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
 
                         using (var ds = renderTarget.CreateDrawingSession())
                         {
                             ds.Clear(Colors.Transparent);
-                            var d = App.AppSettings.PngSize;
-                            var r = App.AppSettings.PngSize / 2;
+                            var d = settings.PngSize;
+                            var r = settings.PngSize / 2;
 
                             var textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
                             var fontSize = (float)d;

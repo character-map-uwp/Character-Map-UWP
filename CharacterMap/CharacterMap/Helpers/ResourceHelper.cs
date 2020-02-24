@@ -18,6 +18,14 @@ namespace CharacterMap.Helpers
             return false;
         }
 
+        public static T Get<T>(string resourceKey)
+        {
+            if (TryGetInternal(Application.Current.Resources, resourceKey, out T value))
+                return value;
+
+            return default;
+        }
+
         static bool TryGetInternal<T>(ResourceDictionary dictionary, string key, out T v)
         {
             if (dictionary.TryGetValue(key, out object r) && r is T c)
