@@ -23,4 +23,22 @@ namespace CharacterMap.Core
     public class GridSizeUpdatedMessage
     {
     }
+
+    public class FontPreviewUpdatedMessage
+    {
+    }
+
+    public class AppNotificationMessage
+    {
+        public AppNotificationMessage(bool local, object data, int durationMs = 0)
+        {
+            Local = local;
+            Data = data;
+            DurationInMilliseconds = durationMs;
+        }
+
+        public bool Local { get; }
+        public object Data { get; }
+        public int DurationInMilliseconds { get; }
+    }
 }

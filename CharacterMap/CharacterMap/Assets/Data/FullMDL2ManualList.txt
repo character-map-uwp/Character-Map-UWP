@@ -1,186 +1,186 @@
-SolidStar(Private):E00A
-SolidStar(Private):E082
-SolidStar(Private):E0B4
-SolidStar(Private):E0B5
-SolidStar(Private):E113
-Accept(Private):E081
-Accept(Private):E0E7
-ChevronLeft(Private):E00E
-ChevronLeft(Private):E012
-ChevronLeft(Private):E016
-ChevronLeft(Private):E096
-ChevronLeft(Private):E09A
-ChevronLeft(Private):E09E
-ChevronLeft(Private):E0E2
-ChevronRight(Private):E00F
-ChevronRight(Private):E013
-ChevronRight(Private):E017
-ChevronRight(Private):E097
-ChevronRight(Private):E09B
-ChevronRight(Private):E09F
-ChevronRight(Private):E0E3
-ChevronDown(Private):E011
-ChevronDown(Private):E015
-ChevronDown(Private):E019
-ChevronDown(Private):E099
-ChevronDown(Private):E09D
-ChevronDown(Private):E0A1
-ChevronDown(Private):E0E5
-ChevronUp(Private):E010
-ChevronUp(Private):E014
-ChevronUp(Private):E018
-ChevronUp(Private):E098
-ChevronUp(Private):E09C
-ChevronUp(Private):E0A0
-ChevronUp(Private):E0E4
-CheckMark(Private):E001
-CheckMark(Private):E008
-HeartFill(Private):E00B
-HeartFill(Private):E0A5
-HeartBroken(Private):E007
-HeartBroken(Private):E00C
-Heart(Private):E006
-View(Private):E052
-Find(Private):E094
-EaseOfAccess(Private):E07F
-Back(Private):E0A6
-Back(Private):E0C4
-Back(Private):E0D5
-Forward(Private):E0AB
-Forward(Private):E0AD
-Forward(Private):E0AE
-KeyboardStandard(Private):E087
-KeyboardSplit(Private):E08F
-CheckboxFill(Private):E002
-CheckboxFill(Private):E009
-CheckboxFill(Private):E25E
-Checkbox(Private):E003
-CheckboxIndeterminate(Private):E004
-CheckboxCompositeReversed(Private):E005
-CheckboxComposite(Private):E0A2
-(Private):E0B8
-Space:0020
-CarriageReturn(Cr):000D
-AllAppsMirrored:EA40
-Camera:E114
-Camcorder:E116
-SecurityAlert:E1DE
-FolderNotSynced:E1DD
-FolderSynced:E1DF
-AddFolder:E1DA
-AutoFlash:E95C
-PhysicalGames:E9A0
-FlashDisabled:EA6E
-DelayedPhoto:EA73
-InfiniteFocus:EA76
-SlowMotionOff:EA7A
-WhiteBalance:EA7B
-Metering:EA7C
-ISO:EA7D
-HdrDisabled:EA7E
-HdrEnabled:EA7F
-16x9:EA77
-4x3:EA78
-Enhance:EA70
-EnhancementDisabled:EA71
-AutoEnhance:EA72
-AskForHelp:EA6B
-Cherries:EAA3
-Grapes:EABE
-ChefsHat:EAC3
-WalkingUpStairs:EAC4
-Apple:EAC9
-SmartWatch:EC5D
-SmartBand:EC5E
-FitnessTracker:EC5F
-Bing:EC6E
-Bull:EC83
-Cow:EC84
-Pig:EC85
-Stopwatch:ECB0
-FitnessProgram:ECB1
-UltraViolet:ECB2
-FacebookLogo:ECB3
-MessengerLogo:ECB4
-TwitterLogo:ECB5
-MMS:ECB6
-AlarmClock:ECB7
-DogFace:ECEA
-GoodBoy:ECEB
-Santa:ED16
-SelectHologram:ED17
-HdrAuto:ED45
-Yoga:ED20
-BoxLogo:ED75
-DropboxLogo:ED77
-AddController:EDEA
-XboxLiveGold:EDEB
-CortanaOnMobile:EDEE
-Touchpad:EDF0
-LoadRing1:EDF1
-LoadRing2:EDF2
-LoadRing3:EDF3
-LoadRing4:EDF4
-LoadRing5:EDF5
-LoadRing6:EDF6
-LoadRing7:EDF7
-LoadRing8:EDF8
-LoadRing9:EDF9
-FavoriteHologram:EE08
-RotateHologram:EE09
-GoogleDriveLogo:EE0B
-GamerscoreLogo:EE0D
-FinancialCalculator:EE16
-HologramSettings:EE3B
-XboxLiveGold:EE91
-Boot:EED9
-Guitar:EEDA
-FlyingGuitar:EED8
-Keyboard:EEDC
-Equalizer:EEDD
-Microphone:EEDE
-RecordingCassette:EEDF
-CowboyBoot:EEE3
-Trumpet:EEE5
-Robot:EEE8
-VictoryLion:EEEA
-Globe:EEEB
-Summer:EF09
-Spring:EF0A
-Autumn:EF0B
-Winter:EF0C
-Basketball:EF0E
-DroidLogo:EF8B
-WindowsUpdateCheckForUpdates:F0C5
-WalletPaymentCard:F10F
-HeightMap:F120
-HeadMountedHololens:F132
-DNA:F194
-Microscope:F195
-Beaker:F196
-TestTubes:F197
-Atoms:F197
-MediumLogo:F1A1
-GamePassLogo:F1DC
-GamePassLogo:F1DD
-SkypeLogoFull:F1E2
-ZuneFlame:F1F3
-XboxIconLogo:F20B
-UserMusic:F32B
-LeftClick:F379
-RightClick:F37A
-DoubleClick:F37B
-OrganizationChart:F3C5
-WindowsLogo:F3FF
-NugetLogo:F44C
-Snowflakes:F54F
-SettingsToggle:F56C
-MouseGestures:F686
-SimpleGamepad:F6C5
-Visa:F703
-VisaBottom:F702
-MastercardIconCircleLeft:F706
-MastercardIconCircleLeft:F705
-MastercardLogo:F707
-AmericanExpressLogoBackPlate:F708
-AmericanExpressLogo:F709
+E00A SolidStar(Private)
+E082 SolidStar(Private)
+E0B4 SolidStar(Private)
+E0B5 SolidStar(Private)
+E113 SolidStar(Private)
+E081 Accept(Private)
+E0E7 Accept(Private)
+E00E ChevronLeft(Private)
+E012 ChevronLeft(Private)
+E016 ChevronLeft(Private)
+E096 ChevronLeft(Private)
+E09A ChevronLeft(Private)
+E09E ChevronLeft(Private)
+E0E2 ChevronLeft(Private)
+E00F ChevronRight(Private)
+E013 ChevronRight(Private)
+E017 ChevronRight(Private)
+E097 ChevronRight(Private)
+E09B ChevronRight(Private)
+E09F ChevronRight(Private)
+E0E3 ChevronRight(Private)
+E011 ChevronDown(Private)
+E015 ChevronDown(Private)
+E019 ChevronDown(Private)
+E099 ChevronDown(Private)
+E09D ChevronDown(Private)
+E0A1 ChevronDown(Private)
+E0E5 ChevronDown(Private)
+E010 ChevronUp(Private)
+E014 ChevronUp(Private)
+E018 ChevronUp(Private)
+E098 ChevronUp(Private)
+E09C ChevronUp(Private)
+E0A0 ChevronUp(Private)
+E0E4 ChevronUp(Private)
+E001 CheckMark(Private)
+E008 CheckMark(Private)
+E00B HeartFill(Private)
+E0A5 HeartFill(Private)
+E007 HeartBroken(Private)
+E00C HeartBroken(Private)
+E006 Heart(Private)
+E052 View(Private)
+E094 Find(Private)
+E07F EaseOfAccess(Private)
+E0A6 Back(Private)
+E0C4 Back(Private)
+E0D5 Back(Private)
+E0AB Forward(Private)
+E0AD Forward(Private)
+E0AE Forward(Private)
+E087 KeyboardStandard(Private)
+E08F KeyboardSplit(Private)
+E002 CheckboxFill(Private)
+E009 CheckboxFill(Private)
+E25E CheckboxFill(Private)
+E003 Checkbox(Private)
+E004 CheckboxIndeterminate(Private)
+E005 CheckboxCompositeReversed(Private)
+E0A2 CheckboxComposite(Private)
+E0B8 (Private)
+0020 Space
+000D CarriageReturn(Cr)
+EA40 AllAppsMirrored
+E114 Camera
+E116 Camcorder
+E1DE SecurityAlert
+E1DD FolderNotSynced
+E1DF FolderSynced
+E1DA AddFolder
+E95C AutoFlash
+E9A0 PhysicalGames
+EA6E FlashDisabled
+EA73 DelayedPhoto
+EA76 InfiniteFocus
+EA7A SlowMotionOff
+EA7B WhiteBalance
+EA7C Metering
+EA7D ISO
+EA7E HdrDisabled
+EA7F HdrEnabled
+EA77 16x9
+EA78 4x3
+EA70 Enhance
+EA71 EnhancementDisabled
+EA72 AutoEnhance
+EA6B AskForHelp
+EAA3 Cherries
+EABE Grapes
+EAC3 ChefsHat
+EAC4 WalkingUpStairs
+EAC9 Apple
+EC5D SmartWatch
+EC5E SmartBand
+EC5F FitnessTracker
+EC6E Bing
+EC83 Bull
+EC84 Cow
+EC85 Pig
+ECB0 Stopwatch
+ECB1 FitnessProgram
+ECB2 UltraViolet
+ECB3 FacebookLogo
+ECB4 MessengerLogo
+ECB5 TwitterLogo
+ECB6 MMS
+ECB7 AlarmClock
+ECEA DogFace
+ECEB GoodBoy
+ED16 Santa
+ED17 SelectHologram
+ED45 HdrAuto
+ED20 Yoga
+ED75 BoxLogo
+ED77 DropboxLogo
+EDEA AddController
+EDEB XboxLiveGold
+EDEE CortanaOnMobile
+EDF0 Touchpad
+EDF1 LoadRing1
+EDF2 LoadRing2
+EDF3 LoadRing3
+EDF4 LoadRing4
+EDF5 LoadRing5
+EDF6 LoadRing6
+EDF7 LoadRing7
+EDF8 LoadRing8
+EDF9 LoadRing9
+EE08 FavoriteHologram
+EE09 RotateHologram
+EE0B GoogleDriveLogo
+EE0D GamerscoreLogo
+EE16 FinancialCalculator
+EE3B HologramSettings
+EE91 XboxLiveGold
+EED9 Boot
+EEDA Guitar
+EED8 FlyingGuitar
+EEDC Keyboard
+EEDD Equalizer
+EEDE Microphone
+EEDF RecordingCassette
+EEE3 CowboyBoot
+EEE5 Trumpet
+EEE8 Robot
+EEEA VictoryLion
+EEEB Globe
+EF09 Summer
+EF0A Spring
+EF0B Autumn
+EF0C Winter
+EF0E Basketball
+EF8B DroidLogo
+F0C5 WindowsUpdateCheckForUpdates
+F10F WalletPaymentCard
+F120 HeightMap
+F132 HeadMountedHololens
+F194 DNA
+F195 Microscope
+F196 Beaker
+F197 TestTubes
+F197 Atoms
+F1A1 MediumLogo
+F1DC GamePassLogo
+F1DD GamePassLogo
+F1E2 SkypeLogoFull
+F1F3 ZuneFlame
+F20B XboxIconLogo
+F32B UserMusic
+F379 LeftClick
+F37A RightClick
+F37B DoubleClick
+F3C5 OrganizationChart
+F3FF WindowsLogo
+F44C NugetLogo
+F54F Snowflakes
+F56C SettingsToggle
+F686 MouseGestures
+F6C5 SimpleGamepad
+F703 Visa
+F702 VisaBottom
+F706 MastercardIconCircleLeft
+F705 MastercardIconCircleLeft
+F707 MastercardLogo
+F708 AmericanExpressLogoBackPlate
+F709 AmericanExpressLogo

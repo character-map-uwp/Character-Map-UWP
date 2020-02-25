@@ -9,12 +9,13 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
     SecondaryButtonClick="{x:Bind Hide}"
+    CornerRadius="4"
     SecondaryButtonStyle="{StaticResource ButtonRevealStyle}"
     mc:Ignorable="d">
 
     <TextBox
+        x:Name="InputBox"
         x:Uid="CreateCollectionEntryBox"
-        Margin="-14,0"
         DataContext="{x:Bind TemplateSettings}"
         Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 

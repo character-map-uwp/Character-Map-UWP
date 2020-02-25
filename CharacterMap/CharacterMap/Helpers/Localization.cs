@@ -12,11 +12,11 @@ namespace CharacterMap.Helpers
     /// </summary>
     public static class Localization
     {
-        static ResourceLoader Resources { get; }
+        static ResourceLoader _resources { get; }
 
         static Localization()
         {
-            Resources = ResourceLoader.GetForViewIndependentUse();
+            _resources = ResourceLoader.GetForViewIndependentUse();
         }
 
         /// <summary>
@@ -26,12 +26,12 @@ namespace CharacterMap.Helpers
         /// <returns>Resource value</returns>
         public static string Get(string key)
         {
-            return Resources.GetString(key);
+            return _resources.GetString(key);
         }
 
         public static string Get(string key, params object[] args)
         {
-            return string.Format(Resources.GetString(key), args);
+            return string.Format(_resources.GetString(key), args);
         }
     }
 }

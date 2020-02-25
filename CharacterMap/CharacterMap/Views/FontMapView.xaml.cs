@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
@@ -48,7 +49,6 @@ namespace CharacterMap.Views
         #endregion
 
         #region IsStandalone
-
         public bool IsStandalone
         {
             get => (bool)GetValue(IsStandaloneProperty);
@@ -81,6 +81,8 @@ namespace CharacterMap.Views
         {
             InitializeComponent();
             Loading += FontMapView_Loading;
+            Loaded += FontMapView_Loaded;
+            Unloaded += FontMapView_Unloaded;
 
             ViewModel = new FontMapViewModel(
                 ServiceLocator.Current.GetInstance<IDialogService>(), 
@@ -89,7 +91,16 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
+        }
+
+        private void FontMapView_Loaded(object sender, RoutedEventArgs e)
+        {
             Messenger.Default.Register<GridSizeUpdatedMessage>(this, _ => UpdateDisplay());
+            Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
+        }
+        private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Messenger.Default.Unregister(this);
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -126,6 +137,14 @@ namespace CharacterMap.Views
             else if (e.PropertyName == nameof(ViewModel.SelectedTypography))
             {
                 UpdateTypographies(ViewModel.SelectedTypography);
+            }
+            else if (e.PropertyName == nameof(ViewModel.SelectedChar))
+            {
+                if (_xamlDirect == null)
+                    return;
+
+                IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
+                UpdateTypography(p, ViewModel.SelectedTypography);
             }
         }
 
@@ -313,6 +332,17 @@ namespace CharacterMap.Views
             OnSearchBoxSubmittedQuery(sender);
         }
 
+        private void InfoFlyout_Opened(object sender, object e)
+        {
+            if (sender is Flyout f)
+            {
+#pragma warning disable CS0618 // Type or member is obsolete
+                if (f.Content.GetFirstAncestorOfType<ScrollViewer>() is ScrollViewer sv)
+                    sv.ScrollToVerticalOffset(0);
+#pragma warning restore CS0618
+            }
+        }
+
         private void MenuFlyout_Opening(object sender, object e)
         {
             if (sender is MenuFlyout menu && ViewModel.SelectedFont is InstalledFont font)
@@ -320,8 +350,7 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     menu,
                     font,
-                    IsStandalone,
-                    DlgCreateCollection);
+                    IsStandalone);
             }
         }
 
@@ -332,6 +361,58 @@ namespace CharacterMap.Views
 
             return Visibility.Collapsed;
         }
+
+        public FrameworkElement CreateExportNotification(ExportResult result)
+        {
+            return ResourceHelper.InflateDataTemplate("ExportNotificationTemplate", result);
+        }
+
+
+
+        void OnNotificationMessage(AppNotificationMessage msg)
+        {
+            if (Dispatcher.HasThreadAccess && !this.IsStandalone)
+                return;
+
+            if (msg.Local && !Dispatcher.HasThreadAccess)
+                return;
+
+            if (msg.Data is ExportResult result)
+            {
+                if (!result.Success)
+                    return;
+
+                ShowNotification(CreateExportNotification(result), 5000);
+            }
+            else if (msg.Data is AddToCollectionResult added)
+            {
+                if (!added.Success)
+                    return;
+
+                var content = ResourceHelper.InflateDataTemplate("AddedToCollectionNotificationTemplate", added);
+                ShowNotification(content, 5000);
+            }
+            else if (msg.Data is string s)
+            {
+                ShowNotification(s, msg.DurationInMilliseconds > 0 ? msg.DurationInMilliseconds : 4000);
+            }
+        }
+
+        void ShowNotification(object o, int durationMs)
+        {
+            // NotificationRoot has x:Load set to false,
+            // we need to ensure it gets realised;
+            if (NotificationRoot == null)
+                this.FindName(nameof(NotificationRoot));
+
+            if (o is string s)
+                DefaultNotification.Show(s, durationMs);
+            else if (o is UIElement e)
+                DefaultNotification.Show(e, durationMs);
+        }
+
+
+        /* Character Grid Binding Helpers */
 
         private void UpdateDisplay()
         {
@@ -428,6 +509,9 @@ namespace CharacterMap.Views
             if (ViewModel.IsLoadingCharacters || CharGrid.ItemsSource == null || CharGrid.ItemsPanelRoot == null)
                 return;
 
+            IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
+            UpdateTypography(p, info);
+
             foreach (GridViewItem item in CharGrid.ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
                 Grid g = (Grid)item.ContentTemplateRoot;
@@ -435,6 +519,14 @@ namespace CharacterMap.Views
                 IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
                 UpdateTypography(o, info);
             }
+        }
+
+        private async void DetailsGrid_Loaded(object sender, RoutedEventArgs e)
+        {
+            // This avoids strange animation on secondary window
+            await Task.Delay(500);
+            if (this.IsLoaded)
+                Animation.SetStandardReposition(sender, e);
         }
     }
 

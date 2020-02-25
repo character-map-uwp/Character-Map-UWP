@@ -11,60 +11,64 @@ namespace CharacterMap.Core
     {
         public double PngSize
         {
-            get => Read(1024.00d);
-            set => SaveAndNotify(value);
+            get => Get(1024.00d);
+            set => Set(value);
         }
 
         public int LastSelectedCharIndex
         {
-            get => Read(0);
-            set => SaveAndNotify(value);
+            get => Get(0);
+            set => Set(value);
         }
 
         public string LastSelectedFontName
         {
-            get => Read(string.Empty);
-            set => SaveAndNotify(value);
+            get => Get(string.Empty);
+            set => Set(value);
         }
 
         public int GridSize
         {
-            get => Read(96);
+            get => Get(96);
             set
             {
-                SaveAndNotify(value);
-                DebounceGrid();
+                if (Set(value))
+                    DebounceGrid();
+            }
+        }
+
+        public bool UseFontForPreview
+        {
+            get => Get(false);
+            set
+            {
+                if (Set(value))
+                    Messenger.Default.Send(new FontPreviewUpdatedMessage());
             }
         }
 
         public bool ShowDevUtils
         {
-            get => Read(true);
-            set => SaveAndNotify(value);
-        }
-
-        public bool UseFontForPreview
-        {
-            get => Read(false);
-            set => SaveAndNotify(value);
+            get => Get(true);
+            set => Set(value);
         }
 
         public bool UseInstantSearch
         {
-            get => Read(true);
-            set => SaveAndNotify(value);
+            get => Get(true);
+            set => Set(value);
         }
 
         public int InstantSearchDelay
         {
-            get => Read(500);
-            set => SaveAndNotify(value);
+            get => Get(500);
+            set => Set(value);
         }
 
         public int MaxSearchResult
         {
-            get => Read(15);
-            set => SaveAndNotify(value);
+            get => Get(15);
+            set => Set(value);
         }
 
 
@@ -83,13 +87,17 @@ namespace CharacterMap.Core
             LocalSettings = ApplicationData.Current.LocalSettings;
         }
 
-        private void SaveAndNotify(object value, [CallerMemberName]string key = null)
+        private bool Set(object value, [CallerMemberName]string key = null)
         {
+            if (LocalSettings.Values.TryGetValue(key, out object t) && t.Equals(value))
+                return false;
+
             LocalSettings.Values[key] = value;
             NotifyPropertyChanged(key);
+            return true;
         }
 
-        private T Read<T>(T defaultValue, [CallerMemberName]string key = null)
+        private T Get<T>(T defaultValue, [CallerMemberName]string key = null)
         {
             if (LocalSettings.Values.TryGetValue(key, out object value))
                 return (T)value;

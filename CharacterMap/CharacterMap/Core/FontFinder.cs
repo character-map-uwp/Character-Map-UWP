@@ -166,7 +166,7 @@ namespace CharacterMap.Core
                 if (!string.IsNullOrEmpty(familyName))
                 {
                     /* Check if we already have a listing for this fontFamily */
-                    if (fontList.TryGetValue(familyName, out var fontFamily))
+                    if (fontList.TryGetValue(familyName, out InstalledFont fontFamily))
                     {
                         var variant = new FontVariant(font.FontFace, file, font.Properties);
                         if (file != null)
@@ -353,6 +353,7 @@ namespace CharacterMap.Core
             {
                 /* If we fail to delete a font at runtime, delete it now before we load anything */
                 var path = Path.Combine(ApplicationData.Current.LocalCacheFolder.Path, PENDING);
+                var fontPath = ApplicationData.Current.LocalFolder.Path;
                 if (File.Exists(path) && await TryGetFileAsync(path).ConfigureAwait(false) is StorageFile file)
                 {
                     var lines = await FileIO.ReadLinesAsync(file).AsTask().ConfigureAwait(false);
@@ -360,7 +361,7 @@ namespace CharacterMap.Core
                     var moreFails = new List<string>();
                     foreach (var line in lines)
                     {
-                        if (await TryGetFileAsync(line).ConfigureAwait(false) is StorageFile deleteFile)
+                        if (await TryGetFileAsync(Path.Combine(fontPath, line)).ConfigureAwait(false) is StorageFile deleteFile)
                         {
                             try
                             {

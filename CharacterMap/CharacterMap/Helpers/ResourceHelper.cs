@@ -43,6 +43,15 @@ namespace CharacterMap.Helpers
             v = default;
             return false;
         }
+
+        public static FrameworkElement InflateDataTemplate(string dataTemplateKey, object dataContext)
+        {
+            DataTemplate template = Get<DataTemplate>(dataTemplateKey);
+            ElementFactoryGetArgs args = new ElementFactoryGetArgs { Data = dataContext };
+            FrameworkElement content = (FrameworkElement)template.GetElement(args);
+            content.DataContext = dataContext;
+            return content;
+        }
     }
 
 }

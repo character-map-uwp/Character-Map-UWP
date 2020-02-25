@@ -23,6 +23,8 @@ namespace CharacterMap.ViewModels
 {
     public class FontMapViewModel : ViewModelBase
     {
+        #region Properties
+
         private Interop _interop { get; }
 
         private Debouncer _searchDebouncer { get; }
@@ -229,6 +231,8 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        #endregion
+
         public FontMapViewModel(IDialogService dialogService, AppSettings settings)
         {
             DialogService = dialogService;
@@ -326,10 +330,6 @@ namespace CharacterMap.ViewModels
             }
 
             IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
-            if (SelectedVariant != null && SelectedVariant.FamilyName.Contains("MDL2 Assets"))
-            {
-                TitlePrefix = GlyphService.GetCharacterDescription(SelectedChar.UnicodeIndex, SelectedVariant);
-            }
         }
 
         private CanvasTypography GetEffectiveTypography()
@@ -419,9 +419,9 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private Task SavePngAsync(ExportStyle style)
+        private async Task SavePngAsync(ExportStyle style)
         {
-            return ExportManager.ExportPngAsync(
+            ExportResult result = await ExportManager.ExportPngAsync(
                 style,
                 SelectedFont,
                 SelectedVariant,
@@ -429,17 +429,23 @@ namespace CharacterMap.ViewModels
                 SelectedCharAnalysis,
                 GetEffectiveTypography(),
                 Settings);
+
+            if (result.Success)
+                MessengerInstance.Send(new AppNotificationMessage(true, result));
         }
 
-        private Task SaveSvgAsync(bool isBlackText)
+        private async Task SaveSvgAsync(bool isBlackText)
         {
-            return ExportManager.ExportSvgAsync(
+            ExportResult result = await ExportManager.ExportSvgAsync(
                 isBlackText ? ExportStyle.Black : ExportStyle.White,
                 SelectedFont,
                 SelectedVariant,
                 SelectedChar,
                 SelectedCharAnalysis,
                 GetEffectiveTypography());
+
+            if (result.Success)
+                MessengerInstance.Send(new AppNotificationMessage(true, result));
         }
 
         public async Task<bool> LoadFromFileArgsAsync(FileActivatedEventArgs args)

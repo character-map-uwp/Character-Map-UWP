@@ -12,60 +12,8 @@ using Windows.UI.Xaml.Documents;
 
 namespace CharacterMap.Core
 {
-    public partial class TypographyBehavior : Behavior<TextBlock>
+    public partial class TypographyBehavior
     {
-        private XamlDirect _xamlDirect { get; set; }
-
-        public TypographyFeatureInfo TypographyFeature
-        {
-            get => (TypographyFeatureInfo)GetValue(TypographyFeatureProperty);
-            set => SetValue(TypographyFeatureProperty, value);
-        }
-
-        public static readonly DependencyProperty TypographyFeatureProperty =
-            DependencyProperty.Register(nameof(TypographyFeature), typeof(TypographyFeatureInfo), typeof(TypographyBehavior), new PropertyMetadata(null, (d,e) =>
-            {
-                ((TypographyBehavior)d).ApplyTypography();
-            }));
-
-        public TypographyBehavior()
-        {
-        }
-
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            ApplyTypography();
-        }
-
-        private void ApplyTypography()
-        {
-            /*
-             * Here we shall map DirectWrite / Win2D typography properties to their 
-             * XAML equivalents. Not all properties are supported because not all 
-             * properties map directly. To support them all, we'd have to render all 
-             * the characters in the GridView with Win2D;
-             */
-
-            if (AssociatedObject == null)
-                return;
-
-            // Hack to avoid XAML Direct crash
-            if (_xamlDirect == null && TypographyFeature == null)
-                return;
-
-            if (_xamlDirect == null)
-                _xamlDirect = XamlDirect.GetDefault();
-
-            /* Get args */
-            CanvasTypographyFeatureName f = TypographyFeature == null ? CanvasTypographyFeatureName.None : TypographyFeature.Feature;
-            TextBlock t = AssociatedObject;
-            IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(t);
-
-            // Update typography
-            SetTypography(o, f, _xamlDirect);
-        }
-
         public static void SetTypography(IXamlDirectObject o, CanvasTypographyFeatureName f, XamlDirect _xamlDirect)
         {
             /* XAML Direct Helpers. Using XD is faster than setting Dependency Properties */

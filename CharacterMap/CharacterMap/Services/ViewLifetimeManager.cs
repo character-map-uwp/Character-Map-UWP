@@ -48,7 +48,7 @@ namespace CharacterMap.Services
         // when there's no way for the user to get to it (it's not in the list of recently used apps, cannot be
         // launched from Start, etc.) A view stops being consolidated when it's visible--at that point
         // the user can interact with it, move it on or off screen, etc. 
-        bool consolidated = true;
+        //bool consolidated = true;
 
         // Used to store pubicly registered events under the protection of a lock
         event ViewReleasedHandler InternalReleased;

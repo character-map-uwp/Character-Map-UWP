@@ -2,13 +2,10 @@
     x:Class="CharacterMap.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters="using:Edi.UWP.Helpers.Converters"
     xmlns:converters1="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
-    xmlns:local="using:CharacterMap"
     xmlns:styles="using:CharacterMap.Styles"
-    xmlns:viewModels="using:CharacterMap.ViewModels"
-    xmlns:services="using:CharacterMap.Services">
+    xmlns:viewModels="using:CharacterMap.ViewModels">
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" />
@@ -16,6 +13,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <styles:ItemTemplates />
+                <styles:Controls />
                 <ResourceDictionary>
                     <core:AppSettings x:Key="AppSettings" />
                     <converters1:SmartTextColorBasedOnAccentTypeConverter x:Key="SmartTextColorBasedOnAccentTypeConverter" />
@@ -53,11 +51,9 @@
                     <SolidColorBrush x:Key="GridViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="GridViewItemRevealPlaceholderBackground" Color="Transparent" />
                 </ResourceDictionary>
-                <ResourceDictionary Source="/Styles/TextBlock.xaml" />
-                <ResourceDictionary Source="/Styles/IconButtonStyle.xaml" />
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
                 <ResourceDictionary Source="/Styles/CommandBar.xaml" />
-                <ResourceDictionary Source="/Styles/ContentDialog.xaml" />
+                <ResourceDictionary Source="/Styles/InAppNotification.xaml" />
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/ListView.xaml" />
                 <ResourceDictionary Source="/Styles/ComboBox.xaml" />

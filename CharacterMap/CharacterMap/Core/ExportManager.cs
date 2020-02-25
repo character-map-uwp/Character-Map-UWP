@@ -3,6 +3,7 @@ using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMapCX;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -22,7 +23,6 @@ using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Shapes;
 
 namespace CharacterMap.Core
 {
@@ -33,40 +33,21 @@ namespace CharacterMap.Core
         ColorGlyph
     }
 
+    public class ExportResult
+    {
+        public StorageFile File { get; }
+        public bool Success { get; }
+
+        public ExportResult(bool success, StorageFile file)
+        {
+            Success = success;
+            File = file;
+        }
+    }
+
     public static class ExportManager
     {
-        private static async Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values)
-        {
-            var savePicker = new FileSavePicker
-            {
-                SuggestedStartLocation = PickerLocationId.Desktop
-            };
-            savePicker.FileTypeChoices.Add(key, values);
-            savePicker.SuggestedFileName = fileName;
-
-            try
-            {
-                return await savePicker.PickSaveFileAsync();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        private static byte[] GetGlyphBytes(CanvasFontFace fontface, int unicodeIndex, int imageType)
-        {
-            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
-            IBuffer buffer = interop.GetImageDataBuffer(fontface, 1024, (uint)unicodeIndex, (uint)imageType);
-            using (DataReader reader = DataReader.FromBuffer(buffer))
-            {
-                byte[] bytes = new byte[buffer.Length];
-                reader.ReadBytes(bytes);
-                return bytes;
-            }
-        }
-
-        public static async Task ExportSvgAsync(
+        public static async Task<ExportResult> ExportSvgAsync(
             ExportStyle style,
             InstalledFont selectedFont,
             FontVariant selectedVariant,
@@ -200,7 +181,7 @@ namespace CharacterMap.Core
                                         await Utils.WriteSvgAsync(document, file);
                                     }
                                 }
-                                catch (Exception ex)
+                                catch
                                 {
                                     // Certain fonts seem to have their SVG glyphs encoded with... I don't evne know what encoding.
                                     // for example: https://github.com/adobe-fonts/emojione-color
@@ -217,6 +198,7 @@ namespace CharacterMap.Core
                     }
 
                     await CachedFileManager.CompleteUpdatesAsync(file);
+                    return new ExportResult(true, file);
                 }
             }
             catch (Exception ex)
@@ -224,9 +206,11 @@ namespace CharacterMap.Core
                 await SimpleIoc.Default.GetInstance<IDialogService>()
                     .ShowMessageBox(ex.Message, Localization.Get("SaveImageError"));
             }
+
+            return new ExportResult(false, null);
         }
 
-        public static async Task ExportPngAsync(
+        public static async Task<ExportResult> ExportPngAsync(
             ExportStyle style,
             InstalledFont selectedFont,
             FontVariant selectedVariant,
@@ -304,12 +288,27 @@ namespace CharacterMap.Core
                     
 
                     await CachedFileManager.CompleteUpdatesAsync(file);
+                    return new ExportResult(true, file);
                 }
             }
             catch (Exception ex)
             {
                 await SimpleIoc.Default.GetInstance<IDialogService>()
                     .ShowMessageBox(ex.Message, Localization.Get("SaveImageError"));
+            }
+
+            return new ExportResult(false, null);
+        }
+
+        private static byte[] GetGlyphBytes(CanvasFontFace fontface, int unicodeIndex, int imageType)
+        {
+            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+            IBuffer buffer = interop.GetImageDataBuffer(fontface, 1024, (uint)unicodeIndex, (uint)imageType);
+            using (DataReader reader = DataReader.FromBuffer(buffer))
+            {
+                byte[] bytes = new byte[buffer.Length];
+                reader.ReadBytes(bytes);
+                return bytes;
             }
         }
 
@@ -323,53 +322,35 @@ namespace CharacterMap.Core
             return $"{selectedFont.Name} {selectedVariant.PreferredName} - {chr}.{ext}";
         }
 
+        private static async Task<StorageFolder> TryGetParentAsync(StorageFile file)
+        {
+            try
+            {
+                return await file.GetParentAsync();
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
+        private static async Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values)
+        {
+            var savePicker = new FileSavePicker
+            {
+                SuggestedStartLocation = PickerLocationId.Desktop
+            };
+            savePicker.FileTypeChoices.Add(key, values);
+            savePicker.SuggestedFileName = fileName;
 
-
-
-        //private static Task RenderAsync(
-        //    StorageFile file,
-        //    ExportStyle style,
-        //    InstalledFont selectedFont,
-        //    FontVariant selectedVariant,
-        //    Character selectedChar,
-        //    Action<CanvasTextLayout, Matrix3x2> render)
-        //{
-        //    CachedFileManager.DeferUpdates(file);
-        //    var device = CanvasDevice.GetSharedDevice();
-
-        //    var canvasH = (float)App.AppSettings.PngSize;
-        //    var canvasW = (float)App.AppSettings.PngSize;
-
-        //    var d = App.AppSettings.PngSize;
-        //    var r = App.AppSettings.PngSize / 2;
-
-        //    var textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
-        //    var fontSize = (float)d;
-
-        //    using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
-        //    {
-        //        FontSize = fontSize,
-        //        FontFamily = selectedVariant.XamlFontFamily.Source,
-        //        FontStretch = selectedVariant.FontFace.Stretch,
-        //        FontWeight = selectedVariant.FontFace.Weight,
-        //        FontStyle = selectedVariant.FontFace.Style,
-        //        HorizontalAlignment = CanvasHorizontalAlignment.Center
-        //    }, canvasW, canvasH))
-        //    {
-        //        var db = layout.DrawBounds;
-        //        double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
-        //        var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
-        //        var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
-
-        //        Matrix3x2 transform =
-        //            Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
-        //            * Matrix3x2.CreateScale(new Vector2((float)scale));
-
-        //        render(layout, transform);
-        //    }
-
-        //    return CachedFileManager.CompleteUpdatesAsync(file).AsTask();
-        //}
+            try
+            {
+                return await savePicker.PickSaveFileAsync();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }

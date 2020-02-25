@@ -47,14 +47,15 @@ namespace CharacterMap.Provider
                 }
 
                 await PopulateMDL2Async(connection).ConfigureAwait(false);
+                await PopulateFontAsync<FontAwesomeGlyph>(connection, "FontAwesome.txt").ConfigureAwait(false);
+                await PopulateFontAsync<MaterialDesignIconsGlyph>(connection, "materialdesignicons.txt").ConfigureAwait(false);
+                await PopulateFontAsync<IcoFontGlyph>(connection, "icofont.txt").ConfigureAwait(false);
+
                 var unicode = await PopulateUnicodeAsync(connection).ConfigureAwait(false);
-                await PopulateFontAwesomeAsync(connection).ConfigureAwait(false);
-                await PopulateMaterialDesignIconsAsync(connection, unicode);
                 await PopulateDingsAsync<WebdingsGlyph>(connection, unicode, "Webdings");
                 await PopulateDingsAsync<WingdingsGlyph>(connection, unicode, "Wingdings");
                 await PopulateDingsAsync<Wingdings2Glyph>(connection, unicode, "Wingdings2");
                 await PopulateDingsAsync<Wingdings3Glyph>(connection, unicode, "Wingdings3");
-                await PopulateIcoFontAsync(connection, unicode);
 
                 using (SQLiteConnection con = new SQLiteConnection(connection))
                 {
@@ -78,20 +79,47 @@ namespace CharacterMap.Provider
 
         private static string Humanize(string s)
         {
-            bool prevLower = false;
+            char prev = char.MinValue;
+
             StringBuilder sb = new StringBuilder();
             foreach (var c in s)
             {
-                if (prevLower && char.IsUpper(c))
+                if (char.IsLower(prev) && char.IsUpper(c))
                     sb.Append(" ");
                 else if ((char.IsPunctuation(c) || char.IsSeparator(c)) && c != ')')
                     sb.Append(" ");
+                else if (sb.Length > 0 && char.IsDigit(c) && !char.IsDigit(prev))
+                    sb.Append(" ");
+                else if(char.IsDigit(prev) && char.IsLetter(c) && (prev != '3' && c != 'D'))
+                    sb.Append(" ");
 
                 sb.Append(c);
-                prevLower = char.IsLower(c);
+                prev = c;
             }
 
-            return sb.ToString().Trim();
+            return sb.ToString()
+                .Replace("  ", " ")
+                .Replace("HWP", "HWP ")
+                .Replace("IRM", "IRM ")
+                .Replace("NUI", "NUI ")
+                .Replace("NUI FP", "NUI FP ")
+                .Replace("PPS", "PPS ")
+                .Replace("Power Point", "PowerPoint")
+                .Replace("SIM", "SIM ")
+                .Replace("CRM", "CRM ")
+                .Replace("CHT", "CHT ")
+                .Replace("AAD", "AAD ")
+                .Replace("ATP", "ATP ")
+                .Replace("MSN", "MSN ")
+                .Replace("e SIM", "eSIM")
+                .Replace("MobeSIM", "Mob eSIM")
+                .Replace("RTT", "RTT ")
+                .Replace("USB", "USB ")
+                .Replace("LTE", " LTE ")
+                .Replace("QWERTY", "QWERTY ")
+                .Replace("Qand A", "Q and A ")
+                .Replace("  ", " ")
+                .Trim();
         }
 
         private Task PopulateMDL2Async(SQLiteConnectionString connection)
@@ -122,12 +150,17 @@ namespace CharacterMap.Provider
                 }
 
                 /* read fabric mdl2 listing */
-                var fabric = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FabricMDL2.json")).AsTask().ConfigureAwait(false);
-                List<FabricGlyph> glyphs = await Json.ReadAsync<List<FabricGlyph>>(fabric);
-                foreach (var glyph in glyphs)
+                var fabric = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FabricMDL2.txt")).AsTask().ConfigureAwait(false);
+                using (var stream = await fabric.OpenStreamForReadAsync().ConfigureAwait(false))
+                using (var reader = new StreamReader(stream))
                 {
-                    if (!datas.Any(d => d.code.Equals(glyph.Unicode)))
-                        datas.Add((glyph.Unicode, glyph.Name));
+                    string[] parts;
+                    while (!reader.EndOfStream)
+                    {
+                        parts = reader.ReadLine().Split(" ", StringSplitOptions.None);
+                        if (!datas.Any(d => d.code.Equals(parts[0], StringComparison.OrdinalIgnoreCase)))
+                            datas.Add((parts[0], parts[1]));
+                    }
                 }
 
                 /* read manually created full mdl2 listings */
@@ -138,10 +171,9 @@ namespace CharacterMap.Provider
                     string[] parts;
                     while (!reader.EndOfStream)
                     {
-                        parts = reader.ReadLine().Split(":", StringSplitOptions.None);
-
-                        if (!datas.Any(d => d.code.Equals(parts[1], StringComparison.OrdinalIgnoreCase)))
-                            datas.Add((parts[1], parts[0]));
+                        parts = reader.ReadLine().Split(" ", StringSplitOptions.None);
+                        if (!datas.Any(d => d.code.Equals(parts[0], StringComparison.OrdinalIgnoreCase)))
+                            datas.Add((parts[0], parts[1]));
                     }
                 }
 
@@ -202,28 +234,28 @@ namespace CharacterMap.Provider
             });
         }
 
-        private Task PopulateFontAwesomeAsync(SQLiteConnectionString connection)
+        private Task PopulateFontAsync<T>(SQLiteConnectionString connection, string fileName) where T : GlyphDescription, new()
         {
             return Task.Run(async () =>
             {
                 using (var c = new SQLiteConnection(connection))
                 {
-                    var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/FontAwesome.txt")).AsTask().ConfigureAwait(false);
+                    var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/Data/{fileName}")).AsTask().ConfigureAwait(false);
 
                     using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
                     using (var reader = new StreamReader(stream))
                     {
                         string[] parts;
-                        List<FontAwesomeGlyph> data = new List<FontAwesomeGlyph>();
+                        List<T> data = new List<T>();
                         while (!reader.EndOfStream)
                         {
-                            parts = reader.ReadLine().Split("	", StringSplitOptions.None);
+                            parts = reader.ReadLine().Split(" ", StringSplitOptions.None);
 
                             string desc = parts[1];
-                            string hex = parts[2].ToUpper();
+                            string hex = parts[0].ToUpper();
                             int code = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
 
-                            data.Add(new FontAwesomeGlyph
+                            data.Add(new T
                             {
                                 Description = desc.Humanize(LetterCasing.Title),
                                 UnicodeHex = hex,
@@ -235,64 +267,6 @@ namespace CharacterMap.Provider
                     }
                 }
             });
-        }
-
-        private async Task PopulateMaterialDesignIconsAsync(SQLiteConnectionString connection, List<UnicodeGlyphData> unicode)
-        {
-            /* read material design icon */
-            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/materialdesignicons.txt")).AsTask().ConfigureAwait(false);
-            using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
-            using (var reader = new StreamReader(stream))
-            {
-                string[] parts;
-                List<MaterialDesignIconsGlyph> data = new List<MaterialDesignIconsGlyph>();
-                while (!reader.EndOfStream)
-                {
-                    parts = reader.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-                    int code = Convert.ToInt32(parts[0], 10);
-
-                    data.Add(new MaterialDesignIconsGlyph
-                    {
-                        Description = parts[1].Humanize().Transform(To.LowerCase, To.TitleCase),
-                        UnicodeHex = code.ToString("x4").ToUpper(),
-                        UnicodeIndex = code
-                    });
-                }
-
-                using (var c = new SQLiteConnection(connection))
-                {
-                    c.RunInTransaction(() => c.InsertAll(data.OrderBy(d => d.UnicodeIndex).ToList()));
-                }
-            }
-        }
-
-        private async Task PopulateIcoFontAsync(SQLiteConnectionString connection, List<UnicodeGlyphData> unicode)
-        {
-            /* read material design icon */
-            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/icofont.txt")).AsTask().ConfigureAwait(false);
-            using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
-            using (var reader = new StreamReader(stream))
-            {
-                string[] parts;
-                List<IcoFontGlyph> data = new List<IcoFontGlyph>();
-                while (!reader.EndOfStream)
-                {
-                    parts = reader.ReadLine().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-                    int code = Convert.ToInt32(parts[0], 10);
-                    data.Add(new IcoFontGlyph
-                    {
-                        Description = parts[1].Humanize().Transform(To.LowerCase, To.TitleCase),
-                        UnicodeHex = code.ToString("x4").ToUpper(),
-                        UnicodeIndex = code
-                    });
-                }
-
-                using (var c = new SQLiteConnection(connection))
-                {
-                    c.RunInTransaction(() => c.InsertAll(data.OrderBy(d => d.UnicodeIndex).ToList()));
-                }
-            }
         }
 
         private async Task PopulateDingsAsync<T>(SQLiteConnectionString connection, List<UnicodeGlyphData> unicode, string fileName) where T : GlyphDescription, new()
@@ -327,6 +301,23 @@ namespace CharacterMap.Provider
                         Description = unicode.First(u => u.UnicodeIndex == Convert.ToInt32(parts[1], 10)).Description,
                         UnicodeHex = hex2,
                         UnicodeIndex = code2
+                    });
+                }
+
+                if (fileName == "Wingdings")
+                {
+                    data.Add(new T
+                    {
+                        Description = "Windows Flag",
+                        UnicodeHex = 255.ToString("X4").ToUpper(),
+                        UnicodeIndex = 255
+                    });
+
+                    data.Add(new T
+                    {
+                        Description = "Windows Flag",
+                        UnicodeHex = 61695.ToString("X4").ToUpper(),
+                        UnicodeIndex = 61695
                     });
                 }
 

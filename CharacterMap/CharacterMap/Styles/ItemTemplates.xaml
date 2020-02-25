@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:CharacterMap.Styles"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:services="using:CharacterMap.Services"
     mc:Ignorable="d">
@@ -36,6 +35,58 @@
                 FontSize="12"
                 Opacity="0.4"
                 Text="{x:Bind UnicodeHex}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ExportNotificationTemplate" x:DataType="core:ExportResult">
+        <Grid ColumnSpacing="12" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="16"
+                IsColorFontEnabled="True"
+                TextWrapping="Wrap">
+                <Run x:Uid="CharacterSavedMessage" />
+                <Run FontWeight="Bold" Text="{x:Bind File.Name}" />
+            </TextBlock>
+
+            <Button
+                x:Uid="BtnOpenFolder"
+                Grid.Column="1"
+                Click="OpenFolderButton_Click"
+                Style="{StaticResource ButtonRevealStyle}" />
+
+            <Button
+                x:Uid="BtnOpenFile"
+                Grid.Column="2"
+                Click="OpenFileButton_Click"
+                Style="{StaticResource ButtonRevealStyle}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="AddedToCollectionNotificationTemplate" x:DataType="services:AddToCollectionResult">
+        <Grid ColumnSpacing="12" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="16"
+                IsColorFontEnabled="True"
+                Text="{x:Bind GetMessage()}"
+                TextWrapping="Wrap" />
+            
+            <Button
+                x:Uid="BtnViewCollection"
+                Click="BtnViewCollection_Click"
+                Margin="12 0 0 0"
+                Grid.Column="1"
+                Style="{StaticResource ButtonRevealStyle}" />
         </Grid>
     </DataTemplate>
 

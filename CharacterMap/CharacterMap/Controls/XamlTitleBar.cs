@@ -57,6 +57,16 @@ namespace CharacterMap.Controls
                 _backgroundElement = e;
                 UpdateDragElement();
             }
+
+            try
+            {
+                // Attempts to avoid titlebar not showing immediately when a window is opened
+                _titleBar = CoreApplication.GetCurrentView().TitleBar;
+                _titleBar.ExtendViewIntoTitleBar = true;
+                UpdateMetrics(_titleBar);
+            }
+            catch
+            { }
         }
 
         private void XamlTitleBar_Loaded(object sender, RoutedEventArgs e)

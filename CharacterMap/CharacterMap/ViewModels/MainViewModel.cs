@@ -15,8 +15,8 @@ using Windows.Storage;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using CharacterMap.Services;
-using CommonServiceLocator;
 using System.Text;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace CharacterMap.ViewModels
 {
@@ -35,13 +35,6 @@ namespace CharacterMap.ViewModels
         public RelayCommand CommandToggleFullScreen { get; }
 
         public bool IsDarkAccent => Utils.IsAccentColorDark();
-
-        private string _appNameVersion;
-        public string AppNameVersion
-        {
-            get => _appNameVersion;
-            set => Set(ref _appNameVersion, value);
-        }
 
         private int _fontListFilter;
         public int FontListFilter
@@ -64,25 +57,11 @@ namespace CharacterMap.ViewModels
             set => Set(ref _titlePrefix, value);
         }
 
-        private string _collectionTitle;
-        public string CollectionTitle
-        {
-            get => _collectionTitle;
-            set { if (Set(ref _collectionTitle, value)) OnCollectionTitleChanged(); }
-        }
-
         private string _filterTitle;
         public string FilterTitle
         {
             get => _filterTitle;
             set => Set(ref _filterTitle, value); 
-        }
-
-        private bool _isCollectionTitleValid;
-        public bool IsCollectionTitleValid
-        {
-            get => _isCollectionTitleValid;
-            set => Set(ref _isCollectionTitleValid, value);
         }
 
         private bool _isLoadingFonts;
@@ -149,11 +128,9 @@ namespace CharacterMap.ViewModels
             DialogService = dialogService;
             Settings = settings;
 
-            AppNameVersion = Utils.GetAppDescription();
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
-            MessengerInstance.Register<ImportMessage>(this, OnFontImportRequest);
 
-            FontCollections = ServiceLocator.Current.GetInstance<UserCollectionsService>();
+            FontCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
             InitialLoad = LoadAsync();
         }
 
@@ -164,7 +141,7 @@ namespace CharacterMap.ViewModels
             await Task.WhenAll(
                 GlyphService.InitializeAsync(),
                 FontFinder.LoadFontsAsync(),
-                ServiceLocator.Current.GetInstance<UserCollectionsService>().LoadCollectionsAsync());
+                FontCollections.LoadCollectionsAsync());
 
             RefreshFontList();
             IsLoadingFonts = false;
@@ -221,27 +198,27 @@ namespace CharacterMap.ViewModels
                     else if (FontListFilter == 6)
                     {
                         fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.AppxPackage);
-                        FilterTitle = "From Microsoft Store";
+                        FilterTitle = Localization.Get("OptionAppxFonts/Text");
                     }
                     else if (FontListFilter == 7)
                     {
                         fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.RemoteFontProvider);
-                        FilterTitle = "Cloud-based Fonts";
+                        FilterTitle = Localization.Get("OptionCloudFonts/Text");
                     }
                     else if (FontListFilter == 8)
                     {
                         fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Decorative);
-                        FilterTitle = "Decorative Fonts";
+                        FilterTitle = Localization.Get("OptionDecorativeFonts/Text");
                     }
                     else if (FontListFilter == 9)
                     {
                         fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Script);
-                        FilterTitle = "Script Fonts";
+                        FilterTitle = Localization.Get("OptionScriptFonts/Text");
                     }
                     else if (FontListFilter == 10)
                     {
                         fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.IsColorFont);
-                        FilterTitle = "Color Fonts";
+                        FilterTitle = Localization.Get("OptionColorFonts/Text");
                     }
                     else
                         FilterTitle = Localization.Get("OptionAllFonts/Text");
@@ -331,42 +308,9 @@ namespace CharacterMap.ViewModels
             {
                 /* looks like we couldn't delete some fonts :'(. 
                  * We'll get em next time the app launches! */
-
-                _ = DialogService.ShowMessage(
-                    Localization.Get("FontsClearedOnNextLaunchNotice"),
-                    Localization.Get("NoticeLabel/Text"));
+                MessengerInstance.Send(
+                    new AppNotificationMessage(true, Localization.Get("FontsClearedOnNextLaunchNotice"), 6000));
             }
-        }
-
-        private void OnFontImportRequest(ImportMessage msg)
-        {
-            _ = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                IsLoadingFonts = true;
-                try
-                {
-                    if (InitialLoad.IsCompleted)
-                    {
-                        RefreshFontList();
-                    }
-                    else
-                    {
-                        await InitialLoad;
-                        await Task.Delay(50);
-                    }
-
-                    TrySetSelectionFromImport(msg.Result);
-                }
-                finally
-                {
-                    IsLoadingFonts = false;
-                }
-            });
-        }
-
-        private void OnCollectionTitleChanged()
-        {
-            IsCollectionTitleValid = !string.IsNullOrWhiteSpace(CollectionTitle);
         }
     }
 }

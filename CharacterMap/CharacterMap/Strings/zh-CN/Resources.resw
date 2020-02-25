@@ -135,12 +135,6 @@
   <data name="BtnSavePng.Text" xml:space="preserve">
     <value>保存 PNG</value>
   </data>
-  <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>显示所有字体</value>
-  </data>
-  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>仅显示图标字体</value>
-  </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>已复制</value>
   </data>

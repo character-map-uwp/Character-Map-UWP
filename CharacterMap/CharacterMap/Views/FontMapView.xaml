@@ -2,14 +2,11 @@
     x:Class="CharacterMap.Views.FontMapView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:local="using:CharacterMap.Views"
+    xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:services="using:CharacterMap.Services"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     d:DesignHeight="800"
     d:DesignWidth="1280"
@@ -96,9 +93,9 @@
                 PreviewKeyDown="SearchBox_PreviewKeyDown"
                 QuerySubmitted="SearchBox_QuerySubmitted"
                 SuggestionChosen="SearchBox_SuggestionChosen"
-                TextChanged="SearchBox_TextChanged"
                 Tag="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
                 Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextChanged="SearchBox_TextChanged"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
                 <AutoSuggestBox.QueryIcon>
@@ -172,7 +169,7 @@
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                                 Glyph="&#xE946;" />
                             <Button.Flyout>
-                                <Flyout>
+                                <Flyout Opened="InfoFlyout_Opened">
                                     <StackPanel
                                         MinWidth="300"
                                         MaxWidth="400"
@@ -401,6 +398,7 @@
 
                     <Button
                         x:Name="MoreOptionsButton"
+                        x:Uid="BtnMoreIcon"
                         x:Load="{x:Bind core:Converters.False(ViewModel.IsExternalFile)}"
                         Grid.Column="1"
                         Width="44"
@@ -425,7 +423,7 @@
                     x:Name="CharGrid"
                     Grid.Row="1"
                     Grid.Column="0"
-                    Padding="10"
+                    Padding="10 10 6 10"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
                     IsItemClickEnabled="False"
                     ItemsSource="{Binding Chars, Mode=OneWay}"
@@ -439,7 +437,10 @@
                         <DataTemplate>
                             <!--  For performance reasons, all bindings are done in C#  -->
                             <Grid Padding="4" Style="{StaticResource CharItemGridStyle}">
-                                <TextBlock Padding="0,0,0,8" Style="{StaticResource CharItemCharStyle}" />
+                                <TextBlock
+                                    Padding="0,0,0,8"
+                                    IsTextScaleFactorEnabled="False"
+                                    Style="{StaticResource CharItemCharStyle}" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
                         </DataTemplate>
@@ -472,9 +473,6 @@
                     Grid.RowSpan="2"
                     Grid.Column="2"
                     SizeChanged="PreviewGrid_SizeChanged">
-                    <Grid.ChildrenTransitions>
-                        <RepositionThemeTransition IsStaggeringEnabled="False" />
-                    </Grid.ChildrenTransitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
@@ -496,15 +494,12 @@
                                 FontWeight="{Binding SelectedVariant.FontFace.Weight}"
                                 IsColorFontEnabled="{Binding ShowColorGlyphs}"
                                 Text="{Binding SelectedChar.Char}"
-                                TextAlignment="Center">
-                                <i:Interaction.Behaviors>
-                                    <core:TypographyBehavior TypographyFeature="{Binding SelectedTypography}" />
-                                </i:Interaction.Behaviors>
-                            </TextBlock>
+                                TextAlignment="Center" />
                         </Viewbox>
 
                         <Border
                             x:Name="BorderCopiedMessage"
+                            x:Load="False"
                             Grid.Row="0"
                             Margin="15"
                             Padding="12"
@@ -529,7 +524,7 @@
 
 
 
-                    <Grid Grid.Row="1">
+                    <Grid Grid.Row="1" Loaded="DetailsGrid_Loaded">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="2" />
                             <RowDefinition Height="Auto" />
@@ -580,7 +575,6 @@
                             Style="{ThemeResource SaveAsPNGCommandBar}">
                             <CommandBar.SecondaryCommands>
                                 <AppBarButton
-                                    Background="Transparent"
                                     Command="{Binding CommandSavePng}"
                                     CommandParameter="{x:Bind ViewModel.GlyphColor}"
                                     Style="{ThemeResource TransparentButton}"
@@ -673,13 +667,13 @@
 
                         <Button
                             x:Name="SaveAsSvgButton"
+                            x:Load="{x:Bind core:Converters.False(ViewModel.IsSvgChar), Mode=OneWay, FallbackValue=False}"
                             Grid.Row="3"
                             Height="54"
                             BorderThickness="0 1"
                             Click="BtnSaveAsSvg_OnClick"
                             IsEnabled="{Binding SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
-                            Style="{ThemeResource TransparentButton}"
-                            Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSvgChar), Mode=OneWay, FallbackValue=Visible}">
+                            Style="{ThemeResource TransparentButton}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="50" />
@@ -703,14 +697,14 @@
 
                         <Button
                             x:Name="SaveAsRawSvgButton"
+                            x:Load="{x:Bind ViewModel.IsSvgChar, Mode=OneWay, FallbackValue=False}"
                             Grid.Row="3"
                             Height="54"
                             BorderThickness="0 1"
                             Command="{x:Bind ViewModel.CommandSaveSvg}"
                             CommandParameter="{StaticResource TrueValue}"
                             IsEnabled="{Binding SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
-                            Style="{ThemeResource TransparentButton}"
-                            Visibility="{x:Bind ViewModel.IsSvgChar, Mode=OneWay, FallbackValue=Collapsed}">
+                            Style="{ThemeResource TransparentButton}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="50" />
@@ -749,11 +743,9 @@
                                 x:Name="TxtXamlCode"
                                 x:Uid="TxtXamlCode"
                                 Margin="0,15,0,0"
-                                FontFamily="Consolas"
-                                FontSize="14"
                                 GotFocus="TxtXamlCode_OnGotFocus"
                                 Header="#TxtXamlCode"
-                                IsReadOnly="True"
+                                Style="{StaticResource CopyTextBox}"
                                 Text="{Binding XamlCode}" />
                             <AppBarButton
                                 x:Name="BtnCopyXamlCode"
@@ -779,11 +771,9 @@
                                 x:Name="TxtFontIcon"
                                 x:Uid="TxtFontIcon"
                                 Margin="0,7,0,0"
-                                FontFamily="Consolas"
-                                FontSize="14"
                                 GotFocus="TxtFontIcon_OnGotFocus"
                                 Header="#TxtFontIcon"
-                                IsReadOnly="True"
+                                Style="{StaticResource CopyTextBox}"
                                 Text="{Binding FontIcon}" />
                             <AppBarButton
                                 x:Name="BtnCopyFontIcon"
@@ -797,9 +787,10 @@
                         </Grid>
 
                         <Grid
+                            x:Name="SymbolIconGrid"
+                            x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SymbolIcon), Mode=OneWay, FallbackValue=False}"
                             Grid.Row="8"
-                            ColumnSpacing="8"
-                            Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SymbolIcon), Mode=OneWay, FallbackValue=Collapsed}">
+                            ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -808,11 +799,9 @@
                                 x:Name="TxtSymbolIcon"
                                 x:Uid="TxtSymbolIcon"
                                 Margin="0,7,0,0"
-                                FontFamily="Consolas"
-                                FontSize="14"
                                 GotFocus="TxtSymbolIcon_OnGotFocus"
                                 Header="#TxtSymbolIcon"
-                                IsReadOnly="True"
+                                Style="{StaticResource CopyTextBox}"
                                 Text="{Binding SymbolIcon}" />
                             <AppBarButton
                                 x:Name="BtnCopySymbolIcon"
@@ -828,6 +817,14 @@
                     </Grid>
                 </Grid>
             </Grid>
+        </Grid>
+
+        <Grid
+            x:Name="NotificationRoot"
+            x:Load="False"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="10">
+            <toolkit:InAppNotification x:Name="DefaultNotification" />
         </Grid>
 
         <!--  Loading Root  -->
@@ -866,14 +863,6 @@
                 Margin="12,0"
                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
         </Grid>
-
-        <controls:CreateCollectionDialog
-            x:Name="DlgCreateCollection"
-            Grid.Row="0"
-            Grid.RowSpan="10"
-            Grid.Column="0"
-            Grid.ColumnSpan="10"
-            d:IsHidden="True" />
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LoadingStates">
