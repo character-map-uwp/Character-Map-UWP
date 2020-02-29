@@ -29,7 +29,7 @@ namespace CharacterMap.Core
 
         public int GridSize
         {
-            get => Get(96);
+            get => Get(80);
             set
             {
                 if (Set(value))
