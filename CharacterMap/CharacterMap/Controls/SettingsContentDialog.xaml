@@ -1,0 +1,108 @@
+﻿<ContentDialog
+    x:Class="CharacterMap.Controls.SettingsContentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="using:CharacterMap.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:CharacterMap.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    x:Uid="DigSettings"
+    CornerRadius="4"
+    IsPrimaryButtonEnabled="True"
+    PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
+    mc:Ignorable="d">
+
+    <ScrollViewer>
+        <StackPanel Margin="0,8,24,0">
+            <Slider
+                x:Name="SldResolution"
+                x:Uid="PngSlider"
+                HorizontalAlignment="Stretch"
+                IsThumbToolTipEnabled="True"
+                Maximum="2048"
+                Minimum="128"
+                StepFrequency="64"
+                TickFrequency="64"
+                TickPlacement="Outside"
+                Value="{x:Bind Settings.PngSize, Mode=TwoWay}" />
+            <TextBlock Margin="0,0,0,16" Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
+
+            <Slider
+                x:Uid="GridSlider"
+                HorizontalAlignment="Stretch"
+                IsThumbToolTipEnabled="True"
+                Maximum="192"
+                Minimum="64"
+                StepFrequency="8"
+                TickFrequency="8"
+                TickPlacement="Outside"
+                Value="{x:Bind Settings.GridSize, Mode=TwoWay}" />
+
+            <TextBlock
+                x:Uid="FontListDisplayHeader"
+                Margin="0,28,0,0"
+                FontWeight="Bold" />
+            <ToggleSwitch x:Uid="FontListDisplayToggle" IsOn="{x:Bind Settings.UseFontForPreview, Mode=TwoWay}" />
+
+            <TextBlock
+                x:Uid="InstantSearchToggleHeader"
+                Margin="0,28,0,0"
+                FontWeight="Bold" />
+            <ToggleSwitch x:Uid="InstantSearchToggle" IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
+
+            <Grid ColumnSpacing="12" Margin="0 4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <muxc:NumberBox
+                    x:Uid="SearchDelaySelector"
+                    AcceptsExpression="False"
+                    BorderThickness="1"
+                    IsEnabled="{x:Bind Settings.UseInstantSearch, Mode=OneWay}"
+                    LargeChange="50"
+                    Maximum="2000"
+                    Minimum="250"
+                    SmallChange="10"
+                    SpinButtonPlacementMode="Inline"
+                    Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
+
+                <muxc:NumberBox
+                    x:Uid="SearchResultsSlider"
+                    Grid.Column="1"
+                    AcceptsExpression="False"
+                    LargeChange="10"
+                    Maximum="100"
+                    Minimum="5"
+                    SmallChange="5"
+                    SpinButtonPlacementMode="Inline"
+                    Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
+            </Grid>
+
+            <!--  Reenable after sorting out export UI issues  -->
+            <!--<TextBlock Margin="0 40 0 4" Text="Dev Utilities" />
+                    <ToggleSwitch
+                        OnContent="Show dev utilities"
+                        OffContent="Hide dev utilities"
+                        IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />-->
+
+            <TextBlock
+                x:Uid="Settings_About"
+                Margin="0,28,0,10"
+                FontWeight="Bold"
+                Text="#Settings_About" />
+            <TextBlock FontSize="14" Text="{x:Bind core:Utils.GetAppDescription()}" />
+            <TextBlock
+                x:Uid="Settings_AboutDescription"
+                FontSize="14"
+                Text="#Settings_AboutDescription"
+                TextWrapping="Wrap" />
+            <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
+        </StackPanel>
+
+    </ScrollViewer>
+
+
+</ContentDialog>

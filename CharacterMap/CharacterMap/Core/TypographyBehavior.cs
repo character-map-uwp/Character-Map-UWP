@@ -1,5 +1,4 @@
 ﻿using Microsoft.Graphics.Canvas.Text;
-using Microsoft.UI.Xaml.Core.Direct;
 using Microsoft.Xaml.Interactivity;
 using System;
 using System.Collections.Generic;
@@ -8,61 +7,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Documents;
 
 namespace CharacterMap.Core
 {
-    public partial class TypographyBehavior : Behavior<TextBlock>
+    public partial class TypographyBehavior
     {
-        private IXamlDirect _xamlDirect { get; set; }
-
-        public TypographyFeatureInfo TypographyFeature
+        public static void SetTypography(IXamlDirectObject o, CanvasTypographyFeatureName f, XamlDirect _xamlDirect)
         {
-            get => (TypographyFeatureInfo)GetValue(TypographyFeatureProperty);
-            set => SetValue(TypographyFeatureProperty, value);
-        }
-
-        public static readonly DependencyProperty TypographyFeatureProperty =
-            DependencyProperty.Register(nameof(TypographyFeature), typeof(TypographyFeatureInfo), typeof(TypographyBehavior), new PropertyMetadata(null, (d,e) =>
-            {
-                ((TypographyBehavior)d).ApplyTypography();
-            }));
-
-        public TypographyBehavior()
-        {
-        }
-
-        protected override void OnAttached()
-        {
-            base.OnAttached();
-            ApplyTypography();
-        }
-
-        private void ApplyTypography()
-        {
-            /*
-             * Here we shall map DirectWrite / Win2D typography properties to their 
-             * XAML equivalents. Not all properties are supported because not all 
-             * properties map directly. To support them all, we'd have to render all 
-             * the characters in the GridView with Win2D;
-             */
-
-            if (AssociatedObject == null)
-                return;
-
-            // Hack to avoid XAML Direct crash
-            if (_xamlDirect == null && TypographyFeature == null)
-                return;
-
-            if (_xamlDirect == null)
-                _xamlDirect = Utils.GetXamlDirectForWindow(Dispatcher);
-
-            /* Assign shorthands for use below */
-            CanvasTypographyFeatureName f = TypographyFeature == null ? CanvasTypographyFeatureName.None : TypographyFeature.Feature;
-            TextBlock t = AssociatedObject;
-
             /* XAML Direct Helpers. Using XD is faster than setting Dependency Properties */
-            object o = _xamlDirect.GetXamlDirectObject(t);
             void Set(XamlPropertyIndex index, bool value)
             {
                 _xamlDirect.SetBooleanProperty(o, index, value);
@@ -75,7 +29,6 @@ namespace CharacterMap.Core
             {
                 _xamlDirect.SetInt32Property(o, index, val ? 1 : 0);
             }
-
 
             /* TODO : ADD EASTASIAN TYPOGRAPY PROPERTIES */
 

@@ -3,19 +3,20 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
-    xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="using:Microsoft.Xaml.Interactivity"
-    xmlns:local="using:CharacterMap"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:services="using:CharacterMap.Services"
-    xmlns:viewmodels="using:CharacterMap.ViewModels"
+    xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:views="using:CharacterMap.Views"
+    xmlns:wct="using:Microsoft.Toolkit.Uwp.UI.Controls"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
 
     <Page.Resources>
+        <!--  Ensure both of these are equal  -->
+        <x:Double x:Key="SplitViewPaneWidth">256</x:Double>
+        <GridLength x:Key="StatusBarPaneWidth">256</GridLength>
+
         <CollectionViewSource
             x:Key="GroupedFontList"
             x:Name="GroupedFontList"
@@ -32,9 +33,8 @@
         KeyUp="LayoutRoot_KeyUp">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="45" />
+            <RowDefinition x:Name="TitleBarRow" Height="45" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="26" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="256" />
@@ -51,7 +51,8 @@
                 <ToggleButton
                     x:Uid="ToggleFullScreenModeButton"
                     Command="{Binding CommandToggleFullScreen}"
-                    Style="{StaticResource IconToggleButtonStyle}">
+                    Style="{StaticResource IconToggleButtonStyle}"
+                    ToolTipService.Placement="Right">
                     <FontIcon FontSize="14" Glyph="&#xE740;" />
                 </ToggleButton>
                 <TextBlock
@@ -67,149 +68,32 @@
 
         <!--  Commands Grid  -->
         <Grid
+            x:Name="CommandsGrid"
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="256" />
+                <ColumnDefinition x:Name="SplitViewPaneColumn" Width="{StaticResource StatusBarPaneWidth}" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="{x:Bind core:Converters.GridLengthAorB(core:Utils.IsSystemOnWin10v1809OrNewer, '0', 'Auto')}" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <DropDownButton
-                    x:Name="FontListFilter"
-                    Height="45"
-                    Margin="0,0,0,0"
-                    Padding="12,6"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    HorizontalContentAlignment="Left"
-                    Background="Transparent"
-                    Content="{x:Bind ViewModel.FilterTitle, Mode=OneWay}"
-                    FontSize="16">
-                    <DropDownButton.Flyout>
-                        <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="RequestedTheme" Value="Default" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                            <MenuFlyoutItem
-                                x:Uid="OptionAllFonts"
-                                Click="Filter_Click"
-                                Tag="0" />
-                            <MenuFlyoutItem
-                                x:Uid="OptionSerifFonts"
-                                Click="Filter_Click"
-                                Tag="4" />
-                            <MenuFlyoutItem
-                                x:Uid="OptionSansSerifFonts"
-                                Click="Filter_Click"
-                                Tag="5" />
-                            <MenuFlyoutItem
-                                x:Uid="OptionSymbolFonts"
-                                Click="Filter_Click"
-                                Tag="1" />
-                            <MenuFlyoutSubItem x:Uid="OptionMoreFilters">
-                                <MenuFlyoutItem
-                                    x:Uid="OptionColorFonts"
-                                    Click="Filter_Click"
-                                    Tag="10" />
-                                <MenuFlyoutItem
-                                    x:Uid="OptionDecorativeFonts"
-                                    Click="Filter_Click"
-                                    Tag="8" />
-                                <MenuFlyoutItem
-                                    x:Uid="OptionScriptFonts"
-                                    Click="Filter_Click"
-                                    Tag="9" />
-                                <MenuFlyoutItem
-                                    x:Uid="OptionMonospacedFonts"
-                                    Click="Filter_Click"
-                                    Tag="3" />
-                                <!--<MenuFlyoutSeparator />
-                                <MenuFlyoutItem
-                                    Text="Normal Fonts"
-                                    Click="Filter_Click"
-                                    Tag="11" />
-                                <MenuFlyoutItem
-                                    Text="Italic Fonts"
-                                    Click="Filter_Click"
-                                    Tag="12" />
-                                <MenuFlyoutItem
-                                    Text="Oblique Fonts"
-                                    Click="Filter_Click"
-                                    Tag="13" />-->
-                                <MenuFlyoutSeparator x:Name="FontSourceSeperator" />
-                                <MenuFlyoutItem
-                                    x:Name="CloudFontsOption"
-                                    x:Uid="OptionCloudFonts"
-                                    Click="Filter_Click"
-                                    Tag="7" />
-                                <MenuFlyoutItem
-                                    x:Name="AppxOption"
-                                    x:Uid="OptionAppxFonts"
-                                    Click="Filter_Click"
-                                    Tag="6" />
-                            </MenuFlyoutSubItem>
-                            <MenuFlyoutSeparator />
-                            <MenuFlyoutItem
-                                x:Uid="OptionImportedFonts"
-                                Click="Filter_Click"
-                                Tag="2" />
-                        </MenuFlyout>
-                    </DropDownButton.Flyout>
-                </DropDownButton>
+            <AppBarButton
+                x:Name="OpenFontPaneButton"
+                Width="45"
+                Height="45"
+                Click="OpenFontPaneButton_Click"
+                Visibility="Collapsed">
+                <SymbolIcon Symbol="GlobalNavigationButton" />
+            </AppBarButton>
 
-                <AppBarButton
-                    x:Name="ImportFontsButton"
-                    x:Uid="ImportFontsButton"
-                    Grid.Column="1"
-                    Width="45"
-                    Height="45"
-                    VerticalAlignment="Bottom"
-                    Click="{x:Bind PickFonts}"
-                    Visibility="Collapsed">
-                    <FontIcon
-                        FontSize="16"
-                        Glyph="&#xE109;"
-                        Opacity="0.8" />
-                </AppBarButton>
-                <AppBarButton
-                    x:Name="OpenFontButton"
-                    x:Uid="OpenFontButton"
-                    Grid.Column="2"
-                    Width="45"
-                    Height="45"
-                    VerticalAlignment="Bottom"
-                    Click="{x:Bind OpenFont}">
-                    <Path
-                        Height="16"
-                        Data="M896,320L1012,320L788,768L0,768L0,128L338.5,128L466.5,0L896,0ZM64,192L64,632.5L220.5,320L832,320L832,64L493.5,64L365.5,192ZM748,704L908,384L260,384L99.5,704Z"
-                        Fill="White"
-                        Opacity="0.8"
-                        Stretch="Uniform" />
-                </AppBarButton>
-            </Grid>
-
-
-            <!--<ToggleSwitch
-                x:Name="ToggleSymbolFontsOnly"
-                x:Uid="ToggleSymbolFontsOnly"
-
-                IsOn="{Binding ShowSymbolFontsOnly, Mode=TwoWay}" />-->
             <TextBlock
                 x:Name="FontTitleBlock"
+                Loaded="{x:Bind helpers:Animation.SetStandardReposition}"
                 Grid.Column="1"
                 Margin="24,0,5,0"
                 VerticalAlignment="Center"
@@ -217,119 +101,29 @@
                 FontWeight="SemiLight"
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
+
             <AutoSuggestBox
                 x:Name="SearchBox"
                 x:Uid="SearchBox"
                 Grid.Column="2"
                 Width="290"
                 VerticalAlignment="Center"
-                GotFocus="SearchBox_GotFocus"
+                GotFocus="{x:Bind FontMap.SearchBox_GotFocus}"
+                ItemTemplate="{StaticResource SearchResultTemplate}"
                 ItemsSource="{x:Bind FontMap.ViewModel.SearchResults, Mode=OneWay}"
                 PlaceholderText="#SearchBox"
-                PreviewKeyDown="SearchBox_PreviewKeyDown"
-                QuerySubmitted="SearchBox_QuerySubmitted"
-                SuggestionChosen="SearchBox_SuggestionChosen"
+                PreviewKeyDown="{x:Bind FontMap.SearchBox_PreviewKeyDown}"
+                QuerySubmitted="{x:Bind FontMap.SearchBox_QuerySubmitted}"
+                SuggestionChosen="{x:Bind FontMap.SearchBox_SuggestionChosen}"
+                Tag="{Binding ElementName=FontMap, Path=ViewModel.FontFamily}"
                 Text="{Binding ElementName=FontMap, Path=ViewModel.SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                TextChanged="{x:Bind FontMap.SearchBox_TextChanged}"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
                 <AutoSuggestBox.QueryIcon>
-                    <SymbolIcon Symbol="Find" Visibility="{x:Bind core:Converters.FalseToVis(Settings.UseInstantSearch), Mode=OneWay}" />
+                    <SymbolIcon Symbol="Find" />
                 </AutoSuggestBox.QueryIcon>
-                <AutoSuggestBox.ContextFlyout>
-                    <Flyout>
-                        <Flyout.FlyoutPresenterStyle>
-                            <Style TargetType="FlyoutPresenter">
-                                <Setter Property="RequestedTheme" Value="Default" />
-                            </Style>
-                        </Flyout.FlyoutPresenterStyle>
-                        <StackPanel Width="260">
-                            <ToggleSwitch
-                                x:Uid="InstantSearchToggle"
-                                Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
-                            <Slider
-                                Margin="0,4"
-                                Header="Delay before search (ms)"
-                                Maximum="3000"
-                                Minimum="250"
-                                TickFrequency="50"
-                                Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
-                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
-                            <Slider
-                                x:Uid="SearchResultsSlider"
-                                Margin="0,4"
-                                Maximum="100"
-                                Minimum="5"
-                                TickFrequency="1"
-                                Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
-                        </StackPanel>
-                    </Flyout>
-                </AutoSuggestBox.ContextFlyout>
-                <AutoSuggestBox.ItemTemplate>
-                    <DataTemplate x:DataType="services:IGlyphData">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="30" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <FontIcon
-                                Margin="4,0,0,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                FontFamily="{Binding ElementName=FontMap, Path=ViewModel.FontFamily}"
-                                FontSize="16"
-                                Glyph="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
-                            <TextBlock
-                                Grid.Column="1"
-                                VerticalAlignment="Center"
-                                Text="{x:Bind Description}" />
-                        </Grid>
-                    </DataTemplate>
-                </AutoSuggestBox.ItemTemplate>
             </AutoSuggestBox>
-
-            <AppBarButton
-                x:Name="SearchOptionButton"
-                x:Load="{x:Bind core:Converters.False(core:Utils.IsSystemOnWin10v1809OrNewer)}"
-                Grid.Column="3"
-                Width="45"
-                Height="45"
-                Visibility="{x:Bind core:Converters.FalseToVis(core:Utils.IsSystemOnWin10v1809OrNewer)}">
-                <Grid>
-                    <FontIcon Glyph="&#xE11A;" />
-                    <FontIcon
-                        Margin="0,3,3,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top"
-                        FontSize="7"
-                        Glyph="&#xE115;" />
-                </Grid>
-                <AppBarButton.ContextFlyout>
-                    <Flyout Placement="Bottom">
-                        <StackPanel>
-                            <ToggleSwitch
-                                x:Uid="InstantSearchToggle"
-                                Margin="0,4"
-                                IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
-                            <Slider
-                                Margin="0,4"
-                                Header="Delay before search (ms)"
-                                Maximum="3000"
-                                Minimum="250"
-                                TickFrequency="50"
-                                Visibility="{x:Bind core:Converters.TrueToVis(Settings.UseInstantSearch), Mode=OneWay}"
-                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
-                            <Slider
-                                x:Uid="SearchResultsSlider"
-                                Margin="0,4"
-                                Maximum="100"
-                                Minimum="5"
-                                TickFrequency="1"
-                                Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
-                        </StackPanel>
-                    </Flyout>
-                </AppBarButton.ContextFlyout>
-            </AppBarButton>
 
             <AppBarButton
                 x:Name="BtnSettings"
@@ -345,164 +139,412 @@
             </AppBarButton>
         </Grid>
 
-        <!--  Font List Grid  -->
-        <Grid
-            x:Name="FontListGrid"
-            Grid.Row="2"
-            Grid.Column="0"
-            Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+        <!--  Main Content  -->
+        <SplitView
+            x:Name="SplitView"
+            Grid.Row="1"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="3"
+            DisplayMode="Inline"
+            IsPaneOpen="True"
+            OpenPaneLength="{StaticResource SplitViewPaneWidth}"
+            PaneBackground="Transparent">
+            <SplitView.Pane>
+                <Grid x:Name="PaneRoot">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="{x:Bind TitleBarRow.Height}" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition x:Name="StatusBarRow" Height="26" />
+                    </Grid.RowDefinitions>
 
-            <Border x:Name="CollectionControlRow" x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay, TargetNullValue=False, FallbackValue=False}">
-                <Border.Background>
-                    <SolidColorBrush Opacity="0.4" Color="{ThemeResource SystemAccentColor}" />
-                </Border.Background>
-                <StackPanel
-                    Padding="0,0"
-                    HorizontalAlignment="Center"
-                    Orientation="Horizontal"
-                    Spacing="12">
-                    <AppBarButton
-                        x:Uid="RenameCollectionButton"
-                        Height="48"
-                        Click="RenameFontCollection_Click"
-                        Icon="Rename"
-                        ToolTipService.Placement="Bottom" />
-                    <AppBarButton
-                        x:Uid="DeleteCollectionButton"
-                        Height="48"
-                        Click="DeleteCollection_Click"
-                        Icon="Delete"
-                        ToolTipService.Placement="Bottom" />
-                </StackPanel>
-            </Border>
+                    <!--  Pane Header Commands  -->
+                    <Grid x:Name="PaneHeaderGrid" RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        
+                        <DropDownButton
+                            x:Name="FontListFilter"
+                            x:Uid="FontListFilter"
+                            Height="45"
+                            Margin="0,0,0,0"
+                            Padding="12,6"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            Background="Transparent"
+                            Content="{x:Bind ViewModel.FilterTitle, Mode=OneWay}"
+                            FontSize="16"
+                            ToolTipService.Placement="Bottom">
+                            <DropDownButton.Flyout>
+                                <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
+                                    <MenuFlyout.MenuFlyoutPresenterStyle>
+                                        <Style TargetType="MenuFlyoutPresenter">
+                                            <Setter Property="RequestedTheme" Value="Default" />
+                                        </Style>
+                                    </MenuFlyout.MenuFlyoutPresenterStyle>
+                                    <MenuFlyoutItem
+                                        x:Uid="OptionAllFonts"
+                                        Click="Filter_Click"
+                                        Tag="0" />
+                                    <MenuFlyoutItem
+                                        x:Uid="OptionSerifFonts"
+                                        Click="Filter_Click"
+                                        Tag="4" />
+                                    <MenuFlyoutItem
+                                        x:Uid="OptionSansSerifFonts"
+                                        Click="Filter_Click"
+                                        Tag="5" />
+                                    <MenuFlyoutItem
+                                        x:Uid="OptionSymbolFonts"
+                                        Click="Filter_Click"
+                                        Tag="1" />
+                                    <MenuFlyoutSubItem x:Uid="OptionMoreFilters">
+                                        <MenuFlyoutItem
+                                            x:Uid="OptionColorFonts"
+                                            Click="Filter_Click"
+                                            Tag="10" />
+                                        <MenuFlyoutItem
+                                            x:Uid="OptionDecorativeFonts"
+                                            Click="Filter_Click"
+                                            Tag="8" />
+                                        <MenuFlyoutItem
+                                            x:Uid="OptionScriptFonts"
+                                            Click="Filter_Click"
+                                            Tag="9" />
+                                        <MenuFlyoutItem
+                                            x:Uid="OptionMonospacedFonts"
+                                            Click="Filter_Click"
+                                            Tag="3" />
+                                        <!--<MenuFlyoutSeparator />
+                                <MenuFlyoutItem
+                                    Text="Normal Fonts"
+                                    Click="Filter_Click"
+                                    Tag="11" />
+                                <MenuFlyoutItem
+                                    Text="Italic Fonts"
+                                    Click="Filter_Click"
+                                    Tag="12" />
+                                <MenuFlyoutItem
+                                    Text="Oblique Fonts"
+                                    Click="Filter_Click"
+                                    Tag="13" />-->
+                                        <MenuFlyoutSeparator x:Name="FontSourceSeperator" />
+                                        <MenuFlyoutItem
+                                            x:Name="CloudFontsOption"
+                                            x:Uid="OptionCloudFonts"
+                                            Click="Filter_Click"
+                                            Tag="7" />
+                                        <MenuFlyoutItem
+                                            x:Name="AppxOption"
+                                            x:Uid="OptionAppxFonts"
+                                            Click="Filter_Click"
+                                            Tag="6" />
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSeparator />
+                                    <MenuFlyoutItem
+                                        x:Uid="OptionImportedFonts"
+                                        Click="Filter_Click"
+                                        Tag="2" />
+                                </MenuFlyout>
+                            </DropDownButton.Flyout>
+                        </DropDownButton>
 
-            <TextBlock
-                x:Name="ImportFontHelpBlock"
-                x:Uid="ImportFontHelpBlock"
-                Grid.Row="1"
-                Margin="12"
-                FontSize="13"
-                Opacity="0.7"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Text=""
-                Visibility="Collapsed" />
+                        <AppBarButton
+                            x:Name="ImportFontsButton"
+                            x:Uid="ImportFontsButton"
+                            Grid.Column="1"
+                            Width="45"
+                            Height="45"
+                            VerticalAlignment="Bottom"
+                            Click="{x:Bind PickFonts}"
+                            Visibility="Collapsed">
+                            <FontIcon
+                                FontSize="16"
+                                Glyph="&#xE109;"
+                                Opacity="0.8" />
+                        </AppBarButton>
 
-            <SemanticZoom x:Name="FontsSemanticZoom" Grid.Row="1">
-                <SemanticZoom.ZoomedInView>
-                    <ListView
-                        x:Name="LstFontFamily"
-                        IsItemClickEnabled="False"
-                        IsSwipeEnabled="False"
-                        ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
-                        SelectedItem="{Binding SelectedFont, Mode=TwoWay}"
-                        SelectedValuePath="Name"
-                        SelectionMode="Single">
+                        <AppBarButton
+                            x:Name="OpenFontButton"
+                            x:Uid="OpenFontButton"
+                            Grid.Column="2"
+                            Width="45"
+                            Height="45"
+                            VerticalAlignment="Bottom"
+                            Click="{x:Bind OpenFont}">
+                            <Path
+                                Height="16"
+                                Data="M896,320L1012,320L788,768L0,768L0,128L338.5,128L466.5,0L896,0ZM64,192L64,632.5L220.5,320L832,320L832,64L493.5,64L365.5,192ZM748,704L908,384L260,384L99.5,704Z"
+                                Fill="White"
+                                Opacity="0.8"
+                                Stretch="Uniform" />
+                        </AppBarButton>
+                    </Grid>
 
-                        <ListView.Resources>
-                            <Style BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
-                                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListView.Resources>
+                    <!--  Font List Grid  -->
+                    <Grid
+                        x:Name="FontListGrid"
+                        Grid.Row="1"
+                        Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
 
-                        <ListView.GroupStyle>
-                            <GroupStyle HeaderContainerStyle="{ThemeResource FontListHeaderItem}" HidesIfEmpty="True">
-                                <GroupStyle.HeaderTemplate>
-                                    <DataTemplate>
-                                        <GridViewItem
-                                            x:Name="Root"
-                                            Margin="0"
-                                            Padding="0"
-                                            HorizontalAlignment="Stretch"
-                                            HorizontalContentAlignment="Stretch"
-                                            IsHitTestVisible="True">
-                                            <Border
-                                                Margin="15,0"
-                                                BorderBrush="#CCC"
-                                                BorderThickness="0,0,0,1">
+                        <Border x:Name="CollectionControlRow" x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay, TargetNullValue=False, FallbackValue=False}">
+                            <Border.Background>
+                                <SolidColorBrush Opacity="0.4" Color="{ThemeResource SystemAccentColor}" />
+                            </Border.Background>
+                            <StackPanel
+                                Padding="0,0"
+                                HorizontalAlignment="Center"
+                                Orientation="Horizontal"
+                                Spacing="12">
+                                <AppBarButton
+                                    x:Uid="RenameCollectionButton"
+                                    Height="48"
+                                    Click="RenameFontCollection_Click"
+                                    Icon="Rename"
+                                    ToolTipService.Placement="Bottom" />
+                                <AppBarButton
+                                    x:Uid="DeleteCollectionButton"
+                                    Height="48"
+                                    Click="DeleteCollection_Click"
+                                    Icon="Delete"
+                                    ToolTipService.Placement="Bottom" />
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock
+                            x:Name="ImportFontHelpBlock"
+                            x:Uid="ImportFontHelpBlock"
+                            Grid.Row="1"
+                            Margin="12"
+                            FontSize="13"
+                            Opacity="0.7"
+                            Style="{StaticResource CaptionTextBlockStyle}"
+                            Visibility="Collapsed" />
+
+                        <SemanticZoom x:Name="FontsSemanticZoom" Grid.Row="1">
+                            <SemanticZoom.ZoomedInView>
+                                <ListView
+                                    x:Name="LstFontFamily"
+                                    IsItemClickEnabled="False"
+                                    IsSwipeEnabled="False"
+                                    ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
+                                    SelectedItem="{Binding SelectedFont, Mode=TwoWay}"
+                                    SelectedValuePath="Name"
+                                    SelectionMode="Single">
+
+                                    <ListView.Resources>
+                                        <Style BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
+                                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        </Style>
+                                    </ListView.Resources>
+
+                                    <ListView.GroupStyle>
+                                        <GroupStyle HeaderContainerStyle="{ThemeResource FontListHeaderItem}" HidesIfEmpty="True">
+                                            <GroupStyle.HeaderTemplate>
+                                                <DataTemplate>
+                                                    <GridViewItem
+                                                        x:Name="Root"
+                                                        Margin="0"
+                                                        Padding="0"
+                                                        HorizontalAlignment="Stretch"
+                                                        HorizontalContentAlignment="Stretch"
+                                                        IsHitTestVisible="True">
+                                                        <Border
+                                                            Margin="15,0"
+                                                            BorderBrush="#CCC"
+                                                            BorderThickness="0,0,0,1">
+                                                            <TextBlock
+                                                                Padding="0,8,0,10"
+                                                                HorizontalAlignment="Stretch"
+                                                                VerticalAlignment="Stretch"
+                                                                FontSize="30"
+                                                                FontWeight="SemiLight"
+                                                                Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                                                                Text="{Binding Key}" />
+                                                        </Border>
+                                                    </GridViewItem>
+                                                </DataTemplate>
+                                            </GroupStyle.HeaderTemplate>
+                                        </GroupStyle>
+                                    </ListView.GroupStyle>
+
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate x:DataType="core:InstalledFont">
+                                            <Grid ColumnSpacing="12" Background="Transparent">
+                                                <Grid.ContextFlyout>
+                                                    <!--  Menu content created dynamically  -->
+                                                    <MenuFlyout Opening="FontContextFlyout_Opening" />
+                                                </Grid.ContextFlyout>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
                                                 <TextBlock
-                                                    Padding="0,8,0,10"
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalAlignment="Stretch"
-                                                    FontSize="30"
+                                                    Padding="5"
+                                                    VerticalAlignment="Center"
+                                                    FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
+                                                    FontSize="14"
+                                                    Text="{x:Bind Name}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="NoWrap" />
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    Padding="5"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Opacity="0.5"
+                                                    Text="{x:Bind Variants.Count}"
+                                                    Visibility="{x:Bind HasVariants}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                            </SemanticZoom.ZoomedInView>
+                            <SemanticZoom.ZoomedOutView>
+                                <GridView
+                                    x:Name="ZoomGridView"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}">
+                                    <GridView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Width="64" Height="64">
+                                                <TextBlock
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    FontSize="32"
                                                     FontWeight="SemiLight"
-                                                    Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                                                    Text="{Binding Key}" />
+                                                    Foreground="{Binding Group.Count, Converter={StaticResource ZoomBackgroundConverter}}"
+                                                    Text="{Binding Group.Key}" />
                                             </Border>
-                                        </GridViewItem>
-                                    </DataTemplate>
-                                </GroupStyle.HeaderTemplate>
-                            </GroupStyle>
-                        </ListView.GroupStyle>
+                                        </DataTemplate>
+                                    </GridView.ItemTemplate>
+                                </GridView>
+                            </SemanticZoom.ZoomedOutView>
+                        </SemanticZoom>
+                    </Grid>
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="core:InstalledFont">
-                                <Grid ColumnSpacing="12" Background="Transparent">
-                                    <Grid.ContextFlyout>
-                                        <!--  Menu content created dynamically  -->
-                                        <MenuFlyout Opening="FontContextFlyout_Opening" />
-                                    </Grid.ContextFlyout>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        Padding="5"
-                                        VerticalAlignment="Center"
-                                        FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
-                                        FontSize="14"
-                                        Text="{x:Bind Name}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="NoWrap" />
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        Padding="5"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Opacity="0.5"
-                                        Text="{x:Bind Variants.Count}"
-                                        Visibility="{x:Bind HasVariants}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
-                    </ListView>
-                </SemanticZoom.ZoomedInView>
-                <SemanticZoom.ZoomedOutView>
-                    <GridView
-                        x:Name="ZoomGridView"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}">
-                        <GridView.ItemTemplate>
-                            <DataTemplate>
-                                <Border Width="64" Height="64">
-                                    <TextBlock
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontSize="32"
-                                        FontWeight="SemiLight"
-                                        Foreground="{Binding Group.Count, Converter={StaticResource ZoomBackgroundConverter}}"
-                                        Text="{Binding Group.Key}" />
-                                </Border>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
-                </SemanticZoom.ZoomedOutView>
-            </SemanticZoom>
+                    <!--  Pane Status Bar  -->
+                    <Grid
+                        x:Name="PaneStatusBar"
+                        Grid.Row="2"
+                        Background="{x:Bind StatusBar.Background}"
+                        RequestedTheme="{x:Bind StatusBar.RequestedTheme}">
+                        <Grid.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontSize" Value="12" />
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                                <Setter Property="Margin" Value="12 0" />
+                                <Setter Property="TextLineBounds" Value="Tight" />
+                            </Style>
+                        </Grid.Resources>
 
-        </Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-        <!--  Main UI Grid  -->
-        <views:FontMapView
-            x:Name="FontMap"
-            Grid.Row="2"
-            Grid.Column="1"
-            Font="{x:Bind ViewModel.SelectedFont, Mode=OneWay}" />
+                        <AppBarButton
+                            x:Name="HidePaneButton"
+                            x:Uid="BtnHidePane"
+                            Width="32"
+                            Margin="0 0 -6 0"
+                            VerticalAlignment="Stretch"
+                            Click="TogglePane_Click">
+                            <FontIcon
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="14"
+                                Glyph="&#xE127;" />
+                        </AppBarButton>
+
+                        <AppBarButton
+                            x:Name="ShowPaneButton2"
+                            x:Uid="BtnShowPane"
+                            Width="32"
+                            Margin="0 0 -6 0"
+                            VerticalAlignment="Stretch"
+                            Click="TogglePane_Click"
+                            Visibility="Collapsed">
+                            <FontIcon
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="14"
+                                Glyph="&#xE126;" />
+                        </AppBarButton>
+
+                        <TextBlock
+                            x:Name="FontFamilyCountLabel"
+                            Grid.Column="1"
+                            Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList), Mode=OneWay}" />
+
+                    </Grid>
+
+
+                </Grid>
+            </SplitView.Pane>
+
+            <!--  FontMap Grid  -->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="{x:Bind TitleBarRow.Height}" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="{x:Bind StatusBarRow.Height}" />
+                </Grid.RowDefinitions>
+
+                <views:FontMapView
+                    x:Name="FontMap"
+                    Grid.Row="1"
+                    Font="{x:Bind ViewModel.SelectedFont, Mode=OneWay}" />
+
+                <!--  Status Bar  -->
+                <Grid
+                    x:Name="StatusBar"
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                    RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="VerticalAlignment" Value="Center" />
+                            <Setter Property="Margin" Value="12 0" />
+                            <Setter Property="TextLineBounds" Value="Tight" />
+                        </Style>
+                    </Grid.Resources>
+
+                    <AppBarButton
+                        x:Name="ShowPaneButton"
+                        x:Uid="BtnShowPane"
+                        Width="32"
+                        Margin="0 0 -6 0"
+                        VerticalAlignment="Stretch"
+                        Click="TogglePane_Click"
+                        Visibility="Collapsed">
+                        <FontIcon
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="14"
+                            Glyph="&#xE126;" />
+                    </AppBarButton>
+
+                    <TextBlock Grid.Column="1" Text="{x:Bind UpdateCharacterCountLabel(FontMap.ViewModel.SelectedVariant), Mode=OneWay}" />
+
+                    <TextBlock Grid.Column="2" Text="{x:Bind FontMap.ViewModel.GetCharDescription(FontMap.ViewModel.SelectedChar), Mode=OneWay}" />
+                </Grid>
+            </Grid>
+        </SplitView>
 
         <!--  Loading Root  -->
         <ProgressRing
@@ -512,160 +554,56 @@
             Width="50"
             Height="50" />
 
-        <!--  Status Bar  -->
+        <!--  Notification Presenter  -->
         <Grid
-            Grid.Row="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="256" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="FontSize" Value="12" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                </Style>
-            </Grid.Resources>
-
-            <TextBlock Margin="12,0" Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList), Mode=OneWay}" />
-            <TextBlock Margin="12,0" Grid.Column="1" Text="{x:Bind UpdateCharacterCountLabel(FontMap.ViewModel.SelectedVariant), Mode=OneWay}" />
-
-            <TextBlock
-                Grid.Column="2"
-                Margin="12,0"
-                Text="{x:Bind FontMap.ViewModel.GetCharDescription(FontMap.ViewModel.SelectedChar), Mode=OneWay}" />
+            x:Name="NotificationRoot"
+            x:Load="False"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="10">
+            <wct:InAppNotification x:Name="DefaultNotification" />
         </Grid>
 
-        <!--  Settings ContentDialog  -->
-        <ContentDialog
-            x:Name="DigSettings"
-            x:Uid="DigSettings"
-            Title="#DigSettings"
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            d:IsHidden="True"
-            IsPrimaryButtonEnabled="True"
-            PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
-            PrimaryButtonText="OK">
-            <ScrollViewer>
-                <StackPanel Margin="0,10,0,0">
-                    <Slider
-                        x:Name="SldResolution"
-                        x:Uid="PngSlider"
-                        HorizontalAlignment="Stretch"
-                        IsThumbToolTipEnabled="True"
-                        Maximum="2048"
-                        Minimum="128"
-                        StepFrequency="64"
-                        TickFrequency="64"
-                        TickPlacement="Outside"
-                        Value="{Binding Source={StaticResource AppSettings}, Path=PngSize, Mode=TwoWay}" />
-                    <TextBlock Margin="0,0,0,20" Text="{Binding ElementName=SldResolution, Path=Value}" />
-
-                    <Slider
-                        x:Uid="GridSlider"
-                        HorizontalAlignment="Stretch"
-                        IsThumbToolTipEnabled="True"
-                        Maximum="192"
-                        Minimum="64"
-                        StepFrequency="8"
-                        TickFrequency="8"
-                        TickPlacement="Outside"
-                        Value="{Binding Source={StaticResource AppSettings}, Path=GridSize, Mode=TwoWay}" />
-                    <TextBlock
-                        x:Uid="RestartHeader"
-                        Margin="0,0,0,10"
-                        Foreground="#666"
-                        TextWrapping="Wrap" />
-
-                    <Button
-                        x:Name="BtnRestart"
-                        x:Uid="RestartButton"
-                        Click="BtnRestart_OnClick"
-                        Style="{StaticResource ButtonRevealStyle}" />
-
-                    <TextBlock x:Uid="FontListDisplayHeader" Margin="0,40,0,4" />
-                    <ToggleSwitch
-                        x:Uid="FontListDisplayToggle"
-                        IsOn="{x:Bind Settings.UseFontForPreview, Mode=TwoWay}"
-                        Toggled="FontListDisplayToggleSwitch_Toggled" />
-
-                    <!--  Reenable after sorting out export UI issues  -->
-                    <!--<TextBlock Margin="0 40 0 4" Text="Dev Utilities" />
-                    <ToggleSwitch
-                        OnContent="Show dev utilities"
-                        OffContent="Hide dev utilities"
-                        IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />-->
-
-                    <TextBlock
-                        x:Uid="Settings_About"
-                        Margin="0,40,0,10"
-                        FontWeight="Bold"
-                        Text="#Settings_About" />
-                    <TextBlock FontSize="14" Text="{Binding AppNameVersion}" />
-                    <TextBlock
-                        x:Uid="Settings_AboutDescription"
-                        FontSize="14"
-                        Text="#Settings_AboutDescription"
-                        TextWrapping="Wrap" />
-                    <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
-                </StackPanel>
-
-            </ScrollViewer>
-        </ContentDialog>
-
-        <controls:CreateCollectionDialog
-            x:Name="DigCreateCollection"
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            d:IsHidden="True" />
-
-        <ContentDialog
-            x:Name="DigRenameCollection"
-            x:Uid="DigRenameCollection"
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            d:IsHidden="True"
-            IsPrimaryButtonEnabled="{x:Bind ViewModel.IsCollectionTitleValid, Mode=OneWay}"
-            IsSecondaryButtonEnabled="True"
-            PrimaryButtonClick="DigRenameCollection_PrimaryButtonClick"
-            PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
-            SecondaryButtonClick="{x:Bind DigRenameCollection.Hide}"
-            SecondaryButtonStyle="{StaticResource ButtonRevealStyle}">
-            <TextBox
-                x:Uid="CreateCollectionEntryBox"
-                Margin="-14,0"
-                DataContext="{x:Bind ViewModel}"
-                Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </ContentDialog>
-
-        <ContentDialog
-            x:Name="DigDeleteCollection"
-            x:Uid="DigDeleteCollection"
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            d:IsHidden="True"
-            IsPrimaryButtonEnabled="True"
-            IsSecondaryButtonEnabled="True"
-            PrimaryButtonClick="DigDeleteCollection_PrimaryButtonClick"
-            PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
-            SecondaryButtonClick="{x:Bind DigDeleteCollection.Hide}"
-            SecondaryButtonStyle="{StaticResource ButtonRevealStyle}" />
-
-
         <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ViewStates">
+                <VisualState x:Name="CompactViewState">
+                    <VisualState.Setters>
+                        <Setter Target="SplitView.IsPaneOpen" Value="False" />
+                        <Setter Target="SplitView.DisplayMode" Value="Overlay" />
+                        <Setter Target="SplitViewPaneColumn.Width" Value="Auto" />
+                        <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
+                        <Setter Target="FontTitleBlock.Margin" Value="8 0 5 0" />
+                        <Setter Target="PaneHeaderGrid.Background" Value="{ThemeResource SystemAccentColorDark1}" />
+                        <Setter Target="PaneStatusBar.Background" Value="{ThemeResource SystemAccentColorDark1}" />
+                        <Setter Target="FontListGrid.Background" Value="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}" />
+
+                        <Setter Target="ShowPaneButton.Visibility" Value="Collapsed" />
+                        <Setter Target="ShowPaneButton2.Visibility" Value="Collapsed" />
+                        <Setter Target="HidePaneButton.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="CollapsedViewState">
+                    <VisualState.Setters>
+                        <Setter Target="SplitView.IsPaneOpen" Value="False" />
+                        <Setter Target="SplitView.DisplayMode" Value="Overlay" />
+                        <Setter Target="SplitViewPaneColumn.Width" Value="Auto" />
+                        <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
+                        <Setter Target="FontTitleBlock.Margin" Value="8 0 5 0" />
+                        <Setter Target="PaneHeaderGrid.Background" Value="{ThemeResource SystemAccentColorDark1}" />
+                        <Setter Target="PaneStatusBar.Background" Value="{ThemeResource SystemAccentColorDark1}" />
+                        <Setter Target="FontListGrid.Background" Value="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}" />
+
+                        <Setter Target="ShowPaneButton.Visibility" Value="Visible" />
+                        <Setter Target="ShowPaneButton2.Visibility" Value="Visible" />
+                        <Setter Target="HidePaneButton.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DefaultViewState">
+                    <VisualState.Setters>
+                        <Setter Target="SplitView.IsPaneOpen" Value="True" />
+                        <Setter Target="SplitView.DisplayMode" Value="Inline" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
             <VisualStateGroup x:Name="LoadingStates">
                 <VisualState x:Name="FontsLoadingState">
                     <VisualState.StateTriggers>
@@ -682,6 +620,10 @@
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.Opacity" Value="0.4" />
+                        <Setter Target="HidePaneButton.IsEnabled" Value="False" />
+                        <Setter Target="ShowPaneButton.IsEnabled" Value="False" />
+                        <Setter Target="OpenFontPaneButton.IsEnabled" Value="False" />
+                        <Setter Target="BtnSettings.IsEnabled" Value="False" />
                         <Setter Target="LoadingRing.IsActive" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
@@ -697,6 +639,21 @@
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="HasFontsState" />
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="SearchStatesGroup">
+                <VisualState x:Name="InstantSearchState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind Settings.UseInstantSearch, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SearchBox.QueryIcon" Value="{x:Null}" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ManualSearchState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind core:Converters.False(Settings.UseInstantSearch), Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

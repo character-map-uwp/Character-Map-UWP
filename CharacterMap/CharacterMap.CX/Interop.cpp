@@ -69,16 +69,24 @@ DWriteFontSet^ Interop::GetFonts(ComPtr<IDWriteFontSet3> fontSet)
 
 		if (fontResource->GetLocality() == DWRITE_LOCALITY::DWRITE_LOCALITY_LOCAL)
 		{
-			auto canvasFontFace = GetOrCreate<CanvasFontFace>(fontResource.Get());
 			auto properties = GetDWriteProperties(fontSet, i, fontResource, ls, localeName);
-			auto fontface = ref new DWriteFontFace(canvasFontFace, properties);
 
-			if (properties->Source == DWriteFontSource::AppxPackage)
-				appxCount++;
-			else if (properties->Source == DWriteFontSource::RemoteFontProvider)
-				cloudCount++;
+			// Some cloud providers, like Microsoft Office, can cause issues with the underlying
+			// DirectWrite system when they are open. This can cause us to be unable to create
+			// a IDWriteFontFace3 from certain fonts, also leading us to not be able to get the
+			// properties. Nothing we can do except *don't* crash.
+			if (properties != nullptr) 
+			{
+				auto canvasFontFace = GetOrCreate<CanvasFontFace>(fontResource.Get());
+				auto fontface = ref new DWriteFontFace(canvasFontFace, properties);
 
-			vec->Append(fontface);
+				if (properties->Source == DWriteFontSource::AppxPackage)
+					appxCount++;
+				else if (properties->Source == DWriteFontSource::RemoteFontProvider)
+					cloudCount++;
+
+				vec->Append(fontface);
+			}
 		}
 	}
 
@@ -96,23 +104,27 @@ DWriteProperties^ Interop::GetDWriteProperties(
 	// 1. Get Font Source
 	DWriteFontSource fontSource = static_cast<DWriteFontSource>(fontSet->GetFontSourceType(index));
 
+	// The following is known to fail if Microsoft Office with cloud fonts
+	// is currently running on the users system. 
 	ComPtr<IDWriteFontFace3> face;
-	faceRef->CreateFontFace(&face);
+	if (faceRef->CreateFontFace(&face) == S_OK)
+	{
+		// 2. Attempt to get FAMILY locale index
+		String^ family = nullptr;
+		ComPtr<IDWriteLocalizedStrings> names;
+		if (SUCCEEDED(face->GetFamilyNames(&names)))
+			family = GetLocaleString(names, ls, locale);
 
-	// 2. Attempt to get FAMILY locale index
-	String^ family = nullptr;
-	ComPtr<IDWriteLocalizedStrings> names;
-	if (SUCCEEDED(face->GetFamilyNames(&names)))
-		family = GetLocaleString(names, ls, locale);
+		// 3. Attempt to get FACE locale index
+		String^ fname = nullptr;
+		names = nullptr;
+		if (SUCCEEDED(face->GetFaceNames(&names)))
+			fname = GetLocaleString(names, ls, locale);
 
+		return ref new DWriteProperties(fontSource, nullptr, family, fname, face->IsColorFont());
+	};
 
-	// 4. Attempt to get FACE locale index
-	String^ fname = nullptr;
-	names = nullptr;
-	if (SUCCEEDED(face->GetFaceNames(&names)))
-		fname = GetLocaleString(names, ls, locale);
-
-	return ref new DWriteProperties(fontSource, nullptr, family, fname, face->IsColorFont());
+	return nullptr;
 }
 
 String^ Interop::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale)
@@ -120,16 +132,12 @@ String^ Interop::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls
 	HRESULT hr = S_OK;
 	UINT32 fidx = 0;
 	BOOL exists = false;
-	{
-		if (ls)
-		{
-			hr = strings->FindLocaleName(locale, &fidx, &exists);
-		}
-		if (SUCCEEDED(hr) && !exists) // if the above find did not find a match, retry with US English
-		{
-			hr = strings->FindLocaleName(L"en-us", &fidx, &exists);
-		}
-	}
+
+	if (ls)
+		hr = strings->FindLocaleName(locale, &fidx, &exists);
+
+	if (SUCCEEDED(hr) && !exists) // if the above find did not find a match, retry with US English
+		hr = strings->FindLocaleName(L"en-us", &fidx, &exists);
 
 	// 3. Get FAMILY Locale string
 	UINT32 length = 0;

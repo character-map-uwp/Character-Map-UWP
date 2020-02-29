@@ -19,25 +19,30 @@ using Windows.Storage.Pickers;
 using CharacterMap.Services;
 using GalaSoft.MvvmLight.Messaging;
 using System.Collections.Generic;
+using System.Text;
+using Windows.UI.Xaml.Markup;
+using CharacterMap.Controls;
 
 namespace CharacterMap.Views
 {
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public static CoreDispatcher MainDispatcher { get; private set; }
+
         public MainViewModel ViewModel { get; }
 
         public AppSettings Settings { get; }
 
-        private bool _isCtrlKeyPressed;
-
-        public static CoreDispatcher MainDispatcher { get; private set; }
-
         private Debouncer _fontListDebouncer { get; } = new Debouncer();
+        
+        private bool _isCtrlKeyPressed;
 
         public MainPage()
         {
             InitializeComponent();
-            Settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
+            Settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
 
             ViewModel = DataContext as MainViewModel;
             NavigationCacheMode = NavigationCacheMode.Enabled;
@@ -47,12 +52,33 @@ namespace CharacterMap.Views
 
             MainDispatcher = Dispatcher;
             Messenger.Default.Register<CollectionsUpdatedMessage>(this, OnCollectionsUpdated);
+            Messenger.Default.Register<FontPreviewUpdatedMessage>(this, OnFontPreviewUpdated);
+
+            this.SizeChanged += MainPage_SizeChanged;
+        }
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            Messenger.Default.Register<ImportMessage>(this, OnFontImportRequest);
+            Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
+
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
             ViewModel.FontListCreated += ViewModel_FontListCreated;
+
+        }
+
+        private void MainPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Messenger.Default.Unregister<ImportMessage>(this);
+            Messenger.Default.Unregister<AppNotificationMessage>(this);
+
+            ViewModel.FontListCreated -= ViewModel_FontListCreated;
         }
 
         private void ViewModel_FontListCreated(object sender, EventArgs e)
@@ -65,39 +91,39 @@ namespace CharacterMap.Views
             });
         }
 
-        private void MainPage_Unloaded(object sender, RoutedEventArgs e)
+        private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ViewModel.FontListCreated -= ViewModel_FontListCreated;
+            if (e.NewSize.Width < 900)
+            {
+                VisualStateManager.GoToState(this, nameof(CompactViewState), true);
+            }
+            else if (ViewStates.CurrentState == CompactViewState)
+            {
+                VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
+            }
         }
 
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private void TogglePane_Click(object sender, RoutedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (SplitView.DisplayMode == SplitViewDisplayMode.Inline)
+            {
+                VisualStateManager.GoToState(this, nameof(CollapsedViewState), true);
+            }
+            else
+            {
+                VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
+            }
         }
 
-        private async void BtnSettings_OnClick(object sender, RoutedEventArgs e)
+        private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
-            await DigSettings.ShowAsync();
-        }
-
-        private async void BtnRestart_OnClick(object sender, RoutedEventArgs e)
-        {
-            await DoRestartRequest();
-        }
-
-        private async Task DoRestartRequest()
-        {
-            await CoreApplication.RequestRestartAsync(string.Empty);
+            _ = (new SettingsContentDialog(Settings)).ShowAsync();
         }
 
         private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control) _isCtrlKeyPressed = false;
+            if (e.Key == VirtualKey.Control) 
+                _isCtrlKeyPressed = false;
         }
 
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -132,11 +158,15 @@ namespace CharacterMap.Views
                 try
                 {
                     var items = await e.DataView.GetStorageItemsAsync();
-                    if (await FontFinder.ImportFontsAsync(items) is FontImportResult result
-                        && result.Imported.Count > 0)
+                    if (await FontFinder.ImportFontsAsync(items) is FontImportResult result)
                     {
-                        ViewModel.RefreshFontList();
-                        ViewModel.TrySetSelectionFromImport(result);
+                        if (result.Imported.Count > 0)
+                        {
+                            ViewModel.RefreshFontList();
+                            ViewModel.TrySetSelectionFromImport(result);
+                        }
+
+                        ShowImportResult(result);
                     }
                 }
                 finally
@@ -157,34 +187,9 @@ namespace CharacterMap.Views
             }
         }
 
-        private void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private void OpenFontPaneButton_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem item && item.Tag is InstalledFont font)
-            {
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    ViewModel.TryRemoveFont(font);
-                });
-            }
-        }
-
-        private void RemoveMenuFlyout_Opening(object sender, object e)
-        {
-            if (sender is MenuFlyout flyout 
-                && flyout.Items[0].Tag is InstalledFont font
-                && font.HasImportedFiles == false)
-            {
-                flyout.Hide();
-            }
-        }
-
-        private void OpenInWindowFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is MenuFlyoutItem item 
-                && item.DataContext is InstalledFont font)
-            {
-                _ = FontMapView.CreateNewViewForFontAsync(font);
-            }
+            SplitView.IsPaneOpen = true;
         }
 
         void OnCollectionsUpdated(CollectionsUpdatedMessage msg)
@@ -264,7 +269,7 @@ namespace CharacterMap.Views
             return string.Empty;
         }
 
-        public string UpdateCharacterCountLabel(FontVariant variant)
+        private string UpdateCharacterCountLabel(FontVariant variant)
         {
             if (variant != null)
                 return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
@@ -272,25 +277,19 @@ namespace CharacterMap.Views
             return string.Empty;
         }
 
-        private void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
+        private void Filter_Click(object sender, RoutedEventArgs e)
         {
-            FontMap.SearchBox_SuggestionChosen(sender, args);
-        }
+            if (sender is FrameworkElement f)
+            {
+                if (!FontsSemanticZoom.IsZoomedInViewActive)
+                    FontsSemanticZoom.IsZoomedInViewActive = true;
 
-        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            FontMap.OnSearchBoxGotFocus(SearchBox);
-        }
-
-        private void SearchBox_PreviewKeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Enter)
-                e.Handled = true;
-        }
-
-        private void SearchBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            FontMap.OnSearchBoxSubmittedQuery(SearchBox);
+                var filter = Convert.ToInt32(f.Tag.ToString(), 10);
+                if (filter == ViewModel.FontListFilter)
+                    ViewModel.RefreshFontList();
+                else
+                    ViewModel.FontListFilter = filter;
+            }
         }
 
         private void MenuFlyout_Opening(object sender, object e)
@@ -348,106 +347,40 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     menu, 
                     font, 
-                    false,
-                    DigCreateCollection);
+                    false);
             }
-        }
-
-        private async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is FrameworkElement f && f.DataContext is InstalledFont font)
-            {
-                await ViewModel.FontCollections.AddToCollectionAsync(
-                               font, ViewModel.FontCollections.SymbolCollection);
-
-                ViewModel.RefreshFontList(ViewModel.SelectedCollection);
-            }
-        }
-
-        private async void RemoveFromCollectionItem_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is FrameworkElement f && f.DataContext is InstalledFont font)
-            {
-                UserFontCollection collection = (ViewModel.SelectedCollection == null && ViewModel.FontListFilter == 1)
-                    ? ViewModel.FontCollections.SymbolCollection
-                    : ViewModel.SelectedCollection;
-
-                await ViewModel.FontCollections.RemoveFromCollectionAsync(font, collection);
-                ViewModel.RefreshFontList(ViewModel.SelectedCollection);
-            }
-        }
-
-        private void CreateFontCollection_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.CollectionTitle = null;
-            DigCreateCollection.DataContext = (sender as FrameworkElement)?.DataContext;
-            _ = DigCreateCollection.ShowAsync();
         }
 
         private void RenameFontCollection_Click(object sender, RoutedEventArgs e)
         {
-            ViewModel.CollectionTitle = ViewModel.SelectedCollection.Name;
-            _ = DigRenameCollection.ShowAsync();
-        }
-
-        private void SetFilter(object filter)
-        {
-            ViewModel.FontListFilter = (int)filter;
-        }
-
-        private void Filter_Click(object sender, RoutedEventArgs e)
-        {
-            if (sender is FrameworkElement f)
-            {
-                if (!FontsSemanticZoom.IsZoomedInViewActive)
-                    FontsSemanticZoom.IsZoomedInViewActive = true;
-
-                var filter = Convert.ToInt32(f.Tag.ToString(), 10);
-                if (filter == ViewModel.FontListFilter)
-                    ViewModel.RefreshFontList();
-                else
-                    ViewModel.FontListFilter = filter;
-            }
+            _ = (new CreateCollectionDialog(ViewModel.SelectedCollection)).ShowAsync();
         }
 
         private void DeleteCollection_Click(object sender, RoutedEventArgs e)
         {
-            _ = DigDeleteCollection.ShowAsync();
-        }
+            var d = new ContentDialog
+            {
+                Title = Localization.Get("DigDeleteCollection/Title"),
+                IsPrimaryButtonEnabled = true,
+                IsSecondaryButtonEnabled = true,
+                PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
+                SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+            };
 
-        private async void DigCreateCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            var d = args.GetDeferral();
-            var collection = await ViewModel.FontCollections.CreateCollectionAsync(ViewModel.CollectionTitle);
-            await ViewModel.FontCollections.AddToCollectionAsync(sender.DataContext as InstalledFont, collection);
-            d.Complete();
-        }
-
-        private async void DigRenameCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            var d = args.GetDeferral();
-            await ViewModel.FontCollections.RenameCollectionAsync(ViewModel.CollectionTitle, ViewModel.SelectedCollection);
-            ViewModel.RefreshFontList(ViewModel.SelectedCollection);
-            d.Complete();
-        }
-
-        private void DigRenameCollection_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            sender.Hide();
+            d.PrimaryButtonClick += DigDeleteCollection_PrimaryButtonClick;
+            _ = d.ShowAsync();
         }
 
         private async void DigDeleteCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            string name = ViewModel.SelectedCollection.Name;
             await ViewModel.FontCollections.DeleteCollectionAsync(ViewModel.SelectedCollection);
             ViewModel.RefreshFontList();
+
+            Messenger.Default.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
         }
 
-        private void DigDeleteCollection_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            sender.Hide();
-        }
-
-        private void FontListDisplayToggleSwitch_Toggled(object sender, RoutedEventArgs e)
+        private void OnFontPreviewUpdated(FontPreviewUpdatedMessage msg)
         {
             if (ViewModel.InitialLoad.IsCompleted)
             {
@@ -456,6 +389,95 @@ namespace CharacterMap.Views
                     ViewModel.RefreshFontList(ViewModel.SelectedCollection);
                 });
             }
+        }
+
+        private void OnFontImportRequest(ImportMessage msg)
+        {
+            _ = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                ViewModel.IsLoadingFonts = true;
+                try
+                {
+                    if (ViewModel.InitialLoad.IsCompleted)
+                    {
+                        ViewModel.RefreshFontList();
+                    }
+                    else
+                    {
+                        await ViewModel.InitialLoad;
+                        await Task.Delay(50);
+                    }
+
+                    ViewModel.TrySetSelectionFromImport(msg.Result);
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
+                    ShowImportResult(msg.Result);
+                }
+            });
+        }
+
+        void ShowImportResult(FontImportResult result)
+        {
+            if (result.Imported.Count == 1)
+                ShowNotification(Localization.Get("NotificationSingleFontAdded",  result.Imported[0].Name), 4000);
+            else if (result.Imported.Count > 1)
+                ShowNotification(Localization.Get("NotificationMultipleFontsAdded",  result.Imported.Count), 4000);
+            else if (result.Invalid.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine(Localization.Get("NotificationImportFailed"));
+                sb.AppendLine();
+                foreach (var i in result.Invalid.Take(5))
+                {
+                    sb.AppendLine($"{i.Item1.Name}: {i.Item2}");
+                }
+
+                if (result.Invalid.Count > 5)
+                    sb.Append("…");
+
+                ShowNotification(sb.ToString().Trim(), 4000);
+            }
+        }
+
+        void OnNotificationMessage(AppNotificationMessage msg)
+        {
+            if (msg.Local && !Dispatcher.HasThreadAccess)
+                return;
+
+            if (msg.Data is ExportResult result)
+            {
+                if (!result.Success)
+                    return;
+               
+                ShowNotification(FontMap.CreateExportNotification(result), 5000);
+            }
+            else if (msg.Data is AddToCollectionResult added)
+            {
+                if (!added.Success)
+                    return;
+
+                var content = ResourceHelper.InflateDataTemplate("AddedToCollectionNotificationTemplate", added);
+                ShowNotification(content, 5000);
+            }
+            else if (msg.Data is string s)
+            {
+                ShowNotification(s, msg.DurationInMilliseconds > 0 ? msg.DurationInMilliseconds : 4000);
+            }
+        }
+
+        void ShowNotification(object o, int durationMs)
+        {
+            // NotificationRoot has x:Load set to false,
+            // we need to ensure it gets realised;
+            if (NotificationRoot == null)
+                this.FindName(nameof(NotificationRoot));
+
+            if (o is string s)
+                DefaultNotification.Show(s, durationMs);
+            else if (o is UIElement e)
+                DefaultNotification.Show(e, durationMs);
         }
     }
 }

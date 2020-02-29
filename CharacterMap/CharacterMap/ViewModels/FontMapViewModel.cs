@@ -23,11 +23,15 @@ namespace CharacterMap.ViewModels
 {
     public class FontMapViewModel : ViewModelBase
     {
+        #region Properties
+
         private Interop _interop { get; }
 
         private Debouncer _searchDebouncer { get; }
 
         private ConcurrencyToken.ConcurrencyTokenGenerator _searchTokenFactory { get; }
+
+        public AppSettings Settings { get; }
 
         public StorageFile SourceFile { get; set; }
 
@@ -38,6 +42,8 @@ namespace CharacterMap.ViewModels
         public IDialogService DialogService { get; }
         public RelayCommand<ExportStyle> CommandSavePng { get; }
         public RelayCommand<bool> CommandSaveSvg { get; }
+
+        internal bool IsLoadingCharacters { get; private set; }
 
         public bool IsDarkAccent => Utils.IsAccentColorDark();
 
@@ -148,7 +154,7 @@ namespace CharacterMap.ViewModels
                 _selectedChar = value;
                 if (null != value)
                 {
-                    App.AppSettings.LastSelectedCharIndex = value.UnicodeIndex;
+                    Settings.LastSelectedCharIndex = value.UnicodeIndex;
                 }
                 RaisePropertyChanged();
                 UpdateCharAnalysis();
@@ -221,13 +227,17 @@ namespace CharacterMap.ViewModels
             set
             {
                 if (Set(ref _searchQuery, value))
-                    DebounceSearch(value, App.AppSettings.InstantSearchDelay, SearchSource.AutoProperty);
+                    DebounceSearch(value, Settings.InstantSearchDelay, SearchSource.AutoProperty);
             }
         }
 
-        public FontMapViewModel(IDialogService dialogService)
+        #endregion
+
+        public FontMapViewModel(IDialogService dialogService, AppSettings settings)
         {
             DialogService = dialogService;
+            Settings = settings;
+
             CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
 
@@ -241,6 +251,7 @@ namespace CharacterMap.ViewModels
         {
             try
             {
+                IsLoadingCharacters = true;
                 Chars = variant?.GetCharacters();
                 if (variant != null)
                 {
@@ -274,6 +285,7 @@ namespace CharacterMap.ViewModels
 
                 SearchResults = null;
                 DebounceSearch(SearchQuery, 100);
+                IsLoadingCharacters = false;
             }
             catch
             {
@@ -283,6 +295,7 @@ namespace CharacterMap.ViewModels
                  * creating a CanvasTextLayout can fail for some unknown reason. So we retry it.
                  * If we get caught in a never ending loop here, something horrible has occurred.
                  */
+                IsLoadingCharacters = false;
                 _ = Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, async () =>
                 {
                     await Task.Delay(100);
@@ -290,7 +303,6 @@ namespace CharacterMap.ViewModels
                         LoadChars(variant);
                 });
             }
-
         }
 
         private void UpdateCharAnalysis()
@@ -318,10 +330,6 @@ namespace CharacterMap.ViewModels
             }
 
             IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
-            if (SelectedVariant != null && SelectedVariant.FamilyName.Contains("MDL2 Assets"))
-            {
-                TitlePrefix = GlyphService.GetCharacterDescription(SelectedChar.UnicodeIndex, SelectedVariant);
-            }
         }
 
         private CanvasTypography GetEffectiveTypography()
@@ -350,20 +358,21 @@ namespace CharacterMap.ViewModels
             }
             else
             {
-                var uni = SelectedChar.UnicodeIndex.ToString("x").ToUpper();
+                var hex = SelectedChar.UnicodeIndex.ToString("x4").ToUpper();
                 XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
-                XamlCode = $"&#x{uni};";
-                FontIcon = $@"<FontIcon FontFamily=""{SelectedVariant.XamlFontSource}"" Glyph=""&#x{uni};"" />";
-                if (Enum.IsDefined(typeof(Symbol), SelectedChar.UnicodeIndex))
+                XamlCode = $"&#x{hex};";
+                FontIcon = $@"<FontIcon FontFamily=""{SelectedVariant.XamlFontSource}"" Glyph=""&#x{hex};"" />";
+
+                if (FontFinder.IsMDL2(SelectedVariant) && Enum.IsDefined(typeof(Symbol), SelectedChar.UnicodeIndex))
                     SymbolIcon = $@"<SymbolIcon Symbol=""{(Symbol)SelectedChar.UnicodeIndex}"" />";
                 else
-                    SymbolIcon = $"(Symbol)0x{uni}";
+                    SymbolIcon = null;
             }
         }
 
         private void SetDefaultChar()
         {
-            if (Chars.FirstOrDefault(i => i.UnicodeIndex == App.AppSettings.LastSelectedCharIndex)
+            if (Chars.FirstOrDefault(i => i.UnicodeIndex == Settings.LastSelectedCharIndex)
                             is Character lastSelectedChar
                             && SelectedVariant.FontFace.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
             {
@@ -391,14 +400,16 @@ namespace CharacterMap.ViewModels
 
         public void DebounceSearch(string query, int delayMilliseconds = 500, SearchSource from = SearchSource.AutoProperty)
         {
-            if (from == SearchSource.AutoProperty && !App.AppSettings.UseInstantSearch)
-            {
+            if (from == SearchSource.AutoProperty && !Settings.UseInstantSearch)
                 return;
-            }
-            _searchDebouncer.Debounce(delayMilliseconds, () => Search(query));
+
+            if (from == SearchSource.ManualSubmit || delayMilliseconds <= 0)
+                Search(query);
+            else
+                _searchDebouncer.Debounce(delayMilliseconds, () => Search(query));
         }
 
-        private async void Search(string query)
+        internal async void Search(string query)
         {
             var token = _searchTokenFactory.GenerateToken();
             if (await GlyphService.SearchAsync(query, SelectedVariant) is IReadOnlyList<IGlyphData> results
@@ -408,26 +419,33 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private Task SavePngAsync(ExportStyle style)
+        private async Task SavePngAsync(ExportStyle style)
         {
-            return ExportManager.ExportPngAsync(
+            ExportResult result = await ExportManager.ExportPngAsync(
                 style,
                 SelectedFont,
                 SelectedVariant,
                 SelectedChar,
                 SelectedCharAnalysis,
-                GetEffectiveTypography());
+                GetEffectiveTypography(),
+                Settings);
+
+            if (result.Success)
+                MessengerInstance.Send(new AppNotificationMessage(true, result));
         }
 
-        private Task SaveSvgAsync(bool isBlackText)
+        private async Task SaveSvgAsync(bool isBlackText)
         {
-            return ExportManager.ExportSvgAsync(
+            ExportResult result = await ExportManager.ExportSvgAsync(
                 isBlackText ? ExportStyle.Black : ExportStyle.White,
                 SelectedFont,
                 SelectedVariant,
                 SelectedChar,
                 SelectedCharAnalysis,
                 GetEffectiveTypography());
+
+            if (result.Success)
+                MessengerInstance.Send(new AppNotificationMessage(true, result));
         }
 
         public async Task<bool> LoadFromFileArgsAsync(FileActivatedEventArgs args)

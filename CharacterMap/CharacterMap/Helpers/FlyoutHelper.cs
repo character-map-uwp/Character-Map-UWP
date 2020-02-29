@@ -24,12 +24,9 @@ namespace CharacterMap.Helpers
         public static void CreateMenu(
             MenuFlyout menu,
             InstalledFont font,
-            bool standalone,
-            CreateCollectionDialog createDialog)
+            bool standalone)
         {
-            MainViewModel main = null;
-            if (ResourceHelper.TryGet("Locator", out ViewModelLocator l))
-                main = l.Main;
+            MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
 
             void OpenInNewWindow(object s, RoutedEventArgs args)
             {
@@ -41,18 +38,24 @@ namespace CharacterMap.Helpers
             {
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
                 {
-                    await _collections.AddToCollectionAsync(
-                                   fnt, _collections.SymbolCollection);
+                    var result = await _collections.AddToCollectionAsync(fnt, _collections.SymbolCollection);
 
                     Messenger.Default.Send(new CollectionsUpdatedMessage());
+
+                    if (result.Success)
+                        Messenger.Default.Send(new AppNotificationMessage(true, result));
+                    
                 }
             }
 
             void CreateCollection_Click(object sender, RoutedEventArgs e)
             {
-                createDialog.TemplateSettings.CollectionTitle = null;
-                createDialog.DataContext = (sender as FrameworkElement)?.DataContext;
-                _ = createDialog.ShowAsync();
+                var d = new CreateCollectionDialog
+                {
+                    DataContext = (sender as FrameworkElement)?.DataContext
+                };
+
+                _ = d.ShowAsync();
             }
 
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
@@ -69,14 +72,27 @@ namespace CharacterMap.Helpers
                 }
             }
 
-            void RemoveMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+            void DeleteMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is MenuFlyoutItem item && item.Tag is InstalledFont fnt)
                 {
-                    _ = MainPage.MainDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    var d = new ContentDialog
                     {
-                        main.TryRemoveFont(fnt);
-                    });
+                        Title = Localization.Get("DlgDeleteFont/Title"),
+                        IsPrimaryButtonEnabled = true,
+                        IsSecondaryButtonEnabled = true,
+                        PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
+                        SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+                    };
+
+                    d.PrimaryButtonClick += (ds, de) =>
+                    {
+                        _ = MainPage.MainDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            main.TryRemoveFont(fnt);
+                        });
+                    };
+                    _ = d.ShowAsync();
                 }
             }
 
@@ -111,7 +127,7 @@ namespace CharacterMap.Helpers
                             Icon = new SymbolIcon { Symbol = Symbol.Delete },
                             Tag = font
                         };
-                        removeFont.Click += RemoveMenuFlyoutItem_Click;
+                        removeFont.Click += DeleteMenuFlyoutItem_Click;
                         menu.Items.Add(removeFont);
                     }
                 }
@@ -177,7 +193,6 @@ namespace CharacterMap.Helpers
                 }
             }
             
-
             // Add items for each user Collection
             if (_collections.Items.Count > 0)
             {
@@ -190,8 +205,13 @@ namespace CharacterMap.Helpers
                     {
                         m.Click += async (s, a) =>
                         {
-                            await _collections.AddToCollectionAsync(
-                                font, (UserFontCollection)(((FrameworkElement)s).DataContext));
+                            UserFontCollection collection = (UserFontCollection)((FrameworkElement)s).DataContext;
+                            AddToCollectionResult result = await _collections.AddToCollectionAsync(font, collection);
+
+                            if (result.Success)
+                            {
+                                Messenger.Default.Send(new AppNotificationMessage(true, result));
+                            }
                         };
                     }
                     coll.Items.Add(m);

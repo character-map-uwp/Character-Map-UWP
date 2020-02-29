@@ -135,12 +135,6 @@
   <data name="BtnSavePng.Text" xml:space="preserve">
     <value>Enregistrer en PNG</value>
   </data>
-  <data name="ToggleSymbolFontsOnly.OnContent" xml:space="preserve">
-    <value>Polices symboliques seules</value>
-  </data>
-  <data name="ToggleSymbolFontsOnly.OffContent" xml:space="preserve">
-    <value>Toutes les polices</value>
-  </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Copier</value>
   </data>

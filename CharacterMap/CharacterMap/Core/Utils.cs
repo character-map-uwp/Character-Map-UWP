@@ -1,7 +1,6 @@
 ﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
-using Microsoft.UI.Xaml.Core.Direct;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,20 +18,6 @@ namespace CharacterMap.Core
     public class Utils
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
-
-        private static Dictionary<int, IXamlDirect> _xamlDirectCache { get; } = new Dictionary<int, IXamlDirect>();
-
-        public static IXamlDirect GetXamlDirectForWindow(CoreDispatcher dispatcher)
-        {
-            int hash = dispatcher.GetHashCode();
-            if (_xamlDirectCache.TryGetValue(hash, out IXamlDirect d))
-                return d;
-
-            d = XamlDirect.GetDefault();
-            _xamlDirectCache[hash] = d;
-            return d;
-        }
-
 
         public static bool TryParseHexString(string hexNumber, out int hex)
         {

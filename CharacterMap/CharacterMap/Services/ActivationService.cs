@@ -106,7 +106,7 @@ namespace CharacterMap.Services
                     await activationHandler.HandleAsync(activationArgs);
                 }
             }
-            catch (Exception ex)
+            catch
             {
 
             }
