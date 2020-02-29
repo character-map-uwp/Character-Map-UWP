@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
 using Windows.Storage;
 using Windows.UI.Xaml.Controls;
+using CharacterMap.Models;
 
 namespace CharacterMap.Provider
 {

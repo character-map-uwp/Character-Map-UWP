@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
+using CharacterMap.Models;
 
 namespace CharacterMap.Views
 {

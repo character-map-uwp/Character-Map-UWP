@@ -1,4 +1,4 @@
-﻿namespace CharacterMap.Core
+﻿namespace CharacterMap.Models
 {
     public class Character
     {

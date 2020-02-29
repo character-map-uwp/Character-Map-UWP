@@ -1,9 +1,7 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Services;
-using CharacterMap.ViewModels;
 using CharacterMapCX;
 using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
@@ -16,13 +14,13 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
+using CharacterMap.Models;
 
 namespace CharacterMap.Core
 {

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -10,7 +9,6 @@ using System.Threading.Tasks;
 using CharacterMap.Helpers;
 using CharacterMapCX;
 using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Graphics.Canvas.Text;
 using Windows.Storage;
 using Windows.UI.Text;
 
@@ -32,8 +30,8 @@ namespace CharacterMap.Core
 
     public class FontFinder
     {
-        const string PENDING = nameof(PENDING);
-        const string TEMP = nameof(TEMP);
+        private const string PENDING = nameof(PENDING);
+        private const string TEMP = nameof(TEMP);
 
         private static SemaphoreSlim _initSemaphore { get; } = new SemaphoreSlim(1,1);
         private static SemaphoreSlim _loadSemaphore { get; } = new SemaphoreSlim(1,1);
@@ -60,8 +58,8 @@ namespace CharacterMap.Core
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
 
-            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
-            DWriteFontSet systemFonts = interop.GetSystemFonts();
+            var interop = SimpleIoc.Default.GetInstance<Interop>();
+            var systemFonts = interop.GetSystemFonts();
 
             try
             {
@@ -70,13 +68,11 @@ namespace CharacterMap.Core
                     await CleanUpTempFolderAsync().ConfigureAwait(false);
                     await CleanUpPendingDeletesAsync().ConfigureAwait(false);
 
-                    var segoe = systemFonts.Fonts.FirstOrDefault(f =>
-                    {
-                        return f.FontFace.FamilyNames.Values.Contains("Segoe UI")
-                                && f.FontFace.Weight.Weight == FontWeights.Normal.Weight
-                                && f.FontFace.Stretch == FontStretch.Normal
-                                && f.FontFace.Style == FontStyle.Normal;
-                    });
+                    var segoe = systemFonts.Fonts.FirstOrDefault(
+                           f => f.FontFace.FamilyNames.Values.Contains("Segoe UI")
+                        && f.FontFace.Weight.Weight == FontWeights.Normal.Weight
+                        && f.FontFace.Stretch == FontStretch.Normal
+                        && f.FontFace.Style == FontStyle.Normal);
 
                     if (segoe != null)
                     {
@@ -103,16 +99,16 @@ namespace CharacterMap.Core
 
             return Task.Run(async () =>
             {
-                DWriteFontSet systemFonts = await InitialiseAsync().ConfigureAwait(false);
+                var systemFonts = await InitialiseAsync().ConfigureAwait(false);
                 UpdateMeta(systemFonts);
 
                 await _loadSemaphore.WaitAsync().ConfigureAwait(false);
 
-                Interop interop = SimpleIoc.Default.GetInstance<Interop>();
-                Dictionary<string, InstalledFont> resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
+                var interop = SimpleIoc.Default.GetInstance<Interop>();
+                var resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
 
                 /* Add all system fonts */
-                foreach(DWriteFontFace font in systemFonts.Fonts)
+                foreach(var font in systemFonts.Fonts)
                 {
                     AddFont(resultList, font, interop);
                 }
@@ -124,9 +120,9 @@ namespace CharacterMap.Core
                     if (_ignoredFonts.Contains(file.Name))
                         continue;
 
-                    DWriteFontSet importedFonts = interop.GetFonts(new Uri(GetAppPath(file)));
+                    var importedFonts = interop.GetFonts(new Uri(GetAppPath(file)));
                     UpdateMeta(importedFonts);
-                    foreach (DWriteFontFace font in importedFonts.Fonts)
+                    foreach (var font in importedFonts.Fonts)
                     {
                         AddFont(resultList, font, interop, file);
                     }
@@ -166,7 +162,7 @@ namespace CharacterMap.Core
                 if (!string.IsNullOrEmpty(familyName))
                 {
                     /* Check if we already have a listing for this fontFamily */
-                    if (fontList.TryGetValue(familyName, out InstalledFont fontFamily))
+                    if (fontList.TryGetValue(familyName, out var fontFamily))
                     {
                         var variant = new FontVariant(font.FontFace, file, font.Properties);
                         if (file != null)
@@ -185,10 +181,6 @@ namespace CharacterMap.Core
                             HasImportedFiles = file != null
                         };
                     }
-                }
-                else
-                {
-
                 }
             }
             catch (Exception)
@@ -213,7 +205,7 @@ namespace CharacterMap.Core
                 var existing = new List<StorageFile>();
                 var invalid = new List<(IStorageItem, string)>();
 
-                Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+                var interop = SimpleIoc.Default.GetInstance<Interop>();
 
                 foreach (var item in items)
                 {
@@ -416,9 +408,9 @@ namespace CharacterMap.Core
 
             var resultList = new Dictionary<string, InstalledFont>();
 
-            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
-            DWriteFontSet fontSet = interop.GetFonts(new Uri(GetAppPath(localFile)));
-            foreach (DWriteFontFace font in fontSet.Fonts)
+            var interop = SimpleIoc.Default.GetInstance<Interop>();
+            var fontSet = interop.GetFonts(new Uri(GetAppPath(localFile)));
+            foreach (var font in fontSet.Fonts)
             {
                 AddFont(resultList, font, interop, localFile);
             }

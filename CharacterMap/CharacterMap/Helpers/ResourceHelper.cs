@@ -20,10 +20,7 @@ namespace CharacterMap.Helpers
 
         public static T Get<T>(string resourceKey)
         {
-            if (TryGetInternal(Application.Current.Resources, resourceKey, out T value))
-                return value;
-
-            return default;
+            return TryGetInternal(Application.Current.Resources, resourceKey, out T value) ? value : default;
         }
 
         static bool TryGetInternal<T>(ResourceDictionary dictionary, string key, out T v)

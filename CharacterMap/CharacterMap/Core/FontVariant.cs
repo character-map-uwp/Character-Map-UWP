@@ -4,11 +4,10 @@ using System.Globalization;
 using System.Linq;
 using CharacterMap.Helpers;
 using CharacterMapCX;
-using GalaSoft.MvvmLight.Ioc;
 using Humanizer;
 using Microsoft.Graphics.Canvas.Text;
 using Windows.Storage;
-using FontFamily = Windows.UI.Xaml.Media.FontFamily;
+using CharacterMap.Models;
 
 namespace CharacterMap.Core
 {

@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.UI.ViewManagement;
 using CharacterMap.Core;
 using Edi.UWP.Helpers.Extensions;
@@ -12,10 +11,8 @@ using GalaSoft.MvvmLight.Views;
 using System.Collections.Generic;
 using CharacterMap.Helpers;
 using Windows.Storage;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Core;
 using CharacterMap.Services;
-using System.Text;
+using CharacterMap.Models;
 using GalaSoft.MvvmLight.Ioc;
 
 namespace CharacterMap.ViewModels
@@ -170,58 +167,52 @@ namespace CharacterMap.ViewModels
                 else
                 {
                     SelectedCollection = null;
-                    if (FontListFilter == 1)
+                    switch (FontListFilter)
                     {
-                        fontList = fontList.Where(f => f.IsSymbolFont || FontCollections.SymbolCollection.Fonts.Contains(f.Name));
-                        FilterTitle = Localization.Get("OptionSymbolFonts/Text");
+                        case 1:
+                            fontList = fontList.Where(f => f.IsSymbolFont || FontCollections.SymbolCollection.Fonts.Contains(f.Name));
+                            FilterTitle = Localization.Get("OptionSymbolFonts/Text");
+                            break;
+                        case 2:
+                            fontList = fontList.Where(f => f.HasImportedFiles);
+                            FilterTitle = Localization.Get("OptionImportedFonts/Text");
+                            break;
+                        case 3:
+                            fontList = fontList.Where(f => f.DefaultVariant.FontFace.IsMonospaced);
+                            FilterTitle = Localization.Get("OptionMonospacedFonts/Text");
+                            break;
+                        case 4:
+                            fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSerifStyle);
+                            FilterTitle = Localization.Get("OptionSerifFonts/Text");
+                            break;
+                        case 5:
+                            fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSansSerifStyle);
+                            FilterTitle = Localization.Get("OptionSansSerifFonts/Text");
+                            break;
+                        case 6:
+                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.AppxPackage);
+                            FilterTitle = Localization.Get("OptionAppxFonts/Text");
+                            break;
+                        case 7:
+                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.RemoteFontProvider);
+                            FilterTitle = Localization.Get("OptionCloudFonts/Text");
+                            break;
+                        case 8:
+                            fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Decorative);
+                            FilterTitle = Localization.Get("OptionDecorativeFonts/Text");
+                            break;
+                        case 9:
+                            fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Script);
+                            FilterTitle = Localization.Get("OptionScriptFonts/Text");
+                            break;
+                        case 10:
+                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.IsColorFont);
+                            FilterTitle = Localization.Get("OptionColorFonts/Text");
+                            break;
+                        default:
+                            FilterTitle = Localization.Get("OptionAllFonts/Text");
+                            break;
                     }
-                    else if (FontListFilter == 2)
-                    {
-                        fontList = fontList.Where(f => f.HasImportedFiles);
-                        FilterTitle = Localization.Get("OptionImportedFonts/Text");
-                    }
-                    else if (FontListFilter == 3)
-                    {
-                        fontList = fontList.Where(f => f.DefaultVariant.FontFace.IsMonospaced);
-                        FilterTitle = Localization.Get("OptionMonospacedFonts/Text");
-                    }
-                    else if (FontListFilter == 4)
-                    {
-                        fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSerifStyle);
-                        FilterTitle = Localization.Get("OptionSerifFonts/Text");
-                    }
-                    else if (FontListFilter == 5)
-                    {
-                        fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSansSerifStyle);
-                        FilterTitle = Localization.Get("OptionSansSerifFonts/Text");
-                    }
-                    else if (FontListFilter == 6)
-                    {
-                        fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.AppxPackage);
-                        FilterTitle = Localization.Get("OptionAppxFonts/Text");
-                    }
-                    else if (FontListFilter == 7)
-                    {
-                        fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.RemoteFontProvider);
-                        FilterTitle = Localization.Get("OptionCloudFonts/Text");
-                    }
-                    else if (FontListFilter == 8)
-                    {
-                        fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Decorative);
-                        FilterTitle = Localization.Get("OptionDecorativeFonts/Text");
-                    }
-                    else if (FontListFilter == 9)
-                    {
-                        fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Script);
-                        FilterTitle = Localization.Get("OptionScriptFonts/Text");
-                    }
-                    else if (FontListFilter == 10)
-                    {
-                        fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.IsColorFont);
-                        FilterTitle = Localization.Get("OptionColorFonts/Text");
-                    }
-                    else
-                        FilterTitle = Localization.Get("OptionAllFonts/Text");
                 }
 
                 FontList = fontList.ToList();

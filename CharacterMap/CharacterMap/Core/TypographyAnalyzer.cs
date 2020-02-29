@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using System.Threading.Tasks;
 using Humanizer;
-using System.Diagnostics;
 
 namespace CharacterMap.Core
 {
@@ -163,10 +161,10 @@ namespace CharacterMap.Core
                 //
                 uint id = (uint)(Feature);
                 DisplayName = ("Custom: ") +
-                    ((char)((id >> 24) & 0xFF)).ToString() +
-                    ((char)((id >> 16) & 0xFF)).ToString() +
-                    ((char)((id >> 8) & 0xFF)).ToString() +
-                    ((char)((id >> 0) & 0xFF)).ToString();
+                    ((char)((id >> 24) & 0xFF)) +
+                    ((char)((id >> 16) & 0xFF)) +
+                    ((char)((id >> 8) & 0xFF)) +
+                    ((char)((id >> 0) & 0xFF));
             }
         }
 
@@ -180,8 +178,7 @@ namespace CharacterMap.Core
         {
             if (obj is TypographyFeatureInfo other)
                 return Feature == other.Feature;
-            else
-                return false;
+            return false;
         }
 
         public override int GetHashCode()

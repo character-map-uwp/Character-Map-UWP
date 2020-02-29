@@ -1,20 +1,7 @@
-using CharacterMap.Core;
-using CharacterMap.Provider;
 using CharacterMap.Services;
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.ApplicationModel;
-using Windows.Data.Xml.Dom;
-using Windows.Storage;
-using Windows.System;
-using Windows.UI.Xaml.Controls;
 
-namespace CharacterMap.Core
+namespace CharacterMap.Models
 {
     public class UnicodeGlyphData : IGlyphData
     {

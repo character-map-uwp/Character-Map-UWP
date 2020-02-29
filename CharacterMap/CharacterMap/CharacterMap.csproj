@@ -180,7 +180,7 @@
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
-    <Compile Include="Core\Character.cs" />
+    <Compile Include="Models\Character.cs" />
     <Compile Include="Core\Messages.cs" />
     <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\ExportManager.cs" />
@@ -189,18 +189,17 @@
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\FontVariant.cs" />
     <Compile Include="Core\InstalledFont.cs" />
-    <Compile Include="Core\PanoseFamily.cs" />
+    <Compile Include="Models\PanoseFamily.cs" />
     <Compile Include="Core\PanoseParser.cs" />
-    <Compile Include="Core\SerifStyle.cs" />
+    <Compile Include="Models\SerifStyle.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
-    <Compile Include="Core\UnicodeGlyphData.cs" />
+    <Compile Include="Models\UnicodeGlyphData.cs" />
     <Compile Include="Helpers\ConcurrencyToken.cs" />
     <Compile Include="Helpers\Debouncer.cs" />
     <Compile Include="Helpers\Localization.cs" />
     <Compile Include="Helpers\ResourceHelper.cs" />
-    <Compile Include="Helpers\SettingsStorageExtensions.cs" />
     <Compile Include="Helpers\Singleton.cs" />
     <Compile Include="Core\Utils.cs" />
     <Compile Include="Helpers\Sqlite.cs" />
@@ -369,6 +368,7 @@
       <Name>CharacterMap.CX</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

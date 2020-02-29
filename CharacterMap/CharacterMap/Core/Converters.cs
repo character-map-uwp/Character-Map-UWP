@@ -37,12 +37,15 @@ namespace CharacterMap.Core
 
         private static GridLength ReadFromString(string s)
         {
-            if (s == Auto)
-                return new GridLength(1, GridUnitType.Auto);
-            else if (s == Star)
-                return new GridLength(1, GridUnitType.Star);
-            else
-                return new GridLength(double.Parse(s), GridUnitType.Pixel);
+            switch (s)
+            {
+                case Auto:
+                    return new GridLength(1, GridUnitType.Auto);
+                case Star:
+                    return new GridLength(1, GridUnitType.Star);
+                default:
+                    return new GridLength(double.Parse(s), GridUnitType.Pixel);
+            }
         }
 
         public const string Auto = "Auto";

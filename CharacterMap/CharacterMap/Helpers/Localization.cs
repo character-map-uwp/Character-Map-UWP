@@ -12,7 +12,7 @@ namespace CharacterMap.Helpers
     /// </summary>
     public static class Localization
     {
-        static ResourceLoader _resources { get; }
+        private static ResourceLoader _resources { get; }
 
         static Localization()
         {
