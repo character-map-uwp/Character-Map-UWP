@@ -437,8 +437,8 @@
                     <Grid
                         x:Name="PaneStatusBar"
                         Grid.Row="2"
-                        Background="{x:Bind StatusBar.Background}"
-                        RequestedTheme="{x:Bind StatusBar.RequestedTheme}">
+                        Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                        RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
                         <Grid.Resources>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontSize" Value="12" />
@@ -462,7 +462,7 @@
                             Click="TogglePane_Click">
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="14"
+                                FontSize="16"
                                 Glyph="&#xE127;" />
                         </AppBarButton>
 
@@ -476,7 +476,7 @@
                             Visibility="Collapsed">
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="14"
+                                FontSize="16"
                                 Glyph="&#xE126;" />
                         </AppBarButton>
 
@@ -535,7 +535,7 @@
                         Visibility="Collapsed">
                         <FontIcon
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            FontSize="14"
+                            FontSize="16"
                             Glyph="&#xE126;" />
                     </AppBarButton>
 
