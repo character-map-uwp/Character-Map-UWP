@@ -14,6 +14,7 @@ using Windows.Storage;
 using CharacterMap.Services;
 using CharacterMap.Models;
 using GalaSoft.MvvmLight.Ioc;
+using CharacterMap.Controls;
 
 namespace CharacterMap.ViewModels
 {
@@ -68,6 +69,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _isLoadingFonts, value);
         }
 
+        private bool _isLoadingFontsFailed;
+        public bool IsLoadingFontsFailed
+        {
+            get => _isLoadingFontsFailed;
+            set => Set(ref _isLoadingFontsFailed, value);
+        }
+
         private bool _hasFonts;
         public bool HasFonts
         {
@@ -118,6 +126,8 @@ namespace CharacterMap.ViewModels
 
         public UserCollectionsService FontCollections { get; }
 
+        private Exception _startUpException = null;
+
         #endregion
 
         public MainViewModel(IDialogService dialogService, AppSettings settings)
@@ -135,13 +145,31 @@ namespace CharacterMap.ViewModels
         {
             IsLoadingFonts = true;
 
-            await Task.WhenAll(
-                GlyphService.InitializeAsync(),
-                FontFinder.LoadFontsAsync(),
-                FontCollections.LoadCollectionsAsync());
+            try
+            {
+                await Task.WhenAll(
+                    GlyphService.InitializeAsync(),
+                    FontFinder.LoadFontsAsync(),
+                    FontCollections.LoadCollectionsAsync());
+            }
+            catch (Exception ex)
+            {
+                // For whatever reason, this exception doesn't get caught by the app's
+                // UnhandledExceptionHandler, so we need to manually catch and handle it.
+                _startUpException = ex;
+                ShowStartUpException();
+                IsLoadingFonts = false;
+                IsLoadingFontsFailed = true;
+                return;
+            }
 
             RefreshFontList();
             IsLoadingFonts = false;
+        }
+
+        public void ShowStartUpException()
+        {
+            UnhandledExceptionDialog.Show(_startUpException);
         }
 
         private void ToggleFullScreenMode()

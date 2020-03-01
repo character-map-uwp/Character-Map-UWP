@@ -8,6 +8,7 @@
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:win10v1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     d:DesignHeight="800"
     d:DesignWidth="1280"
     mc:Ignorable="d">
@@ -38,12 +39,14 @@
             Grid.Row="1"
             Height="45"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            Canvas.ZIndex="1"
+            Loading="TitleGrid_Loading"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="{x:Bind core:Converters.GridLengthAorB(core:Utils.IsSystemOnWin10v1809OrNewer, '0', 'Auto')}" />
+                <ColumnDefinition Width="0" />
             </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="FontTitleBlock"
@@ -122,17 +125,25 @@
                 </Storyboard>
             </Grid.Resources>
 
-            <!--  Char Grid  -->
+            <!--  Char Grid  Background="#141414"  -->
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" MinWidth="250" />
                     <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="330" />
+                    <ColumnDefinition x:Name="PreviewColumn" Width="330" MinWidth="125" />
                 </Grid.ColumnDefinitions>
+
+                <Rectangle
+                    x:Name="ShadowTarget"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="3"
+                    Fill="Transparent"
+                    Stretch="UniformToFill"
+                    StrokeThickness="0" />
 
                 <Grid
                     ColumnSpacing="12"
@@ -146,7 +157,7 @@
                     <StackPanel
                         x:Name="OptionsPanel"
                         Orientation="Horizontal"
-                        Spacing="24">
+                        Spacing="12">
 
                         <ComboBox
                             x:Name="WeightSelector"
@@ -159,11 +170,9 @@
                         <Button
                             x:Name="FontPropertiesButton"
                             x:Uid="FontPropertiesButton"
-                            Width="44"
                             Height="44"
-                            Margin="0,0,0,-8"
                             VerticalAlignment="Bottom"
-                            Style="{ThemeResource TransparentButton}">
+                            Style="{ThemeResource TransparentHintButton}">
                             <FontIcon
                                 Margin="0,0,-2,0"
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
@@ -342,12 +351,10 @@
 
                         <Button
                             x:Uid="FontOptionsButton"
-                            Width="44"
                             Height="44"
-                            Margin="0,0,0,-8"
                             VerticalAlignment="Bottom"
                             IsEnabled="{Binding HasFontOptions}"
-                            Style="{ThemeResource TransparentButton}">
+                            Style="{ThemeResource TransparentHintButton}">
                             <FontIcon
                                 Margin="0,0,-2,0"
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
@@ -403,12 +410,19 @@
                         Grid.Column="1"
                         Width="44"
                         Height="44"
-                        Margin="0,0,0,-8"
                         VerticalAlignment="Bottom"
                         DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
                         Style="{ThemeResource TransparentButton}">
                         <Button.Flyout>
-                            <MenuFlyout Opening="MenuFlyout_Opening" Placement="Bottom" />
+                            <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight" >
+                                <MenuFlyout.MenuFlyoutPresenterStyle>
+                                    <Style TargetType="MenuFlyoutPresenter">
+                                        <Setter Property="Background" Value="{StaticResource FlyoutBackgroundBrush}" />
+                                        <Setter Property="RequestedTheme" Value="Default" />
+                                        <Setter Property="FontSize" Value="16" />
+                                    </Style>
+                                </MenuFlyout.MenuFlyoutPresenterStyle>
+                            </MenuFlyout>
                         </Button.Flyout>
                         <FontIcon
                             Margin="0,0,-2,0"
@@ -417,7 +431,6 @@
                     </Button>
 
                 </Grid>
-
 
                 <GridView
                     x:Name="CharGrid"
@@ -436,11 +449,12 @@
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <!--  For performance reasons, all bindings are done in C#  -->
-                            <Grid Padding="4" Style="{StaticResource CharItemGridStyle}">
+                            <Grid Padding="4">
                                 <TextBlock
+                                    Margin="0 -2 0 0"
                                     Padding="0,0,0,8"
                                     IsTextScaleFactorEnabled="False"
-                                    Style="{StaticResource CharItemCharStyle}" />
+                                    TextAlignment="Center" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
                         </DataTemplate>
@@ -456,6 +470,7 @@
                     CursorBehavior="ChangeOnSplitterHover"
                     GripperCursor="SizeWestEast"
                     GripperForeground="Transparent"
+                    Loading="GridSplitter_Loading"
                     ResizeBehavior="BasedOnAlignment"
                     ResizeDirection="Columns" />
 
@@ -816,6 +831,7 @@
 
                     </Grid>
                 </Grid>
+
             </Grid>
         </Grid>
 
@@ -849,6 +865,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
             <Grid.Resources>
                 <Style TargetType="TextBlock">
                     <Setter Property="FontSize" Value="12" />
@@ -862,6 +879,7 @@
                 Grid.Column="2"
                 Margin="12,0"
                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
+
         </Grid>
 
         <VisualStateManager.VisualStateGroups>

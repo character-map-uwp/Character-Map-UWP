@@ -1,5 +1,7 @@
-﻿using CharacterMap.Services;
+﻿using CharacterMap.Helpers;
+using CharacterMap.Services;
 using CommonServiceLocator;
+using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,8 +60,8 @@ namespace CharacterMap.Core
         {
             if (_settings == null)
             {
-                _settings = (AppSettings)App.Current.Resources[nameof(AppSettings)];
-                _userCollections = ServiceLocator.Current.GetInstance<UserCollectionsService>();
+                _settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
+                _userCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
             }
 
             if (_settings.UseFontForPreview

@@ -185,10 +185,10 @@ namespace CharacterMap.Provider
                 StringBuilder sb = new StringBuilder();
                 bool next = false;
 
-                /// Note: SQLite only supports expression trees upto 1000 items, so we need to limit the range
+                /// Note: SQLite only supports expression trees up to 1000 items, so we need to limit the range
                 /// of Unicode ranges we search through. Very rare for any font to hit this - especially one with
                 /// any useful search results. MS Office Symbol is an example of such a font (with no useful search
-                /// results anyway). Certain complex asain script fonts **may** theoretically hit this limit.
+                /// results anyway). Certain complex Asian script fonts **may** theoretically hit this limit.
                 /// We don't want to throw an exception if we ever hit this case, we'll just do our best.
                 foreach ((int, int) range in variant.UnicodeRanges.Take(995)) 
                 {

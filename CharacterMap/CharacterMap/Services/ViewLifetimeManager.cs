@@ -14,7 +14,7 @@ namespace CharacterMap.Services
     public delegate void ViewReleasedHandler(Object sender, EventArgs e);
 
     // A ViewLifetimeControl is instantiated for every secondary view. ViewLifetimeControl's reference count
-    // keeps track of when the secondary view thinks it's in usem and when the main view is interacting with the secondary view (about to show
+    // keeps track of when the secondary view thinks it's in use and when the main view is interacting with the secondary view (about to show
     // it to the user, etc.) When the reference count drops to zero, the secondary view is closed.
     public sealed class ViewLifetimeManager : INotifyPropertyChanged
     {
@@ -50,7 +50,7 @@ namespace CharacterMap.Services
         // the user can interact with it, move it on or off screen, etc. 
         //bool consolidated = true;
 
-        // Used to store pubicly registered events under the protection of a lock
+        // Used to store publicly registered events under the protection of a lock
         event ViewReleasedHandler InternalReleased;
 
         // Instantiate views using "CreateForCurrentView"

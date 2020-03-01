@@ -5,8 +5,8 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:CharacterMap.Views"
     xmlns:wct="using:Microsoft.Toolkit.Uwp.UI.Controls"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
@@ -25,6 +25,7 @@
     </Page.Resources>
 
     <Grid
+        x:Name="LayoutRoot"
         AllowDrop="True"
         Background="Transparent"
         DragOver="Grid_DragOver"
@@ -42,7 +43,10 @@
         </Grid.ColumnDefinitions>
 
         <!--  Title Bar Grid  -->
-        <controls:XamlTitleBar Grid.Row="0" Grid.ColumnSpan="2">
+        <controls:XamlTitleBar
+            x:Name="TitleBar"
+            Grid.Row="0"
+            Grid.ColumnSpan="2">
             <Grid ColumnSpacing="7">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -73,12 +77,13 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            Loading="CommandsGrid_Loading"
             RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="SplitViewPaneColumn" Width="{StaticResource StatusBarPaneWidth}" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="{x:Bind core:Converters.GridLengthAorB(core:Utils.IsSystemOnWin10v1809OrNewer, '0', 'Auto')}" />
+                <ColumnDefinition Width="0" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -93,12 +98,12 @@
 
             <TextBlock
                 x:Name="FontTitleBlock"
-                Loaded="{x:Bind helpers:Animation.SetStandardReposition}"
                 Grid.Column="1"
                 Margin="24,0,5,0"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
+                Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
 
@@ -151,7 +156,7 @@
             OpenPaneLength="{StaticResource SplitViewPaneWidth}"
             PaneBackground="Transparent">
             <SplitView.Pane>
-                <Grid x:Name="PaneRoot">
+                <Grid x:Name="PaneRoot" Loading="PaneRoot_Loading">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{x:Bind TitleBarRow.Height}" />
                         <RowDefinition Height="*" />
@@ -159,14 +164,17 @@
                     </Grid.RowDefinitions>
 
                     <!--  Pane Header Commands  -->
-                    <Grid x:Name="PaneHeaderGrid" RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+                    <Grid
+                        x:Name="PaneHeaderGrid"
+                        Loading="PaneHeaderGrid_Loading"
+                        RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        
-                        <DropDownButton
+
+                        <Button
                             x:Name="FontListFilter"
                             x:Uid="FontListFilter"
                             Height="45"
@@ -178,46 +186,57 @@
                             Background="Transparent"
                             Content="{x:Bind ViewModel.FilterTitle, Mode=OneWay}"
                             FontSize="16"
+                            Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom">
-                            <DropDownButton.Flyout>
+                            <Button.Flyout>
                                 <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
                                     <MenuFlyout.MenuFlyoutPresenterStyle>
                                         <Style TargetType="MenuFlyoutPresenter">
+                                            <Setter Property="Background" Value="{StaticResource FlyoutBackgroundBrush}" />
                                             <Setter Property="RequestedTheme" Value="Default" />
+                                            <Setter Property="FontSize" Value="16" />
                                         </Style>
                                     </MenuFlyout.MenuFlyoutPresenterStyle>
                                     <MenuFlyoutItem
                                         x:Uid="OptionAllFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="0" />
                                     <MenuFlyoutItem
                                         x:Uid="OptionSerifFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="4" />
                                     <MenuFlyoutItem
                                         x:Uid="OptionSansSerifFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="5" />
                                     <MenuFlyoutItem
                                         x:Uid="OptionSymbolFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="1" />
-                                    <MenuFlyoutSubItem x:Uid="OptionMoreFilters">
+                                    <MenuFlyoutSubItem x:Uid="OptionMoreFilters" FontSize="16">
                                         <MenuFlyoutItem
                                             x:Uid="OptionColorFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="10" />
                                         <MenuFlyoutItem
                                             x:Uid="OptionDecorativeFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="8" />
                                         <MenuFlyoutItem
                                             x:Uid="OptionScriptFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="9" />
                                         <MenuFlyoutItem
                                             x:Uid="OptionMonospacedFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="3" />
                                         <!--<MenuFlyoutSeparator />
                                 <MenuFlyoutItem
@@ -237,21 +256,24 @@
                                             x:Name="CloudFontsOption"
                                             x:Uid="OptionCloudFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="7" />
                                         <MenuFlyoutItem
                                             x:Name="AppxOption"
                                             x:Uid="OptionAppxFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="6" />
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
                                         x:Uid="OptionImportedFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="2" />
                                 </MenuFlyout>
-                            </DropDownButton.Flyout>
-                        </DropDownButton>
+                            </Button.Flyout>
+                        </Button>
 
                         <AppBarButton
                             x:Name="ImportFontsButton"
@@ -338,7 +360,12 @@
                                     ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
                                     SelectedItem="{Binding SelectedFont, Mode=TwoWay}"
                                     SelectedValuePath="Name"
-                                    SelectionMode="Single">
+                                    SelectionMode="Single"
+                                    ShowsScrollingPlaceholders="False">
+
+                                    <ListView.ItemContainerTransitions>
+                                        <TransitionCollection />
+                                    </ListView.ItemContainerTransitions>
 
                                     <ListView.Resources>
                                         <Style BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
@@ -546,6 +573,15 @@
             </Grid>
         </SplitView>
 
+        <!--  Status Bar Background (for content resize)  -->
+        <Rectangle
+            Grid.Row="3"
+            Grid.ColumnSpan="10"
+            Height="26"
+            VerticalAlignment="Bottom"
+            Canvas.ZIndex="-1"
+            Fill="{x:Bind StatusBar.Background, Mode=OneWay}" />
+
         <!--  Loading Root  -->
         <ProgressRing
             x:Name="LoadingRing"
@@ -553,6 +589,39 @@
             Grid.ColumnSpan="2"
             Width="50"
             Height="50" />
+
+        <!--  Startup Exception Root  -->
+
+        <Grid
+            x:Name="StartupFailedRoot"
+            x:Load="{x:Bind ViewModel.IsLoadingFontsFailed, Mode=OneWay}"
+            Grid.Row="2"
+            Grid.ColumnSpan="10">
+            <StackPanel
+                Margin="40"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="8">
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="Uh Oh"
+                    TextAlignment="Center" />
+                <TextBlock
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap">
+                    <Run Text="Something went wrong and we couldn't start the app right now." />
+                    <LineBreak />
+                    <LineBreak /><Run Text="Please consider posting details about this error to GitHub so we can help you fix it." />
+                </TextBlock>
+                <Button
+                    MinWidth="200"
+                    Margin="0 8 0 0"
+                    HorizontalAlignment="Center"
+                    Click="{x:Bind ViewModel.ShowStartUpException}"
+                    Content="Show Details" />
+            </StackPanel>
+        </Grid>
 
         <!--  Notification Presenter  -->
         <Grid
@@ -564,7 +633,10 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="ViewStates">
+            <VisualStateGroup
+                x:Name="ViewStates"
+                CurrentStateChanged="ViewStates_CurrentStateChanged"
+                CurrentStateChanging="ViewStates_CurrentStateChanging">
                 <VisualState x:Name="CompactViewState">
                     <VisualState.Setters>
                         <Setter Target="SplitView.IsPaneOpen" Value="False" />
@@ -610,12 +682,9 @@
                         <StateTrigger IsActive="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="FontListGrid.Visibility" Value="Collapsed" />
-                        <Setter Target="FontMap.Opacity" Value="0" />
-                        <Setter Target="FontMap.IsHitTestVisible" Value="False" />
+                        <Setter Target="SplitView.Opacity" Value="0" />
+                        <Setter Target="SplitView.IsHitTestVisible" Value="False" />
                         <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
-                        <Setter Target="FontListFilter.IsHitTestVisible" Value="False" />
-                        <Setter Target="FontListFilter.Opacity" Value="0.4" />
                         <Setter Target="SearchBox.IsEnabled" Value="False" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.IsEnabled" Value="False" />
@@ -625,6 +694,19 @@
                         <Setter Target="OpenFontPaneButton.IsEnabled" Value="False" />
                         <Setter Target="BtnSettings.IsEnabled" Value="False" />
                         <Setter Target="LoadingRing.IsActive" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FontsFailedState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind ViewModel.IsLoadingFontsFailed, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SplitView.Visibility" Value="Collapsed" />
+                        <Setter Target="SearchBox.IsEnabled" Value="False" />
+                        <Setter Target="HidePaneButton.IsEnabled" Value="False" />
+                        <Setter Target="ShowPaneButton.IsEnabled" Value="False" />
+                        <Setter Target="OpenFontPaneButton.IsEnabled" Value="False" />
+                        <Setter Target="BtnSettings.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FontsLoadedState" />

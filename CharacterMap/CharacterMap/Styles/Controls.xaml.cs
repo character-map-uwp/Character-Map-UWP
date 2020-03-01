@@ -27,7 +27,7 @@ namespace CharacterMap.Styles
 
         private void ContentRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            Animation.SetStandardReposition(sender, e);
+            Composition.SetStandardReposition(sender, e);
         }
 
         private void PaneRoot_Loaded(object sender, RoutedEventArgs e)
@@ -40,7 +40,7 @@ namespace CharacterMap.Styles
             o.Target = "Translation";
             o.InsertExpressionKeyFrame(0, "this.StartingValue");
             o.InsertKeyFrame(1, new System.Numerics.Vector3(-256, 0, 0));
-            o.Duration = TimeSpan.FromSeconds(Animation.DefaultOffsetDuration);
+            o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
 
             ElementCompositionPreview.SetImplicitHideAnimation(f, o);
 
@@ -48,7 +48,7 @@ namespace CharacterMap.Styles
             o2.Target = "Translation";
             o2.InsertExpressionKeyFrame(0, "this.StartingValue");
             o2.InsertKeyFrame(1, new System.Numerics.Vector3(0, 0, 0));
-            o2.Duration = TimeSpan.FromSeconds(Animation.DefaultOffsetDuration);
+            o2.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
 
             ElementCompositionPreview.SetImplicitShowAnimation(f, o2);
         }

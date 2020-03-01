@@ -1,9 +1,10 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Provider;
 using CharacterMap.Services;
 using System;
 using System.Collections.Generic;
 
-namespace CharacterMap.Provider
+namespace CharacterMap.Models
 {
     public partial class SearchTarget
     {

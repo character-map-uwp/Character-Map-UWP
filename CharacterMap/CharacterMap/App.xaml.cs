@@ -6,12 +6,13 @@ using CharacterMap.Core;
 using CharacterMap.Services;
 using Edi.UWP.Helpers;
 using CharacterMap.Helpers;
+using CharacterMap.Controls;
 
 namespace CharacterMap
 {
     sealed partial class App : Application
     {
-        private Lazy<ActivationService> _activationService;
+        private Lazy<ActivationService> _activationService { get; }
         internal ActivationService ActivationService => _activationService.Value;
 
         public static new App Current { get; private set; }
@@ -33,18 +34,18 @@ namespace CharacterMap
                 .UnhandledException += SynchronizationContext_UnhandledException;
         }
 
-        private async void SynchronizationContext_UnhandledException(object sender, Edi.UWP.Helpers.UnhandledExceptionEventArgs e)
+        private void SynchronizationContext_UnhandledException(object sender, Edi.UWP.Helpers.UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
-            await new MessageDialog("Synchronization Context Unhandled Exception:\r\n" + GetExceptionDetailMessage(e.Exception), "🙈 ERROR")
-                .ShowAsync();
+            UnhandledExceptionDialog.Show(e.Exception);
+
         }
 
-        private async void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        private void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
-            await new MessageDialog("Application Unhandled Exception:\r\n" + GetExceptionDetailMessage(e.Exception), "🙈 ERROR")
-                .ShowAsync();
+            UnhandledExceptionDialog.Show(e.Exception);
+
         }
 
         private string GetExceptionDetailMessage(Exception ex)

@@ -22,10 +22,12 @@ using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Xaml.Markup;
 using CharacterMap.Controls;
+using CharacterMap.Models;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class MainPage : Page, INotifyPropertyChanged
+    public sealed partial class MainPage : Page, INotifyPropertyChanged, IInAppNotificationPresenter
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -45,6 +47,7 @@ namespace CharacterMap.Views
             Settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
 
             ViewModel = DataContext as MainViewModel;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
             Loaded += MainPage_Loaded;
@@ -55,6 +58,17 @@ namespace CharacterMap.Views
             Messenger.Default.Register<FontPreviewUpdatedMessage>(this, OnFontPreviewUpdated);
 
             this.SizeChanged += MainPage_SizeChanged;
+        }
+
+        private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ViewModel.GroupedFontList))
+            {
+                if (ViewModel.IsLoadingFonts)
+                    return;
+
+                Composition.PlayEntrance(LstFontFamily, 66, 100);
+            }
         }
 
         [NotifyPropertyChangedInvocator]
@@ -70,7 +84,6 @@ namespace CharacterMap.Views
 
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
             ViewModel.FontListCreated += ViewModel_FontListCreated;
-
         }
 
         private void MainPage_Unloaded(object sender, RoutedEventArgs e)
@@ -421,9 +434,9 @@ namespace CharacterMap.Views
         void ShowImportResult(FontImportResult result)
         {
             if (result.Imported.Count == 1)
-                ShowNotification(Localization.Get("NotificationSingleFontAdded",  result.Imported[0].Name), 4000);
+                InAppNotificationHelper.ShowNotification(this, Localization.Get("NotificationSingleFontAdded",  result.Imported[0].Name), 4000);
             else if (result.Imported.Count > 1)
-                ShowNotification(Localization.Get("NotificationMultipleFontsAdded",  result.Imported.Count), 4000);
+                InAppNotificationHelper.ShowNotification(this, Localization.Get("NotificationMultipleFontsAdded",  result.Imported.Count), 4000);
             else if (result.Invalid.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -437,47 +450,54 @@ namespace CharacterMap.Views
                 if (result.Invalid.Count > 5)
                     sb.Append("…");
 
-                ShowNotification(sb.ToString().Trim(), 4000);
+                InAppNotificationHelper.ShowNotification(this, sb.ToString().Trim(), 4000);
             }
+        }
+
+
+
+        public InAppNotification GetNotifier()
+        {
+            if (NotificationRoot == null)
+                this.FindName(nameof(NotificationRoot));
+
+            return DefaultNotification;
         }
 
         void OnNotificationMessage(AppNotificationMessage msg)
         {
-            if (msg.Local && !Dispatcher.HasThreadAccess)
-                return;
-
-            if (msg.Data is ExportResult result)
-            {
-                if (!result.Success)
-                    return;
-               
-                ShowNotification(FontMap.CreateExportNotification(result), 5000);
-            }
-            else if (msg.Data is AddToCollectionResult added)
-            {
-                if (!added.Success)
-                    return;
-
-                var content = ResourceHelper.InflateDataTemplate("AddedToCollectionNotificationTemplate", added);
-                ShowNotification(content, 5000);
-            }
-            else if (msg.Data is string s)
-            {
-                ShowNotification(s, msg.DurationInMilliseconds > 0 ? msg.DurationInMilliseconds : 4000);
-            }
+            InAppNotificationHelper.OnMessage(this, msg);
         }
 
-        void ShowNotification(object o, int durationMs)
+        private void PaneRoot_Loading(FrameworkElement sender, object args)
         {
-            // NotificationRoot has x:Load set to false,
-            // we need to ensure it gets realised;
-            if (NotificationRoot == null)
-                this.FindName(nameof(NotificationRoot));
+            Composition.SetThemeShadow(sender, 40, FontMap);
+        }
 
-            if (o is string s)
-                DefaultNotification.Show(s, durationMs);
-            else if (o is UIElement e)
-                DefaultNotification.Show(e, durationMs);
+        private void PaneHeaderGrid_Loading(FrameworkElement sender, object args)
+        {
+            Composition.SetThemeShadow(sender, 20, FontListGrid);
+        }
+
+        private void CommandsGrid_Loading(FrameworkElement sender, object args)
+        {
+            Composition.SetThemeShadow(sender, 20, FontMap);
+        }
+
+        private void ViewStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
+        {
+            //if (e.NewState != DefaultViewState)
+            //    CompositionFactory.TryAddRecievers(PaneRoot, CommandsGrid, TitleBar);
+            //else
+            //    CompositionFactory.TryRemoveRecievers(PaneRoot, CommandsGrid, TitleBar);
+        }
+
+        private void ViewStates_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            //if (e.NewState != DefaultViewState)
+            //    CompositionFactory.TryAddRecievers(PaneRoot, CommandsGrid, TitleBar);
+            //else
+            //    CompositionFactory.TryRemoveRecievers(PaneRoot, CommandsGrid, TitleBar);
         }
     }
 }

@@ -25,10 +25,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using CharacterMap.Models;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class FontMapView : UserControl
+    public sealed partial class FontMapView : UserControl, IInAppNotificationPresenter
     {
         #region Dependency Properties
 
@@ -49,18 +50,6 @@ namespace CharacterMap.Views
 
         #endregion
 
-        #region IsStandalone
-        public bool IsStandalone
-        {
-            get => (bool)GetValue(IsStandaloneProperty);
-            set => SetValue(IsStandaloneProperty, value);
-        }
-
-        public static readonly DependencyProperty IsStandaloneProperty =
-            DependencyProperty.Register(nameof(IsStandalone), typeof(bool), typeof(FontMapView), new PropertyMetadata(false));
-
-        #endregion
-
         #region ViewModel
 
         public FontMapViewModel ViewModel
@@ -76,7 +65,11 @@ namespace CharacterMap.Views
 
         #endregion
 
+        public bool IsStandalone { get; set; }
+
         private XamlDirect _xamlDirect { get; set; }
+
+        private long _previewColumnToken = long.MinValue;
 
         public FontMapView()
         {
@@ -90,18 +83,7 @@ namespace CharacterMap.Views
                 ResourceHelper.Get<AppSettings>(nameof(AppSettings)));
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-
             CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
-        }
-
-        private void FontMapView_Loaded(object sender, RoutedEventArgs e)
-        {
-            Messenger.Default.Register<GridSizeUpdatedMessage>(this, _ => UpdateDisplay());
-            Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
-        }
-        private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
-        {
-            Messenger.Default.Unregister(this);
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -114,7 +96,37 @@ namespace CharacterMap.Views
                     .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
 
                 Window.Current.Activate();
+                Window.Current.Closed += Current_Closed;
             }
+        }
+
+        private void FontMapView_Loaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            Messenger.Default.Register<GridSizeUpdatedMessage>(this, _ => UpdateDisplay());
+            Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
+
+            PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
+            _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
+            {
+                ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
+            });
+        }
+
+        private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            PreviewColumn.UnregisterPropertyChangedCallback(ColumnDefinition.WidthProperty, _previewColumnToken);
+            ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+            Messenger.Default.Unregister(this);
+        }
+
+        private void Current_Closed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
+        {
+            this.Bindings.StopTracking();
+            Window.Current.Closed -= Current_Closed;
+            Window.Current.Content = null;
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -122,14 +134,10 @@ namespace CharacterMap.Views
             if (e.PropertyName == nameof(ViewModel.SelectedFont))
             {
                 UpdateStates();
-
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
-                {
-                    if (null != CharGrid.SelectedItem)
-                    {
-                        CharGrid.ScrollIntoView(CharGrid.SelectedItem, ScrollIntoViewAlignment.Default);
-                    }
-                });
+            }
+            else if (e.PropertyName == nameof(ViewModel.SelectedVariant))
+            {
+                _ = SetCharacterSelectionAsync();
             }
             else if (e.PropertyName == nameof(ViewModel.ShowColorGlyphs))
             {
@@ -144,8 +152,15 @@ namespace CharacterMap.Views
                 if (_xamlDirect == null)
                     return;
 
+                Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
+
                 IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
                 UpdateTypography(p, ViewModel.SelectedTypography);
+            }
+            else if (e.PropertyName == nameof(ViewModel.Chars))
+            {
+                CharGrid.ItemsSource = ViewModel.Chars;
+                Composition.PlayEntrance(CharGrid);
             }
         }
 
@@ -155,6 +170,9 @@ namespace CharacterMap.Views
             VisualStateManager.GoToState(this, ViewModel.SelectedFont == null ? NoFontState.Name : HasFontState.Name,
                 true);
         }
+
+
+
 
         /* Public surface-area methods */
 
@@ -220,6 +238,9 @@ namespace CharacterMap.Views
             }
             BorderFadeInStoryboard.Begin();
         }
+
+
+
 
         /* UI Event Handlers */
 
@@ -363,60 +384,47 @@ namespace CharacterMap.Views
             return Visibility.Collapsed;
         }
 
-        public FrameworkElement CreateExportNotification(ExportResult result)
+        private Task SetCharacterSelectionAsync()
         {
-            return ResourceHelper.InflateDataTemplate("ExportNotificationTemplate", result);
+            return Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
+            {
+                if (null != CharGrid.SelectedItem)
+                {
+                    CharGrid.ScrollIntoView(ViewModel.SelectedChar, ScrollIntoViewAlignment.Default);
+                }
+            }).AsTask();
         }
 
 
+
+
+        /* Notification Helpers */
+
+        public InAppNotification GetNotifier()
+        {
+            if (NotificationRoot == null)
+                this.FindName(nameof(NotificationRoot));
+
+            return DefaultNotification;
+        }
 
         void OnNotificationMessage(AppNotificationMessage msg)
         {
             if (Dispatcher.HasThreadAccess && !this.IsStandalone)
                 return;
 
-            if (msg.Local && !Dispatcher.HasThreadAccess)
-                return;
-
-            if (msg.Data is ExportResult result)
-            {
-                if (!result.Success)
-                    return;
-
-                ShowNotification(CreateExportNotification(result), 5000);
-            }
-            else if (msg.Data is AddToCollectionResult added)
-            {
-                if (!added.Success)
-                    return;
-
-                var content = ResourceHelper.InflateDataTemplate("AddedToCollectionNotificationTemplate", added);
-                ShowNotification(content, 5000);
-            }
-            else if (msg.Data is string s)
-            {
-                ShowNotification(s, msg.DurationInMilliseconds > 0 ? msg.DurationInMilliseconds : 4000);
-            }
+            InAppNotificationHelper.OnMessage(this, msg);
         }
 
-        void ShowNotification(object o, int durationMs)
-        {
-            // NotificationRoot has x:Load set to false,
-            // we need to ensure it gets realised;
-            if (NotificationRoot == null)
-                this.FindName(nameof(NotificationRoot));
 
-            if (o is string s)
-                DefaultNotification.Show(s, durationMs);
-            else if (o is UIElement e)
-                DefaultNotification.Show(e, durationMs);
-        }
 
 
         /* Character Grid Binding Helpers */
 
         private void UpdateDisplay()
         {
+            // We apply the size changes by clearing the ItemsSource and resetting it,
+            // allowing the GridView to re-layout all of it's items with their new size.
             _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 if (!this.IsLoaded)
@@ -424,11 +432,9 @@ namespace CharacterMap.Views
 
                 CharGrid.ItemsSource = null;
                 await Task.Yield();
-                CharGrid.SetBinding(GridView.ItemsSourceProperty, new Binding
-                {
-                    Source = ViewModel,
-                    Path = new PropertyPath(nameof(ViewModel.Chars))
-                });
+                CharGrid.ItemsSource = ViewModel.Chars;
+                ViewModel.SetDefaultChar();
+                _ = SetCharacterSelectionAsync();
             });
         }
 
@@ -437,6 +443,10 @@ namespace CharacterMap.Views
             if (args.InRecycleQueue)
                 return;
 
+            /* 
+             * For performance reasons, we've forgone XAML bindings and
+             * will update everything in code 
+             */
             if (args.ItemContainer is GridViewItem item)
             {
                 Character c = ((Character)args.Item);
@@ -448,17 +458,20 @@ namespace CharacterMap.Views
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void UpdateContainer(GridViewItem item, Character c)
         {
+            // Perf considerations:
+            // 1 - Batch rendering updates by suspending rendering until all properties are set
+            // 2 - Use XAML direct to set new properties, rather than through DP's
+
             XamlBindingHelper.SuspendRendering(item);
 
             double size = ViewModel.Settings.GridSize;
-            Grid g = (Grid)item.ContentTemplateRoot;
-            IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(g);
+            IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot);
 
             _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Width, size);
             _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Height, size);
 
-            TextBlock tb = (TextBlock)g.Children[0];
-            IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
+            IXamlDirectObject cld = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.Panel_Children);
+            IXamlDirectObject o = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 0);
 
             _xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, ViewModel.FontFamily);
             _xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStretch, (uint)ViewModel.SelectedVariant.FontFace.Stretch);
@@ -467,11 +480,13 @@ namespace CharacterMap.Views
             _xamlDirect.SetBooleanProperty(o, XamlPropertyIndex.TextBlock_IsColorFontEnabled, ViewModel.ShowColorGlyphs);
             _xamlDirect.SetDoubleProperty(o, XamlPropertyIndex.TextBlock_FontSize, size / 2d);
 
-            UpdateColorFont(tb, o, ViewModel.ShowColorGlyphs);
+            UpdateColorFont(null, o, ViewModel.ShowColorGlyphs);
             UpdateTypography(o, ViewModel.SelectedTypography);
 
             _xamlDirect.SetStringProperty(o, XamlPropertyIndex.TextBlock_Text, c.Char);
-            ((TextBlock)g.Children[1]).Text = c.UnicodeString;
+
+            IXamlDirectObject o2 = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 1);
+            _xamlDirect.SetStringProperty(o2, XamlPropertyIndex.TextBlock_Text, c.UnicodeString);
 
             XamlBindingHelper.ResumeRendering(item);
         }
@@ -522,12 +537,27 @@ namespace CharacterMap.Views
             }
         }
 
+
+
+
+        /* Composition */
+
         private async void DetailsGrid_Loaded(object sender, RoutedEventArgs e)
         {
             // This avoids strange animation on secondary window
             await Task.Delay(500);
             if (this.IsLoaded)
-                Animation.SetStandardReposition(sender, e);
+                Composition.SetStandardReposition(sender, e);
+        }
+
+        private void TitleGrid_Loading(FrameworkElement sender, object args)
+        {
+            Composition.SetThemeShadow(sender, 20, MainUIGrid);
+        }
+
+        private void GridSplitter_Loading(FrameworkElement sender, object args)
+        {
+            Composition.SetThemeShadow(sender, 20, ShadowTarget);
         }
     }
 

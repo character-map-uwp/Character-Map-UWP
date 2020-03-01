@@ -71,6 +71,12 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public double LastColumnWidth
+        {
+            get => Get(330d);
+            set => Set(value);
+        }
+
 
 
 

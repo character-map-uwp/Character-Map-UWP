@@ -20,15 +20,12 @@
                     <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
                     <x:Boolean x:Key="TrueValue">True</x:Boolean>
                     <x:Boolean x:Key="FalseValue">False</x:Boolean>
-                    <Style x:Key="CharItemGridStyle" TargetType="Grid">
-                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}" />
-                        <Setter Property="Margin" Value="0" />
-                    </Style>
-                    <Style x:Key="CharItemCharStyle" TargetType="TextBlock">
-                        <Setter Property="Margin" Value="0,-2,0,0" />
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="TextAlignment" Value="Center" />
-                    </Style>
+                    <AcrylicBrush
+                        x:Key="FlyoutBackgroundBrush"
+                        BackgroundSource="Backdrop"
+                        FallbackColor="{ThemeResource SystemAccentColorLight1}"
+                        TintColor="{ThemeResource SystemAccentColor}"
+                        TintOpacity="0.5" />
                     <Style x:Key="CharItemUnicodeStyle" TargetType="TextBlock">
                         <Setter Property="FontFamily" Value="Consolas" />
                         <Setter Property="VerticalAlignment" Value="Bottom" />
@@ -57,7 +54,7 @@
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/ListView.xaml" />
                 <ResourceDictionary Source="/Styles/ComboBox.xaml" />
-                
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

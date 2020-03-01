@@ -504,4 +504,19 @@
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>"{0}" collection deleted</value>
   </data>
+  <data name="DlgException.PrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="DlgException.Title" xml:space="preserve">
+    <value>Something went wrong</value>
+  </data>
+  <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
+    <value>Copy error to Clipboard and open GitHub</value>
+  </data>
+  <data name="DlgExceptionExpander.Header" xml:space="preserve">
+    <value>View Full Exception details</value>
+  </data>
+  <data name="DlgExceptionMessage.Text" xml:space="preserve">
+    <value>To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</value>
+  </data>
 </root>

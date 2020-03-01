@@ -96,8 +96,8 @@ namespace CharacterMap.Core
                                 {
                                     /* 
                                      * Unfortunately this only constructs a monochrome path, if we want color
-                                     * Win2D does not yet expose the neccessary API's to get the individual glyph
-                                     * layers that make up a colour glyph.
+                                     * Win2D does not yet expose the necessary API's to get the individual glyph
+                                     * layers that make up a color glyph.
                                      * 
                                      * We'll need to handle this in C++/CX if we want to do this at some point.
                                      */
@@ -181,7 +181,7 @@ namespace CharacterMap.Core
                                 }
                                 catch
                                 {
-                                    // Certain fonts seem to have their SVG glyphs encoded with... I don't evne know what encoding.
+                                    // Certain fonts seem to have their SVG glyphs encoded with... I don't even know what encoding.
                                     // for example: https://github.com/adobe-fonts/emojione-color
                                     // In these cases, fallback to monochrome black
                                     await SaveMonochromeAsync();
@@ -220,7 +220,7 @@ namespace CharacterMap.Core
             try
             {
                 string name = GetFileName(selectedFont, selectedVariant, selectedChar, "png");
-                if (await PickFileAsync(name, "Png Image", new[] { ".png" }) is StorageFile file)
+                if (await PickFileAsync(name, "PNG Image", new[] { ".png" }) is StorageFile file)
                 {
                     CachedFileManager.DeferUpdates(file);
 
