@@ -217,7 +217,7 @@
     <value>Delete Font Family</value>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
-    <value>Restart</value>
+    <value>Restart app</value>
   </data>
   <data name="RestartHeader.Text" xml:space="preserve">
     <value>Requires application restart to take effect.</value>
@@ -247,7 +247,7 @@
     <value>Unicode</value>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>XAML Code</value>
+    <value>Glyph Code</value>
   </data>
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>Glyph Variants</value>
@@ -457,7 +457,7 @@
     <value>OK</value>
   </data>
   <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
-    <value>Character Search</value>
+    <value>Instant Search</value>
   </data>
   <data name="CharacterSavedMessage.Text" xml:space="preserve">
     <value>Saved to</value>

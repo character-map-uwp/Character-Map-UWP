@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 
 namespace CharacterMap.Core
 {
@@ -20,12 +21,14 @@ namespace CharacterMap.Core
     {
     }
 
-    public class GridSizeUpdatedMessage
+    public class AppSettingsChangedMessage
     {
-    }
+        public AppSettingsChangedMessage(string propertyName)
+        {
+            PropertyName = propertyName;
+        }
 
-    public class FontPreviewUpdatedMessage
-    {
+        public string PropertyName { get; }
     }
 
     public class AppNotificationMessage

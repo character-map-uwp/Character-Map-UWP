@@ -25,33 +25,39 @@ namespace CharacterMap.Helpers
 
         public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffset = 140)
         {
+            var animation = CreateEntranceAnimation(target, new Vector3(0, 140, 0), delayMs);
+            ElementCompositionPreview.GetElementVisual(target).StartAnimationGroup(animation);
+        }
+
+        public static ICompositionAnimationBase CreateEntranceAnimation(UIElement target, Vector3 from, int delayMs, int durationMs = 1000)
+        {
             ElementCompositionPreview.SetIsTranslationEnabled(target, true);
-            Visual v = ElementCompositionPreview.GetElementVisual(target);
+            Compositor c = ElementCompositionPreview.GetElementVisual(target).Compositor;
 
             TimeSpan delay = TimeSpan.FromMilliseconds(delayMs);
-            var e = v.Compositor.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));
+            var e = c.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));
 
-            var t = v.Compositor.CreateVector3KeyFrameAnimation();
+            var t = c.CreateVector3KeyFrameAnimation();
             t.Target = "Translation";
             t.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             t.DelayTime = delay;
-            t.InsertKeyFrame(0, new Vector3(0, fromOffset, 0));
+            t.InsertKeyFrame(0, from);
             t.InsertKeyFrame(1, new Vector3(0), e);
-            t.Duration = TimeSpan.FromSeconds(1);
+            t.Duration = TimeSpan.FromMilliseconds(durationMs);
 
-            var o = v.Compositor.CreateScalarKeyFrameAnimation();
+            var o = c.CreateScalarKeyFrameAnimation();
             o.Target = nameof(Visual.Opacity);
             o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             t.DelayTime = delay;
             o.InsertKeyFrame(0, 0);
             o.InsertKeyFrame(1, 1);
-            o.Duration = TimeSpan.FromSeconds(0.3);
+            o.Duration = TimeSpan.FromMilliseconds(durationMs * 0.33);
 
-            var g = v.Compositor.CreateAnimationGroup();
+            var g = c.CreateAnimationGroup();
             g.Add(t);
             g.Add(o);
 
-            v.StartAnimationGroup(g);
+            return g;
         }
 
         public static void PlayScaleEntrance(FrameworkElement target, float from, float to)
@@ -112,7 +118,7 @@ namespace CharacterMap.Helpers
 
         public static void SetThemeShadow(UIElement target, float depth, params UIElement[] recievers)
         {
-            if (!Utils.Supports1903)
+            if (!Utils.Supports1903 || !ResourceHelper.AppSettings.EnableShadows)
                 return;
 
             if (!CompositionCapabilities.GetForCurrentView().AreEffectsFast())

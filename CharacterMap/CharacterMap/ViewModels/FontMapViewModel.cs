@@ -193,6 +193,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _isSvgChar, value);
         }
 
+        private bool _isLongGeometry = true;
+        public bool IsLongGeometry
+        {
+            get => _isLongGeometry;
+            set => Set(ref _isLongGeometry, value);
+        }
+
         private string _xamlPath;
         public string XamlPath
         {
@@ -205,6 +212,13 @@ namespace CharacterMap.ViewModels
         {
             get => _xamlCode;
             set => Set(ref _xamlCode, value);
+        }
+
+        private string _xamlPathGeom;
+        public string XamlPathGeom
+        {
+            get => _xamlPathGeom;
+            set { if (Set(ref _xamlPathGeom, value)) IsLongGeometry = value != null && value.Length > 2048; }
         }
 
         private string _symbolIcon;
@@ -351,23 +365,21 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private void UpdateDevValues()
+        internal void UpdateDevValues()
         {
-            if (SelectedVariant == null || SelectedChar == null)
+            if (SelectedVariant == null || SelectedChar == null || !Settings.ShowDevUtils)
             {
-                XamlPath = XamlCode = FontIcon = SymbolIcon = null;
+                XamlPath = XamlPathGeom = XamlCode = FontIcon = SymbolIcon = null;
             }
             else
             {
-                var hex = SelectedChar.UnicodeIndex.ToString("x4").ToUpper();
-                XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
-                XamlCode = $"&#x{hex};";
-                FontIcon = $@"<FontIcon FontFamily=""{SelectedVariant.XamlFontSource}"" Glyph=""&#x{hex};"" />";
+                var data = GlyphService.GetDevValues(SelectedChar, SelectedVariant, SelectedCharAnalysis, GetEffectiveTypography(), Settings.DevToolsLanguage == 0);
+                XamlCode = data.Hex;
+                FontIcon = data.FontIcon;
+                XamlPathGeom = data.Path;
+                SymbolIcon = data.Symbol;
 
-                if (FontFinder.IsMDL2(SelectedVariant) && Enum.IsDefined(typeof(Symbol), SelectedChar.UnicodeIndex))
-                    SymbolIcon = $@"<SymbolIcon Symbol=""{(Symbol)SelectedChar.UnicodeIndex}"" />";
-                else
-                    SymbolIcon = null;
+                XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
             }
         }
 

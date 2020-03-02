@@ -4,6 +4,7 @@ using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Windows.Storage;
+using Windows.UI.Xaml;
 
 namespace CharacterMap.Core
 {
@@ -27,26 +28,6 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
-        public int GridSize
-        {
-            get => Get(80);
-            set
-            {
-                if (Set(value))
-                    DebounceGrid();
-            }
-        }
-
-        public bool UseFontForPreview
-        {
-            get => Get(false);
-            set
-            {
-                if (Set(value))
-                    Messenger.Default.Send(new FontPreviewUpdatedMessage());
-            }
-        }
-
         public bool ShowDevUtils
         {
             get => Get(true);
@@ -56,7 +37,7 @@ namespace CharacterMap.Core
         public bool UseInstantSearch
         {
             get => Get(true);
-            set => Set(value);
+            set => BroadcastSet(value);
         }
 
         public int InstantSearchDelay
@@ -77,7 +58,57 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public bool UseSelectionAnimations
+        {
+            get => Get(true);
+            set => Set(value);
+        }
 
+        public bool EnableShadows
+        {
+            get => Get(true);
+            set => Set(value);
+        }
+
+        public bool AllowExpensiveAnimations
+        {
+            get => Get(false);
+            set => BroadcastSet(value);
+        }
+
+        public bool ShowCharGridUnicode
+        {
+            get => Get(true);
+            set => BroadcastSet(value);
+        }
+
+        public bool UseFontForPreview
+        {
+            get => Get(true);
+            set => BroadcastSet(value);
+        }
+
+        public ElementTheme RequestedTheme
+        {
+            get => (ElementTheme)Get((int)ElementTheme.Default);
+            set => BroadcastSet((int)value);
+        }
+
+        public int DevToolsLanguage
+        {
+            get => Get(0);
+            set => BroadcastSet(value);
+        }
+
+        public int GridSize
+        {
+            get => Get(80);
+            set
+            {
+                if (Set(value))
+                    DebounceGrid();
+            }
+        }
 
 
         /* INFRASTRUCTURE */
@@ -103,6 +134,14 @@ namespace CharacterMap.Core
             return true;
         }
 
+        private bool BroadcastSet(object value, [CallerMemberName]string key = null)
+        {
+            bool result = Set(value, key);
+            if (result)
+                Messenger.Default.Send(new AppSettingsChangedMessage(key));
+            return result;
+        }
+
         private T Get<T>(T defaultValue, [CallerMemberName]string key = null)
         {
             if (LocalSettings.Values.TryGetValue(key, out object value))
@@ -123,7 +162,7 @@ namespace CharacterMap.Core
         {
             _gridDebouncer.Debounce(1000, () =>
             {
-                Messenger.Default.Send(new GridSizeUpdatedMessage());
+                Messenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
             });
         }
     }

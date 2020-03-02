@@ -47,6 +47,11 @@ namespace CharacterMap.Services
 
         private StorageFolder _collectionsFolder;
 
+        public bool IsSymbolFont(InstalledFont font)
+        {
+            return font.IsSymbolFont || SymbolCollection.Fonts.Contains(font.Name);
+        }
+
         public async Task LoadCollectionsAsync()
         {
             List<UserFontCollection> collections = new List<UserFontCollection>();

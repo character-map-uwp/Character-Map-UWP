@@ -76,5 +76,16 @@ namespace CharacterMap.Styles
                 b.GetFirstAncestorOfType<InAppNotification>()?.Dismiss();
             }
         }
+
+        private void FontContextFlyout_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout menu && menu.Target.DataContext is InstalledFont font)
+            {
+                FlyoutHelper.CreateMenu(
+                    menu,
+                    font,
+                    false);
+            }
+        }
     }
 }

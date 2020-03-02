@@ -54,7 +54,6 @@
                                         <Setter Target="RootGrid.(RevealBrush.State)" Value="Pressed" />
                                         <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonRevealBackgroundPressed}" />
                                         <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushPressed}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundPressed}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
@@ -180,7 +179,7 @@
                             AutomationProperties.AccessibilityView="Raw"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
-                            Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
+                            Foreground="{TemplateBinding Foreground}"
                             Glyph="&#xE0E5;"
                             IsHitTestVisible="False" />
                     </Grid>
@@ -224,7 +223,6 @@
                                         <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
                                         <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPointerOver}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <PointerUpThemeAnimation Storyboard.TargetName="Content" />
@@ -236,7 +234,6 @@
                                         <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
                                         <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPressed}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <PointerDownThemeAnimation Storyboard.TargetName="Content" />
@@ -247,7 +244,7 @@
                                     <VisualState.Setters>
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundDisabled}" />
                                         <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushDisabled}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
+                                        <Setter Target="Root.Opacity" Value="0.5" />
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="OverflowNormal">
@@ -259,7 +256,6 @@
                                     <VisualState.Setters>
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
                                         <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPointerOver}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <PointerUpThemeAnimation Storyboard.TargetName="Content" />
@@ -269,7 +265,6 @@
                                     <VisualState.Setters>
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
                                         <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPressed}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
                                     </VisualState.Setters>
 
                                     <Storyboard>
@@ -297,7 +292,7 @@
     </Style>
 
     <Style x:Key="IconToggleButtonStyle" BasedOn="{StaticResource TextBlockButtonStyle}" TargetType="ToggleButton">
-        <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize" Value="20" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="Width" Value="48" />
@@ -352,7 +347,6 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
                     </ContentPresenter>
                 </ControlTemplate>
             </Setter.Value>

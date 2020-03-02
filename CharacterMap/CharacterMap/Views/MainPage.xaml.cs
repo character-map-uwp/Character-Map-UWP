@@ -24,6 +24,7 @@ using Windows.UI.Xaml.Markup;
 using CharacterMap.Controls;
 using CharacterMap.Models;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using Windows.UI.ViewManagement;
 
 namespace CharacterMap.Views
 {
@@ -35,16 +36,21 @@ namespace CharacterMap.Views
 
         public MainViewModel ViewModel { get; }
 
-        public AppSettings Settings { get; }
-
         private Debouncer _fontListDebouncer { get; } = new Debouncer();
-        
+
+        private Debouncer _fontSelectionDebouncer { get; } = new Debouncer();
+
+        public object ThemeLock { get; } = new object();
+       
+        private UISettings _uiSettings { get; }
+
         private bool _isCtrlKeyPressed;
 
         public MainPage()
         {
+            RequestedTheme = ResourceHelper.AppSettings.RequestedTheme;
+
             InitializeComponent();
-            Settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
 
             ViewModel = DataContext as MainViewModel;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -55,9 +61,18 @@ namespace CharacterMap.Views
 
             MainDispatcher = Dispatcher;
             Messenger.Default.Register<CollectionsUpdatedMessage>(this, OnCollectionsUpdated);
-            Messenger.Default.Register<FontPreviewUpdatedMessage>(this, OnFontPreviewUpdated);
+            Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
 
             this.SizeChanged += MainPage_SizeChanged;
+
+            _uiSettings = new UISettings();
+            _uiSettings.ColorValuesChanged += (s, e) =>
+            {
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    Messenger.Default.Send(new AppSettingsChangedMessage(nameof(AppSettings.RequestedTheme)));
+                });
+            };
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -67,7 +82,40 @@ namespace CharacterMap.Views
                 if (ViewModel.IsLoadingFonts)
                     return;
 
-                Composition.PlayEntrance(LstFontFamily, 66, 100);
+                if (ViewModel.Settings.UseSelectionAnimations)
+                    Composition.PlayEntrance(LstFontFamily, 66, 100);
+            }
+            else if (e.PropertyName == nameof(ViewModel.SelectedFont))
+            {
+                if (ViewModel.SelectedFont != null)
+                    LstFontFamily.SelectedItem = ViewModel.SelectedFont;
+
+                // Looks weird, important for performance to prevent
+                // reloading CharacterGrid when changing FontList preview font
+                //_fontSelectionDebouncer.Debounce(16, () => { var t = _fontSelectionDebouncer; });
+            }
+            //else if (e.PropertyName == "FontSelectionDebounce")
+            //{
+            //    // Looks weird, important for performance to prevent
+            //    // reloading CharacterGrid when changing FontList preview font
+            //    _fontSelectionDebouncer.Debounce(16, () => { var t = _fontSelectionDebouncer; });
+            //    LstFontFamily.SelectedItem = ViewModel.SelectedFont;
+
+            //    ViewModel_FontListCreated(sender, e);
+            //}
+        }
+
+        private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
+        {
+            switch (msg.PropertyName)
+            {
+                case nameof(AppSettings.UseFontForPreview):
+                    OnFontPreviewUpdated();
+                    break;
+                case nameof(AppSettings.RequestedTheme):
+                    this.RequestedTheme = ViewModel.Settings.RequestedTheme;
+                    OnPropertyChanged(nameof(ThemeLock));
+                    break;
             }
         }
 
@@ -130,7 +178,8 @@ namespace CharacterMap.Views
 
         private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
-            _ = (new SettingsContentDialog(Settings)).ShowAsync();
+            this.FindName(nameof(SettingsView));
+            SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont);
         }
 
         private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
@@ -155,6 +204,14 @@ namespace CharacterMap.Views
                         FontMap.TryCopy();
                         break;
                 }
+            }
+        }
+
+        private void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.FirstOrDefault() is InstalledFont font)
+            {
+                ViewModel.SelectedFont = font;
             }
         }
 
@@ -186,17 +243,6 @@ namespace CharacterMap.Views
                 {
                     ViewModel.IsLoadingFonts = false;
                 }
-            }
-        }
-
-        private void Grid_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            e.Handled = true;
-            if (sender is Grid grid
-                && grid.DataContext is InstalledFont font
-                && font.HasImportedFiles)
-            {
-                grid.ContextFlyout?.ShowAt(grid);
             }
         }
 
@@ -393,7 +439,7 @@ namespace CharacterMap.Views
             Messenger.Default.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
         }
 
-        private void OnFontPreviewUpdated(FontPreviewUpdatedMessage msg)
+        private void OnFontPreviewUpdated()
         {
             if (ViewModel.InitialLoad.IsCompleted)
             {
@@ -482,22 +528,6 @@ namespace CharacterMap.Views
         private void CommandsGrid_Loading(FrameworkElement sender, object args)
         {
             Composition.SetThemeShadow(sender, 20, FontMap);
-        }
-
-        private void ViewStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
-        {
-            //if (e.NewState != DefaultViewState)
-            //    CompositionFactory.TryAddRecievers(PaneRoot, CommandsGrid, TitleBar);
-            //else
-            //    CompositionFactory.TryRemoveRecievers(PaneRoot, CommandsGrid, TitleBar);
-        }
-
-        private void ViewStates_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
-        {
-            //if (e.NewState != DefaultViewState)
-            //    CompositionFactory.TryAddRecievers(PaneRoot, CommandsGrid, TitleBar);
-            //else
-            //    CompositionFactory.TryRemoveRecievers(PaneRoot, CommandsGrid, TitleBar);
         }
     }
 }

@@ -170,16 +170,13 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CharacterGridView.cs" />
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Controls\SettingsContentDialog.xaml.cs">
-      <DependentUpon>SettingsContentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\UnhandledExceptionDialog.xaml.cs">
       <DependentUpon>UnhandledExceptionDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\SmartTextColorBasedOnAccentTypeConverter.cs" />
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
@@ -238,6 +235,9 @@
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\ViewModelLocator.cs" />
     <Compile Include="Controls\XamlTitleBar.cs" />
+    <Compile Include="Views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -318,10 +318,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Controls\SettingsContentDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\UnhandledExceptionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -369,6 +365,10 @@
     <Page Include="Views\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\SettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

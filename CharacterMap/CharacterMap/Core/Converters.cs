@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -34,8 +35,26 @@ namespace CharacterMap.Core
             return $"{Utils.GetWeightName(weight)} - {weight.Weight}";
         }
 
+        public static Brush GetForegroundBrush(object obj)
+        {
+            if (Utils.IsAccentColorDark())
+                return ResourceHelper.Get<Brush>("WhiteBrush");
+            else
+                return ResourceHelper.Get<Brush>("BlackBrush");
+        }
+
+        public static ElementTheme ChooseThemeForAccent(object obj)
+        {
+            return Utils.IsAccentColorDark() ? ElementTheme.Dark : ElementTheme.Light;
+        }
+
         public static GridLength GridLengthAorB(bool input, string a, string b) 
             => input ? ReadFromString(a) : ReadFromString(b);
+
+        public static double GetFontSize(int d)
+        {
+            return d / 2d;
+        }
 
         private static GridLength ReadFromString(string s)
         {
@@ -49,6 +68,7 @@ namespace CharacterMap.Core
                     return new GridLength(double.Parse(s), GridUnitType.Pixel);
             }
         }
+
 
         public const string Auto = "Auto";
         public const string Star = "*";

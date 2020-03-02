@@ -47,7 +47,7 @@
                             FontFamily="Segoe UI"
                             FontSize="12"
                             FontWeight="Normal"
-                            Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}"
+                            Foreground="{ThemeResource TextControlHeaderForeground}"
                             Opacity="0.5"
                             TextWrapping="{TemplateBinding TextWrapping}"
                             Visibility="Collapsed" />

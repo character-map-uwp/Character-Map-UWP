@@ -32,8 +32,6 @@ namespace CharacterMap.ViewModels
 
         public RelayCommand CommandToggleFullScreen { get; }
 
-        public bool IsDarkAccent => Utils.IsAccentColorDark();
-
         private int _fontListFilter;
         public int FontListFilter
         {
@@ -45,7 +43,17 @@ namespace CharacterMap.ViewModels
         public UserFontCollection SelectedCollection
         {
             get => _selectedCollection;
-            set { if (Set(ref _selectedCollection, value)) if (value != null) RefreshFontList(value); }
+            set 
+            { 
+                if (value != null && value.IsSystemSymbolCollection)
+                {
+                    FontListFilter = 1;
+                    return;
+                }
+
+                if (Set(ref _selectedCollection, value) && value != null)
+                    RefreshFontList(value);
+            }
         }
 
         private string _titlePrefix;
@@ -271,8 +279,15 @@ namespace CharacterMap.ViewModels
 
                 if (!string.IsNullOrEmpty(lastSelected))
                 {
-                    var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == lastSelected));
-                    SelectedFont = lastSelectedFont ?? FontList.FirstOrDefault();
+                    if (SelectedFont == null || lastSelected != SelectedFont.Name)
+                    {
+                        var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == lastSelected));
+                        SelectedFont = lastSelectedFont ?? FontList.FirstOrDefault();
+                    }
+                    else
+                    {
+                        RaisePropertyChanged("FontSelectionDebounce");
+                    }
                 }
                 else
                 {

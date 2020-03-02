@@ -26,11 +26,16 @@ using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using CharacterMap.Models;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using System.ComponentModel;
+using Windows.UI.Core;
+using CharacterMap.Annotations;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class FontMapView : UserControl, IInAppNotificationPresenter
+    public sealed partial class FontMapView : UserControl, IInAppNotificationPresenter, INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
+
         #region Dependency Properties
 
         #region Font
@@ -67,12 +72,20 @@ namespace CharacterMap.Views
 
         public bool IsStandalone { get; set; }
 
-        private XamlDirect _xamlDirect { get; set; }
+        public object ThemeLock { get; } = new object();
+
+        private bool _isCtrlKeyPressed = false;
+
+        private XamlDirect _xamlDirect { get; }
+
+        private UISettings _uiSettings = null;
 
         private long _previewColumnToken = long.MinValue;
 
         public FontMapView()
         {
+            RequestedTheme = ResourceHelper.AppSettings.RequestedTheme;
+
             InitializeComponent();
             Loading += FontMapView_Loading;
             Loaded += FontMapView_Loaded;
@@ -80,23 +93,30 @@ namespace CharacterMap.Views
 
             ViewModel = new FontMapViewModel(
                 ServiceLocator.Current.GetInstance<IDialogService>(), 
-                ResourceHelper.Get<AppSettings>(nameof(AppSettings)));
+                ResourceHelper.AppSettings);
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            CharGrid.ItemSize = ViewModel.Settings.GridSize;
             CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
+            _xamlDirect = XamlDirect.GetDefault();
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
         {
-            _xamlDirect = XamlDirect.GetDefault();
-
             if (IsStandalone)
             {
                 ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
 
                 Window.Current.Activate();
+                Window.Current.Closed -= Current_Closed;
                 Window.Current.Closed += Current_Closed;
+
+                LayoutRoot.KeyUp -= LayoutRoot_KeyUp;
+                LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
+
+                LayoutRoot.KeyUp += LayoutRoot_KeyUp;
+                LayoutRoot.KeyDown += LayoutRoot_KeyDown;
             }
         }
 
@@ -105,8 +125,10 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            Messenger.Default.Register<GridSizeUpdatedMessage>(this, _ => UpdateDisplay());
             Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
+            Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
+
+            UpdateSearchStates();
 
             PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
             _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
@@ -118,18 +140,23 @@ namespace CharacterMap.Views
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
         {
             PreviewColumn.UnregisterPropertyChangedCallback(ColumnDefinition.WidthProperty, _previewColumnToken);
+
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+
+            LayoutRoot.KeyUp -= LayoutRoot_KeyUp;
+            LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
+
             Messenger.Default.Unregister(this);
         }
 
-        private void Current_Closed(object sender, Windows.UI.Core.CoreWindowEventArgs e)
+        private void Current_Closed(object sender, CoreWindowEventArgs e)
         {
             this.Bindings.StopTracking();
             Window.Current.Closed -= Current_Closed;
             Window.Current.Content = null;
         }
 
-        private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ViewModel.SelectedFont))
             {
@@ -139,35 +166,103 @@ namespace CharacterMap.Views
             {
                 _ = SetCharacterSelectionAsync();
             }
-            else if (e.PropertyName == nameof(ViewModel.ShowColorGlyphs))
-            {
-                UpdateColorsFonts(ViewModel.ShowColorGlyphs);
-            }
             else if (e.PropertyName == nameof(ViewModel.SelectedTypography))
             {
-                UpdateTypographies(ViewModel.SelectedTypography);
+                UpdateTypography(ViewModel.SelectedTypography);
             }
             else if (e.PropertyName == nameof(ViewModel.SelectedChar))
             {
-                if (_xamlDirect == null)
-                    return;
+                if (ViewModel.Settings.UseSelectionAnimations)
+                    Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
 
-                Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
-
-                IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
-                UpdateTypography(p, ViewModel.SelectedTypography);
+                UpdateTypography(ViewModel.SelectedTypography);
             }
             else if (e.PropertyName == nameof(ViewModel.Chars))
             {
                 CharGrid.ItemsSource = ViewModel.Chars;
-                Composition.PlayEntrance(CharGrid);
+
+                if (ViewModel.Settings.UseSelectionAnimations)
+                    Composition.PlayEntrance(CharGrid);
             }
+        }
+
+        private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
+        {
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                switch (msg.PropertyName)
+                {
+                    case nameof(AppSettings.AllowExpensiveAnimations):
+                        CharGrid.EnableResizeAnimation = ViewModel.Settings.AllowExpensiveAnimations;
+                        break;
+                    case nameof(AppSettings.ShowCharGridUnicode):
+                        CharGrid.ShowUnicodeDescription = ViewModel.Settings.ShowCharGridUnicode;
+                        break;
+                    case nameof(AppSettings.DevToolsLanguage):
+                        ViewModel.UpdateDevValues();
+                        break;
+                    case nameof(AppSettings.GridSize):
+                        UpdateDisplay();
+                        break;
+                    case nameof(AppSettings.RequestedTheme):
+                        this.RequestedTheme = ViewModel.Settings.RequestedTheme;
+                        OnPropertyChanged(nameof(ThemeLock));
+                        break;
+                    case nameof(AppSettings.UseInstantSearch):
+                        UpdateSearchStates();
+                        break;
+                }
+            });
+        }
+
+        private void UpdateSearchStates()
+        {
+            if (this.IsStandalone)
+            {
+                VisualStateManager.GoToState(
+                  this,
+                  ViewModel.Settings.UseInstantSearch ? nameof(InstantSearchState) : nameof(ManualSearchState),
+                  true);
+            }
+        }
+
+        private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Control)
+                _isCtrlKeyPressed = false;
+        }
+
+        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.Control)
+            {
+                _isCtrlKeyPressed = true;
+                return;
+            }
+
+            if (_isCtrlKeyPressed)
+            {
+                switch (e.Key)
+                {
+                    case VirtualKey.C:
+                        TryCopy();
+                        break;
+                }
+            }
+        }
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void UpdateStates()
         {
             // Ideally should have been achieved with VisualState setters, buuuuut didn't work for some reason
-            VisualStateManager.GoToState(this, ViewModel.SelectedFont == null ? NoFontState.Name : HasFontState.Name,
+            VisualStateManager.GoToState(
+                this, 
+                ViewModel.SelectedFont == null ? NoFontState.Name : HasFontState.Name,
                 true);
         }
 
@@ -196,7 +291,7 @@ namespace CharacterMap.Views
         public void TryCopy()
         {
             if (CharGrid.SelectedItem is Character character &&
-                !TxtSymbolIcon.SelectedText.Any() &&
+                (TxtSymbolIcon == null || !TxtSymbolIcon.SelectedText.Any()) &&
                 !TxtFontIcon.SelectedText.Any() &&
                 !TxtXamlCode.SelectedText.Any())
             {
@@ -216,22 +311,31 @@ namespace CharacterMap.Views
 
                 if (!ViewModel.SelectedVariant.IsImported)
                 {
-                    // We can allow users to also copy the glyph with the font metadata included,
+                    // We can allow users to also copy the glyph with the font meta-data included,
                     // so when they paste into a supported program like Microsoft Word or 
                     // Adobe Photoshop the correct font is automatically applied to the paste.
                     // To do so we need to create a RichTextFormat document, and we use the 
-                    // RichEditBox as a proxy to do this (otherwise the syntax is arkane).
+                    // RichEditBox as a proxy to do this (otherwise the syntax is arcane).
                     // This won't include any Typographic variations unfortunately.
                     RichEditBox r = new RichEditBox();
                     ITextCharacterFormat format = r.TextDocument.GetDefaultCharacterFormat();
                     format.Size = 12;
+                    format.ForegroundColor = Windows.UI.Colors.Black;
                     format.Name = ViewModel.FontFamily.Source;
+
+                    var longName = ViewModel.FontFamily.Source;
+                    if (ViewModel.SelectedVariant.FontInformation.FirstOrDefault(i => i.Key == "Full Name") is var p)
+                    {
+                        if (p.Value != format.Name)
+                            longName = $"{ViewModel.FontFamily.Source}, {p.Value}";
+                    }
+
                     r.TextDocument.SetDefaultCharacterFormat(format);
                     r.TextDocument.SetText(TextSetOptions.None, character.Char);
                     r.TextDocument.GetText(TextGetOptions.FormatRtf, out string doc);
 
                     dp.SetRtf(doc);
-                    dp.SetHtmlFormat($"<p style=\"font-family:'{ViewModel.FontFamily.Source}'; \">{character.Char}</p>");
+                    dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{character.Char}</p>");
                 }
 
                 Clipboard.SetContent(dp);
@@ -254,14 +358,9 @@ namespace CharacterMap.Views
             SaveAsSvgCommandBar.IsOpen = !SaveAsSvgCommandBar.IsOpen;
         }
 
-        private void TxtFontIcon_OnGotFocus(object sender, RoutedEventArgs e)
+        private void OnCopyGotFocus(object sender, RoutedEventArgs e)
         {
-            TxtFontIcon.SelectAll();
-        }
-
-        private void TxtXamlCode_OnGotFocus(object sender, RoutedEventArgs e)
-        {
-            TxtXamlCode.SelectAll();
+            ((TextBox)sender).SelectAll();
         }
 
         private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
@@ -276,9 +375,11 @@ namespace CharacterMap.Views
             BorderFadeInStoryboard.Begin();
         }
 
-        private void TxtSymbolIcon_OnGotFocus(object sender, RoutedEventArgs e)
+        private void BtnCopyXamlPath_OnClick(object sender, RoutedEventArgs e)
         {
-            TxtSymbolIcon.SelectAll();
+            GeometryFlyout?.Hide();
+            Edi.UWP.Helpers.Utils.CopyToClipBoard(ViewModel.XamlPathGeom);
+            BorderFadeInStoryboard.Begin();
         }
 
         private void BtnCopySymbolIcon_OnClick(object sender, RoutedEventArgs e)
@@ -423,118 +524,38 @@ namespace CharacterMap.Views
 
         private void UpdateDisplay()
         {
-            // We apply the size changes by clearing the ItemsSource and resetting it,
-            // allowing the GridView to re-layout all of it's items with their new size.
+            
             _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 if (!this.IsLoaded)
                     return;
 
-                CharGrid.ItemsSource = null;
-                await Task.Yield();
-                CharGrid.ItemsSource = ViewModel.Chars;
-                ViewModel.SetDefaultChar();
-                _ = SetCharacterSelectionAsync();
+                if (ViewModel.Settings.AllowExpensiveAnimations)
+                {
+                    CharGrid.UpdateSize(ViewModel.Settings.GridSize);
+                }
+                else
+                {
+                    // We apply the size changes by clearing the ItemsSource and resetting it,
+                    // allowing the GridView to re-layout all of it's items with their new size.
+
+                    CharGrid.ItemsSource = null;
+                    CharGrid.ItemSize = ViewModel.Settings.GridSize;
+                    await Task.Yield();
+                    CharGrid.ItemsSource = ViewModel.Chars;
+                    ViewModel.SetDefaultChar();
+                    _ = SetCharacterSelectionAsync();
+                }
             });
         }
 
-        private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            if (args.InRecycleQueue)
-                return;
-
-            /* 
-             * For performance reasons, we've forgone XAML bindings and
-             * will update everything in code 
-             */
-            if (args.ItemContainer is GridViewItem item)
-            {
-                Character c = ((Character)args.Item);
-                UpdateContainer(item, c);
-                args.Handled = true;
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void UpdateContainer(GridViewItem item, Character c)
-        {
-            // Perf considerations:
-            // 1 - Batch rendering updates by suspending rendering until all properties are set
-            // 2 - Use XAML direct to set new properties, rather than through DP's
-
-            XamlBindingHelper.SuspendRendering(item);
-
-            double size = ViewModel.Settings.GridSize;
-            IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot);
-
-            _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Width, size);
-            _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Height, size);
-
-            IXamlDirectObject cld = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.Panel_Children);
-            IXamlDirectObject o = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 0);
-
-            _xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, ViewModel.FontFamily);
-            _xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStretch, (uint)ViewModel.SelectedVariant.FontFace.Stretch);
-            _xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStyle, (uint)ViewModel.SelectedVariant.FontFace.Style);
-            _xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontWeight, ViewModel.SelectedVariant.FontFace.Weight);
-            _xamlDirect.SetBooleanProperty(o, XamlPropertyIndex.TextBlock_IsColorFontEnabled, ViewModel.ShowColorGlyphs);
-            _xamlDirect.SetDoubleProperty(o, XamlPropertyIndex.TextBlock_FontSize, size / 2d);
-
-            UpdateColorFont(null, o, ViewModel.ShowColorGlyphs);
-            UpdateTypography(o, ViewModel.SelectedTypography);
-
-            _xamlDirect.SetStringProperty(o, XamlPropertyIndex.TextBlock_Text, c.Char);
-
-            IXamlDirectObject o2 = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 1);
-            _xamlDirect.SetStringProperty(o2, XamlPropertyIndex.TextBlock_Text, c.UnicodeString);
-
-            XamlBindingHelper.ResumeRendering(item);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void UpdateColorFont(TextBlock block, IXamlDirectObject xd, bool value)
-        {
-            if (xd != null)
-                _xamlDirect.SetBooleanProperty(xd, XamlPropertyIndex.TextBlock_IsColorFontEnabled, value);
-            else
-                block.IsColorFontEnabled = value;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void UpdateTypography(IXamlDirectObject o, TypographyFeatureInfo info)
-        {
-            CanvasTypographyFeatureName f = info == null ? CanvasTypographyFeatureName.None : info.Feature;
-            TypographyBehavior.SetTypography(o, f, _xamlDirect);
-        }
-
-        void UpdateColorsFonts(bool value)
-        {
-            if (ViewModel.IsLoadingCharacters || CharGrid.ItemsSource == null || CharGrid.ItemsPanelRoot == null)
-                return;
-
-            foreach (GridViewItem item in CharGrid.ItemsPanelRoot.Children.Cast<GridViewItem>())
-            {
-                Grid g = (Grid)item.ContentTemplateRoot;
-                TextBlock tb = (TextBlock)g.Children[0];
-                UpdateColorFont(tb, null, value);
-            }
-        }
-
-        void UpdateTypographies(TypographyFeatureInfo info)
+        void UpdateTypography(TypographyFeatureInfo info)
         {
             if (ViewModel.IsLoadingCharacters || CharGrid.ItemsSource == null || CharGrid.ItemsPanelRoot == null)
                 return;
 
             IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
-            UpdateTypography(p, info);
-
-            foreach (GridViewItem item in CharGrid.ItemsPanelRoot.Children.Cast<GridViewItem>())
-            {
-                Grid g = (Grid)item.ContentTemplateRoot;
-                TextBlock tb = (TextBlock)g.Children[0];
-                IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
-                UpdateTypography(o, info);
-            }
+            CharGrid.UpdateTypography(p, info);
         }
 
 

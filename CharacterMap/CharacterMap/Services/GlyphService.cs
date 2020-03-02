@@ -1,10 +1,16 @@
 ﻿//#define GENERATE_DATA
 
 using CharacterMap.Core;
+using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Provider;
+using CharacterMapCX;
+using Microsoft.Graphics.Canvas.Text;
 using SQLite;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Services
 {
@@ -98,5 +104,35 @@ namespace CharacterMap.Services
 
             return _provider.SearchAsync(query, variant);
         }
+
+        public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(Character c, FontVariant v, CanvasTextLayoutAnalysis analysis, CanvasTypography t, bool isXaml)
+        {
+            string h, f, p, s = null;
+            string pathData = ExportManager.GetGeometry(ResourceHelper.AppSettings.GridSize, v, c, analysis, t).Path.Trim();
+            bool hasSymbol = FontFinder.IsMDL2(v) && Enum.IsDefined(typeof(Symbol), c.UnicodeIndex);
+
+            var hex = c.UnicodeIndex.ToString("x4").ToUpper();
+            if (isXaml)
+            {
+                h = $"&#x{hex};";
+                f = $@"<FontIcon FontFamily=""{v.XamlFontSource}"" Glyph=""&#x{hex};"" />";
+                p = $"<Path Data=\"{pathData}\" Fill=\"Black\" Stretch=\"Uniform\" />";
+
+                if (hasSymbol)
+                    s = $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />";
+            }
+            else
+            {
+                h = $"\\u{hex}";
+                f = $"new FontIcon {{ FontFamily = new Windows.UI.Xaml.Media.FontFamily(\"{v.XamlFontSource}\") , Glyph = \"\\u{hex}\" }};";
+                p = $"new Windows.UI.Xaml.Shapes.Path {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Geometry), \"{pathData}\"), Fill = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Black), Stretch = Windows.UI.Xaml.Media.Stretch.Uniform }};";
+
+                if (hasSymbol)
+                    s = $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};";
+            }
+
+            return (h, f, p, s);
+        }
+
     }
 }
