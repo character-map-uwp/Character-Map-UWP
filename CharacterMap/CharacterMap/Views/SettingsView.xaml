@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:CharacterMap.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
@@ -58,16 +57,17 @@
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(Settings), Mode=OneWay}">
             <TextBlock
+                x:Uid="SettingsHeader"
                 Margin="20 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}"
-                Text="Settings" />
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}" />
 
             <AppBarButton
                 x:Name="BtnClose"
+                x:Uid="BtnClose"
                 Width="45"
                 Height="45"
                 HorizontalAlignment="Right"
@@ -77,7 +77,6 @@
             </AppBarButton>
 
         </Grid>
-
 
         <ScrollViewer x:Name="ContentScroller" Grid.Row="1">
             <Grid ColumnSpacing="16" Margin="20 20 20 120">
@@ -94,12 +93,21 @@
                     <!--#region USER INTERFACE-->
 
                     <TextBlock
+                        x:Uid="SettingsUIHeader"
                         Margin="0 -4 0 -16"
                         Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="User Interface" />
+                        Text="#UserInterface" />
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Grid Size" />
-                    <TextBlock Style="{StaticResource DescriptionStyle}" Text="The size of individual characters inside the character grid. Smaller sizes may affect performance." />
+                    <TextBlock
+                        x:Uid="SettingsCharGridHeader"
+                        Style="{StaticResource HeaderStyle}"
+                        Text="#CharacterGridSize" />
+
+                    <TextBlock
+                        x:Uid="SettingsCharGridDescription"
+                        Style="{StaticResource DescriptionStyle}"
+                        Text="#Description" />
+
                     <Slider
                         HorizontalAlignment="Stretch"
                         IsThumbToolTipEnabled="True"
@@ -109,16 +117,14 @@
                         TickFrequency="8"
                         TickPlacement="Outside"
                         Value="{x:Bind Settings.GridSize, Mode=TwoWay}" />
+
                     <TextBlock>
                         <Run Text="{x:Bind Settings.GridSize, Mode=OneWay}" />
                         <Run Text="px" />
                     </TextBlock>
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Show Unicode value in Character Grid" />
-                    <TextBlock Style="{StaticResource DescriptionStyle}">
-                        <Run Text="Shows the Unicode value of a character underneath the character in the character grid." />
-                        <LineBreak /><Run Text="Turning this on can have a minor impact on scrolling performance." />
-                    </TextBlock>
+                    <TextBlock x:Uid="SettingsUnicodeHeader" Style="{StaticResource HeaderStyle}" />
+                    <TextBlock x:Uid="SettingsUnicodeDescription" Style="{StaticResource DescriptionStyle}" />
                     <ToggleSwitch IsOn="{x:Bind Settings.ShowCharGridUnicode, Mode=TwoWay}" />
 
                     <StackPanel
@@ -190,29 +196,23 @@
                     </StackPanel>
 
                     <TextBlock
+                        x:Uid="SettingsCharPreviewHint"
                         Margin="4 4 0 12"
                         FontStyle="Italic"
                         OpticalMarginAlignment="None"
-                        Style="{StaticResource DescriptionStyle}">
-                        Character grid preview
-                    </TextBlock>
+                        Style="{StaticResource DescriptionStyle}" />
 
-                    <TextBlock
-                        x:Uid="FontListDisplayHeader"
-                        Style="{StaticResource HeaderStyle}"
-                        Text="#Font List Display" />
-                    <TextBlock Style="{StaticResource DescriptionStyle}">
-                        <Run Text="Choose the font used to display the names of fonts in the font list." />
-                    </TextBlock>
+                    <TextBlock x:Uid="FontListDisplayHeader" Style="{StaticResource HeaderStyle}" />
+                    <TextBlock x:Uid="SettingsFontListDescription" Style="{StaticResource DescriptionStyle}" />
                     <RadioButton
                         x:Name="UseSystemFont"
+                        x:Uid="RbUseSystemFont"
                         Checked="UseSystemFont_Checked"
-                        Content="Use system font"
                         GroupName="FontList" />
                     <RadioButton
                         x:Name="UseActualFont"
+                        x:Uid="RbUseActualFont"
                         Checked="UseActualFont_Checked"
-                        Content="Use actual font"
                         GroupName="FontList" />
 
                     <ListView
@@ -240,54 +240,44 @@
                     </ListView>
 
                     <TextBlock
+                        x:Uid="SettingsFontListPreviewHint"
                         Margin="4 4 0 12"
                         FontStyle="Italic"
                         OpticalMarginAlignment="None"
-                        Style="{StaticResource DescriptionStyle}">
-                        Font list preview
-                    </TextBlock>
+                        Style="{StaticResource DescriptionStyle}" />
 
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Theme" />
+                    <TextBlock x:Uid="SettingsThemeHeader" Style="{StaticResource HeaderStyle}" />
                     <RadioButton
                         x:Name="ThemeLight"
+                        x:Uid="RbThemeLight"
                         Checked="ThemeLight_Checked"
-                        Content="Light"
                         GroupName="ThemeSelector" />
                     <RadioButton
                         x:Name="ThemeDark"
+                        x:Uid="RbThemeDark"
                         Checked="ThemeDark_Checked"
-                        Content="Dark"
                         GroupName="ThemeSelector" />
                     <RadioButton
                         x:Name="ThemeSystem"
+                        x:Uid="RbThemeSystem"
                         Checked="ThemeSystem_Checked"
-                        Content="Windows default"
                         GroupName="ThemeSelector" />
 
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Enable simple animations" />
-                    <TextBlock Style="{StaticResource DescriptionStyle}">
-                        <Run Text="Controls the animation for loading the font list, switching fonts and changing characters. " />
-                        <LineBreak /><Run Text="Turning this on has negligible performance impact." />
-                    </TextBlock>
+                    <TextBlock x:Uid="SettingsSimpleAnimationHeader" Style="{StaticResource HeaderStyle}" />
+                    <TextBlock x:Uid="SettingsSimpleAnimationDescription" Style="{StaticResource DescriptionStyle}" />
                     <ToggleSwitch IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
 
                     <win1903:StackPanel>
-                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Enable shadows" />
-                        <TextBlock Style="{StaticResource DescriptionStyle}">
-                            <Run Text="Enables subtle depth shadows on the UI. Only noticeable when using the Light theme. " />
-                            <LineBreak /><Run Text="Turning this on may have a small performance impact on weaker devices." />
-                            <LineBreak /><Run Text="Requires a restart to take effect." />
-                        </TextBlock>
+                        <TextBlock x:Uid="SettingsShadowsHeader" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsShadowsDescription" Style="{StaticResource DescriptionStyle}" />
                         <ToggleSwitch IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
                     </win1903:StackPanel>
 
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Enable window resize animations" />
-                    <TextBlock Style="{StaticResource DescriptionStyle}">
-                        <Run Text="Animates the character grid when resizing the window. " />
-                        <LineBreak /><Run Text="Turning this on can incur a large performance penalty when resizing the window." /></TextBlock>
+                    <TextBlock x:Uid="SettingsExpensiveAnimationHeader" Style="{StaticResource HeaderStyle}" />
+                    <TextBlock x:Uid="SettingsExpensiveAnimationDescription" Style="{StaticResource DescriptionStyle}" />
                     <ToggleSwitch IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
 
 
@@ -295,15 +285,9 @@
 
 
                     <StackPanel x:Name="LanguagePanel" Visibility="Collapsed">
-                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Language override" />
-                        <TextBlock Style="{StaticResource DescriptionStyle}">
-                            <Run Text="Override the in-app language." />
-                            <LineBreak /><Run Text="Requires a restart to take effect." />
-                        </TextBlock>
-                        <ToggleSwitch
-                            x:Name="LangOverrideSwitch"
-                            OffContent="Use default language"
-                            OnContent="Use override language" />
+                        <TextBlock x:Uid="SettingsLanguageHeader" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsLanguageDescription" Style="{StaticResource DescriptionStyle}" />
+                        <ToggleSwitch x:Name="LangOverrideSwitch" x:Uid="SettingsLangOverride" />
                         <ComboBox
                             x:Name="ComboLanguages"
                             Width="200"
@@ -316,12 +300,9 @@
                     <!--#region EXPORT-->
 
                     <StackPanel Margin="0 12 0 0">
-                        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Export" />
-                        <TextBlock
-                            x:Uid="PNG Export Size"
-                            Style="{StaticResource HeaderStyle}"
-                            Text="PNG Export Size" />
-                        <TextBlock Style="{StaticResource DescriptionStyle}" Text="The size in pixels of exported PNG images." />
+                        <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
+                        <TextBlock x:Uid="SettingsPNGExportHeader" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsPNGExportDescription" Style="{StaticResource DescriptionStyle}" />
 
                         <Slider
                             x:Name="SldResolution"
@@ -343,6 +324,7 @@
 
                     <!--#endregion-->
 
+                    <!--#region CHARACTER SEARCH-->
 
                     <StackPanel Margin="0 0 0 0">
                         <StackPanel.ChildrenTransitions>
@@ -351,13 +333,13 @@
                             </TransitionCollection>
                         </StackPanel.ChildrenTransitions>
 
-                        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Character Search" />
+                        <TextBlock x:Uid="SettingsCharacterSearchHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
                         <TextBlock
                             x:Uid="InstantSearchToggleHeader"
                             Style="{StaticResource HeaderStyle}"
                             Text="#Use Instant Search" />
-                        <TextBlock Style="{StaticResource DescriptionStyle}" Text="Toggle instant search. If disabled, you can start a search by using the enter key or pressing the search icon." />
+                        <TextBlock x:Uid="SettingsCharacterSearchDescription" Style="{StaticResource DescriptionStyle}" />
                         <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
 
                         <muxc:NumberBox
@@ -392,34 +374,27 @@
                             Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
                     </StackPanel>
 
+                    <!--#endregion-->
 
+                    <!--#region DEVELOPER FEATURES-->
 
                     <StackPanel x:Name="DeveloperPanel" Margin="0 24 0 0">
-                        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Developer Tools" />
+                        <TextBlock x:Uid="SettingsDevToolsGroupHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
                         <StackPanel Visibility="Collapsed">
-                            <TextBlock Style="{StaticResource HeaderStyle}" Text="Show developer tools" />
-                            <TextBlock Style="{StaticResource DescriptionStyle}">
-                                Show the tools for XAML developers, like Symbol Icon and Font Icon.
-                            </TextBlock>
+                            <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource HeaderStyle}" />
+                            <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource DescriptionStyle}" />
                             <ToggleSwitch IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />
                         </StackPanel>
 
-
                         <StackPanel Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
-                            <TextBlock
-                                Margin="0,20,0,0"
-                                FontWeight="Bold"
-                                Text="Language" />
-                            <TextBlock Style="{StaticResource DescriptionStyle}">
-                                Choose the language for developer tools content.
-                            </TextBlock>
+                            <TextBlock x:Uid="SettingsDevToolsLangHeader" Style="{StaticResource HeaderStyle}" />
+                            <TextBlock x:Uid="SettingsDevToolsLangDescription" Style="{StaticResource DescriptionStyle}" />
                             <muxc:RadioButtons x:Name="RbLanguage" SelectionChanged="RadioButtons_SelectionChanged" />
-
                         </StackPanel>
-
                     </StackPanel>
 
+                    <!--#endregion-->
 
                 </StackPanel>
 
@@ -458,9 +433,9 @@
 
                         <Button
                             x:Name="BtnReview"
+                            x:Uid="BtnRateAndReview"
                             HorizontalAlignment="Stretch"
                             Click="BtnReview_Click"
-                            Content="Rate &amp; Review"
                             Style="{StaticResource ButtonRevealStyle}" />
 
                         <!--<Button
@@ -474,7 +449,6 @@
                             Margin="0 16 0 0"
                             HorizontalAlignment="Stretch"
                             Click="BtnRestart_Click"
-                            Content="#RestartApp"
                             Style="{StaticResource ButtonRevealStyle}" />
 
                     </StackPanel>
@@ -484,14 +458,6 @@
                 <!--#endregion-->
 
             </Grid>
-
-
-
         </ScrollViewer>
-
-
     </Grid>
-
-
-
 </UserControl>

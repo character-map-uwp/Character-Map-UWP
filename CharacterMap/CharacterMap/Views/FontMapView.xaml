@@ -775,6 +775,7 @@
                                 Text="{Binding XamlCode}" />
                             <AppBarButton
                                 x:Name="BtnCopyXamlCode"
+                                x:Uid="BtnCopyDev"
                                 Grid.Column="1"
                                 Width="50"
                                 Height="50"
@@ -805,6 +806,7 @@
 
                             <AppBarButton
                                 x:Name="BtnCopyFontIcon"
+                                x:Uid="BtnCopyDev"
                                 Grid.Column="1"
                                 Width="50"
                                 Height="50"
@@ -819,8 +821,6 @@
                             ColumnSpacing="8"
                             Height="50">
 
-
-
                             <Grid x:Name="XAMLGeometryDefaultRoot" VerticalAlignment="Stretch">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -829,11 +829,11 @@
 
                                 <StackPanel Margin="0 0 0 0">
                                     <TextBlock
+                                        x:Uid="TxtPathGeometry"
                                         Margin="14 0 0 0"
                                         FontSize="12"
-                                        Opacity="0.5"
                                         Foreground="{ThemeResource TextControlHeaderForeground}"
-                                        Text="Path Geometry" />
+                                        Opacity="0.5" />
 
                                     <!--
                                         XAML Path Geometry can easily be too long to display in
@@ -851,9 +851,9 @@
 
                                     <Button
                                         x:Name="BtnXAMLGeometry"
+                                        x:Uid="BtnXAMLGeometry"
                                         x:Load="{x:Bind ViewModel.IsLongGeometry, Mode=OneWay}"
                                         Margin="6 0 0 0"
-                                        Content="Click to view"
                                         FontSize="13.333"
                                         Style="{StaticResource TextBlockButtonStyle}">
                                         <Button.Flyout>
@@ -868,9 +868,10 @@
                                                         <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
 
-                                                    <TextBlock VerticalAlignment="Center" Text="XAML Path Geometry" />
+                                                    <TextBlock x:Uid="TxtPathGeometry" VerticalAlignment="Center" />
 
                                                     <AppBarButton
+                                                        x:Uid="BtnCopyDev"
                                                         Grid.Column="1"
                                                         Width="50"
                                                         Height="50"
@@ -891,8 +892,6 @@
                                                         TextWrapping="Wrap" />
 
                                                 </Grid>
-
-
                                             </Flyout>
                                         </Button.Flyout>
                                     </Button>
@@ -901,6 +900,7 @@
 
 
                                 <AppBarButton
+                                    x:Uid="BtnCopyDev"
                                     Grid.Column="1"
                                     Width="50"
                                     Height="50"
@@ -910,15 +910,6 @@
                                 </AppBarButton>
 
                             </Grid>
-
-
-                            <!--<TextBox
-                                x:Name="TxtXamlPath"
-                                Margin="0,7,0,0"
-                                Header="XAML Path"
-                                Style="{StaticResource CopyTextBox}"
-                                Text="{x:Bind ViewModel.XamlPathGeom, Mode=OneWay}" />-->
-
                         </Grid>
 
                         <Grid
@@ -940,6 +931,7 @@
                                 Text="{Binding SymbolIcon}" />
                             <AppBarButton
                                 x:Name="BtnCopySymbolIcon"
+                                x:Uid="BtnCopyDev"
                                 Grid.Column="1"
                                 Width="50"
                                 Height="50"
@@ -949,10 +941,8 @@
                             </AppBarButton>
                         </Grid>
 
-
                     </Grid>
                 </Grid>
-
             </Grid>
         </Grid>
 

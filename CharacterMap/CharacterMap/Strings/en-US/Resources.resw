@@ -519,4 +519,130 @@
   <data name="DlgExceptionMessage.Text" xml:space="preserve">
     <value>To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</value>
   </data>
+  <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="BtnRateAndReview.Content" xml:space="preserve">
+    <value>Rate &amp; Review</value>
+  </data>
+  <data name="BtnXAMLGeometry.Content" xml:space="preserve">
+    <value>Click to view</value>
+  </data>
+  <data name="RbThemeDark.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="RbThemeLight.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="RbThemeSystem.Content" xml:space="preserve">
+    <value>Windows default</value>
+  </data>
+  <data name="RbUseActualFont.Content" xml:space="preserve">
+    <value>Use actual font</value>
+  </data>
+  <data name="RbUseSystemFont.Content" xml:space="preserve">
+    <value>Use system font</value>
+  </data>
+  <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
+    <value>Toggle instant search. If disabled, you can start a search by using the enter key or pressing the search icon.</value>
+  </data>
+  <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
+    <value>Character Search</value>
+  </data>
+  <data name="SettingsCharGridDescription.Text" xml:space="preserve">
+    <value>The size of individual characters inside the character grid. Smaller sizes may affect performance.</value>
+  </data>
+  <data name="SettingsCharGridHeader.Text" xml:space="preserve">
+    <value>Character Grid Size</value>
+  </data>
+  <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
+    <value>Character grid preview</value>
+  </data>
+  <data name="SettingsDevToolsDescription.Text" xml:space="preserve">
+    <value>Show the tools for XAML developers, like Symbol Icon and Font Icon.</value>
+  </data>
+  <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
+    <value>Developer Features</value>
+  </data>
+  <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
+    <value>Show developers features</value>
+  </data>
+  <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
+    <value>Choose the dev language for developer features content.</value>
+  </data>
+  <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
+    <value>Animates the character grid when resizing the window.
+Turning this on can incur a large performance penalty when resizing the window.</value>
+  </data>
+  <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
+    <value>Enable window resize animations</value>
+  </data>
+  <data name="SettingsExportHeader.Text" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="SettingsFontListDescription.Text" xml:space="preserve">
+    <value>Choose the font used to display the names of fonts in the font list.</value>
+  </data>
+  <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
+    <value>Font list preview</value>
+  </data>
+  <data name="SettingsHeader.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsLangOverride.OffContent" xml:space="preserve">
+    <value>Use default language</value>
+  </data>
+  <data name="SettingsLangOverride.OnContent" xml:space="preserve">
+    <value>Use override language</value>
+  </data>
+  <data name="SettingsLanguageDescription.Text" xml:space="preserve">
+    <value>Override the in-app language.
+Requires a restart to take effect.</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text" xml:space="preserve">
+    <value>Language override</value>
+  </data>
+  <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
+    <value>The size in pixels of exported PNG images.</value>
+  </data>
+  <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
+    <value>PNG Export Size</value>
+  </data>
+  <data name="SettingsShadowsDescription.Text" xml:space="preserve">
+    <value>Enables subtle depth shadows on the UI. Only noticeable when using the Light theme.
+Turning this on may have a small performance impact on weaker devices.
+Requires a restart to take effect.</value>
+  </data>
+  <data name="SettingsShadowsHeader.Text" xml:space="preserve">
+    <value>Enable shadows</value>
+  </data>
+  <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
+    <value>Controls the animation for loading the font list, switching fonts and changing characters.
+Turning this on has negligible performance impact.</value>
+  </data>
+  <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
+    <value>Enable simple animations</value>
+  </data>
+  <data name="SettingsThemeHeader.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="SettingsUIHeader.Text" xml:space="preserve">
+    <value>User Interface</value>
+  </data>
+  <data name="SettingsUnicodeDescription.Text" xml:space="preserve">
+    <value>Shows the Unicode value of a character underneath the character in the character grid.
+Turning this on can have a minor impact on scrolling performance.</value>
+  </data>
+  <data name="SettingsUnicodeHeader.Text" xml:space="preserve">
+    <value>Show Unicode value in Character Grid</value>
+  </data>
+  <data name="TxtPathGeometry.Text" xml:space="preserve">
+    <value>Path Geometry</value>
+  </data>
 </root>

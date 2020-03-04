@@ -116,7 +116,7 @@ namespace CharacterMap.Services
             {
                 h = $"&#x{hex};";
                 f = $@"<FontIcon FontFamily=""{v.XamlFontSource}"" Glyph=""&#x{hex};"" />";
-                p = $"<Path Data=\"{pathData}\" Fill=\"Black\" Stretch=\"Uniform\" />";
+                p = $"<Path Data=\"{pathData}\" Fill=\"{{ThemeResource SystemControlForegroundBaseHighBrush}}\" Stretch=\"Uniform\" />";
 
                 if (hasSymbol)
                     s = $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />";

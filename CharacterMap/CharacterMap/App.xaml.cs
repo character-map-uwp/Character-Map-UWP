@@ -38,19 +38,12 @@ namespace CharacterMap
         {
             e.Handled = true;
             UnhandledExceptionDialog.Show(e.Exception);
-
         }
 
         private void OnUnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
             UnhandledExceptionDialog.Show(e.Exception);
-
-        }
-
-        private string GetExceptionDetailMessage(Exception ex)
-        {
-            return $"{ex.Message}\r\n{ex.StackTrace}";
         }
 
         protected override async void OnLaunched(LaunchActivatedEventArgs e)

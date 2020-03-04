@@ -210,9 +210,10 @@ namespace CharacterMap.Provider
                     return list;
                 }
 
+                List<IGlyphData> results = null;
                 // 3. Otherwise, perform a multi-step text search. First perform an FTS4 search
                 string sql = $"SELECT * FROM {ftsTable} {sb.ToString()} AND Description MATCH ? LIMIT {SEARCH_LIMIT}";
-                var results = _connection.Query<GlyphDescription>(sql, query)?.Cast<IGlyphData>()?.ToList();
+                results = _connection.Query<GlyphDescription>(sql, $"{query}*")?.Cast<IGlyphData>()?.ToList();
 
                 // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
                 if (results != null && results.Count == SEARCH_LIMIT)

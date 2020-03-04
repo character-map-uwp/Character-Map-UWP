@@ -179,7 +179,7 @@
                             AutomationProperties.AccessibilityView="Raw"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
-                            Foreground="{TemplateBinding Foreground}"
+                            Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
                             Glyph="&#xE0E5;"
                             IsHitTestVisible="False" />
                     </Grid>
