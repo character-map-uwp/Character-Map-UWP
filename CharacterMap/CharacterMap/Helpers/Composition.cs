@@ -19,9 +19,9 @@ namespace CharacterMap.Helpers
         private static Dictionary<Compositor, Vector3KeyFrameAnimation> _defaultOffsetAnimations { get; } 
             = new Dictionary<Compositor, Vector3KeyFrameAnimation>();
 
-        private static string CENTRE_EXPRESSION(float x, float y) =>
-            $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * {x}f, " +
-            $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * {y}f, 0f))";
+        private static string CENTRE_EXPRESSION =>
+            $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * 0.5f, " +
+            $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * 0.5f, 0f))";
 
         public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffset = 140)
         {
@@ -69,7 +69,7 @@ namespace CharacterMap.Helpers
             {
                 var c = v.Compositor.CreateExpressionAnimation();
                 c.Target = nameof(Visual.CenterPoint);
-                c.Expression = CENTRE_EXPRESSION(.5f, .5f);
+                c.Expression = CENTRE_EXPRESSION;
                 v.StartAnimationGroup(c);
                 target.Tag = target;
             }
