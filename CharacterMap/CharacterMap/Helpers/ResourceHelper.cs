@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharacterMap.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -48,6 +49,15 @@ namespace CharacterMap.Helpers
             FrameworkElement content = (FrameworkElement)template.GetElement(args);
             content.DataContext = dataContext;
             return content;
+        }
+
+
+
+        /* Character Map Specific resources */
+        private static AppSettings _settings;
+        public static AppSettings AppSettings
+        {
+            get => _settings ?? (_settings = Get<AppSettings>(nameof(AppSettings)));
         }
     }
 

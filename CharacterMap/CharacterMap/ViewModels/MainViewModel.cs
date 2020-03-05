@@ -14,6 +14,7 @@ using Windows.Storage;
 using CharacterMap.Services;
 using CharacterMap.Models;
 using GalaSoft.MvvmLight.Ioc;
+using CharacterMap.Controls;
 
 namespace CharacterMap.ViewModels
 {
@@ -31,8 +32,6 @@ namespace CharacterMap.ViewModels
 
         public RelayCommand CommandToggleFullScreen { get; }
 
-        public bool IsDarkAccent => Utils.IsAccentColorDark();
-
         private int _fontListFilter;
         public int FontListFilter
         {
@@ -44,7 +43,17 @@ namespace CharacterMap.ViewModels
         public UserFontCollection SelectedCollection
         {
             get => _selectedCollection;
-            set { if (Set(ref _selectedCollection, value)) if (value != null) RefreshFontList(value); }
+            set 
+            { 
+                if (value != null && value.IsSystemSymbolCollection)
+                {
+                    FontListFilter = 1;
+                    return;
+                }
+
+                if (Set(ref _selectedCollection, value) && value != null)
+                    RefreshFontList(value);
+            }
         }
 
         private string _titlePrefix;
@@ -66,6 +75,13 @@ namespace CharacterMap.ViewModels
         {
             get => _isLoadingFonts;
             set => Set(ref _isLoadingFonts, value);
+        }
+
+        private bool _isLoadingFontsFailed;
+        public bool IsLoadingFontsFailed
+        {
+            get => _isLoadingFontsFailed;
+            set => Set(ref _isLoadingFontsFailed, value);
         }
 
         private bool _hasFonts;
@@ -118,6 +134,8 @@ namespace CharacterMap.ViewModels
 
         public UserCollectionsService FontCollections { get; }
 
+        private Exception _startUpException = null;
+
         #endregion
 
         public MainViewModel(IDialogService dialogService, AppSettings settings)
@@ -135,13 +153,31 @@ namespace CharacterMap.ViewModels
         {
             IsLoadingFonts = true;
 
-            await Task.WhenAll(
-                GlyphService.InitializeAsync(),
-                FontFinder.LoadFontsAsync(),
-                FontCollections.LoadCollectionsAsync());
+            try
+            {
+                await Task.WhenAll(
+                    GlyphService.InitializeAsync(),
+                    FontFinder.LoadFontsAsync(),
+                    FontCollections.LoadCollectionsAsync());
+            }
+            catch (Exception ex)
+            {
+                // For whatever reason, this exception doesn't get caught by the app's
+                // UnhandledExceptionHandler, so we need to manually catch and handle it.
+                _startUpException = ex;
+                ShowStartUpException();
+                IsLoadingFonts = false;
+                IsLoadingFontsFailed = true;
+                return;
+            }
 
             RefreshFontList();
             IsLoadingFonts = false;
+        }
+
+        public void ShowStartUpException()
+        {
+            UnhandledExceptionDialog.Show(_startUpException);
         }
 
         private void ToggleFullScreenMode()
@@ -243,8 +279,15 @@ namespace CharacterMap.ViewModels
 
                 if (!string.IsNullOrEmpty(lastSelected))
                 {
-                    var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == lastSelected));
-                    SelectedFont = lastSelectedFont ?? FontList.FirstOrDefault();
+                    if (SelectedFont == null || lastSelected != SelectedFont.Name)
+                    {
+                        var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == lastSelected));
+                        SelectedFont = lastSelectedFont ?? FontList.FirstOrDefault();
+                    }
+                    else
+                    {
+                        RaisePropertyChanged("FontSelectionDebounce");
+                    }
                 }
                 else
                 {

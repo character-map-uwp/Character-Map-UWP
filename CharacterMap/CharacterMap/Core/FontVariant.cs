@@ -64,7 +64,7 @@ namespace CharacterMap.Core
         public DWriteProperties DirectWriteProperties { get; }
 
         /// <summary>
-        /// File-system path for DWrite / Xaml to construct a font for use in this application
+        /// File-system path for DWrite / XAML to construct a font for use in this application
         /// </summary>
         public string Source { get; }
 

@@ -1,6 +1,7 @@
 ﻿using CharacterMap.Controls;
 using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;

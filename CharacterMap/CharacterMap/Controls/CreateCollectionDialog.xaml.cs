@@ -1,5 +1,6 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Services;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight;

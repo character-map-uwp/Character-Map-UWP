@@ -5,10 +5,11 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:CharacterMap.Views"
     xmlns:wct="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
     mc:Ignorable="d">
 
@@ -25,6 +26,7 @@
     </Page.Resources>
 
     <Grid
+        x:Name="LayoutRoot"
         AllowDrop="True"
         Background="Transparent"
         DragOver="Grid_DragOver"
@@ -42,7 +44,10 @@
         </Grid.ColumnDefinitions>
 
         <!--  Title Bar Grid  -->
-        <controls:XamlTitleBar Grid.Row="0" Grid.ColumnSpan="2">
+        <controls:XamlTitleBar
+            x:Name="TitleBar"
+            Grid.Row="0"
+            Grid.ColumnSpan="2">
             <Grid ColumnSpacing="7">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -51,6 +56,7 @@
                 <ToggleButton
                     x:Uid="ToggleFullScreenModeButton"
                     Command="{Binding CommandToggleFullScreen}"
+                    Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                     Style="{StaticResource IconToggleButtonStyle}"
                     ToolTipService.Placement="Right">
                     <FontIcon FontSize="14" Glyph="&#xE740;" />
@@ -59,6 +65,7 @@
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     FontSize="12"
+                    Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                     IsHitTestVisible="False">
                     <Run Text="{Binding TitlePrefix}" />
                     <Run x:Uid="TxtTitle" />
@@ -73,12 +80,14 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+            Loading="CommandsGrid_Loading"
+            RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="SplitViewPaneColumn" Width="{StaticResource StatusBarPaneWidth}" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="{x:Bind core:Converters.GridLengthAorB(core:Utils.IsSystemOnWin10v1809OrNewer, '0', 'Auto')}" />
+                <ColumnDefinition Width="0" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -87,18 +96,20 @@
                 Width="45"
                 Height="45"
                 Click="OpenFontPaneButton_Click"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                 Visibility="Collapsed">
                 <SymbolIcon Symbol="GlobalNavigationButton" />
             </AppBarButton>
 
             <TextBlock
                 x:Name="FontTitleBlock"
-                Loaded="{x:Bind helpers:Animation.SetStandardReposition}"
                 Grid.Column="1"
                 Margin="24,0,5,0"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
+                Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
                 TextTrimming="CharacterEllipsis" />
 
@@ -130,7 +141,8 @@
                 Grid.Column="4"
                 Width="45"
                 Height="45"
-                Click="BtnSettings_OnClick">
+                Click="BtnSettings_OnClick"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}">
                 <FontIcon
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -151,7 +163,7 @@
             OpenPaneLength="{StaticResource SplitViewPaneWidth}"
             PaneBackground="Transparent">
             <SplitView.Pane>
-                <Grid x:Name="PaneRoot">
+                <Grid x:Name="PaneRoot" Loading="PaneRoot_Loading">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{x:Bind TitleBarRow.Height}" />
                         <RowDefinition Height="*" />
@@ -159,14 +171,17 @@
                     </Grid.RowDefinitions>
 
                     <!--  Pane Header Commands  -->
-                    <Grid x:Name="PaneHeaderGrid" RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+                    <Grid
+                        x:Name="PaneHeaderGrid"
+                        Loading="PaneHeaderGrid_Loading"
+                        RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        
-                        <DropDownButton
+
+                        <Button
                             x:Name="FontListFilter"
                             x:Uid="FontListFilter"
                             Height="45"
@@ -178,46 +193,57 @@
                             Background="Transparent"
                             Content="{x:Bind ViewModel.FilterTitle, Mode=OneWay}"
                             FontSize="16"
+                            Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
+                            Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom">
-                            <DropDownButton.Flyout>
+                            <Button.Flyout>
                                 <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
                                     <MenuFlyout.MenuFlyoutPresenterStyle>
                                         <Style TargetType="MenuFlyoutPresenter">
                                             <Setter Property="RequestedTheme" Value="Default" />
+                                            <Setter Property="FontSize" Value="16" />
                                         </Style>
                                     </MenuFlyout.MenuFlyoutPresenterStyle>
                                     <MenuFlyoutItem
                                         x:Uid="OptionAllFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="0" />
                                     <MenuFlyoutItem
                                         x:Uid="OptionSerifFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="4" />
                                     <MenuFlyoutItem
                                         x:Uid="OptionSansSerifFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="5" />
                                     <MenuFlyoutItem
                                         x:Uid="OptionSymbolFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="1" />
-                                    <MenuFlyoutSubItem x:Uid="OptionMoreFilters">
+                                    <MenuFlyoutSubItem x:Uid="OptionMoreFilters" FontSize="16">
                                         <MenuFlyoutItem
                                             x:Uid="OptionColorFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="10" />
                                         <MenuFlyoutItem
                                             x:Uid="OptionDecorativeFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="8" />
                                         <MenuFlyoutItem
                                             x:Uid="OptionScriptFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="9" />
                                         <MenuFlyoutItem
                                             x:Uid="OptionMonospacedFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="3" />
                                         <!--<MenuFlyoutSeparator />
                                 <MenuFlyoutItem
@@ -237,21 +263,24 @@
                                             x:Name="CloudFontsOption"
                                             x:Uid="OptionCloudFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="7" />
                                         <MenuFlyoutItem
                                             x:Name="AppxOption"
                                             x:Uid="OptionAppxFonts"
                                             Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="6" />
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
                                         x:Uid="OptionImportedFonts"
                                         Click="Filter_Click"
+                                        FontSize="16"
                                         Tag="2" />
                                 </MenuFlyout>
-                            </DropDownButton.Flyout>
-                        </DropDownButton>
+                            </Button.Flyout>
+                        </Button>
 
                         <AppBarButton
                             x:Name="ImportFontsButton"
@@ -261,6 +290,7 @@
                             Height="45"
                             VerticalAlignment="Bottom"
                             Click="{x:Bind PickFonts}"
+                            Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                             Visibility="Collapsed">
                             <FontIcon
                                 FontSize="16"
@@ -275,11 +305,12 @@
                             Width="45"
                             Height="45"
                             VerticalAlignment="Bottom"
-                            Click="{x:Bind OpenFont}">
+                            Click="{x:Bind OpenFont}"
+                            Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}">
                             <Path
                                 Height="16"
                                 Data="M896,320L1012,320L788,768L0,768L0,128L338.5,128L466.5,0L896,0ZM64,192L64,632.5L220.5,320L832,320L832,64L493.5,64L365.5,192ZM748,704L908,384L260,384L99.5,704Z"
-                                Fill="White"
+                                Fill="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                                 Opacity="0.8"
                                 Stretch="Uniform" />
                         </AppBarButton>
@@ -336,9 +367,15 @@
                                     IsItemClickEnabled="False"
                                     IsSwipeEnabled="False"
                                     ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
-                                    SelectedItem="{Binding SelectedFont, Mode=TwoWay}"
                                     SelectedValuePath="Name"
-                                    SelectionMode="Single">
+                                    SelectionMode="Single"
+                                    SelectionChanged="LstFontFamily_SelectionChanged"
+                                    ItemTemplate="{StaticResource FontListItemTemplate}"
+                                    ShowsScrollingPlaceholders="False">
+
+                                    <ListView.ItemContainerTransitions>
+                                        <TransitionCollection />
+                                    </ListView.ItemContainerTransitions>
 
                                     <ListView.Resources>
                                         <Style BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
@@ -376,37 +413,6 @@
                                             </GroupStyle.HeaderTemplate>
                                         </GroupStyle>
                                     </ListView.GroupStyle>
-
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="core:InstalledFont">
-                                            <Grid ColumnSpacing="12" Background="Transparent">
-                                                <Grid.ContextFlyout>
-                                                    <!--  Menu content created dynamically  -->
-                                                    <MenuFlyout Opening="FontContextFlyout_Opening" />
-                                                </Grid.ContextFlyout>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock
-                                                    Padding="5"
-                                                    VerticalAlignment="Center"
-                                                    FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
-                                                    FontSize="14"
-                                                    Text="{x:Bind Name}"
-                                                    TextTrimming="CharacterEllipsis"
-                                                    TextWrapping="NoWrap" />
-                                                <TextBlock
-                                                    Grid.Column="1"
-                                                    Padding="5"
-                                                    HorizontalAlignment="Right"
-                                                    VerticalAlignment="Center"
-                                                    Opacity="0.5"
-                                                    Text="{x:Bind Variants.Count}"
-                                                    Visibility="{x:Bind HasVariants}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
                                 </ListView>
                             </SemanticZoom.ZoomedInView>
                             <SemanticZoom.ZoomedOutView>
@@ -438,7 +444,7 @@
                         x:Name="PaneStatusBar"
                         Grid.Row="2"
                         Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                        RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+                        RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
                         <Grid.Resources>
                             <Style TargetType="TextBlock">
                                 <Setter Property="FontSize" Value="12" />
@@ -459,7 +465,8 @@
                             Width="32"
                             Margin="0 0 -6 0"
                             VerticalAlignment="Stretch"
-                            Click="TogglePane_Click">
+                            Click="TogglePane_Click"
+                            Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}">
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="16"
@@ -473,6 +480,7 @@
                             Margin="0 0 -6 0"
                             VerticalAlignment="Stretch"
                             Click="TogglePane_Click"
+                            Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                             Visibility="Collapsed">
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -483,10 +491,10 @@
                         <TextBlock
                             x:Name="FontFamilyCountLabel"
                             Grid.Column="1"
+                            Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                             Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList), Mode=OneWay}" />
 
                     </Grid>
-
 
                 </Grid>
             </SplitView.Pane>
@@ -510,7 +518,7 @@
                     Grid.Row="2"
                     Grid.Column="0"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-                    RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+                    RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
@@ -532,6 +540,7 @@
                         Margin="0 0 -6 0"
                         VerticalAlignment="Stretch"
                         Click="TogglePane_Click"
+                        Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                         Visibility="Collapsed">
                         <FontIcon
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -539,12 +548,28 @@
                             Glyph="&#xE126;" />
                     </AppBarButton>
 
-                    <TextBlock Grid.Column="1" Text="{x:Bind UpdateCharacterCountLabel(FontMap.ViewModel.SelectedVariant), Mode=OneWay}" />
+                    <TextBlock
+                        Grid.Column="1"
+                        Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
+                        Text="{x:Bind UpdateCharacterCountLabel(FontMap.ViewModel.SelectedVariant), Mode=OneWay}" />
 
-                    <TextBlock Grid.Column="2" Text="{x:Bind FontMap.ViewModel.GetCharDescription(FontMap.ViewModel.SelectedChar), Mode=OneWay}" />
+                    <TextBlock
+                        Grid.Column="2"
+                        Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
+                        Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
+                        Text="{x:Bind FontMap.ViewModel.GetCharDescription(FontMap.ViewModel.SelectedChar), Mode=OneWay}" />
                 </Grid>
             </Grid>
         </SplitView>
+
+        <!--  Status Bar Background (for content resize)  -->
+        <Rectangle
+            Grid.Row="3"
+            Grid.ColumnSpan="10"
+            Height="26"
+            VerticalAlignment="Bottom"
+            Canvas.ZIndex="-1"
+            Fill="{x:Bind StatusBar.Background, Mode=OneWay}" />
 
         <!--  Loading Root  -->
         <ProgressRing
@@ -553,6 +578,46 @@
             Grid.ColumnSpan="2"
             Width="50"
             Height="50" />
+
+        <views:SettingsView
+            x:Name="SettingsView"
+            x:Load="False"
+            Grid.Row="1"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="10"
+            Visibility="Collapsed" />
+
+        <!--  Startup Exception Root  -->
+        <Grid
+            x:Name="StartupFailedRoot"
+            x:Load="{x:Bind ViewModel.IsLoadingFontsFailed, Mode=OneWay}"
+            Grid.Row="2"
+            Grid.ColumnSpan="10">
+            <StackPanel
+                Margin="40"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="8">
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="Uh Oh"
+                    TextAlignment="Center" />
+                <TextBlock
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap">
+                    <Run Text="Something went wrong and we couldn't start the app right now." />
+                    <LineBreak />
+                    <LineBreak /><Run Text="Please consider posting details about this error to GitHub so we can help you fix it." />
+                </TextBlock>
+                <Button
+                    MinWidth="200"
+                    Margin="0 8 0 0"
+                    HorizontalAlignment="Center"
+                    Click="{x:Bind ViewModel.ShowStartUpException}"
+                    Content="Show Details" />
+            </StackPanel>
+        </Grid>
 
         <!--  Notification Presenter  -->
         <Grid
@@ -564,7 +629,8 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup x:Name="ViewStates">
+            <VisualStateGroup
+                x:Name="ViewStates">
                 <VisualState x:Name="CompactViewState">
                     <VisualState.Setters>
                         <Setter Target="SplitView.IsPaneOpen" Value="False" />
@@ -610,12 +676,9 @@
                         <StateTrigger IsActive="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="FontListGrid.Visibility" Value="Collapsed" />
-                        <Setter Target="FontMap.Opacity" Value="0" />
-                        <Setter Target="FontMap.IsHitTestVisible" Value="False" />
+                        <Setter Target="SplitView.Opacity" Value="0" />
+                        <Setter Target="SplitView.IsHitTestVisible" Value="False" />
                         <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
-                        <Setter Target="FontListFilter.IsHitTestVisible" Value="False" />
-                        <Setter Target="FontListFilter.Opacity" Value="0.4" />
                         <Setter Target="SearchBox.IsEnabled" Value="False" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.IsEnabled" Value="False" />
@@ -625,6 +688,19 @@
                         <Setter Target="OpenFontPaneButton.IsEnabled" Value="False" />
                         <Setter Target="BtnSettings.IsEnabled" Value="False" />
                         <Setter Target="LoadingRing.IsActive" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FontsFailedState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind ViewModel.IsLoadingFontsFailed, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="SplitView.Visibility" Value="Collapsed" />
+                        <Setter Target="SearchBox.IsEnabled" Value="False" />
+                        <Setter Target="HidePaneButton.IsEnabled" Value="False" />
+                        <Setter Target="ShowPaneButton.IsEnabled" Value="False" />
+                        <Setter Target="OpenFontPaneButton.IsEnabled" Value="False" />
+                        <Setter Target="BtnSettings.IsEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FontsLoadedState" />
@@ -643,7 +719,7 @@
             <VisualStateGroup x:Name="SearchStatesGroup">
                 <VisualState x:Name="InstantSearchState">
                     <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind Settings.UseInstantSearch, Mode=OneWay}" />
+                        <StateTrigger IsActive="{x:Bind ViewModel.Settings.UseInstantSearch, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SearchBox.QueryIcon" Value="{x:Null}" />
@@ -651,7 +727,7 @@
                 </VisualState>
                 <VisualState x:Name="ManualSearchState">
                     <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind core:Converters.False(Settings.UseInstantSearch), Mode=OneWay}" />
+                        <StateTrigger IsActive="{x:Bind core:Converters.False(ViewModel.Settings.UseInstantSearch), Mode=OneWay}" />
                     </VisualState.StateTriggers>
                 </VisualState>
             </VisualStateGroup>

@@ -63,8 +63,14 @@ namespace CharacterMap.Provider
                     con.Execute($"DROP TRIGGER IF EXISTS insert_trigger_{MDL2_SEARCH_TABLE}");
                     con.Execute($"DROP TRIGGER IF EXISTS insert_trigger_{UNICODE_SEARCH_TABLE}");
 
+                    con.Execute($"INSERT INTO {MDL2_SEARCH_TABLE}({MDL2_SEARCH_TABLE}) VALUES('optimize')");
+                    con.Execute($"INSERT INTO {UNICODE_SEARCH_TABLE}({UNICODE_SEARCH_TABLE}) VALUES('optimize')");
+
                     foreach (SearchTarget target in SearchTarget.KnownTargets)
+                    {
                         con.Execute($"DROP TRIGGER IF EXISTS insert_trigger_{target.SearchTable}");
+                        con.Execute($"INSERT INTO {target.SearchTable}({target.SearchTable}) VALUES('optimize')");
+                    }
                 }
 
                 using (SQLiteConnection con = new SQLiteConnection(connection))
@@ -346,13 +352,12 @@ namespace CharacterMap.Provider
             /* GENERIC ICON FONTS */
             foreach (SearchTarget target in SearchTarget.KnownTargets)
                 CreateSearchTable(con, target.SearchTable, target.TargetType.Name);
-
         }
 
         private static void CreateSearchTable(SQLiteConnection con, string table, string insertSource)
         {
             con.Execute($"CREATE VIRTUAL TABLE {table} USING " +
-                $"fts4(Ix, Hx, {nameof(IGlyphData.Description)})");
+                $"fts4(Ix, Hx, {nameof(IGlyphData.Description)}, matchinfo=fts3)");
 
             con.Execute($"CREATE TRIGGER insert_trigger_{table} AFTER INSERT ON {insertSource} " +
                 $"BEGIN INSERT INTO {table}(Ix, Hx, {nameof(IGlyphData.Description)}) " +

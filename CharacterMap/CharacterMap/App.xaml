@@ -2,7 +2,7 @@
     x:Class="CharacterMap.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:converters1="using:CharacterMap.Converters"
+    xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
     xmlns:styles="using:CharacterMap.Styles"
     xmlns:viewModels="using:CharacterMap.ViewModels">
@@ -16,19 +16,9 @@
                 <styles:Controls />
                 <ResourceDictionary>
                     <core:AppSettings x:Key="AppSettings" />
-                    <converters1:SmartTextColorBasedOnAccentTypeConverter x:Key="SmartTextColorBasedOnAccentTypeConverter" />
-                    <converters1:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
+                    <converters:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
                     <x:Boolean x:Key="TrueValue">True</x:Boolean>
                     <x:Boolean x:Key="FalseValue">False</x:Boolean>
-                    <Style x:Key="CharItemGridStyle" TargetType="Grid">
-                        <Setter Property="Background" Value="{ThemeResource SystemControlBackgroundAltHighBrush}" />
-                        <Setter Property="Margin" Value="0" />
-                    </Style>
-                    <Style x:Key="CharItemCharStyle" TargetType="TextBlock">
-                        <Setter Property="Margin" Value="0,-2,0,0" />
-                        <Setter Property="VerticalAlignment" Value="Center" />
-                        <Setter Property="TextAlignment" Value="Center" />
-                    </Style>
                     <Style x:Key="CharItemUnicodeStyle" TargetType="TextBlock">
                         <Setter Property="FontFamily" Value="Consolas" />
                         <Setter Property="VerticalAlignment" Value="Bottom" />
@@ -36,20 +26,13 @@
                         <Setter Property="TextAlignment" Value="Center" />
                         <Setter Property="Foreground" Value="#888" />
                     </Style>
+                    <SolidColorBrush x:Key="WhiteBrush" Color="White" />
+                    <SolidColorBrush x:Key="BlackBrush" Color="Black" />
                     <SolidColorBrush x:Key="SystemControlTransparentRevealBackgroundBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="SystemControlTransparentRevealBorderBrush" Color="Transparent" />
-                    <SolidColorBrush x:Key="GridViewItemRevealBorderBrush" Color="Transparent" />
                     <Thickness x:Key="ListViewItemRevealBorderThemeThickness">0</Thickness>
-                    <Thickness x:Key="GridViewItemRevealBorderThemeThickness">0</Thickness>
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
-                    <SolidColorBrush x:Key="GridViewItemRevealBackground" Color="Transparent" />
-                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundPointerOver" Color="Transparent" />
-                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundPressed" Color="Transparent" />
-                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundSelected" Color="Transparent" />
-                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundSelectedPointerOver" Color="Transparent" />
-                    <SolidColorBrush x:Key="GridViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
-                    <SolidColorBrush x:Key="GridViewItemRevealPlaceholderBackground" Color="Transparent" />
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
                 <ResourceDictionary Source="/Styles/CommandBar.xaml" />
@@ -57,7 +40,7 @@
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/ListView.xaml" />
                 <ResourceDictionary Source="/Styles/ComboBox.xaml" />
-                
+
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
