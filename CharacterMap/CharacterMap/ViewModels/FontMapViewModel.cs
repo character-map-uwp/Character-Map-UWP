@@ -72,6 +72,28 @@ namespace CharacterMap.ViewModels
             set => Set(ref _searchResults, value);
         }
 
+        private InstalledFont _selectedFont;
+        public InstalledFont SelectedFont
+        {
+            get => _selectedFont;
+            set
+            {
+                if (value == _selectedFont) return;
+                _selectedFont = value;
+                TitleBarHelper.SetTitle(value?.Name);
+                RaisePropertyChanged();
+                if (null != _selectedFont)
+                {
+                    if (value != null) TitlePrefix = value.Name + " -";
+                    SelectedVariant = _selectedFont.DefaultVariant;
+                }
+                else
+                {
+                    SelectedVariant = null;
+                }
+            }
+        }
+
         private FontVariant _selectedVariant;
         public FontVariant SelectedVariant
         {
@@ -85,8 +107,16 @@ namespace CharacterMap.ViewModels
                     FontFamily = value == null ? null : new FontFamily(value.Source);
                     LoadChars(value);
                     RaisePropertyChanged();
+                    SetDefaultChar();
                 }
             }
+        }
+
+        private IReadOnlyList<Character> _chars;
+        public IReadOnlyList<Character> Chars
+        {
+            get => _chars;
+            set => Set(ref _chars, value);
         }
 
         private FontFamily _fontFamily;
@@ -94,6 +124,45 @@ namespace CharacterMap.ViewModels
         {
             get => _fontFamily;
             private set => Set(ref _fontFamily, value);
+        }
+
+        private TypographyFeatureInfo _selectedTypography;
+        public TypographyFeatureInfo SelectedTypography
+        {
+            get => _selectedTypography;
+            set => Set(ref _selectedTypography, value);
+        }
+
+        private CanvasTextLayoutAnalysis _selectedVariantAnalysis;
+        public CanvasTextLayoutAnalysis SelectedVariantAnalysis
+        {
+            get => _selectedVariantAnalysis;
+            set => Set(ref _selectedVariantAnalysis, value);
+        }
+
+        private CanvasTextLayoutAnalysis _selectedCharAnalysis;
+        public CanvasTextLayoutAnalysis SelectedCharAnalysis
+        {
+            get => _selectedCharAnalysis;
+            set => Set(ref _selectedCharAnalysis, value);
+        }
+
+        private Character _selectedChar;
+        public Character SelectedChar
+        {
+            get => _selectedChar;
+            set
+            {
+                if (_selectedChar == value) return;
+                _selectedChar = value;
+                if (null != value)
+                {
+                    Settings.LastSelectedCharIndex = value.UnicodeIndex;
+                }
+                RaisePropertyChanged();
+                UpdateCharAnalysis();
+                UpdateDevValues();
+            }
         }
 
         private bool _showColorGlyphs = true;
@@ -124,43 +193,11 @@ namespace CharacterMap.ViewModels
             set => Set(ref _isSvgChar, value);
         }
 
-        private CanvasTextLayoutAnalysis _selectedVariantAnalysis;
-        public CanvasTextLayoutAnalysis SelectedVariantAnalysis
+        private bool _isLongGeometry = true;
+        public bool IsLongGeometry
         {
-            get => _selectedVariantAnalysis;
-            set => Set(ref _selectedVariantAnalysis, value);
-        }
-
-        private CanvasTextLayoutAnalysis _selectedCharAnalysis;
-        public CanvasTextLayoutAnalysis SelectedCharAnalysis
-        {
-            get => _selectedCharAnalysis;
-            set => Set(ref _selectedCharAnalysis, value);
-        }
-
-        private IReadOnlyList<Character> _chars;
-        public IReadOnlyList<Character> Chars
-        {
-            get => _chars;
-            set => Set(ref _chars, value);
-        }
-
-        private Character _selectedChar;
-        public Character SelectedChar
-        {
-            get => _selectedChar;
-            set
-            {
-                if (_selectedChar == value) return;
-                _selectedChar = value;
-                if (null != value)
-                {
-                    Settings.LastSelectedCharIndex = value.UnicodeIndex;
-                }
-                RaisePropertyChanged();
-                UpdateCharAnalysis();
-                UpdateDevValues();
-            }
+            get => _isLongGeometry;
+            set => Set(ref _isLongGeometry, value);
         }
 
         private string _xamlPath;
@@ -177,6 +214,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _xamlCode, value);
         }
 
+        private string _xamlPathGeom;
+        public string XamlPathGeom
+        {
+            get => _xamlPathGeom;
+            set { if (Set(ref _xamlPathGeom, value)) IsLongGeometry = value != null && value.Length > 2048; }
+        }
+
         private string _symbolIcon;
         public string SymbolIcon
         {
@@ -189,36 +233,6 @@ namespace CharacterMap.ViewModels
         {
             get => _fontIcon;
             set => Set(ref _fontIcon, value);
-        }
-
-        private InstalledFont _selectedFont;
-        public InstalledFont SelectedFont
-        {
-            get => _selectedFont;
-            set
-            {
-                if (value == _selectedFont) return;
-                _selectedFont = value;
-                TitleBarHelper.SetTitle(value?.Name);
-                RaisePropertyChanged();
-                if (null != _selectedFont)
-                {
-                    if (value != null) TitlePrefix = value.Name + " -";
-                    SelectedVariant = _selectedFont.DefaultVariant;
-                    SetDefaultChar();
-                }
-                else
-                {
-                    SelectedVariant = null;
-                }
-            }
-        }
-
-        private TypographyFeatureInfo _selectedTypography;
-        public TypographyFeatureInfo SelectedTypography
-        {
-            get => _selectedTypography;
-            set => Set(ref _selectedTypography, value);
         }
 
         private string _searchQuery;
@@ -351,28 +365,29 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private void UpdateDevValues()
+        internal void UpdateDevValues()
         {
-            if (SelectedVariant == null || SelectedChar == null)
+            if (SelectedVariant == null || SelectedChar == null || !Settings.ShowDevUtils)
             {
-                XamlPath = XamlCode = FontIcon = SymbolIcon = null;
+                XamlPath = XamlPathGeom = XamlCode = FontIcon = SymbolIcon = null;
             }
             else
             {
-                var hex = SelectedChar.UnicodeIndex.ToString("x4").ToUpper();
-                XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
-                XamlCode = $"&#x{hex};";
-                FontIcon = $@"<FontIcon FontFamily=""{SelectedVariant.XamlFontSource}"" Glyph=""&#x{hex};"" />";
+                var data = GlyphService.GetDevValues(SelectedChar, SelectedVariant, SelectedCharAnalysis, GetEffectiveTypography(), Settings.DevToolsLanguage == 0);
+                XamlCode = data.Hex;
+                FontIcon = data.FontIcon;
+                XamlPathGeom = data.Path;
+                SymbolIcon = data.Symbol;
 
-                if (FontFinder.IsMDL2(SelectedVariant) && Enum.IsDefined(typeof(Symbol), SelectedChar.UnicodeIndex))
-                    SymbolIcon = $@"<SymbolIcon Symbol=""{(Symbol)SelectedChar.UnicodeIndex}"" />";
-                else
-                    SymbolIcon = null;
+                XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
             }
         }
 
-        private void SetDefaultChar()
+        public void SetDefaultChar()
         {
+            if (Chars == null)
+                return;
+
             if (Chars.FirstOrDefault(i => i.UnicodeIndex == Settings.LastSelectedCharIndex)
                             is Character lastSelectedChar
                             && SelectedVariant.FontFace.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
@@ -381,9 +396,8 @@ namespace CharacterMap.ViewModels
             }
             else
             {
-                // Everything below 32 / u0020 are control characters and typically blank, so we
-                // try not to choose them as the defaults. 32 is "space", so don't bother with him either.
-                SelectedChar = Chars?.FirstOrDefault(c => c.UnicodeIndex > 32) ?? Chars.FirstOrDefault();
+                SelectedChar = Chars?.FirstOrDefault(
+                    c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
             }
         }
 

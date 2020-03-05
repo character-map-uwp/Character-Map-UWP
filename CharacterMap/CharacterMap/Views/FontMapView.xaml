@@ -12,13 +12,15 @@
     d:DesignWidth="1280"
     mc:Ignorable="d">
 
-    <Grid DataContext="{x:Bind ViewModel}">
+    <Grid
+        x:Name="LayoutRoot"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        DataContext="{x:Bind ViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
-
         </Grid.RowDefinitions>
 
         <controls:XamlTitleBar x:Name="TitleBar" x:Load="{x:Bind IsStandalone}">
@@ -38,12 +40,14 @@
             Grid.Row="1"
             Height="45"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+            Canvas.ZIndex="1"
+            Loading="TitleGrid_Loading"
+            RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="{x:Bind core:Converters.GridLengthAorB(core:Utils.IsSystemOnWin10v1809OrNewer, '0', 'Auto')}" />
+                <ColumnDefinition Width="0" />
             </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="FontTitleBlock"
@@ -52,6 +56,7 @@
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                 Text="{Binding SelectedFont.Name}"
                 TextTrimming="CharacterEllipsis"
                 ToolTipService.ToolTip="{Binding SelectedFont.Name}" />
@@ -62,8 +67,8 @@
                 Padding="12,0"
                 HorizontalAlignment="Right"
                 Click="{x:Bind ViewModel.ImportFile}"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                 IsEnabled="{Binding ImportButtonEnabled}"
-                RequestedTheme="Dark"
                 Style="{ThemeResource TransparentButton}"
                 Visibility="{x:Bind ViewModel.IsExternalFile}">
                 <Grid ColumnSpacing="12">
@@ -122,17 +127,28 @@
                 </Storyboard>
             </Grid.Resources>
 
-            <!--  Char Grid  -->
+            <!--  Char Grid  Background="#141414"  -->
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" MinWidth="250" />
                     <ColumnDefinition Width="8" />
-                    <ColumnDefinition Width="330" />
+                    <ColumnDefinition
+                        x:Name="PreviewColumn"
+                        Width="330"
+                        MinWidth="125" />
                 </Grid.ColumnDefinitions>
+
+                <Rectangle
+                    x:Name="ShadowTarget"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="3"
+                    Fill="Transparent"
+                    Stretch="UniformToFill"
+                    StrokeThickness="0" />
 
                 <Grid
                     ColumnSpacing="12"
@@ -146,7 +162,7 @@
                     <StackPanel
                         x:Name="OptionsPanel"
                         Orientation="Horizontal"
-                        Spacing="24">
+                        Spacing="12">
 
                         <ComboBox
                             x:Name="WeightSelector"
@@ -159,11 +175,9 @@
                         <Button
                             x:Name="FontPropertiesButton"
                             x:Uid="FontPropertiesButton"
-                            Width="44"
                             Height="44"
-                            Margin="0,0,0,-8"
                             VerticalAlignment="Bottom"
-                            Style="{ThemeResource TransparentButton}">
+                            Style="{ThemeResource TransparentHintButton}">
                             <FontIcon
                                 Margin="0,0,-2,0"
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
@@ -342,12 +356,10 @@
 
                         <Button
                             x:Uid="FontOptionsButton"
-                            Width="44"
                             Height="44"
-                            Margin="0,0,0,-8"
                             VerticalAlignment="Bottom"
                             IsEnabled="{Binding HasFontOptions}"
-                            Style="{ThemeResource TransparentButton}">
+                            Style="{ThemeResource TransparentHintButton}">
                             <FontIcon
                                 Margin="0,0,-2,0"
                                 Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
@@ -403,12 +415,18 @@
                         Grid.Column="1"
                         Width="44"
                         Height="44"
-                        Margin="0,0,0,-8"
                         VerticalAlignment="Bottom"
                         DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
                         Style="{ThemeResource TransparentButton}">
                         <Button.Flyout>
-                            <MenuFlyout Opening="MenuFlyout_Opening" Placement="Bottom" />
+                            <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
+                                <MenuFlyout.MenuFlyoutPresenterStyle>
+                                    <Style TargetType="MenuFlyoutPresenter">
+                                        <Setter Property="RequestedTheme" Value="Default" />
+                                        <Setter Property="FontSize" Value="16" />
+                                    </Style>
+                                </MenuFlyout.MenuFlyoutPresenterStyle>
+                            </MenuFlyout>
                         </Button.Flyout>
                         <FontIcon
                             Margin="0,0,-2,0"
@@ -418,17 +436,21 @@
 
                 </Grid>
 
-
-                <GridView
+                <controls:CharacterGridView
                     x:Name="CharGrid"
                     Grid.Row="1"
                     Grid.Column="0"
                     Padding="10 10 6 10"
-                    ContainerContentChanging="CharGrid_ContainerContentChanging"
+                    EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
                     IsItemClickEnabled="False"
+                    ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
+                    ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
+                    ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
                     ItemsSource="{Binding Chars, Mode=OneWay}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single"
+                    ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
+                    ShowUnicodeDescription="{x:Bind ViewModel.Settings.ShowCharGridUnicode, Mode=OneTime}"
                     ShowsScrollingPlaceholders="False">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection />
@@ -436,16 +458,17 @@
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <!--  For performance reasons, all bindings are done in C#  -->
-                            <Grid Padding="4" Style="{StaticResource CharItemGridStyle}">
+                            <Grid Padding="4">
                                 <TextBlock
+                                    Margin="0 -2 0 0"
                                     Padding="0,0,0,8"
                                     IsTextScaleFactorEnabled="False"
-                                    Style="{StaticResource CharItemCharStyle}" />
+                                    TextAlignment="Center" />
                                 <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
-                </GridView>
+                </controls:CharacterGridView>
 
                 <!--  Column Grid Splitter  -->
                 <toolkit:GridSplitter
@@ -456,6 +479,7 @@
                     CursorBehavior="ChangeOnSplitterHover"
                     GripperCursor="SizeWestEast"
                     GripperForeground="Transparent"
+                    Loading="GridSplitter_Loading"
                     ResizeBehavior="BasedOnAlignment"
                     ResizeDirection="Columns" />
 
@@ -532,6 +556,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="2" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -733,6 +758,8 @@
                         <Grid
                             Grid.Row="6"
                             ColumnSpacing="8"
+                            Height="50"
+                            Margin="0,15,0,0"
                             Visibility="{x:Bind ViewModel.Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -742,13 +769,13 @@
                             <TextBox
                                 x:Name="TxtXamlCode"
                                 x:Uid="TxtXamlCode"
-                                Margin="0,15,0,0"
-                                GotFocus="TxtXamlCode_OnGotFocus"
+                                GotFocus="OnCopyGotFocus"
                                 Header="#TxtXamlCode"
                                 Style="{StaticResource CopyTextBox}"
                                 Text="{Binding XamlCode}" />
                             <AppBarButton
                                 x:Name="BtnCopyXamlCode"
+                                x:Uid="BtnCopyDev"
                                 Grid.Column="1"
                                 Width="50"
                                 Height="50"
@@ -761,6 +788,7 @@
                         <Grid
                             Grid.Row="7"
                             ColumnSpacing="8"
+                            Height="50"
                             Visibility="{x:Bind ViewModel.Settings.ShowDevUtils, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -770,13 +798,15 @@
                             <TextBox
                                 x:Name="TxtFontIcon"
                                 x:Uid="TxtFontIcon"
-                                Margin="0,7,0,0"
-                                GotFocus="TxtFontIcon_OnGotFocus"
+                                Margin="0 0 0 -8"
+                                GotFocus="OnCopyGotFocus"
                                 Header="#TxtFontIcon"
                                 Style="{StaticResource CopyTextBox}"
                                 Text="{Binding FontIcon}" />
+
                             <AppBarButton
                                 x:Name="BtnCopyFontIcon"
+                                x:Uid="BtnCopyDev"
                                 Grid.Column="1"
                                 Width="50"
                                 Height="50"
@@ -787,10 +817,107 @@
                         </Grid>
 
                         <Grid
+                            Grid.Row="8"
+                            ColumnSpacing="8"
+                            Height="50">
+
+                            <Grid x:Name="XAMLGeometryDefaultRoot" VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="50" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Margin="0 0 0 0">
+                                    <TextBlock
+                                        x:Uid="TxtPathGeometry"
+                                        Margin="14 0 0 0"
+                                        FontSize="12"
+                                        Foreground="{ThemeResource TextControlHeaderForeground}"
+                                        Opacity="0.5" />
+
+                                    <!--
+                                        XAML Path Geometry can easily be too long to display in
+                                        a normal TextBlock and will cause it to fail to render.
+                                        So we switch to Flyout if needed.
+                                    -->
+
+                                    <TextBox
+                                        x:Name="GeometryTextbox"
+                                        x:Load="{x:Bind core:Converters.False(ViewModel.IsLongGeometry), Mode=OneWay}"
+                                        Margin="0 -8 0 0"
+                                        GotFocus="OnCopyGotFocus"
+                                        Style="{StaticResource CopyTextBox}"
+                                        Text="{Binding XamlPathGeom}" />
+
+                                    <Button
+                                        x:Name="BtnXAMLGeometry"
+                                        x:Uid="BtnXAMLGeometry"
+                                        x:Load="{x:Bind ViewModel.IsLongGeometry, Mode=OneWay}"
+                                        Margin="6 0 0 0"
+                                        FontSize="13.333"
+                                        Style="{StaticResource TextBlockButtonStyle}">
+                                        <Button.Flyout>
+                                            <Flyout x:Name="GeometryFlyout" ScrollViewer.VerticalScrollMode="Disabled">
+                                                <Grid>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto" />
+                                                        <RowDefinition Height="Auto" />
+                                                    </Grid.RowDefinitions>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <TextBlock x:Uid="TxtPathGeometry" VerticalAlignment="Center" />
+
+                                                    <AppBarButton
+                                                        x:Uid="BtnCopyDev"
+                                                        Grid.Column="1"
+                                                        Width="50"
+                                                        Height="50"
+                                                        VerticalAlignment="Bottom"
+                                                        Click="BtnCopyXamlPath_OnClick">
+                                                        <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                                                    </AppBarButton>
+
+                                                    <TextBox
+                                                        Grid.Row="1"
+                                                        Grid.ColumnSpan="2"
+                                                        Width="400"
+                                                        MaxHeight="400"
+                                                        FontFamily="Consolas"
+                                                        IsReadOnly="True"
+                                                        ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                        Text="{x:Bind ViewModel.XamlPathGeom, Mode=OneWay}"
+                                                        TextWrapping="Wrap" />
+
+                                                </Grid>
+                                            </Flyout>
+                                        </Button.Flyout>
+                                    </Button>
+
+                                </StackPanel>
+
+
+                                <AppBarButton
+                                    x:Uid="BtnCopyDev"
+                                    Grid.Column="1"
+                                    Width="50"
+                                    Height="50"
+                                    VerticalAlignment="Bottom"
+                                    Click="BtnCopyXamlPath_OnClick">
+                                    <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                                </AppBarButton>
+
+                            </Grid>
+                        </Grid>
+
+                        <Grid
                             x:Name="SymbolIconGrid"
                             x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SymbolIcon), Mode=OneWay, FallbackValue=False}"
-                            Grid.Row="8"
-                            ColumnSpacing="8">
+                            Grid.Row="9"
+                            ColumnSpacing="8"
+                            Height="50">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="50" />
@@ -798,13 +925,13 @@
                             <TextBox
                                 x:Name="TxtSymbolIcon"
                                 x:Uid="TxtSymbolIcon"
-                                Margin="0,7,0,0"
-                                GotFocus="TxtSymbolIcon_OnGotFocus"
+                                GotFocus="OnCopyGotFocus"
                                 Header="#TxtSymbolIcon"
                                 Style="{StaticResource CopyTextBox}"
                                 Text="{Binding SymbolIcon}" />
                             <AppBarButton
                                 x:Name="BtnCopySymbolIcon"
+                                x:Uid="BtnCopyDev"
                                 Grid.Column="1"
                                 Width="50"
                                 Height="50"
@@ -842,13 +969,13 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Height="26"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-            RequestedTheme="{Binding IsDarkAccent, Converter={StaticResource SmartTextColorBasedOnAccentTypeConverter}, Mode=OneWay}">
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
             <Grid.Resources>
                 <Style TargetType="TextBlock">
                     <Setter Property="FontSize" Value="12" />
@@ -856,12 +983,18 @@
                 </Style>
             </Grid.Resources>
 
-            <TextBlock Margin="12,0" Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant), Mode=OneWay}" />
+            <TextBlock
+                Margin="12,0"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
+                Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant), Mode=OneWay}" />
 
             <TextBlock
                 Grid.Column="2"
                 Margin="12,0"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
+                Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
+
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
@@ -888,18 +1021,11 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="SearchStatesGroup">
                 <VisualState x:Name="InstantSearchState">
-                    <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind ViewModel.Settings.UseInstantSearch, Mode=OneWay}" />
-                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SearchBox.QueryIcon" Value="{x:Null}" />
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="ManualSearchState">
-                    <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind core:Converters.False(ViewModel.Settings.UseInstantSearch), Mode=OneWay}" />
-                    </VisualState.StateTriggers>
-                </VisualState>
+                <VisualState x:Name="ManualSearchState" />
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

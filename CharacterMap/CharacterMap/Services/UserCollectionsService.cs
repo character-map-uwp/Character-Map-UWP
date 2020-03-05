@@ -1,6 +1,6 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
-using Newtonsoft.Json;
+using CharacterMap.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,16 +13,6 @@ using Windows.Storage;
 
 namespace CharacterMap.Services
 {
-    public class UserFontCollection
-    {
-        [JsonIgnore]
-        public bool IsSystemSymbolCollection { get; set; }
-        [JsonIgnore]
-        public StorageFile File { get; set; }
-        public string Name { get; set; }
-        public HashSet<string> Fonts { get; set; } = new HashSet<string>();
-    }
-
     public class AddToCollectionResult
     {
         public AddToCollectionResult(bool success, InstalledFont font, UserFontCollection collection)
@@ -56,6 +46,11 @@ namespace CharacterMap.Services
         public List<UserFontCollection> Items { get; private set; } = new List<UserFontCollection>();
 
         private StorageFolder _collectionsFolder;
+
+        public bool IsSymbolFont(InstalledFont font)
+        {
+            return font.IsSymbolFont || SymbolCollection.Fonts.Contains(font.Name);
+        }
 
         public async Task LoadCollectionsAsync()
         {
@@ -98,7 +93,7 @@ namespace CharacterMap.Services
 
                 collections = collections.OrderBy(c => c.Name).ToList();
             });
-            
+
             foreach (var item in collections)
                 Items.Add(item);
         }
@@ -125,7 +120,7 @@ namespace CharacterMap.Services
                 Items.Add(collection);
                 Items = Items.OrderBy(i => i.Name).ToList();
             }
-            
+
             return collection;
         }
 
@@ -158,7 +153,7 @@ namespace CharacterMap.Services
                     }
                 }
             });
-            
+
         }
 
         public async Task<AddToCollectionResult> AddToCollectionAsync(InstalledFont font, UserFontCollection collection)
@@ -203,7 +198,7 @@ namespace CharacterMap.Services
         private async Task<UserFontCollection> LoadCollectionAsync(StorageFile file)
         {
             string name;
-            HashSet<String> items = new HashSet<string>();
+            HashSet<string> items = new HashSet<string>();
 
             using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
             using (var reader = new StreamReader(stream))
@@ -219,11 +214,11 @@ namespace CharacterMap.Services
         private async Task<UserFontCollection> ConvertFromLegacyFormatAsync(StorageFile file, StorageFolder folder)
         {
             // Legacy Collection format used .json files.
-            // JSON lib was dropped to improve peft and reduce RAM,
+            // JSON lib was dropped to improve perf and reduce RAM,
             // so manually parse.
 
             string name;
-            HashSet<String> items = new HashSet<string>();
+            HashSet<string> items = new HashSet<string>();
 
             using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
             using (var reader = new StreamReader(stream))
@@ -254,7 +249,7 @@ namespace CharacterMap.Services
                             if (!string.IsNullOrEmpty(s))
                                 items.Add(s);
                         }
-                        
+
                         break;
                     }
                 }

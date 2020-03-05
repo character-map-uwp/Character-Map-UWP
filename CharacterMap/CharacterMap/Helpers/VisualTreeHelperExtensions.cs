@@ -91,7 +91,6 @@ namespace Windows.UI.Xaml.Media
             }
         }
 
-
         /// <summary>
         /// Gets the descendants.
         /// </summary>
@@ -153,8 +152,6 @@ namespace Windows.UI.Xaml.Media
                 yield return child;
             }
         }
-
-
 
         public static T GetChildOfType<T>(this DependencyObject depObj) where T : DependencyObject
         {

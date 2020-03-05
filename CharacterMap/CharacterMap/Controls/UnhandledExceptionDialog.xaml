@@ -1,0 +1,42 @@
+﻿<ContentDialog
+    x:Class="CharacterMap.Controls.UnhandledExceptionDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Uid="DlgException"
+    CornerRadius="4"
+    IsSecondaryButtonEnabled="False"
+    PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
+    PrimaryButtonText="OK"
+    mc:Ignorable="d">
+
+    <Grid RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <StackPanel>
+            <TextBlock x:Uid="DlgExceptionMessage" TextWrapping="Wrap" />
+            <HyperlinkButton Click="HyperlinkButton_Click">
+                <TextBlock TextWrapping="Wrap">
+                    <Run FontFamily="{ThemeResource SymbolThemeFontFamily}"></Run>
+                    <Run x:Uid="DlgExceptionCopyMessage" />
+                </TextBlock>
+            </HyperlinkButton>
+        </StackPanel>
+
+        <controls:Expander x:Uid="DlgExceptionExpander" Grid.Row="1">
+            <ScrollViewer
+                MaxHeight="500"
+                HorizontalScrollBarVisibility="Auto"
+                HorizontalScrollMode="Auto">
+                <TextBlock
+                    x:Name="ExceptionBlock"
+                    Margin="8 8 8 24"
+                    IsTextSelectionEnabled="True" />
+            </ScrollViewer>
+        </controls:Expander>
+    </Grid>
+</ContentDialog>
