@@ -48,7 +48,7 @@ namespace CharacterMap.Views
 
         public MainPage()
         {
-            RequestedTheme = ResourceHelper.AppSettings.RequestedTheme;
+            RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
 
             InitializeComponent();
 
@@ -70,7 +70,7 @@ namespace CharacterMap.Views
             {
                 _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    Messenger.Default.Send(new AppSettingsChangedMessage(nameof(AppSettings.RequestedTheme)));
+                    Messenger.Default.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
                 });
             };
         }
@@ -112,8 +112,8 @@ namespace CharacterMap.Views
                 case nameof(AppSettings.UseFontForPreview):
                     OnFontPreviewUpdated();
                     break;
-                case nameof(AppSettings.RequestedTheme):
-                    this.RequestedTheme = ViewModel.Settings.RequestedTheme;
+                case nameof(AppSettings.UserRequestedTheme):
+                    this.RequestedTheme = ViewModel.Settings.UserRequestedTheme;
                     OnPropertyChanged(nameof(ThemeLock));
                     break;
             }

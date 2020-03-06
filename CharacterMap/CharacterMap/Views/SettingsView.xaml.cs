@@ -82,7 +82,7 @@ namespace CharacterMap.Views
 
         void OnAppSettingsUpdated(AppSettingsChangedMessage msg)
         {
-            if (msg.PropertyName == nameof(Settings.RequestedTheme))
+            if (msg.PropertyName == nameof(Settings.UserRequestedTheme))
                 OnPropertyChanged(nameof(Settings));
         }
 
@@ -125,7 +125,7 @@ namespace CharacterMap.Views
 
             // Set the settings that can't be set with bindings
 
-            switch (Settings.RequestedTheme)
+            switch (Settings.UserRequestedTheme)
             {
                 case ElementTheme.Default:
                     ThemeSystem.IsChecked = true;
@@ -165,17 +165,17 @@ namespace CharacterMap.Views
 
         private void ThemeLight_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.RequestedTheme = ElementTheme.Light;
+            Settings.UserRequestedTheme = ElementTheme.Light;
         }
 
         private void ThemeDark_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.RequestedTheme = ElementTheme.Dark;
+            Settings.UserRequestedTheme = ElementTheme.Dark;
         }
 
         private void ThemeSystem_Checked(object sender, RoutedEventArgs e)
         {
-            Settings.RequestedTheme = ElementTheme.Default;
+            Settings.UserRequestedTheme = ElementTheme.Default;
         }
 
         private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)

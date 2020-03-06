@@ -88,7 +88,7 @@ namespace CharacterMap.Core
             set => BroadcastSet(value);
         }
 
-        public ElementTheme RequestedTheme
+        public ElementTheme UserRequestedTheme
         {
             get => (ElementTheme)Get((int)ElementTheme.Default);
             set => BroadcastSet((int)value);
@@ -144,8 +144,8 @@ namespace CharacterMap.Core
 
         private T Get<T>(T defaultValue, [CallerMemberName]string key = null)
         {
-            if (LocalSettings.Values.TryGetValue(key, out object value))
-                return (T)value;
+            if (LocalSettings.Values.TryGetValue(key, out object value) && value is T val)
+                return val;
 
             if (defaultValue != null)
                 return defaultValue;

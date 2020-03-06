@@ -84,7 +84,7 @@ namespace CharacterMap.Views
 
         public FontMapView()
         {
-            RequestedTheme = ResourceHelper.AppSettings.RequestedTheme;
+            RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
 
             InitializeComponent();
             Loading += FontMapView_Loading;
@@ -204,8 +204,8 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.GridSize):
                         UpdateDisplay();
                         break;
-                    case nameof(AppSettings.RequestedTheme):
-                        this.RequestedTheme = ViewModel.Settings.RequestedTheme;
+                    case nameof(AppSettings.UserRequestedTheme):
+                        this.RequestedTheme = ViewModel.Settings.UserRequestedTheme;
                         OnPropertyChanged(nameof(ThemeLock));
                         break;
                     case nameof(AppSettings.UseInstantSearch):
