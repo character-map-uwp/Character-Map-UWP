@@ -37,14 +37,13 @@ namespace CharacterMap.Views
 
         private Random _random { get; } = new Random();
 
-        private UISettings _uiSettings { get; }
-
         public AppSettings Settings { get; }
         public UserCollectionsService FontCollections { get; }
 
         public SettingsView()
         {
-            Settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
+            Settings = ResourceHelper.AppSettings;
+
             FontCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsUpdated);
 
@@ -94,6 +93,9 @@ namespace CharacterMap.Views
 #pragma warning disable CS0618 // ChangeView doesn't work well when not properly visible
             ContentScroller.ScrollToVerticalOffset(0);
 #pragma warning restore CS0618 
+
+            // Note: it is legal for both "variant" and "font" to be *null*
+            //       when calling, so test both cases.
 
             bool isSymbol = FontCollections.IsSymbolFont(font);
 
