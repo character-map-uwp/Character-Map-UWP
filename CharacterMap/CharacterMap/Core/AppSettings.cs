@@ -126,7 +126,7 @@ namespace CharacterMap.Core
 
         private bool Set(object value, [CallerMemberName]string key = null)
         {
-            if (LocalSettings.Values.TryGetValue(key, out object t) && t.Equals(value))
+            if (LocalSettings.Values.TryGetValue(key, out object t) && t != null && t.Equals(value))
                 return false;
 
             LocalSettings.Values[key] = value;
