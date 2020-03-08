@@ -1,110 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
-    Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
-    associated with the data types.
-    
-    Example:
-    
-    ... ado.net/XML headers & schema ...
-    <resheader name="resmimetype">text/microsoft-resx</resheader>
-    <resheader name="version">2.0</resheader>
-    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
-    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
-    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
-    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
-    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
-        <value>[base64 mime encoded serialized .NET Framework object]</value>
-    </data>
-    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-        <comment>This is a comment</comment>
-    </data>
-                
-    There are any number of "resheader" rows that contain simple 
-    name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
-    mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
-    extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
-    read any of the formats listed below.
-    
-    mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
-            : and then encoded with base64 encoding.
-    
-    mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
-            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
-            : and then encoded with base64 encoding.
-
-    mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
-            : using a System.ComponentModel.TypeConverter
-            : and then encoded with base64 encoding.
-    -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -117,92 +12,29 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="TxtUnicode.Header" xml:space="preserve">
-    <value>Unicode 编码</value>
-  </data>
-  <data name="BtnSelect.Content" xml:space="preserve">
-    <value>选择</value>
-  </data>
-  <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>XAML 转义代码</value>
-  </data>
-  <data name="TxtFontIcon.Header" xml:space="preserve">
-    <value>字体图标</value>
+  <data name="AddToCollectionHint.Text" xml:space="preserve">
+    <value>添加到库</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>字符映射表</value>
   </data>
-  <data name="BtnSavePng.Text" xml:space="preserve">
-    <value>保存 PNG</value>
-  </data>
-  <data name="TxtCopiedMessage.Text" xml:space="preserve">
-    <value>已复制</value>
-  </data>
-  <data name="Settings_About.Text" xml:space="preserve">
-    <value>关于</value>
-  </data>
-  <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>本应用可替换 Windows 10 系统自带的 Win32字符映射表。适配高DPI屏幕的设备。</value>
-  </data>
-  <data name="DigSettings.Title" xml:space="preserve">
-    <value>设置</value>
+  <data name="BlackFill.Text" xml:space="preserve">
+    <value>黑色填充</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>复制 (仅字符)</value>
   </data>
-  <data name="TxtTitle.Text" xml:space="preserve">
-    <value>字符映射表</value>
-  </data>
-  <data name="TxtSymbolIcon.Header" xml:space="preserve">
-    <value>Symbol图标</value>
-  </data>
-  <data name="SearchBox.PlaceholderText" xml:space="preserve">
-    <value>检索字符名称或 Unicode HEX</value>
-  </data>
-  <data name="AddToCollectionFlyout.Text" xml:space="preserve">
-    <value>添加到收藏</value>
-  </data>
-  <data name="AddToCollectionHint.Text" xml:space="preserve">
-    <value>添加到库</value>
-  </data>
-  <data name="BlackFill.Text" xml:space="preserve">
-    <value>黑色填充</value>
-  </data>
-  <data name="CharsLabel.Text" xml:space="preserve">
-    <value>个字符</value>
-  </data>
-  <data name="WhiteFill.Text" xml:space="preserve">
-    <value>白色填充</value>
-  </data>
-  <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
-    <value>创建</value>
-  </data>
-  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
-    <value>取消</value>
-  </data>
-  <data name="DigCreateCollection.Title" xml:space="preserve">
-    <value>创建收藏</value>
-  </data>
-  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
-    <value>删除</value>
-  </data>
-  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
-    <value>取消</value>
-  </data>
-  <data name="DigDeleteCollection.Title" xml:space="preserve">
-    <value>确定要删除该收藏吗？</value>
-  </data>
-  <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
-    <value>重命名</value>
-  </data>
-  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
-    <value>取消</value>
-  </data>
-  <data name="DigRenameCollection.Title" xml:space="preserve">
-    <value>重命名收藏</value>
+  <data name="BtnSavePng.Text" xml:space="preserve">
+    <value>保存 PNG</value>
   </data>
   <data name="BtnSaveSvg.Text" xml:space="preserve">
     <value>保存 SVG (仅单色)</value>
+  </data>
+  <data name="BtnSelect.Content" xml:space="preserve">
+    <value>选择</value>
+  </data>
+  <data name="CharsLabel.Text" xml:space="preserve">
+    <value>个字符</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
     <value>颜色选择</value>
@@ -213,14 +45,8 @@
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>着色字符</value>
   </data>
-  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>收藏名称</value>
-  </data>
-  <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>删除收藏</value>
-  </data>
-  <data name="FilePickerConfirm" xml:space="preserve">
-    <value>导入</value>
+  <data name="DigSettings.Title" xml:space="preserve">
+    <value>设置</value>
   </data>
   <data name="FilterAllFonts.Content" xml:space="preserve">
     <value>所有字体</value>
@@ -234,56 +60,8 @@
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>字体显示选项</value>
   </data>
-  <data name="FontListDisplayHeader.Text" xml:space="preserve">
-    <value>字体显示</value>
-  </data>
-  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
-    <value>使用系统默认字体显示字体名称</value>
-  </data>
-  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
-    <value>使用字体本身显示字体名称</value>
-  </data>
   <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>字体渲染选项</value>
-  </data>
-  <data name="FontPropCount.Text" xml:space="preserve">
-    <value>字符数量</value>
-  </data>
-  <data name="RestartHeader.Text" xml:space="preserve">
-    <value>需要重启应用生效</value>
-  </data>
-  <data name="TypographyVariantsHeader.Text" xml:space="preserve">
-    <value>字符变体</value>
-  </data>
-  <data name="WeightSelector.Header" xml:space="preserve">
-    <value>变体</value>
-  </data>
-  <data name="SearchResultsSlider.Header" xml:space="preserve">
-    <value>最大搜索结果数量</value>
-  </data>
-  <data name="SaveImageError" xml:space="preserve">
-    <value>抱歉，尝试保存图片时候有什么奇怪的东西出错了</value>
-  </data>
-  <data name="OptionAllFonts.Text" xml:space="preserve">
-    <value>所有字体</value>
-  </data>
-  <data name="OptionImportedFonts.Text" xml:space="preserve">
-    <value>导入的字体</value>
-  </data>
-  <data name="OptionMonospacedFonts.Text" xml:space="preserve">
-    <value>等宽字体</value>
-  </data>
-  <data name="OptionSansSerifFonts.Text" xml:space="preserve">
-    <value>无衬线字体</value>
-  </data>
-  <data name="OptionSerifFonts.Text" xml:space="preserve">
-    <value>衬线字体</value>
-  </data>
-  <data name="OptionSymbolFonts.Text" xml:space="preserve">
-    <value>符号字体</value>
-  </data>
-  <data name="RestartButton.Content" xml:space="preserve">
-    <value>重启应用</value>
   </data>
   <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>字体属性</value>
@@ -315,26 +93,68 @@
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>粗细</value>
   </data>
-  <data name="FontPropXaml.Text" xml:space="preserve">
-    <value>XAML FontFamily 源代码</value>
-  </data>
-  <data name="FontsClearedOnNextLaunchNotice" xml:space="preserve">
-    <value>某些字体目前无法完全删除，这些字体在下次应用启动时会被完全删除并不显示在字体列表中。 </value>
-  </data>
-  <data name="FontsCountLabel.Text" xml:space="preserve">
-    <value>字体</value>
-  </data>
   <data name="GridSlider.Header" xml:space="preserve">
     <value>字符网格尺寸</value>
   </data>
-  <data name="ImportFileCopyFail" xml:space="preserve">
-    <value>有奇怪的东西出错了，请稍后再试</value>
+  <data name="InvalidFontMessage" xml:space="preserve">
+    <value>抱歉，我们无法在该文件中找到支持的字体</value>
   </data>
-  <data name="ImportFontHelpBlock.Text" xml:space="preserve">
-    <value>将字体文件拖拽到应用里以加入库</value>
+  <data name="InvalidFontTitle" xml:space="preserve">
+    <value>不支持的文件</value>
   </data>
-  <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>导入的字体</value>
+  <data name="OpenInNewWindow.Text" xml:space="preserve">
+    <value>在新窗口中打开</value>
+  </data>
+  <data name="PngSlider.Header" xml:space="preserve">
+    <value>PNG 分辨率(像素)</value>
+  </data>
+  <data name="RemoveFontFlyout.Text" xml:space="preserve">
+    <value>删除字体全家</value>
+  </data>
+  <data name="RestartButton.Content" xml:space="preserve">
+    <value>重启应用</value>
+  </data>
+  <data name="RestartHeader.Text" xml:space="preserve">
+    <value>需要重启应用生效</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>检索字符名称或 Unicode HEX</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>本应用可替换 Windows 10 系统自带的 Win32字符映射表。适配高DPI屏幕的设备。</value>
+  </data>
+  <data name="TxtCopiedMessage.Text" xml:space="preserve">
+    <value>已复制</value>
+  </data>
+  <data name="TxtFontIcon.Header" xml:space="preserve">
+    <value>字体图标</value>
+  </data>
+  <data name="TxtSymbolIcon.Header" xml:space="preserve">
+    <value>Symbol图标</value>
+  </data>
+  <data name="TxtTitle.Text" xml:space="preserve">
+    <value>字符映射表</value>
+  </data>
+  <data name="TxtUnicode.Header" xml:space="preserve">
+    <value>Unicode 编码</value>
+  </data>
+  <data name="TxtXamlCode.Header" xml:space="preserve">
+    <value>XAML 转义代码</value>
+  </data>
+  <data name="TypographyVariantsHeader.Text" xml:space="preserve">
+    <value>字符变体</value>
+  </data>
+  <data name="WeightSelector.Header" xml:space="preserve">
+    <value>变体</value>
+  </data>
+  <data name="WhiteFill.Text" xml:space="preserve">
+    <value>白色填充</value>
+  </data>
+  <data name="FontsCountLabel.Text" xml:space="preserve">
+    <value>字体</value>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>不是一个文件</value>
@@ -351,26 +171,32 @@
   <data name="ImportUnsupportedFontType" xml:space="preserve">
     <value>不支持的字体类型</value>
   </data>
-  <data name="InstantSearchToggle.OffContent" xml:space="preserve">
-    <value>即时搜索已关闭</value>
+  <data name="FontsClearedOnNextLaunchNotice" xml:space="preserve">
+    <value>某些字体目前无法完全删除，这些字体在下次应用启动时会被完全删除并不显示在字体列表中。 </value>
   </data>
-  <data name="InstantSearchToggle.OnContent" xml:space="preserve">
-    <value>即时搜索已启用</value>
-  </data>
-  <data name="InvalidFontMessage" xml:space="preserve">
-    <value>抱歉，我们无法在该文件中找到支持的字体</value>
-  </data>
-  <data name="InvalidFontTitle" xml:space="preserve">
-    <value>不支持的文件</value>
+  <data name="SaveImageError" xml:space="preserve">
+    <value>抱歉，尝试保存图片时候有什么奇怪的东西出错了</value>
   </data>
   <data name="LoadingFontListError" xml:space="preserve">
     <value>加载字体列表出错</value>
   </data>
-  <data name="NewCollectionItem.Text" xml:space="preserve">
-    <value>新收藏</value>
-  </data>
   <data name="NoticeLabel.Text" xml:space="preserve">
     <value>注意</value>
+  </data>
+  <data name="ImportFileCopyFail" xml:space="preserve">
+    <value>有奇怪的东西出错了，请稍后再试</value>
+  </data>
+  <data name="ImportFontHelpBlock.Text" xml:space="preserve">
+    <value>将字体文件拖拽到应用里以加入库</value>
+  </data>
+  <data name="FontPropXaml.Text" xml:space="preserve">
+    <value>XAML FontFamily 源代码</value>
+  </data>
+  <data name="FilePickerConfirm" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>导入的字体</value>
   </data>
   <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>打开字体</value>
@@ -378,19 +204,94 @@
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>打开</value>
   </data>
-  <data name="OpenInNewWindow.Text" xml:space="preserve">
-    <value>在新窗口中打开</value>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>收藏名称</value>
   </data>
-  <data name="PngSlider.Header" xml:space="preserve">
-    <value>PNG 分辨率(像素)</value>
+  <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
+    <value>创建</value>
   </data>
-  <data name="RemoveFontFlyout.Text" xml:space="preserve">
-    <value>删除字体全家</value>
+  <data name="DigCreateCollection.Title" xml:space="preserve">
+    <value>创建收藏</value>
+  </data>
+  <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>删除收藏</value>
+  </data>
+  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="DigDeleteCollection.Title" xml:space="preserve">
+    <value>确定要删除该收藏吗？</value>
+  </data>
+  <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="DigRenameCollection.Title" xml:space="preserve">
+    <value>重命名收藏</value>
+  </data>
+  <data name="OptionAllFonts.Text" xml:space="preserve">
+    <value>所有字体</value>
+  </data>
+  <data name="OptionImportedFonts.Text" xml:space="preserve">
+    <value>导入的字体</value>
+  </data>
+  <data name="OptionSymbolFonts.Text" xml:space="preserve">
+    <value>符号字体</value>
+  </data>
+  <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>重命名收藏</value>
+  </data>
+  <data name="FontListDisplayHeader.Text" xml:space="preserve">
+    <value>字体显示</value>
+  </data>
+  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
+    <value>使用系统默认字体显示字体名称</value>
+  </data>
+  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
+    <value>使用字体本身显示字体名称</value>
+  </data>
+  <data name="FontPropCount.Text" xml:space="preserve">
+    <value>字符数量</value>
+  </data>
+  <data name="OptionMonospacedFonts.Text" xml:space="preserve">
+    <value>等宽字体</value>
+  </data>
+  <data name="OptionSansSerifFonts.Text" xml:space="preserve">
+    <value>无衬线字体</value>
+  </data>
+  <data name="OptionSerifFonts.Text" xml:space="preserve">
+    <value>衬线字体</value>
+  </data>
+  <data name="NewCollectionItem.Text" xml:space="preserve">
+    <value>新收藏</value>
   </data>
   <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
     <value>从收藏中删除</value>
   </data>
-  <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>重命名收藏</value>
+  <data name="AddToCollectionFlyout.Text" xml:space="preserve">
+    <value>添加到收藏</value>
+  </data>
+  <data name="InstantSearchToggle.OffContent" xml:space="preserve">
+    <value>即时搜索已关闭</value>
+  </data>
+  <data name="InstantSearchToggle.OnContent" xml:space="preserve">
+    <value>即时搜索已启用</value>
+  </data>
+  <data name="SearchResultsSlider.Header" xml:space="preserve">
+    <value>最大搜索结果数量</value>
+  </data>
+  <data name="SettingsCharGridHeader.Text" xml:space="preserve">
+    <value>字符网格尺寸</value>
+  </data>
+  <data name="SettingsHeader.Text" xml:space="preserve">
+    <value>设置</value>
   </data>
 </root>
