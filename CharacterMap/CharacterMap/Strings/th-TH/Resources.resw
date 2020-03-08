@@ -117,6 +117,9 @@
   <data name="RestartHeader.Text" xml:space="preserve">
     <value>จะมีผลเมื่อแอปรีสตาร์ทแล้ว</value>
   </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>ค้นหาตัวอักษรหรือค้นด้วยรหัส Unicode</value>
+  </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>เกี่ยวกับแอพพลิเคชั่นนี้</value>
   </data>
@@ -127,10 +130,10 @@
     <value>คัดลอกเรียบร้อย</value>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
-    <value>Font Icon</value>
+    <value>ฟอนต์ไอคอน</value>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
-    <value>Symbol Icon</value>
+    <value>ฟอนต์สัญลักษณ์</value>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>ผังอักขระ</value>
@@ -186,6 +189,54 @@
   <data name="ImportFontHelpBlock.Text" xml:space="preserve">
     <value>ลากไฟล์ฟอนต์เข้ามาในแอปเพื่อนำเข้าเก็บไว้ในรายการสะสม</value>
   </data>
+  <data name="FontPropXaml.Text" xml:space="preserve">
+    <value>XAML FontFamily Source</value>
+  </data>
+  <data name="FilePickerConfirm" xml:space="preserve">
+    <value>นำเข้า</value>
+  </data>
+  <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>นำเข้าฟอนต์</value>
+  </data>
+  <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เปิดฟอนต์</value>
+  </data>
+  <data name="OpenFontPickerConfirm" xml:space="preserve">
+    <value>เปิด</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>ชื่อรายการสะสม</value>
+  </data>
+  <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
+    <value>สร้าง</value>
+  </data>
+  <data name="DigCreateCollection.Title" xml:space="preserve">
+    <value>สร้างรายการสะสม</value>
+  </data>
+  <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ลบรายการสะสม</value>
+  </data>
+  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
+    <value>ยกเลิก</value>
+  </data>
+  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+    <value>ลบ</value>
+  </data>
+  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
+    <value>ยกเลิก</value>
+  </data>
+  <data name="DigDeleteCollection.Title" xml:space="preserve">
+    <value>คุณแน่ในหรือไม่ว่าคุณต้องการลบรายการสะสมนี้?</value>
+  </data>
+  <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
+    <value>เปลี่ยนชื่อ</value>
+  </data>
+  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
+    <value>ยกเลิก</value>
+  </data>
+  <data name="DigRenameCollection.Title" xml:space="preserve">
+    <value>เปลิ่ยนชื่อรายการสะสม</value>
+  </data>
   <data name="OptionAllFonts.Text" xml:space="preserve">
     <value>ฟอนต์ทั้งหมด</value>
   </data>
@@ -194,6 +245,60 @@
   </data>
   <data name="OptionSymbolFonts.Text" xml:space="preserve">
     <value>ฟอนต์สัญลักษณ์</value>
+  </data>
+  <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เปลี่ยนชื่อรายการสะสม</value>
+  </data>
+  <data name="FontListDisplayHeader.Text" xml:space="preserve">
+    <value>รายการแสดงผลฟอนต์</value>
+  </data>
+  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
+    <value>แสดงชื่อฟอนต์ด้วยฟอนต์ระบบ</value>
+  </data>
+  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
+    <value>แลดงชื่อฟอนต์โดยใช้ฟอนต์นั้นๆ</value>
+  </data>
+  <data name="FontPropCount.Text" xml:space="preserve">
+    <value>จำนวนตัวอักษร</value>
+  </data>
+  <data name="OptionMonospacedFonts.Text" xml:space="preserve">
+    <value>ฟอนต์อักษรเท่ากัน</value>
+  </data>
+  <data name="OptionSansSerifFonts.Text" xml:space="preserve">
+    <value>ฟอนต์ไม่มีหาง (ฟอนต์เรียบ)</value>
+  </data>
+  <data name="OptionSerifFonts.Text" xml:space="preserve">
+    <value>ฟอนต์มีหาง</value>
+  </data>
+  <data name="NewCollectionItem.Text" xml:space="preserve">
+    <value>สร้างรายการสะสมใหม่</value>
+  </data>
+  <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
+    <value>ลบจากรายการสะสม</value>
+  </data>
+  <data name="AddToCollectionFlyout.Text" xml:space="preserve">
+    <value>เพิ่มเข้ารายการสะสม</value>
+  </data>
+  <data name="InstantSearchToggle.OffContent" xml:space="preserve">
+    <value>ปิดการค้นหาทันทีขณะเขียน</value>
+  </data>
+  <data name="InstantSearchToggle.OnContent" xml:space="preserve">
+    <value>เปิดการค้นหาทันทีขณะเขียน</value>
+  </data>
+  <data name="SearchResultsSlider.Header" xml:space="preserve">
+    <value>จำนวนผลการค้นหาสูงสุด</value>
+  </data>
+  <data name="FontPropCharCount.Text" xml:space="preserve">
+    <value>จำนวนตัวอักษร</value>
+  </data>
+  <data name="FontPropFilePath.Text" xml:space="preserve">
+    <value>ที่ตั้งของไฟล์</value>
+  </data>
+  <data name="DWriteSourcePerMachine" xml:space="preserve">
+    <value>ผู้ใช้ทั้งหมด</value>
+  </data>
+  <data name="DWriteSourcePerUser" xml:space="preserve">
+    <value>ผู้ใช้ปัจจุบันเท่านั้น</value>
   </data>
   <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
     <value>ฟอนต์จากอินเตอร์เน็ต</value>

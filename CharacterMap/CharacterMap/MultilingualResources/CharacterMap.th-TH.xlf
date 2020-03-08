@@ -148,7 +148,7 @@
         </trans-unit>
         <trans-unit id="SearchBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Search character name or unicode hex</source>
-          <target state="new">Search character name or unicode hex</target>
+          <target state="translated">ค้นหาตัวอักษรหรือค้นด้วยรหัส Unicode</target>
         </trans-unit>
         <trans-unit id="Settings_About.Text" translate="yes" xml:space="preserve">
           <source>About this application</source>
@@ -164,11 +164,11 @@
         </trans-unit>
         <trans-unit id="TxtFontIcon.Header" translate="yes" xml:space="preserve">
           <source>Font Icon</source>
-          <target state="needs-review-translation">Font Icon</target>
+          <target state="translated">ฟอนต์ไอคอน</target>
         </trans-unit>
         <trans-unit id="TxtSymbolIcon.Header" translate="yes" xml:space="preserve">
           <source>Symbol Icon</source>
-          <target state="needs-review-translation">Symbol Icon</target>
+          <target state="translated">ฟอนต์สัญลักษณ์</target>
         </trans-unit>
         <trans-unit id="TxtTitle.Text" translate="yes" xml:space="preserve">
           <source>Character Map</source>
@@ -176,7 +176,7 @@
         </trans-unit>
         <trans-unit id="TxtUnicode.Header" translate="yes" xml:space="preserve">
           <source>Unicode</source>
-          <target state="needs-review-translation">Unicode</target>
+          <target state="translated">Unicode</target>
         </trans-unit>
         <trans-unit id="TxtXamlCode.Header" translate="yes" xml:space="preserve">
           <source>Glyph Code</source>
@@ -244,67 +244,67 @@
         </trans-unit>
         <trans-unit id="FontPropXaml.Text" translate="yes" xml:space="preserve">
           <source>XAML FontFamily Source</source>
-          <target state="new">XAML FontFamily Source</target>
+          <target state="translated">XAML FontFamily Source</target>
         </trans-unit>
         <trans-unit id="FilePickerConfirm" translate="yes" xml:space="preserve">
           <source>Import</source>
-          <target state="new">Import</target>
+          <target state="translated">นำเข้า</target>
         </trans-unit>
         <trans-unit id="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Import Fonts</source>
-          <target state="new">Import Fonts</target>
+          <target state="translated">นำเข้าฟอนต์</target>
         </trans-unit>
         <trans-unit id="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Open Font</source>
-          <target state="new">Open Font</target>
+          <target state="translated">เปิดฟอนต์</target>
         </trans-unit>
         <trans-unit id="OpenFontPickerConfirm" translate="yes" xml:space="preserve">
           <source>Open</source>
-          <target state="new">Open</target>
+          <target state="translated">เปิด</target>
         </trans-unit>
         <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
           <source>Collection Name</source>
-          <target state="new">Collection Name</target>
+          <target state="translated">ชื่อรายการสะสม</target>
         </trans-unit>
         <trans-unit id="DigCreateCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Create</source>
-          <target state="new">Create</target>
+          <target state="translated">สร้าง</target>
         </trans-unit>
         <trans-unit id="DigCreateCollection.Title" translate="yes" xml:space="preserve">
           <source>Create Collection</source>
-          <target state="new">Create Collection</target>
+          <target state="translated">สร้างรายการสะสม</target>
         </trans-unit>
         <trans-unit id="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Delete Collection</source>
-          <target state="new">Delete Collection</target>
+          <target state="translated">ลบรายการสะสม</target>
         </trans-unit>
         <trans-unit id="DigCreateCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="new">Cancel</target>
+          <target state="translated">ยกเลิก</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Delete</source>
-          <target state="new">Delete</target>
+          <target state="translated">ลบ</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="new">Cancel</target>
+          <target state="translated">ยกเลิก</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this collection?</source>
-          <target state="new">Are you sure you want to delete this collection?</target>
+          <target state="translated">คุณแน่ในหรือไม่ว่าคุณต้องการลบรายการสะสมนี้?</target>
         </trans-unit>
         <trans-unit id="DigRenameCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Rename</source>
-          <target state="new">Rename</target>
+          <target state="translated">เปลี่ยนชื่อ</target>
         </trans-unit>
         <trans-unit id="DigRenameCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="new">Cancel</target>
+          <target state="translated">ยกเลิก</target>
         </trans-unit>
         <trans-unit id="DigRenameCollection.Title" translate="yes" xml:space="preserve">
           <source>Rename Collection</source>
-          <target state="new">Rename Collection</target>
+          <target state="translated">เปลิ่ยนชื่อรายการสะสม</target>
         </trans-unit>
         <trans-unit id="OptionAllFonts.Text" translate="yes" xml:space="preserve">
           <source>All Fonts</source>
@@ -320,67 +320,67 @@
         </trans-unit>
         <trans-unit id="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Rename Collection</source>
-          <target state="new">Rename Collection</target>
+          <target state="translated">เปลี่ยนชื่อรายการสะสม</target>
         </trans-unit>
         <trans-unit id="FontListDisplayHeader.Text" translate="yes" xml:space="preserve">
           <source>Fonts List Display</source>
-          <target state="new">Fonts List Display</target>
+          <target state="translated">รายการแสดงผลฟอนต์</target>
         </trans-unit>
         <trans-unit id="FontListDisplayToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Show Font names using System default font</source>
-          <target state="new">Show Font names using System default font</target>
+          <target state="translated">แสดงชื่อฟอนต์ด้วยฟอนต์ระบบ</target>
         </trans-unit>
         <trans-unit id="FontListDisplayToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Show Font names using actual font</source>
-          <target state="new">Show Font names using actual font</target>
+          <target state="translated">แลดงชื่อฟอนต์โดยใช้ฟอนต์นั้นๆ</target>
         </trans-unit>
         <trans-unit id="FontPropCount.Text" translate="yes" xml:space="preserve">
           <source>Glyph Count</source>
-          <target state="new">Glyph Count</target>
+          <target state="translated">จำนวนตัวอักษร</target>
         </trans-unit>
         <trans-unit id="OptionMonospacedFonts.Text" translate="yes" xml:space="preserve">
           <source>Monospaced Fonts</source>
-          <target state="new">Monospaced Fonts</target>
+          <target state="translated">ฟอนต์อักษรเท่ากัน</target>
         </trans-unit>
         <trans-unit id="OptionSansSerifFonts.Text" translate="yes" xml:space="preserve">
           <source>Sans Serif Fonts</source>
-          <target state="new">Sans Serif Fonts</target>
+          <target state="translated">ฟอนต์ไม่มีหาง (ฟอนต์เรียบ)</target>
         </trans-unit>
         <trans-unit id="OptionSerifFonts.Text" translate="yes" xml:space="preserve">
           <source>Serif Fonts</source>
-          <target state="new">Serif Fonts</target>
+          <target state="translated">ฟอนต์มีหาง</target>
         </trans-unit>
         <trans-unit id="NewCollectionItem.Text" translate="yes" xml:space="preserve">
           <source>New Collection</source>
-          <target state="new">New Collection</target>
+          <target state="translated">สร้างรายการสะสมใหม่</target>
         </trans-unit>
         <trans-unit id="RemoveFromCollectionItem.Text" translate="yes" xml:space="preserve">
           <source>Remove from Collection</source>
-          <target state="new">Remove from Collection</target>
+          <target state="translated">ลบจากรายการสะสม</target>
         </trans-unit>
         <trans-unit id="AddToCollectionFlyout.Text" translate="yes" xml:space="preserve">
           <source>Add to Collection</source>
-          <target state="new">Add to Collection</target>
+          <target state="translated">เพิ่มเข้ารายการสะสม</target>
         </trans-unit>
         <trans-unit id="InstantSearchToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Instant search disabled</source>
-          <target state="new">Instant search disabled</target>
+          <target state="translated">ปิดการค้นหาทันทีขณะเขียน</target>
         </trans-unit>
         <trans-unit id="InstantSearchToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Instant search enabled</source>
-          <target state="new">Instant search enabled</target>
+          <target state="translated">เปิดการค้นหาทันทีขณะเขียน</target>
         </trans-unit>
         <trans-unit id="SearchResultsSlider.Header" translate="yes" xml:space="preserve">
           <source>Maximum search results</source>
-          <target state="new">Maximum search results</target>
+          <target state="translated">จำนวนผลการค้นหาสูงสุด</target>
         </trans-unit>
         <trans-unit id="FontPropCharCount.Text" translate="yes" xml:space="preserve">
           <source>Character Count</source>
-          <target state="new">Character Count</target>
+          <target state="translated">จำนวนตัวอักษร</target>
         </trans-unit>
         <trans-unit id="FontPropFilePath.Text" translate="yes" xml:space="preserve">
           <source>File Path</source>
-          <target state="new">File Path</target>
+          <target state="translated">ที่ตั้งของไฟล์</target>
         </trans-unit>
         <trans-unit id="DWriteSourceAppxPackage" translate="yes" xml:space="preserve">
           <source>Microsoft Store</source>
@@ -388,11 +388,11 @@
         </trans-unit>
         <trans-unit id="DWriteSourcePerMachine" translate="yes" xml:space="preserve">
           <source>All Users</source>
-          <target state="new">All Users</target>
+          <target state="translated">ผู้ใช้ทั้งหมด</target>
         </trans-unit>
         <trans-unit id="DWriteSourcePerUser" translate="yes" xml:space="preserve">
           <source>Current User only</source>
-          <target state="new">Current User only</target>
+          <target state="translated">ผู้ใช้ปัจจุบันเท่านั้น</target>
         </trans-unit>
         <trans-unit id="DWriteSourceRemoteFontProvider" translate="yes" xml:space="preserve">
           <source>Cloud Provider</source>
