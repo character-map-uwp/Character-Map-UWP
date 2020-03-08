@@ -714,6 +714,14 @@ Turning this on can have a minor impact on scrolling performance.</target>
           <source>Path Geometry</source>
           <target state="new">Path Geometry</target>
         </trans-unit>
+        <trans-unit id="UseSystemLanguage" translate="yes" xml:space="preserve">
+          <source>Use system language setting</source>
+          <target state="new">Use system language setting</target>
+        </trans-unit>
+        <trans-unit id="SettingsNeedRestart.Text" translate="yes" xml:space="preserve">
+          <source>Change will apply after restart</source>
+          <target state="new">Change will apply after restart</target>
+        </trans-unit>
       </group>
     </body>
   </file>

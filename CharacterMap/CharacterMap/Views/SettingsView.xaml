@@ -99,6 +99,7 @@
                         Text="#UserInterface" />
 
                     <TextBlock
+                        x:Uid="SettingsLanguageHeader"
                         Style="{StaticResource HeaderStyle}"
                         Text="#Language" />
 
@@ -109,11 +110,11 @@
                         SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}"/>
                     
                     <TextBlock
+                        x:Uid="SettingsNeedRestart"
                         Margin="4 4 0 4"
                         FontStyle="Italic"
                         OpticalMarginAlignment="None"
                         Style="{StaticResource DescriptionStyle}"
-                        Text="Change will apply after restart"
                         Visibility="{x:Bind core:Converters.CompareLanguageToSetting(Settings.AppLanguage), Mode=OneWay}"/> 
 
                     <TextBlock

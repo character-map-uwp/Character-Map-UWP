@@ -645,4 +645,10 @@ Turning this on can have a minor impact on scrolling performance.</value>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
   </data>
+  <data name="UseSystemLanguage" xml:space="preserve">
+    <value>Use system language setting</value>
+  </data>
+  <data name="SettingsNeedRestart.Text" xml:space="preserve">
+    <value>Change will apply after restart</value>
+  </data>
 </root>
