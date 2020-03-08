@@ -43,6 +43,11 @@ namespace CharacterMap.Controls
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
             StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"<!-- If possible, please describe what you were doing before the issue occurred -->");
+            sb.AppendLine();
+            sb.AppendLine();
+            sb.AppendLine();
+            sb.AppendLine("<!-- Please do not edit below this line -->");
             sb.AppendLine($"```\n{ExceptionBlock.Text}\n```");
             sb.AppendLine();
             sb.AppendLine($"**OS Version**: {SystemInformation.OperatingSystemVersion}");

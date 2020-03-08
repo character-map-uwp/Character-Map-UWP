@@ -49,7 +49,7 @@ namespace CharacterMap.Services
 
         public bool IsSymbolFont(InstalledFont font)
         {
-            return font.IsSymbolFont || SymbolCollection.Fonts.Contains(font.Name);
+            return font != null && (font.IsSymbolFont || SymbolCollection.Fonts.Contains(font.Name));
         }
 
         public async Task LoadCollectionsAsync()
