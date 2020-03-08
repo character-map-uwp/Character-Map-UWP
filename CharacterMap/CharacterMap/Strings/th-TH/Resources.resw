@@ -195,10 +195,247 @@
   <data name="OptionSymbolFonts.Text" xml:space="preserve">
     <value>ฟอนต์สัญลักษณ์</value>
   </data>
+  <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
+    <value>ฟอนต์จากอินเตอร์เน็ต</value>
+  </data>
+  <data name="DWriteSourceUnknown" xml:space="preserve">
+    <value>ไม่ได้ระบุ</value>
+  </data>
+  <data name="FontPropInstallType.Text" xml:space="preserve">
+    <value>ประเภทฟอนต์</value>
+  </data>
+  <data name="OptionAppxFonts.Text" xml:space="preserve">
+    <value>ฟอนต์จาก Microsoft Store</value>
+  </data>
+  <data name="OptionCloudFonts.Text" xml:space="preserve">
+    <value>ฟอนต์ออนไลน์</value>
+  </data>
+  <data name="OptionColorFonts.Text" xml:space="preserve">
+    <value>ฟอนต์สี</value>
+  </data>
+  <data name="OptionDecorativeFonts.Text" xml:space="preserve">
+    <value>ฟอนต์ตกแต่ง</value>
+  </data>
+  <data name="OptionMoreFilters.Text" xml:space="preserve">
+    <value>ฟอนต์อื่นๆ </value>
+  </data>
+  <data name="OptionScriptFonts.Text" xml:space="preserve">
+    <value>ฟอนต์ตัวเขียน</value>
+  </data>
+  <data name="BtnSaveSvgRaw.Text" xml:space="preserve">
+    <value>บันทึกเป็น SVG</value>
+  </data>
+  <data name="StatusBarFontCount" xml:space="preserve">
+    <value>{0} ฟอนต์</value>
+  </data>
+  <data name="FontPropFileSize.Text" xml:space="preserve">
+    <value>ขนาดไฟล์</value>
+  </data>
+  <data name="InstallTypeImported" xml:space="preserve">
+    <value>ไม่ได้ติดตั้ง (นำเข้า)</value>
+  </data>
+  <data name="StatusBarCharacterCount" xml:space="preserve">
+    <value>{0} ตัวอักษร</value>
+  </data>
+  <data name="SearchDelaySelector.Header" xml:space="preserve">
+    <value>ดีเลย์ก่อนค้นหา (ms)</value>
+  </data>
+  <data name="DigSettings.PrimaryButtonText" xml:space="preserve">
+    <value>ตกลง</value>
+  </data>
+  <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
+    <value>ค้นหาทันที</value>
+  </data>
+  <data name="CharacterSavedMessage.Text" xml:space="preserve">
+    <value>บันทึกไว้ที่</value>
+  </data>
+  <data name="NotificationAddedToCollection" xml:space="preserve">
+    <value>ฟอนต์ {0} ถูกเพิ่มเข้ารายการ "{1}" แล้ว</value>
+  </data>
+  <data name="BtnOpenFile.Content" xml:space="preserve">
+    <value>เปิดฟอนต์</value>
+  </data>
+  <data name="BtnOpenFolder.Content" xml:space="preserve">
+    <value>เปิดโฟล์เดอร์</value>
+  </data>
+  <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ซ่อนรายการฟอนต์</value>
+  </data>
+  <data name="NotificationImportFailed" xml:space="preserve">
+    <value>นำเข้าฟอนต์ล้มเหลว</value>
+  </data>
+  <data name="NotificationMultipleFontsAdded" xml:space="preserve">
+    <value>{0} ไฟล์ได้ถูกเพิ่มเข้าไปในรายการเรียบร้อยแล้ว</value>
+  </data>
+  <data name="NotificationSingleFontAdded" xml:space="preserve">
+    <value>เพิ่มฟอนต์ {0} เข้ารายการสะสมเรียบร้อย</value>
+  </data>
+  <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>แสดงรายการฟอนต์</value>
+  </data>
+  <data name="BtnViewCollection.Content" xml:space="preserve">
+    <value>แสดงรายการสะสม</value>
+  </data>
+  <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>อื่นๆ </value>
+  </data>
+  <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>กรองรายการฟอนต์</value>
+  </data>
+  <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>สลับเต็มจอ</value>
+  </data>
+  <data name="DlgDeleteFont.Title" xml:space="preserve">
+    <value>คุณแน่ใจว่าคุณต้องการลบฟอนต์นี้ออกจากรายการสะสม?</value>
+  </data>
+  <data name="NotificationCollectionDeleted" xml:space="preserve">
+    <value>ลบรายการสะสม "{0}" แล้ว</value>
+  </data>
+  <data name="DlgException.PrimaryButtonText" xml:space="preserve">
+    <value>ตกลง</value>
+  </data>
+  <data name="DlgException.Title" xml:space="preserve">
+    <value>เกิดการผิดพลาดบางอย่าง</value>
+  </data>
+  <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
+    <value>คัดลอกรายละเอียดข้อผิดพลาดแล้วรายงานให้นักพัฒนา (บน GitHub)</value>
+  </data>
+  <data name="DlgExceptionExpander.Header" xml:space="preserve">
+    <value>ดูรายละเอียดข้อผิดพลาด</value>
+  </data>
+  <data name="DlgExceptionMessage.Text" xml:space="preserve">
+    <value>หากคุณเจอปัญหานี้เป็นประจำ กรุณาแจ้งให้เราทราบ เราจะได้ช่วยแก้ไขปัญหาให้ในภายหลัง ด้วยการรายงานข้อผิดพลากนี้บนเว็บ GitHub.</value>
+  </data>
+  <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ปิด</value>
+  </data>
+  <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>คัดลอก</value>
+  </data>
+  <data name="BtnRateAndReview.Content" xml:space="preserve">
+    <value>ให้คะแนนความพอใจและความเห็น</value>
+  </data>
+  <data name="BtnXAMLGeometry.Content" xml:space="preserve">
+    <value>คลิกเพื่อดู</value>
+  </data>
+  <data name="RbThemeDark.Content" xml:space="preserve">
+    <value>มืด</value>
+  </data>
+  <data name="RbThemeLight.Content" xml:space="preserve">
+    <value>สว่าง</value>
+  </data>
+  <data name="RbThemeSystem.Content" xml:space="preserve">
+    <value>ตามการตั้งค่าระบบ</value>
+  </data>
+  <data name="RbUseActualFont.Content" xml:space="preserve">
+    <value>แสดงตัวอย่างฟอนต์</value>
+  </data>
+  <data name="RbUseSystemFont.Content" xml:space="preserve">
+    <value>ใช้ฟอนต์ระบบ</value>
+  </data>
+  <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
+    <value>ค้นหาทันทีที่เขียน. หากปิดแล้ว เมื่อจะค้นหาต้องกด Enter หรือคลิกที่ปุ่มค้นหา</value>
+  </data>
+  <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
+    <value>ค้นหาตัวอักษร</value>
+  </data>
+  <data name="SettingsCharGridDescription.Text" xml:space="preserve">
+    <value>ขนาดการแสดงผลตัวอักษรในตาราง. ขนาดใหญ่เกินไปอาจมีผลต่อความเร็วแอป.</value>
+  </data>
   <data name="SettingsCharGridHeader.Text" xml:space="preserve">
     <value>ขนาดตารางแสดงตัวอักษร</value>
   </data>
+  <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
+    <value>ตัวอย่างตารางตัวอักษร</value>
+  </data>
+  <data name="SettingsDevToolsDescription.Text" xml:space="preserve">
+    <value>แสดงเครื่องมือช่วยนักพัฒนา. เช่นโค้ดสำหรับไอคอนตัวอักษร.</value>
+  </data>
+  <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
+    <value>ฟังชั่นก์สำหรับนักพัฒนา</value>
+  </data>
+  <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
+    <value>แสดงเครื่องมือนักพัฒนา</value>
+  </data>
+  <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
+    <value>เลือกภาษาโค้ดที่จะแสดงผลในเครื่องมือนักพัฒนา</value>
+  </data>
+  <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
+    <value>ภาษา</value>
+  </data>
+  <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
+    <value>แสดงอนิเมชั่นเมื่อเปลื่ยนขนาดโปรแกรม.
+เมื่อเปิดฟังชั่นก์นี้อาจมีผลต่อประสิทธิภาพแอป.</value>
+  </data>
+  <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
+    <value>ใช้อนิเมชั่นเมื่อย่อ-ขยายหน้าต่างโปรแกรม</value>
+  </data>
+  <data name="SettingsExportHeader.Text" xml:space="preserve">
+    <value>บันทึก</value>
+  </data>
+  <data name="SettingsFontListDescription.Text" xml:space="preserve">
+    <value>เลือกฟอนต์ที่จะแสดงในรายการแสดงผลรายการฟอนต์.</value>
+  </data>
+  <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
+    <value>ตัวอย่างแสดงรายการฟอนต์</value>
+  </data>
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>ตั้งค่า</value>
+  </data>
+  <data name="SettingsLangOverride.OffContent" xml:space="preserve">
+    <value>ใช้ภาษาเริ่มต้น</value>
+  </data>
+  <data name="SettingsLangOverride.OnContent" xml:space="preserve">
+    <value>ใช้ภาษากำหนดเอง</value>
+  </data>
+  <data name="SettingsLanguageDescription.Text" xml:space="preserve">
+    <value>กำหนดภาษาแสดงผลแอป.
+จะมีผลเมื่อเปิดแอปครั้งถัดไป.</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text" xml:space="preserve">
+    <value>ตั้งค่าภาษา</value>
+  </data>
+  <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
+    <value>ขนาดรูป PNG ที่บันทึก.</value>
+  </data>
+  <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
+    <value>ขนาดรูป PNG</value>
+  </data>
+  <data name="SettingsShadowsDescription.Text" xml:space="preserve">
+    <value>เปิดเอฟเฟ็คเงาในแอป. จะเห็นได้ชัดเจนเมื่อใช้แอปในชุดรูปแบบสว่าง.
+เปิดหรือปิดไม่มีผลกับสมรรถภาพแอป.
+จะมีผลเมื่อเปิดแอปครั้งหน้า (เริ่มต้นแอปใหม่).</value>
+  </data>
+  <data name="SettingsShadowsHeader.Text" xml:space="preserve">
+    <value>ใช้เอฟเฟ็คเงา</value>
+  </data>
+  <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
+    <value>ใช้อนิเมชั่นขณะโหลดฟอนต์, เปลี่ยนฟอนต์, เปลี่ยนตัวอักษรที่เลือก.
+เปิดการตั้งค่านี้ไม่มีผลเสียต่อสมรรถภาพแอป.</value>
+  </data>
+  <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
+    <value>ใช้อนิเมชั่น</value>
+  </data>
+  <data name="SettingsThemeHeader.Text" xml:space="preserve">
+    <value>ชุดรูปแบบ</value>
+  </data>
+  <data name="SettingsUIHeader.Text" xml:space="preserve">
+    <value>หน้าตาแอป</value>
+  </data>
+  <data name="SettingsUnicodeDescription.Text" xml:space="preserve">
+    <value>แสดงรหัส Unicode ของตัวอักษรนั้นๆ ข้างล่างตารางแสดงผลตัวอักษร.
+เปิดการตั้งค่านี้อาจมีผลต่อความเร็วในการแสดงผลตัวอักษรขณะเลื่อนดูรายการ.</value>
+  </data>
+  <data name="SettingsUnicodeHeader.Text" xml:space="preserve">
+    <value>แสดงรหัส Unicode ของตัวอักษร</value>
+  </data>
+  <data name="TxtPathGeometry.Text" xml:space="preserve">
+    <value>Path Geometry</value>
+  </data>
+  <data name="UseSystemLanguage" xml:space="preserve">
+    <value>ใช้ภาษาตามการตั้งค่าระบบ</value>
+  </data>
+  <data name="SettingsNeedRestart.Text" xml:space="preserve">
+    <value>จะมีผลเมื่อเปิดแอปครั้งหน้า (เริ่มต้นแอปใหม่)</value>
   </data>
 </root>

@@ -396,199 +396,199 @@
         </trans-unit>
         <trans-unit id="DWriteSourceRemoteFontProvider" translate="yes" xml:space="preserve">
           <source>Cloud Provider</source>
-          <target state="new">Cloud Provider</target>
+          <target state="translated">ฟอนต์จากอินเตอร์เน็ต</target>
         </trans-unit>
         <trans-unit id="DWriteSourceUnknown" translate="yes" xml:space="preserve">
           <source>Undefined</source>
-          <target state="new">Undefined</target>
+          <target state="translated">ไม่ได้ระบุ</target>
         </trans-unit>
         <trans-unit id="FontPropInstallType.Text" translate="yes" xml:space="preserve">
           <source>Install Type</source>
-          <target state="new">Install Type</target>
+          <target state="translated">ประเภทฟอนต์</target>
         </trans-unit>
         <trans-unit id="OptionAppxFonts.Text" translate="yes" xml:space="preserve">
           <source>From Microsoft Store</source>
-          <target state="new">From Microsoft Store</target>
+          <target state="translated">ฟอนต์จาก Microsoft Store</target>
         </trans-unit>
         <trans-unit id="OptionCloudFonts.Text" translate="yes" xml:space="preserve">
           <source>Cloud-based Fonts</source>
-          <target state="new">Cloud-based Fonts</target>
+          <target state="translated">ฟอนต์ออนไลน์</target>
         </trans-unit>
         <trans-unit id="OptionColorFonts.Text" translate="yes" xml:space="preserve">
           <source>Color Fonts</source>
-          <target state="new">Color Fonts</target>
+          <target state="translated">ฟอนต์สี</target>
         </trans-unit>
         <trans-unit id="OptionDecorativeFonts.Text" translate="yes" xml:space="preserve">
           <source>Decorative Fonts</source>
-          <target state="new">Decorative Fonts</target>
+          <target state="translated">ฟอนต์ตกแต่ง</target>
         </trans-unit>
         <trans-unit id="OptionMoreFilters.Text" translate="yes" xml:space="preserve">
           <source>More</source>
-          <target state="new">More</target>
+          <target state="translated">ฟอนต์อื่นๆ </target>
         </trans-unit>
         <trans-unit id="OptionScriptFonts.Text" translate="yes" xml:space="preserve">
           <source>Script Fonts</source>
-          <target state="new">Script Fonts</target>
+          <target state="translated">ฟอนต์ตัวเขียน</target>
         </trans-unit>
         <trans-unit id="BtnSaveSvgRaw.Text" translate="yes" xml:space="preserve">
           <source>Save as SVG</source>
-          <target state="new">Save as SVG</target>
+          <target state="translated">บันทึกเป็น SVG</target>
         </trans-unit>
         <trans-unit id="StatusBarFontCount" translate="yes" xml:space="preserve">
           <source>{0} Font Families</source>
-          <target state="new">{0} Font Families</target>
+          <target state="translated">{0} ฟอนต์</target>
         </trans-unit>
         <trans-unit id="FontPropFileSize.Text" translate="yes" xml:space="preserve">
           <source>File Size</source>
-          <target state="new">File Size</target>
+          <target state="translated">ขนาดไฟล์</target>
         </trans-unit>
         <trans-unit id="InstallTypeImported" translate="yes" xml:space="preserve">
           <source>Not Installed (Imported)</source>
-          <target state="new">Not Installed (Imported)</target>
+          <target state="translated">ไม่ได้ติดตั้ง (นำเข้า)</target>
         </trans-unit>
         <trans-unit id="StatusBarCharacterCount" translate="yes" xml:space="preserve">
           <source>{0} Characters</source>
-          <target state="new">{0} Characters</target>
+          <target state="translated">{0} ตัวอักษร</target>
         </trans-unit>
         <trans-unit id="SearchDelaySelector.Header" translate="yes" xml:space="preserve">
           <source>Delay before search (ms)</source>
-          <target state="new">Delay before search (ms)</target>
+          <target state="translated">ดีเลย์ก่อนค้นหา (ms)</target>
         </trans-unit>
         <trans-unit id="DigSettings.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>OK</source>
-          <target state="new">OK</target>
+          <target state="translated">ตกลง</target>
         </trans-unit>
         <trans-unit id="InstantSearchToggleHeader.Text" translate="yes" xml:space="preserve">
           <source>Instant Search</source>
-          <target state="new">Instant Search</target>
+          <target state="translated">ค้นหาทันที</target>
         </trans-unit>
         <trans-unit id="CharacterSavedMessage.Text" translate="yes" xml:space="preserve">
           <source>Saved to</source>
-          <target state="new">Saved to</target>
+          <target state="translated">บันทึกไว้ที่</target>
         </trans-unit>
         <trans-unit id="NotificationAddedToCollection" translate="yes" xml:space="preserve">
           <source>{0} was added to "{1}" collection</source>
-          <target state="new">{0} was added to "{1}" collection</target>
+          <target state="translated">ฟอนต์ {0} ถูกเพิ่มเข้ารายการ "{1}" แล้ว</target>
         </trans-unit>
         <trans-unit id="BtnOpenFile.Content" translate="yes" xml:space="preserve">
           <source>Open File</source>
-          <target state="new">Open File</target>
+          <target state="translated">เปิดฟอนต์</target>
         </trans-unit>
         <trans-unit id="BtnOpenFolder.Content" translate="yes" xml:space="preserve">
           <source>Open Folder</source>
-          <target state="new">Open Folder</target>
+          <target state="translated">เปิดโฟล์เดอร์</target>
         </trans-unit>
         <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Hide font pane</source>
-          <target state="new">Hide font pane</target>
+          <target state="translated">ซ่อนรายการฟอนต์</target>
         </trans-unit>
         <trans-unit id="NotificationImportFailed" translate="yes" xml:space="preserve">
           <source>Import Failed</source>
-          <target state="new">Import Failed</target>
+          <target state="translated">นำเข้าฟอนต์ล้มเหลว</target>
         </trans-unit>
         <trans-unit id="NotificationMultipleFontsAdded" translate="yes" xml:space="preserve">
           <source>{0} files were added to your collection</source>
-          <target state="new">{0} files were added to your collection</target>
+          <target state="translated">{0} ไฟล์ได้ถูกเพิ่มเข้าไปในรายการเรียบร้อยแล้ว</target>
         </trans-unit>
         <trans-unit id="NotificationSingleFontAdded" translate="yes" xml:space="preserve">
           <source>{0} was added to your collection</source>
-          <target state="new">{0} was added to your collection</target>
+          <target state="translated">เพิ่มฟอนต์ {0} เข้ารายการสะสมเรียบร้อย</target>
         </trans-unit>
         <trans-unit id="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Show font pane</source>
-          <target state="new">Show font pane</target>
+          <target state="translated">แสดงรายการฟอนต์</target>
         </trans-unit>
         <trans-unit id="BtnViewCollection.Content" translate="yes" xml:space="preserve">
           <source>View Collection</source>
-          <target state="new">View Collection</target>
+          <target state="translated">แสดงรายการสะสม</target>
         </trans-unit>
         <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>More</source>
-          <target state="new">More</target>
+          <target state="translated">อื่นๆ </target>
         </trans-unit>
         <trans-unit id="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Filter fonts</source>
-          <target state="new">Filter fonts</target>
+          <target state="translated">กรองรายการฟอนต์</target>
         </trans-unit>
         <trans-unit id="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Fullscreen</source>
-          <target state="new">Toggle Fullscreen</target>
+          <target state="translated">สลับเต็มจอ</target>
         </trans-unit>
         <trans-unit id="DlgDeleteFont.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this font from your collection?</source>
-          <target state="new">Are you sure you want to delete this font from your collection?</target>
+          <target state="translated">คุณแน่ใจว่าคุณต้องการลบฟอนต์นี้ออกจากรายการสะสม?</target>
         </trans-unit>
         <trans-unit id="NotificationCollectionDeleted" translate="yes" xml:space="preserve">
           <source>"{0}" collection deleted</source>
-          <target state="new">"{0}" collection deleted</target>
+          <target state="translated">ลบรายการสะสม "{0}" แล้ว</target>
         </trans-unit>
         <trans-unit id="DlgException.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>OK</source>
-          <target state="new">OK</target>
+          <target state="translated">ตกลง</target>
         </trans-unit>
         <trans-unit id="DlgException.Title" translate="yes" xml:space="preserve">
           <source>Something went wrong</source>
-          <target state="new">Something went wrong</target>
+          <target state="translated">เกิดการผิดพลาดบางอย่าง</target>
         </trans-unit>
         <trans-unit id="DlgExceptionCopyMessage.Text" translate="yes" xml:space="preserve">
           <source>Copy error to Clipboard and open GitHub</source>
-          <target state="new">Copy error to Clipboard and open GitHub</target>
+          <target state="translated">คัดลอกรายละเอียดข้อผิดพลาดแล้วรายงานให้นักพัฒนา (บน GitHub)</target>
         </trans-unit>
         <trans-unit id="DlgExceptionExpander.Header" translate="yes" xml:space="preserve">
           <source>View Full Exception details</source>
-          <target state="new">View Full Exception details</target>
+          <target state="translated">ดูรายละเอียดข้อผิดพลาด</target>
         </trans-unit>
         <trans-unit id="DlgExceptionMessage.Text" translate="yes" xml:space="preserve">
           <source>To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</source>
-          <target state="new">To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</target>
+          <target state="translated">หากคุณเจอปัญหานี้เป็นประจำ กรุณาแจ้งให้เราทราบ เราจะได้ช่วยแก้ไขปัญหาให้ในภายหลัง ด้วยการรายงานข้อผิดพลากนี้บนเว็บ GitHub.</target>
         </trans-unit>
         <trans-unit id="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Close</source>
-          <target state="new">Close</target>
+          <target state="translated">ปิด</target>
         </trans-unit>
         <trans-unit id="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Copy</source>
-          <target state="new">Copy</target>
+          <target state="translated">คัดลอก</target>
         </trans-unit>
         <trans-unit id="BtnRateAndReview.Content" translate="yes" xml:space="preserve">
           <source>Rate &amp; Review</source>
-          <target state="new">Rate &amp; Review</target>
+          <target state="translated">ให้คะแนนความพอใจและความเห็น</target>
         </trans-unit>
         <trans-unit id="BtnXAMLGeometry.Content" translate="yes" xml:space="preserve">
           <source>Click to view</source>
-          <target state="new">Click to view</target>
+          <target state="translated">คลิกเพื่อดู</target>
         </trans-unit>
         <trans-unit id="RbThemeDark.Content" translate="yes" xml:space="preserve">
           <source>Dark</source>
-          <target state="new">Dark</target>
+          <target state="translated">มืด</target>
         </trans-unit>
         <trans-unit id="RbThemeLight.Content" translate="yes" xml:space="preserve">
           <source>Light</source>
-          <target state="new">Light</target>
+          <target state="translated">สว่าง</target>
         </trans-unit>
         <trans-unit id="RbThemeSystem.Content" translate="yes" xml:space="preserve">
           <source>Windows default</source>
-          <target state="new">Windows default</target>
+          <target state="translated">ตามการตั้งค่าระบบ</target>
         </trans-unit>
         <trans-unit id="RbUseActualFont.Content" translate="yes" xml:space="preserve">
           <source>Use actual font</source>
-          <target state="new">Use actual font</target>
+          <target state="translated">แสดงตัวอย่างฟอนต์</target>
         </trans-unit>
         <trans-unit id="RbUseSystemFont.Content" translate="yes" xml:space="preserve">
           <source>Use system font</source>
-          <target state="new">Use system font</target>
+          <target state="translated">ใช้ฟอนต์ระบบ</target>
         </trans-unit>
         <trans-unit id="SettingsCharacterSearchDescription.Text" translate="yes" xml:space="preserve">
           <source>Toggle instant search. If disabled, you can start a search by using the enter key or pressing the search icon.</source>
-          <target state="new">Toggle instant search. If disabled, you can start a search by using the enter key or pressing the search icon.</target>
+          <target state="translated">ค้นหาทันทีที่เขียน. หากปิดแล้ว เมื่อจะค้นหาต้องกด Enter หรือคลิกที่ปุ่มค้นหา</target>
         </trans-unit>
         <trans-unit id="SettingsCharacterSearchHeader.Text" translate="yes" xml:space="preserve">
           <source>Character Search</source>
-          <target state="new">Character Search</target>
+          <target state="translated">ค้นหาตัวอักษร</target>
         </trans-unit>
         <trans-unit id="SettingsCharGridDescription.Text" translate="yes" xml:space="preserve">
           <source>The size of individual characters inside the character grid. Smaller sizes may affect performance.</source>
-          <target state="new">The size of individual characters inside the character grid. Smaller sizes may affect performance.</target>
+          <target state="translated">ขนาดการแสดงผลตัวอักษรในตาราง. ขนาดใหญ่เกินไปอาจมีผลต่อความเร็วแอป.</target>
         </trans-unit>
         <trans-unit id="SettingsCharGridHeader.Text" translate="yes" xml:space="preserve">
           <source>Character Grid Size</source>
@@ -596,49 +596,49 @@
         </trans-unit>
         <trans-unit id="SettingsCharPreviewHint.Text" translate="yes" xml:space="preserve">
           <source>Character grid preview</source>
-          <target state="new">Character grid preview</target>
+          <target state="translated">ตัวอย่างตารางตัวอักษร</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsDescription.Text" translate="yes" xml:space="preserve">
           <source>Show the tools for XAML developers, like Symbol Icon and Font Icon.</source>
-          <target state="new">Show the tools for XAML developers, like Symbol Icon and Font Icon.</target>
+          <target state="translated">แสดงเครื่องมือช่วยนักพัฒนา. เช่นโค้ดสำหรับไอคอนตัวอักษร.</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsGroupHeader.Text" translate="yes" xml:space="preserve">
           <source>Developer Features</source>
-          <target state="new">Developer Features</target>
+          <target state="translated">ฟังชั่นก์สำหรับนักพัฒนา</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsHeader.Text" translate="yes" xml:space="preserve">
           <source>Show developers features</source>
-          <target state="new">Show developers features</target>
+          <target state="translated">แสดงเครื่องมือนักพัฒนา</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsLangDescription.Text" translate="yes" xml:space="preserve">
           <source>Choose the dev language for developer features content.</source>
-          <target state="new">Choose the dev language for developer features content.</target>
+          <target state="translated">เลือกภาษาโค้ดที่จะแสดงผลในเครื่องมือนักพัฒนา</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsLangHeader.Text" translate="yes" xml:space="preserve">
           <source>Language</source>
-          <target state="new">Language</target>
+          <target state="translated">ภาษา</target>
         </trans-unit>
         <trans-unit id="SettingsExpensiveAnimationDescription.Text" translate="yes" xml:space="preserve">
           <source>Animates the character grid when resizing the window.
 Turning this on can incur a large performance penalty when resizing the window.</source>
-          <target state="new">Animates the character grid when resizing the window.
-Turning this on can incur a large performance penalty when resizing the window.</target>
+          <target state="translated">แสดงอนิเมชั่นเมื่อเปลื่ยนขนาดโปรแกรม.
+เมื่อเปิดฟังชั่นก์นี้อาจมีผลต่อประสิทธิภาพแอป.</target>
         </trans-unit>
         <trans-unit id="SettingsExpensiveAnimationHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable window resize animations</source>
-          <target state="new">Enable window resize animations</target>
+          <target state="translated">ใช้อนิเมชั่นเมื่อย่อ-ขยายหน้าต่างโปรแกรม</target>
         </trans-unit>
         <trans-unit id="SettingsExportHeader.Text" translate="yes" xml:space="preserve">
           <source>Export</source>
-          <target state="new">Export</target>
+          <target state="translated">บันทึก</target>
         </trans-unit>
         <trans-unit id="SettingsFontListDescription.Text" translate="yes" xml:space="preserve">
           <source>Choose the font used to display the names of fonts in the font list.</source>
-          <target state="new">Choose the font used to display the names of fonts in the font list.</target>
+          <target state="translated">เลือกฟอนต์ที่จะแสดงในรายการแสดงผลรายการฟอนต์.</target>
         </trans-unit>
         <trans-unit id="SettingsFontListPreviewHint.Text" translate="yes" xml:space="preserve">
           <source>Font list preview</source>
-          <target state="new">Font list preview</target>
+          <target state="translated">ตัวอย่างแสดงรายการฟอนต์</target>
         </trans-unit>
         <trans-unit id="SettingsHeader.Text" translate="yes" xml:space="preserve">
           <source>Settings</source>
@@ -646,81 +646,81 @@ Turning this on can incur a large performance penalty when resizing the window.<
         </trans-unit>
         <trans-unit id="SettingsLangOverride.OffContent" translate="yes" xml:space="preserve">
           <source>Use default language</source>
-          <target state="new">Use default language</target>
+          <target state="translated">ใช้ภาษาเริ่มต้น</target>
         </trans-unit>
         <trans-unit id="SettingsLangOverride.OnContent" translate="yes" xml:space="preserve">
           <source>Use override language</source>
-          <target state="new">Use override language</target>
+          <target state="translated">ใช้ภาษากำหนดเอง</target>
         </trans-unit>
         <trans-unit id="SettingsLanguageDescription.Text" translate="yes" xml:space="preserve">
           <source>Override the in-app language.
 Requires a restart to take effect.</source>
-          <target state="new">Override the in-app language.
-Requires a restart to take effect.</target>
+          <target state="translated">กำหนดภาษาแสดงผลแอป.
+จะมีผลเมื่อเปิดแอปครั้งถัดไป.</target>
         </trans-unit>
         <trans-unit id="SettingsLanguageHeader.Text" translate="yes" xml:space="preserve">
           <source>Language override</source>
-          <target state="new">Language override</target>
+          <target state="translated">ตั้งค่าภาษา</target>
         </trans-unit>
         <trans-unit id="SettingsPNGExportDescription.Text" translate="yes" xml:space="preserve">
           <source>The size in pixels of exported PNG images.</source>
-          <target state="new">The size in pixels of exported PNG images.</target>
+          <target state="translated">ขนาดรูป PNG ที่บันทึก.</target>
         </trans-unit>
         <trans-unit id="SettingsPNGExportHeader.Text" translate="yes" xml:space="preserve">
           <source>PNG Export Size</source>
-          <target state="new">PNG Export Size</target>
+          <target state="translated">ขนาดรูป PNG</target>
         </trans-unit>
         <trans-unit id="SettingsShadowsDescription.Text" translate="yes" xml:space="preserve">
           <source>Enables subtle depth shadows on the UI. Only noticeable when using the Light theme.
 Turning this on may have a small performance impact on weaker devices.
 Requires a restart to take effect.</source>
-          <target state="new">Enables subtle depth shadows on the UI. Only noticeable when using the Light theme.
-Turning this on may have a small performance impact on weaker devices.
-Requires a restart to take effect.</target>
+          <target state="translated">เปิดเอฟเฟ็คเงาในแอป. จะเห็นได้ชัดเจนเมื่อใช้แอปในชุดรูปแบบสว่าง.
+เปิดหรือปิดไม่มีผลกับสมรรถภาพแอป.
+จะมีผลเมื่อเปิดแอปครั้งหน้า (เริ่มต้นแอปใหม่).</target>
         </trans-unit>
         <trans-unit id="SettingsShadowsHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable shadows</source>
-          <target state="new">Enable shadows</target>
+          <target state="translated">ใช้เอฟเฟ็คเงา</target>
         </trans-unit>
         <trans-unit id="SettingsSimpleAnimationDescription.Text" translate="yes" xml:space="preserve">
           <source>Controls the animation for loading the font list, switching fonts and changing characters.
 Turning this on has negligible performance impact.</source>
-          <target state="new">Controls the animation for loading the font list, switching fonts and changing characters.
-Turning this on has negligible performance impact.</target>
+          <target state="translated">ใช้อนิเมชั่นขณะโหลดฟอนต์, เปลี่ยนฟอนต์, เปลี่ยนตัวอักษรที่เลือก.
+เปิดการตั้งค่านี้ไม่มีผลเสียต่อสมรรถภาพแอป.</target>
         </trans-unit>
         <trans-unit id="SettingsSimpleAnimationHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable simple animations</source>
-          <target state="new">Enable simple animations</target>
+          <target state="translated">ใช้อนิเมชั่น</target>
         </trans-unit>
         <trans-unit id="SettingsThemeHeader.Text" translate="yes" xml:space="preserve">
           <source>Theme</source>
-          <target state="new">Theme</target>
+          <target state="translated">ชุดรูปแบบ</target>
         </trans-unit>
         <trans-unit id="SettingsUIHeader.Text" translate="yes" xml:space="preserve">
           <source>User Interface</source>
-          <target state="new">User Interface</target>
+          <target state="translated">หน้าตาแอป</target>
         </trans-unit>
         <trans-unit id="SettingsUnicodeDescription.Text" translate="yes" xml:space="preserve">
           <source>Shows the Unicode value of a character underneath the character in the character grid.
 Turning this on can have a minor impact on scrolling performance.</source>
-          <target state="new">Shows the Unicode value of a character underneath the character in the character grid.
-Turning this on can have a minor impact on scrolling performance.</target>
+          <target state="translated">แสดงรหัส Unicode ของตัวอักษรนั้นๆ ข้างล่างตารางแสดงผลตัวอักษร.
+เปิดการตั้งค่านี้อาจมีผลต่อความเร็วในการแสดงผลตัวอักษรขณะเลื่อนดูรายการ.</target>
         </trans-unit>
         <trans-unit id="SettingsUnicodeHeader.Text" translate="yes" xml:space="preserve">
           <source>Show Unicode value in Character Grid</source>
-          <target state="new">Show Unicode value in Character Grid</target>
+          <target state="translated">แสดงรหัส Unicode ของตัวอักษร</target>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
-          <target state="new">Path Geometry</target>
+          <target state="translated">Path Geometry</target>
         </trans-unit>
         <trans-unit id="UseSystemLanguage" translate="yes" xml:space="preserve">
           <source>Use system language setting</source>
-          <target state="new">Use system language setting</target>
+          <target state="translated">ใช้ภาษาตามการตั้งค่าระบบ</target>
         </trans-unit>
         <trans-unit id="SettingsNeedRestart.Text" translate="yes" xml:space="preserve">
           <source>Change will apply after restart</source>
-          <target state="new">Change will apply after restart</target>
+          <target state="translated">จะมีผลเมื่อเปิดแอปครั้งหน้า (เริ่มต้นแอปใหม่)</target>
         </trans-unit>
       </group>
     </body>
