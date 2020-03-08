@@ -84,6 +84,8 @@ namespace CharacterMap.Views
             SupportedLanguages = new ObservableCollection<SupportedLanguage>(
                 ApplicationLanguages.ManifestLanguages.
                 Select(language => new SupportedLanguage(language)));
+
+            SupportedLanguages.Insert(0, SupportedLanguage.SystemLanguage);
         }
 
         void OnAppSettingsUpdated(AppSettingsChangedMessage msg)

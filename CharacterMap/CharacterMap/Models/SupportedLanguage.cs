@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,12 +20,17 @@ namespace CharacterMap.Models
 
         public SupportedLanguage(string ID)
         {
-            LanguageID = new System.Globalization.CultureInfo(ID).Name;
-            LanguageName = new System.Globalization.CultureInfo(ID).DisplayName;
+            LanguageID = new CultureInfo(ID).Name;
+            LanguageName = new CultureInfo(ID).DisplayName;
         }
 
         public override string ToString() => LanguageName;
 
         public static SupportedLanguage DefaultLanguage => new SupportedLanguage("en-US");
+        public static SupportedLanguage SystemLanguage => new SupportedLanguage()
+        {
+            LanguageID = "",
+            LanguageName = Windows.ApplicationModel.Resources.ResourceLoader.GetForCurrentView().GetString("UseSystemLanguage")
+        };
     }
 }
