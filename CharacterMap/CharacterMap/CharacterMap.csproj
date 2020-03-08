@@ -16,11 +16,16 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile></PackageCertificateKeyFile>
-    <SccProjectName></SccProjectName>
-    <SccLocalPath></SccLocalPath>
-    <SccAuxPath></SccAuxPath>
-    <SccProvider></SccProvider>
+    <PackageCertificateKeyFile>
+    </PackageCertificateKeyFile>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
     <PackageCertificateThumbprint>F4C1BC290432ACAE9C11F15DB762EDD9CCF2D498</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
@@ -197,6 +202,7 @@
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
+    <Compile Include="Models\SupportedLanguage.cs" />
     <Compile Include="Models\UnicodeGlyphData.cs" />
     <Compile Include="Helpers\ConcurrencyToken.cs" />
     <Compile Include="Helpers\Debouncer.cs" />
@@ -308,6 +314,7 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <PRIResource Include="Strings\th-TH\Resources.resw" />
     <PRIResource Include="Strings\en-GB\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
@@ -378,7 +385,16 @@
       <Name>CharacterMap.CX</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <XliffResource Include="MultilingualResources\CharacterMap.de-DE.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.en-GB.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.fr-FR.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.pl-PL.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.ru-RU.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.th-TH.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.zh-CN.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.zh-TW.xlf" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
