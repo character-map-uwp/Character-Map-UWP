@@ -99,6 +99,16 @@
                         Text="#UserInterface" />
 
                     <TextBlock
+                        Style="{StaticResource HeaderStyle}"
+                        Text="#Language" />
+
+                    <ComboBox
+                        Height="48"
+                        ItemsSource="{x:Bind SupportedLanguages}"
+                        PlaceholderText="{x:Bind core:Converters.GetLanguageDisplayFromID(Settings.AppLanguage)}"
+                        SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}"/>
+
+                    <TextBlock
                         x:Uid="SettingsCharGridHeader"
                         Style="{StaticResource HeaderStyle}"
                         Text="#CharacterGridSize" />

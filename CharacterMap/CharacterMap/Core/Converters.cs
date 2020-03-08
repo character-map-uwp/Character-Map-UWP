@@ -101,5 +101,11 @@ namespace CharacterMap.Core
             size = size / 1024;
             return $"{size:0.00} MB";
         }
+
+        public static Models.SupportedLanguage GetSelectedLanguage(string selected, IList<Models.SupportedLanguage> languages) 
+            => languages.FirstOrDefault(i => i.LanguageID == selected);
+
+        public static string GetLanguageDisplayFromID(string id)
+            => new System.Globalization.CultureInfo(id).DisplayName;
     }
 }
