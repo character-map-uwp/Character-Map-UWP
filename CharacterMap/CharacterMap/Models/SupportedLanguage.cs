@@ -21,7 +21,7 @@ namespace CharacterMap.Models
         public SupportedLanguage(string ID)
         {
             LanguageID = new CultureInfo(ID).Name;
-            LanguageName = new CultureInfo(ID).DisplayName;
+            LanguageName = new CultureInfo(ID).NativeName;
         }
 
         public override string ToString() => LanguageName;
