@@ -3,22 +3,41 @@ using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation.Metadata;
-using Windows.Graphics.Imaging;
 using Windows.Storage;
-using Windows.Storage.Pickers;
-using Windows.Storage.Provider;
-using Windows.UI.Core;
+using Windows.UI;
 using Windows.UI.Text;
+using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 
 namespace CharacterMap.Core
 {
     public class Utils
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
+
+        public static Color GetAccentColor()
+        {
+            if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
+            {
+                return (Color)Application.Current.Resources["SystemAccentColor"];
+            }
+            return new UISettings().GetColorValue(UIColorType.Accent);
+        }
+
+        public static void CopyToClipBoard(string str)
+        {
+            var dp = new DataPackage
+            {
+                RequestedOperation = DataPackageOperation.Copy,
+            };
+            dp.SetText(str);
+            Clipboard.SetContent(dp);
+        }
 
         public static bool TryParseHexString(string hexNumber, out int hex)
         {
@@ -34,18 +53,18 @@ namespace CharacterMap.Core
 
         public static bool IsAccentColorDark()
         {
-            var uiSettings = new Windows.UI.ViewManagement.UISettings();
-            var c = uiSettings.GetColorValue(Windows.UI.ViewManagement.UIColorType.Accent);
+            var uiSettings = new UISettings();
+            var c = uiSettings.GetColorValue(UIColorType.Accent);
             var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
             return isDark;
         }
 
         public static string GetAppDescription()
         {
-            var package = Windows.ApplicationModel.Package.Current;
+            var package = Package.Current;
             var packageId = package.Id;
             var version = packageId.Version;
-            var architecture = Edi.UWP.Helpers.Utils.Architecture;
+            var architecture = Package.Current.Id.Architecture.ToString();
 
             return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({architecture})";
         }

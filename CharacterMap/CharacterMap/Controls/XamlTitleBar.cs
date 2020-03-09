@@ -146,19 +146,60 @@ namespace CharacterMap.Controls
             var darkAccent = _settings.GetColorValue(UIColorType.AccentDark1);
             var btnHoverColor = _settings.GetColorValue(UIColorType.AccentLight1);
 
-            Edi.UWP.Helpers.UI.ApplyColorToTitleBar(
+            ApplyColorToTitleBar(
                 accentColor,
                 Colors.White,
                 darkAccent,
                 Colors.Gray);
 
-            Edi.UWP.Helpers.UI.ApplyColorToTitleButton(
+            ApplyColorToTitleButton(
                 Colors.Transparent, Colors.White,
                 btnHoverColor, Colors.White,
                 accentColor, Colors.White,
                 Colors.Transparent, Colors.Gray);
 
             RequestedTheme = !IsAccentColorDark() ? ElementTheme.Light : ElementTheme.Dark;
+        }
+
+        private static void ApplyColorToTitleBar(Color? titleBackgroundColor,
+            Color? titleForegroundColor,
+            Color? titleInactiveBackgroundColor,
+            Color? titleInactiveForegroundColor)
+        {
+            var view = ApplicationView.GetForCurrentView();
+
+            // active
+            view.TitleBar.BackgroundColor = titleBackgroundColor;
+            view.TitleBar.ForegroundColor = titleForegroundColor;
+
+            // inactive
+            view.TitleBar.InactiveBackgroundColor = titleInactiveBackgroundColor;
+            view.TitleBar.InactiveForegroundColor = titleInactiveForegroundColor;
+        }
+
+        private static void ApplyColorToTitleButton(Color? titleButtonBackgroundColor,
+            Color? titleButtonForegroundColor,
+            Color? titleButtonHoverBackgroundColor,
+            Color? titleButtonHoverForegroundColor,
+            Color? titleButtonPressedBackgroundColor,
+            Color? titleButtonPressedForegroundColor,
+            Color? titleButtonInactiveBackgroundColor,
+            Color? titleButtonInactiveForegroundColor)
+        {
+            var view = ApplicationView.GetForCurrentView();
+
+            // button
+            view.TitleBar.ButtonBackgroundColor = titleButtonBackgroundColor;
+            view.TitleBar.ButtonForegroundColor = titleButtonForegroundColor;
+
+            view.TitleBar.ButtonHoverBackgroundColor = titleButtonHoverBackgroundColor;
+            view.TitleBar.ButtonHoverForegroundColor = titleButtonHoverForegroundColor;
+
+            view.TitleBar.ButtonPressedBackgroundColor = titleButtonPressedBackgroundColor;
+            view.TitleBar.ButtonPressedForegroundColor = titleButtonPressedForegroundColor;
+
+            view.TitleBar.ButtonInactiveBackgroundColor = titleButtonInactiveBackgroundColor;
+            view.TitleBar.ButtonInactiveForegroundColor = titleButtonInactiveForegroundColor;
         }
 
         private void UpdateMetrics(CoreApplicationViewTitleBar bar)

@@ -1,12 +1,10 @@
 using System;
 using Windows.ApplicationModel.Activation;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using CharacterMap.Core;
 using CharacterMap.Services;
-using Edi.UWP.Helpers;
-using CharacterMap.Helpers;
 using CharacterMap.Controls;
+using UnhandledExceptionEventArgs = CharacterMap.Core.UnhandledExceptionEventArgs;
 
 namespace CharacterMap
 {
@@ -15,7 +13,7 @@ namespace CharacterMap
         private Lazy<ActivationService> _activationService { get; }
         internal ActivationService ActivationService => _activationService.Value;
 
-        public static new App Current { get; private set; }
+        public new static App Current { get; private set; }
 
         public App()
         {
@@ -43,7 +41,7 @@ namespace CharacterMap
                 .UnhandledException += SynchronizationContext_UnhandledException;
         }
 
-        private void SynchronizationContext_UnhandledException(object sender, Edi.UWP.Helpers.UnhandledExceptionEventArgs e)
+        private void SynchronizationContext_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             e.Handled = true;
             UnhandledExceptionDialog.Show(e.Exception);

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using CharacterMap.Core;
-using Edi.UWP.Helpers.Extensions;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
@@ -268,7 +267,7 @@ namespace CharacterMap.ViewModels
                 string lastSelected = Settings.LastSelectedFontName;
 
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
-                GroupedFontList = list.ToObservableCollection();
+                GroupedFontList = new ObservableCollection<AlphaKeyGroup<InstalledFont>>(list);
                 HasFonts = FontList.Count > 0;
 
                 if (FontList.Count == 0)

@@ -2,6 +2,7 @@
 using Windows.UI;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
+using CharacterMap.Core;
 
 namespace CharacterMap.Converters
 {
@@ -14,7 +15,7 @@ namespace CharacterMap.Converters
             {
                 var count = int.Parse(value.ToString());
                 if (count > 0)
-                    return new SolidColorBrush(Edi.UWP.Helpers.UI.GetAccentColor());
+                    return new SolidColorBrush(Utils.GetAccentColor());
             }
             return new SolidColorBrush(Windows.UI.Colors.Gray);
 

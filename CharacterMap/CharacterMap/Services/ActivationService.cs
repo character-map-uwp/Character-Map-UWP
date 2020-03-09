@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
+using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -11,7 +12,6 @@ using Windows.UI.Xaml.Navigation;
 using CharacterMap.Activation;
 using CharacterMap.Helpers;
 using CommonServiceLocator;
-using Edi.UWP.Helpers;
 using GalaSoft.MvvmLight.Threading;
 using CharacterMap.Views;
 
@@ -31,8 +31,6 @@ namespace CharacterMap.Services
             //_shell = shell ?? new Frame();
             _defaultNavItem = defaultNavItem;
         }
-
-
 
         public async Task ActivateAsync(object activationArgs)
         {
@@ -124,7 +122,9 @@ namespace CharacterMap.Services
                 // Ensure the current window is active
                 Window.Current.Activate();
 
-                UI.SetWindowLaunchSize(3000, 2000);
+                // Make the window max as much as possible by default
+                ApplicationView.PreferredLaunchViewSize = new Size { Height = 2000, Width = 3000 };
+                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
                 // Tasks after activation
                 await StartupAsync();

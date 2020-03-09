@@ -1,22 +1,10 @@
-﻿using CharacterMap.Helpers;
-using Microsoft.Toolkit.Uwp.Helpers;
+﻿using Microsoft.Toolkit.Uwp.Helpers;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-
+using CharacterMap.Core;
 
 namespace CharacterMap.Controls
 {
@@ -55,7 +43,7 @@ namespace CharacterMap.Controls
             sb.AppendLine($"**App Version**: {SystemInformation.ApplicationVersion.ToFormattedString()}");
             sb.AppendLine($"**App Culture**: {SystemInformation.Culture.Name}");
 
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(sb.ToString());
+            Utils.CopyToClipBoard(sb.ToString());
             var uri = new Uri("https://github.com/EdiWang/Character-Map-UWP/issues/new");
             _ = Launcher.LaunchUriAsync(uri);
         }

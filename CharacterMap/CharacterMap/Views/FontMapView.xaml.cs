@@ -365,26 +365,26 @@ namespace CharacterMap.Views
 
         private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
         {
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
+            Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
             BorderFadeInStoryboard.Begin();
         }
 
         private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
         {
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
+            Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
             BorderFadeInStoryboard.Begin();
         }
 
         private void BtnCopyXamlPath_OnClick(object sender, RoutedEventArgs e)
         {
             GeometryFlyout?.Hide();
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(ViewModel.XamlPathGeom);
+            Utils.CopyToClipBoard(ViewModel.XamlPathGeom);
             BorderFadeInStoryboard.Begin();
         }
 
         private void BtnCopySymbolIcon_OnClick(object sender, RoutedEventArgs e)
         {
-            Edi.UWP.Helpers.Utils.CopyToClipBoard(TxtSymbolIcon.Text.Trim());
+            Utils.CopyToClipBoard(TxtSymbolIcon.Text.Trim());
             BorderFadeInStoryboard.Begin();
         }
 
