@@ -99,6 +99,25 @@
                         Text="#UserInterface" />
 
                     <TextBlock
+                        x:Uid="SettingsLanguageHeader"
+                        Style="{StaticResource HeaderStyle}"
+                        Text="#Language" />
+
+                    <ComboBox
+                        Height="48"
+                        ItemsSource="{x:Bind SupportedLanguages}"
+                        PlaceholderText="{x:Bind core:Converters.GetLanguageDisplayFromID(Settings.AppLanguage)}"
+                        SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}"/>
+                    
+                    <TextBlock
+                        x:Uid="SettingsNeedRestart"
+                        Margin="4 4 0 4"
+                        FontStyle="Italic"
+                        OpticalMarginAlignment="None"
+                        Style="{StaticResource DescriptionStyle}"
+                        Visibility="{x:Bind core:Converters.CompareLanguageToSetting(Settings.AppLanguage), Mode=OneWay}"/> 
+
+                    <TextBlock
                         x:Uid="SettingsCharGridHeader"
                         Style="{StaticResource HeaderStyle}"
                         Text="#CharacterGridSize" />

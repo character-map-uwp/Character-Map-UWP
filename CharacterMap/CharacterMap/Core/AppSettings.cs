@@ -110,6 +110,11 @@ namespace CharacterMap.Core
             }
         }
 
+        public string AppLanguage
+        {
+            get => Get("en-US");
+            set => Set(value);
+        }
 
         /* INFRASTRUCTURE */
 

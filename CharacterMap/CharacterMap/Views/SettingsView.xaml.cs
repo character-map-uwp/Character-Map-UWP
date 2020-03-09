@@ -8,6 +8,7 @@ using GalaSoft.MvvmLight.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Globalization;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -39,6 +41,7 @@ namespace CharacterMap.Views
 
         public AppSettings Settings { get; }
         public UserCollectionsService FontCollections { get; }
+        public ObservableCollection<SupportedLanguage> SupportedLanguages { get; set; }
 
         public SettingsView()
         {
@@ -77,6 +80,12 @@ namespace CharacterMap.Views
             };
 
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
+
+            SupportedLanguages = new ObservableCollection<SupportedLanguage>(
+                ApplicationLanguages.ManifestLanguages.
+                Select(language => new SupportedLanguage(language)));
+
+            SupportedLanguages.Insert(0, SupportedLanguage.SystemLanguage);
         }
 
         void OnAppSettingsUpdated(AppSettingsChangedMessage msg)
@@ -209,5 +218,8 @@ namespace CharacterMap.Views
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public void SelectedLanguageToString(object selected) => 
+            Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "en-US";
     }
 }

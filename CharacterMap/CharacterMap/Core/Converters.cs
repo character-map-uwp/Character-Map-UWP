@@ -101,5 +101,20 @@ namespace CharacterMap.Core
             size = size / 1024;
             return $"{size:0.00} MB";
         }
+
+        public static Models.SupportedLanguage GetSelectedLanguage(string selected, IList<Models.SupportedLanguage> languages) 
+            => languages.FirstOrDefault(i => i.LanguageID == selected);
+
+        public static string GetLanguageDisplayFromID(string id)
+            => new System.Globalization.CultureInfo(id).DisplayName;
+
+        /// <summary>
+        /// This converter only use to show "need restart" text block.
+        /// </summary>
+        /// <param name="selectedLanguage"></param>
+        /// <returns>Return Visible if language is changed and not match current app language, otherwise it return Collapsed.</returns>
+        public static Visibility CompareLanguageToSetting(string selectedLanguage) =>
+            System.Globalization.CultureInfo.CurrentUICulture.Name == selectedLanguage 
+            ? Visibility.Collapsed : Visibility.Visible;
     }
 }

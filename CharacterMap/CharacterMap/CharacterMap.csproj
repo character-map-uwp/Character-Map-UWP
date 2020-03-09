@@ -110,6 +110,12 @@
   <PropertyGroup>
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
+  <PropertyGroup Label="MultilingualAppToolkit">
+    <MultilingualAppToolkitVersion>4.0</MultilingualAppToolkitVersion>
+    <MultilingualFallbackLanguage>en-US</MultilingualFallbackLanguage>
+    <TranslationReport Condition="'$(Configuration)' == 'Release'">true</TranslationReport>
+    <SuppressPseudoWarning Condition="'$(Configuration)' == 'Debug'">true</SuppressPseudoWarning>
+  </PropertyGroup>
   <ItemGroup>
     <!-- <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0"> -->
     <!-- <Name>Microsoft Engagement Framework</Name> -->
@@ -196,6 +202,7 @@
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
+    <Compile Include="Models\SupportedLanguage.cs" />
     <Compile Include="Models\UnicodeGlyphData.cs" />
     <Compile Include="Helpers\ConcurrencyToken.cs" />
     <Compile Include="Helpers\Debouncer.cs" />
@@ -307,6 +314,7 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <PRIResource Include="Strings\th-TH\Resources.resw" />
     <PRIResource Include="Strings\en-GB\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
@@ -377,11 +385,24 @@
       <Name>CharacterMap.CX</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <XliffResource Include="MultilingualResources\CharacterMap.de-DE.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.en-GB.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.fr-FR.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.pl-PL.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.ru-RU.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.th-TH.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.zh-CN.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.zh-TW.xlf" />
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.PriResources.targets" Label="MultilingualAppToolkit" Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\v$(MultilingualAppToolkitVersion)\Microsoft.Multilingual.PriResources.targets')" />
+  <Target Name="MATPrerequisite" BeforeTargets="PrepareForBuild" Condition="!Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.PriResources.targets')" Label="MultilingualAppToolkit">
+    <Warning Text="$(MSBuildProjectFile) is Multilingual build enabled, but the Multilingual App Toolkit is unavailable during the build. If building with Visual Studio, please check to ensure that toolkit is properly installed." />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
