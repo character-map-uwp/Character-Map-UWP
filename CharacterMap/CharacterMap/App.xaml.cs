@@ -22,8 +22,11 @@ namespace CharacterMap
             //Set app language
             //Try getting setting
             Windows.Storage.ApplicationData.Current.LocalSettings.Values.TryGetValue("AppLanguage", out var language);
-            Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride = 
+            if (null != language)
+            {
+                Windows.Globalization.ApplicationLanguages.PrimaryLanguageOverride =
                 string.IsNullOrEmpty(language.ToString()) ? "" : language.ToString();
+            }
 
             this.FocusVisualKind = FocusVisualKind.Reveal;
             this.InitializeComponent();
