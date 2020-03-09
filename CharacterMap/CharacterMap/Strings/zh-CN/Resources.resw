@@ -288,10 +288,133 @@
   <data name="SearchResultsSlider.Header" xml:space="preserve">
     <value>最大搜索结果数量</value>
   </data>
+  <data name="FontPropCharCount.Text" xml:space="preserve">
+    <value>字符数量</value>
+  </data>
+  <data name="FontPropFilePath.Text" xml:space="preserve">
+    <value>文件路径</value>
+  </data>
+  <data name="DWriteSourceAppxPackage" xml:space="preserve">
+    <value>微软应用商店</value>
+  </data>
+  <data name="DWriteSourcePerMachine" xml:space="preserve">
+    <value>所有用户</value>
+  </data>
+  <data name="DWriteSourcePerUser" xml:space="preserve">
+    <value>仅当前用户</value>
+  </data>
+  <data name="OptionAppxFonts.Text" xml:space="preserve">
+    <value>来自微软应用商店</value>
+  </data>
+  <data name="OptionMoreFilters.Text" xml:space="preserve">
+    <value>更多</value>
+  </data>
+  <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
+    <value>即时搜索</value>
+  </data>
+  <data name="CharacterSavedMessage.Text" xml:space="preserve">
+    <value>保存到</value>
+  </data>
+  <data name="BtnOpenFile.Content" xml:space="preserve">
+    <value>打开文件</value>
+  </data>
+  <data name="BtnOpenFolder.Content" xml:space="preserve">
+    <value>打开文件夹</value>
+  </data>
+  <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>更多</value>
+  </data>
+  <data name="DlgException.PrimaryButtonText" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="DlgException.Title" xml:space="preserve">
+    <value>有东西爆了</value>
+  </data>
+  <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="BtnRateAndReview.Content" xml:space="preserve">
+    <value>评分及反馈</value>
+  </data>
+  <data name="RbThemeDark.Content" xml:space="preserve">
+    <value>黑暗</value>
+  </data>
+  <data name="RbThemeLight.Content" xml:space="preserve">
+    <value>明亮</value>
+  </data>
+  <data name="RbThemeSystem.Content" xml:space="preserve">
+    <value>Windows 默认</value>
+  </data>
+  <data name="RbUseActualFont.Content" xml:space="preserve">
+    <value>使用字体本身</value>
+  </data>
+  <data name="RbUseSystemFont.Content" xml:space="preserve">
+    <value>使用系统字体</value>
+  </data>
+  <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
+    <value>字符搜索</value>
+  </data>
   <data name="SettingsCharGridHeader.Text" xml:space="preserve">
     <value>字符网格尺寸</value>
   </data>
+  <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
+    <value>字符网格效果预览</value>
+  </data>
+  <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
+    <value>开发者功能</value>
+  </data>
+  <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
+    <value>显示开发者功能</value>
+  </data>
+  <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
+    <value>选择开发者功能显示的编程语言</value>
+  </data>
+  <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
+    <value>启动窗口尺寸调整动画</value>
+  </data>
+  <data name="SettingsExportHeader.Text" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
+    <value>字体列表预览效果</value>
+  </data>
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>设置</value>
+  </data>
+  <data name="SettingsLangOverride.OffContent" xml:space="preserve">
+    <value>使用默认语言</value>
+  </data>
+  <data name="SettingsLangOverride.OnContent" xml:space="preserve">
+    <value>使用覆盖语言</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
+    <value>PNG 导出图片尺寸</value>
+  </data>
+  <data name="SettingsShadowsHeader.Text" xml:space="preserve">
+    <value>启用阴影</value>
+  </data>
+  <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
+    <value>启动简单动画效果</value>
+  </data>
+  <data name="SettingsThemeHeader.Text" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="SettingsUIHeader.Text" xml:space="preserve">
+    <value>用户界面</value>
+  </data>
+  <data name="UseSystemLanguage" xml:space="preserve">
+    <value>跟随系统语言设置</value>
+  </data>
+  <data name="SettingsNeedRestart.Text" xml:space="preserve">
+    <value>应用重启后生效</value>
   </data>
 </root>

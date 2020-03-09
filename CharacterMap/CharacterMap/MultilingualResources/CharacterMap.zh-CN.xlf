@@ -376,23 +376,23 @@
         </trans-unit>
         <trans-unit id="FontPropCharCount.Text" translate="yes" xml:space="preserve">
           <source>Character Count</source>
-          <target state="new">Character Count</target>
+          <target state="translated">字符数量</target>
         </trans-unit>
         <trans-unit id="FontPropFilePath.Text" translate="yes" xml:space="preserve">
           <source>File Path</source>
-          <target state="new">File Path</target>
+          <target state="translated">文件路径</target>
         </trans-unit>
         <trans-unit id="DWriteSourceAppxPackage" translate="yes" xml:space="preserve">
           <source>Microsoft Store</source>
-          <target state="new">Microsoft Store</target>
+          <target state="translated">微软应用商店</target>
         </trans-unit>
         <trans-unit id="DWriteSourcePerMachine" translate="yes" xml:space="preserve">
           <source>All Users</source>
-          <target state="new">All Users</target>
+          <target state="translated">所有用户</target>
         </trans-unit>
         <trans-unit id="DWriteSourcePerUser" translate="yes" xml:space="preserve">
           <source>Current User only</source>
-          <target state="new">Current User only</target>
+          <target state="translated">仅当前用户</target>
         </trans-unit>
         <trans-unit id="DWriteSourceRemoteFontProvider" translate="yes" xml:space="preserve">
           <source>Cloud Provider</source>
@@ -408,7 +408,7 @@
         </trans-unit>
         <trans-unit id="OptionAppxFonts.Text" translate="yes" xml:space="preserve">
           <source>From Microsoft Store</source>
-          <target state="new">From Microsoft Store</target>
+          <target state="translated">来自微软应用商店</target>
         </trans-unit>
         <trans-unit id="OptionCloudFonts.Text" translate="yes" xml:space="preserve">
           <source>Cloud-based Fonts</source>
@@ -424,7 +424,7 @@
         </trans-unit>
         <trans-unit id="OptionMoreFilters.Text" translate="yes" xml:space="preserve">
           <source>More</source>
-          <target state="new">More</target>
+          <target state="translated">更多</target>
         </trans-unit>
         <trans-unit id="OptionScriptFonts.Text" translate="yes" xml:space="preserve">
           <source>Script Fonts</source>
@@ -460,11 +460,11 @@
         </trans-unit>
         <trans-unit id="InstantSearchToggleHeader.Text" translate="yes" xml:space="preserve">
           <source>Instant Search</source>
-          <target state="new">Instant Search</target>
+          <target state="translated">即时搜索</target>
         </trans-unit>
         <trans-unit id="CharacterSavedMessage.Text" translate="yes" xml:space="preserve">
           <source>Saved to</source>
-          <target state="new">Saved to</target>
+          <target state="translated">保存到</target>
         </trans-unit>
         <trans-unit id="NotificationAddedToCollection" translate="yes" xml:space="preserve">
           <source>{0} was added to "{1}" collection</source>
@@ -472,11 +472,11 @@
         </trans-unit>
         <trans-unit id="BtnOpenFile.Content" translate="yes" xml:space="preserve">
           <source>Open File</source>
-          <target state="new">Open File</target>
+          <target state="translated">打开文件</target>
         </trans-unit>
         <trans-unit id="BtnOpenFolder.Content" translate="yes" xml:space="preserve">
           <source>Open Folder</source>
-          <target state="new">Open Folder</target>
+          <target state="translated">打开文件夹</target>
         </trans-unit>
         <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Hide font pane</source>
@@ -504,7 +504,7 @@
         </trans-unit>
         <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>More</source>
-          <target state="new">More</target>
+          <target state="translated">更多</target>
         </trans-unit>
         <trans-unit id="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Filter fonts</source>
@@ -524,11 +524,11 @@
         </trans-unit>
         <trans-unit id="DlgException.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>OK</source>
-          <target state="new">OK</target>
+          <target state="translated">确定</target>
         </trans-unit>
         <trans-unit id="DlgException.Title" translate="yes" xml:space="preserve">
           <source>Something went wrong</source>
-          <target state="new">Something went wrong</target>
+          <target state="translated">有东西爆了</target>
         </trans-unit>
         <trans-unit id="DlgExceptionCopyMessage.Text" translate="yes" xml:space="preserve">
           <source>Copy error to Clipboard and open GitHub</source>
@@ -544,15 +544,15 @@
         </trans-unit>
         <trans-unit id="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Close</source>
-          <target state="new">Close</target>
+          <target state="translated">关闭</target>
         </trans-unit>
         <trans-unit id="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Copy</source>
-          <target state="new">Copy</target>
+          <target state="translated">复制</target>
         </trans-unit>
         <trans-unit id="BtnRateAndReview.Content" translate="yes" xml:space="preserve">
           <source>Rate &amp; Review</source>
-          <target state="new">Rate &amp; Review</target>
+          <target state="translated">评分及反馈</target>
         </trans-unit>
         <trans-unit id="BtnXAMLGeometry.Content" translate="yes" xml:space="preserve">
           <source>Click to view</source>
@@ -560,23 +560,23 @@
         </trans-unit>
         <trans-unit id="RbThemeDark.Content" translate="yes" xml:space="preserve">
           <source>Dark</source>
-          <target state="new">Dark</target>
+          <target state="translated">黑暗</target>
         </trans-unit>
         <trans-unit id="RbThemeLight.Content" translate="yes" xml:space="preserve">
           <source>Light</source>
-          <target state="new">Light</target>
+          <target state="translated">明亮</target>
         </trans-unit>
         <trans-unit id="RbThemeSystem.Content" translate="yes" xml:space="preserve">
           <source>Windows default</source>
-          <target state="new">Windows default</target>
+          <target state="translated">Windows 默认</target>
         </trans-unit>
         <trans-unit id="RbUseActualFont.Content" translate="yes" xml:space="preserve">
           <source>Use actual font</source>
-          <target state="new">Use actual font</target>
+          <target state="translated">使用字体本身</target>
         </trans-unit>
         <trans-unit id="RbUseSystemFont.Content" translate="yes" xml:space="preserve">
           <source>Use system font</source>
-          <target state="new">Use system font</target>
+          <target state="translated">使用系统字体</target>
         </trans-unit>
         <trans-unit id="SettingsCharacterSearchDescription.Text" translate="yes" xml:space="preserve">
           <source>Toggle instant search. If disabled, you can start a search by using the enter key or pressing the search icon.</source>
@@ -584,7 +584,7 @@
         </trans-unit>
         <trans-unit id="SettingsCharacterSearchHeader.Text" translate="yes" xml:space="preserve">
           <source>Character Search</source>
-          <target state="new">Character Search</target>
+          <target state="translated">字符搜索</target>
         </trans-unit>
         <trans-unit id="SettingsCharGridDescription.Text" translate="yes" xml:space="preserve">
           <source>The size of individual characters inside the character grid. Smaller sizes may affect performance.</source>
@@ -596,7 +596,7 @@
         </trans-unit>
         <trans-unit id="SettingsCharPreviewHint.Text" translate="yes" xml:space="preserve">
           <source>Character grid preview</source>
-          <target state="new">Character grid preview</target>
+          <target state="translated">字符网格效果预览</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsDescription.Text" translate="yes" xml:space="preserve">
           <source>Show the tools for XAML developers, like Symbol Icon and Font Icon.</source>
@@ -604,19 +604,19 @@
         </trans-unit>
         <trans-unit id="SettingsDevToolsGroupHeader.Text" translate="yes" xml:space="preserve">
           <source>Developer Features</source>
-          <target state="new">Developer Features</target>
+          <target state="translated">开发者功能</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsHeader.Text" translate="yes" xml:space="preserve">
           <source>Show developers features</source>
-          <target state="new">Show developers features</target>
+          <target state="translated">显示开发者功能</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsLangDescription.Text" translate="yes" xml:space="preserve">
           <source>Choose the dev language for developer features content.</source>
-          <target state="new">Choose the dev language for developer features content.</target>
+          <target state="translated">选择开发者功能显示的编程语言</target>
         </trans-unit>
         <trans-unit id="SettingsDevToolsLangHeader.Text" translate="yes" xml:space="preserve">
           <source>Language</source>
-          <target state="new">Language</target>
+          <target state="translated">语言</target>
         </trans-unit>
         <trans-unit id="SettingsExpensiveAnimationDescription.Text" translate="yes" xml:space="preserve">
           <source>Animates the character grid when resizing the window.
@@ -626,11 +626,11 @@ Turning this on can incur a large performance penalty when resizing the window.<
         </trans-unit>
         <trans-unit id="SettingsExpensiveAnimationHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable window resize animations</source>
-          <target state="new">Enable window resize animations</target>
+          <target state="translated">启动窗口尺寸调整动画</target>
         </trans-unit>
         <trans-unit id="SettingsExportHeader.Text" translate="yes" xml:space="preserve">
           <source>Export</source>
-          <target state="new">Export</target>
+          <target state="translated">导出</target>
         </trans-unit>
         <trans-unit id="SettingsFontListDescription.Text" translate="yes" xml:space="preserve">
           <source>Choose the font used to display the names of fonts in the font list.</source>
@@ -638,7 +638,7 @@ Turning this on can incur a large performance penalty when resizing the window.<
         </trans-unit>
         <trans-unit id="SettingsFontListPreviewHint.Text" translate="yes" xml:space="preserve">
           <source>Font list preview</source>
-          <target state="new">Font list preview</target>
+          <target state="translated">字体列表预览效果</target>
         </trans-unit>
         <trans-unit id="SettingsHeader.Text" translate="yes" xml:space="preserve">
           <source>Settings</source>
@@ -646,11 +646,11 @@ Turning this on can incur a large performance penalty when resizing the window.<
         </trans-unit>
         <trans-unit id="SettingsLangOverride.OffContent" translate="yes" xml:space="preserve">
           <source>Use default language</source>
-          <target state="new">Use default language</target>
+          <target state="translated">使用默认语言</target>
         </trans-unit>
         <trans-unit id="SettingsLangOverride.OnContent" translate="yes" xml:space="preserve">
           <source>Use override language</source>
-          <target state="new">Use override language</target>
+          <target state="translated">使用覆盖语言</target>
         </trans-unit>
         <trans-unit id="SettingsLanguageDescription.Text" translate="yes" xml:space="preserve">
           <source>Override the in-app language.
@@ -660,7 +660,7 @@ Requires a restart to take effect.</target>
         </trans-unit>
         <trans-unit id="SettingsLanguageHeader.Text" translate="yes" xml:space="preserve">
           <source>Language override</source>
-          <target state="new">Language override</target>
+          <target state="translated">语言</target>
         </trans-unit>
         <trans-unit id="SettingsPNGExportDescription.Text" translate="yes" xml:space="preserve">
           <source>The size in pixels of exported PNG images.</source>
@@ -668,7 +668,7 @@ Requires a restart to take effect.</target>
         </trans-unit>
         <trans-unit id="SettingsPNGExportHeader.Text" translate="yes" xml:space="preserve">
           <source>PNG Export Size</source>
-          <target state="new">PNG Export Size</target>
+          <target state="translated">PNG 导出图片尺寸</target>
         </trans-unit>
         <trans-unit id="SettingsShadowsDescription.Text" translate="yes" xml:space="preserve">
           <source>Enables subtle depth shadows on the UI. Only noticeable when using the Light theme.
@@ -680,7 +680,7 @@ Requires a restart to take effect.</target>
         </trans-unit>
         <trans-unit id="SettingsShadowsHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable shadows</source>
-          <target state="new">Enable shadows</target>
+          <target state="translated">启用阴影</target>
         </trans-unit>
         <trans-unit id="SettingsSimpleAnimationDescription.Text" translate="yes" xml:space="preserve">
           <source>Controls the animation for loading the font list, switching fonts and changing characters.
@@ -690,15 +690,15 @@ Turning this on has negligible performance impact.</target>
         </trans-unit>
         <trans-unit id="SettingsSimpleAnimationHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable simple animations</source>
-          <target state="new">Enable simple animations</target>
+          <target state="translated">启动简单动画效果</target>
         </trans-unit>
         <trans-unit id="SettingsThemeHeader.Text" translate="yes" xml:space="preserve">
           <source>Theme</source>
-          <target state="new">Theme</target>
+          <target state="translated">主题</target>
         </trans-unit>
         <trans-unit id="SettingsUIHeader.Text" translate="yes" xml:space="preserve">
           <source>User Interface</source>
-          <target state="new">User Interface</target>
+          <target state="translated">用户界面</target>
         </trans-unit>
         <trans-unit id="SettingsUnicodeDescription.Text" translate="yes" xml:space="preserve">
           <source>Shows the Unicode value of a character underneath the character in the character grid.
@@ -716,11 +716,11 @@ Turning this on can have a minor impact on scrolling performance.</target>
         </trans-unit>
         <trans-unit id="UseSystemLanguage" translate="yes" xml:space="preserve">
           <source>Use system language setting</source>
-          <target state="new">Use system language setting</target>
+          <target state="translated">跟随系统语言设置</target>
         </trans-unit>
         <trans-unit id="SettingsNeedRestart.Text" translate="yes" xml:space="preserve">
           <source>Change will apply after restart</source>
-          <target state="new">Change will apply after restart</target>
+          <target state="translated">应用重启后生效</target>
         </trans-unit>
       </group>
     </body>
