@@ -41,7 +41,7 @@ namespace CharacterMap.Views
 
         public AppSettings Settings { get; }
         public UserCollectionsService FontCollections { get; }
-        public ObservableCollection<SupportedLanguage> SupportedLanguages { get; set; }
+        public List<SupportedLanguage> SupportedLanguages { get; }
 
         public SettingsView()
         {
@@ -58,7 +58,7 @@ namespace CharacterMap.Views
             var o = v.Compositor.CreateScalarKeyFrameAnimation();
             o.Target = nameof(Visual.Opacity);
             o.InsertKeyFrame(1, 0);
-            o.Duration = TimeSpan.FromSeconds(0.175);
+            o.Duration = TimeSpan.FromSeconds(0.2);
 
             var t = v.Compositor.CreateVector3KeyFrameAnimation();
             t.Target = "Translation";
@@ -70,7 +70,7 @@ namespace CharacterMap.Views
             g.Add(o);
             ElementCompositionPreview.SetImplicitHideAnimation(this, g);
 
-            var show = Composition.CreateEntranceAnimation(this, new Vector3(0, 200, 0), 0, 700);
+            var show = Composition.CreateEntranceAnimation(this, new Vector3(0, 200, 0), 0, 550);
             ElementCompositionPreview.SetImplicitShowAnimation(this, show);
 
 
@@ -81,7 +81,7 @@ namespace CharacterMap.Views
 
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
 
-            SupportedLanguages = new ObservableCollection<SupportedLanguage>(
+            SupportedLanguages = new List<SupportedLanguage>(
                 ApplicationLanguages.ManifestLanguages.
                 Select(language => new SupportedLanguage(language)));
 
@@ -97,6 +97,8 @@ namespace CharacterMap.Views
         public void Show(FontVariant variant, InstalledFont font)
         {
             this.Visibility = Visibility.Visible;
+            
+            // 1. Focus the close button to ensure keyboard focus is retained inside the settings panel
             BtnClose.Focus(FocusState.Programmatic);
 
 #pragma warning disable CS0618 // ChangeView doesn't work well when not properly visible
@@ -106,6 +108,8 @@ namespace CharacterMap.Views
             // Note: it is legal for both "variant" and "font" to be *null*
             //       when calling, so test both cases.
 
+
+            // 2. Get the fonts used for Font List  & Character Grid previews
             bool isSymbol = FontCollections.IsSymbolFont(font);
 
             Preview1.FontFamily = Preview2.FontFamily = Preview3.FontFamily 
@@ -115,14 +119,16 @@ namespace CharacterMap.Views
                                               .OrderBy(f => f.Name)
                                               .ToList();
 
-            if (font != null && !isSymbol)
+            if (font != null && !isSymbol && !items.Contains(font))
             {
                 items.RemoveAt(0);
                 items.Add(font);
             }
 
-            RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
             LstFontFamily.ItemsSource =  items.OrderBy(f => f.Name).ToList();
+            
+            // 3. Set correct Developer features language
+            RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
         }
 
         public void Hide()
@@ -154,14 +160,6 @@ namespace CharacterMap.Views
             else
                 UseSystemFont.IsChecked = true;
 
-
-            var langs = Windows.Globalization.ApplicationLanguages.ManifestLanguages.ToList();
-            var idx = langs.IndexOf(Windows.Globalization.ApplicationLanguages.Languages[0]);
-            if (idx < 0)
-                idx = langs.IndexOf("en-us");
-
-            ComboLanguages.ItemsSource = langs;
-            ComboLanguages.SelectedIndex = idx;
         }
 
         private void BtnReview_Click(object sender, RoutedEventArgs e)

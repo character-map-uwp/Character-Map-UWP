@@ -722,6 +722,10 @@ Turning this on can have a minor impact on scrolling performance.</target>
           <source>Change will apply after restart</source>
           <target state="translated">应用重启后生效</target>
         </trans-unit>
+        <trans-unit id="BtnContributors.Content" translate="yes" xml:space="preserve">
+          <source>Contributors</source>
+          <target state="new">Contributors</target>
+        </trans-unit>
       </group>
     </body>
   </file>

@@ -651,4 +651,7 @@ Turning this on can have a minor impact on scrolling performance.</value>
   <data name="SettingsNeedRestart.Text" xml:space="preserve">
     <value>Change will apply after restart</value>
   </data>
+  <data name="BtnContributors.Content" xml:space="preserve">
+    <value>Contributors</value>
+  </data>
 </root>
