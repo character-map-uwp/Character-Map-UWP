@@ -103,13 +103,14 @@ namespace CharacterMap.Views
 
 #pragma warning disable CS0618 // ChangeView doesn't work well when not properly visible
             ContentScroller.ScrollToVerticalOffset(0);
-#pragma warning restore CS0618 
+#pragma warning restore CS0618
 
-            // Note: it is legal for both "variant" and "font" to be *null*
-            //       when calling, so test both cases.
+
 
 
             // 2. Get the fonts used for Font List  & Character Grid previews
+            // Note: it is legal for both "variant" and "font" to be NULL
+            //       when calling, so test both cases.
             bool isSymbol = FontCollections.IsSymbolFont(font);
 
             Preview1.FontFamily = Preview2.FontFamily = Preview3.FontFamily 

@@ -7,32 +7,78 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
 {
-    public static class Composition
+    [Bindable]
+    public class Composition : DependencyObject
     {
         public const double DefaultOffsetDuration = 0.325;
 
-        private static Dictionary<Compositor, Vector3KeyFrameAnimation> _defaultOffsetAnimations { get; } 
+        private static Dictionary<Compositor, Vector3KeyFrameAnimation> _defaultOffsetAnimations { get; }
             = new Dictionary<Compositor, Vector3KeyFrameAnimation>();
 
         private static string CENTRE_EXPRESSION =>
             $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * 0.5f, " +
             $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * 0.5f, 0f))";
 
+
+        #region Attached Properties
+
+        public static Duration GetOpacityDuration(DependencyObject obj)
+        {
+            return (Duration)obj.GetValue(OpacityDurationProperty);
+        }
+
+        public static void SetOpacityDuration(DependencyObject obj, Duration value)
+        {
+            obj.SetValue(OpacityDurationProperty, value);
+        }
+
+        public static readonly DependencyProperty OpacityDurationProperty =
+            DependencyProperty.RegisterAttached("OpacityDuration", typeof(Duration), typeof(Composition), new PropertyMetadata(new Duration(TimeSpan.FromSeconds(0)), (d, e) =>
+            {
+                if (d is FrameworkElement element && e.NewValue is Duration t)
+                {
+                    SetOpacityTransition(element, t.HasTimeSpan ? t.TimeSpan : TimeSpan.Zero);
+                }
+            }));
+
+        #endregion
+
+
+        private static void SetOpacityTransition(FrameworkElement e, TimeSpan t)
+        {
+            if (t.TotalMilliseconds > 0)
+            {
+                var c = e.GetElementVisual().Compositor;
+                var ani = c.CreateScalarKeyFrameAnimation();
+                ani.Target = nameof(Visual.Opacity);
+                ani.InsertExpressionKeyFrame(1, "this.FinalValue", c.CreateLinearEasingFunction());
+                ani.Duration = t;
+
+                e.SetImplicitAnimation(nameof(Visual.Opacity), ani);
+            }
+            else
+            {
+                e.SetImplicitAnimation(nameof(Visual.Opacity), null);
+            }
+        }
+
+
         public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffset = 140)
         {
             var animation = CreateEntranceAnimation(target, new Vector3(0, 140, 0), delayMs);
-            ElementCompositionPreview.GetElementVisual(target).StartAnimationGroup(animation);
+            target.GetElementVisual().StartAnimationGroup(animation);
         }
 
         public static ICompositionAnimationBase CreateEntranceAnimation(UIElement target, Vector3 from, int delayMs, int durationMs = 1000)
         {
             ElementCompositionPreview.SetIsTranslationEnabled(target, true);
-            Compositor c = ElementCompositionPreview.GetElementVisual(target).Compositor;
+            Compositor c = target.GetElementVisual().Compositor;
 
             TimeSpan delay = TimeSpan.FromMilliseconds(delayMs);
             var e = c.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));
@@ -62,8 +108,7 @@ namespace CharacterMap.Helpers
 
         public static void PlayScaleEntrance(FrameworkElement target, float from, float to)
         {
-            Visual v = ElementCompositionPreview.GetElementVisual(target);
-
+            Visual v = target.GetElementVisual();
 
             if (target.Tag == null)
             {
@@ -98,7 +143,7 @@ namespace CharacterMap.Helpers
         public static void SetStandardReposition(object sender, RoutedEventArgs args)
         {
             UIElement e = (UIElement)sender;
-            Visual v = ElementCompositionPreview.GetElementVisual(e);
+            Visual v = e.GetElementVisual();
 
             if (!_defaultOffsetAnimations.TryGetValue(v.Compositor, out Vector3KeyFrameAnimation value))
             {
@@ -111,10 +156,11 @@ namespace CharacterMap.Helpers
                 value = o;
             }
 
-            var set = v.Compositor.CreateImplicitAnimationCollection();
-            set.Add(nameof(Visual.Offset), value);
-            v.ImplicitAnimations = set;
+            v.SetImplicitAnimation(nameof(Visual.Offset), value);
         }
+
+
+        
 
         public static void SetThemeShadow(UIElement target, float depth, params UIElement[] recievers)
         {
@@ -131,6 +177,8 @@ namespace CharacterMap.Helpers
             foreach (var r in recievers)
                 shadow.Receivers.Add(r);
         }
+
+
 
 
 

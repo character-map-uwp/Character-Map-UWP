@@ -210,7 +210,9 @@ namespace CharacterMap.Helpers
                         foreach (var m in 
                                 _collections.Items.Select(item => new MenuFlyoutItem
                                 {
-                                    DataContext = item, Text = item.Name, IsEnabled = !item.Fonts.Contains(font.Name)
+                                    DataContext = item, 
+                                    Text = item.Name, 
+                                    IsEnabled = !item.Fonts.Contains(font.Name)
                                 }))
                         {
                             if (m.IsEnabled)

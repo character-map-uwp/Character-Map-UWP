@@ -107,6 +107,7 @@ namespace CharacterMap.ViewModels
                     FontFamily = value == null ? null : new FontFamily(value.Source);
                     LoadChars(value);
                     RaisePropertyChanged();
+                    SelectedTypography = value?.XamlTypographyFeatures?.FirstOrDefault();
                     SetDefaultChar();
                 }
             }
@@ -298,6 +299,7 @@ namespace CharacterMap.ViewModels
                     ImportButtonEnabled = false;
                 }
 
+                SelectedTypography = null;
                 SearchResults = null;
                 DebounceSearch(SearchQuery, 100);
                 IsLoadingCharacters = false;

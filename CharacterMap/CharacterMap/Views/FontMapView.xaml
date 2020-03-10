@@ -374,6 +374,9 @@
                                         SelectionMode="Single"
                                         ShowsScrollingPlaceholders="False"
                                         SingleSelectionFollowsFocus="True">
+                                        <ListView.ItemContainerTransitions>
+                                            <TransitionCollection />
+                                        </ListView.ItemContainerTransitions>
                                         <ListView.Header>
                                             <StackPanel Margin="12,4" Spacing="12">
                                                 <TextBlock

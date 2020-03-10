@@ -78,8 +78,6 @@ namespace CharacterMap.Views
 
         private XamlDirect _xamlDirect { get; }
 
-        private UISettings _uiSettings = null;
-
         private long _previewColumnToken = long.MinValue;
 
         public FontMapView()

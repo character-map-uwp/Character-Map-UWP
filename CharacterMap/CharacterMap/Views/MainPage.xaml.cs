@@ -371,7 +371,7 @@ namespace CharacterMap.Views
                     menu.Items.Add(new MenuFlyoutSeparator());
                     foreach (var item in ViewModel.FontCollections.Items)
                     {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name };
+                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, FontSize = 16 };
                         m.Click += (s, a) =>
                         {
                             if (m.DataContext is UserFontCollection u)
