@@ -77,32 +77,38 @@ namespace CharacterMap.Views
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ViewModel.GroupedFontList))
+            switch (e.PropertyName)
             {
-                if (ViewModel.IsLoadingFonts)
-                    return;
+                case nameof(ViewModel.GroupedFontList):
+                    if (ViewModel.IsLoadingFonts)
+                        return;
 
-                if (ViewModel.Settings.UseSelectionAnimations)
-                    Composition.PlayEntrance(LstFontFamily, 66, 100);
+                    if (ViewModel.Settings.UseSelectionAnimations)
+                        Composition.PlayEntrance(LstFontFamily, 66, 100);
+
+                    break;
+
+                case nameof(ViewModel.SelectedFont):
+                    if (ViewModel.SelectedFont != null)
+                        LstFontFamily.SelectedItem = ViewModel.SelectedFont;
+
+                    break;
+
+                case nameof(ViewModel.IsLoadingFonts):
+                case nameof(ViewModel.IsLoadingFontsFailed):
+                    UpdateLoadingStates();
+                    break;
             }
-            else if (e.PropertyName == nameof(ViewModel.SelectedFont))
-            {
-                if (ViewModel.SelectedFont != null)
-                    LstFontFamily.SelectedItem = ViewModel.SelectedFont;
+        }
 
-                // Looks weird, important for performance to prevent
-                // reloading CharacterGrid when changing FontList preview font
-                //_fontSelectionDebouncer.Debounce(16, () => { var t = _fontSelectionDebouncer; });
-            }
-            //else if (e.PropertyName == "FontSelectionDebounce")
-            //{
-            //    // Looks weird, important for performance to prevent
-            //    // reloading CharacterGrid when changing FontList preview font
-            //    _fontSelectionDebouncer.Debounce(16, () => { var t = _fontSelectionDebouncer; });
-            //    LstFontFamily.SelectedItem = ViewModel.SelectedFont;
-
-            //    ViewModel_FontListCreated(sender, e);
-            //}
+        private void UpdateLoadingStates()
+        {
+            if (ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
+                VisualStateManager.GoToState(this, nameof(FontsLoadingState), true);
+            else if (ViewModel.IsLoadingFontsFailed)
+                VisualStateManager.GoToState(this, nameof(FontsFailedState), true);
+            else
+                VisualStateManager.GoToState(this, nameof(FontsLoadedState), true);
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -132,6 +138,8 @@ namespace CharacterMap.Views
 
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
             ViewModel.FontListCreated += ViewModel_FontListCreated;
+
+            UpdateLoadingStates();
         }
 
         private void MainPage_Unloaded(object sender, RoutedEventArgs e)
