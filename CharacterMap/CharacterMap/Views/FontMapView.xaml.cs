@@ -307,6 +307,7 @@ namespace CharacterMap.Views
                 {
                     RequestedOperation = DataPackageOperation.Copy,
                 };
+
                 dp.SetText(character.Char);
 
                 if (!ViewModel.SelectedVariant.IsImported)
@@ -314,27 +315,18 @@ namespace CharacterMap.Views
                     // We can allow users to also copy the glyph with the font meta-data included,
                     // so when they paste into a supported program like Microsoft Word or 
                     // Adobe Photoshop the correct font is automatically applied to the paste.
-                    // To do so we need to create a RichTextFormat document, and we use the 
-                    // RichEditBox as a proxy to do this (otherwise the syntax is arcane).
-                    // This won't include any Typographic variations unfortunately.
-                    RichEditBox r = new RichEditBox();
-                    ITextCharacterFormat format = r.TextDocument.GetDefaultCharacterFormat();
-                    format.Size = 12;
-                    format.ForegroundColor = Windows.UI.Colors.Black;
-                    format.Name = ViewModel.FontFamily.Source;
+                    // This can't include any Typographic variations unfortunately.
+
+                    var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {ViewModel.FontFamily.Source};}}}} " +
+                               $@"{{\colortbl;\red0\green0\blue0; }}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs24\u{character.UnicodeIndex}?}}";
+                    dp.SetRtf(rtf);
 
                     var longName = ViewModel.FontFamily.Source;
                     if (ViewModel.SelectedVariant.FontInformation.FirstOrDefault(i => i.Key == "Full Name") is var p)
                     {
-                        if (p.Value != format.Name)
+                        if (p.Value != longName)
                             longName = $"{ViewModel.FontFamily.Source}, {p.Value}";
                     }
-
-                    r.TextDocument.SetDefaultCharacterFormat(format);
-                    r.TextDocument.SetText(TextSetOptions.None, character.Char);
-                    r.TextDocument.GetText(TextGetOptions.FormatRtf, out string doc);
-
-                    dp.SetRtf(doc);
                     dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{character.Char}</p>");
                 }
 
