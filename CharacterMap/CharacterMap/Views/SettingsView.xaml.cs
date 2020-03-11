@@ -46,45 +46,18 @@ namespace CharacterMap.Views
         public SettingsView()
         {
             Settings = ResourceHelper.AppSettings;
-
             FontCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsUpdated);
 
             this.InitializeComponent();
+            SetupAnimations();
 
-            ElementCompositionPreview.SetIsTranslationEnabled(this, true);
-            Visual v = ElementCompositionPreview.GetElementVisual(this);
-
-            var o = v.Compositor.CreateScalarKeyFrameAnimation();
-            o.Target = nameof(Visual.Opacity);
-            o.InsertKeyFrame(1, 0);
-            o.Duration = TimeSpan.FromSeconds(0.2);
-
-            var t = v.Compositor.CreateVector3KeyFrameAnimation();
-            t.Target = "Translation";
-            t.InsertKeyFrame(1, new Vector3(0, 200, 0));
-            t.Duration = TimeSpan.FromSeconds(0.375);
-
-            var g = v.Compositor.CreateAnimationGroup();
-            g.Add(t);
-            g.Add(o);
-            ElementCompositionPreview.SetImplicitHideAnimation(this, g);
-
-            var show = Composition.CreateEntranceAnimation(this, new Vector3(0, 200, 0), 0, 550);
-            ElementCompositionPreview.SetImplicitShowAnimation(this, show);
-
-
-            RbLanguage.ItemsSource = new List<String>
-            {
-                "XAML", "C#"
-            };
-
+            RbLanguage.ItemsSource = new List<String> { "XAML", "C#" };
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
 
             SupportedLanguages = new List<SupportedLanguage>(
                 ApplicationLanguages.ManifestLanguages.
                 Select(language => new SupportedLanguage(language)));
-
             SupportedLanguages.Insert(0, SupportedLanguage.SystemLanguage);
         }
 
@@ -92,6 +65,27 @@ namespace CharacterMap.Views
         {
             if (msg.PropertyName == nameof(Settings.UserRequestedTheme))
                 OnPropertyChanged(nameof(Settings));
+        }
+
+        private void SetupAnimations()
+        {
+            Visual v = this.EnableTranslation(true).GetElementVisual();
+
+            var o = v.Compositor.CreateScalarKeyFrameAnimation();
+            o.Target = nameof(Visual.Opacity);
+            o.InsertKeyFrame(1, 0);
+            o.Duration = TimeSpan.FromSeconds(0.2);
+
+            var t = v.Compositor.CreateVector3KeyFrameAnimation();
+            t.Target = Composition.TRANSLATION;
+            t.InsertKeyFrame(1, new Vector3(0, 200, 0));
+            t.Duration = TimeSpan.FromSeconds(0.375);
+
+            this.SetHideAnimation(v.Compositor.CreateAnimationGroup(t, o));
+
+            this.SetShowAnimation(Composition.CreateEntranceAnimation(this, new Vector3(0, 200, 0), 0, 550));
+            LeftPanel.SetShowAnimation(Composition.CreateEntranceAnimation(LeftPanel, new Vector3(0, 140, 0), Composition.DEFAULT_STAGGER_MS, 850));
+            RightPanel.SetShowAnimation(Composition.CreateEntranceAnimation(RightPanel, new Vector3(0, 140, 0), Composition.DEFAULT_STAGGER_MS * 2, 850));
         }
 
         public void Show(FontVariant variant, InstalledFont font)

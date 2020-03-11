@@ -40,12 +40,12 @@ namespace CharacterMap.Helpers
             return element;
         }
 
-        public static void SetShowAnimation(this FrameworkElement element, ICompositionAnimationBase animation)
+        public static void SetShowAnimation(this UIElement element, ICompositionAnimationBase animation)
         {
             ElementCompositionPreview.SetImplicitShowAnimation(element, animation);
         }
 
-        public static void SetHideAnimation(this FrameworkElement element, ICompositionAnimationBase animation)
+        public static void SetHideAnimation(this UIElement element, ICompositionAnimationBase animation)
         {
             ElementCompositionPreview.SetImplicitHideAnimation(element, animation);
         }
@@ -59,6 +59,14 @@ namespace CharacterMap.Helpers
         public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
         {
             return c.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));
+        }
+
+        public static CompositionAnimationGroup CreateAnimationGroup(this Compositor c, params CompositionAnimation[] animations)
+        {
+            var group = c.CreateAnimationGroup();
+            foreach (var a in animations)
+                group.Add(a);
+            return group;
         }
     }
 }

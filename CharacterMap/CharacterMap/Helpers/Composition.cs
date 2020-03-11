@@ -25,9 +25,10 @@ namespace CharacterMap.Helpers
             $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * 0.5f, " +
             $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * 0.5f, 0f))";
 
-        private const string TRANSLATION = "Translation";
-        private const string STARTING_VALUE = "this.StartingValue";
-        private const string FINAL_VALUE = "this.FinalValue";
+        public const string TRANSLATION = "Translation";
+        public const string STARTING_VALUE = "this.StartingValue";
+        public const string FINAL_VALUE = "this.FinalValue";
+        public const int DEFAULT_STAGGER_MS = 83;
 
         #region Attached Properties
 
@@ -94,16 +95,12 @@ namespace CharacterMap.Helpers
             var o = c.CreateScalarKeyFrameAnimation();
             o.Target = nameof(Visual.Opacity);
             o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            t.DelayTime = delay;
+            o.DelayTime = delay;
             o.InsertKeyFrame(0, 0);
             o.InsertKeyFrame(1, 1);
             o.Duration = TimeSpan.FromMilliseconds(durationMs * 0.33);
 
-            var g = c.CreateAnimationGroup();
-            g.Add(t);
-            g.Add(o);
-
-            return g;
+            return c.CreateAnimationGroup(t, o);
         }
 
         public static void PlayScaleEntrance(FrameworkElement target, float from, float to)
@@ -133,10 +130,7 @@ namespace CharacterMap.Helpers
             o.InsertKeyFrame(1, 1);
             o.Duration = TimeSpan.FromSeconds(0.2);
 
-            var g = v.Compositor.CreateAnimationGroup();
-            g.Add(t);
-            g.Add(o);
-
+            var g = v.Compositor.CreateAnimationGroup(t, o);
             v.StartAnimationGroup(g);
         }
 

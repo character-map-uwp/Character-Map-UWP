@@ -94,7 +94,7 @@
         </Grid>
 
         <ScrollViewer x:Name="ContentScroller" Grid.Row="1">
-            <Grid ColumnSpacing="16" Margin="20 20 20 120">
+            <Grid x:Name="ContentPanel" ColumnSpacing="16" Margin="20 20 20 120">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MaxWidth="700" />
@@ -103,7 +103,7 @@
 
                 <!--#region LEFT COLUMN-->
 
-                <StackPanel>
+                <StackPanel x:Name="LeftPanel">
 
                     <!--#region USER INTERFACE-->
 
@@ -418,6 +418,7 @@
                 <!--#region RIGHT COLUMN-->
 
                 <StackPanel
+                    x:Name="RightPanel"
                     Grid.Row="1"
                     Grid.Column="1"
                     MaxWidth="216"
