@@ -76,6 +76,8 @@ namespace CharacterMap.Views
 
         private bool _isCtrlKeyPressed = false;
 
+        private Debouncer _sizeDebouncer { get; } = new Debouncer();
+
         private XamlDirect _xamlDirect { get; }
 
         private UISettings _uiSettings = null;
@@ -380,6 +382,26 @@ namespace CharacterMap.Views
             BorderFadeInStoryboard.Begin();
         }
 
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // Make sure the PreviewColumn fits properly.
+
+            if (e.NewSize.Width > e.PreviousSize.Width)
+                return;
+
+            _sizeDebouncer.Debounce(64, () =>
+            {
+                if (!this.IsLoaded)
+                    return;
+
+                var size = CharGrid.ActualWidth + Splitter.ActualWidth + PreviewGrid.ActualWidth;
+                if (this.ActualWidth < size)
+                {
+                    PreviewColumn.Width = new GridLength((int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth));
+                }
+            });
+        }
+
         private void PreviewGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             var newSize = e.NewSize.Width - 2;
@@ -572,6 +594,7 @@ namespace CharacterMap.Views
         {
             Composition.SetThemeShadow(sender, 20, ShadowTarget);
         }
+
     }
 
 
