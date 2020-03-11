@@ -25,6 +25,9 @@ namespace CharacterMap.Helpers
             $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * 0.5f, " +
             $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * 0.5f, 0f))";
 
+        private const string TRANSLATION = "Translation";
+        private const string STARTING_VALUE = "this.StartingValue";
+        private const string FINAL_VALUE = "this.FinalValue";
 
         #region Attached Properties
 
@@ -49,7 +52,6 @@ namespace CharacterMap.Helpers
 
         #endregion
 
-
         private static void SetOpacityTransition(FrameworkElement e, TimeSpan t)
         {
             if (t.TotalMilliseconds > 0)
@@ -57,7 +59,7 @@ namespace CharacterMap.Helpers
                 var c = e.GetElementVisual().Compositor;
                 var ani = c.CreateScalarKeyFrameAnimation();
                 ani.Target = nameof(Visual.Opacity);
-                ani.InsertExpressionKeyFrame(1, "this.FinalValue", c.CreateLinearEasingFunction());
+                ani.InsertExpressionKeyFrame(1, FINAL_VALUE, c.CreateLinearEasingFunction());
                 ani.Duration = t;
 
                 e.SetImplicitAnimation(nameof(Visual.Opacity), ani);
@@ -68,23 +70,21 @@ namespace CharacterMap.Helpers
             }
         }
 
-
         public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffset = 140)
         {
-            var animation = CreateEntranceAnimation(target, new Vector3(0, 140, 0), delayMs);
+            var animation = CreateEntranceAnimation(target, new Vector3(0, fromOffset, 0), delayMs);
             target.GetElementVisual().StartAnimationGroup(animation);
         }
 
         public static ICompositionAnimationBase CreateEntranceAnimation(UIElement target, Vector3 from, int delayMs, int durationMs = 1000)
         {
-            ElementCompositionPreview.SetIsTranslationEnabled(target, true);
-            Compositor c = target.GetElementVisual().Compositor;
+            Compositor c = target.EnableTranslation(true).GetElementVisual().Compositor;
 
             TimeSpan delay = TimeSpan.FromMilliseconds(delayMs);
-            var e = c.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));
+            var e = c.CreateEntranceEasingFunction();
 
             var t = c.CreateVector3KeyFrameAnimation();
-            t.Target = "Translation";
+            t.Target = TRANSLATION;
             t.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             t.DelayTime = delay;
             t.InsertKeyFrame(0, from);
@@ -119,7 +119,7 @@ namespace CharacterMap.Helpers
                 target.Tag = target;
             }
 
-            var e = v.Compositor.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));
+            var e = v.Compositor.CreateEntranceEasingFunction();
 
             var t = v.Compositor.CreateVector3KeyFrameAnimation();
             t.Target = nameof(Visual.Scale);
@@ -149,8 +149,8 @@ namespace CharacterMap.Helpers
             {
                 var o = v.Compositor.CreateVector3KeyFrameAnimation();
                 o.Target = nameof(Visual.Offset);
-                o.InsertExpressionKeyFrame(0, "this.StartingValue");
-                o.InsertExpressionKeyFrame(1, "this.FinalValue");
+                o.InsertExpressionKeyFrame(0, STARTING_VALUE);
+                o.InsertExpressionKeyFrame(1, FINAL_VALUE);
                 o.Duration = TimeSpan.FromSeconds(DefaultOffsetDuration);
                 _defaultOffsetAnimations[v.Compositor] = o;
                 value = o;
@@ -159,8 +159,59 @@ namespace CharacterMap.Helpers
             v.SetImplicitAnimation(nameof(Visual.Offset), value);
         }
 
+        public static void SetDropInOut(FrameworkElement background, IList<FrameworkElement> children, FrameworkElement container = null)
+        {
+            double delay = 0.15;
 
-        
+            var bv = background.EnableTranslation(true).GetElementVisual();
+            var ease = bv.Compositor.CreateEntranceEasingFunction();
+
+            var bt = bv.Compositor.CreateVector3KeyFrameAnimation();
+            bt.Target = TRANSLATION;
+            bt.InsertExpressionKeyFrame(0, "Vector3(0, -this.Target.Size.Y, 0)");
+            bt.InsertKeyFrame(1, Vector3.Zero, ease);
+            bt.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            bt.DelayTime = TimeSpan.FromSeconds(delay);
+            bt.Duration = TimeSpan.FromSeconds(0.7);
+            background.SetShowAnimation(bt);
+
+            delay += 0.15;
+
+            foreach (var child in children)
+            {
+                var v = child.EnableTranslation(true).GetElementVisual();
+                var t = v.Compositor.CreateVector3KeyFrameAnimation();
+                t.Target = TRANSLATION;
+                t.InsertExpressionKeyFrame(0, "Vector3(0, -this.Target.Size.Y, 0)");
+                t.InsertKeyFrame(1, Vector3.Zero, ease);
+                t.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                t.DelayTime = TimeSpan.FromSeconds(delay);
+                t.Duration = TimeSpan.FromSeconds(0.7);
+                child.SetShowAnimation(t);
+                delay += 0.075;
+            }
+
+            if (container != null)
+            {
+                var c = container.GetElementVisual();
+                var clip = c.Compositor.CreateInsetClip();
+                c.Clip = clip;
+            }
+
+
+            // Create hide animation
+            var list = new List<FrameworkElement>();
+            list.Add(background);
+            list.AddRange(children);
+
+            var ht = bv.Compositor.CreateVector3KeyFrameAnimation();
+            ht.Target = TRANSLATION;
+            ht.InsertExpressionKeyFrame(1, "Vector3(0, -this.Target.Size.Y, 0)", ease);
+            ht.Duration = TimeSpan.FromSeconds(0.5);
+
+            foreach (var child in list)
+                child.SetHideAnimation(ht);
+        }
 
         public static void SetThemeShadow(UIElement target, float depth, params UIElement[] recievers)
         {
@@ -177,8 +228,6 @@ namespace CharacterMap.Helpers
             foreach (var r in recievers)
                 shadow.Receivers.Add(r);
         }
-
-
 
 
 

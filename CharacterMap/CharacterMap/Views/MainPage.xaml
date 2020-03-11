@@ -320,17 +320,21 @@
                     <Grid
                         x:Name="FontListGrid"
                         Grid.Row="1"
-                        Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                        Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                        Loading="FontListGrid_Loading">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Border x:Name="CollectionControlRow" x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay, TargetNullValue=False, FallbackValue=False}">
-                            <Border.Background>
-                                <SolidColorBrush Opacity="0.4" Color="{ThemeResource SystemAccentColor}" />
-                            </Border.Background>
+                        <Grid x:Name="CollectionControlRow" Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}">
+                            <Border x:Name="CollectionControlBackground">
+                                <Border.Background>
+                                    <SolidColorBrush Opacity="0.4" Color="{ThemeResource SystemAccentColor}" />
+                                </Border.Background>
+                            </Border>
                             <StackPanel
+                                x:Name="CollectionControlItems"
                                 Padding="0,0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal"
@@ -348,7 +352,7 @@
                                     Icon="Delete"
                                     ToolTipService.Placement="Bottom" />
                             </StackPanel>
-                        </Border>
+                        </Grid>
 
                         <TextBlock
                             x:Name="ImportFontHelpBlock"
@@ -366,11 +370,11 @@
                                     x:Name="LstFontFamily"
                                     IsItemClickEnabled="False"
                                     IsSwipeEnabled="False"
+                                    ItemTemplate="{StaticResource FontListItemTemplate}"
                                     ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
                                     SelectedValuePath="Name"
-                                    SelectionMode="Single"
                                     SelectionChanged="LstFontFamily_SelectionChanged"
-                                    ItemTemplate="{StaticResource FontListItemTemplate}"
+                                    SelectionMode="Single"
                                     ShowsScrollingPlaceholders="False">
 
                                     <ListView.ItemContainerTransitions>
@@ -629,8 +633,7 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup
-                x:Name="ViewStates">
+            <VisualStateGroup x:Name="ViewStates">
                 <VisualState x:Name="CompactViewState">
                     <VisualState.Setters>
                         <Setter Target="SplitView.IsPaneOpen" Value="False" />

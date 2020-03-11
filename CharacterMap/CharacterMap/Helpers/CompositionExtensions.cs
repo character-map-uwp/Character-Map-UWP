@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
@@ -37,6 +38,27 @@ namespace CharacterMap.Helpers
 
             composition.ImplicitAnimations[path] = animation;
             return element;
+        }
+
+        public static void SetShowAnimation(this FrameworkElement element, ICompositionAnimationBase animation)
+        {
+            ElementCompositionPreview.SetImplicitShowAnimation(element, animation);
+        }
+
+        public static void SetHideAnimation(this FrameworkElement element, ICompositionAnimationBase animation)
+        {
+            ElementCompositionPreview.SetImplicitHideAnimation(element, animation);
+        }
+
+        public static UIElement EnableTranslation(this UIElement element, bool enable)
+        {
+            ElementCompositionPreview.SetIsTranslationEnabled(element, enable);
+            return element;
+        }
+
+        public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
+        {
+            return c.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));
         }
     }
 }

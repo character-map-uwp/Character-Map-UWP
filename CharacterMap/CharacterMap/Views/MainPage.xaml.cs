@@ -41,7 +41,7 @@ namespace CharacterMap.Views
         private Debouncer _fontSelectionDebouncer { get; } = new Debouncer();
 
         public object ThemeLock { get; } = new object();
-       
+
         private UISettings _uiSettings { get; }
 
         private bool _isCtrlKeyPressed;
@@ -184,7 +184,7 @@ namespace CharacterMap.Views
 
         private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control) 
+            if (e.Key == VirtualKey.Control)
                 _isCtrlKeyPressed = false;
         }
 
@@ -263,59 +263,6 @@ namespace CharacterMap.Views
                     {
                         ViewModel.RefreshFontList(ViewModel.SelectedCollection);
                     });
-                }
-            }
-        }
-
-        private async void PickFonts()
-        {
-            var picker = new FileOpenPicker();
-            foreach (var format in FontFinder.SupportedFormats)
-                picker.FileTypeFilter.Add(format);
-
-            picker.CommitButtonText = Localization.Get("FilePickerConfirm");
-            var files = await picker.PickMultipleFilesAsync();
-            if (files.Any())
-            {
-                ViewModel.IsLoadingFonts = true;
-                try
-                {
-                    if (await FontFinder.ImportFontsAsync(files.ToList()) is FontImportResult result
-                        && result.Imported.Count > 0)
-                    {
-                        ViewModel.RefreshFontList();
-                        ViewModel.TrySetSelectionFromImport(result);
-                    }
-                }
-                finally
-                {
-                    ViewModel.IsLoadingFonts = false;
-                }
-            }
-        }
-
-        private async void OpenFont()
-        {
-            var picker = new FileOpenPicker();
-            foreach (var format in FontFinder.SupportedFormats)
-                picker.FileTypeFilter.Add(format);
-
-            picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
-            var file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                try
-                {
-                    ViewModel.IsLoadingFonts = true;
-
-                    if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
-                    {
-                        await FontMapView.CreateNewViewForFontAsync(font, file);
-                    }
-                }
-                finally
-                {
-                    ViewModel.IsLoadingFonts = false;
                 }
             }
         }
@@ -399,17 +346,6 @@ namespace CharacterMap.Views
             }
         }
 
-        private void FontContextFlyout_Opening(object sender, object e)
-        {
-            if (sender is MenuFlyout menu && menu.Target.DataContext is InstalledFont font)
-            {
-                FlyoutHelper.CreateMenu(
-                    menu, 
-                    font, 
-                    false);
-            }
-        }
-
         private void RenameFontCollection_Click(object sender, RoutedEventArgs e)
         {
             _ = (new CreateCollectionDialog(ViewModel.SelectedCollection)).ShowAsync();
@@ -450,6 +386,59 @@ namespace CharacterMap.Views
             }
         }
 
+        private async void PickFonts()
+        {
+            var picker = new FileOpenPicker();
+            foreach (var format in FontFinder.SupportedFormats)
+                picker.FileTypeFilter.Add(format);
+
+            picker.CommitButtonText = Localization.Get("FilePickerConfirm");
+            var files = await picker.PickMultipleFilesAsync();
+            if (files.Any())
+            {
+                ViewModel.IsLoadingFonts = true;
+                try
+                {
+                    if (await FontFinder.ImportFontsAsync(files.ToList()) is FontImportResult result
+                        && result.Imported.Count > 0)
+                    {
+                        ViewModel.RefreshFontList();
+                        ViewModel.TrySetSelectionFromImport(result);
+                    }
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
+                }
+            }
+        }
+
+        private async void OpenFont()
+        {
+            var picker = new FileOpenPicker();
+            foreach (var format in FontFinder.SupportedFormats)
+                picker.FileTypeFilter.Add(format);
+
+            picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
+            var file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                try
+                {
+                    ViewModel.IsLoadingFonts = true;
+
+                    if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
+                    {
+                        await FontMapView.CreateNewViewForFontAsync(font, file);
+                    }
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
+                }
+            }
+        }
+
         private void OnFontImportRequest(ImportMessage msg)
         {
             _ = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
@@ -480,9 +469,9 @@ namespace CharacterMap.Views
         void ShowImportResult(FontImportResult result)
         {
             if (result.Imported.Count == 1)
-                InAppNotificationHelper.ShowNotification(this, Localization.Get("NotificationSingleFontAdded",  result.Imported[0].Name), 4000);
+                InAppNotificationHelper.ShowNotification(this, Localization.Get("NotificationSingleFontAdded", result.Imported[0].Name), 4000);
             else if (result.Imported.Count > 1)
-                InAppNotificationHelper.ShowNotification(this, Localization.Get("NotificationMultipleFontsAdded",  result.Imported.Count), 4000);
+                InAppNotificationHelper.ShowNotification(this, Localization.Get("NotificationMultipleFontsAdded", result.Imported.Count), 4000);
             else if (result.Invalid.Count > 0)
             {
                 StringBuilder sb = new StringBuilder();
@@ -502,6 +491,9 @@ namespace CharacterMap.Views
 
 
 
+
+        /* Notifications */
+
         public InAppNotification GetNotifier()
         {
             if (NotificationRoot == null)
@@ -514,6 +506,11 @@ namespace CharacterMap.Views
         {
             InAppNotificationHelper.OnMessage(this, msg);
         }
+
+
+
+
+        /* Composition */
 
         private void PaneRoot_Loading(FrameworkElement sender, object args)
         {
@@ -528,6 +525,14 @@ namespace CharacterMap.Views
         private void CommandsGrid_Loading(FrameworkElement sender, object args)
         {
             Composition.SetThemeShadow(sender, 20, FontMap);
+        }
+
+        private void FontListGrid_Loading(FrameworkElement sender, object args)
+        {
+            Composition.SetDropInOut(
+                CollectionControlBackground,
+                CollectionControlItems.Children.Cast<FrameworkElement>().ToList(),
+                CollectionControlRow);
         }
     }
 }
