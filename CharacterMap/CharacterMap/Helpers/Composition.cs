@@ -92,15 +92,31 @@ namespace CharacterMap.Helpers
             t.InsertKeyFrame(1, new Vector3(0), e);
             t.Duration = TimeSpan.FromMilliseconds(durationMs);
 
-            var o = c.CreateScalarKeyFrameAnimation();
-            o.Target = nameof(Visual.Opacity);
-            o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            o.DelayTime = delay;
-            o.InsertKeyFrame(0, 0);
-            o.InsertKeyFrame(1, 1);
-            o.Duration = TimeSpan.FromMilliseconds(durationMs * 0.33);
+            var o = CreateFade(c, 1, 0, (int)(durationMs * 0.33), delayMs);
 
             return c.CreateAnimationGroup(t, o);
+        }
+
+        public static CompositionAnimation CreateFade(Compositor c, float to, float? from, int durationMs, int delayMs = 0)
+        {
+            var o = c.CreateScalarKeyFrameAnimation();
+            o.Target = nameof(Visual.Opacity);
+            if (from != null && from.HasValue)
+                o.InsertKeyFrame(0, from.Value);
+            o.InsertKeyFrame(1, to);
+            o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+            o.DelayTime = TimeSpan.FromMilliseconds(delayMs);
+            o.Duration = TimeSpan.FromMilliseconds(durationMs);
+            return o;
+        }
+
+        public static ExpressionAnimation StartCentering(Visual v)
+        {
+            var e = v.Compositor.CreateExpressionAnimation();
+            e.Target = nameof(Visual.CenterPoint);
+            e.Expression = CENTRE_EXPRESSION;
+            v.StartAnimationGroup(e);
+            return e;
         }
 
         public static void PlayScaleEntrance(FrameworkElement target, float from, float to)
@@ -109,10 +125,7 @@ namespace CharacterMap.Helpers
 
             if (target.Tag == null)
             {
-                var c = v.Compositor.CreateExpressionAnimation();
-                c.Target = nameof(Visual.CenterPoint);
-                c.Expression = CENTRE_EXPRESSION;
-                v.StartAnimationGroup(c);
+                StartCentering(v);
                 target.Tag = target;
             }
 
@@ -124,11 +137,7 @@ namespace CharacterMap.Helpers
             t.InsertKeyFrame(1, new Vector3(to, to, 0), e);
             t.Duration = TimeSpan.FromSeconds(0.6);
 
-            var o = v.Compositor.CreateScalarKeyFrameAnimation();
-            o.Target = nameof(Visual.Opacity);
-            o.InsertKeyFrame(0, 0);
-            o.InsertKeyFrame(1, 1);
-            o.Duration = TimeSpan.FromSeconds(0.2);
+            var o = CreateFade(v.Compositor, 1, 0, 200);
 
             var g = v.Compositor.CreateAnimationGroup(t, o);
             v.StartAnimationGroup(g);

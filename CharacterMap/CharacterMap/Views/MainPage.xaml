@@ -109,6 +109,9 @@
                 Click="OpenFontPaneButton_Click"
                 Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                 Visibility="Collapsed">
+                <FrameworkElement.RenderTransform>
+                    <CompositeTransform />
+                </FrameworkElement.RenderTransform>
                 <SymbolIcon Symbol="GlobalNavigationButton" />
             </AppBarButton>
 
@@ -612,13 +615,7 @@
             Canvas.ZIndex="-1"
             Fill="{x:Bind StatusBar.Background, Mode=OneWay}" />
 
-        <!--  Loading Root  -->
-        <ProgressRing
-            x:Name="LoadingRing"
-            Grid.Row="2"
-            Grid.ColumnSpan="2"
-            Width="50"
-            Height="50" />
+
 
         <views:SettingsView
             x:Name="SettingsView"
@@ -668,6 +665,36 @@
             Grid.ColumnSpan="10">
             <wct:InAppNotification x:Name="DefaultNotification" />
         </Grid>
+
+        <!--  Loading Root  -->
+        <Grid
+            x:Name="LoadingRoot"
+            x:Load="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}"
+            Grid.RowSpan="20"
+            Grid.ColumnSpan="20"
+            Background="{ThemeResource SystemAccentColor}"
+            Loading="LoadingRoot_Loading">
+
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="24">
+                <ProgressRing
+                    Width="75"
+                    Height="75"
+                    Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock)}"
+                    IsActive="True" />
+
+                <TextBlock
+                    x:Uid="TxtLoadingFonts"
+                    HorizontalAlignment="Center"
+                    FontSize="18"
+                    FontWeight="SemiLight"
+                    Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock)}" />
+            </StackPanel>
+
+        </Grid>
+
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ViewStates">
@@ -745,6 +772,11 @@
                                 <LinearDoubleKeyFrame KeyTime="0:0:0.2" Value="-60" />
                                 <EasingDoubleKeyFrame EasingFunction="{StaticResource BackOut4}" KeyTime="0:0:0.9" Value="0" />
                             </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OpenFontPaneButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-100" />
+                                <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="-100" />
+                                <EasingDoubleKeyFrame EasingFunction="{StaticResource BackOut4}" KeyTime="0:0:0.8" Value="0" />
+                            </DoubleAnimationUsingKeyFrames>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="FontMap" Storyboard.TargetProperty="Opacity">
                                 <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                                 <LinearDoubleKeyFrame KeyTime="0:0:0.4" Value="0" />
@@ -784,7 +816,6 @@
                         <Setter Target="OpenFontPaneButton.IsEnabled" Value="False" />
                         <Setter Target="BtnSettings.IsEnabled" Value="False" />
                         <Setter Target="BtnSettings.Opacity" Value="0" />
-                        <Setter Target="LoadingRing.IsActive" Value="True" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FontsFailedState">

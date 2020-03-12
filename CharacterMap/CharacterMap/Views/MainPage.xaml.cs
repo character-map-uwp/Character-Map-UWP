@@ -542,5 +542,22 @@ namespace CharacterMap.Views
                 CollectionControlItems.Children.Cast<FrameworkElement>().ToList(),
                 CollectionControlRow);
         }
+
+        private void LoadingRoot_Loading(FrameworkElement sender, object args)
+        {
+            var v = sender.GetElementVisual();
+
+            Composition.StartCentering(v);
+
+            int duration = 200;
+            var ani = v.Compositor.CreateVector3KeyFrameAnimation();
+            ani.Target = nameof(v.Scale);
+            ani.InsertKeyFrame(1, new System.Numerics.Vector3(1.1f, 1.1f, 0));
+            ani.Duration = TimeSpan.FromMilliseconds(duration);
+
+            var op = Composition.CreateFade(v.Compositor, 0, null, duration);
+
+            sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
+        }
     }
 }
