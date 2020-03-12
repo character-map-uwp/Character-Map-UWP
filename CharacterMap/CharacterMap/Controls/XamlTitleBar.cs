@@ -56,8 +56,12 @@ namespace CharacterMap.Controls
             {
                 _backgroundElement = e;
                 UpdateDragElement();
+                TryUpdateMetrics();
             }
+        }
 
+        public void TryUpdateMetrics()
+        {
             try
             {
                 // Attempts to avoid titlebar not showing immediately when a window is opened

@@ -103,12 +103,31 @@ namespace CharacterMap.Views
 
         private void UpdateLoadingStates()
         {
+
             if (ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
                 VisualStateManager.GoToState(this, nameof(FontsLoadingState), true);
             else if (ViewModel.IsLoadingFontsFailed)
                 VisualStateManager.GoToState(this, nameof(FontsFailedState), true);
             else
-                VisualStateManager.GoToState(this, nameof(FontsLoadedState), ViewModel.Settings.UseSelectionAnimations);
+            {
+                if (ViewModel.Settings.UseSelectionAnimations)
+                {
+                    TitleBar.TryUpdateMetrics();
+                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                    {
+                        _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+                        {
+                            await Task.Delay(32);
+                            if (!ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
+                                VisualStateManager.GoToState(this, nameof(FontsLoadedState), ViewModel.Settings.UseSelectionAnimations);
+                        });
+                    });
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, nameof(FontsLoadedState), ViewModel.Settings.UseSelectionAnimations);
+                }
+            }
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)

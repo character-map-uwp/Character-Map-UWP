@@ -672,6 +672,7 @@
             x:Load="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}"
             Grid.RowSpan="20"
             Grid.ColumnSpan="20"
+            Opacity="0.98"
             Background="{ThemeResource SystemAccentColor}"
             Loading="LoadingRoot_Loading">
 
@@ -805,7 +806,6 @@
                         <Setter Target="CommandsGrid.Opacity" Value="0" />
                         <Setter Target="SplitView.Opacity" Value="0" />
                         <Setter Target="SplitView.IsHitTestVisible" Value="False" />
-                        <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
                         <Setter Target="SearchBox.IsEnabled" Value="False" />
                         <Setter Target="SearchBox.Opacity" Value="0" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
