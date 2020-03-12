@@ -32,10 +32,8 @@ using CharacterMap.Annotations;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class FontMapView : UserControl, IInAppNotificationPresenter, INotifyPropertyChanged
+    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         #region Dependency Properties
 
         #region Font
@@ -127,6 +125,7 @@ namespace CharacterMap.Views
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
 
             UpdateSearchStates();
+            UpdateCharacterFit();
 
             PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
             _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
@@ -186,7 +185,7 @@ namespace CharacterMap.Views
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
         {
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            RunOnUI(() =>
             {
                 switch (msg.PropertyName)
                 {
@@ -209,8 +208,31 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.UseInstantSearch):
                         UpdateSearchStates();
                         break;
+                    case nameof(AppSettings.FitCharacter):
+                        UpdateCharacterFit();
+                        break;
                 }
             });
+        }
+
+        private void UpdateCharacterFit()
+        {
+            if (ViewModel.Settings.FitCharacter)
+            {
+                ZoomOutGlyph.Visibility = Visibility.Visible;
+                ZoomGlyph.Visibility = Visibility.Collapsed;
+
+                TxtPreview.MinHeight = ViewModel.Settings.GridSize;
+                TxtPreview.MinWidth = ViewModel.Settings.GridSize;
+            }
+            else
+            {
+                TxtPreview.ClearValue(TextBlock.MinWidthProperty);
+                TxtPreview.ClearValue(TextBlock.MinHeightProperty);
+
+                ZoomOutGlyph.Visibility = Visibility.Collapsed;
+                ZoomGlyph.Visibility = Visibility.Visible;
+            }
         }
 
         private void UpdateSearchStates()
@@ -249,11 +271,7 @@ namespace CharacterMap.Views
             }
         }
 
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        
 
         private void UpdateStates()
         {
@@ -345,6 +363,11 @@ namespace CharacterMap.Views
 
 
         /* UI Event Handlers */
+
+        private void BtnFit_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.Settings.FitCharacter = !ViewModel.Settings.FitCharacter;
+        }
 
         private void BtnSaveAs_OnClick(object sender, RoutedEventArgs e)
         {
@@ -485,7 +508,7 @@ namespace CharacterMap.Views
 
         private Task SetCharacterSelectionAsync()
         {
-            return Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
+            return Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 if (null != CharGrid.SelectedItem)
                 {
@@ -522,8 +545,14 @@ namespace CharacterMap.Views
 
         private void UpdateDisplay()
         {
-            
-            _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            TxtPreview.FontSize = Core.Converters.GetFontSize(ViewModel.Settings.GridSize);
+            if (ViewModel.Settings.FitCharacter)
+            {
+                TxtPreview.MinHeight = ViewModel.Settings.GridSize;
+                TxtPreview.MinWidth = ViewModel.Settings.GridSize;
+            }
+
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 if (!this.IsLoaded)
                     return;

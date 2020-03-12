@@ -108,7 +108,7 @@ namespace CharacterMap.Views
             else if (ViewModel.IsLoadingFontsFailed)
                 VisualStateManager.GoToState(this, nameof(FontsFailedState), true);
             else
-                VisualStateManager.GoToState(this, nameof(FontsLoadedState), true);
+                VisualStateManager.GoToState(this, nameof(FontsLoadedState), ViewModel.Settings.UseSelectionAnimations);
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -545,6 +545,9 @@ namespace CharacterMap.Views
 
         private void LoadingRoot_Loading(FrameworkElement sender, object args)
         {
+            if (!ViewModel.Settings.UseSelectionAnimations)
+                return;
+
             var v = sender.GetElementVisual();
 
             Composition.StartCentering(v);

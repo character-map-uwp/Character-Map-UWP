@@ -216,6 +216,19 @@ namespace CharacterMap.Helpers
                 child.SetHideAnimation(ht);
         }
 
+        public static void SetStandardFadeInOut(object sender, RoutedEventArgs args)
+        {
+            if (sender is FrameworkElement e)
+                SetFadeInOut(e, 200);
+        }
+
+        private static void SetFadeInOut(FrameworkElement e, int durationMs)
+        {
+            var v = e.GetElementVisual();
+            e.SetHideAnimation(CreateFade(v.Compositor, 0, null, durationMs));
+            e.SetShowAnimation(CreateFade(v.Compositor, 1, null, durationMs));
+        }
+
         public static void SetThemeShadow(UIElement target, float depth, params UIElement[] recievers)
         {
             if (!Utils.Supports1903 || !ResourceHelper.AppSettings.EnableShadows)

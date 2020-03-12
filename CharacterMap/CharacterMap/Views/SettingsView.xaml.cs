@@ -33,10 +33,8 @@ using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class SettingsView : UserControl, INotifyPropertyChanged
+    public sealed partial class SettingsView : ViewBase
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private Random _random { get; } = new Random();
 
         public AppSettings Settings { get; }
@@ -204,12 +202,6 @@ namespace CharacterMap.Views
             var items = LstFontFamily.ItemsSource;
             LstFontFamily.ItemsSource = null;
             LstFontFamily.ItemsSource = items;
-        }
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         public void SelectedLanguageToString(object selected) => 
