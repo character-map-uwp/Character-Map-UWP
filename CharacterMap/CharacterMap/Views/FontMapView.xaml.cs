@@ -273,8 +273,6 @@ namespace CharacterMap.Views
             }
         }
 
-        
-
         private void UpdateStates()
         {
             // Ideally should have been achieved with VisualState setters, buuuuut didn't work for some reason

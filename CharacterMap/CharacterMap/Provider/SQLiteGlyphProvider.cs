@@ -141,7 +141,7 @@ namespace CharacterMap.Provider
                     //      If it does then we ask the database, otherwise we can return without query.
                     foreach (var range in variant.UnicodeRanges)
                     {
-                        if (hex >= range.Item1 && hex <= range.Item2)
+                        if (hex >= range.First && hex <= range.Last)
                         {
                             string hexsql = $"SELECT * FROM {table} WHERE Ix == {hex} LIMIT 1";
                             var hexresults = _connection.Query<GlyphDescription>(hexsql, query)?.Cast<IGlyphData>()?.ToList();
@@ -190,14 +190,14 @@ namespace CharacterMap.Provider
                 /// any useful search results. MS Office Symbol is an example of such a font (with no useful search
                 /// results anyway). Certain complex Asian script fonts **may** theoretically hit this limit.
                 /// We don't want to throw an exception if we ever hit this case, we'll just do our best.
-                foreach ((int, int) range in variant.UnicodeRanges.Take(995)) 
+                foreach (var range in variant.UnicodeRanges.Take(995)) 
                 {
                     if (next)
-                        sb.AppendFormat(" OR Ix BETWEEN {0} AND {1}", range.Item1, range.Item2);
+                        sb.AppendFormat(" OR Ix BETWEEN {0} AND {1}", range.First, range.Last);
                     else
                     {
                         next = true;
-                        sb.AppendFormat("WHERE (Ix BETWEEN {0} AND {1}", range.Item1, range.Item2);
+                        sb.AppendFormat("WHERE (Ix BETWEEN {0} AND {1}", range.First, range.Last);
                     }
                 }
                 sb.Append(")");

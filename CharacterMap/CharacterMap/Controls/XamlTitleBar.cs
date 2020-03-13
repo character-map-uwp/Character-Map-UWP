@@ -46,6 +46,10 @@ namespace CharacterMap.Controls
             DefaultStyleKey = typeof(XamlTitleBar);
             Loaded += XamlTitleBar_Loaded;
             Unloaded += XamlTitleBar_Unloaded;
+
+            // 32px is the default height at default text scaling. 
+            // We'll use this as a placeholder until we get a real value
+            Height = 32;
         }
 
         protected override void OnApplyTemplate()
@@ -68,6 +72,7 @@ namespace CharacterMap.Controls
                 _titleBar = CoreApplication.GetCurrentView().TitleBar;
                 _titleBar.ExtendViewIntoTitleBar = true;
                 UpdateMetrics(_titleBar);
+                UpdateColors();
             }
             catch
             { }
@@ -142,7 +147,10 @@ namespace CharacterMap.Controls
 
         private void UpdateColors()
         {
-            bool active = _window.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
+            if (_settings == null)
+                return;
+
+            bool active = _window != null && _window.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
 
             TemplateSettings.BackgroundColor = _settings.GetColorValue(active ? UIColorType.Accent : UIColorType.AccentDark1);
 
@@ -171,6 +179,8 @@ namespace CharacterMap.Controls
             Color? titleInactiveForegroundColor)
         {
             var view = ApplicationView.GetForCurrentView();
+            if (view == null)
+                return;
 
             // active
             view.TitleBar.BackgroundColor = titleBackgroundColor;
@@ -191,6 +201,8 @@ namespace CharacterMap.Controls
             Color? titleButtonInactiveForegroundColor)
         {
             var view = ApplicationView.GetForCurrentView();
+            if (view == null)
+                return;
 
             // button
             view.TitleBar.ButtonBackgroundColor = titleButtonBackgroundColor;
@@ -210,7 +222,8 @@ namespace CharacterMap.Controls
         {
             bool ltr = FlowDirection == FlowDirection.LeftToRight;
 
-            Height = bar.Height;
+            if (bar.Height > 0)
+                Height = bar.Height;
 
             TemplateSettings.LeftColumnWidth 
                 = new GridLength(ltr ? bar.SystemOverlayLeftInset : bar.SystemOverlayRightInset);

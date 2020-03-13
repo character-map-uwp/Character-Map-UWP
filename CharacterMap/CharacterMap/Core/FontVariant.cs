@@ -13,6 +13,9 @@ namespace CharacterMap.Core
 {
     public partial class FontVariant : IDisposable
     {
+        /* Use a character cache avoids a lot of unnecessary allocations */
+        private static Dictionary<int, Character> _characters { get; } = new Dictionary<int, Character>();
+
 
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
@@ -57,7 +60,7 @@ namespace CharacterMap.Core
 
         public string FamilyName { get; }
 
-        public (uint, uint)[] UnicodeRanges { get; }
+        public CanvasUnicodeRange[] UnicodeRanges => FontFace.UnicodeRanges;
 
         public Panose Panose { get; }
 
@@ -74,7 +77,6 @@ namespace CharacterMap.Core
         public FontVariant(CanvasFontFace face, StorageFile file, DWriteProperties dwProps)
         {
             FontFace = face;
-            Characters = new List<Character>();
             FamilyName = dwProps.FamilyName;
 
             if (file != null)
@@ -93,7 +95,6 @@ namespace CharacterMap.Core
                 name = Utils.GetVariantDescription(face);
 
             DirectWriteProperties = dwProps;
-            UnicodeRanges = face.UnicodeRanges.Select(r => (r.First, r.Last)).ToArray();
             PreferredName = name;
             Panose = PanoseParser.Parse(face);
         }
@@ -111,7 +112,7 @@ namespace CharacterMap.Core
 
         public IReadOnlyList<Character> GetCharacters()
         {
-            if (Characters.Count == 0)
+            if (Characters == null)
             {
                 var characters = new List<Character>();
                 foreach (var range in FontFace.UnicodeRanges)
@@ -119,18 +120,24 @@ namespace CharacterMap.Core
                     CharacterHash += range.First;
                     CharacterHash += range.Last;
 
-                    for (uint i = range.First; i <= range.Last; i++)
+                    int last = (int)range.Last;
+                    for (int i = (int)range.First; i <= last; i++)
                     {
-                        characters.Add(new Character
+                        if (!_characters.TryGetValue(i, out Character c))
                         {
-                            Index = i,
-                            Char = (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1),
-                            UnicodeIndex = (int)i
-                        });
+                            c = new Character
+                            {
+                                Char = (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32(i) : new string((char)i, 1),
+                                UnicodeIndex = i
+                            };
+
+                            _characters[i] = c;
+                        }
+
+                        characters.Add(c);
                     }
                 }
                 Characters = characters;
-                return characters;
             }
 
             return Characters;

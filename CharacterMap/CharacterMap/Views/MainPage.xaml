@@ -86,7 +86,6 @@
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             Loading="CommandsGrid_Loading"
             RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
 
@@ -97,6 +96,13 @@
                 <ColumnDefinition Width="0" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
+            <!-- Required to work around error with hit-testing and shadowing -->
+            <Border
+                x:Name="CommandsGridBackground"
+                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                Grid.ColumnSpan="5"
+                />
 
             <AppBarButton
                 x:Name="OpenFontPaneButton"

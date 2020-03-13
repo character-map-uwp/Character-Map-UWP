@@ -234,12 +234,13 @@ namespace CharacterMap.Helpers
             List<FrameworkElement> barElements,
             List<FrameworkElement> contentElements)
         {
-            TimeSpan duration = TimeSpan.FromSeconds(0.65);
-            TimeSpan duration1 = TimeSpan.FromSeconds(0.75);
+            TimeSpan duration = TimeSpan.FromSeconds(0.5);
+            TimeSpan duration1 = TimeSpan.FromSeconds(0.7);
 
             var b = barBackground.EnableTranslation(true).GetElementVisual();
             var c = b.Compositor;
-            var backOut = c.CreateCubicBezierEasingFunction(new Vector2(0.175f, 0.885f), new Vector2(0.32f, 1.175f));
+
+            var backOut = c.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.885f), new Vector2(0.25f, 1.125f));
             var ent = c.CreateEntranceEasingFunction();
             var lin = c.CreateLinearEasingFunction();
 

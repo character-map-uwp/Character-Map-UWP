@@ -9,9 +9,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:views="using:CharacterMap.Views"
-    SizeChanged="UserControl_SizeChanged"
     d:DesignHeight="800"
     d:DesignWidth="1280"
+    SizeChanged="UserControl_SizeChanged"
     mc:Ignorable="d">
 
     <Grid
@@ -501,9 +501,9 @@
                 <!--  Preview Grid  -->
                 <Grid
                     x:Name="PreviewGrid"
-                    SizeChanged="PreviewGrid_SizeChanged"
                     Grid.RowSpan="2"
-                    Grid.Column="2">
+                    Grid.Column="2"
+                    SizeChanged="PreviewGrid_SizeChanged">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
@@ -671,9 +671,10 @@
                         <Button
                             Grid.Row="2"
                             Height="54"
+                            Padding="8 4 0 5"
                             BorderThickness="0 1"
                             Click="BtnSaveAs_OnClick"
-                            Style="{ThemeResource TransparentButton}">
+                            Style="{StaticResource TransparentButton}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="50" />
@@ -702,7 +703,7 @@
                             Grid.RowSpan="6"
                             Height="54"
                             VerticalAlignment="Top"
-                            Style="{ThemeResource SaveAsPNGCommandBar}">
+                            Style="{StaticResource SaveAsPNGCommandBar}">
                             <CommandBar.SecondaryCommands>
                                 <AppBarButton
                                     Background="Transparent"
@@ -731,10 +732,11 @@
                             x:Load="{x:Bind core:Converters.False(ViewModel.IsSvgChar), Mode=OneWay, FallbackValue=False}"
                             Grid.Row="3"
                             Height="54"
+                            Padding="8 4 0 5"
                             BorderThickness="0 1"
                             Click="BtnSaveAsSvg_OnClick"
                             IsEnabled="{Binding SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
-                            Style="{ThemeResource TransparentButton}">
+                            Style="{StaticResource TransparentButton}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="50" />
@@ -751,6 +753,7 @@
                                     TextTrimming="CharacterEllipsis" />
                                 <FontIcon
                                     Grid.Column="2"
+                                    HorizontalAlignment="Center"
                                     FontSize="13"
                                     Glyph="&#xE972;" />
                             </Grid>
@@ -761,11 +764,12 @@
                             x:Load="{x:Bind ViewModel.IsSvgChar, Mode=OneWay, FallbackValue=False}"
                             Grid.Row="3"
                             Height="54"
+                            Padding="8 4 0 5"
                             BorderThickness="0 1"
                             Command="{x:Bind ViewModel.CommandSaveSvg}"
                             CommandParameter="{StaticResource TrueValue}"
                             IsEnabled="{Binding SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
-                            Style="{ThemeResource TransparentButton}">
+                            Style="{StaticResource TransparentButton}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="50" />

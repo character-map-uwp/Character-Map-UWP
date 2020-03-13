@@ -38,8 +38,6 @@ namespace CharacterMap.Views
 
         private Debouncer _fontListDebouncer { get; } = new Debouncer();
 
-        private Debouncer _fontSelectionDebouncer { get; } = new Debouncer();
-
         public object ThemeLock { get; } = new object();
 
         private UISettings _uiSettings { get; }
@@ -97,6 +95,7 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.IsLoadingFonts):
                 case nameof(ViewModel.IsLoadingFontsFailed):
                     UpdateLoadingStates();
+
                     break;
             }
         }
@@ -115,15 +114,15 @@ namespace CharacterMap.Views
                 if (ViewModel.Settings.UseSelectionAnimations)
                 {
                     Composition.StartStartUpAnimation(
-                        CommandsGrid,
+                        CommandsGridBackground,
                         new List<FrameworkElement>
                         {
+                            OpenFontPaneButton,
+                            FontListFilter,
+                            OpenFontButton,
                             FontTitleBlock,
                             SearchBox,
-                            OpenFontButton,
-                            BtnSettings,
-                            FontListFilter,
-                            OpenFontPaneButton
+                            BtnSettings
                         },
                         new List<FrameworkElement>
                         {
@@ -242,37 +241,6 @@ namespace CharacterMap.Views
             if (e.AddedItems.FirstOrDefault() is InstalledFont font)
             {
                 ViewModel.SelectedFont = font;
-            }
-        }
-
-        private void Grid_DragOver(object sender, DragEventArgs e)
-        {
-            e.AcceptedOperation = DataPackageOperation.Copy;
-        }
-
-        private async void Grid_Drop(object sender, DragEventArgs e)
-        {
-            if (e.DataView.Contains(StandardDataFormats.StorageItems))
-            {
-                ViewModel.IsLoadingFonts = true;
-                try
-                {
-                    var items = await e.DataView.GetStorageItemsAsync();
-                    if (await FontFinder.ImportFontsAsync(items) is FontImportResult result)
-                    {
-                        if (result.Imported.Count > 0)
-                        {
-                            ViewModel.RefreshFontList();
-                            ViewModel.TrySetSelectionFromImport(result);
-                        }
-
-                        ShowImportResult(result);
-                    }
-                }
-                finally
-                {
-                    ViewModel.IsLoadingFonts = false;
-                }
             }
         }
 
@@ -413,6 +381,37 @@ namespace CharacterMap.Views
                 {
                     ViewModel.RefreshFontList(ViewModel.SelectedCollection);
                 });
+            }
+        }
+
+        private void Grid_DragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Copy;
+        }
+
+        private async void Grid_Drop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                ViewModel.IsLoadingFonts = true;
+                try
+                {
+                    var items = await e.DataView.GetStorageItemsAsync();
+                    if (await FontFinder.ImportFontsAsync(items) is FontImportResult result)
+                    {
+                        if (result.Imported.Count > 0)
+                        {
+                            ViewModel.RefreshFontList();
+                            ViewModel.TrySetSelectionFromImport(result);
+                        }
+
+                        ShowImportResult(result);
+                    }
+                }
+                finally
+                {
+                    ViewModel.IsLoadingFonts = false;
+                }
             }
         }
 
@@ -577,8 +576,8 @@ namespace CharacterMap.Views
             int duration = 200;
             var ani = v.Compositor.CreateVector3KeyFrameAnimation();
             ani.Target = nameof(v.Scale);
-            ani.InsertKeyFrame(1, new System.Numerics.Vector3(1.1f, 1.1f, 0));
-            ani.Duration = TimeSpan.FromMilliseconds(duration);
+            ani.InsertKeyFrame(1, new System.Numerics.Vector3(1.15f, 1.15f, 0));
+            ani.Duration = TimeSpan.FromMilliseconds(300);
 
             var op = Composition.CreateFade(v.Compositor, 0, null, duration);
 

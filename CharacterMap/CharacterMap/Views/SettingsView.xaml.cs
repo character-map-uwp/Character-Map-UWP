@@ -69,16 +69,12 @@ namespace CharacterMap.Views
         {
             Visual v = this.EnableTranslation(true).GetElementVisual();
 
-            var o = v.Compositor.CreateScalarKeyFrameAnimation();
-            o.Target = nameof(Visual.Opacity);
-            o.InsertKeyFrame(1, 0);
-            o.Duration = TimeSpan.FromSeconds(0.2);
-
             var t = v.Compositor.CreateVector3KeyFrameAnimation();
             t.Target = Composition.TRANSLATION;
             t.InsertKeyFrame(1, new Vector3(0, 200, 0));
             t.Duration = TimeSpan.FromSeconds(0.375);
 
+            var o = Composition.CreateFade(v.Compositor, 0, null, 200);
             this.SetHideAnimation(v.Compositor.CreateAnimationGroup(t, o));
 
             this.SetShowAnimation(Composition.CreateEntranceAnimation(this, new Vector3(0, 200, 0), 0, 550));
@@ -96,9 +92,6 @@ namespace CharacterMap.Views
 #pragma warning disable CS0618 // ChangeView doesn't work well when not properly visible
             ContentScroller.ScrollToVerticalOffset(0);
 #pragma warning restore CS0618
-
-
-
 
             // 2. Get the fonts used for Font List  & Character Grid previews
             // Note: it is legal for both "variant" and "font" to be NULL
