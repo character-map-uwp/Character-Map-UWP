@@ -229,6 +229,65 @@ namespace CharacterMap.Helpers
             e.SetShowAnimation(CreateFade(v.Compositor, 1, null, durationMs));
         }
 
+        public static void StartStartUpAnimation(
+            FrameworkElement barBackground,
+            List<FrameworkElement> barElements,
+            List<FrameworkElement> contentElements)
+        {
+            TimeSpan duration = TimeSpan.FromSeconds(0.65);
+            TimeSpan duration1 = TimeSpan.FromSeconds(0.75);
+
+            var b = barBackground.EnableTranslation(true).GetElementVisual();
+            var c = b.Compositor;
+            var backOut = c.CreateCubicBezierEasingFunction(new Vector2(0.175f, 0.885f), new Vector2(0.32f, 1.175f));
+            var ent = c.CreateEntranceEasingFunction();
+            var lin = c.CreateLinearEasingFunction();
+
+            var a1 = c.CreateVector3KeyFrameAnimation();
+            a1.Target = TRANSLATION;
+            a1.Duration = duration;
+            a1.InsertKeyFrame(0, new Vector3(0, -45, 0));
+            a1.InsertKeyFrame(1, Vector3.Zero, ent);
+            b.StartAnimationGroup(a1);
+
+            double delay = 0.1;
+            foreach (var element in barElements)
+            {
+                var t = c.CreateVector3KeyFrameAnimation();
+                t.Target = TRANSLATION;
+                t.InsertKeyFrame(0, new Vector3(0, -100, 0));
+                t.InsertKeyFrame(1, Vector3.Zero, backOut);
+                t.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                t.DelayTime = TimeSpan.FromSeconds(delay);
+                t.Duration = duration1;
+                delay += 0.055;
+
+                element.EnableTranslation(true).StartAnimation(t);
+            }
+
+            delay = 0.4;
+            foreach (var element in contentElements)
+            {
+                var t = c.CreateVector3KeyFrameAnimation();
+                t.Target = TRANSLATION;
+                t.InsertKeyFrame(0, new Vector3(0, 140, 0));
+                t.InsertKeyFrame(1, Vector3.Zero, ent);
+                t.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                t.DelayTime = TimeSpan.FromSeconds(delay);
+                t.Duration = duration1;
+
+                var o = c.CreateScalarKeyFrameAnimation();
+                o.Target = nameof(Visual.Opacity);
+                o.InsertKeyFrame(0, 0);
+                o.InsertKeyFrame(1, 1, lin);
+                o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                o.DelayTime = TimeSpan.FromSeconds(delay);
+                o.Duration = TimeSpan.FromSeconds(0.33);
+
+                element.EnableTranslation(true).StartAnimation(c.CreateAnimationGroup(t, o));
+            }
+        }
+
         public static void SetThemeShadow(UIElement target, float depth, params UIElement[] recievers)
         {
             if (!Utils.Supports1903 || !ResourceHelper.AppSettings.EnableShadows)

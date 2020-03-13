@@ -103,6 +103,7 @@ namespace CharacterMap.Views
 
         private void UpdateLoadingStates()
         {
+            TitleBar.TryUpdateMetrics();
 
             if (ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
                 VisualStateManager.GoToState(this, nameof(FontsLoadingState), true);
@@ -110,22 +111,24 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(this, nameof(FontsFailedState), true);
             else
             {
+                VisualStateManager.GoToState(this, nameof(FontsLoadedState), false);
                 if (ViewModel.Settings.UseSelectionAnimations)
                 {
-                    TitleBar.TryUpdateMetrics();
-                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                    {
-                        _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+                    Composition.StartStartUpAnimation(
+                        CommandsGrid,
+                        new List<FrameworkElement>
                         {
-                            await Task.Delay(32);
-                            if (!ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
-                                VisualStateManager.GoToState(this, nameof(FontsLoadedState), ViewModel.Settings.UseSelectionAnimations);
+                            FontTitleBlock,
+                            SearchBox,
+                            OpenFontButton,
+                            BtnSettings,
+                            FontListFilter,
+                            OpenFontPaneButton
+                        },
+                        new List<FrameworkElement>
+                        {
+                            FontMap, FontListGrid
                         });
-                    });
-                }
-                else
-                {
-                    VisualStateManager.GoToState(this, nameof(FontsLoadedState), ViewModel.Settings.UseSelectionAnimations);
                 }
             }
         }

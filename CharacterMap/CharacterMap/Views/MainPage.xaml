@@ -90,10 +90,6 @@
             Loading="CommandsGrid_Loading"
             RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
 
-            <FrameworkElement.RenderTransform>
-                <CompositeTransform />
-            </FrameworkElement.RenderTransform>
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition x:Name="SplitViewPaneColumn" Width="{StaticResource StatusBarPaneWidth}" />
                 <ColumnDefinition Width="*" />
@@ -109,9 +105,6 @@
                 Click="OpenFontPaneButton_Click"
                 Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                 Visibility="Collapsed">
-                <FrameworkElement.RenderTransform>
-                    <CompositeTransform />
-                </FrameworkElement.RenderTransform>
                 <SymbolIcon Symbol="GlobalNavigationButton" />
             </AppBarButton>
 
@@ -125,11 +118,7 @@
                 Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                 Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                 Text="{Binding SelectedFont.Name, Mode=OneWay}"
-                TextTrimming="CharacterEllipsis">
-                <FrameworkElement.RenderTransform>
-                    <CompositeTransform />
-                </FrameworkElement.RenderTransform>
-            </TextBlock>
+                TextTrimming="CharacterEllipsis" />
 
             <AutoSuggestBox
                 x:Name="SearchBox"
@@ -149,9 +138,6 @@
                 TextChanged="{x:Bind FontMap.SearchBox_TextChanged}"
                 TextMemberPath="Description"
                 UpdateTextOnSelect="False">
-                <FrameworkElement.RenderTransform>
-                    <CompositeTransform />
-                </FrameworkElement.RenderTransform>
                 <AutoSuggestBox.QueryIcon>
                     <SymbolIcon Symbol="Find" />
                 </AutoSuggestBox.QueryIcon>
@@ -169,9 +155,6 @@
                     VerticalAlignment="Center"
                     FontSize="16"
                     Glyph="&#xE115;" />
-                <FrameworkElement.RenderTransform>
-                    <CompositeTransform />
-                </FrameworkElement.RenderTransform>
             </AppBarButton>
         </Grid>
 
@@ -221,9 +204,6 @@
                             Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                             Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom">
-                            <FrameworkElement.RenderTransform>
-                                <CompositeTransform />
-                            </FrameworkElement.RenderTransform>
                             <Button.Flyout>
                                 <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
                                     <MenuFlyout.MenuFlyoutPresenterStyle>
@@ -335,9 +315,6 @@
                             VerticalAlignment="Bottom"
                             Click="{x:Bind OpenFont}"
                             Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}">
-                            <FrameworkElement.RenderTransform>
-                                <CompositeTransform />
-                            </FrameworkElement.RenderTransform>
                             <Path
                                 Height="16"
                                 Data="M896,320L1012,320L788,768L0,768L0,128L338.5,128L466.5,0L896,0ZM64,192L64,632.5L220.5,320L832,320L832,64L493.5,64L365.5,192ZM748,704L908,384L260,384L99.5,704Z"
@@ -353,10 +330,6 @@
                         Grid.Row="1"
                         Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
                         Loading="FontListGrid_Loading">
-
-                        <FrameworkElement.RenderTransform>
-                            <CompositeTransform />
-                        </FrameworkElement.RenderTransform>
 
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -550,11 +523,7 @@
                 <views:FontMapView
                     x:Name="FontMap"
                     Grid.Row="1"
-                    Font="{x:Bind ViewModel.SelectedFont, Mode=OneWay}">
-                    <FrameworkElement.RenderTransform>
-                        <CompositeTransform />
-                    </FrameworkElement.RenderTransform>
-                </views:FontMapView>
+                    Font="{x:Bind ViewModel.SelectedFont, Mode=OneWay}" />
 
                 <!--  Status Bar  -->
                 <Grid
@@ -672,7 +641,6 @@
             x:Load="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}"
             Grid.RowSpan="20"
             Grid.ColumnSpan="20"
-            Opacity="0.98"
             Background="{ThemeResource SystemAccentColor}"
             Loading="LoadingRoot_Loading">
 
@@ -685,7 +653,6 @@
                     Height="75"
                     Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock)}"
                     IsActive="True" />
-
                 <TextBlock
                     x:Uid="TxtLoadingFonts"
                     HorizontalAlignment="Center"
@@ -739,68 +706,6 @@
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="LoadingStates">
-                <VisualStateGroup.Transitions>
-                    <VisualTransition
-                        GeneratedDuration="0:0:0"
-                        From="FontsLoadingState"
-                        To="FontsLoadedState">
-                        <Storyboard>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CommandsGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-45" />
-                                <SplineDoubleKeyFrame KeySpline="0.1 0.9 0.2 1.0" KeyTime="0:0:0.5" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="FontTitleBlock" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-100" />
-                                <EasingDoubleKeyFrame EasingFunction="{StaticResource BackOut4}" KeyTime="0:0:0.7" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SearchBox" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-100" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="-100" />
-                                <EasingDoubleKeyFrame EasingFunction="{StaticResource BackOut4}" KeyTime="0:0:0.8" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BtnSettings" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-100" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.2" Value="-100" />
-                                <EasingDoubleKeyFrame EasingFunction="{StaticResource BackOut4}" KeyTime="0:0:0.9" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OpenFontButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-100" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="-100" />
-                                <EasingDoubleKeyFrame EasingFunction="{StaticResource BackOut4}" KeyTime="0:0:0.8" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="FontListFilter" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-60" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.2" Value="-60" />
-                                <EasingDoubleKeyFrame EasingFunction="{StaticResource BackOut4}" KeyTime="0:0:0.9" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OpenFontPaneButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="-100" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.1" Value="-100" />
-                                <EasingDoubleKeyFrame EasingFunction="{StaticResource BackOut4}" KeyTime="0:0:0.8" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="FontMap" Storyboard.TargetProperty="Opacity">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.4" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.73" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="FontMap" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="140" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.4" Value="140" />
-                                <SplineDoubleKeyFrame KeySpline="0.1 0.9 0.2 1.0" KeyTime="0:0:1.2" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="FontListGrid" Storyboard.TargetProperty="Opacity">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.4" Value="0" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.73" Value="1" />
-                            </DoubleAnimationUsingKeyFrames>
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="FontListGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <LinearDoubleKeyFrame KeyTime="0:0:0" Value="140" />
-                                <LinearDoubleKeyFrame KeyTime="0:0:0.4" Value="140" />
-                                <SplineDoubleKeyFrame KeySpline="0.1 0.9 0.2 1.0" KeyTime="0:0:1.2" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                    </VisualTransition>
-                </VisualStateGroup.Transitions>
                 <VisualState x:Name="FontsLoadingState">
                     <VisualState.Setters>
                         <Setter Target="CommandsGrid.Opacity" Value="0" />
