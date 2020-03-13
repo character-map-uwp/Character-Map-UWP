@@ -9,6 +9,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:views="using:CharacterMap.Views"
+    SizeChanged="UserControl_SizeChanged"
     d:DesignHeight="800"
     d:DesignWidth="1280"
     mc:Ignorable="d">
@@ -477,6 +478,7 @@
 
                 <!--  Column Grid Splitter  -->
                 <toolkit:GridSplitter
+                    x:Name="Splitter"
                     Grid.RowSpan="2"
                     Grid.Column="1"
                     Width="8"
@@ -499,9 +501,9 @@
                 <!--  Preview Grid  -->
                 <Grid
                     x:Name="PreviewGrid"
+                    SizeChanged="PreviewGrid_SizeChanged"
                     Grid.RowSpan="2"
-                    Grid.Column="2"
-                    SizeChanged="PreviewGrid_SizeChanged">
+                    Grid.Column="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
