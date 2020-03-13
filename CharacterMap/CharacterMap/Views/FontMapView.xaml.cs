@@ -410,13 +410,13 @@ namespace CharacterMap.Views
             if (e.NewSize.Width > e.PreviousSize.Width)
                 return;
 
-            _sizeDebouncer.Debounce(64, () =>
+            _sizeDebouncer.Debounce(250, () =>
             {
                 if (!this.IsLoaded)
                     return;
 
-                var size = CharGrid.ActualWidth + Splitter.ActualWidth + PreviewGrid.ActualWidth;
-                if (this.ActualWidth < size)
+                var size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
+                if (this.ActualWidth < size && this.ActualWidth < 700)
                 {
                     PreviewColumn.Width = new GridLength((int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth));
                 }
