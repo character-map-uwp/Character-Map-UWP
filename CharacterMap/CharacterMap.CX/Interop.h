@@ -10,10 +10,12 @@
 #include "DWriteProperties.h"
 #include "DWriteFontFace.h"
 #include "DWriteFontSet.h"
+#include "PathData.h"
 
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
+using namespace Microsoft::Graphics::Canvas::Geometry;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Storage::Streams;
@@ -33,7 +35,8 @@ namespace CharacterMapCX
 		IBuffer^ GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, UINT imageType);
 		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace);
 		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
-		Platform::String^ GetPathGeometry(CanvasTextLayoutAnalysis^ analysis, CanvasFontFace^ set);
+		Platform::String^ GetPathData(CanvasFontFace^ fontFace, UINT16 charIndex);
+		PathData^ GetPathData(CanvasGeometry^ geometry);
 
 		DWriteFontSet^ GetSystemFonts();
 		DWriteFontSet^ GetFonts(Uri^ uri);

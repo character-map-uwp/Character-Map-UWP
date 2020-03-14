@@ -24,6 +24,7 @@
     <ClInclude Include="SVGGeometrySink.h" />
     <ClInclude Include="DWriteFontFace.h" />
     <ClInclude Include="DWriteFontSet.h" />
+    <ClInclude Include="PathData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

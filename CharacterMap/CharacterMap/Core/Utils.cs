@@ -3,10 +3,12 @@ using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI;
@@ -131,26 +133,32 @@ namespace CharacterMap.Core
 
         public static CanvasSvgDocument GenerateSvgDocument(
             ICanvasResourceCreator device,
-            double width,
-            double height,
+            Rect rect,
             string path)
         {
-            return GenerateSvgDocument(device, width, height, new List<string> { path });
+            return GenerateSvgDocument(device, rect, new List<string> { path });
         }
 
         public static CanvasSvgDocument GenerateSvgDocument(
             ICanvasResourceCreator device,
-            double width, 
-            double height, 
+            Rect rect, 
             IList<string> paths)
         {
-            width = Math.Ceiling(width);
-            height = Math.Ceiling(height);
+            var right = Math.Ceiling(rect.Width);
+            var bottom = Math.Ceiling(rect.Height);
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("<svg width=\"100%\" height=\"100%\" viewBox=\"0 0 {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">", width, height);
+            sb.AppendFormat(
+                CultureInfo.InvariantCulture, 
+                "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">", 
+                right, bottom, -Math.Floor(rect.Left), -Math.Floor(rect.Top));
+
             foreach (var path in paths)
             {
-                sb.AppendFormat("<path d=\"{0}\" />", path);
+                string p = path;
+                if (path.StartsWith("F1 "))
+                    p = path.Remove(0, 3);
+
+                sb.AppendFormat("<path d=\"{0}\" />", p);
             }
             sb.Append("</svg>");
 
