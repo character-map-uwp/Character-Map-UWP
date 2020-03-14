@@ -244,6 +244,7 @@ Platform::String^ Interop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphInd
 
 	ComPtr<SVGGeometrySink> sink = new (std::nothrow) SVGGeometrySink();
 	geom->Stream(sink.Get());
+	sink->Close();
 
 	return sink->GetPathData();
 }
@@ -300,6 +301,9 @@ IVectorView<PathData^>^ Interop::GetPathDatas(CanvasFontFace^ fontFace, const Pl
 				ref new PathData(sink->GetPathData(), Rect(bounds.left, bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top)));
 		}
 
+		sink->Close();
+
+		sink = nullptr;
 		geometrySink = nullptr;
 		geom = nullptr;
 	}
@@ -330,7 +334,10 @@ PathData^ Interop::GetPathData(CanvasGeometry^ geometry)
 
 	p->Stream(sink.Get());
 
-	return ref new PathData(sink->GetPathData(), m);
+	auto data = ref new PathData(sink->GetPathData(), m);
+	sink->Close();
+
+	return data;
 }
 
 CanvasTextLayoutAnalysis^ Interop::AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace)
