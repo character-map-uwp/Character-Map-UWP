@@ -28,6 +28,12 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public bool FitCharacter
+        {
+            get => Get(false);
+            set => BroadcastSet(value);
+        }
+
         public bool ShowDevUtils
         {
             get => Get(true);

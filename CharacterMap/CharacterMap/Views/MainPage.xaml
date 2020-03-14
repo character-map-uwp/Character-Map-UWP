@@ -23,6 +23,12 @@
             x:Name="GroupedFontList"
             IsSourceGrouped="True"
             Source="{Binding GroupedFontList}" />
+
+        <BackEase
+            x:Key="BackOut4"
+            Amplitude="0.4"
+            EasingMode="EaseOut" />
+
     </Page.Resources>
 
     <Grid
@@ -47,7 +53,8 @@
         <controls:XamlTitleBar
             x:Name="TitleBar"
             Grid.Row="0"
-            Grid.ColumnSpan="2">
+            Grid.ColumnSpan="2"
+            Canvas.ZIndex="1">
             <Grid ColumnSpacing="7">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
@@ -79,7 +86,6 @@
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="2"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
             Loading="CommandsGrid_Loading"
             RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
 
@@ -90,6 +96,13 @@
                 <ColumnDefinition Width="0" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
+            <!-- Required to work around error with hit-testing and shadowing -->
+            <Border
+                x:Name="CommandsGridBackground"
+                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                Grid.ColumnSpan="5"
+                />
 
             <AppBarButton
                 x:Name="OpenFontPaneButton"
@@ -164,6 +177,7 @@
             PaneBackground="Transparent">
             <SplitView.Pane>
                 <Grid x:Name="PaneRoot" Loading="PaneRoot_Loading">
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{x:Bind TitleBarRow.Height}" />
                         <RowDefinition Height="*" />
@@ -320,17 +334,22 @@
                     <Grid
                         x:Name="FontListGrid"
                         Grid.Row="1"
-                        Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                        Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                        Loading="FontListGrid_Loading">
+
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Border x:Name="CollectionControlRow" x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay, TargetNullValue=False, FallbackValue=False}">
-                            <Border.Background>
-                                <SolidColorBrush Opacity="0.4" Color="{ThemeResource SystemAccentColor}" />
-                            </Border.Background>
+                        <Grid x:Name="CollectionControlRow" Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}">
+                            <Border x:Name="CollectionControlBackground">
+                                <Border.Background>
+                                    <SolidColorBrush Opacity="0.4" Color="{ThemeResource SystemAccentColor}" />
+                                </Border.Background>
+                            </Border>
                             <StackPanel
+                                x:Name="CollectionControlItems"
                                 Padding="0,0"
                                 HorizontalAlignment="Center"
                                 Orientation="Horizontal"
@@ -348,7 +367,7 @@
                                     Icon="Delete"
                                     ToolTipService.Placement="Bottom" />
                             </StackPanel>
-                        </Border>
+                        </Grid>
 
                         <TextBlock
                             x:Name="ImportFontHelpBlock"
@@ -366,11 +385,11 @@
                                     x:Name="LstFontFamily"
                                     IsItemClickEnabled="False"
                                     IsSwipeEnabled="False"
+                                    ItemTemplate="{StaticResource FontListItemTemplate}"
                                     ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
                                     SelectedValuePath="Name"
-                                    SelectionMode="Single"
                                     SelectionChanged="LstFontFamily_SelectionChanged"
-                                    ItemTemplate="{StaticResource FontListItemTemplate}"
+                                    SelectionMode="Single"
                                     ShowsScrollingPlaceholders="False">
 
                                     <ListView.ItemContainerTransitions>
@@ -571,13 +590,7 @@
             Canvas.ZIndex="-1"
             Fill="{x:Bind StatusBar.Background, Mode=OneWay}" />
 
-        <!--  Loading Root  -->
-        <ProgressRing
-            x:Name="LoadingRing"
-            Grid.Row="2"
-            Grid.ColumnSpan="2"
-            Width="50"
-            Height="50" />
+
 
         <views:SettingsView
             x:Name="SettingsView"
@@ -628,9 +641,37 @@
             <wct:InAppNotification x:Name="DefaultNotification" />
         </Grid>
 
+        <!--  Loading Root  -->
+        <Grid
+            x:Name="LoadingRoot"
+            x:Load="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}"
+            Grid.RowSpan="20"
+            Grid.ColumnSpan="20"
+            Background="{ThemeResource SystemAccentColor}"
+            Loading="LoadingRoot_Loading">
+
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="24">
+                <ProgressRing
+                    Width="75"
+                    Height="75"
+                    Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock)}"
+                    IsActive="True" />
+                <TextBlock
+                    x:Uid="TxtLoadingFonts"
+                    HorizontalAlignment="Center"
+                    FontSize="18"
+                    FontWeight="SemiLight"
+                    Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock)}" />
+            </StackPanel>
+
+        </Grid>
+
+
         <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup
-                x:Name="ViewStates">
+            <VisualStateGroup x:Name="ViewStates">
                 <VisualState x:Name="CompactViewState">
                     <VisualState.Setters>
                         <Setter Target="SplitView.IsPaneOpen" Value="False" />
@@ -672,14 +713,12 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="LoadingStates">
                 <VisualState x:Name="FontsLoadingState">
-                    <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}" />
-                    </VisualState.StateTriggers>
                     <VisualState.Setters>
+                        <Setter Target="CommandsGrid.Opacity" Value="0" />
                         <Setter Target="SplitView.Opacity" Value="0" />
                         <Setter Target="SplitView.IsHitTestVisible" Value="False" />
-                        <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
                         <Setter Target="SearchBox.IsEnabled" Value="False" />
+                        <Setter Target="SearchBox.Opacity" Value="0" />
                         <Setter Target="ImportFontsButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontButton.Opacity" Value="0.4" />
@@ -687,13 +726,10 @@
                         <Setter Target="ShowPaneButton.IsEnabled" Value="False" />
                         <Setter Target="OpenFontPaneButton.IsEnabled" Value="False" />
                         <Setter Target="BtnSettings.IsEnabled" Value="False" />
-                        <Setter Target="LoadingRing.IsActive" Value="True" />
+                        <Setter Target="BtnSettings.Opacity" Value="0" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FontsFailedState">
-                    <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind ViewModel.IsLoadingFontsFailed, Mode=OneWay}" />
-                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SplitView.Visibility" Value="Collapsed" />
                         <Setter Target="SearchBox.IsEnabled" Value="False" />

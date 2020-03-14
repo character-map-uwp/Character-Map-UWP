@@ -67,7 +67,7 @@ namespace CharacterMap.Core
                     
                     async Task SaveMonochromeAsync()
                     {
-                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds.Width, data.Bounds.Height, data.Path))
+                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path))
                         {
                             ((CanvasSvgNamedElement)document.Root.FirstChild).SetColorAttribute("fill", textColor);
                             await Utils.WriteSvgAsync(document, file);
@@ -281,8 +281,9 @@ namespace CharacterMap.Core
         {
             var savePicker = new FileSavePicker
             {
-                SuggestedStartLocation = PickerLocationId.Desktop
+                SuggestedStartLocation = PickerLocationId.PicturesLibrary
             };
+
             savePicker.FileTypeChoices.Add(key, values);
             savePicker.SuggestedFileName = fileName;
 
@@ -303,6 +304,33 @@ namespace CharacterMap.Core
             CanvasTextLayoutAnalysis analysis,
             CanvasTypography typography)
         {
+            using (CanvasGeometry geom = CreateGeometry(size, selectedVariant, selectedChar, analysis, typography))
+            {
+                /* 
+                 * Unfortunately this only constructs a monochrome path, if we want color
+                 * Win2D does not yet expose the necessary API's to get the individual glyph
+                 * layers that make up a color glyph.
+                 * 
+                 * We'll need to handle this in C++/CX if we want to do this at some point.
+                 */
+
+                var bounds = geom.ComputeBounds();
+                var interop = SimpleIoc.Default.GetInstance<Interop>();
+                var s = interop.GetPathData(geom);
+
+                var t = s.Transform.Translation;
+                bounds = new Rect(t.X - bounds.Left, -bounds.Top + t.Y, bounds.Width, bounds.Height);
+                return (s.Path, bounds);
+            }
+        }
+
+        public static CanvasGeometry CreateGeometry(
+           float size,
+           FontVariant selectedVariant,
+           Character selectedChar,
+           CanvasTextLayoutAnalysis analysis,
+           CanvasTypography typography)
+        {
             CanvasDevice device = Utils.CanvasDevice;
 
             /* SVG Exports render at fixed size - but a) they're vectors, and b) they're
@@ -322,31 +350,7 @@ namespace CharacterMap.Core
                 layout.SetTypography(0, 1, typography);
                 layout.Options = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg) ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
 
-                using (CanvasGeometry temp = CanvasGeometry.CreateText(layout))
-                {
-                    var b = temp.ComputeBounds();
-                    double scale = Math.Min(1, Math.Min(canvasW / b.Width, canvasH / b.Height));
-
-                    Matrix3x2 transform =
-                        Matrix3x2.CreateTranslation(new Vector2((float)-b.Left, (float)-b.Top))
-                        * Matrix3x2.CreateScale(new Vector2((float)scale));
-
-                    using (CanvasGeometry geom = temp.Transform(transform))
-                    {
-                        /* 
-                         * Unfortunately this only constructs a monochrome path, if we want color
-                         * Win2D does not yet expose the necessary API's to get the individual glyph
-                         * layers that make up a color glyph.
-                         * 
-                         * We'll need to handle this in C++/CX if we want to do this at some point.
-                         */
-
-                        SVGPathReciever rc = new SVGPathReciever();
-                        geom.SendPathTo(rc);
-
-                        return (rc.GetPathData(), geom.ComputeBounds());
-                    }
-                }
+                return CanvasGeometry.CreateText(layout);
             }
         }
     }

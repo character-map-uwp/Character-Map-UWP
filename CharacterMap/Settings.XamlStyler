@@ -3,7 +3,7 @@
     "KeepFirstAttributeOnSameLine": false,
     "MaxAttributeCharactersPerLine": 0,
     "MaxAttributesPerLine": 1,
-    "NewlineExemptionElements": "RadialGradientBrush, GradientStop, LinearGradientBrush, ScaleTransform, SkewTransform, RotateTransform, TranslateTransform, Trigger, Condition, Style, Setter",
+    "NewlineExemptionElements": "RadialGradientBrush, GradientStop, LinearGradientBrush, ScaleTransform, SkewTransform, RotateTransform, TranslateTransform, Trigger, Condition, Style, Setter, SplineDoubleKeyFrame, KeySpline, EasingDoubleKeyFrame",
     "SeparateByGroups": false,
     "AttributeIndentation": 0,
     "AttributeIndentationStyle": 1,

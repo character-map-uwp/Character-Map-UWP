@@ -122,9 +122,7 @@ namespace CharacterMap.Services
                 // Ensure the current window is active
                 Window.Current.Activate();
 
-                // Make the window max as much as possible by default
-                ApplicationView.PreferredLaunchViewSize = new Size { Height = 2000, Width = 3000 };
-                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
 
                 // Tasks after activation
                 await StartupAsync();

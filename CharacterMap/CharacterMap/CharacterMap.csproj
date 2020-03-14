@@ -184,6 +184,7 @@
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
+    <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Core\Messages.cs" />
@@ -243,6 +244,7 @@
     <Compile Include="Views\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ViewBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

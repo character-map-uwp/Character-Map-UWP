@@ -275,6 +275,7 @@
     <ClInclude Include="DWriteFontSource.h" />
     <ClInclude Include="DWriteProperties.h" />
     <ClInclude Include="GlyphImageFormat.h" />
+    <ClInclude Include="PathData.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Interop.h" />
     <ClInclude Include="SVGGeometrySink.h" />

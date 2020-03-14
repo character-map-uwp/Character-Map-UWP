@@ -5,6 +5,7 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Provider;
 using CharacterMapCX;
+using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Graphics.Canvas.Text;
 using SQLite;
 using System;
@@ -105,11 +106,19 @@ namespace CharacterMap.Services
             return _provider.SearchAsync(query, variant);
         }
 
-        public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(Character c, FontVariant v, CanvasTextLayoutAnalysis analysis, CanvasTypography t, bool isXaml)
+        public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
+            Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)
         {
+            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+
             string h, f, p, s = null;
-            string pathData = ExportManager.GetGeometry(ResourceHelper.AppSettings.GridSize, v, c, analysis, t).Path.Trim();
             bool hasSymbol = FontFinder.IsMDL2(v) && Enum.IsDefined(typeof(Symbol), c.UnicodeIndex);
+            
+            string pathData;
+            using (var geom = ExportManager.CreateGeometry(ResourceHelper.AppSettings.GridSize, v, c, a, t))
+            {
+                pathData = interop.GetPathData(geom).Path;
+            }
 
             var hex = c.UnicodeIndex.ToString("x4").ToUpper();
             if (isXaml)

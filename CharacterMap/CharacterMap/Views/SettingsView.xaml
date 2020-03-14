@@ -1,11 +1,13 @@
-﻿<UserControl
+﻿<views:ViewBase
     x:Class="CharacterMap.Views.SettingsView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     d:DesignHeight="1880"
     d:DesignWidth="1920"
@@ -15,13 +17,14 @@
 
     <UserControl.Resources>
         <Style x:Key="SubheaderTextBlockStyle" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="26" />
-            <Setter Property="FontWeight" Value="Light" />
-            <Setter Property="Margin" Value="0 12 0 -16" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
         <Style x:Key="DescriptionStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
             <Setter Property="Opacity" Value="0.7" />
             <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Margin" Value="0 4 0 8" />
             <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
         </Style>
         <Style x:Key="HeaderStyle" TargetType="TextBlock">
@@ -29,9 +32,22 @@
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Margin" Value="0 20 0 0" />
         </Style>
+        <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
+            <Setter Property="Margin" Value="4 4 0 12" />
+            <Setter Property="FontStyle" Value="Italic" />
+            <Setter Property="OpticalMarginAlignment" Value="None" />
+        </Style>
         <Style TargetType="RadioButton">
             <Setter Property="MinWidth" Value="200" />
         </Style>
+
+        <Style x:Key="SpacerStyle" TargetType="Border">
+            <Setter Property="Height" Value="1" />
+            <Setter Property="Background" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
+            <Setter Property="Opacity" Value="0.3" />
+            <Setter Property="Margin" Value="0 24 0 12" />
+        </Style>
+
     </UserControl.Resources>
 
     <!--
@@ -40,11 +56,11 @@
     <Grid>
         <Grid.Background>
             <AcrylicBrush
-                win1903:TintLuminosityOpacity="0.2"
+                win1903:TintLuminosityOpacity="0.3"
                 BackgroundSource="Backdrop"
                 FallbackColor="{ThemeResource SystemAltHighColor}"
                 TintColor="{ThemeResource SystemChromeGrayColor}"
-                TintOpacity="0.5" />
+                TintOpacity="0.6" />
         </Grid.Background>
 
         <Grid.RowDefinitions>
@@ -80,7 +96,10 @@
         </Grid>
 
         <ScrollViewer x:Name="ContentScroller" Grid.Row="1">
-            <Grid ColumnSpacing="16" Margin="20 20 20 120">
+            <Grid
+                x:Name="ContentPanel"
+                ColumnSpacing="16"
+                Margin="20 20 20 120">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MaxWidth="700" />
@@ -89,34 +108,14 @@
 
                 <!--#region LEFT COLUMN-->
 
-                <StackPanel>
+                <StackPanel x:Name="LeftPanel">
 
                     <!--#region USER INTERFACE-->
 
                     <TextBlock
                         x:Uid="SettingsUIHeader"
-                        Margin="0 -4 0 -16"
                         Style="{StaticResource SubheaderTextBlockStyle}"
                         Text="#UserInterface" />
-
-                    <TextBlock
-                        x:Uid="SettingsLanguageHeader"
-                        Style="{StaticResource HeaderStyle}"
-                        Text="#Language" />
-
-                    <ComboBox
-                        Height="48"
-                        ItemsSource="{x:Bind SupportedLanguages}"
-                        PlaceholderText="{x:Bind core:Converters.GetLanguageDisplayFromID(Settings.AppLanguage)}"
-                        SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}"/>
-                    
-                    <TextBlock
-                        x:Uid="SettingsNeedRestart"
-                        Margin="4 4 0 4"
-                        FontStyle="Italic"
-                        OpticalMarginAlignment="None"
-                        Style="{StaticResource DescriptionStyle}"
-                        Visibility="{x:Bind core:Converters.CompareLanguageToSetting(Settings.AppLanguage), Mode=OneWay}"/> 
 
                     <TextBlock
                         x:Uid="SettingsCharGridHeader"
@@ -217,12 +216,7 @@
 
                     </StackPanel>
 
-                    <TextBlock
-                        x:Uid="SettingsCharPreviewHint"
-                        Margin="4 4 0 12"
-                        FontStyle="Italic"
-                        OpticalMarginAlignment="None"
-                        Style="{StaticResource DescriptionStyle}" />
+                    <TextBlock x:Uid="SettingsCharPreviewHint" Style="{StaticResource HintStyle}" />
 
                     <TextBlock x:Uid="FontListDisplayHeader" Style="{StaticResource HeaderStyle}" />
                     <TextBlock x:Uid="SettingsFontListDescription" Style="{StaticResource DescriptionStyle}" />
@@ -261,12 +255,7 @@
                         </ListView.Resources>
                     </ListView>
 
-                    <TextBlock
-                        x:Uid="SettingsFontListPreviewHint"
-                        Margin="4 4 0 12"
-                        FontStyle="Italic"
-                        OpticalMarginAlignment="None"
-                        Style="{StaticResource DescriptionStyle}" />
+                    <TextBlock x:Uid="SettingsFontListPreviewHint" Style="{StaticResource HintStyle}" />
 
 
                     <TextBlock x:Uid="SettingsThemeHeader" Style="{StaticResource HeaderStyle}" />
@@ -287,41 +276,51 @@
                         GroupName="ThemeSelector" />
 
 
-                    <TextBlock x:Uid="SettingsSimpleAnimationHeader" Style="{StaticResource HeaderStyle}" />
-                    <TextBlock x:Uid="SettingsSimpleAnimationDescription" Style="{StaticResource DescriptionStyle}" />
-                    <ToggleSwitch IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="SettingsLanguageHeader"
+                            Style="{StaticResource HeaderStyle}"
+                            Text="#Language" />
 
-                    <win1903:StackPanel>
-                        <TextBlock x:Uid="SettingsShadowsHeader" Style="{StaticResource HeaderStyle}" />
-                        <TextBlock x:Uid="SettingsShadowsDescription" Style="{StaticResource DescriptionStyle}" />
-                        <ToggleSwitch IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
-                    </win1903:StackPanel>
-
-
-                    <TextBlock x:Uid="SettingsExpensiveAnimationHeader" Style="{StaticResource HeaderStyle}" />
-                    <TextBlock x:Uid="SettingsExpensiveAnimationDescription" Style="{StaticResource DescriptionStyle}" />
-                    <ToggleSwitch IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
-
-
-
-
-
-                    <StackPanel x:Name="LanguagePanel" Visibility="Collapsed">
-                        <TextBlock x:Uid="SettingsLanguageHeader" Style="{StaticResource HeaderStyle}" />
-                        <TextBlock x:Uid="SettingsLanguageDescription" Style="{StaticResource DescriptionStyle}" />
-                        <ToggleSwitch x:Name="LangOverrideSwitch" x:Uid="SettingsLangOverride" />
                         <ComboBox
-                            x:Name="ComboLanguages"
-                            Width="200"
-                            SelectedIndex="0"
-                            Visibility="{x:Bind LangOverrideSwitch.IsOn, Mode=OneWay}" />
+                            Width="256"
+                            Margin="0 8 0 0"
+                            ItemsSource="{x:Bind SupportedLanguages}"
+                            PlaceholderText="{x:Bind core:Converters.GetLanguageDisplayFromID(Settings.AppLanguage)}"
+                            SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}"
+                            Style="{StaticResource DefaultComboBoxStyle}" />
+
+                        <TextBlock
+                            x:Uid="SettingsNeedRestart"
+                            Margin="4 4 0 4"
+                            Style="{StaticResource HintStyle}"
+                            Visibility="{x:Bind core:Converters.CompareLanguageToSetting(Settings.AppLanguage), Mode=OneWay}" />
+                    </StackPanel>
+
+                    <StackPanel Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
+                        <TextBlock x:Uid="SettingsSimpleAnimationHeader" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsSimpleAnimationDescription" Style="{StaticResource DescriptionStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+
+                        <win1903:StackPanel>
+                            <TextBlock x:Uid="SettingsShadowsHeader" Style="{StaticResource HeaderStyle}" />
+                            <TextBlock x:Uid="SettingsShadowsDescription" Style="{StaticResource DescriptionStyle}" />
+                            <ToggleSwitch IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
+                        </win1903:StackPanel>
+
+
+                        <TextBlock x:Uid="SettingsExpensiveAnimationHeader" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsExpensiveAnimationDescription" Style="{StaticResource DescriptionStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
                     </StackPanel>
 
                     <!--#endregion-->
 
+                    <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
+
                     <!--#region EXPORT-->
 
-                    <StackPanel Margin="0 12 0 0">
+                    <StackPanel Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
                         <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
                         <TextBlock x:Uid="SettingsPNGExportHeader" Style="{StaticResource HeaderStyle}" />
                         <TextBlock x:Uid="SettingsPNGExportDescription" Style="{StaticResource DescriptionStyle}" />
@@ -346,14 +345,11 @@
 
                     <!--#endregion-->
 
+                    <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
+
                     <!--#region CHARACTER SEARCH-->
 
-                    <StackPanel Margin="0 0 0 0">
-                        <StackPanel.ChildrenTransitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition IsStaggeringEnabled="False" />
-                            </TransitionCollection>
-                        </StackPanel.ChildrenTransitions>
+                    <StackPanel Margin="0 0 0 0" Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
 
                         <TextBlock x:Uid="SettingsCharacterSearchHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
@@ -389,18 +385,22 @@
                             AcceptsExpression="False"
                             Header="#Search Results"
                             LargeChange="10"
+                            Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                             Maximum="100"
                             Minimum="5"
                             SmallChange="5"
                             SpinButtonPlacementMode="Inline"
                             Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
+
                     </StackPanel>
 
                     <!--#endregion-->
 
+                    <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
+
                     <!--#region DEVELOPER FEATURES-->
 
-                    <StackPanel x:Name="DeveloperPanel" Margin="0 24 0 0">
+                    <StackPanel x:Name="DeveloperPanel" Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
                         <TextBlock x:Uid="SettingsDevToolsGroupHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
                         <StackPanel Visibility="Collapsed">
@@ -425,6 +425,7 @@
                 <!--#region RIGHT COLUMN-->
 
                 <StackPanel
+                    x:Name="RightPanel"
                     Grid.Row="1"
                     Grid.Column="1"
                     MaxWidth="216"
@@ -446,6 +447,7 @@
                         Text="#Settings_AboutDescription"
                         TextWrapping="Wrap" />
                     <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
+                    <HyperlinkButton x:Uid="BtnContributors" NavigateUri="https://github.com/EdiWang/Character-Map-UWP/graphs/contributors" />
 
 
                     <StackPanel
@@ -482,4 +484,4 @@
             </Grid>
         </ScrollViewer>
     </Grid>
-</UserControl>
+</views:ViewBase>

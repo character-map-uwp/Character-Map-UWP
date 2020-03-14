@@ -5,12 +5,14 @@
 #include <string>
 #include "DWHelpers.h"
 #include "SVGGeometrySink.h"
+#include "PathData.h"
 #include "Windows.h"
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
 using namespace Windows::Storage::Streams;
 using namespace Platform::Collections;
+using namespace Windows::Foundation::Numerics;
 
 Interop::Interop(CanvasDevice^ device)
 {
@@ -213,6 +215,64 @@ IBuffer^ Interop::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerE
 	return buffer;
 }
 
+Platform::String^ Interop::GetPathData(CanvasFontFace^ fontFace, UINT16 charIndex)
+{
+	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
+	ComPtr<IDWriteFontFace3> face;
+	faceRef->CreateFontFace(&face);
+
+	uint16 indicies[1];
+	indicies[0] = charIndex;
+
+	ComPtr<ID2D1PathGeometry> geom;
+	m_d2dFactory->CreatePathGeometry(&geom);
+
+	ComPtr<ID2D1GeometrySink> geometrySink;
+	geom->Open(&geometrySink);
+	
+	face->GetGlyphRunOutline(
+		64,
+		indicies,
+		nullptr,
+		nullptr,
+		ARRAYSIZE(indicies),
+		false,
+		false,
+		geometrySink.Get());
+
+	geometrySink->Close();
+
+	ComPtr<SVGGeometrySink> sink = new (std::nothrow) SVGGeometrySink();
+	geom->Stream(sink.Get());
+
+	return sink->GetPathData();
+}
+
+PathData^ Interop::GetPathData(CanvasGeometry^ geometry)
+{
+	ComPtr<ID2D1GeometryGroup> geom = GetWrappedResource<ID2D1GeometryGroup>(geometry);
+	ComPtr<SVGGeometrySink> sink = new (std::nothrow) SVGGeometrySink();
+
+	ComPtr<ID2D1Geometry> g;
+	geom->GetSourceGeometries(&g, 1);
+
+	ComPtr<ID2D1TransformedGeometry> t;
+	g.As<ID2D1TransformedGeometry>(&t);
+
+	D2D1_MATRIX_3X2_F matrix;
+	t->GetTransform(&matrix);
+	auto m = static_cast<D2D1::Matrix3x2F*>(&matrix);
+	
+	ComPtr<ID2D1Geometry> s;
+	t->GetSourceGeometry(&s);
+
+	ComPtr<ID2D1PathGeometry> p;
+	s.As<ID2D1PathGeometry>(&p);
+
+	p->Stream(sink.Get());
+
+	return ref new PathData(sink->GetPathData(), m);
+}
 
 CanvasTextLayoutAnalysis^ Interop::AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace)
 {
@@ -253,38 +313,4 @@ bool Interop::HasValidFonts(Uri^ uri)
 	bool valid = fontset->Fonts->Size > 0;
 	delete fontset;
 	return valid;
-}
-
-Platform::String^ Interop::GetPathGeometry(CanvasTextLayoutAnalysis^ analysis , CanvasFontFace^ canvasFace)
-{
-	return nullptr;
-	/*SVGGeometrySink* sink = new SVGGeometrySink();
-
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFace);
-	ComPtr<IDWriteFontFace3> face;
-	faceRef->CreateFontFace(&face);
-	IDWriteFontFace5* face5;
-	face->QueryInterface(__uuidof(IDWriteFontFace5), reinterpret_cast<void**>(&face5));
-
-	auto count = analysis->Indicies[0]->Size;
-	uint16* items = new uint16[count];
-	for (uint16 a = 0; a < count; a = a + 1)
-	{
-		items[a] = analysis->Indicies[0]->GetAt(a);
-	}
-
-	face5->GetGlyphRunOutline(
-		120,
-		items,
-		nullptr,
-		nullptr,
-		1,
-		false,
-		false,
-		sink);
-
-	auto path = sink->GetPathData();
-	SafeRelease(&sink);
-
-	return path;*/
 }

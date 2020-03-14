@@ -651,4 +651,11 @@ Turning this on can have a minor impact on scrolling performance.</value>
   <data name="SettingsNeedRestart.Text" xml:space="preserve">
     <value>Change will apply after restart</value>
   </data>
+  <data name="BtnContributors.Content" xml:space="preserve">
+    <value>Contributors</value>
+  </data>
+  <data name="TxtLoadingFonts.Text" xml:space="preserve">
+    <value>loading fonts</value>
+    <comment>intentionally lowercase for design reasons</comment>
+  </data>
 </root>
