@@ -63,13 +63,50 @@ namespace CharacterMap.Core
                     CanvasDevice device = Utils.CanvasDevice;
                     Color textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
 
+
+                    // If COLR format (e.g. Segoe UI Emoji), we have special export path.
+                    if (style == ExportStyle.ColorGlyph && analysis.HasColorGlyphs && !analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
+                    {
+                        Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+                        List<string> paths = new List<string>();
+                        Rect bounds = Rect.Empty;
+
+                        foreach (var thing in analysis.Indicies)
+                        {
+                            var path = interop.GetPathDatas(selectedVariant.FontFace, thing.ToArray()).First();
+                            paths.Add(path.Path);
+
+                            if (!path.Bounds.IsEmpty)
+                            {
+                                var left = Math.Min(bounds.Left, path.Bounds.Left);
+                                var top = Math.Min(bounds.Top, path.Bounds.Top);
+                                var right = Math.Max(bounds.Right, path.Bounds.Right);
+                                var bottom = Math.Max(bounds.Bottom, path.Bounds.Bottom);
+                                bounds = new Rect(
+                                    left,
+                                    top,
+                                    right - left,
+                                    bottom - top);
+                            }
+                        }
+
+                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, bounds, paths, analysis.Colors, invertBounds: false))
+                        {
+                            await Utils.WriteSvgAsync(document, file);
+                        }
+
+                        return new ExportResult(true, file);
+                    }
+
+
+
+
+
                     var data = GetGeometry(1024, selectedVariant, selectedChar, analysis, typography);
-                    
                     async Task SaveMonochromeAsync()
                     {
-                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path))
+                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor))
                         {
-                            ((CanvasSvgNamedElement)document.Root.FirstChild).SetColorAttribute("fill", textColor);
                             await Utils.WriteSvgAsync(document, file);
                         }
                     }

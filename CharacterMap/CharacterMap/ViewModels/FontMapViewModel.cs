@@ -42,7 +42,7 @@ namespace CharacterMap.ViewModels
 
         public IDialogService DialogService { get; }
         public RelayCommand<ExportStyle> CommandSavePng { get; }
-        public RelayCommand<bool> CommandSaveSvg { get; }
+        public RelayCommand<ExportStyle> CommandSaveSvg { get; }
 
         internal bool IsLoadingCharacters { get; private set; }
 
@@ -255,7 +255,7 @@ namespace CharacterMap.ViewModels
             Settings = settings;
 
             CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
-            CommandSaveSvg = new RelayCommand<bool>(async (b) => await SaveSvgAsync(b));
+            CommandSaveSvg = new RelayCommand<ExportStyle>(async (b) => await SaveSvgAsync(b));
 
             _interop = SimpleIoc.Default.GetInstance<Interop>();
 
@@ -333,13 +333,13 @@ namespace CharacterMap.ViewModels
 
             using (CanvasTextLayout layout = new CanvasTextLayout(Utils.CanvasDevice, $"{SelectedChar.Char}", new CanvasTextFormat
             {
-                FontSize = 20,
+                FontSize = (float)Core.Converters.GetFontSize(Settings.GridSize),
                 FontFamily = SelectedVariant.Source,
                 FontStretch = SelectedVariant.FontFace.Stretch,
                 FontWeight = SelectedVariant.FontFace.Weight,
                 FontStyle = SelectedVariant.FontFace.Style,
-                HorizontalAlignment = CanvasHorizontalAlignment.Center,
-            }, 100, 100))
+                HorizontalAlignment = CanvasHorizontalAlignment.Left,
+            }, Settings.GridSize, Settings.GridSize))
             {
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
                 ApplyEffectiveTypography(layout);
@@ -451,10 +451,10 @@ namespace CharacterMap.ViewModels
                 MessengerInstance.Send(new AppNotificationMessage(true, result));
         }
 
-        private async Task SaveSvgAsync(bool isBlackText)
+        private async Task SaveSvgAsync(ExportStyle style)
         {
             ExportResult result = await ExportManager.ExportSvgAsync(
-                isBlackText ? ExportStyle.Black : ExportStyle.White,
+                style,
                 SelectedFont,
                 SelectedVariant,
                 SelectedChar,

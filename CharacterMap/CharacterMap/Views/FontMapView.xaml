@@ -514,6 +514,7 @@
                             Margin="24 12 24 4"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
+                            IsHitTestVisible="False"
                             Stretch="Uniform"
                             StretchDirection="Both">
                             <TextBlock
@@ -526,6 +527,7 @@
                                 FontWeight="{Binding SelectedVariant.FontFace.Weight}"
                                 Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                                 IsColorFontEnabled="{Binding ShowColorGlyphs}"
+                                IsTextScaleFactorEnabled="False"
                                 Text="{Binding SelectedChar.Char}"
                                 TextAlignment="Center" />
                         </Viewbox>
@@ -553,7 +555,6 @@
                                     Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
                                     Visibility="{x:Bind ViewModel.Settings.FitCharacter, Mode=OneTime}" />
                             </Grid>
-
                         </AppBarButton>
 
                         <Border
@@ -706,9 +707,18 @@
                             Style="{StaticResource SaveAsPNGCommandBar}">
                             <CommandBar.SecondaryCommands>
                                 <AppBarButton
+                                    Command="{Binding CommandSaveSvg}"
+                                    CommandParameter="{x:Bind ViewModel.GlyphColor}"
+                                    Style="{ThemeResource TransparentButton}"
+                                    Visibility="{x:Bind ViewModel.SelectedCharAnalysis.HasColorGlyphs, Mode=OneWay}">
+                                    <AppBarButton.Content>
+                                        <TextBlock x:Uid="ColoredGlyphLabel" Margin="12,10" />
+                                    </AppBarButton.Content>
+                                </AppBarButton>
+                                <AppBarButton
                                     Background="Transparent"
                                     Command="{Binding CommandSaveSvg}"
-                                    CommandParameter="{StaticResource TrueValue}"
+                                    CommandParameter="{x:Bind ViewModel.BlackColor}"
                                     Style="{ThemeResource TransparentButton}">
                                     <AppBarButton.Content>
                                         <TextBlock x:Uid="BlackFill" Margin="12,10" />
@@ -718,7 +728,7 @@
                                     VerticalContentAlignment="Stretch"
                                     Background="Transparent"
                                     Command="{Binding CommandSaveSvg}"
-                                    CommandParameter="{StaticResource FalseValue}"
+                                    CommandParameter="{x:Bind ViewModel.WhiteColor}"
                                     Style="{ThemeResource TransparentButton}">
                                     <AppBarButton.Content>
                                         <TextBlock x:Uid="WhiteFill" Margin="12,10" />
@@ -745,7 +755,7 @@
                                 </Grid.ColumnDefinitions>
                                 <FontIcon Foreground="{ThemeResource SystemControlForegroundAccentBrush}" Glyph="&#xEB9F;" />
                                 <TextBlock
-                                    x:Uid="BtnSaveSvg"
+                                    x:Uid="BtnSaveSvgRaw"
                                     Grid.Column="1"
                                     Margin="0,0,5,0"
                                     VerticalAlignment="Center"
@@ -767,7 +777,7 @@
                             Padding="8 4 0 5"
                             BorderThickness="0 1"
                             Command="{x:Bind ViewModel.CommandSaveSvg}"
-                            CommandParameter="{StaticResource TrueValue}"
+                            CommandParameter="{x:Bind ViewModel.GlyphColor}"
                             IsEnabled="{Binding SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
                             Style="{StaticResource TransparentButton}">
                             <Grid>

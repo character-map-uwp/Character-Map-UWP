@@ -134,15 +134,18 @@ namespace CharacterMap.Core
         public static CanvasSvgDocument GenerateSvgDocument(
             ICanvasResourceCreator device,
             Rect rect,
-            string path)
+            string path,
+            Color color)
         {
-            return GenerateSvgDocument(device, rect, new List<string> { path });
+            return GenerateSvgDocument(device, rect, new List<string> { path }, new List<Color> { color });
         }
 
         public static CanvasSvgDocument GenerateSvgDocument(
             ICanvasResourceCreator device,
             Rect rect, 
-            IList<string> paths)
+            IList<string> paths,
+            IList<Color> colors,
+            bool invertBounds = true)
         {
             var right = Math.Ceiling(rect.Width);
             var bottom = Math.Ceiling(rect.Height);
@@ -150,7 +153,10 @@ namespace CharacterMap.Core
             sb.AppendFormat(
                 CultureInfo.InvariantCulture, 
                 "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">", 
-                right, bottom, -Math.Floor(rect.Left), -Math.Floor(rect.Top));
+                right,
+                bottom, 
+                invertBounds ? -Math.Floor(rect.Left) : Math.Floor(rect.Left),
+                invertBounds ? -Math.Floor(rect.Top) : Math.Floor(rect.Top));
 
             foreach (var path in paths)
             {
@@ -158,7 +164,13 @@ namespace CharacterMap.Core
                 if (path.StartsWith("F1 "))
                     p = path.Remove(0, 3);
 
-                sb.AppendFormat("<path d=\"{0}\" />", p);
+                if (string.IsNullOrWhiteSpace(p))
+                    continue;
+
+                sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
+                    p,
+                    AsHex(colors[paths.IndexOf(path)]),
+                    (double)colors[paths.IndexOf(path)].A / 255d);
             }
             sb.Append("</svg>");
 
@@ -167,6 +179,11 @@ namespace CharacterMap.Core
             // TODO : When we export colour SVGs we'll need to set all the correct path fills here
 
             return doc;
+        }
+
+        private static string AsHex(Color c)
+        {
+            return $"#{c.R.ToString("x2")}{c.G.ToString("x2")}{c.B.ToString("x2")}";
         }
 
         public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)
