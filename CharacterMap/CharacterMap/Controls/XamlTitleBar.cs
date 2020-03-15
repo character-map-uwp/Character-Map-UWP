@@ -68,7 +68,7 @@ namespace CharacterMap.Controls
         {
             try
             {
-                // Attempts to avoid titlebar not showing immediately when a window is opened
+                // Attempts to avoid title bar not showing immediately when a window is opened
                 _titleBar = CoreApplication.GetCurrentView().TitleBar;
                 _titleBar.ExtendViewIntoTitleBar = true;
                 UpdateMetrics(_titleBar);
@@ -145,6 +145,17 @@ namespace CharacterMap.Controls
             UpdateMetrics(sender);
         }
 
+        private static ApplicationView TryGetCurrentView()
+        {
+            ApplicationView view = null;
+            try
+            {
+                view = ApplicationView.GetForCurrentView();
+            }
+            catch { }
+            return view;
+        }
+
         private void UpdateColors()
         {
             if (_settings == null)
@@ -178,7 +189,7 @@ namespace CharacterMap.Controls
             Color? titleInactiveBackgroundColor,
             Color? titleInactiveForegroundColor)
         {
-            var view = ApplicationView.GetForCurrentView();
+            var view = TryGetCurrentView();
             if (view == null)
                 return;
 
@@ -200,7 +211,7 @@ namespace CharacterMap.Controls
             Color? titleButtonInactiveBackgroundColor,
             Color? titleButtonInactiveForegroundColor)
         {
-            var view = ApplicationView.GetForCurrentView();
+            var view = TryGetCurrentView();
             if (view == null)
                 return;
 

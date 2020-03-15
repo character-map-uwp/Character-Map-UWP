@@ -158,6 +158,8 @@ namespace CharacterMap.ViewModels
                     GlyphService.InitializeAsync(),
                     FontFinder.LoadFontsAsync(),
                     FontCollections.LoadCollectionsAsync());
+
+                RefreshFontList();
             }
             catch (Exception ex)
             {
@@ -170,7 +172,6 @@ namespace CharacterMap.ViewModels
                 return;
             }
 
-            RefreshFontList();
             IsLoadingFonts = false;
         }
 

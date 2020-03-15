@@ -85,7 +85,12 @@ namespace CharacterMap.Views
         public void Show(FontVariant variant, InstalledFont font)
         {
             this.Visibility = Visibility.Visible;
-            
+            if (!Composition.UISettings.AnimationsEnabled)
+            {
+                this.GetElementVisual().Opacity = 1;
+                this.GetElementVisual().Properties.InsertVector3(Composition.TRANSLATION, Vector3.Zero);
+            }
+
             // 1. Focus the close button to ensure keyboard focus is retained inside the settings panel
             BtnClose.Focus(FocusState.Programmatic);
 
