@@ -292,7 +292,8 @@ namespace CharacterMap.Helpers
                 t.Duration = duration1;
                 delay += 0.055;
 
-                element.EnableTranslation(true).StartAnimation(t);
+                var v = element.EnableTranslation(true).GetElementVisual();
+                v.StartAnimationGroup(t);
             }
 
             delay = 0.4;
@@ -314,7 +315,8 @@ namespace CharacterMap.Helpers
                 o.DelayTime = TimeSpan.FromSeconds(delay);
                 o.Duration = TimeSpan.FromSeconds(0.33);
 
-                element.EnableTranslation(true).StartAnimation(c.CreateAnimationGroup(t, o));
+                var v = element.EnableTranslation(true).GetElementVisual();
+                v.StartAnimationGroup(c.CreateAnimationGroup(t, o));
             }
         }
 

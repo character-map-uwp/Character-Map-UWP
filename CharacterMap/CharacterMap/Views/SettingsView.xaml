@@ -303,11 +303,10 @@
                         <ToggleSwitch IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
 
                         <win1903:StackPanel>
-                            <TextBlock x:Uid="SettingsShadowsHeader" Style="{StaticResource HeaderStyle}" />
-                            <TextBlock x:Uid="SettingsShadowsDescription" Style="{StaticResource DescriptionStyle}" />
-                            <ToggleSwitch IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
+                            <win1903:TextBlock x:Uid="SettingsShadowsHeader" Style="{StaticResource HeaderStyle}" />
+                            <win1903:TextBlock x:Uid="SettingsShadowsDescription" Style="{StaticResource DescriptionStyle}" />
+                            <win1903:ToggleSwitch IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
                         </win1903:StackPanel>
-
 
                         <TextBlock x:Uid="SettingsExpensiveAnimationHeader" Style="{StaticResource HeaderStyle}" />
                         <TextBlock x:Uid="SettingsExpensiveAnimationDescription" Style="{StaticResource DescriptionStyle}" />
