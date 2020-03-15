@@ -215,14 +215,14 @@ IBuffer^ Interop::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerE
 	return buffer;
 }
 
-Platform::String^ Interop::GetPathData(CanvasFontFace^ fontFace, UINT16 charIndex)
+Platform::String^ Interop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie)
 {
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
 	ComPtr<IDWriteFontFace3> face;
 	faceRef->CreateFontFace(&face);
 
 	uint16 indicies[1];
-	indicies[0] = charIndex;
+	indicies[0] = glyphIndicie;
 
 	ComPtr<ID2D1PathGeometry> geom;
 	m_d2dFactory->CreatePathGeometry(&geom);
@@ -244,8 +244,71 @@ Platform::String^ Interop::GetPathData(CanvasFontFace^ fontFace, UINT16 charInde
 
 	ComPtr<SVGGeometrySink> sink = new (std::nothrow) SVGGeometrySink();
 	geom->Stream(sink.Get());
+	sink->Close();
 
 	return sink->GetPathData();
+}
+
+IVectorView<PathData^>^ Interop::GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies)
+{
+	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
+	ComPtr<IDWriteFontFace3> face;
+	faceRef->CreateFontFace(&face);
+
+	Vector<PathData^>^ paths = ref new Vector<PathData^>();
+
+	for (int i = 0; i < glyphIndicies->Length; i++)
+	{
+		auto ind = glyphIndicies[i];
+		if (ind == 0)
+			continue;
+
+		uint16 indicies[1];
+		indicies[0] = ind;
+
+		ComPtr<ID2D1PathGeometry> geom;
+		m_d2dFactory->CreatePathGeometry(&geom);
+
+		ComPtr<ID2D1GeometrySink> geometrySink;
+		geom->Open(&geometrySink);
+
+		face->GetGlyphRunOutline(
+			256,
+			indicies,
+			nullptr,
+			nullptr,
+			ARRAYSIZE(indicies),
+			false,
+			false,
+			geometrySink.Get());
+
+		geometrySink->Close();
+
+		ComPtr<SVGGeometrySink> sink = new (std::nothrow) SVGGeometrySink();
+		geom->Stream(sink.Get());
+
+		D2D1_RECT_F bounds;
+		geom->GetBounds(D2D1_MATRIX_3X2_F { 1, 0, 0, 1, 0, 0 }, &bounds);
+		
+		if (isinf(bounds.left) || isinf(bounds.top))
+		{
+			paths->Append(
+				ref new PathData(ref new String(), Rect::Empty));
+		}
+		else
+		{
+			paths->Append(
+				ref new PathData(sink->GetPathData(), Rect(bounds.left, bounds.top, bounds.right - bounds.left, bounds.bottom - bounds.top)));
+		}
+
+		sink->Close();
+
+		sink = nullptr;
+		geometrySink = nullptr;
+		geom = nullptr;
+	}
+
+	return paths->GetView();
 }
 
 PathData^ Interop::GetPathData(CanvasGeometry^ geometry)
@@ -271,7 +334,10 @@ PathData^ Interop::GetPathData(CanvasGeometry^ geometry)
 
 	p->Stream(sink.Get());
 
-	return ref new PathData(sink->GetPathData(), m);
+	auto data = ref new PathData(sink->GetPathData(), m);
+	sink->Close();
+
+	return data;
 }
 
 CanvasTextLayoutAnalysis^ Interop::AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace)

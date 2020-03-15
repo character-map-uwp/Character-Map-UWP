@@ -15,7 +15,7 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 		m_glyphLayerCount = analyzer->GlyphLayerCount;
 
 		auto colors = ref new Array<Color>(analyzer->RunColors.size());
-		float max = 255;
+		float max = 255.0;
 		for (unsigned int a = 0; a < analyzer->RunColors.size(); a = a + 1)
 		{
 			DWRITE_COLOR_F color = analyzer->RunColors[a];
@@ -63,17 +63,15 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 	auto vec = ref new Vector<GlyphImageFormat>(std::move(analyzer->GlyphFormats));
 	m_glyphFormats = vec->GetView();
 
-	// If we're analysing the character only, we're done here.
+	// If we're analyzing the character only, we're done here.
 	if (analyzer->IsCharacterAnalysisMode || fontFaceRef == nullptr)
 		return;
-
-
 
 	// Get File Size
 	m_fileSize = fontFaceRef->GetFileSize();
 
 	// Attempt to get FilePath. 
-	// This involves aquiring the FileLoader and querying it
+	// This involves acquiring the FileLoader and querying it
 	// for the file path;
 	ComPtr<IDWriteFontFile> file;
 	if (fontFaceRef->GetFontFile(&file) != S_OK)

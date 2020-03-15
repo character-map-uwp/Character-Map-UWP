@@ -21,6 +21,8 @@ using Windows.UI;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using CharacterMap.Models;
+using System.IO;
+using System.IO.Compression;
 
 namespace CharacterMap.Core
 {
@@ -63,13 +65,50 @@ namespace CharacterMap.Core
                     CanvasDevice device = Utils.CanvasDevice;
                     Color textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
 
+
+                    // If COLR format (e.g. Segoe UI Emoji), we have special export path.
+                    if (style == ExportStyle.ColorGlyph && analysis.HasColorGlyphs && !analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
+                    {
+                        Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+                        List<string> paths = new List<string>();
+                        Rect bounds = Rect.Empty;
+
+                        foreach (var thing in analysis.Indicies)
+                        {
+                            var path = interop.GetPathDatas(selectedVariant.FontFace, thing.ToArray()).First();
+                            paths.Add(path.Path);
+
+                            if (!path.Bounds.IsEmpty)
+                            {
+                                var left = Math.Min(bounds.Left, path.Bounds.Left);
+                                var top = Math.Min(bounds.Top, path.Bounds.Top);
+                                var right = Math.Max(bounds.Right, path.Bounds.Right);
+                                var bottom = Math.Max(bounds.Bottom, path.Bounds.Bottom);
+                                bounds = new Rect(
+                                    left,
+                                    top,
+                                    right - left,
+                                    bottom - top);
+                            }
+                        }
+
+                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, bounds, paths, analysis.Colors, invertBounds: false))
+                        {
+                            await Utils.WriteSvgAsync(document, file);
+                        }
+
+                        return new ExportResult(true, file);
+                    }
+
+
+
+
+
                     var data = GetGeometry(1024, selectedVariant, selectedChar, analysis, typography);
-                    
                     async Task SaveMonochromeAsync()
                     {
-                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path))
+                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor))
                         {
-                            ((CanvasSvgNamedElement)document.Root.FirstChild).SetColorAttribute("fill", textColor);
                             await Utils.WriteSvgAsync(document, file);
                         }
                     }
@@ -78,64 +117,85 @@ namespace CharacterMap.Core
                     if (analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
                     {
                         byte[] bytes = GetGlyphBytes(selectedVariant.FontFace, selectedChar.UnicodeIndex, 8);
-                        string str = Encoding.UTF8.GetString(bytes);
+                        
+                        string str;
+
+                        if (bytes.Length > 2 && bytes[0] == 31 && bytes[1] == 139)
+                        {
+                            // Content is GZIP'd. Decompress first.
+                            using (var stream = new MemoryStream(bytes))
+                            using (var gzip = new GZipStream(stream, CompressionMode.Decompress))
+                            using (var reader = new StreamReader(gzip))
+                            {
+                                str = reader.ReadToEnd();
+                            }
+                        }
+                        else
+                        {
+                            str = Encoding.UTF8.GetString(bytes);
+                        }
+
                         if (str.StartsWith("<?xml"))
                             str = str.Remove(0, str.IndexOf(">") + 1);
 
                         str = str.TrimStart();
 
-                        // We need to transform the SVG to fit within the default document bounds, as characters
-                        // are based *above* the base origin of (0,0) as (0,0) is the Baseline (bottom left) position for a character, 
-                        // so by default a will appear out of bounds of the default SVG viewport (towards top left).
                         try
                         {
                             using (CanvasSvgDocument document = CanvasSvgDocument.LoadFromXml(Utils.CanvasDevice, str))
                             {
-                                // We'll regroup all the elements inside a "g" / group tag,
-                                // and apply a transform to the "g" tag to try and put in 
-                                // in the correct place. There's probably a more accurate way
-                                // to do this by directly setting the root viewBox, if anyone
-                                // can find the correct calculation...
+                                // We need to transform the SVG to fit within the default document bounds, as characters
+                                // are based *above* the base origin of (0,0) as (0,0) is the Baseline (bottom left) position for a character, 
+                                // so by default a will appear out of bounds of the default SVG viewport (towards top left).
 
-                                List<ICanvasSvgElement> elements = new List<ICanvasSvgElement>();
-
-                                double minTop = 0;
-                                double minLeft = double.MaxValue;
-                                double maxWidth = double.MinValue;
-                                double maxHeight = double.MinValue;
-
-                                void ProcessChildren(CanvasSvgNamedElement root)
+                                //if (!document.Root.IsAttributeSpecified("viewBox")) // Specified viewbox requires baseline transform?
                                 {
-                                    CanvasSvgNamedElement ele = root.FirstChild as CanvasSvgNamedElement;
-                                    while (true)
-                                    {
-                                        CanvasSvgNamedElement next = root.GetNextSibling(ele) as CanvasSvgNamedElement;
-                                        if (ele.Tag == "g")
-                                        {
-                                            ProcessChildren(ele);
-                                        }
-                                        else if (ele.Tag == "path")
-                                        {
-                                            // Create a XAML geometry to try and find the bounds of each character
-                                            // Probably more efficient to do in Win2D, but far less code to do with XAML.
-                                            Geometry gm = XamlBindingHelper.ConvertValue(typeof(Geometry), ele.GetStringAttribute("d")) as Geometry;
-                                            minTop = Math.Min(minTop, gm.Bounds.Top);
-                                            minLeft = Math.Min(minLeft, gm.Bounds.Left);
-                                            maxWidth = Math.Max(maxWidth, gm.Bounds.Width);
-                                            maxHeight = Math.Max(maxHeight, gm.Bounds.Height);
-                                        }
+                                    // We'll regroup all the elements inside a "g" / group tag,
+                                    // and apply a transform to the "g" tag to try and put in 
+                                    // in the correct place. There's probably a more accurate way
+                                    // to do this by directly setting the root viewBox, if anyone
+                                    // can find the correct calculation...
 
-                                        ele = next;
-                                        if (ele == null)
-                                            break;
+                                    List<ICanvasSvgElement> elements = new List<ICanvasSvgElement>();
+
+                                    double minTop = 0;
+                                    double minLeft = double.MaxValue;
+                                    double maxWidth = double.MinValue;
+                                    double maxHeight = double.MinValue;
+
+                                    void ProcessChildren(CanvasSvgNamedElement root)
+                                    {
+                                        CanvasSvgNamedElement ele = root.FirstChild as CanvasSvgNamedElement;
+                                        while (true)
+                                        {
+                                            CanvasSvgNamedElement next = root.GetNextSibling(ele) as CanvasSvgNamedElement;
+                                            if (ele.Tag == "g")
+                                            {
+                                                ProcessChildren(ele);
+                                            }
+                                            else if (ele.Tag == "path")
+                                            {
+                                                // Create a XAML geometry to try and find the bounds of each character
+                                                // Probably more efficient to do in Win2D, but far less code to do with XAML.
+                                                Geometry gm = XamlBindingHelper.ConvertValue(typeof(Geometry), ele.GetStringAttribute("d")) as Geometry;
+                                                minTop = Math.Min(minTop, gm.Bounds.Top);
+                                                minLeft = Math.Min(minLeft, gm.Bounds.Left);
+                                                maxWidth = Math.Max(maxWidth, gm.Bounds.Width);
+                                                maxHeight = Math.Max(maxHeight, gm.Bounds.Height);
+                                            }
+                                            ele = next;
+                                            if (ele == null)
+                                                break;
+                                        }
                                     }
+
+                                    ProcessChildren(document.Root);
+
+                                    double top = minTop < 0 ? minTop : 0;
+                                    double left = minLeft;
+                                    document.Root.SetRectangleAttribute("viewBox", new Rect(left, top, data.Bounds.Width, data.Bounds.Height));
                                 }
 
-                                ProcessChildren(document.Root);
-
-                                double top = minTop < 0 ? minTop : 0;
-                                double left = minLeft;
-                                document.Root.SetRectangleAttribute("viewBox", new Rect(left, top, data.Bounds.Width, data.Bounds.Height));
                                 await Utils.WriteSvgAsync(document, file);
                             }
                         }

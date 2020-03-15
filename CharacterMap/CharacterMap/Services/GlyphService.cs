@@ -109,6 +109,9 @@ namespace CharacterMap.Services
         public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
             Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)
         {
+            if (v == FontFinder.DefaultFont.DefaultVariant)
+                return (string.Empty, string.Empty, string.Empty, string.Empty);
+
             Interop interop = SimpleIoc.Default.GetInstance<Interop>();
 
             string h, f, p, s = null;

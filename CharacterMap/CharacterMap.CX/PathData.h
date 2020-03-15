@@ -26,6 +26,11 @@ namespace CharacterMapCX
 			float3x2 get() { return m_matrix; }
 		}
 
+		property Rect Bounds
+		{
+			Rect get() { return m_bounds; }
+		}
+
 	internal:
 		PathData(String^ path, D2D1::Matrix3x2F* matrix)
 		{
@@ -33,9 +38,16 @@ namespace CharacterMapCX
 			m_matrix = { matrix->_11, matrix->_12, matrix->_21, matrix->_22, matrix->_31, matrix->_32 };
 		}
 
+		PathData(String^ path, Rect bounds)
+		{
+			m_path = path;
+			m_bounds = bounds;
+		}
+
 	private:
 		inline PathData() { }
 
+		Rect m_bounds = Rect::Empty;
 		float3x2 m_matrix;
 		String^ m_path = nullptr;
 	};

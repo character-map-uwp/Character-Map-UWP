@@ -18,6 +18,7 @@ using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::Graphics::Canvas::Geometry;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
+using namespace Windows::Foundation::Collections;
 using namespace Windows::Storage::Streams;
 
 namespace CharacterMapCX
@@ -35,7 +36,8 @@ namespace CharacterMapCX
 		IBuffer^ GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, UINT imageType);
 		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace);
 		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
-		Platform::String^ GetPathData(CanvasFontFace^ fontFace, UINT16 charIndex);
+		IVectorView<PathData^>^ GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
+		Platform::String^ GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie);
 		PathData^ GetPathData(CanvasGeometry^ geometry);
 
 		DWriteFontSet^ GetSystemFonts();
