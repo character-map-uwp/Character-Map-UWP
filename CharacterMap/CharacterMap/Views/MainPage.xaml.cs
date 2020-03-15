@@ -111,6 +111,10 @@ namespace CharacterMap.Views
             else
             {
                 VisualStateManager.GoToState(this, nameof(FontsLoadedState), false);
+
+                // BugCheck?
+                return;
+
                 if (ViewModel.Settings.UseSelectionAnimations)
                 {
                     Composition.StartStartUpAnimation(
@@ -566,7 +570,10 @@ namespace CharacterMap.Views
 
         private void LoadingRoot_Loading(FrameworkElement sender, object args)
         {
-            if (!ViewModel.Settings.UseSelectionAnimations)
+            // BugCheck?
+            return;
+
+            if (!ViewModel.Settings.UseSelectionAnimations || !Composition.UISettings.AnimationsEnabled)
                 return;
 
             var v = sender.GetElementVisual();

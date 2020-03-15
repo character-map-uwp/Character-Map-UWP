@@ -69,10 +69,13 @@ namespace CharacterMap.Controls
             try
             {
                 // Attempts to avoid title bar not showing immediately when a window is opened
-                _titleBar = CoreApplication.GetCurrentView().TitleBar;
-                _titleBar.ExtendViewIntoTitleBar = true;
-                UpdateMetrics(_titleBar);
-                UpdateColors();
+                _titleBar = CoreApplication.GetCurrentView()?.TitleBar;
+                if (_titleBar != null)
+                {
+                    _titleBar.ExtendViewIntoTitleBar = true;
+                    UpdateMetrics(_titleBar);
+                    UpdateColors();
+                }
             }
             catch
             { }
