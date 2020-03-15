@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
@@ -17,6 +18,8 @@ namespace CharacterMap.Helpers
     public class Composition : DependencyObject
     {
         public const double DefaultOffsetDuration = 0.325;
+
+        public static UISettings UISettings { get; }
 
         private static Dictionary<Compositor, Vector3KeyFrameAnimation> _defaultOffsetAnimations { get; }
             = new Dictionary<Compositor, Vector3KeyFrameAnimation>();
@@ -53,8 +56,16 @@ namespace CharacterMap.Helpers
 
         #endregion
 
+        static Composition()
+        {
+            UISettings = new UISettings();
+        }
+
         private static void SetOpacityTransition(FrameworkElement e, TimeSpan t)
         {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
             if (t.TotalMilliseconds > 0)
             {
                 var c = e.GetElementVisual().Compositor;
@@ -73,6 +84,9 @@ namespace CharacterMap.Helpers
 
         public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffset = 140)
         {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
             var animation = CreateEntranceAnimation(target, new Vector3(0, fromOffset, 0), delayMs);
             target.GetElementVisual().StartAnimationGroup(animation);
         }
@@ -121,6 +135,9 @@ namespace CharacterMap.Helpers
 
         public static void PlayScaleEntrance(FrameworkElement target, float from, float to)
         {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
             Visual v = target.GetElementVisual();
 
             if (target.Tag == null)
@@ -145,6 +162,9 @@ namespace CharacterMap.Helpers
 
         public static void SetStandardReposition(object sender, RoutedEventArgs args)
         {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
             UIElement e = (UIElement)sender;
             Visual v = e.GetElementVisual();
 
@@ -164,6 +184,9 @@ namespace CharacterMap.Helpers
 
         public static void SetDropInOut(FrameworkElement background, IList<FrameworkElement> children, FrameworkElement container = null)
         {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
             double delay = 0.15;
 
             var bv = background.EnableTranslation(true).GetElementVisual();
@@ -218,6 +241,9 @@ namespace CharacterMap.Helpers
 
         public static void SetStandardFadeInOut(object sender, RoutedEventArgs args)
         {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
             if (sender is FrameworkElement e)
                 SetFadeInOut(e, 200);
         }
@@ -234,6 +260,9 @@ namespace CharacterMap.Helpers
             List<FrameworkElement> barElements,
             List<FrameworkElement> contentElements)
         {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
             TimeSpan duration = TimeSpan.FromSeconds(0.5);
             TimeSpan duration1 = TimeSpan.FromSeconds(0.7);
 
@@ -294,15 +323,23 @@ namespace CharacterMap.Helpers
             if (!Utils.Supports1903 || !ResourceHelper.AppSettings.EnableShadows)
                 return;
 
-            if (!CompositionCapabilities.GetForCurrentView().AreEffectsFast())
+            // Temporarily, we'll also disable shadows if Windows Animations are disabled
+            if (!UISettings.AnimationsEnabled)
                 return;
 
-            target.Translation = new Vector3(0, 0, depth);
+            try
+            {
+                if (!CompositionCapabilities.GetForCurrentView().AreEffectsFast())
+                    return;
 
-            var shadow = new ThemeShadow();
-            target.Shadow = shadow;
-            foreach (var r in recievers)
-                shadow.Receivers.Add(r);
+                target.Translation = new Vector3(0, 0, depth);
+
+                var shadow = new ThemeShadow();
+                target.Shadow = shadow;
+                foreach (var r in recievers)
+                    shadow.Receivers.Add(r);
+            }
+            catch { }          
         }
 
 

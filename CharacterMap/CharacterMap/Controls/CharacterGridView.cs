@@ -156,7 +156,7 @@ namespace CharacterMap.Controls
             {
                 if (d is CharacterGridView g && e.NewValue is bool b)
                 {
-                    g._templateSettings.EnableReposition = b;
+                    g._templateSettings.EnableReposition = b && Composition.UISettings.AnimationsEnabled;
                     g.UpdateAnimation(b);
                 }
             }));
@@ -357,6 +357,9 @@ namespace CharacterMap.Controls
         private void UpdateAnimation(bool newValue)
         {
             if (this.ItemsPanelRoot == null)
+                return;
+
+            if (!Composition.UISettings.AnimationsEnabled)
                 return;
 
             foreach (var item in this.ItemsPanelRoot.Children)
