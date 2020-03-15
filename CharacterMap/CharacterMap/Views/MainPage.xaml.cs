@@ -566,7 +566,8 @@ namespace CharacterMap.Views
 
         private void LoadingRoot_Loading(FrameworkElement sender, object args)
         {
-            if (!ViewModel.Settings.UseSelectionAnimations)
+            if (!ViewModel.Settings.UseSelectionAnimations 
+                || !Composition.UISettings.AnimationsEnabled)
                 return;
 
             var v = sender.GetElementVisual();
