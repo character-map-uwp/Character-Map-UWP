@@ -447,6 +447,7 @@
                     Grid.Row="1"
                     Grid.Column="0"
                     Padding="10 10 6 10"
+                    x:FieldModifier="public"
                     EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
                     IsItemClickEnabled="False"
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
@@ -1046,6 +1047,16 @@
                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
 
         </Grid>
+
+        <Border
+            x:Name="PrintPresenter"
+            x:DeferLoadStrategy="Lazy"
+            Grid.Row="1"
+            Grid.RowSpan="10"
+            Grid.ColumnSpan="10"
+            Canvas.ZIndex="100" />
+
+        <Canvas x:Name="PrintCanvas" Margin="-10000, -10000, 0, 0" />
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LoadingStates">

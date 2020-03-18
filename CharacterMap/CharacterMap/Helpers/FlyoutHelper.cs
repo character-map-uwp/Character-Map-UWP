@@ -25,7 +25,8 @@ namespace CharacterMap.Helpers
         public static void CreateMenu(
             MenuFlyout menu,
             InstalledFont font,
-            bool standalone)
+            bool standalone,
+            bool showAdvanced = false)
         {
             MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
 
@@ -57,6 +58,11 @@ namespace CharacterMap.Helpers
                 };
 
                 _ = d.ShowAsync();
+            }
+
+            void Print_Click(object sender, RoutedEventArgs e)
+            {
+                Messenger.Default.Send(new PrintRequestedMessage());
             }
 
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
@@ -233,6 +239,21 @@ namespace CharacterMap.Helpers
 
                             coll.Items.Add(m);
                         }
+                    }
+                }
+
+                if (showAdvanced)
+                {
+                    if (Windows.Graphics.Printing.PrintManager.IsSupported())
+                    {
+                        MenuFlyoutItem item = new MenuFlyoutItem
+                        {
+                            Text = "Print",
+                            Icon = new SymbolIcon { Symbol = Symbol.Print }
+                        };
+
+                        item.Click += Print_Click;
+                        menu.Items.Add(item);
                     }
                 }
             }

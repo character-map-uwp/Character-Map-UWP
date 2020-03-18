@@ -121,12 +121,10 @@
                         x:Uid="SettingsCharGridHeader"
                         Style="{StaticResource HeaderStyle}"
                         Text="#CharacterGridSize" />
-
                     <TextBlock
                         x:Uid="SettingsCharGridDescription"
                         Style="{StaticResource DescriptionStyle}"
                         Text="#Description" />
-
                     <Slider
                         HorizontalAlignment="Stretch"
                         IsThumbToolTipEnabled="True"
@@ -136,7 +134,6 @@
                         TickFrequency="8"
                         TickPlacement="Outside"
                         Value="{x:Bind Settings.GridSize, Mode=TwoWay}" />
-
                     <TextBlock>
                         <Run Text="{x:Bind Settings.GridSize, Mode=OneWay}" />
                         <Run Text="px" />

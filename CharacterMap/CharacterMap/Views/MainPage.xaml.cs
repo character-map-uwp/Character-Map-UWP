@@ -28,7 +28,7 @@ using Windows.UI.ViewManagement;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class MainPage : Page, INotifyPropertyChanged, IInAppNotificationPresenter
+    public sealed partial class MainPage : Page, INotifyPropertyChanged, IInAppNotificationPresenter, IPrintPresenter
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -60,6 +60,11 @@ namespace CharacterMap.Views
             MainDispatcher = Dispatcher;
             Messenger.Default.Register<CollectionsUpdatedMessage>(this, OnCollectionsUpdated);
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
+            Messenger.Default.Register<PrintRequestedMessage>(this, m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    PrintView.Show(this);
+            });
 
             this.SizeChanged += MainPage_SizeChanged;
 
@@ -517,6 +522,19 @@ namespace CharacterMap.Views
                 InAppNotificationHelper.ShowNotification(this, sb.ToString().Trim(), 4000);
             }
         }
+
+
+
+
+        /* Printing */
+
+        public Border GetPresenter()
+        {
+            this.FindName(nameof(PrintPresenter));
+            return PrintPresenter;
+        }
+
+        public FontMapView GetFontMap() => FontMap;
 
 
 

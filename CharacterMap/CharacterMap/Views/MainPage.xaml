@@ -97,12 +97,11 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <!-- Required to work around error with hit-testing and shadowing -->
+            <!--  Required to work around error with hit-testing and shadowing  -->
             <Border
                 x:Name="CommandsGridBackground"
-                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                 Grid.ColumnSpan="5"
-                />
+                Background="{ThemeResource SystemControlBackgroundAccentBrush}" />
 
             <AppBarButton
                 x:Name="OpenFontPaneButton"
@@ -640,6 +639,14 @@
             Grid.ColumnSpan="10">
             <wct:InAppNotification x:Name="DefaultNotification" />
         </Grid>
+
+        <!--  Print Presenter  -->
+        <Border
+            x:Name="PrintPresenter"
+            x:DeferLoadStrategy="Lazy"
+            Grid.Row="1"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="10" />
 
         <!--  Loading Root  -->
         <Grid

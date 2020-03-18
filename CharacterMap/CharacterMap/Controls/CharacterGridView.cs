@@ -326,10 +326,10 @@ namespace CharacterMap.Controls
 
         public void UpdateSize(double value)
         {
-            if (ItemsSource == null || ItemsPanelRoot == null)
+            ItemSize = value;
+            if (this.Items.Count == 0 || ItemsPanelRoot == null)
                 return;
 
-            ItemSize = value;
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
                 Grid g = (Grid)item.ContentTemplateRoot;

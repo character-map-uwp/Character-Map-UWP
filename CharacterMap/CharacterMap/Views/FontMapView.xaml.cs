@@ -32,7 +32,7 @@ using CharacterMap.Annotations;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter
+    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPrintPresenter
     {
         #region Dependency Properties
 
@@ -125,6 +125,11 @@ namespace CharacterMap.Views
 
             Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
+            Messenger.Default.Register<PrintRequestedMessage>(this, m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    TryPrint();
+            });
 
             UpdateSearchStates();
             UpdateCharacterFit();
@@ -134,6 +139,7 @@ namespace CharacterMap.Views
             {
                 ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
             });
+
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -506,7 +512,8 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     menu,
                     font,
-                    IsStandalone);
+                    IsStandalone,
+                    true);
             }
         }
 
@@ -527,6 +534,27 @@ namespace CharacterMap.Views
                     CharGrid.ScrollIntoView(ViewModel.SelectedChar, ScrollIntoViewAlignment.Default);
                 }
             }).AsTask();
+        }
+
+
+
+
+        /* Print Helpers */
+
+        FontMapView IPrintPresenter.GetFontMap() => this;
+
+        Border IPrintPresenter.GetPresenter()
+        {
+            this.FindName(nameof(PrintPresenter));
+            return PrintPresenter;
+        }
+
+        private void TryPrint()
+        {
+            if (this.GetFirstAncestorOfType<MainPage>() is null)
+            {
+                PrintView.Show(this);
+            }
         }
 
 
@@ -619,7 +647,6 @@ namespace CharacterMap.Views
         {
             Composition.SetThemeShadow(sender, 20, ShadowTarget);
         }
-
     }
 
 
