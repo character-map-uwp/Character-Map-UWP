@@ -10,22 +10,74 @@
 
     <Grid>
 
-        <Grid x:Name="MarginsRoot" x:Load="{x:Bind PrintModel.ShowMargins, Mode=OneWay}">
-            <Border
-                Margin="{x:Bind GetMargin(PrintModel.HorizontalMargin, PrintModel.VerticalMargin), Mode=OneWay}"
-                BorderBrush="Red"
-                BorderThickness="1" />
+        <Grid x:Name="PreviewRoot" x:Load="{x:Bind IsInAppPreview}">
+            <Grid x:Name="MarginsRoot" x:Load="{x:Bind PrintModel.ShowMargins, Mode=OneWay}">
+                <Border
+                    Margin="{x:Bind GetMargin(PrintModel.HorizontalMargin, PrintModel.VerticalMargin), Mode=OneWay}"
+                    BorderBrush="Red"
+                    BorderThickness="1" />
+            </Grid>
         </Grid>
 
+
         <Grid x:Name="PrintableArea" x:FieldModifier="public">
-            <controls:CharacterGridView
-                x:Name="ItemsPanel"
-                Margin="0 0 -8 0"
-                Padding="0">
-                <controls:CharacterGridView.ItemContainerTransitions>
-                    <TransitionCollection />
-                </controls:CharacterGridView.ItemContainerTransitions>
-            </controls:CharacterGridView>
+            <Border x:Name="GridLayout" x:Load="False">
+                <controls:CharacterGridView
+                    x:Name="ItemsPanel"
+                    Margin="0 0 -8 0"
+                    Padding="0"
+                    ItemsSource="{x:Bind Items}">
+                    <controls:CharacterGridView.ItemContainerTransitions>
+                        <TransitionCollection />
+                    </controls:CharacterGridView.ItemContainerTransitions>
+                </controls:CharacterGridView>
+            </Border>
+
+            <Border x:Name="ListLayout" x:Load="False">
+                <ListView ContainerContentChanging="ListView_ContainerContentChanging" ItemsSource="{x:Bind Items}">
+                    <ListView.ItemContainerTransitions>
+                        <TransitionCollection />
+                    </ListView.ItemContainerTransitions>
+                    <ListView.Resources>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="BorderThickness" Value="0 0 0 1" />
+                            <Setter Property="BorderBrush" Value="LightGray" />
+                            <Setter Property="Padding" Value="0" />
+                        </Style>
+                    </ListView.Resources>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock TextAlignment="Center" />
+
+                                <StackPanel
+                                    Grid.Column="1"
+                                    Margin="12 0 0 0"
+                                    VerticalAlignment="Center">
+                                    <!--  Unicode Index  -->
+                                    <TextBlock Foreground="#333" Style="{StaticResource CharItemUnicodeStyle}" />
+                                    <!--  Glyph Description  -->
+                                    <!--
+                                    <TextBlock />-->
+                                </StackPanel>
+
+                                <Border
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Stretch"
+                                    BorderBrush="LightGray"
+                                    BorderThickness="0 0 0 0" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+            </Border>
+
         </Grid>
 
     </Grid>

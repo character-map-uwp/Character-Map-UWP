@@ -33,6 +33,27 @@ namespace CharacterMap.Views
     {
         public PrintViewModel ViewModel { get; }
 
+        private int _currentPage = 1;
+        public int CurrentPage
+        {
+            get => _currentPage;
+            private set => Set(ref _currentPage, value);
+        }
+
+        private int _pageCount = 1;
+        public int PageCount
+        {
+            get => _pageCount;
+            private set => Set(ref _pageCount, value);
+        }
+
+        public List<PrintLayout> Layouts { get; } = new List<PrintLayout>
+        {
+            PrintLayout.Grid,
+            PrintLayout.List,
+            PrintLayout.TwoColumn
+        };
+
         private Debouncer _sizeDebouncer { get; } = new Debouncer();
 
         public AppSettings Settings { get; }
@@ -47,7 +68,6 @@ namespace CharacterMap.Views
         {
             var view = new PrintView(presenter);
             presenter.GetPresenter().Child = view;
-
             view.Show();
         }
 
@@ -56,7 +76,7 @@ namespace CharacterMap.Views
             _fontMap = presenter.GetFontMap();
             _presenter = presenter;
             Settings = _fontMap.ViewModel.Settings;
-            ViewModel = new PrintViewModel();
+            ViewModel = PrintViewModel.Create(_fontMap.ViewModel);
 
             if (!DesignMode.DesignMode2Enabled)
                 this.Visibility = Visibility.Collapsed;
@@ -114,6 +134,7 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.GlyphSize):
                 case nameof(ViewModel.VerticalMargin):
                 case nameof(ViewModel.HorizontalMargin):
+                case nameof(ViewModel.Layout):
                     _sizeDebouncer.Debounce(350, UpdateDisplay);
                     break;
                 case nameof(ViewModel.Orientation):
@@ -136,10 +157,12 @@ namespace CharacterMap.Views
 
             Size safeSize = size.GetSafeAreaSize(ViewModel.Orientation);
             int perPage = FontMapPrintPage.CalculateGlyphsPerPage(safeSize, ViewModel);
+            PageCount = (int)Math.Ceiling((double)ViewModel.Font.Characters.Count / (double)perPage);
+            CurrentPage = Math.Min(CurrentPage, PageCount);
 
             if (view == null)
             {
-                view = new FontMapPrintPage(_fontMap.ViewModel, ViewModel, _fontMap.CharGrid.ItemTemplate)
+                view = new FontMapPrintPage(ViewModel, _fontMap.CharGrid.ItemTemplate, true)
                 {
                     Background = ResourceHelper.Get<Brush>("WhiteBrush")
                 };
@@ -156,7 +179,7 @@ namespace CharacterMap.Views
             view.PrintableArea.Width = safeSize.Width;
             view.PrintableArea.Height = safeSize.Height;
 
-            view.AddCharacters(0, perPage, _fontMap.ViewModel.Chars);
+            view.AddCharacters(CurrentPage - 1, perPage, _fontMap.ViewModel.Chars);
             view.Update();
 
             Composition.SetThemeShadow(view, 30, ContentBackground);
@@ -175,6 +198,11 @@ namespace CharacterMap.Views
             {
                 ViewModel.Orientation = bs.SelectedIndex == 0 ? Orientation.Vertical : Orientation.Horizontal;
             }
+        }
+
+        private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        {
+            _sizeDebouncer.Debounce(350, UpdateDisplay);
         }
     }
 }

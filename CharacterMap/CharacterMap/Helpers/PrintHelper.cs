@@ -252,7 +252,7 @@ namespace CharacterMap.Helpers
                 bool hasMore = true;
                 while (hasMore)
                 {
-                    var page = new FontMapPrintPage(fontMap.ViewModel, _printModel, fontMap.CharGrid.ItemTemplate)
+                    var page = new FontMapPrintPage(_printModel, fontMap.CharGrid.ItemTemplate)
                     {
                         Width = pageWidth,
                         Height = pageHeight

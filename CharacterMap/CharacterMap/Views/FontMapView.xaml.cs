@@ -29,6 +29,7 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.ComponentModel;
 using Windows.UI.Core;
 using CharacterMap.Annotations;
+using CharacterMap.Controls;
 
 namespace CharacterMap.Views
 {
@@ -622,7 +623,7 @@ namespace CharacterMap.Views
                 return;
 
             IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
-            CharGrid.UpdateTypography(p, info);
+            CharacterGridView.UpdateTypography(_xamlDirect, p, info);
         }
 
 

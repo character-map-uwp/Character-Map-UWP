@@ -51,6 +51,111 @@
             <Setter Property="MinWidth" Value="180" />
         </Style>
 
+        <Style x:Name="NumberBoxSpinButtonStyle" BasedOn="{StaticResource DefaultRepeatButtonStyle}" TargetType="RepeatButton">
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="MinWidth" Value="34" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="{ThemeResource TextControlBackground}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="{ThemeResource NumberBoxSpinButtonBorderThickness}" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        </Style>
+
+        <ControlTemplate x:Key="HorizontalNumberBoxTemplate" TargetType="muxc:NumberBox">
+            <Grid>
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.ThemeDictionaries>
+                            <ResourceDictionary x:Key="Light">
+                                <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
+                                <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="Dark">
+                                <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
+                                <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="HighContrast">
+                                <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
+                                <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+                            </ResourceDictionary>
+                        </ResourceDictionary.ThemeDictionaries>
+                    </ResourceDictionary>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="SpinButtonStates">
+                        <VisualState x:Name="SpinButtonsCollapsed" />
+                        <VisualState x:Name="SpinButtonsVisible">
+                            <VisualState.Setters>
+                                <Setter Target="InputBox.CornerRadius" Value="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="SpinButtonsPopup" />
+                    </VisualStateGroup>
+                    <VisualStateGroup x:Name="UpSpinButtonEnabledStates">
+                        <VisualState x:Name="UpSpinButtonEnabled" />
+                        <VisualState x:Name="UpSpinButtonDisabled">
+                            <VisualState.Setters>
+                                <Setter Target="UpSpinButton.IsEnabled" Value="False" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                    <VisualStateGroup x:Name="DownSpinButtonEnabledStates">
+                        <VisualState x:Name="DownSpinButtonEnabled" />
+                        <VisualState x:Name="DownSpinButtonDisabled">
+                            <VisualState.Setters>
+                                <Setter Target="DownSpinButton.IsEnabled" Value="False" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+                <ContentPresenter
+                    x:Name="HeaderContentPresenter"
+                    Grid.ColumnSpan="3"
+                    Margin="{ThemeResource TextBoxTopHeaderMargin}"
+                    VerticalAlignment="Top"
+                    Content="{TemplateBinding Header}"
+                    ContentTemplate="{TemplateBinding HeaderTemplate}"
+                    FontWeight="Normal"
+                    Foreground="{ThemeResource TextControlHeaderForeground}"
+                    TextWrapping="Wrap" />
+                <TextBox
+                    x:Name="InputBox"
+                    Grid.Row="1"
+                    MinWidth="50"
+                    PlaceholderText="{TemplateBinding PlaceholderText}"
+                    PreventKeyboardDisplayOnProgrammaticFocus="{TemplateBinding PreventKeyboardDisplayOnProgrammaticFocus}"
+                    SelectionHighlightColor="{TemplateBinding SelectionHighlightColor}"
+                    TextReadingOrder="{TemplateBinding TextReadingOrder}" />
+                <RepeatButton
+                    x:Name="DownSpinButton"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Content="&#xE00E;"
+                    CornerRadius="0"
+                    FontSize="{TemplateBinding FontSize}"
+                    Style="{StaticResource NumberBoxSpinButtonStyle}" />
+                <RepeatButton
+                    x:Name="UpSpinButton"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Content="&#xE00F;"
+                    CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                    FontSize="{TemplateBinding FontSize}"
+                    Style="{StaticResource NumberBoxSpinButtonStyle}" />
+            </Grid>
+        </ControlTemplate>
+
+
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot">
@@ -117,7 +222,7 @@
                         Style="{StaticResource SubheaderTextBlockStyle}"
                         Text="Design" />
 
-                   
+
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Size" />
                     <Slider
                         HorizontalAlignment="Stretch"
@@ -134,10 +239,10 @@
                     </TextBlock>
 
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="List Style" />
-                    <ComboBox SelectedIndex="0">
-                        <ComboBoxItem>Grid</ComboBoxItem>
-                        <ComboBoxItem>List</ComboBoxItem>
-                    </ComboBox>
+                    <ComboBox
+                        ItemsSource="{x:Bind Layouts}"
+                        SelectedIndex="0"
+                        SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}" />
 
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Description" />
                     <ComboBox SelectedIndex="1">
@@ -160,7 +265,10 @@
                         <ComboBoxItem>Landscape</ComboBoxItem>
                     </ComboBox>
 
-                    <ToggleSwitch Margin="0 12 0 -4" Header="Show Margins (Preview Only)" IsOn="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}" />
+                    <ToggleSwitch
+                        Margin="0 12 0 -4"
+                        Header="Show Margins (Preview Only)"
+                        IsOn="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}" />
 
 
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Horizontal Margin" />
@@ -215,13 +323,41 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <Viewbox
-                x:Name="PreviewViewBox"
+            <Grid
                 Grid.Column="1"
-                Margin="24"
-                IsHitTestVisible="False"
-                Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
-                Stretch="Uniform" />
+                Margin="12"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock VerticalAlignment="Center">Page</TextBlock>
+                    <muxc:NumberBox
+                        Margin="8 0"
+                        LargeChange="1"
+                        Maximum="{x:Bind PageCount, Mode=OneWay}"
+                        Minimum="1"
+                        SmallChange="1"
+                        SpinButtonPlacementMode="Inline"
+                        Template="{StaticResource HorizontalNumberBoxTemplate}"
+                        ValueChanged="NumberBox_ValueChanged"
+                        Value="{x:Bind CurrentPage, Mode=TwoWay}" />
+                    <TextBlock VerticalAlignment="Center"><Run Text="of " /><Run Text="{x:Bind PageCount, Mode=OneWay}" /></TextBlock>
+                </StackPanel>
+
+                <Viewbox
+                    x:Name="PreviewViewBox"
+                    Grid.Row="1"
+                    Margin="12"
+                    IsHitTestVisible="False"
+                    Stretch="Uniform" />
+            </Grid>
+
 
         </Grid>
 

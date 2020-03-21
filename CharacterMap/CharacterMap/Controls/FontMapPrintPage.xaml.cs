@@ -1,8 +1,10 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -11,6 +13,7 @@ using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
@@ -21,57 +24,81 @@ namespace CharacterMap.Controls
     public sealed partial class FontMapPrintPage : Page
     {
         PrintViewModel PrintModel { get; }
+        public bool IsInAppPreview { get; }
+        public ObservableCollection<Character> Items { get; } = new ObservableCollection<Character>();
 
 
+        private DataTemplate _gridTemplate = null;
+        private readonly XamlDirect _xamlDirect = XamlDirect.GetDefault();
 
-        public bool IsInAppPreview
-        {
-            get { return (bool)GetValue(IsInAppPreviewProperty); }
-            set { SetValue(IsInAppPreviewProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsInAppPreviewProperty =
-            DependencyProperty.Register(nameof(IsInAppPreview), typeof(bool), typeof(FontMapPrintPage), new PropertyMetadata(false));
-
-
-
-        public FontMapPrintPage(FontMapViewModel viewModel, PrintViewModel printModel, DataTemplate t, bool isAppPreview = false)
+        public FontMapPrintPage(PrintViewModel printModel, DataTemplate t, bool isAppPreview = false)
         {
             PrintModel = printModel;
+            _gridTemplate = t;
 
             this.InitializeComponent();
 
+            UpdateLazyLoad();
             IsInAppPreview = isAppPreview;
 
             Update();
-            ItemsPanel.EnableResizeAnimation = false;
-            ItemsPanel.ItemTemplate = t;
-            ItemsPanel.ItemFontFace = viewModel.SelectedVariant.FontFace;
-            ItemsPanel.ItemFontFamily = viewModel.FontFamily;
-            ItemsPanel.ItemTypography = viewModel.SelectedTypography;
-            ItemsPanel.ShowColorGlyphs = viewModel.ShowColorGlyphs;
-            ItemsPanel.ShowUnicodeDescription = viewModel.Settings.ShowCharGridUnicode;
         }
 
         public void Update()
         {
-            ItemsPanel.UpdateSize(PrintModel.GlyphSize);
+            ItemsPanel?.UpdateSize(PrintModel.GlyphSize);
         }
 
-        public static int CalculateGlyphsPerPage(Size printSize, PrintViewModel viewModel)
+        public static int CalculateGlyphsPerPage(Size safePrintAreaSize, PrintViewModel viewModel)
         {
-            double size = viewModel.GlyphSize + 4d + 4d; // 4px is GridViewItem padding, 4px is border-thickness.
+            if (viewModel.Layout == PrintLayout.Grid)
+            {
+                double size = viewModel.GlyphSize + 4d + 4d; // 4px is GridViewItem padding, 4px is border-thickness.
 
-            var c = (int)Math.Floor((printSize.Width + 6) / size);
-            var r = (int)Math.Floor((printSize.Height) / size);
+                var c = (int)Math.Floor((safePrintAreaSize.Width + 6) / size);
+                var r = (int)Math.Floor((safePrintAreaSize.Height) / size);
 
-            return r * c; 
+                return r * c;
+            }
+            else
+            {
+                double size = viewModel.GlyphSize;
+                var r = (int)Math.Floor((safePrintAreaSize.Height + 1) / size);
+                return r;
+            }
+        }
+
+        private void UpdateLazyLoad()
+        {
+            if (PrintModel.Layout == PrintLayout.Grid)
+            {
+                this.UnloadObject(ListLayout);
+                this.FindName(nameof(GridLayout));
+                ItemsPanel.ItemTemplate = _gridTemplate;
+                ItemsPanel.EnableResizeAnimation = false;
+                ItemsPanel.ItemFontFace = PrintModel.Font.FontFace;
+                ItemsPanel.ItemFontFamily = PrintModel.FontFamily;
+                ItemsPanel.ItemTypography = PrintModel.Typography;
+                ItemsPanel.ShowColorGlyphs = PrintModel.ShowColorGlyphs;
+                ItemsPanel.ShowUnicodeDescription = true;
+            }
+            else if (PrintModel.Layout == PrintLayout.List)
+            {
+                this.UnloadObject(GridLayout);
+                this.FindName(nameof(ListLayout));
+            }
+            else if (PrintModel.Layout == PrintLayout.TwoColumn)
+            {
+                this.UnloadObject(GridLayout);
+                this.UnloadObject(ListLayout);
+            }
         }
 
         public bool AddCharacters(int page, int charsPerPage, IReadOnlyCollection<Character> e)
         {
+            UpdateLazyLoad();
             foreach (var c in e.Skip((page) * charsPerPage).Take(charsPerPage))
-                ItemsPanel.Items.Add(c);
+                Items.Add(c);
 
             // Are there still more characters in the font too add?
             return e.Count > (page + 1) * charsPerPage;
@@ -79,13 +106,38 @@ namespace CharacterMap.Controls
 
         public void ClearCharacters()
         {
-            ItemsPanel.Items.Clear();
+            Items.Clear();
         }
-
 
         private Thickness GetMargin(double horizontal, double vertical)
         {
             return new Thickness(horizontal, vertical, horizontal, vertical);
+        }
+
+        private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (!args.InRecycleQueue && args.ItemContainer is ListViewItem item)
+            {
+                Character c = ((Character)args.Item);
+                UpdateListContainer(item, c);
+                args.Handled = true;
+            }
+        }
+
+        private void UpdateListContainer(ListViewItem item, Character c)
+        {
+            item.Height = PrintModel.GlyphSize;
+            Grid g = (Grid)item.ContentTemplateRoot;
+            g.ColumnDefinitions[0].Width = new GridLength(PrintModel.GlyphSize);
+
+            TextBlock t = (TextBlock)g.Children[0];
+            t.Height = t.Width = PrintModel.GlyphSize;
+
+            TextBlock d = ((TextBlock)((StackPanel)g.Children[1]).Children[0]);
+            d.Text = GlyphService.GetCharacterDescription(c.UnicodeIndex, PrintModel.Font);
+
+            IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(t);
+            CharacterGridView.SetGlyphProperties(_xamlDirect, o, PrintModel.GetTemplateSettings(), c);
         }
     }
 }
