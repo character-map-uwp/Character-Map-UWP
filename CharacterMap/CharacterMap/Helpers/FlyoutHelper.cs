@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace CharacterMap.Helpers
 {
@@ -30,13 +31,13 @@ namespace CharacterMap.Helpers
         {
             MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
 
-            void OpenInNewWindow(object s, RoutedEventArgs args)
+            static void OpenInNewWindow(object s, RoutedEventArgs args)
             {
                 if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
                     _ = FontMapView.CreateNewViewForFontAsync(fnt);
             }
 
-            async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
+            static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
                 {
@@ -46,11 +47,10 @@ namespace CharacterMap.Helpers
 
                     if (result.Success)
                         Messenger.Default.Send(new AppNotificationMessage(true, result));
-                    
                 }
             }
 
-            void CreateCollection_Click(object sender, RoutedEventArgs e)
+            static void CreateCollection_Click(object sender, RoutedEventArgs e)
             {
                 var d = new CreateCollectionDialog
                 {
@@ -75,7 +75,6 @@ namespace CharacterMap.Helpers
 
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
                     Messenger.Default.Send(new CollectionsUpdatedMessage());
-
                 }
             }
 
@@ -124,6 +123,16 @@ namespace CharacterMap.Helpers
                         };
                         newWindow.Click += OpenInNewWindow;
                         menu.Items.Add(newWindow);
+
+                        if (showAdvanced)
+                        {
+                            newWindow.KeyboardAccelerators.Add(new KeyboardAccelerator
+                            {
+                                Key = Windows.System.VirtualKey.N,
+                                Modifiers = Windows.System.VirtualKeyModifiers.Control
+                            });
+                        }
+
                     }
 
                     // Add "Delete Font" button
@@ -252,8 +261,14 @@ namespace CharacterMap.Helpers
                             Icon = new SymbolIcon { Symbol = Symbol.Print }
                         };
 
+                        item.KeyboardAccelerators.Add(new Windows.UI.Xaml.Input.KeyboardAccelerator
+                        {
+                             Key = Windows.System.VirtualKey.P,
+                             Modifiers = Windows.System.VirtualKeyModifiers.Control
+                        });
+
                         item.Click += Print_Click;
-                        menu.Items.Add(item);
+                        menu.Items.Insert(standalone ? 0 : 1, item);
                     }
                 }
             }

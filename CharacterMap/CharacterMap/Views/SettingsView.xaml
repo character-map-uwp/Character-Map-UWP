@@ -141,15 +141,15 @@
 
                     <TextBlock x:Uid="SettingsUnicodeHeader" Style="{StaticResource HeaderStyle}" />
                     <TextBlock x:Uid="SettingsUnicodeDescription" Style="{StaticResource DescriptionStyle}" />
-                    <ToggleSwitch IsOn="{x:Bind Settings.ShowCharGridUnicode, Mode=TwoWay}" />
+                    <ToggleSwitch x:Name="ToggleUnicode" Toggled="ToggleUnicode_Toggled" />
 
                     <StackPanel
                         Margin="0 12 0 0"
                         Padding="4 4 0 0"
                         HorizontalAlignment="Left"
-                        BorderThickness="1"
-                        BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
                         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                        BorderThickness="1"
                         Orientation="Horizontal">
                         <GridViewItem>
                             <Grid
@@ -167,7 +167,7 @@
                                 <TextBlock
                                     Style="{StaticResource CharItemUnicodeStyle}"
                                     Text="U+0041"
-                                    Visibility="{x:Bind Settings.ShowCharGridUnicode, Mode=OneWay}" />
+                                    Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
                             </Grid>
                         </GridViewItem>
 
@@ -187,7 +187,7 @@
                                 <TextBlock
                                     Style="{StaticResource CharItemUnicodeStyle}"
                                     Text="U+0062"
-                                    Visibility="{x:Bind Settings.ShowCharGridUnicode, Mode=OneWay}" />
+                                    Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
                             </Grid>
                         </GridViewItem>
 
@@ -207,7 +207,7 @@
                                 <TextBlock
                                     Style="{StaticResource CharItemUnicodeStyle}"
                                     Text="U+0079"
-                                    Visibility="{x:Bind Settings.ShowCharGridUnicode, Mode=OneWay}" />
+                                    Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
                             </Grid>
                         </GridViewItem>
 

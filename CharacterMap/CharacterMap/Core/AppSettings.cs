@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Helpers;
+using CharacterMap.ViewModels;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.ComponentModel;
@@ -82,12 +83,6 @@ namespace CharacterMap.Core
             set => BroadcastSet(value);
         }
 
-        public bool ShowCharGridUnicode
-        {
-            get => Get(true);
-            set => BroadcastSet(value);
-        }
-
         public bool UseFontForPreview
         {
             get => Get(true);
@@ -97,6 +92,12 @@ namespace CharacterMap.Core
         public ElementTheme UserRequestedTheme
         {
             get => (ElementTheme)Get((int)ElementTheme.Default);
+            set => BroadcastSet((int)value);
+        }
+
+        public GlyphAnnotation GlyphAnnotation
+        {
+            get => (GlyphAnnotation)Get((int)GlyphAnnotation.None);
             set => BroadcastSet((int)value);
         }
 

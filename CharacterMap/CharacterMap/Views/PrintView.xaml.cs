@@ -47,11 +47,25 @@ namespace CharacterMap.Views
             private set => Set(ref _pageCount, value);
         }
 
+        private bool _canContinue = true;
+        public bool CanContinue
+        {
+            get => _canContinue;
+            private set => Set(ref _canContinue, value);
+        }
+
         public List<PrintLayout> Layouts { get; } = new List<PrintLayout>
         {
             PrintLayout.Grid,
             PrintLayout.List,
-            PrintLayout.TwoColumn
+            //PrintLayout.TwoColumn
+        };
+
+        public List<GlyphAnnotation> Annotations { get; } = new List<GlyphAnnotation>
+        {
+            GlyphAnnotation.None,
+            GlyphAnnotation.UnicodeHex,
+            GlyphAnnotation.UnicodeIndex
         };
 
         private Debouncer _sizeDebouncer { get; } = new Debouncer();
@@ -131,13 +145,15 @@ namespace CharacterMap.Views
         {
             switch (e.PropertyName)
             {
+                // For slider based values, we use a grace period before updating the preview
                 case nameof(ViewModel.GlyphSize):
                 case nameof(ViewModel.VerticalMargin):
                 case nameof(ViewModel.HorizontalMargin):
-                case nameof(ViewModel.Layout):
                     _sizeDebouncer.Debounce(350, UpdateDisplay);
                     break;
-                case nameof(ViewModel.Orientation):
+
+                // For other values we update straight away
+                default:
                     UpdateDisplay();
                     break;
             }
@@ -157,8 +173,8 @@ namespace CharacterMap.Views
 
             Size safeSize = size.GetSafeAreaSize(ViewModel.Orientation);
             int perPage = FontMapPrintPage.CalculateGlyphsPerPage(safeSize, ViewModel);
-            PageCount = (int)Math.Ceiling((double)ViewModel.Font.Characters.Count / (double)perPage);
-            CurrentPage = Math.Min(CurrentPage, PageCount);
+            PageCount = Math.Max((int)Math.Ceiling((double)ViewModel.Characters.Count / (double)perPage), 1);
+            CurrentPage = Math.Max(Math.Min(CurrentPage, PageCount), 1);
 
             if (view == null)
             {
@@ -179,13 +195,19 @@ namespace CharacterMap.Views
             view.PrintableArea.Width = safeSize.Width;
             view.PrintableArea.Height = safeSize.Height;
 
-            view.AddCharacters(CurrentPage - 1, perPage, _fontMap.ViewModel.Chars);
+            view.AddCharacters(CurrentPage - 1, perPage, ViewModel.Characters);
             view.Update();
+
+            CanContinue = ViewModel.Characters.Count > 0;
 
             Composition.SetThemeShadow(view, 30, ContentBackground);
             PreviewViewBox.Child = view;
         }
 
+
+
+
+        /* UI EVENT HANDLERS */
 
         private void BtnContinue_Click(object sender, RoutedEventArgs e)
         {
@@ -203,6 +225,54 @@ namespace CharacterMap.Views
         private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
             _sizeDebouncer.Debounce(350, UpdateDisplay);
+        }
+
+        private void Flyout_Opening(object sender, object e)
+        {
+            CategoryList.ItemsSource = PrintViewModel.CreateCategoriesList(ViewModel);
+        }
+
+        private void Flyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+        {
+        }
+
+        private void FilterAccept_Click(object sender, RoutedEventArgs e)
+        {
+            ViewModel.UpdateCategories((List<UnicodeCategoryModel>)CategoryList.ItemsSource);
+            FilterFlyout.Hide();
+        }
+
+        private void FilterRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            CategoryList.ItemsSource = PrintViewModel.CreateCategoriesList(ViewModel);
+        }
+
+        private void FilterSelectAll_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in ((List<UnicodeCategoryModel>)CategoryList.ItemsSource))
+                item.IsSelected = true;
+        }
+
+        private void FilterClear_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in ((List<UnicodeCategoryModel>)CategoryList.ItemsSource))
+                item.IsSelected = false;
+        }
+
+        private void HeaderGrid_Loading(FrameworkElement sender, object args)
+        {
+            Composition.SetThemeShadow(HeaderGrid, 30, ContentPanel);
+        }
+
+
+
+
+        /* CONVERTERS */
+
+        public string GetAnnotationName(GlyphAnnotation a)
+        {
+            string s = Localization.Get($"GlyphAnnotation_{a}");
+            return Humanizer.EnumHumanizeExtensions.Humanize(a);
         }
     }
 }

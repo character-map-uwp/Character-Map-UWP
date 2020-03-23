@@ -222,6 +222,8 @@ namespace CharacterMap.Views
                 _isCtrlKeyPressed = false;
         }
 
+
+
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.Control)
@@ -232,10 +234,22 @@ namespace CharacterMap.Views
 
             if (_isCtrlKeyPressed)
             {
+                // Check to see if any basic modals are open first
+                if ((SettingsView != null && SettingsView.IsOpen)
+                    || (PrintPresenter != null && PrintPresenter.Child != null))
+                    return;
+
                 switch (e.Key)
                 {
                     case VirtualKey.C:
                         FontMap.TryCopy();
+                        break;
+                    case VirtualKey.N:
+                        if (ViewModel.SelectedFont is InstalledFont fnt)
+                            _ = FontMapView.CreateNewViewForFontAsync(fnt);
+                        break;
+                    case VirtualKey.P:
+                        Messenger.Default.Send(new PrintRequestedMessage());
                         break;
                 }
             }

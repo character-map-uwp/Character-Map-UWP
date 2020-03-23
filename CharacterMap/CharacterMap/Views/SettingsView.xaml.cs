@@ -3,6 +3,7 @@ using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
+using CharacterMap.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.UI.Xaml.Controls;
@@ -40,6 +41,8 @@ namespace CharacterMap.Views
         public AppSettings Settings { get; }
         public UserCollectionsService FontCollections { get; }
         public List<SupportedLanguage> SupportedLanguages { get; }
+
+        public bool IsOpen { get; private set; }
 
         public SettingsView()
         {
@@ -120,10 +123,16 @@ namespace CharacterMap.Views
             
             // 3. Set correct Developer features language
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
+
+            // 4. Set Unicode toggle
+            ToggleUnicode.IsOn = Settings.GlyphAnnotation != GlyphAnnotation.None;
+
+            IsOpen = true;
         }
 
         public void Hide()
         {
+            IsOpen = false;
             this.Visibility = Visibility.Collapsed;
         }
 
@@ -189,6 +198,11 @@ namespace CharacterMap.Views
             ResetFontPreview();
         }
 
+        private void ToggleUnicode_Toggled(object sender, RoutedEventArgs e)
+        {
+            Settings.GlyphAnnotation = !ToggleUnicode.IsOn ? GlyphAnnotation.None : GlyphAnnotation.UnicodeHex;
+        }
+
         private void UseActualFont_Checked(object sender, RoutedEventArgs e)
         {
             Settings.UseFontForPreview = true;
@@ -204,5 +218,15 @@ namespace CharacterMap.Views
 
         public void SelectedLanguageToString(object selected) => 
             Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "en-US";
+
+
+
+
+        /* CONVERTERS */
+
+        Visibility ShowUnicode(GlyphAnnotation annotation)
+        {
+            return annotation != GlyphAnnotation.None ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 }

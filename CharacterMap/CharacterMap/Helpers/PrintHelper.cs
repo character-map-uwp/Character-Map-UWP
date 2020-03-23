@@ -62,11 +62,6 @@ namespace CharacterMap.Helpers
         }
     }
 
-    public class PrintConfig
-    {
-        public double GridSize { get; set; }
-    }
-
     public class PrintHelper
     {
         private PrintViewModel _printModel { get; }
@@ -181,12 +176,32 @@ namespace CharacterMap.Helpers
             PrintTask printTask = null;
             printTask = e.Request.CreatePrintTask("Character Map UWP", sourceRequested =>
             {
+                printTask.Options.Orientation = _printModel.Orientation == Orientation.Vertical ? PrintOrientation.Portrait : PrintOrientation.Landscape;
+
+                printTask.Options.PageRangeOptions.AllowAllPages = true;
+                printTask.Options.PageRangeOptions.AllowCurrentPage = true;
+                printTask.Options.PageRangeOptions.AllowCustomSetOfPages = true;
+
+                IList<string> displayedOptions = printTask.Options.DisplayedOptions;
+
+                // Choose the printer options to be shown.
+                // The order in which the options are appended determines the order in which they appear in the UI
+                displayedOptions.Clear();
+                displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.CustomPageRanges);
+                displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Orientation);
+                displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Duplex);
+                displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Copies);
+                displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.ColorMode);
+
+
                 // Print Task event handler is invoked when the print job is completed.
                 printTask.Completed += (s, args) =>
                 {
-                    Clear();
-
-                    GC.Collect();
+                    _ = fontMap.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                    {
+                        Clear();
+                        GC.Collect();
+                    });
 
                     // Notify the user when the print operation fails.
                     if (args.Completion == PrintTaskCompletion.Failed)
@@ -244,10 +259,8 @@ namespace CharacterMap.Helpers
                 var printableAreaHeight = pageHeight - marginHeight;
 
                 int charsPerPage = FontMapPrintPage.CalculateGlyphsPerPage(
-                    new Windows.Foundation.Size(Math.Floor(printableAreaWidth), Math.Floor(printableAreaHeight)), 
+                    new Size(Math.Floor(printableAreaWidth), Math.Floor(printableAreaHeight)), 
                     _printModel);
-
-                var enumerator = fontMap.ViewModel.Chars.GetEnumerator();
 
                 bool hasMore = true;
                 while (hasMore)
@@ -265,7 +278,7 @@ namespace CharacterMap.Helpers
                     printableArea.Height = printableAreaHeight ;
 
                     // Layout page
-                    hasMore = page.AddCharacters(printPreviewPages.Count, charsPerPage, fontMap.ViewModel.Chars);
+                    hasMore = page.AddCharacters(printPreviewPages.Count, charsPerPage, _printModel.Characters);
 
                     // Add the (newly created) page to the print canvas which is part of the visual tree and force it to go
                     // through layout so that the linked containers correctly distribute the content inside them.

@@ -450,6 +450,7 @@
                     x:FieldModifier="public"
                     EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
                     IsItemClickEnabled="False"
+                    ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
@@ -457,7 +458,6 @@
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
-                    ShowUnicodeDescription="{x:Bind ViewModel.Settings.ShowCharGridUnicode, Mode=OneTime}"
                     ShowsScrollingPlaceholders="False">
                     <GridView.ItemContainerTransitions>
                         <TransitionCollection />

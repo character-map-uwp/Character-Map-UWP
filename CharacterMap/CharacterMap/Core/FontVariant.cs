@@ -127,7 +127,7 @@ namespace CharacterMap.Core
                         {
                             c = new Character
                             {
-                                Char = (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32(i) : new string((char)i, 1),
+                                Char = Unicode.GetHexValue(i),
                                 UnicodeIndex = i
                             };
 

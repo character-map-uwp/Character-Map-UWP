@@ -1,6 +1,7 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.ViewModels;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace CharacterMap.Controls
         public bool ShowColorGlyphs { get; set; }
         public double Size { get; set; }
         public bool EnableReposition { get; set; }
-        public bool ShowUnicode { get; set; }
+        public GlyphAnnotation Annotation { get; set; }
     }
 
 
@@ -125,21 +126,25 @@ namespace CharacterMap.Controls
 
         #region ShowUnicodeDescription
 
-        public bool ShowUnicodeDescription
+        public GlyphAnnotation ItemAnnotation
         {
-            get { return (bool)GetValue(ShowUnicodeDescriptionProperty); }
-            set { SetValue(ShowUnicodeDescriptionProperty, value); }
+            get { return (GlyphAnnotation)GetValue(ItemAnnotationProperty); }
+            set { SetValue(ItemAnnotationProperty, value); }
         }
 
-        public static readonly DependencyProperty ShowUnicodeDescriptionProperty =
-            DependencyProperty.Register(nameof(ShowUnicodeDescription), typeof(bool), typeof(CharacterGridView), new PropertyMetadata(false, (d, e) =>
+        // Using a DependencyProperty as the backing store for ItemAnnotation.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ItemAnnotationProperty =
+            DependencyProperty.Register("ItemAnnotation", typeof(GlyphAnnotation), typeof(CharacterGridView), new PropertyMetadata(GlyphAnnotation.None, (d, e) =>
             {
-                if (d is CharacterGridView g && e.NewValue is bool b)
+                if (d is CharacterGridView g && e.NewValue is GlyphAnnotation b)
                 {
-                    g._templateSettings.ShowUnicode = b;
+                    g._templateSettings.Annotation = b;
                     g.UpdateUnicode(b);
                 }
             }));
+
+
+
 
         #endregion
 
@@ -220,6 +225,7 @@ namespace CharacterMap.Controls
             // 2 - Use XAML direct to set new properties, rather than through DP's
             // 3 - Access any required data properties from parents through normal properties, 
             //     not DP's - DP access can be order of magnitudes slower.
+            // Note : This will be faster via C++ as it avoids all marshaling costs.
 
             // Assumed Structure:
             // -- Grid
@@ -241,14 +247,15 @@ namespace CharacterMap.Controls
             IXamlDirectObject o2 = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 1);
             if (o2 != null)
             {
-                if (_templateSettings.ShowUnicode)
+                switch(_templateSettings.Annotation)
                 {
-                    _xamlDirect.SetStringProperty(o2, XamlPropertyIndex.TextBlock_Text, c.UnicodeString);
-                    _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 0);
-                }
-                else
-                {
-                    _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 1);
+                    case GlyphAnnotation.None:
+                        _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 1);
+                        break;
+                    default:
+                        _xamlDirect.SetStringProperty(o2, XamlPropertyIndex.TextBlock_Text, c.GetAnnotation(_templateSettings.Annotation));
+                        _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 0);
+                        break;
                 }
             }
             
@@ -320,7 +327,7 @@ namespace CharacterMap.Controls
             }
         }
 
-        void UpdateUnicode(bool value)
+        void UpdateUnicode(GlyphAnnotation value)
         {
             if (ItemsSource == null || ItemsPanelRoot == null)
                 return;
@@ -332,8 +339,8 @@ namespace CharacterMap.Controls
                     if (g.Tag is Character c)
                     {
                         TextBlock tb = (TextBlock)g.Children[1];
-                        tb.Text = c.UnicodeString;
-                        tb.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                        tb.Text = c.GetAnnotation(value);
+                        tb.Visibility = value != GlyphAnnotation.None ? Visibility.Visible : Visibility.Collapsed;
                     }
                 }
             }

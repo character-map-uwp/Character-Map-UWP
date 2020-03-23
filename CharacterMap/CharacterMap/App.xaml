@@ -5,7 +5,8 @@
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
     xmlns:styles="using:CharacterMap.Styles"
-    xmlns:viewModels="using:CharacterMap.ViewModels">
+    xmlns:viewModels="using:CharacterMap.ViewModels"
+    xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
     <Application.Resources>
         <ResourceDictionary>
             <viewModels:ViewModelLocator x:Key="Locator" />
@@ -28,11 +29,20 @@
                     </Style>
                     <SolidColorBrush x:Key="WhiteBrush" Color="White" />
                     <SolidColorBrush x:Key="BlackBrush" Color="Black" />
+                    <SolidColorBrush x:Key="PrintBorderBrush" Color="LightGray" />
                     <SolidColorBrush x:Key="SystemControlTransparentRevealBackgroundBrush" Color="Transparent" />
                     <SolidColorBrush x:Key="SystemControlTransparentRevealBorderBrush" Color="Transparent" />
                     <Thickness x:Key="ListViewItemRevealBorderThemeThickness">0</Thickness>
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
+
+                    <AcrylicBrush
+                        x:Name="DefaultAcrylicBrush"
+                        win1903:TintLuminosityOpacity="0.3"
+                        BackgroundSource="Backdrop"
+                        FallbackColor="{ThemeResource SystemAltHighColor}"
+                        TintColor="{ThemeResource SystemChromeGrayColor}"
+                        TintOpacity="0.6" />
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
                 <ResourceDictionary Source="/Styles/CommandBar.xaml" />

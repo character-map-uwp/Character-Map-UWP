@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
@@ -18,6 +19,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Shapes;
 
 namespace CharacterMap.Controls
 {
@@ -28,8 +30,8 @@ namespace CharacterMap.Controls
         public ObservableCollection<Character> Items { get; } = new ObservableCollection<Character>();
 
 
-        private DataTemplate _gridTemplate = null;
-        private readonly XamlDirect _xamlDirect = XamlDirect.GetDefault();
+        private DataTemplate _gridTemplate { get; } = null;
+        private XamlDirect _xamlDirect { get; } = XamlDirect.GetDefault();
 
         public FontMapPrintPage(PrintViewModel printModel, DataTemplate t, bool isAppPreview = false)
         {
@@ -46,7 +48,10 @@ namespace CharacterMap.Controls
 
         public void Update()
         {
-            ItemsPanel?.UpdateSize(PrintModel.GlyphSize);
+            if (ItemsPanel != null)
+            {
+                ItemsPanel.UpdateSize(PrintModel.GlyphSize);
+            }
         }
 
         public static int CalculateGlyphsPerPage(Size safePrintAreaSize, PrintViewModel viewModel)
@@ -80,7 +85,7 @@ namespace CharacterMap.Controls
                 ItemsPanel.ItemFontFamily = PrintModel.FontFamily;
                 ItemsPanel.ItemTypography = PrintModel.Typography;
                 ItemsPanel.ShowColorGlyphs = PrintModel.ShowColorGlyphs;
-                ItemsPanel.ShowUnicodeDescription = true;
+                ItemsPanel.ItemAnnotation = PrintModel.Annotation;
             }
             else if (PrintModel.Layout == PrintLayout.List)
             {
@@ -97,10 +102,11 @@ namespace CharacterMap.Controls
         public bool AddCharacters(int page, int charsPerPage, IReadOnlyCollection<Character> e)
         {
             UpdateLazyLoad();
+
             foreach (var c in e.Skip((page) * charsPerPage).Take(charsPerPage))
                 Items.Add(c);
 
-            // Are there still more characters in the font too add?
+            // Are there still more characters in the font to add?
             return e.Count > (page + 1) * charsPerPage;
         }
 
@@ -133,11 +139,29 @@ namespace CharacterMap.Controls
             TextBlock t = (TextBlock)g.Children[0];
             t.Height = t.Width = PrintModel.GlyphSize;
 
-            TextBlock d = ((TextBlock)((StackPanel)g.Children[1]).Children[0]);
-            d.Text = GlyphService.GetCharacterDescription(c.UnicodeIndex, PrintModel.Font);
+            TextBlock unicodeId = ((TextBlock)((StackPanel)g.Children[1]).Children[0]);
+            unicodeId.Visibility = PrintModel.Annotation == GlyphAnnotation.None ? Visibility.Collapsed : Visibility.Visible;
+            unicodeId.Text = c.GetAnnotation(PrintModel.Annotation);
+
+            TextBlock description = ((TextBlock)((StackPanel)g.Children[1]).Children[1]);
+            description.Text = GlyphService.GetCharacterDescription(c.UnicodeIndex, PrintModel.Font);
 
             IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(t);
             CharacterGridView.SetGlyphProperties(_xamlDirect, o, PrintModel.GetTemplateSettings(), c);
+
+            foreach (var r in g.GetFirstLevelDescendantsOfType<Rectangle>())
+                r.Visibility = PrintModel.ShowBorders ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ItemsPanel_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (!args.InRecycleQueue && args.ItemContainer is GridViewItem item)
+            {
+                if (PrintModel.ShowBorders)
+                {
+                    item.BorderBrush = ResourceHelper.Get<Brush>("PrintBorderBrush");
+                }
+            }
         }
     }
 }

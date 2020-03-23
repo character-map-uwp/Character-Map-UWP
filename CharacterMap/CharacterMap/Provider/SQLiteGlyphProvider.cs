@@ -78,6 +78,7 @@ namespace CharacterMap.Provider
                     break;
                 }
             }
+
             // Otherwise get a fallback value
             if (string.IsNullOrEmpty(desc))
                 desc = _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;

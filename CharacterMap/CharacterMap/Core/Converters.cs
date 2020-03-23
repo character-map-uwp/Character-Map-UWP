@@ -1,5 +1,6 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Services;
+using CharacterMap.ViewModels;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 using System;
@@ -28,7 +29,7 @@ namespace CharacterMap.Core
         public static bool IsNull(object obj) => obj == null;
         public static bool IsNotNull(object obj) => obj != null;
 
-        public static string ToHex(int i) => (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1);
+        public static string ToHex(int i) => Unicode.GetHexValue(i);
 
         public static string GetWeightName(Windows.UI.Text.FontWeight weight)
         {
@@ -100,6 +101,12 @@ namespace CharacterMap.Core
 
             size = size / 1024;
             return $"{size:0.00} MB";
+        }
+
+        public static string GetAnnotationName(GlyphAnnotation a)
+        {
+            string s = Localization.Get($"GlyphAnnotation_{a}");
+            return Humanizer.EnumHumanizeExtensions.Humanize(a);
         }
 
         public static Models.SupportedLanguage GetSelectedLanguage(string selected, IList<Models.SupportedLanguage> languages) 

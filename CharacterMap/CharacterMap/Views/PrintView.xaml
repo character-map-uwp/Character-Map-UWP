@@ -7,6 +7,7 @@
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     d:DesignHeight="720"
@@ -82,25 +83,11 @@
                     </ResourceDictionary>
                 </Grid.Resources>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
                 <VisualStateManager.VisualStateGroups>
-                    <VisualStateGroup x:Name="SpinButtonStates">
-                        <VisualState x:Name="SpinButtonsCollapsed" />
-                        <VisualState x:Name="SpinButtonsVisible">
-                            <VisualState.Setters>
-                                <Setter Target="InputBox.CornerRadius" Value="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource LeftCornerRadiusFilterConverter}}" />
-                            </VisualState.Setters>
-                        </VisualState>
-                        <VisualState x:Name="SpinButtonsPopup" />
-                    </VisualStateGroup>
                     <VisualStateGroup x:Name="UpSpinButtonEnabledStates">
                         <VisualState x:Name="UpSpinButtonEnabled" />
                         <VisualState x:Name="UpSpinButtonDisabled">
@@ -118,32 +105,27 @@
                         </VisualState>
                     </VisualStateGroup>
                 </VisualStateManager.VisualStateGroups>
-                <ContentPresenter
-                    x:Name="HeaderContentPresenter"
-                    Grid.ColumnSpan="3"
-                    Margin="{ThemeResource TextBoxTopHeaderMargin}"
-                    VerticalAlignment="Top"
-                    Content="{TemplateBinding Header}"
-                    ContentTemplate="{TemplateBinding HeaderTemplate}"
-                    FontWeight="Normal"
-                    Foreground="{ThemeResource TextControlHeaderForeground}"
-                    TextWrapping="Wrap" />
+
+                <RepeatButton
+                    x:Name="DownSpinButton"
+                    Grid.Row="1"
+                    BorderThickness="1 1 0 1"
+                    Content="&#xE00E;"
+                    CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource LeftCornerRadiusFilterConverter}}"
+                    FontSize="{TemplateBinding FontSize}"
+                    Style="{StaticResource NumberBoxSpinButtonStyle}" />
+
                 <TextBox
                     x:Name="InputBox"
                     Grid.Row="1"
+                    Grid.Column="1"
                     MinWidth="50"
+                    CornerRadius="0"
                     PlaceholderText="{TemplateBinding PlaceholderText}"
                     PreventKeyboardDisplayOnProgrammaticFocus="{TemplateBinding PreventKeyboardDisplayOnProgrammaticFocus}"
                     SelectionHighlightColor="{TemplateBinding SelectionHighlightColor}"
                     TextReadingOrder="{TemplateBinding TextReadingOrder}" />
-                <RepeatButton
-                    x:Name="DownSpinButton"
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Content="&#xE00E;"
-                    CornerRadius="0"
-                    FontSize="{TemplateBinding FontSize}"
-                    Style="{StaticResource NumberBoxSpinButtonStyle}" />
+
                 <RepeatButton
                     x:Name="UpSpinButton"
                     Grid.Row="1"
@@ -170,6 +152,7 @@
             x:Name="HeaderGrid"
             Height="45"
             Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            Loading="HeaderGrid_Loading"
             RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(Settings), Mode=OneWay}">
             <TextBlock
                 x:Uid="PrintHeader"
@@ -179,7 +162,7 @@
                 FontSize="22"
                 FontWeight="SemiLight"
                 Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}"
-                Text="Print Setup" />
+                Text="Print Configuration" />
 
             <AppBarButton
                 x:Name="BtnClose"
@@ -204,23 +187,149 @@
             </Grid.ColumnDefinitions>
 
             <!--  Requires it's own element to enable theme shadows  -->
-            <Border x:Name="ContentBackground" Grid.ColumnSpan="2">
-                <Border.Background>
-                    <AcrylicBrush
-                        win1903:TintLuminosityOpacity="0.3"
-                        BackgroundSource="Backdrop"
-                        FallbackColor="{ThemeResource SystemAltHighColor}"
-                        TintColor="{ThemeResource SystemChromeGrayColor}"
-                        TintOpacity="0.6" />
-                </Border.Background>
-            </Border>
+            <Border
+                x:Name="ContentBackground"
+                Grid.ColumnSpan="2"
+                Background="{StaticResource DefaultAcrylicBrush}" />
 
             <ScrollViewer x:Name="ContentScroller">
                 <StackPanel Margin="20 20 20 120">
+
+                    <TextBlock
+                        x:Uid="PrintData"
+                        Style="{StaticResource SubheaderTextBlockStyle}"
+                        Text="Data" />
+
+                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Characters" />
+                    <!--<TextBlock Style="{StaticResource DescriptionStyle}" Text="Choose the range of glyphs to print." />-->
+                    <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock OpticalMarginAlignment="TrimSideBearings" Text="Choose character groups to display" />
+                                <TextBlock
+                                    Margin="4 2 0 0"
+                                    VerticalAlignment="Center"
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="12"
+                                    Text="&#xE019;"
+                                    TextLineBounds="Tight" />
+                            </StackPanel>
+
+                        </Button.Content>
+                        <Button.Flyout>
+                            <Flyout
+                                x:Name="FilterFlyout"
+                                Closing="Flyout_Closing"
+                                Opening="Flyout_Opening">
+                                <Flyout.FlyoutPresenterStyle>
+                                    <win1903:Style TargetType="FlyoutPresenter">
+                                        <Setter Property="AllowFocusOnInteraction" Value="False" />
+                                        <Setter Property="Padding" Value="0 12" />
+                                        <Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}" />
+                                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                                        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
+                                        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+                                        <Setter Property="IsDefaultShadowEnabled" Value="False" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="FlyoutPresenter">
+                                                    <ContentPresenter
+                                                        Padding="{TemplateBinding Padding}"
+                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                        Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                        Content="{TemplateBinding Content}"
+                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                        ContentTransitions="{TemplateBinding ContentTransitions}" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </win1903:Style>
+                                </Flyout.FlyoutPresenterStyle>
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <StackPanel>
+                                        <TextBlock
+                                            Margin="12 12 0 6"
+                                            Style="{StaticResource HeaderStyle}"
+                                            Text="UNICODE CATEGORY FILTERS" />
+
+                                        <Grid>
+                                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                                <AppBarButton
+                                                    Click="FilterSelectAll_Click"
+                                                    Icon="SelectAll"
+                                                    Label="Select All"
+                                                    Style="{StaticResource LabelAppBarButtonStyle}" />
+                                                <AppBarButton
+                                                    Click="FilterClear_Click"
+                                                    Icon="ClearSelection"
+                                                    Label="Clear"
+                                                    Style="{StaticResource LabelAppBarButtonStyle}" />
+                                            </StackPanel>
+
+                                            <AppBarButton
+                                                HorizontalAlignment="Right"
+                                                Click="FilterRefresh_Click"
+                                                Content="Reset"
+                                                Icon="Refresh"
+                                                Label="Reset"
+                                                Style="{StaticResource LabelAppBarButtonStyle}" />
+                                        </Grid>
+                                    </StackPanel>
+
+
+
+                                    <GridView
+                                        x:Name="CategoryList"
+                                        Grid.Row="1"
+                                        Width="440"
+                                        MaxHeight="500"
+                                        Padding="12 12 0 48"
+                                        SelectionMode="None">
+                                        <GridView.ItemContainerTransitions>
+                                            <TransitionCollection />
+                                        </GridView.ItemContainerTransitions>
+                                        <GridView.ItemTemplate>
+                                            <DataTemplate x:DataType="viewmodels:UnicodeCategoryModel">
+                                                <CheckBox
+                                                    Width="200"
+                                                    Content="{x:Bind DisplayName}"
+                                                    IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
+                                            </DataTemplate>
+                                        </GridView.ItemTemplate>
+                                    </GridView>
+
+                                    <Button
+                                        Grid.Row="2"
+                                        Width="200"
+                                        Margin="12 12 12 0"
+                                        HorizontalAlignment="Right"
+                                        Click="FilterAccept_Click"
+                                        Content="Apply"
+                                        Style="{StaticResource DefaultButtonStyle}" />
+
+                                </Grid>
+
+                            </Flyout>
+                        </Button.Flyout>
+                    </Button>
+                    <CheckBox IsChecked="{x:Bind ViewModel.ShowWhitespace, Mode=TwoWay}">Include whitespace and control characters</CheckBox>
+
+                    <Border Style="{StaticResource SpacerStyle}" />
+
+
                     <TextBlock
                         x:Uid="PrintDesign"
                         Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="Design" />
+                        Text="Layout" />
 
 
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Size" />
@@ -238,6 +347,9 @@
                         <Run Text="px" />
                     </TextBlock>
 
+                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />
+                    <CheckBox IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}">Show borders</CheckBox>
+
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="List Style" />
                     <ComboBox
                         ItemsSource="{x:Bind Layouts}"
@@ -245,11 +357,12 @@
                         SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}" />
 
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Description" />
-                    <ComboBox SelectedIndex="1">
-                        <ComboBoxItem>None</ComboBoxItem>
-                        <ComboBoxItem>Unicode Hex</ComboBoxItem>
-                        <ComboBoxItem>Character Index</ComboBoxItem>
-                        <ComboBoxItem>Unicode description</ComboBoxItem>
+                    <ComboBox ItemsSource="{x:Bind Annotations}" SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:GlyphAnnotation">
+                                <TextBlock Text="{x:Bind core:Converters.GetAnnotationName((viewmodels:GlyphAnnotation))}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
 
                     <Border Style="{StaticResource SpacerStyle}" />
@@ -257,19 +370,13 @@
                     <TextBlock
                         x:Uid="PrintLayout"
                         Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="Page Layout" />
+                        Text="Page Setup" />
 
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Page Orientation" />
                     <ComboBox SelectedIndex="0" SelectionChanged="RadioButtons_SelectionChanged">
                         <ComboBoxItem>Portrait</ComboBoxItem>
                         <ComboBoxItem>Landscape</ComboBoxItem>
                     </ComboBox>
-
-                    <ToggleSwitch
-                        Margin="0 12 0 -4"
-                        Header="Show Margins (Preview Only)"
-                        IsOn="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}" />
-
 
                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Horizontal Margin" />
                     <Slider
@@ -301,25 +408,6 @@
                         <Run Text="px" />
                     </TextBlock>
 
-
-                    <Border Style="{StaticResource SpacerStyle}" />
-
-                    <TextBlock
-                        x:Uid="PrintData"
-                        Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="Data" />
-
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Show" />
-                    <TextBlock Style="{StaticResource DescriptionStyle}" Text="Choose the range of glyphs to print." />
-                    <ComboBox
-                        Width="200"
-                        SelectedIndex="0"
-                        Style="{StaticResource DefaultComboBoxStyle}">
-                        <ComboBoxItem>All</ComboBoxItem>
-                        <ComboBoxItem>Latin characters</ComboBoxItem>
-                        <ComboBoxItem>Symbols</ComboBoxItem>
-                        <ComboBoxItem>Control Characters</ComboBoxItem>
-                    </ComboBox>
                 </StackPanel>
             </ScrollViewer>
 
@@ -335,7 +423,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
                     <TextBlock VerticalAlignment="Center">Page</TextBlock>
                     <muxc:NumberBox
                         Margin="8 0"
@@ -356,9 +444,15 @@
                     Margin="12"
                     IsHitTestVisible="False"
                     Stretch="Uniform" />
+
+                <CheckBox
+                    Grid.Row="2"
+                    HorizontalAlignment="Center"
+                    Content="Show margins"
+                    IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
+                    IsThreeState="False" />
+
             </Grid>
-
-
         </Grid>
 
 
@@ -373,6 +467,7 @@
                     x:Name="BtnContinue"
                     Width="150"
                     Click="BtnContinue_Click"
+                    IsEnabled="{x:Bind CanContinue, Mode=OneWay}"
                     Style="{StaticResource AccentButtonStyle}">
                     Continue
                 </Button>

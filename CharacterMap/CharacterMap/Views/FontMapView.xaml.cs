@@ -201,8 +201,8 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.AllowExpensiveAnimations):
                         CharGrid.EnableResizeAnimation = ViewModel.Settings.AllowExpensiveAnimations;
                         break;
-                    case nameof(AppSettings.ShowCharGridUnicode):
-                        CharGrid.ShowUnicodeDescription = ViewModel.Settings.ShowCharGridUnicode;
+                    case nameof(AppSettings.GlyphAnnotation):
+                        CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
                         break;
                     case nameof(AppSettings.DevToolsLanguage):
                         ViewModel.UpdateDevValues();
@@ -275,6 +275,9 @@ namespace CharacterMap.Views
                 {
                     case VirtualKey.C:
                         TryCopy();
+                        break;
+                    case VirtualKey.P:
+                        Messenger.Default.Send(new PrintRequestedMessage());
                         break;
                 }
             }

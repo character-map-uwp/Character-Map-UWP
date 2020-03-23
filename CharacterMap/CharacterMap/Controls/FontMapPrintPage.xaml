@@ -26,7 +26,8 @@
                     x:Name="ItemsPanel"
                     Margin="0 0 -8 0"
                     Padding="0"
-                    ItemsSource="{x:Bind Items}">
+                    ItemsSource="{x:Bind Items}"
+                    ContainerContentChanging="ItemsPanel_ContainerContentChanging">
                     <controls:CharacterGridView.ItemContainerTransitions>
                         <TransitionCollection />
                     </controls:CharacterGridView.ItemContainerTransitions>
@@ -34,14 +35,14 @@
             </Border>
 
             <Border x:Name="ListLayout" x:Load="False">
-                <ListView ContainerContentChanging="ListView_ContainerContentChanging" ItemsSource="{x:Bind Items}">
+                <ListView x:Name="ListLayoutList" ContainerContentChanging="ListView_ContainerContentChanging" ItemsSource="{x:Bind Items}">
                     <ListView.ItemContainerTransitions>
                         <TransitionCollection />
                     </ListView.ItemContainerTransitions>
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
-                            <Setter Property="BorderThickness" Value="0 0 0 1" />
-                            <Setter Property="BorderBrush" Value="LightGray" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                             <Setter Property="Padding" Value="0" />
                         </Style>
                     </ListView.Resources>
@@ -57,20 +58,36 @@
                                 <StackPanel
                                     Grid.Column="1"
                                     Margin="12 0 0 0"
+                                    HorizontalAlignment="Stretch"
                                     VerticalAlignment="Center">
                                     <!--  Unicode Index  -->
-                                    <TextBlock Foreground="#333" Style="{StaticResource CharItemUnicodeStyle}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Left"
+                                        Foreground="#333"
+                                        Style="{StaticResource CharItemUnicodeStyle}"
+                                        TextWrapping="Wrap" />
+
                                     <!--  Glyph Description  -->
-                                    <!--
-                                    <TextBlock />-->
+                                    <TextBlock
+                                        HorizontalAlignment="Left"
+                                        Foreground="#333"
+                                        Style="{StaticResource CharItemUnicodeStyle}"
+                                        TextWrapping="Wrap" />
                                 </StackPanel>
 
-                                <Border
+                                <Rectangle
                                     Grid.Column="1"
+                                    Width="2"
                                     HorizontalAlignment="Left"
                                     VerticalAlignment="Stretch"
-                                    BorderBrush="LightGray"
-                                    BorderThickness="0 0 0 0" />
+                                    Fill="{StaticResource PrintBorderBrush}" />
+
+                                <Rectangle
+                                    Grid.ColumnSpan="2"
+                                    Height="2"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Bottom"
+                                    Fill="{StaticResource PrintBorderBrush}" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

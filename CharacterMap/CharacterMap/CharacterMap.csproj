@@ -190,6 +190,7 @@
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
     <Compile Include="Helpers\PrintHelper.cs" />
+    <Compile Include="Helpers\Unicode.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Core\Messages.cs" />
     <Compile Include="Core\Converters.cs" />
@@ -234,6 +235,7 @@
       <DependentUpon>Controls.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\FontMapViewModel.cs" />
+    <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="Views\FontMapView.xaml.cs">
       <DependentUpon>FontMapView.xaml</DependentUpon>
     </Compile>
