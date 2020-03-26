@@ -135,8 +135,8 @@
           <target state="new">PNG Resolution (pixel)</target>
         </trans-unit>
         <trans-unit id="RemoveFontFlyout.Text" translate="yes" xml:space="preserve">
-          <source>Delete Font Family</source>
-          <target state="new">Delete Font Family</target>
+          <source>Delete Font</source>
+          <target state="new">Delete Font</target>
         </trans-unit>
         <trans-unit id="RestartButton.Content" translate="yes" xml:space="preserve">
           <source>Restart app</source>
@@ -515,8 +515,8 @@
           <target state="new">Toggle Fullscreen</target>
         </trans-unit>
         <trans-unit id="DlgDeleteFont.Title" translate="yes" xml:space="preserve">
-          <source>Are you sure you want to delete this font from your collection?</source>
-          <target state="new">Are you sure you want to delete this font from your collection?</target>
+          <source>Are you sure you want to delete this font from your library?</source>
+          <target state="new">Are you sure you want to delete this font from your library?</target>
         </trans-unit>
         <trans-unit id="NotificationCollectionDeleted" translate="yes" xml:space="preserve">
           <source>"{0}" collection deleted</source>

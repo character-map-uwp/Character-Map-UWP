@@ -144,7 +144,11 @@ namespace CharacterMap.Controls
             unicodeId.Text = c.GetAnnotation(PrintModel.Annotation);
 
             TextBlock description = ((TextBlock)((StackPanel)g.Children[1]).Children[1]);
-            description.Text = GlyphService.GetCharacterDescription(c.UnicodeIndex, PrintModel.Font);
+            try
+            {
+                description.Text = GlyphService.GetCharacterDescription(c.UnicodeIndex, PrintModel.Font);
+            }
+            catch { }
 
             IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(t);
             CharacterGridView.SetGlyphProperties(_xamlDirect, o, PrintModel.GetTemplateSettings(), c);

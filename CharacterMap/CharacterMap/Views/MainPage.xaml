@@ -37,8 +37,7 @@
         Background="Transparent"
         DragOver="Grid_DragOver"
         Drop="Grid_Drop"
-        KeyDown="LayoutRoot_KeyDown"
-        KeyUp="LayoutRoot_KeyUp">
+        KeyDown="LayoutRoot_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition x:Name="TitleBarRow" Height="45" />

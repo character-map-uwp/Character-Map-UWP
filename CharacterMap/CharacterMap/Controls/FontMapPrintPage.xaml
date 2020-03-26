@@ -26,19 +26,17 @@
                     x:Name="ItemsPanel"
                     Margin="0 0 -8 0"
                     Padding="0"
-                    ItemsSource="{x:Bind Items}"
-                    ContainerContentChanging="ItemsPanel_ContainerContentChanging">
-                    <controls:CharacterGridView.ItemContainerTransitions>
-                        <TransitionCollection />
-                    </controls:CharacterGridView.ItemContainerTransitions>
-                </controls:CharacterGridView>
+                    ContainerContentChanging="ItemsPanel_ContainerContentChanging"
+                    ItemContainerTransitions="{StaticResource NoTransitions}"
+                    ItemsSource="{x:Bind Items}" />
             </Border>
 
             <Border x:Name="ListLayout" x:Load="False">
-                <ListView x:Name="ListLayoutList" ContainerContentChanging="ListView_ContainerContentChanging" ItemsSource="{x:Bind Items}">
-                    <ListView.ItemContainerTransitions>
-                        <TransitionCollection />
-                    </ListView.ItemContainerTransitions>
+                <ListView
+                    x:Name="ListLayoutList"
+                    ContainerContentChanging="ListView_ContainerContentChanging"
+                    ItemContainerTransitions="{StaticResource NoTransitions}"
+                    ItemsSource="{x:Bind Items}">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalAlignment" Value="Stretch" />

@@ -214,7 +214,7 @@
     <value>PNG Resolution (pixel)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
-    <value>Delete Font Family</value>
+    <value>Delete Font</value>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
     <value>Restart app</value>
@@ -499,7 +499,7 @@
     <value>Toggle Fullscreen</value>
   </data>
   <data name="DlgDeleteFont.Title" xml:space="preserve">
-    <value>Are you sure you want to delete this font from your collection?</value>
+    <value>Are you sure you want to delete this font from your library?</value>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>"{0}" collection deleted</value>

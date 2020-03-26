@@ -1,7 +1,6 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using CharacterMap.ViewModels;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;

@@ -178,16 +178,15 @@ namespace CharacterMap.Helpers
             {
                 printTask.Options.Orientation = _printModel.Orientation == Orientation.Vertical ? PrintOrientation.Portrait : PrintOrientation.Landscape;
 
-                printTask.Options.PageRangeOptions.AllowAllPages = true;
+                printTask.Options.PageRangeOptions.AllowAllPages = false;
                 printTask.Options.PageRangeOptions.AllowCurrentPage = true;
-                printTask.Options.PageRangeOptions.AllowCustomSetOfPages = true;
+                printTask.Options.PageRangeOptions.AllowCustomSetOfPages = false;
 
                 IList<string> displayedOptions = printTask.Options.DisplayedOptions;
 
                 // Choose the printer options to be shown.
                 // The order in which the options are appended determines the order in which they appear in the UI
                 displayedOptions.Clear();
-                displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.CustomPageRanges);
                 displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Orientation);
                 displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Duplex);
                 displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Copies);
@@ -263,7 +262,8 @@ namespace CharacterMap.Helpers
                     _printModel);
 
                 bool hasMore = true;
-                while (hasMore)
+                int currentPage = _printModel.FirstPage - 1;
+                while (hasMore && printPreviewPages.Count < _printModel.PagesToPrint)
                 {
                     var page = new FontMapPrintPage(_printModel, fontMap.CharGrid.ItemTemplate)
                     {
@@ -278,7 +278,8 @@ namespace CharacterMap.Helpers
                     printableArea.Height = printableAreaHeight ;
 
                     // Layout page
-                    hasMore = page.AddCharacters(printPreviewPages.Count, charsPerPage, _printModel.Characters);
+                    hasMore = page.AddCharacters(currentPage, charsPerPage, _printModel.Characters);
+                    currentPage++;
 
                     // Add the (newly created) page to the print canvas which is part of the visual tree and force it to go
                     // through layout so that the linked containers correctly distribute the content inside them.
@@ -286,7 +287,7 @@ namespace CharacterMap.Helpers
                     PrintCanvas.InvalidateMeasure();
                     PrintCanvas.UpdateLayout();
 
-                    printPreviewPages.Add(new PrintPage(printPreviewPages.Count + e.CurrentPreviewPageNumber, page));
+                    printPreviewPages.Add(new PrintPage(printPreviewPages.Count + 1, page));
                 }
 
                 if (PreviewPagesCreated != null)
@@ -297,7 +298,7 @@ namespace CharacterMap.Helpers
                 PrintDocument printDoc = (PrintDocument)sender;
 
                 // Report the number of preview pages created
-                printDoc.SetPreviewPageCount(printPreviewPages.Count, PreviewPageCountType.Intermediate);
+                printDoc.SetPreviewPageCount(printPreviewPages.Count, PreviewPageCountType.Final);
             }
         }
 
@@ -311,7 +312,7 @@ namespace CharacterMap.Helpers
         protected virtual void GetPrintPreviewPage(object sender, GetPreviewPageEventArgs e)
         {
             PrintDocument printDoc = (PrintDocument)sender;
-            printDoc.SetPreviewPage(e.PageNumber, printPreviewPages[e.PageNumber -1]?.Page);
+            printDoc.SetPreviewPage(e.PageNumber, printPreviewPages.FirstOrDefault(p => p.PageNumber == e.PageNumber)?.Page);
         }
 
         /// <summary>

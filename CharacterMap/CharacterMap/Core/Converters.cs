@@ -1,6 +1,6 @@
 ﻿using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Services;
-using CharacterMap.ViewModels;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
 using System;
@@ -59,15 +59,23 @@ namespace CharacterMap.Core
 
         private static GridLength ReadFromString(string s)
         {
-            switch (s)
+            return s switch
             {
-                case Auto:
-                    return new GridLength(1, GridUnitType.Auto);
-                case Star:
-                    return new GridLength(1, GridUnitType.Star);
-                default:
-                    return new GridLength(double.Parse(s), GridUnitType.Pixel);
-            }
+                Auto => new GridLength(1, GridUnitType.Auto),
+                Star => new GridLength(1, GridUnitType.Star),
+                _ => new GridLength(double.Parse(s), GridUnitType.Pixel),
+            };
+        }
+
+        public static string GetAnnotation(GlyphAnnotation a, int index)
+        {
+            return a switch
+            {
+                GlyphAnnotation.None => string.Empty,
+                GlyphAnnotation.UnicodeHex => $"U+{index:x4}".ToUpper(),
+                GlyphAnnotation.UnicodeIndex => index.ToString(),
+                _ => string.Empty
+            };
         }
 
 

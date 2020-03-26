@@ -111,10 +111,8 @@ namespace CharacterMap.Views
                 Window.Current.Closed -= Current_Closed;
                 Window.Current.Closed += Current_Closed;
 
-                LayoutRoot.KeyUp -= LayoutRoot_KeyUp;
                 LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
-                LayoutRoot.KeyUp += LayoutRoot_KeyUp;
                 LayoutRoot.KeyDown += LayoutRoot_KeyDown;
             }
         }
@@ -149,7 +147,6 @@ namespace CharacterMap.Views
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
-            LayoutRoot.KeyUp -= LayoutRoot_KeyUp;
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
             Messenger.Default.Unregister(this);
@@ -255,21 +252,10 @@ namespace CharacterMap.Views
             }
         }
 
-        private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Control)
-                _isCtrlKeyPressed = false;
-        }
-
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control)
-            {
-                _isCtrlKeyPressed = true;
-                return;
-            }
-
-            if (_isCtrlKeyPressed)
+            var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
+            if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
                 switch (e.Key)
                 {

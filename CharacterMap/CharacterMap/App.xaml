@@ -20,6 +20,11 @@
                     <converters:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
                     <x:Boolean x:Key="TrueValue">True</x:Boolean>
                     <x:Boolean x:Key="FalseValue">False</x:Boolean>
+                    <TransitionCollection x:Key="NoTransitions" />
+                    <TransitionCollection x:Key="RepositionTransitions" >
+                        <RepositionThemeTransition IsStaggeringEnabled="False" />
+                    </TransitionCollection>
+
                     <Style x:Key="CharItemUnicodeStyle" TargetType="TextBlock">
                         <Setter Property="FontFamily" Value="Consolas" />
                         <Setter Property="VerticalAlignment" Value="Bottom" />
@@ -35,7 +40,6 @@
                     <Thickness x:Key="ListViewItemRevealBorderThemeThickness">0</Thickness>
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
-
                     <AcrylicBrush
                         x:Name="DefaultAcrylicBrush"
                         win1903:TintLuminosityOpacity="0.3"

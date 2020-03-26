@@ -1,5 +1,5 @@
 ﻿using CharacterMap.Helpers;
-using CharacterMap.ViewModels;
+using CharacterMap.Models;
 using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.ComponentModel;

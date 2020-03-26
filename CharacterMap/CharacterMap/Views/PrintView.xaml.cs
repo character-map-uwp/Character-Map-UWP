@@ -1,6 +1,7 @@
 ﻿using CharacterMap.Controls;
 using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -31,6 +32,14 @@ namespace CharacterMap.Views
 
     public sealed partial class PrintView : ViewBase
     {
+        /* 
+         * UWP printing requires us to create ALL pages ahead of time
+         * as FrameworkElements, before sending them off to the print
+         * job all at once. Having too many pages can cause memory 
+         * and / or heap crashes, so we limit.
+         */
+        public static int MAX_PAGE_COUNT = 50;
+
         public PrintViewModel ViewModel { get; }
 
         private int _currentPage = 1;
@@ -96,21 +105,7 @@ namespace CharacterMap.Views
                 this.Visibility = Visibility.Collapsed;
 
             this.InitializeComponent();
-            SetupAnimation();
-        }
-
-        private void SetupAnimation()
-        {
-            Visual v = this.EnableTranslation(true).GetElementVisual();
-
-            var t = v.Compositor.CreateVector3KeyFrameAnimation();
-            t.Target = Composition.TRANSLATION;
-            t.InsertKeyFrame(1, new Vector3(0, 200, 0));
-            t.Duration = TimeSpan.FromSeconds(0.375);
-
-            var o = Composition.CreateFade(v.Compositor, 0, null, 200);
-            this.SetHideAnimation(v.Compositor.CreateAnimationGroup(t, o));
-            this.SetShowAnimation(Composition.CreateEntranceAnimation(this, new Vector3(0, 200, 0), 0, 550));
+            Composition.SetupOverlayPanelAnimation(this);
         }
 
         public void Show()
@@ -118,6 +113,8 @@ namespace CharacterMap.Views
             // Initialize common helper class and register for printing
             _printHelper = new PrintHelper(_fontMap, ViewModel);
             _printHelper.RegisterForPrinting();
+
+            StartShowAnimation();
 
             this.Visibility = Visibility.Visible;
             UpdatePreview();
@@ -141,6 +138,26 @@ namespace CharacterMap.Views
             _printHelper.Clear();
         }
 
+        private void StartShowAnimation()
+        {
+            if (!Composition.UISettings.AnimationsEnabled)
+                return;
+
+            List<UIElement> elements = new List<UIElement> { this };
+            elements.AddRange(OptionsPanel.Children);
+            Composition.PlayEntrance(elements, 0, 200);
+
+            elements.Clear();
+            elements.AddRange(PreviewOptions.Children);
+            elements.Add(PreviewViewBox);
+            Composition.PlayEntrance(elements, 0, 200);
+
+            elements.Clear();
+            elements.Add(BottomLabel);
+            elements.AddRange(BottomButtonOptions.Children);
+            Composition.PlayEntrance(elements, 0, 200);
+        }
+
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -150,6 +167,12 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.VerticalMargin):
                 case nameof(ViewModel.HorizontalMargin):
                     _sizeDebouncer.Debounce(350, UpdateDisplay);
+                    break;
+
+                case nameof(ViewModel.FirstPage):
+                case nameof(ViewModel.PagesToPrint):
+                    // Do not update preview.
+                    // Page being previewed might be outside the range, don't care.
                     break;
 
                 // For other values we update straight away
@@ -171,22 +194,32 @@ namespace CharacterMap.Views
             size.HorizontalMargin = ViewModel.HorizontalMargin;
             size.VerticalMargin = ViewModel.VerticalMargin;
 
+            bool isMaxRange = ViewModel.PagesToPrint == GetMaxPageRange(0, 0);
+
+            // Calculate how many pages would be taken up by the current selection
             Size safeSize = size.GetSafeAreaSize(ViewModel.Orientation);
             int perPage = FontMapPrintPage.CalculateGlyphsPerPage(safeSize, ViewModel);
             PageCount = Math.Max((int)Math.Ceiling((double)ViewModel.Characters.Count / (double)perPage), 1);
             CurrentPage = Math.Max(Math.Min(CurrentPage, PageCount), 1);
 
-            if (view == null)
+            // Ensure print range is clamped
+            if (ViewModel.FirstPage > PageCount)
             {
+                ViewModel.FirstPage = Math.Max(1, PageCount - ViewModel.PagesToPrint);
+                ViewModel.PagesToPrint = PageCount;
+            }
+            if (ViewModel.FirstPage + ViewModel.PagesToPrint - 1 > PageCount)
+            {
+                ViewModel.PagesToPrint = PageCount;
+            }
+
+            if (view == null)
                 view = new FontMapPrintPage(ViewModel, _fontMap.CharGrid.ItemTemplate, true)
                 {
                     Background = ResourceHelper.Get<Brush>("WhiteBrush")
                 };
-            }
-            else
-            {
-                view.ClearCharacters();
-            }
+            
+            view.ClearCharacters();
 
             Size pageSize = size.GetPageSize(ViewModel.Orientation);
             view.Width = pageSize.Width;
@@ -202,6 +235,14 @@ namespace CharacterMap.Views
 
             Composition.SetThemeShadow(view, 30, ContentBackground);
             PreviewViewBox.Child = view;
+
+            if (isMaxRange)
+            {
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    ViewModel.PagesToPrint = GetMaxPageRange(0, 0);
+                });
+            }
         }
 
 
@@ -269,10 +310,42 @@ namespace CharacterMap.Views
 
         /* CONVERTERS */
 
+        public string GetPageRangeLabel(int start, int count)
+        {
+            return $"Printing pages {start} - {start + count - 1}";
+        }
+
+        public string GetLastPageLabel(int start, int count)
+        {
+            return $"{start + count - 1}";
+        }
+
+        public Visibility IsOutOfRange(int start, int count, int current)
+        {
+            int last = start + count - 1;
+            return current >= start && current <= last ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public int GetLastPage(int start, int count)
+        {
+            return start + count - 1;
+        }
+
+        public int GetMaxPageRange(int r, int s)
+        {
+            int range = Math.Min(PageCount + 1 - ViewModel.FirstPage, MAX_PAGE_COUNT);
+            return range;
+        }
+
         public string GetAnnotationName(GlyphAnnotation a)
         {
             string s = Localization.Get($"GlyphAnnotation_{a}");
             return Humanizer.EnumHumanizeExtensions.Humanize(a);
+        }
+
+        private void NumberBox_ValueChanged_1(NumberBox sender, NumberBoxValueChangedEventArgs args)
+        {
+
         }
     }
 }

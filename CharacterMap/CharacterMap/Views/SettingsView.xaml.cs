@@ -3,7 +3,6 @@ using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
-using CharacterMap.ViewModels;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.UI.Xaml.Controls;
@@ -44,6 +43,13 @@ namespace CharacterMap.Views
 
         public bool IsOpen { get; private set; }
 
+        public List<GlyphAnnotation> Annotations { get; } = new List<GlyphAnnotation>
+        {
+            GlyphAnnotation.None,
+            GlyphAnnotation.UnicodeHex,
+            GlyphAnnotation.UnicodeIndex
+        };
+
         public SettingsView()
         {
             Settings = ResourceHelper.AppSettings;
@@ -51,7 +57,7 @@ namespace CharacterMap.Views
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsUpdated);
 
             this.InitializeComponent();
-            SetupAnimations();
+            Composition.SetupOverlayPanelAnimation(this);
 
             RbLanguage.ItemsSource = new List<String> { "XAML", "C#" };
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
@@ -68,26 +74,12 @@ namespace CharacterMap.Views
                 OnPropertyChanged(nameof(Settings));
         }
 
-        private void SetupAnimations()
-        {
-            Visual v = this.EnableTranslation(true).GetElementVisual();
-
-            var t = v.Compositor.CreateVector3KeyFrameAnimation();
-            t.Target = Composition.TRANSLATION;
-            t.InsertKeyFrame(1, new Vector3(0, 200, 0));
-            t.Duration = TimeSpan.FromSeconds(0.375);
-
-            var o = Composition.CreateFade(v.Compositor, 0, null, 200);
-            this.SetHideAnimation(v.Compositor.CreateAnimationGroup(t, o));
-
-            this.SetShowAnimation(Composition.CreateEntranceAnimation(this, new Vector3(0, 200, 0), 0, 550));
-            LeftPanel.SetShowAnimation(Composition.CreateEntranceAnimation(LeftPanel, new Vector3(0, 140, 0), Composition.DEFAULT_STAGGER_MS, 850));
-            RightPanel.SetShowAnimation(Composition.CreateEntranceAnimation(RightPanel, new Vector3(0, 140, 0), Composition.DEFAULT_STAGGER_MS * 2, 850));
-        }
 
         public void Show(FontVariant variant, InstalledFont font)
         {
+            StartShowAnimation();
             this.Visibility = Visibility.Visible;
+
             if (!Composition.UISettings.AnimationsEnabled)
             {
                 this.GetElementVisual().Opacity = 1;
@@ -124,9 +116,6 @@ namespace CharacterMap.Views
             // 3. Set correct Developer features language
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
 
-            // 4. Set Unicode toggle
-            ToggleUnicode.IsOn = Settings.GlyphAnnotation != GlyphAnnotation.None;
-
             IsOpen = true;
         }
 
@@ -134,6 +123,20 @@ namespace CharacterMap.Views
         {
             IsOpen = false;
             this.Visibility = Visibility.Collapsed;
+        }
+
+        private void StartShowAnimation()
+        {
+            if (!Composition.UISettings.AnimationsEnabled)
+                return;
+
+            List<UIElement> elements = new List<UIElement> { this };
+            elements.AddRange(LeftPanel.Children);
+            Composition.PlayEntrance(elements, 0, 200);
+
+            elements.Clear();
+            elements.AddRange(RightPanel.Children);
+            Composition.PlayEntrance(elements, 0, 200);
         }
 
         private void View_Loading(FrameworkElement sender, object args)
@@ -196,11 +199,6 @@ namespace CharacterMap.Views
         {
             Settings.UseFontForPreview = false;
             ResetFontPreview();
-        }
-
-        private void ToggleUnicode_Toggled(object sender, RoutedEventArgs e)
-        {
-            Settings.GlyphAnnotation = !ToggleUnicode.IsOn ? GlyphAnnotation.None : GlyphAnnotation.UnicodeHex;
         }
 
         private void UseActualFont_Checked(object sender, RoutedEventArgs e)

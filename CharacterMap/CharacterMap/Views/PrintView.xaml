@@ -2,10 +2,12 @@
     x:Class="CharacterMap.Views.PrintView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
@@ -33,7 +35,7 @@
             <Setter Property="Margin" Value="0 20 0 4" />
         </Style>
         <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
-            <Setter Property="Margin" Value="4 4 0 12" />
+            <Setter Property="Margin" Value="0 4 0 2" />
             <Setter Property="FontStyle" Value="Italic" />
             <Setter Property="OpticalMarginAlignment" Value="None" />
         </Style>
@@ -48,8 +50,13 @@
             <Setter Property="Margin" Value="0 24 0 12" />
         </Style>
 
+        <DataTemplate x:Key="HeaderTemplate">
+            <TextBlock Style="{StaticResource HeaderStyle}" Text="{Binding}" />
+        </DataTemplate>
+
         <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
-            <Setter Property="MinWidth" Value="180" />
+            <Setter Property="MinWidth" Value="168" />
+            <Setter Property="HeaderTemplate" Value="{StaticResource HeaderTemplate}" />
         </Style>
 
         <Style x:Name="NumberBoxSpinButtonStyle" BasedOn="{StaticResource DefaultRepeatButtonStyle}" TargetType="RepeatButton">
@@ -193,271 +200,344 @@
                 Background="{StaticResource DefaultAcrylicBrush}" />
 
             <ScrollViewer x:Name="ContentScroller">
-                <StackPanel Margin="20 20 20 120">
+                <StackPanel x:Name="OptionsPanel" Margin="20 20 20 120" ChildrenTransitions="{StaticResource RepositionTransitions}">
 
-                    <TextBlock
-                        x:Uid="PrintData"
-                        Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="Data" />
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="PrintData"
+                            Style="{StaticResource SubheaderTextBlockStyle}"
+                            Text="Data" />
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Characters" />
-                    <!--<TextBlock Style="{StaticResource DescriptionStyle}" Text="Choose the range of glyphs to print." />-->
-                    <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
-                        <Button.Content>
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock OpticalMarginAlignment="TrimSideBearings" Text="Choose character groups to display" />
-                                <TextBlock
-                                    Margin="4 2 0 0"
-                                    VerticalAlignment="Center"
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    FontSize="12"
-                                    Text="&#xE019;"
-                                    TextLineBounds="Tight" />
-                            </StackPanel>
+                        <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Characters" />-->
+                        <!--<TextBlock Style="{StaticResource DescriptionStyle}" Text="Choose the range of glyphs to print." />-->
+                        <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock OpticalMarginAlignment="TrimSideBearings" Text="Choose character groups to display" />
+                                    <TextBlock
+                                        Margin="4 2 0 0"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="12"
+                                        Text="&#xE019;"
+                                        TextLineBounds="Tight" />
+                                </StackPanel>
+                            </Button.Content>
+                            <Button.Flyout>
+                                <Flyout
+                                    x:Name="FilterFlyout"
+                                    win1903:ShouldConstrainToRootBounds="False"
+                                    Closing="Flyout_Closing"
+                                    Opening="Flyout_Opening">
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <win1903:Style TargetType="FlyoutPresenter">
+                                            <Setter Property="AllowFocusOnInteraction" Value="False" />
+                                            <Setter Property="Margin" Value="12 0 0 0" />
+                                            <Setter Property="Padding" Value="0 12" />
+                                            <Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}" />
+                                            <Setter Property="BorderBrush" Value="DarkGray" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                                            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
+                                            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+                                            <Setter Property="IsDefaultShadowEnabled" Value="False" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="FlyoutPresenter">
+                                                        <ContentPresenter
+                                                            Padding="{TemplateBinding Padding}"
+                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            Content="{TemplateBinding Content}"
+                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                            CornerRadius="{TemplateBinding CornerRadius}" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </win1903:Style>
+                                    </Flyout.FlyoutPresenterStyle>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
 
-                        </Button.Content>
-                        <Button.Flyout>
-                            <Flyout
-                                x:Name="FilterFlyout"
-                                Closing="Flyout_Closing"
-                                Opening="Flyout_Opening">
-                                <Flyout.FlyoutPresenterStyle>
-                                    <win1903:Style TargetType="FlyoutPresenter">
-                                        <Setter Property="AllowFocusOnInteraction" Value="False" />
-                                        <Setter Property="Padding" Value="0 12" />
-                                        <Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}" />
-                                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
-                                        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
-                                        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
-                                        <Setter Property="IsDefaultShadowEnabled" Value="False" />
-                                        <Setter Property="Template">
-                                            <Setter.Value>
-                                                <ControlTemplate TargetType="FlyoutPresenter">
-                                                    <ContentPresenter
-                                                        Padding="{TemplateBinding Padding}"
-                                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                        Background="{TemplateBinding Background}"
-                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                                        Content="{TemplateBinding Content}"
-                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                        ContentTransitions="{TemplateBinding ContentTransitions}" />
-                                                </ControlTemplate>
-                                            </Setter.Value>
-                                        </Setter>
-                                    </win1903:Style>
-                                </Flyout.FlyoutPresenterStyle>
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="*" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
+                                        <StackPanel>
+                                            <TextBlock
+                                                Margin="12 12 0 6"
+                                                Style="{StaticResource HeaderStyle}"
+                                                Text="UNICODE CATEGORY FILTERS" />
 
-                                    <StackPanel>
-                                        <TextBlock
-                                            Margin="12 12 0 6"
-                                            Style="{StaticResource HeaderStyle}"
-                                            Text="UNICODE CATEGORY FILTERS" />
+                                            <Grid>
+                                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                                    <AppBarButton
+                                                        Click="FilterSelectAll_Click"
+                                                        Icon="SelectAll"
+                                                        Label="Select All"
+                                                        Style="{StaticResource LabelAppBarButtonStyle}" />
+                                                    <AppBarButton
+                                                        Click="FilterClear_Click"
+                                                        Icon="ClearSelection"
+                                                        Label="Clear"
+                                                        Style="{StaticResource LabelAppBarButtonStyle}" />
+                                                </StackPanel>
 
-                                        <Grid>
-                                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                                 <AppBarButton
-                                                    Click="FilterSelectAll_Click"
-                                                    Icon="SelectAll"
-                                                    Label="Select All"
+                                                    HorizontalAlignment="Right"
+                                                    Click="FilterRefresh_Click"
+                                                    Content="Reset"
+                                                    Icon="Refresh"
+                                                    Label="Reset"
                                                     Style="{StaticResource LabelAppBarButtonStyle}" />
-                                                <AppBarButton
-                                                    Click="FilterClear_Click"
-                                                    Icon="ClearSelection"
-                                                    Label="Clear"
-                                                    Style="{StaticResource LabelAppBarButtonStyle}" />
-                                            </StackPanel>
-
-                                            <AppBarButton
-                                                HorizontalAlignment="Right"
-                                                Click="FilterRefresh_Click"
-                                                Content="Reset"
-                                                Icon="Refresh"
-                                                Label="Reset"
-                                                Style="{StaticResource LabelAppBarButtonStyle}" />
-                                        </Grid>
-                                    </StackPanel>
+                                            </Grid>
+                                        </StackPanel>
 
 
 
-                                    <GridView
-                                        x:Name="CategoryList"
-                                        Grid.Row="1"
-                                        Width="440"
-                                        MaxHeight="500"
-                                        Padding="12 12 0 48"
-                                        SelectionMode="None">
-                                        <GridView.ItemContainerTransitions>
-                                            <TransitionCollection />
-                                        </GridView.ItemContainerTransitions>
-                                        <GridView.ItemTemplate>
-                                            <DataTemplate x:DataType="viewmodels:UnicodeCategoryModel">
-                                                <CheckBox
-                                                    Width="200"
-                                                    Content="{x:Bind DisplayName}"
-                                                    IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
-                                            </DataTemplate>
-                                        </GridView.ItemTemplate>
-                                    </GridView>
+                                        <GridView
+                                            x:Name="CategoryList"
+                                            Grid.Row="1"
+                                            Width="440"
+                                            MaxHeight="500"
+                                            Padding="12 12 0 48"
+                                            SelectionMode="None">
+                                            <GridView.ItemContainerTransitions>
+                                                <TransitionCollection />
+                                            </GridView.ItemContainerTransitions>
+                                            <GridView.ItemTemplate>
+                                                <DataTemplate x:DataType="viewmodels:UnicodeCategoryModel">
+                                                    <CheckBox
+                                                        Width="200"
+                                                        Content="{x:Bind DisplayName}"
+                                                        IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
+                                                </DataTemplate>
+                                            </GridView.ItemTemplate>
+                                        </GridView>
 
-                                    <Button
-                                        Grid.Row="2"
-                                        Width="200"
-                                        Margin="12 12 12 0"
-                                        HorizontalAlignment="Right"
-                                        Click="FilterAccept_Click"
-                                        Content="Apply"
-                                        Style="{StaticResource DefaultButtonStyle}" />
+                                        <Button
+                                            Grid.Row="2"
+                                            Width="200"
+                                            Margin="12 12 12 0"
+                                            HorizontalAlignment="Right"
+                                            Click="FilterAccept_Click"
+                                            Content="Apply"
+                                            Style="{StaticResource DefaultButtonStyle}" />
 
-                                </Grid>
+                                    </Grid>
 
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                    <CheckBox IsChecked="{x:Bind ViewModel.ShowWhitespace, Mode=TwoWay}">Include whitespace and control characters</CheckBox>
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                        <CheckBox IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}">Hide whitespace and control characters</CheckBox>
 
-                    <Border Style="{StaticResource SpacerStyle}" />
+                        <Border Style="{StaticResource SpacerStyle}" />
+                    </StackPanel>
 
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="PrintDesign"
+                            Style="{StaticResource SubheaderTextBlockStyle}"
+                            Text="Layout" />
 
-                    <TextBlock
-                        x:Uid="PrintDesign"
-                        Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="Layout" />
+                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Size" />
+                        <Slider
+                            HorizontalAlignment="Stretch"
+                            IsThumbToolTipEnabled="True"
+                            Maximum="224"
+                            Minimum="64"
+                            StepFrequency="2"
+                            TickFrequency="4"
+                            TickPlacement="Outside"
+                            Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
+                        <TextBlock>
+                            <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" />
+                            <Run Text="px" />
+                        </TextBlock>
 
+                        <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />-->
+                        <CheckBox Margin="0 16 0 -8" IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}">Show borders</CheckBox>
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Size" />
-                    <Slider
-                        HorizontalAlignment="Stretch"
-                        IsThumbToolTipEnabled="True"
-                        Maximum="192"
-                        Minimum="64"
-                        StepFrequency="2"
-                        TickFrequency="4"
-                        TickPlacement="Outside"
-                        Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
-                    <TextBlock>
-                        <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" />
-                        <Run Text="px" />
-                    </TextBlock>
+                        <controls:WrapPanel ChildrenTransitions="{StaticResource RepositionTransitions}" HorizontalSpacing="24">
+                            <ComboBox
+                                Header="List Style"
+                                ItemsSource="{x:Bind Layouts}"
+                                SelectedIndex="0"
+                                SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}" />
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />
-                    <CheckBox IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}">Show borders</CheckBox>
+                            <ComboBox
+                                Header="Character Label"
+                                ItemsSource="{x:Bind Annotations}"
+                                SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:GlyphAnnotation">
+                                        <TextBlock Text="{x:Bind core:Converters.GetAnnotationName((models:GlyphAnnotation))}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </controls:WrapPanel>
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="List Style" />
-                    <ComboBox
-                        ItemsSource="{x:Bind Layouts}"
-                        SelectedIndex="0"
-                        SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}" />
+                        <Border Style="{StaticResource SpacerStyle}" />
+                    </StackPanel>
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Description" />
-                    <ComboBox ItemsSource="{x:Bind Annotations}" SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="viewmodels:GlyphAnnotation">
-                                <TextBlock Text="{x:Bind core:Converters.GetAnnotationName((viewmodels:GlyphAnnotation))}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="PrintLayout"
+                            Style="{StaticResource SubheaderTextBlockStyle}"
+                            Text="Page Setup" />
 
-                    <Border Style="{StaticResource SpacerStyle}" />
+                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Page Range" />
+                        <TextBlock Style="{StaticResource DescriptionStyle}">
+                            Up to 50 pages can be printed at a time. Select the range of pages to print here.
+                        </TextBlock>
+                        <controls:WrapPanel
+                            ChildrenTransitions="{StaticResource RepositionTransitions}"
+                            HorizontalSpacing="24"
+                            Orientation="Horizontal"
+                            VerticalSpacing="12">
+                            <muxc:NumberBox
+                                Header="Start from page:"
+                                Maximum="{x:Bind PageCount, Mode=OneWay}"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Inline"
+                                ValueChanged="NumberBox_ValueChanged_1"
+                                Value="{x:Bind ViewModel.FirstPage, Mode=TwoWay}" />
 
-                    <TextBlock
-                        x:Uid="PrintLayout"
-                        Style="{StaticResource SubheaderTextBlockStyle}"
-                        Text="Page Setup" />
+                            <muxc:NumberBox
+                                Header="Pages to print:"
+                                Maximum="{x:Bind GetMaxPageRange(ViewModel.FirstPage, PageCount), Mode=OneWay}"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Inline"
+                                Value="{x:Bind ViewModel.PagesToPrint, Mode=TwoWay}" />
+                        </controls:WrapPanel>
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Page Orientation" />
-                    <ComboBox SelectedIndex="0" SelectionChanged="RadioButtons_SelectionChanged">
-                        <ComboBoxItem>Portrait</ComboBoxItem>
-                        <ComboBoxItem>Landscape</ComboBoxItem>
-                    </ComboBox>
+                        <TextBlock Style="{StaticResource HintStyle}" Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Horizontal Margin" />
-                    <Slider
-                        HorizontalAlignment="Stretch"
-                        IsThumbToolTipEnabled="True"
-                        Maximum="84"
-                        Minimum="44"
-                        StepFrequency="2"
-                        TickFrequency="4"
-                        TickPlacement="Outside"
-                        Value="{x:Bind ViewModel.HorizontalMargin, Mode=TwoWay}" />
-                    <TextBlock>
-                        <Run Text="{x:Bind ViewModel.HorizontalMargin, Mode=OneWay}" />
-                        <Run Text="px" />
-                    </TextBlock>
+                        <ComboBox
+                            Header="Page Orientation"
+                            SelectedIndex="0"
+                            SelectionChanged="RadioButtons_SelectionChanged">
+                            <ComboBoxItem>Portrait</ComboBoxItem>
+                            <ComboBoxItem>Landscape</ComboBoxItem>
+                        </ComboBox>
 
-                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Vertical Margin" />
-                    <Slider
-                        HorizontalAlignment="Stretch"
-                        IsThumbToolTipEnabled="True"
-                        Maximum="84"
-                        Minimum="44"
-                        StepFrequency="2"
-                        TickFrequency="4"
-                        TickPlacement="Outside"
-                        Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}" />
-                    <TextBlock>
-                        <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
-                        <Run Text="px" />
-                    </TextBlock>
+                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Horizontal Margin" />
+                        <Slider
+                            HorizontalAlignment="Stretch"
+                            IsThumbToolTipEnabled="True"
+                            Maximum="84"
+                            Minimum="44"
+                            StepFrequency="2"
+                            TickFrequency="4"
+                            TickPlacement="Outside"
+                            Value="{x:Bind ViewModel.HorizontalMargin, Mode=TwoWay}" />
+                        <TextBlock>
+                            <Run Text="{x:Bind ViewModel.HorizontalMargin, Mode=OneWay}" />
+                            <Run Text="px" />
+                        </TextBlock>
+
+                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Vertical Margin" />
+                        <Slider
+                            HorizontalAlignment="Stretch"
+                            IsThumbToolTipEnabled="True"
+                            Maximum="84"
+                            Minimum="44"
+                            StepFrequency="2"
+                            TickFrequency="4"
+                            TickPlacement="Outside"
+                            Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}" />
+                        <TextBlock>
+                            <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
+                            <Run Text="px" />
+                        </TextBlock>
+                    </StackPanel>
 
                 </StackPanel>
             </ScrollViewer>
 
             <Grid
+                
                 Grid.Column="1"
                 Margin="12"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
                 Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
-                    <TextBlock VerticalAlignment="Center">Page</TextBlock>
-                    <muxc:NumberBox
-                        Margin="8 0"
-                        LargeChange="1"
-                        Maximum="{x:Bind PageCount, Mode=OneWay}"
-                        Minimum="1"
-                        SmallChange="1"
-                        SpinButtonPlacementMode="Inline"
-                        Template="{StaticResource HorizontalNumberBoxTemplate}"
-                        ValueChanged="NumberBox_ValueChanged"
-                        Value="{x:Bind CurrentPage, Mode=TwoWay}" />
-                    <TextBlock VerticalAlignment="Center"><Run Text="of " /><Run Text="{x:Bind PageCount, Mode=OneWay}" /></TextBlock>
+                <StackPanel x:Name="PreviewOptions" Grid.Row="0">
+
+                    <CheckBox
+                        HorizontalAlignment="Center"
+                        Content="Show margins"
+                        IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
+                        IsThreeState="False" />
+
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center">Previewing page</TextBlock>
+                        <muxc:NumberBox
+                            Margin="8 0"
+                            LargeChange="1"
+                            Maximum="{x:Bind PageCount, Mode=OneWay}"
+                            Minimum="1"
+                            SmallChange="1"
+                            SpinButtonPlacementMode="Inline"
+                            Template="{StaticResource HorizontalNumberBoxTemplate}"
+                            ValueChanged="NumberBox_ValueChanged"
+                            Value="{x:Bind CurrentPage, Mode=TwoWay}" />
+                        <TextBlock VerticalAlignment="Center">
+                            <Run Text="of" />
+                            <Run Text="{x:Bind PageCount, Mode=OneWay}" />
+                            <!--<Run Text="(of" />
+                        <Run Text="{x:Bind PageCount, Mode=OneWay}" /><Run Text=")" />-->
+                        </TextBlock>
+                    </StackPanel>
+
+                    <TextBlock
+                        Margin="0 4 0 0"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource HintStyle}"
+                        TextAlignment="Center"
+                        Visibility="{x:Bind IsOutOfRange(ViewModel.FirstPage, ViewModel.PagesToPrint, CurrentPage), Mode=OneWay}">
+                        <Run Text="This page is outside the current page range and will not be printed. " />
+                        <LineBreak />
+                        <Run Text="You can change the page range in the Page Setup section. " />
+                    </TextBlock>
+
                 </StackPanel>
 
                 <Viewbox
                     x:Name="PreviewViewBox"
                     Grid.Row="1"
                     Margin="12"
+                    HorizontalAlignment="Center"
                     IsHitTestVisible="False"
                     Stretch="Uniform" />
-
-                <CheckBox
-                    Grid.Row="2"
-                    HorizontalAlignment="Center"
-                    Content="Show margins"
-                    IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
-                    IsThreeState="False" />
 
             </Grid>
         </Grid>
 
 
-        <Grid Grid.Row="2" Background="{ThemeResource SystemAccentColorDark2}">
+        <Grid x:Name="BottomBar" Grid.Row="2" Background="{ThemeResource SystemAccentColorDark2}">
+
+            <TextBlock
+                x:Name="BottomLabel"
+                Margin="12 0"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="White"
+                TextLineBounds="Tight">
+                <Run Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
+            </TextBlock>
+
             <StackPanel
+                x:Name="BottomButtonOptions"
                 Margin="8"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal"

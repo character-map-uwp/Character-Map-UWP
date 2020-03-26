@@ -235,6 +235,8 @@
       <DependentUpon>Controls.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\FontMapViewModel.cs" />
+    <Compile Include="Models\GlyphAnnotation.cs" />
+    <Compile Include="Models\PrintLayout.cs" />
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="Views\FontMapView.xaml.cs">
       <DependentUpon>FontMapView.xaml</DependentUpon>

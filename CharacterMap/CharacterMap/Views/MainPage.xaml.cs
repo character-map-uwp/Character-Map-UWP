@@ -25,6 +25,8 @@ using CharacterMap.Controls;
 using CharacterMap.Models;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI.ViewManagement;
+using Windows.UI.Core.AnimationMetrics;
+
 
 namespace CharacterMap.Views
 {
@@ -41,8 +43,6 @@ namespace CharacterMap.Views
         public object ThemeLock { get; } = new object();
 
         private UISettings _uiSettings { get; }
-
-        private bool _isCtrlKeyPressed;
 
         public MainPage()
         {
@@ -129,12 +129,17 @@ namespace CharacterMap.Views
                             SearchBox,
                             BtnSettings
                         },
-                        new List<FrameworkElement>
+                        new List<UIElement>
                         {
-                            FontMap, FontListGrid
+                            FontsSemanticZoom, 
+                            FontMap.CharGridHeader, 
+                            FontMap.SplitterContainer,
+                            FontMap.CharGrid,
+                            FontMap.PreviewGrid
                         });
                 }
             }
+
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -216,23 +221,10 @@ namespace CharacterMap.Views
             SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont);
         }
 
-        private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Control)
-                _isCtrlKeyPressed = false;
-        }
-
-
-
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control)
-            {
-                _isCtrlKeyPressed = true;
-                return;
-            }
-
-            if (_isCtrlKeyPressed)
+            var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
+            if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
                 // Check to see if any basic modals are open first
                 if ((SettingsView != null && SettingsView.IsOpen)
@@ -250,6 +242,10 @@ namespace CharacterMap.Views
                         break;
                     case VirtualKey.P:
                         Messenger.Default.Send(new PrintRequestedMessage());
+                        break;
+                    case VirtualKey.Delete:
+                        if (ViewModel.SelectedFont is InstalledFont font && font.HasImportedFiles)
+                            FlyoutHelper.RequestDelete(font);
                         break;
                 }
             }
@@ -606,11 +602,11 @@ namespace CharacterMap.Views
 
             Composition.StartCentering(v);
 
-            int duration = 200;
+            int duration = 350;
             var ani = v.Compositor.CreateVector3KeyFrameAnimation();
             ani.Target = nameof(v.Scale);
             ani.InsertKeyFrame(1, new System.Numerics.Vector3(1.15f, 1.15f, 0));
-            ani.Duration = TimeSpan.FromMilliseconds(300);
+            ani.Duration = TimeSpan.FromMilliseconds(duration);
 
             var op = Composition.CreateFade(v.Compositor, 0, null, duration);
 

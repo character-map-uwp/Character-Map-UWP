@@ -1,6 +1,4 @@
-﻿using CharacterMap.ViewModels;
-
-namespace CharacterMap.Models
+﻿namespace CharacterMap.Models
 {
     public class Character
     {

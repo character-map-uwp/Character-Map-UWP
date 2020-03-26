@@ -15,19 +15,6 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels
 {
-    public enum PrintLayout
-    {
-        Grid,
-        List,
-        TwoColumn
-    }
-
-    public enum GlyphAnnotation
-    { 
-        None = 0,
-        UnicodeHex = 1,
-        UnicodeIndex = 2
-    }
 
     public class UnicodeCategoryModel : ViewModelBase
     {
@@ -71,15 +58,15 @@ namespace CharacterMap.ViewModels
             set => Set(ref _showBorders, value);
         }
 
-        private bool _showWhitespace = true;
-        public bool ShowWhitespace
+        private bool _hideWhitespace = true;
+        public bool HideWhitespace
         {
-            get => _showWhitespace;
+            get => _hideWhitespace;
             set
             {
-                if (value != _showWhitespace)
+                if (value != _hideWhitespace)
                 {
-                    _showWhitespace = value;
+                    _hideWhitespace = value;
                     UpdateCharacters();
                     RaisePropertyChanged();
                 }
@@ -143,6 +130,19 @@ namespace CharacterMap.ViewModels
             private set => Set(ref _categories, value);
         }
 
+        private int _firstPage = 1;
+        public int FirstPage
+        {
+            get => _firstPage;
+            set => Set(ref _firstPage, value);
+        }
+
+        private int _pageCount = 50;
+        public int PagesToPrint
+        {
+            get => _pageCount;
+            set => Set(ref _pageCount, value);
+        }
 
         public bool IsPortrait => Orientation == Orientation.Vertical;
 
@@ -169,7 +169,7 @@ namespace CharacterMap.ViewModels
         private void UpdateCharacters()
         {
             // Fast path : all characters;
-            if (!Categories.Any(c => !c.IsSelected) && ShowWhitespace)
+            if (!Categories.Any(c => !c.IsSelected) && !HideWhitespace)
             {
                 Characters = Font.Characters;
                 return;
@@ -178,7 +178,7 @@ namespace CharacterMap.ViewModels
             // Filter characters
 
             var chars = Font.Characters.AsEnumerable();
-            if (!ShowWhitespace)
+            if (HideWhitespace)
                 chars = Font.Characters.Where(c => !Unicode.IsWhiteSpaceOrControl(c.UnicodeIndex));
 
             foreach (var cat in Categories.Where(c => !c.IsSelected))
@@ -205,15 +205,17 @@ namespace CharacterMap.ViewModels
 
         public static PrintViewModel Create(FontMapViewModel viewModel)
         {
-            return new PrintViewModel
+            var model = new PrintViewModel
             {
                 ShowColorGlyphs = viewModel.ShowColorGlyphs,
                 Typography = viewModel.SelectedTypography,
                 FontFamily = viewModel.FontFamily,
                 Font = viewModel.SelectedVariant,
-                Characters = viewModel.SelectedVariant.Characters,
                 Annotation = viewModel.Settings.GlyphAnnotation
             };
+
+            model.UpdateCharacters();
+            return model;
         }
     }
 }
