@@ -246,11 +246,11 @@ namespace CharacterMap.Helpers
                     {
                         MenuFlyoutItem item = new MenuFlyoutItem
                         {
-                            Text = "Print",
+                            Text = Localization.Get("BtnPrint/Content"),
                             Icon = new SymbolIcon { Symbol = Symbol.Print }
                         };
 
-                        item.KeyboardAccelerators.Add(new Windows.UI.Xaml.Input.KeyboardAccelerator
+                        item.KeyboardAccelerators.Add(new KeyboardAccelerator
                         {
                              Key = Windows.System.VirtualKey.P,
                              Modifiers = Windows.System.VirtualKeyModifiers.Control

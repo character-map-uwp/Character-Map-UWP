@@ -162,14 +162,13 @@
             Loading="HeaderGrid_Loading"
             RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(Settings), Mode=OneWay}">
             <TextBlock
-                x:Uid="PrintHeader"
+                x:Uid="PrintViewTitle"
                 Margin="20 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="SemiLight"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}"
-                Text="Print Configuration" />
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}" />
 
             <AppBarButton
                 x:Name="BtnClose"
@@ -200,20 +199,18 @@
                 Background="{StaticResource DefaultAcrylicBrush}" />
 
             <ScrollViewer x:Name="ContentScroller">
-                <StackPanel x:Name="OptionsPanel" Margin="20 20 20 120" ChildrenTransitions="{StaticResource RepositionTransitions}">
+                <StackPanel
+                    x:Name="OptionsPanel"
+                    Margin="20 20 20 120"
+                    ChildrenTransitions="{StaticResource RepositionTransitions}">
 
                     <StackPanel>
-                        <TextBlock
-                            x:Uid="PrintData"
-                            Style="{StaticResource SubheaderTextBlockStyle}"
-                            Text="Data" />
+                        <TextBlock x:Uid="PrintDataHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
-                        <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Characters" />-->
-                        <!--<TextBlock Style="{StaticResource DescriptionStyle}" Text="Choose the range of glyphs to print." />-->
                         <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
                             <Button.Content>
                                 <StackPanel Orientation="Horizontal">
-                                    <TextBlock OpticalMarginAlignment="TrimSideBearings" Text="Choose character groups to display" />
+                                    <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
                                     <TextBlock
                                         Margin="4 2 0 0"
                                         VerticalAlignment="Center"
@@ -227,7 +224,6 @@
                                 <Flyout
                                     x:Name="FilterFlyout"
                                     win1903:ShouldConstrainToRootBounds="False"
-                                    Closing="Flyout_Closing"
                                     Opening="Flyout_Opening">
                                     <Flyout.FlyoutPresenterStyle>
                                         <win1903:Style TargetType="FlyoutPresenter">
@@ -269,30 +265,29 @@
 
                                         <StackPanel>
                                             <TextBlock
+                                                x:Uid="UnicodeFiltersTitle"
                                                 Margin="12 12 0 6"
-                                                Style="{StaticResource HeaderStyle}"
-                                                Text="UNICODE CATEGORY FILTERS" />
+                                                Style="{StaticResource HeaderStyle}" />
 
                                             <Grid>
                                                 <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
                                                     <AppBarButton
+                                                        x:Uid="AppBtnSelectAll"
                                                         Click="FilterSelectAll_Click"
                                                         Icon="SelectAll"
-                                                        Label="Select All"
                                                         Style="{StaticResource LabelAppBarButtonStyle}" />
                                                     <AppBarButton
+                                                        x:Uid="AppBtnClear"
                                                         Click="FilterClear_Click"
                                                         Icon="ClearSelection"
-                                                        Label="Clear"
                                                         Style="{StaticResource LabelAppBarButtonStyle}" />
                                                 </StackPanel>
 
                                                 <AppBarButton
+                                                    x:Uid="AppBtnReset"
                                                     HorizontalAlignment="Right"
                                                     Click="FilterRefresh_Click"
-                                                    Content="Reset"
                                                     Icon="Refresh"
-                                                    Label="Reset"
                                                     Style="{StaticResource LabelAppBarButtonStyle}" />
                                             </Grid>
                                         </StackPanel>
@@ -320,12 +315,12 @@
                                         </GridView>
 
                                         <Button
+                                            x:Uid="BtnApply"
                                             Grid.Row="2"
                                             Width="200"
                                             Margin="12 12 12 0"
                                             HorizontalAlignment="Right"
                                             Click="FilterAccept_Click"
-                                            Content="Apply"
                                             Style="{StaticResource DefaultButtonStyle}" />
 
                                     </Grid>
@@ -333,18 +328,15 @@
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
-                        <CheckBox IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}">Hide whitespace and control characters</CheckBox>
+                        <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
 
                         <Border Style="{StaticResource SpacerStyle}" />
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock
-                            x:Uid="PrintDesign"
-                            Style="{StaticResource SubheaderTextBlockStyle}"
-                            Text="Layout" />
+                        <TextBlock x:Uid="PrintViewLayoutHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
-                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Size" />
+                        <TextBlock x:Uid="PrintViewCharSize" Style="{StaticResource HeaderStyle}" />
                         <Slider
                             HorizontalAlignment="Stretch"
                             IsThumbToolTipEnabled="True"
@@ -360,22 +352,31 @@
                         </TextBlock>
 
                         <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />-->
-                        <CheckBox Margin="0 16 0 -8" IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}">Show borders</CheckBox>
+                        <CheckBox
+                            x:Uid="ChkBxShowBorders"
+                            Margin="0 16 0 -8"
+                            IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}" />
 
                         <controls:WrapPanel ChildrenTransitions="{StaticResource RepositionTransitions}" HorizontalSpacing="24">
                             <ComboBox
-                                Header="List Style"
+                                x:Uid="CbListStyle"
                                 ItemsSource="{x:Bind Layouts}"
                                 SelectedIndex="0"
-                                SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}" />
+                                SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:PrintLayout">
+                                        <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:PrintLayout))}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
 
                             <ComboBox
-                                Header="Character Label"
+                                x:Uid="CbCharacterLabel"
                                 ItemsSource="{x:Bind Annotations}"
                                 SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
                                 <ComboBox.ItemTemplate>
                                     <DataTemplate x:DataType="models:GlyphAnnotation">
-                                        <TextBlock Text="{x:Bind core:Converters.GetAnnotationName((models:GlyphAnnotation))}" />
+                                        <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
@@ -385,30 +386,24 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock
-                            x:Uid="PrintLayout"
-                            Style="{StaticResource SubheaderTextBlockStyle}"
-                            Text="Page Setup" />
+                        <TextBlock x:Uid="PrintViewPageSetupHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
-                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Page Range" />
-                        <TextBlock Style="{StaticResource DescriptionStyle}">
-                            Up to 50 pages can be printed at a time. Select the range of pages to print here.
-                        </TextBlock>
+                        <TextBlock x:Uid="PrintViewPageRange" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="PrintViewPageRangeDesc" Style="{StaticResource DescriptionStyle}" />
                         <controls:WrapPanel
                             ChildrenTransitions="{StaticResource RepositionTransitions}"
                             HorizontalSpacing="24"
                             Orientation="Horizontal"
                             VerticalSpacing="12">
                             <muxc:NumberBox
-                                Header="Start from page:"
+                                x:Uid="PrintViewPageSelector"
                                 Maximum="{x:Bind PageCount, Mode=OneWay}"
                                 Minimum="1"
                                 SpinButtonPlacementMode="Inline"
-                                ValueChanged="NumberBox_ValueChanged_1"
                                 Value="{x:Bind ViewModel.FirstPage, Mode=TwoWay}" />
 
                             <muxc:NumberBox
-                                Header="Pages to print:"
+                                x:Uid="PrintViewPageRangeSelector"
                                 Maximum="{x:Bind GetMaxPageRange(ViewModel.FirstPage, PageCount), Mode=OneWay}"
                                 Minimum="1"
                                 SpinButtonPlacementMode="Inline"
@@ -418,14 +413,14 @@
                         <TextBlock Style="{StaticResource HintStyle}" Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
 
                         <ComboBox
-                            Header="Page Orientation"
+                            x:Uid="PrintViewPageOrientation"
                             SelectedIndex="0"
                             SelectionChanged="RadioButtons_SelectionChanged">
-                            <ComboBoxItem>Portrait</ComboBoxItem>
-                            <ComboBoxItem>Landscape</ComboBoxItem>
+                            <ComboBoxItem x:Uid="CbiPageOrientationPortrait" />
+                            <ComboBoxItem x:Uid="CbiPageOrientationLandscape" />
                         </ComboBox>
 
-                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Horizontal Margin" />
+                        <TextBlock x:Uid="PrintViewHorizontalMarginHeader" Style="{StaticResource HeaderStyle}" />
                         <Slider
                             HorizontalAlignment="Stretch"
                             IsThumbToolTipEnabled="True"
@@ -440,7 +435,7 @@
                             <Run Text="px" />
                         </TextBlock>
 
-                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Vertical Margin" />
+                        <TextBlock x:Uid="PrintViewVerticalMarginHeader" Style="{StaticResource HeaderStyle}" />
                         <Slider
                             HorizontalAlignment="Stretch"
                             IsThumbToolTipEnabled="True"
@@ -460,7 +455,6 @@
             </ScrollViewer>
 
             <Grid
-                
                 Grid.Column="1"
                 Margin="12"
                 HorizontalAlignment="Stretch"
@@ -474,13 +468,13 @@
                 <StackPanel x:Name="PreviewOptions" Grid.Row="0">
 
                     <CheckBox
+                        x:Uid="CbShowMargins"
                         HorizontalAlignment="Center"
-                        Content="Show margins"
                         IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
                         IsThreeState="False" />
 
                     <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Center">Previewing page</TextBlock>
+                        <TextBlock x:Uid="PrintViewPreviewingLabel" VerticalAlignment="Center" />
                         <muxc:NumberBox
                             Margin="8 0"
                             LargeChange="1"
@@ -492,7 +486,7 @@
                             ValueChanged="NumberBox_ValueChanged"
                             Value="{x:Bind CurrentPage, Mode=TwoWay}" />
                         <TextBlock VerticalAlignment="Center">
-                            <Run Text="of" />
+                            <Run x:Uid="PrintViewOfLabel" />
                             <Run Text="{x:Bind PageCount, Mode=OneWay}" />
                             <!--<Run Text="(of" />
                         <Run Text="{x:Bind PageCount, Mode=OneWay}" /><Run Text=")" />-->
@@ -500,15 +494,12 @@
                     </StackPanel>
 
                     <TextBlock
+                        x:Uid="PrintViewPreviewOutOfBoundsLabel"
                         Margin="0 4 0 0"
                         HorizontalAlignment="Center"
                         Style="{StaticResource HintStyle}"
                         TextAlignment="Center"
-                        Visibility="{x:Bind IsOutOfRange(ViewModel.FirstPage, ViewModel.PagesToPrint, CurrentPage), Mode=OneWay}">
-                        <Run Text="This page is outside the current page range and will not be printed. " />
-                        <LineBreak />
-                        <Run Text="You can change the page range in the Page Setup section. " />
-                    </TextBlock>
+                        Visibility="{x:Bind IsOutOfRange(ViewModel.FirstPage, ViewModel.PagesToPrint, CurrentPage), Mode=OneWay}" />
 
                 </StackPanel>
 
@@ -524,7 +515,10 @@
         </Grid>
 
 
-        <Grid x:Name="BottomBar" Grid.Row="2" Background="{ThemeResource SystemAccentColorDark2}">
+        <Grid
+            x:Name="BottomBar"
+            Grid.Row="2"
+            Background="{ThemeResource SystemAccentColorDark2}">
 
             <TextBlock
                 x:Name="BottomLabel"
@@ -545,18 +539,16 @@
                 Spacing="8">
                 <Button
                     x:Name="BtnContinue"
+                    x:Uid="BtnContinue"
                     Width="150"
                     Click="BtnContinue_Click"
                     IsEnabled="{x:Bind CanContinue, Mode=OneWay}"
-                    Style="{StaticResource AccentButtonStyle}">
-                    Continue
-                </Button>
+                    Style="{StaticResource AccentButtonStyle}" />
                 <Button
+                    x:Uid="BtnCancel"
                     Width="150"
                     Click="{x:Bind Hide}"
-                    Style="{StaticResource ButtonRevealStyle}">
-                    Cancel
-                </Button>
+                    Style="{StaticResource ButtonRevealStyle}" />
             </StackPanel>
         </Grid>
 

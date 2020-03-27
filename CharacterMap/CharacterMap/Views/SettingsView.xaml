@@ -147,12 +147,12 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock Style="{StaticResource HeaderStyle}" Text="Character Label" />
-                        <TextBlock Style="{StaticResource DescriptionStyle}" Text="Choose the label to show under each character. May have a minor effect on scrolling performance." />
+                        <TextBlock x:Uid="SettingsCharLabel" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsCharLabelDesc" Style="{StaticResource DescriptionStyle}" />
                         <ComboBox ItemsSource="{x:Bind Annotations}" SelectedItem="{x:Bind Settings.GlyphAnnotation, Mode=TwoWay}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate x:DataType="models:GlyphAnnotation">
-                                    <TextBlock Text="{x:Bind core:Converters.GetAnnotationName((models:GlyphAnnotation))}" />
+                                    <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
@@ -288,7 +288,7 @@
                             Checked="ThemeSystem_Checked"
                             GroupName="ThemeSelector" />
 
-                        <HyperlinkButton Content="Windows theme settings" NavigateUri="ms-settings:personalization-colors" />
+                        <HyperlinkButton x:Uid="SettingsWindowsThemeSettings" NavigateUri="ms-settings:personalization-colors" />
                     </StackPanel>
 
                     <StackPanel>
@@ -439,10 +439,10 @@
                     <!--#region FONT MANAGEMENT-->
 
                     <StackPanel Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
-                        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Installed Fonts" />
+                        <TextBlock x:Uid="SettingsSystemFontHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
                         <HyperlinkButton
-                            Content="Manage installed fonts"
+                            x:Uid="SettingsManageSystemFonts"
                             NavigateUri="ms-settings:fonts"
                             Style="{StaticResource TextBlockButtonStyle}" />
                     </StackPanel>

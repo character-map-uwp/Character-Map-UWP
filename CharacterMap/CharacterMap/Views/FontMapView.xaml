@@ -158,10 +158,10 @@
 
                     <Grid
                         x:Name="CharGridHeader"
+                        x:FieldModifier="public"
                         ColumnSpacing="12"
                         Margin="12"
-                        VerticalAlignment="Top"
-                        x:FieldModifier="public">
+                        VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -449,10 +449,10 @@
 
                     <controls:CharacterGridView
                         x:Name="CharGrid"
+                        x:FieldModifier="public"
                         Grid.Row="1"
                         Grid.Column="0"
                         Padding="10 10 6 10"
-                        x:FieldModifier="public"
                         EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
                         IsItemClickEnabled="False"
                         ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
@@ -486,9 +486,9 @@
                 <!--  Column Grid Splitter  -->
                 <Grid
                     x:Name="SplitterContainer"
+                    x:FieldModifier="public"
                     Grid.RowSpan="2"
-                    Grid.Column="1"
-                    x:FieldModifier="public">
+                    Grid.Column="1">
                     <toolkit:GridSplitter
                         x:Name="Splitter"
                         Width="8"
@@ -515,9 +515,9 @@
                 <!--  Preview Grid  -->
                 <Grid
                     x:Name="PreviewGrid"
+                    x:FieldModifier="public"
                     Grid.RowSpan="2"
                     Grid.Column="2"
-                    x:FieldModifier="public"
                     SizeChanged="PreviewGrid_SizeChanged">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />

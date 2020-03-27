@@ -55,7 +55,7 @@ namespace CharacterMap.Core
 
         public int MaxSearchResult
         {
-            get => Get(15);
+            get => Get(20);
             set => Set(value);
         }
 
@@ -97,7 +97,7 @@ namespace CharacterMap.Core
 
         public GlyphAnnotation GlyphAnnotation
         {
-            get => (GlyphAnnotation)Get((int)GlyphAnnotation.None);
+            get => (GlyphAnnotation)Get((int)GlyphAnnotation.UnicodeHex);
             set => BroadcastSet((int)value);
         }
 
@@ -122,6 +122,9 @@ namespace CharacterMap.Core
             get => Get("en-US");
             set => Set(value);
         }
+
+
+
 
         /* INFRASTRUCTURE */
 

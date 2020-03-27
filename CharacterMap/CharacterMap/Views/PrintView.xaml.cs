@@ -209,9 +209,10 @@ namespace CharacterMap.Views
                 ViewModel.PagesToPrint = PageCount;
             }
             if (ViewModel.FirstPage + ViewModel.PagesToPrint - 1 > PageCount)
-            {
                 ViewModel.PagesToPrint = PageCount;
-            }
+
+            if (isMaxRange)
+                ViewModel.PagesToPrint = GetMaxPageRange(0, 0);
 
             if (view == null)
                 view = new FontMapPrintPage(ViewModel, _fontMap.CharGrid.ItemTemplate, true)
@@ -235,14 +236,6 @@ namespace CharacterMap.Views
 
             Composition.SetThemeShadow(view, 30, ContentBackground);
             PreviewViewBox.Child = view;
-
-            if (isMaxRange)
-            {
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
-                {
-                    ViewModel.PagesToPrint = GetMaxPageRange(0, 0);
-                });
-            }
         }
 
 
@@ -271,10 +264,6 @@ namespace CharacterMap.Views
         private void Flyout_Opening(object sender, object e)
         {
             CategoryList.ItemsSource = PrintViewModel.CreateCategoriesList(ViewModel);
-        }
-
-        private void Flyout_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
-        {
         }
 
         private void FilterAccept_Click(object sender, RoutedEventArgs e)
@@ -312,7 +301,7 @@ namespace CharacterMap.Views
 
         public string GetPageRangeLabel(int start, int count)
         {
-            return $"Printing pages {start} - {start + count - 1}";
+            return Localization.Get("PrintViewPrintingLabel", start, start + count - 1);
         }
 
         public string GetLastPageLabel(int start, int count)
@@ -335,17 +324,6 @@ namespace CharacterMap.Views
         {
             int range = Math.Min(PageCount + 1 - ViewModel.FirstPage, MAX_PAGE_COUNT);
             return range;
-        }
-
-        public string GetAnnotationName(GlyphAnnotation a)
-        {
-            string s = Localization.Get($"GlyphAnnotation_{a}");
-            return Humanizer.EnumHumanizeExtensions.Humanize(a);
-        }
-
-        private void NumberBox_ValueChanged_1(NumberBox sender, NumberBoxValueChangedEventArgs args)
-        {
-
         }
     }
 }
