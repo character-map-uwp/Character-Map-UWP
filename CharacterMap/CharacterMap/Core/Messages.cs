@@ -21,6 +21,10 @@ namespace CharacterMap.Core
     {
     }
 
+    public class PrintRequestedMessage
+    {
+    }
+
     public class AppSettingsChangedMessage
     {
         public AppSettingsChangedMessage(string propertyName)

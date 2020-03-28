@@ -343,5 +343,17 @@ namespace Windows.UI.Xaml.Media
 
             return focused.GetAncestors().Any(a => a == element);
         }
+
+        /// <summary>
+        /// Gets the implementation root of the Control.
+        /// </summary>
+        /// <param name="dependencyObject">The DependencyObject.</param>
+        /// <returns>Returns the implementation root or null.</returns>
+        public static FrameworkElement GetImplementationRoot(DependencyObject dependencyObject)
+        {
+            return (1 == VisualTreeHelper.GetChildrenCount(dependencyObject)) ?
+                VisualTreeHelper.GetChild(dependencyObject, 0) as FrameworkElement :
+                null;
+        }
     }
 }

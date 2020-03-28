@@ -82,6 +82,23 @@ namespace CharacterMap.Helpers
             }
         }
 
+        public static void SetupOverlayPanelAnimation(UIElement e)
+        {
+            if (!Composition.UISettings.AnimationsEnabled)
+                return;
+
+            Visual v = e.EnableTranslation(true).GetElementVisual();
+
+            var t = v.Compositor.CreateVector3KeyFrameAnimation();
+            t.Target = Composition.TRANSLATION;
+            t.InsertKeyFrame(1, new Vector3(0, 200, 0));
+            t.Duration = TimeSpan.FromSeconds(0.375);
+
+            var o = Composition.CreateFade(v.Compositor, 0, null, 200);
+            e.SetHideAnimation(v.Compositor.CreateAnimationGroup(t, o));
+            e.SetShowAnimation(Composition.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
+        }
+
         public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffset = 140)
         {
             if (!UISettings.AnimationsEnabled)
@@ -109,6 +126,21 @@ namespace CharacterMap.Helpers
             var o = CreateFade(c, 1, 0, (int)(durationMs * 0.33), delayMs);
 
             return c.CreateAnimationGroup(t, o);
+        }
+
+        public static void PlayEntrance(List<UIElement> targets, int delayMs = 0, int fromOffset = 140, int durationMs = 800, int staggerMs = 83)
+        {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
+            int start = delayMs;
+
+            foreach (var target in targets)
+            {
+                var animation = CreateEntranceAnimation(target, new Vector3(0, fromOffset, 0), start, durationMs);
+                target.GetElementVisual().StartAnimationGroup(animation);
+                start += staggerMs;
+            }
         }
 
         public static CompositionAnimation CreateFade(Compositor c, float to, float? from, int durationMs, int delayMs = 0)
@@ -258,7 +290,7 @@ namespace CharacterMap.Helpers
         public static void StartStartUpAnimation(
             FrameworkElement barBackground,
             List<FrameworkElement> barElements,
-            List<FrameworkElement> contentElements)
+            List<UIElement> contentElements)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
@@ -271,7 +303,6 @@ namespace CharacterMap.Helpers
 
             var backOut = c.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.885f), new Vector2(0.25f, 1.125f));
             var ent = c.CreateEntranceEasingFunction();
-            var lin = c.CreateLinearEasingFunction();
 
             var a1 = c.CreateVector3KeyFrameAnimation();
             a1.Target = TRANSLATION;
@@ -296,28 +327,7 @@ namespace CharacterMap.Helpers
                 v.StartAnimationGroup(t);
             }
 
-            delay = 0.4;
-            foreach (var element in contentElements)
-            {
-                var t = c.CreateVector3KeyFrameAnimation();
-                t.Target = TRANSLATION;
-                t.InsertKeyFrame(0, new Vector3(0, 140, 0));
-                t.InsertKeyFrame(1, Vector3.Zero, ent);
-                t.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-                t.DelayTime = TimeSpan.FromSeconds(delay);
-                t.Duration = duration1;
-
-                var o = c.CreateScalarKeyFrameAnimation();
-                o.Target = nameof(Visual.Opacity);
-                o.InsertKeyFrame(0, 0);
-                o.InsertKeyFrame(1, 1, lin);
-                o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-                o.DelayTime = TimeSpan.FromSeconds(delay);
-                o.Duration = TimeSpan.FromSeconds(0.33);
-
-                var v = element.EnableTranslation(true).GetElementVisual();
-                v.StartAnimationGroup(c.CreateAnimationGroup(t, o));
-            }
+            PlayEntrance(contentElements, 200);
         }
 
         public static void SetThemeShadow(UIElement target, float depth, params UIElement[] recievers)

@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
@@ -46,6 +47,10 @@
             <Setter Property="Background" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
             <Setter Property="Opacity" Value="0.3" />
             <Setter Property="Margin" Value="0 24 0 12" />
+        </Style>
+
+        <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
+            <Setter Property="MinWidth" Value="172" />
         </Style>
 
     </UserControl.Resources>
@@ -117,164 +122,174 @@
                         Style="{StaticResource SubheaderTextBlockStyle}"
                         Text="#UserInterface" />
 
-                    <TextBlock
-                        x:Uid="SettingsCharGridHeader"
-                        Style="{StaticResource HeaderStyle}"
-                        Text="#CharacterGridSize" />
-
-                    <TextBlock
-                        x:Uid="SettingsCharGridDescription"
-                        Style="{StaticResource DescriptionStyle}"
-                        Text="#Description" />
-
-                    <Slider
-                        HorizontalAlignment="Stretch"
-                        IsThumbToolTipEnabled="True"
-                        Maximum="192"
-                        Minimum="64"
-                        StepFrequency="8"
-                        TickFrequency="8"
-                        TickPlacement="Outside"
-                        Value="{x:Bind Settings.GridSize, Mode=TwoWay}" />
-
-                    <TextBlock>
-                        <Run Text="{x:Bind Settings.GridSize, Mode=OneWay}" />
-                        <Run Text="px" />
-                    </TextBlock>
-
-                    <TextBlock x:Uid="SettingsUnicodeHeader" Style="{StaticResource HeaderStyle}" />
-                    <TextBlock x:Uid="SettingsUnicodeDescription" Style="{StaticResource DescriptionStyle}" />
-                    <ToggleSwitch IsOn="{x:Bind Settings.ShowCharGridUnicode, Mode=TwoWay}" />
-
-                    <StackPanel
-                        Margin="0 12 0 0"
-                        Padding="4 4 0 0"
-                        HorizontalAlignment="Left"
-                        BorderThickness="1"
-                        BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
-                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                        Orientation="Horizontal">
-                        <GridViewItem>
-                            <Grid
-                                Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                Height="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                Padding="4">
-                                <TextBlock
-                                    x:Name="Preview1"
-                                    Margin="0 -2 0 0"
-                                    Padding="0,0,0,8"
-                                    FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
-                                    IsTextScaleFactorEnabled="False"
-                                    Text="A"
-                                    TextAlignment="Center" />
-                                <TextBlock
-                                    Style="{StaticResource CharItemUnicodeStyle}"
-                                    Text="U+0041"
-                                    Visibility="{x:Bind Settings.ShowCharGridUnicode, Mode=OneWay}" />
-                            </Grid>
-                        </GridViewItem>
-
-                        <GridViewItem>
-                            <Grid
-                                Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                Height="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                Padding="4">
-                                <TextBlock
-                                    x:Name="Preview2"
-                                    Margin="0 -2 0 0"
-                                    Padding="0,0,0,8"
-                                    FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
-                                    IsTextScaleFactorEnabled="False"
-                                    Text="b"
-                                    TextAlignment="Center" />
-                                <TextBlock
-                                    Style="{StaticResource CharItemUnicodeStyle}"
-                                    Text="U+0062"
-                                    Visibility="{x:Bind Settings.ShowCharGridUnicode, Mode=OneWay}" />
-                            </Grid>
-                        </GridViewItem>
-
-                        <GridViewItem>
-                            <Grid
-                                Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                Height="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                Padding="4">
-                                <TextBlock
-                                    x:Name="Preview3"
-                                    Margin="0 -2 0 0"
-                                    Padding="0,0,0,8"
-                                    FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
-                                    IsTextScaleFactorEnabled="False"
-                                    Text="y"
-                                    TextAlignment="Center" />
-                                <TextBlock
-                                    Style="{StaticResource CharItemUnicodeStyle}"
-                                    Text="U+0079"
-                                    Visibility="{x:Bind Settings.ShowCharGridUnicode, Mode=OneWay}" />
-                            </Grid>
-                        </GridViewItem>
-
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="SettingsCharGridHeader"
+                            Style="{StaticResource HeaderStyle}"
+                            Text="#CharacterGridSize" />
+                        <TextBlock
+                            x:Uid="SettingsCharGridDescription"
+                            Style="{StaticResource DescriptionStyle}"
+                            Text="#Description" />
+                        <Slider
+                            HorizontalAlignment="Stretch"
+                            IsThumbToolTipEnabled="True"
+                            Maximum="192"
+                            Minimum="64"
+                            StepFrequency="8"
+                            TickFrequency="8"
+                            TickPlacement="Outside"
+                            Value="{x:Bind Settings.GridSize, Mode=TwoWay}" />
+                        <TextBlock>
+                            <Run Text="{x:Bind Settings.GridSize, Mode=OneWay}" />
+                            <Run Text="px" />
+                        </TextBlock>
                     </StackPanel>
 
-                    <TextBlock x:Uid="SettingsCharPreviewHint" Style="{StaticResource HintStyle}" />
+                    <StackPanel>
+                        <TextBlock x:Uid="SettingsCharLabel" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsCharLabelDesc" Style="{StaticResource DescriptionStyle}" />
+                        <ComboBox ItemsSource="{x:Bind Annotations}" SelectedItem="{x:Bind Settings.GlyphAnnotation, Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate x:DataType="models:GlyphAnnotation">
+                                    <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
 
-                    <TextBlock x:Uid="FontListDisplayHeader" Style="{StaticResource HeaderStyle}" />
-                    <TextBlock x:Uid="SettingsFontListDescription" Style="{StaticResource DescriptionStyle}" />
-                    <RadioButton
-                        x:Name="UseSystemFont"
-                        x:Uid="RbUseSystemFont"
-                        Checked="UseSystemFont_Checked"
-                        GroupName="FontList" />
-                    <RadioButton
-                        x:Name="UseActualFont"
-                        x:Uid="RbUseActualFont"
-                        Checked="UseActualFont_Checked"
-                        GroupName="FontList" />
+                        <StackPanel
+                            Margin="0 12 0 0"
+                            Padding="4 4 0 0"
+                            HorizontalAlignment="Left"
+                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                            BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                            BorderThickness="1"
+                            Orientation="Horizontal">
+                            <GridViewItem>
+                                <Grid
+                                    Width="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                    Height="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                    Padding="4">
+                                    <TextBlock
+                                        x:Name="Preview1"
+                                        Margin="0 -2 0 0"
+                                        Padding="0,0,0,8"
+                                        FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
+                                        IsTextScaleFactorEnabled="False"
+                                        Text="A"
+                                        TextAlignment="Center" />
+                                    <TextBlock
+                                        Style="{StaticResource CharItemUnicodeStyle}"
+                                        Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 65), Mode=OneWay}"
+                                        Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
+                                </Grid>
+                            </GridViewItem>
 
-                    <ListView
-                        x:Name="LstFontFamily"
-                        Width="256"
-                        Margin="0 12 0 0"
-                        HorizontalAlignment="Left"
-                        Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
-                        IsItemClickEnabled="False"
-                        IsSwipeEnabled="False"
-                        ItemTemplate="{StaticResource FontListItemTemplate}"
-                        SelectionMode="None"
-                        ShowsScrollingPlaceholders="False">
+                            <GridViewItem>
+                                <Grid
+                                    Width="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                    Height="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                    Padding="4">
+                                    <TextBlock
+                                        x:Name="Preview2"
+                                        Margin="0 -2 0 0"
+                                        Padding="0,0,0,8"
+                                        FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
+                                        IsTextScaleFactorEnabled="False"
+                                        Text="b"
+                                        TextAlignment="Center" />
+                                    <TextBlock
+                                        Style="{StaticResource CharItemUnicodeStyle}"
+                                        Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 98), Mode=OneWay}"
+                                        Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
+                                </Grid>
+                            </GridViewItem>
 
-                        <ListView.ItemContainerTransitions>
-                            <TransitionCollection />
-                        </ListView.ItemContainerTransitions>
+                            <GridViewItem>
+                                <Grid
+                                    Width="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                    Height="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                    Padding="4">
+                                    <TextBlock
+                                        x:Name="Preview3"
+                                        Margin="0 -2 0 0"
+                                        Padding="0,0,0,8"
+                                        FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
+                                        IsTextScaleFactorEnabled="False"
+                                        Text="y"
+                                        TextAlignment="Center" />
+                                    <TextBlock
+                                        Style="{StaticResource CharItemUnicodeStyle}"
+                                        Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 121), Mode=OneWay}"
+                                        Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
+                                </Grid>
+                            </GridViewItem>
 
-                        <ListView.Resources>
-                            <Style BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
-                                <Setter Property="HorizontalAlignment" Value="Stretch" />
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListView.Resources>
-                    </ListView>
+                        </StackPanel>
 
-                    <TextBlock x:Uid="SettingsFontListPreviewHint" Style="{StaticResource HintStyle}" />
+                        <TextBlock x:Uid="SettingsCharPreviewHint" Style="{StaticResource HintStyle}" />
+                    </StackPanel>
 
+                    <StackPanel>
+                        <TextBlock x:Uid="FontListDisplayHeader" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsFontListDescription" Style="{StaticResource DescriptionStyle}" />
+                        <RadioButton
+                            x:Name="UseSystemFont"
+                            x:Uid="RbUseSystemFont"
+                            Checked="UseSystemFont_Checked"
+                            GroupName="FontList" />
+                        <RadioButton
+                            x:Name="UseActualFont"
+                            x:Uid="RbUseActualFont"
+                            Checked="UseActualFont_Checked"
+                            GroupName="FontList" />
 
-                    <TextBlock x:Uid="SettingsThemeHeader" Style="{StaticResource HeaderStyle}" />
-                    <RadioButton
-                        x:Name="ThemeLight"
-                        x:Uid="RbThemeLight"
-                        Checked="ThemeLight_Checked"
-                        GroupName="ThemeSelector" />
-                    <RadioButton
-                        x:Name="ThemeDark"
-                        x:Uid="RbThemeDark"
-                        Checked="ThemeDark_Checked"
-                        GroupName="ThemeSelector" />
-                    <RadioButton
-                        x:Name="ThemeSystem"
-                        x:Uid="RbThemeSystem"
-                        Checked="ThemeSystem_Checked"
-                        GroupName="ThemeSelector" />
+                        <ListView
+                            x:Name="LstFontFamily"
+                            Width="256"
+                            Margin="0 12 0 0"
+                            HorizontalAlignment="Left"
+                            Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                            IsHitTestVisible="False"
+                            IsItemClickEnabled="False"
+                            IsSwipeEnabled="False"
+                            IsTabStop="False"
+                            ItemContainerTransitions="{StaticResource NoTransitions}"
+                            ItemTemplate="{StaticResource FontListItemTemplate}"
+                            SelectionMode="None"
+                            ShowsScrollingPlaceholders="False">
+                            <ListView.Resources>
+                                <Style BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
+                                    <Setter Property="IsTabStop" Value="False" />
+                                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                </Style>
+                            </ListView.Resources>
+                        </ListView>
 
+                        <TextBlock x:Uid="SettingsFontListPreviewHint" Style="{StaticResource HintStyle}" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock x:Uid="SettingsThemeHeader" Style="{StaticResource HeaderStyle}" />
+                        <RadioButton
+                            x:Name="ThemeLight"
+                            x:Uid="RbThemeLight"
+                            Checked="ThemeLight_Checked"
+                            GroupName="ThemeSelector" />
+                        <RadioButton
+                            x:Name="ThemeDark"
+                            x:Uid="RbThemeDark"
+                            Checked="ThemeDark_Checked"
+                            GroupName="ThemeSelector" />
+                        <RadioButton
+                            x:Name="ThemeSystem"
+                            x:Uid="RbThemeSystem"
+                            Checked="ThemeSystem_Checked"
+                            GroupName="ThemeSelector" />
+
+                        <HyperlinkButton x:Uid="SettingsWindowsThemeSettings" NavigateUri="ms-settings:personalization-colors" />
+                    </StackPanel>
 
                     <StackPanel>
                         <TextBlock
@@ -283,12 +298,11 @@
                             Text="#Language" />
 
                         <ComboBox
-                            Width="256"
+                            MinWidth="256"
                             Margin="0 8 0 0"
                             ItemsSource="{x:Bind SupportedLanguages}"
                             PlaceholderText="{x:Bind core:Converters.GetLanguageDisplayFromID(Settings.AppLanguage)}"
-                            SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}"
-                            Style="{StaticResource DefaultComboBoxStyle}" />
+                            SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}" />
 
                         <TextBlock
                             x:Uid="SettingsNeedRestart"
@@ -311,11 +325,12 @@
                         <TextBlock x:Uid="SettingsExpensiveAnimationHeader" Style="{StaticResource HeaderStyle}" />
                         <TextBlock x:Uid="SettingsExpensiveAnimationDescription" Style="{StaticResource DescriptionStyle}" />
                         <ToggleSwitch IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
+
+                        <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
+
                     </StackPanel>
 
                     <!--#endregion-->
-
-                    <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
 
                     <!--#region EXPORT-->
 
@@ -339,12 +354,13 @@
                             <Run Text="x" />
                             <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
                         </TextBlock>
+
+                        <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
+
                     </StackPanel>
 
 
                     <!--#endregion-->
-
-                    <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
 
                     <!--#region CHARACTER SEARCH-->
 
@@ -391,11 +407,11 @@
                             SpinButtonPlacementMode="Inline"
                             Value="{x:Bind Settings.MaxSearchResult, Mode=TwoWay}" />
 
+                        <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
+
                     </StackPanel>
 
                     <!--#endregion-->
-
-                    <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
 
                     <!--#region DEVELOPER FEATURES-->
 
@@ -413,6 +429,22 @@
                             <TextBlock x:Uid="SettingsDevToolsLangDescription" Style="{StaticResource DescriptionStyle}" />
                             <muxc:RadioButtons x:Name="RbLanguage" SelectionChanged="RadioButtons_SelectionChanged" />
                         </StackPanel>
+
+                        <Border Loaded="{x:Bind helpers:Composition.SetStandardReposition}" Style="{StaticResource SpacerStyle}" />
+
+                    </StackPanel>
+
+                    <!--#endregion-->
+
+                    <!--#region FONT MANAGEMENT-->
+
+                    <StackPanel Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
+                        <TextBlock x:Uid="SettingsSystemFontHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                        <HyperlinkButton
+                            x:Uid="SettingsManageSystemFonts"
+                            NavigateUri="ms-settings:fonts"
+                            Style="{StaticResource TextBlockButtonStyle}" />
                     </StackPanel>
 
                     <!--#endregion-->
@@ -448,33 +480,20 @@
                     <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
                     <HyperlinkButton x:Uid="BtnContributors" NavigateUri="https://github.com/EdiWang/Character-Map-UWP/graphs/contributors" />
 
-
-                    <StackPanel
+                    <Button
+                        x:Name="BtnReview"
+                        x:Uid="BtnRateAndReview"
                         Margin="0 24 0 0"
                         HorizontalAlignment="Stretch"
-                        Spacing="12">
-
-                        <Button
-                            x:Name="BtnReview"
-                            x:Uid="BtnRateAndReview"
-                            HorizontalAlignment="Stretch"
-                            Click="BtnReview_Click"
-                            Style="{StaticResource ButtonRevealStyle}" />
-
-                        <!--<Button
-                            HorizontalAlignment="Stretch"
-                            Content="Feedback"
-                            Style="{StaticResource ButtonRevealStyle}" />-->
-
-                        <Button
-                            x:Name="BtnRestart"
-                            x:Uid="RestartButton"
-                            Margin="0 16 0 0"
-                            HorizontalAlignment="Stretch"
-                            Click="BtnRestart_Click"
-                            Style="{StaticResource ButtonRevealStyle}" />
-
-                    </StackPanel>
+                        Click="BtnReview_Click"
+                        Style="{StaticResource ButtonRevealStyle}" />
+                    <Button
+                        x:Name="BtnRestart"
+                        x:Uid="RestartButton"
+                        Margin="0 24 0 0"
+                        HorizontalAlignment="Stretch"
+                        Click="BtnRestart_Click"
+                        Style="{StaticResource ButtonRevealStyle}" />
 
                 </StackPanel>
 

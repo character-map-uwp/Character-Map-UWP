@@ -25,10 +25,12 @@ using CharacterMap.Controls;
 using CharacterMap.Models;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI.ViewManagement;
+using Windows.UI.Core.AnimationMetrics;
+
 
 namespace CharacterMap.Views
 {
-    public sealed partial class MainPage : Page, INotifyPropertyChanged, IInAppNotificationPresenter
+    public sealed partial class MainPage : Page, INotifyPropertyChanged, IInAppNotificationPresenter, IPrintPresenter
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -41,8 +43,6 @@ namespace CharacterMap.Views
         public object ThemeLock { get; } = new object();
 
         private UISettings _uiSettings { get; }
-
-        private bool _isCtrlKeyPressed;
 
         public MainPage()
         {
@@ -60,6 +60,11 @@ namespace CharacterMap.Views
             MainDispatcher = Dispatcher;
             Messenger.Default.Register<CollectionsUpdatedMessage>(this, OnCollectionsUpdated);
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
+            Messenger.Default.Register<PrintRequestedMessage>(this, m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    PrintView.Show(this);
+            });
 
             this.SizeChanged += MainPage_SizeChanged;
 
@@ -124,12 +129,17 @@ namespace CharacterMap.Views
                             SearchBox,
                             BtnSettings
                         },
-                        new List<FrameworkElement>
+                        new List<UIElement>
                         {
-                            FontMap, FontListGrid
+                            FontsSemanticZoom, 
+                            FontMap.CharGridHeader, 
+                            FontMap.SplitterContainer,
+                            FontMap.CharGrid,
+                            FontMap.PreviewGrid
                         });
                 }
             }
+
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -211,26 +221,31 @@ namespace CharacterMap.Views
             SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont);
         }
 
-        private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Control)
-                _isCtrlKeyPressed = false;
-        }
-
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control)
+            var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
+            if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
-                _isCtrlKeyPressed = true;
-                return;
-            }
+                // Check to see if any basic modals are open first
+                if ((SettingsView != null && SettingsView.IsOpen)
+                    || (PrintPresenter != null && PrintPresenter.Child != null))
+                    return;
 
-            if (_isCtrlKeyPressed)
-            {
                 switch (e.Key)
                 {
                     case VirtualKey.C:
                         FontMap.TryCopy();
+                        break;
+                    case VirtualKey.N:
+                        if (ViewModel.SelectedFont is InstalledFont fnt)
+                            _ = FontMapView.CreateNewViewForFontAsync(fnt);
+                        break;
+                    case VirtualKey.P:
+                        Messenger.Default.Send(new PrintRequestedMessage());
+                        break;
+                    case VirtualKey.Delete:
+                        if (ViewModel.SelectedFont is InstalledFont font && font.HasImportedFiles)
+                            FlyoutHelper.RequestDelete(font);
                         break;
                 }
             }
@@ -521,6 +536,19 @@ namespace CharacterMap.Views
 
 
 
+        /* Printing */
+
+        public Border GetPresenter()
+        {
+            this.FindName(nameof(PrintPresenter));
+            return PrintPresenter;
+        }
+
+        public FontMapView GetFontMap() => FontMap;
+
+
+
+
         /* Notifications */
 
         public InAppNotification GetNotifier()
@@ -574,11 +602,11 @@ namespace CharacterMap.Views
 
             Composition.StartCentering(v);
 
-            int duration = 200;
+            int duration = 350;
             var ani = v.Compositor.CreateVector3KeyFrameAnimation();
             ani.Target = nameof(v.Scale);
             ani.InsertKeyFrame(1, new System.Numerics.Vector3(1.15f, 1.15f, 0));
-            ani.Duration = TimeSpan.FromMilliseconds(300);
+            ani.Duration = TimeSpan.FromMilliseconds(duration);
 
             var op = Composition.CreateFade(v.Compositor, 0, null, duration);
 

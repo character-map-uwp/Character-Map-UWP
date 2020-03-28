@@ -1,0 +1,556 @@
+﻿<views:ViewBase
+    x:Class="CharacterMap.Views.PrintView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:core="using:CharacterMap.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:CharacterMap.Models"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
+    xmlns:views="using:CharacterMap.Views"
+    xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
+    d:DesignHeight="720"
+    d:DesignWidth="1280"
+    Background="Transparent"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <Style x:Key="SubheaderTextBlockStyle" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Margin" Value="0 12 0 4" />
+        </Style>
+        <Style x:Key="DescriptionStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="Opacity" Value="0.7" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Margin" Value="0 0 0 8" />
+            <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+        </Style>
+        <Style x:Key="HeaderStyle" TargetType="TextBlock">
+            <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Margin" Value="0 20 0 4" />
+        </Style>
+        <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0 4 0 2" />
+            <Setter Property="FontStyle" Value="Italic" />
+            <Setter Property="OpticalMarginAlignment" Value="None" />
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="MinWidth" Value="200" />
+        </Style>
+
+        <Style x:Key="SpacerStyle" TargetType="Border">
+            <Setter Property="Height" Value="1" />
+            <Setter Property="Background" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
+            <Setter Property="Opacity" Value="0.3" />
+            <Setter Property="Margin" Value="0 24 0 12" />
+        </Style>
+
+        <DataTemplate x:Key="HeaderTemplate">
+            <TextBlock Style="{StaticResource HeaderStyle}" Text="{Binding}" />
+        </DataTemplate>
+
+        <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
+            <Setter Property="MinWidth" Value="168" />
+            <Setter Property="HeaderTemplate" Value="{StaticResource HeaderTemplate}" />
+        </Style>
+
+        <Style x:Name="NumberBoxSpinButtonStyle" BasedOn="{StaticResource DefaultRepeatButtonStyle}" TargetType="RepeatButton">
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="MinWidth" Value="34" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="Background" Value="{ThemeResource TextControlBackground}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}" />
+            <Setter Property="BorderThickness" Value="{ThemeResource NumberBoxSpinButtonBorderThickness}" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+        </Style>
+
+        <ControlTemplate x:Key="HorizontalNumberBoxTemplate" TargetType="muxc:NumberBox">
+            <Grid>
+                <Grid.Resources>
+                    <ResourceDictionary>
+                        <ResourceDictionary.ThemeDictionaries>
+                            <ResourceDictionary x:Key="Light">
+                                <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
+                                <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="Dark">
+                                <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="TextControlBorderBrush" />
+                                <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="TextControlBorderBrush" />
+                            </ResourceDictionary>
+                            <ResourceDictionary x:Key="HighContrast">
+                                <StaticResource x:Key="RepeatButtonBorderBrushPointerOver" ResourceKey="SystemControlHighlightBaseMediumLowBrush" />
+                                <StaticResource x:Key="RepeatButtonBorderBrushPressed" ResourceKey="SystemControlHighlightTransparentBrush" />
+                            </ResourceDictionary>
+                        </ResourceDictionary.ThemeDictionaries>
+                    </ResourceDictionary>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroup x:Name="UpSpinButtonEnabledStates">
+                        <VisualState x:Name="UpSpinButtonEnabled" />
+                        <VisualState x:Name="UpSpinButtonDisabled">
+                            <VisualState.Setters>
+                                <Setter Target="UpSpinButton.IsEnabled" Value="False" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                    <VisualStateGroup x:Name="DownSpinButtonEnabledStates">
+                        <VisualState x:Name="DownSpinButtonEnabled" />
+                        <VisualState x:Name="DownSpinButtonDisabled">
+                            <VisualState.Setters>
+                                <Setter Target="DownSpinButton.IsEnabled" Value="False" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateManager.VisualStateGroups>
+
+                <RepeatButton
+                    x:Name="DownSpinButton"
+                    Grid.Row="1"
+                    BorderThickness="1 1 0 1"
+                    Content="&#xE00E;"
+                    CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource LeftCornerRadiusFilterConverter}}"
+                    FontSize="{TemplateBinding FontSize}"
+                    Style="{StaticResource NumberBoxSpinButtonStyle}" />
+
+                <TextBox
+                    x:Name="InputBox"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    MinWidth="50"
+                    CornerRadius="0"
+                    PlaceholderText="{TemplateBinding PlaceholderText}"
+                    PreventKeyboardDisplayOnProgrammaticFocus="{TemplateBinding PreventKeyboardDisplayOnProgrammaticFocus}"
+                    SelectionHighlightColor="{TemplateBinding SelectionHighlightColor}"
+                    TextReadingOrder="{TemplateBinding TextReadingOrder}" />
+
+                <RepeatButton
+                    x:Name="UpSpinButton"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Content="&#xE00F;"
+                    CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
+                    FontSize="{TemplateBinding FontSize}"
+                    Style="{StaticResource NumberBoxSpinButtonStyle}" />
+            </Grid>
+        </ControlTemplate>
+
+
+    </UserControl.Resources>
+
+    <Grid x:Name="LayoutRoot">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="AUto" />
+        </Grid.RowDefinitions>
+
+        <Grid
+            x:Name="HeaderGrid"
+            Height="45"
+            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+            Loading="HeaderGrid_Loading"
+            RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(Settings), Mode=OneWay}">
+            <TextBlock
+                x:Uid="PrintViewTitle"
+                Margin="20 0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontSize="22"
+                FontWeight="SemiLight"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}" />
+
+            <AppBarButton
+                x:Name="BtnClose"
+                x:Uid="BtnClose"
+                Width="45"
+                Height="45"
+                HorizontalAlignment="Right"
+                Click="{x:Bind Hide}"
+                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}">
+                <SymbolIcon Symbol="Cancel" />
+            </AppBarButton>
+
+        </Grid>
+
+        <Grid
+            x:Name="ContentPanel"
+            Grid.Row="1"
+            ColumnSpacing="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.8*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Requires it's own element to enable theme shadows  -->
+            <Border
+                x:Name="ContentBackground"
+                Grid.ColumnSpan="2"
+                Background="{StaticResource DefaultAcrylicBrush}" />
+
+            <ScrollViewer x:Name="ContentScroller">
+                <StackPanel
+                    x:Name="OptionsPanel"
+                    Margin="20 20 20 120"
+                    ChildrenTransitions="{StaticResource RepositionTransitions}">
+
+                    <StackPanel>
+                        <TextBlock x:Uid="PrintDataHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                        <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
+                                    <TextBlock
+                                        Margin="4 2 0 0"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="12"
+                                        Text="&#xE019;"
+                                        TextLineBounds="Tight" />
+                                </StackPanel>
+                            </Button.Content>
+                            <Button.Flyout>
+                                <Flyout
+                                    x:Name="FilterFlyout"
+                                    win1903:ShouldConstrainToRootBounds="False"
+                                    Opening="Flyout_Opening">
+                                    <Flyout.FlyoutPresenterStyle>
+                                        <win1903:Style TargetType="FlyoutPresenter">
+                                            <Setter Property="AllowFocusOnInteraction" Value="False" />
+                                            <Setter Property="Margin" Value="12 0 0 0" />
+                                            <Setter Property="Padding" Value="0 12" />
+                                            <Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}" />
+                                            <Setter Property="BorderBrush" Value="DarkGray" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                                            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
+                                            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+                                            <Setter Property="IsDefaultShadowEnabled" Value="False" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="FlyoutPresenter">
+                                                        <ContentPresenter
+                                                            Padding="{TemplateBinding Padding}"
+                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                            Background="{TemplateBinding Background}"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            Content="{TemplateBinding Content}"
+                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                            CornerRadius="{TemplateBinding CornerRadius}" />
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </win1903:Style>
+                                    </Flyout.FlyoutPresenterStyle>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+
+                                        <StackPanel>
+                                            <TextBlock
+                                                x:Uid="UnicodeFiltersTitle"
+                                                Margin="12 12 0 6"
+                                                Style="{StaticResource HeaderStyle}" />
+
+                                            <Grid>
+                                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                                    <AppBarButton
+                                                        x:Uid="AppBtnSelectAll"
+                                                        Click="FilterSelectAll_Click"
+                                                        Icon="SelectAll"
+                                                        Style="{StaticResource LabelAppBarButtonStyle}" />
+                                                    <AppBarButton
+                                                        x:Uid="AppBtnClear"
+                                                        Click="FilterClear_Click"
+                                                        Icon="ClearSelection"
+                                                        Style="{StaticResource LabelAppBarButtonStyle}" />
+                                                </StackPanel>
+
+                                                <AppBarButton
+                                                    x:Uid="AppBtnReset"
+                                                    HorizontalAlignment="Right"
+                                                    Click="FilterRefresh_Click"
+                                                    Icon="Refresh"
+                                                    Style="{StaticResource LabelAppBarButtonStyle}" />
+                                            </Grid>
+                                        </StackPanel>
+
+
+
+                                        <GridView
+                                            x:Name="CategoryList"
+                                            Grid.Row="1"
+                                            Width="440"
+                                            MaxHeight="500"
+                                            Padding="12 12 0 48"
+                                            SelectionMode="None">
+                                            <GridView.ItemContainerTransitions>
+                                                <TransitionCollection />
+                                            </GridView.ItemContainerTransitions>
+                                            <GridView.ItemTemplate>
+                                                <DataTemplate x:DataType="viewmodels:UnicodeCategoryModel">
+                                                    <CheckBox
+                                                        Width="200"
+                                                        Content="{x:Bind DisplayName}"
+                                                        IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
+                                                </DataTemplate>
+                                            </GridView.ItemTemplate>
+                                        </GridView>
+
+                                        <Button
+                                            x:Uid="BtnApply"
+                                            Grid.Row="2"
+                                            Width="200"
+                                            Margin="12 12 12 0"
+                                            HorizontalAlignment="Right"
+                                            Click="FilterAccept_Click"
+                                            Style="{StaticResource DefaultButtonStyle}" />
+
+                                    </Grid>
+
+                                </Flyout>
+                            </Button.Flyout>
+                        </Button>
+                        <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
+
+                        <Border Style="{StaticResource SpacerStyle}" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock x:Uid="PrintViewLayoutHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                        <TextBlock x:Uid="PrintViewCharSize" Style="{StaticResource HeaderStyle}" />
+                        <Slider
+                            HorizontalAlignment="Stretch"
+                            IsThumbToolTipEnabled="True"
+                            Maximum="224"
+                            Minimum="64"
+                            StepFrequency="2"
+                            TickFrequency="4"
+                            TickPlacement="Outside"
+                            Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
+                        <TextBlock>
+                            <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" />
+                            <Run Text="px" />
+                        </TextBlock>
+
+                        <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />-->
+                        <CheckBox
+                            x:Uid="ChkBxShowBorders"
+                            Margin="0 16 0 -8"
+                            IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}" />
+
+                        <controls:WrapPanel ChildrenTransitions="{StaticResource RepositionTransitions}" HorizontalSpacing="24">
+                            <ComboBox
+                                x:Uid="CbListStyle"
+                                ItemsSource="{x:Bind Layouts}"
+                                SelectedIndex="0"
+                                SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:PrintLayout">
+                                        <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:PrintLayout))}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <ComboBox
+                                x:Uid="CbCharacterLabel"
+                                ItemsSource="{x:Bind Annotations}"
+                                SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate x:DataType="models:GlyphAnnotation">
+                                        <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </controls:WrapPanel>
+
+                        <Border Style="{StaticResource SpacerStyle}" />
+                    </StackPanel>
+
+                    <StackPanel>
+                        <TextBlock x:Uid="PrintViewPageSetupHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                        <TextBlock x:Uid="PrintViewPageRange" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="PrintViewPageRangeDesc" Style="{StaticResource DescriptionStyle}" />
+                        <controls:WrapPanel
+                            ChildrenTransitions="{StaticResource RepositionTransitions}"
+                            HorizontalSpacing="24"
+                            Orientation="Horizontal"
+                            VerticalSpacing="12">
+                            <muxc:NumberBox
+                                x:Uid="PrintViewPageSelector"
+                                Maximum="{x:Bind PageCount, Mode=OneWay}"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Inline"
+                                Value="{x:Bind ViewModel.FirstPage, Mode=TwoWay}" />
+
+                            <muxc:NumberBox
+                                x:Uid="PrintViewPageRangeSelector"
+                                Maximum="{x:Bind GetMaxPageRange(ViewModel.FirstPage, PageCount), Mode=OneWay}"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Inline"
+                                Value="{x:Bind ViewModel.PagesToPrint, Mode=TwoWay}" />
+                        </controls:WrapPanel>
+
+                        <TextBlock Style="{StaticResource HintStyle}" Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
+
+                        <ComboBox
+                            x:Uid="PrintViewPageOrientation"
+                            SelectedIndex="0"
+                            SelectionChanged="RadioButtons_SelectionChanged">
+                            <ComboBoxItem x:Uid="CbiPageOrientationPortrait" />
+                            <ComboBoxItem x:Uid="CbiPageOrientationLandscape" />
+                        </ComboBox>
+
+                        <TextBlock x:Uid="PrintViewHorizontalMarginHeader" Style="{StaticResource HeaderStyle}" />
+                        <Slider
+                            HorizontalAlignment="Stretch"
+                            IsThumbToolTipEnabled="True"
+                            Maximum="84"
+                            Minimum="44"
+                            StepFrequency="2"
+                            TickFrequency="4"
+                            TickPlacement="Outside"
+                            Value="{x:Bind ViewModel.HorizontalMargin, Mode=TwoWay}" />
+                        <TextBlock>
+                            <Run Text="{x:Bind ViewModel.HorizontalMargin, Mode=OneWay}" />
+                            <Run Text="px" />
+                        </TextBlock>
+
+                        <TextBlock x:Uid="PrintViewVerticalMarginHeader" Style="{StaticResource HeaderStyle}" />
+                        <Slider
+                            HorizontalAlignment="Stretch"
+                            IsThumbToolTipEnabled="True"
+                            Maximum="84"
+                            Minimum="44"
+                            StepFrequency="2"
+                            TickFrequency="4"
+                            TickPlacement="Outside"
+                            Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}" />
+                        <TextBlock>
+                            <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
+                            <Run Text="px" />
+                        </TextBlock>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <Grid
+                Grid.Column="1"
+                Margin="12"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <StackPanel x:Name="PreviewOptions" Grid.Row="0">
+
+                    <CheckBox
+                        x:Uid="CbShowMargins"
+                        HorizontalAlignment="Center"
+                        IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
+                        IsThreeState="False" />
+
+                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                        <TextBlock x:Uid="PrintViewPreviewingLabel" VerticalAlignment="Center" />
+                        <muxc:NumberBox
+                            Margin="8 0"
+                            LargeChange="1"
+                            Maximum="{x:Bind PageCount, Mode=OneWay}"
+                            Minimum="1"
+                            SmallChange="1"
+                            SpinButtonPlacementMode="Inline"
+                            Template="{StaticResource HorizontalNumberBoxTemplate}"
+                            ValueChanged="NumberBox_ValueChanged"
+                            Value="{x:Bind CurrentPage, Mode=TwoWay}" />
+                        <TextBlock VerticalAlignment="Center">
+                            <Run x:Uid="PrintViewOfLabel" />
+                            <Run Text="{x:Bind PageCount, Mode=OneWay}" />
+                            <!--<Run Text="(of" />
+                        <Run Text="{x:Bind PageCount, Mode=OneWay}" /><Run Text=")" />-->
+                        </TextBlock>
+                    </StackPanel>
+
+                    <TextBlock
+                        x:Uid="PrintViewPreviewOutOfBoundsLabel"
+                        Margin="0 4 0 0"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource HintStyle}"
+                        TextAlignment="Center"
+                        Visibility="{x:Bind IsOutOfRange(ViewModel.FirstPage, ViewModel.PagesToPrint, CurrentPage), Mode=OneWay}" />
+
+                </StackPanel>
+
+                <Viewbox
+                    x:Name="PreviewViewBox"
+                    Grid.Row="1"
+                    Margin="12"
+                    HorizontalAlignment="Center"
+                    IsHitTestVisible="False"
+                    Stretch="Uniform" />
+
+            </Grid>
+        </Grid>
+
+
+        <Grid
+            x:Name="BottomBar"
+            Grid.Row="2"
+            Background="{ThemeResource SystemAccentColorDark2}">
+
+            <TextBlock
+                x:Name="BottomLabel"
+                Margin="12 0"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Foreground="White"
+                TextLineBounds="Tight">
+                <Run Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
+            </TextBlock>
+
+            <StackPanel
+                x:Name="BottomButtonOptions"
+                Margin="8"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                RequestedTheme="Dark"
+                Spacing="8">
+                <Button
+                    x:Name="BtnContinue"
+                    x:Uid="BtnContinue"
+                    Width="150"
+                    Click="BtnContinue_Click"
+                    IsEnabled="{x:Bind CanContinue, Mode=OneWay}"
+                    Style="{StaticResource AccentButtonStyle}" />
+                <Button
+                    x:Uid="BtnCancel"
+                    Width="150"
+                    Click="{x:Bind Hide}"
+                    Style="{StaticResource ButtonRevealStyle}" />
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</views:ViewBase>

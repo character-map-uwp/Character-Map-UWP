@@ -27,7 +27,7 @@ namespace CharacterMap.Controls
         public bool ShowColorGlyphs { get; set; }
         public double Size { get; set; }
         public bool EnableReposition { get; set; }
-        public bool ShowUnicode { get; set; }
+        public GlyphAnnotation Annotation { get; set; }
     }
 
 
@@ -125,21 +125,25 @@ namespace CharacterMap.Controls
 
         #region ShowUnicodeDescription
 
-        public bool ShowUnicodeDescription
+        public GlyphAnnotation ItemAnnotation
         {
-            get { return (bool)GetValue(ShowUnicodeDescriptionProperty); }
-            set { SetValue(ShowUnicodeDescriptionProperty, value); }
+            get { return (GlyphAnnotation)GetValue(ItemAnnotationProperty); }
+            set { SetValue(ItemAnnotationProperty, value); }
         }
 
-        public static readonly DependencyProperty ShowUnicodeDescriptionProperty =
-            DependencyProperty.Register(nameof(ShowUnicodeDescription), typeof(bool), typeof(CharacterGridView), new PropertyMetadata(false, (d, e) =>
+        // Using a DependencyProperty as the backing store for ItemAnnotation.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ItemAnnotationProperty =
+            DependencyProperty.Register("ItemAnnotation", typeof(GlyphAnnotation), typeof(CharacterGridView), new PropertyMetadata(GlyphAnnotation.None, (d, e) =>
             {
-                if (d is CharacterGridView g && e.NewValue is bool b)
+                if (d is CharacterGridView g && e.NewValue is GlyphAnnotation b)
                 {
-                    g._templateSettings.ShowUnicode = b;
+                    g._templateSettings.Annotation = b;
                     g.UpdateUnicode(b);
                 }
             }));
+
+
+
 
         #endregion
 
@@ -165,9 +169,9 @@ namespace CharacterMap.Controls
 
         #endregion
 
-        private XamlDirect _xamlDirect { get; }
+        private XamlDirect _xamlDirect = null;
 
-        private CharacterGridViewTemplateSettings _templateSettings { get; }
+        private CharacterGridViewTemplateSettings _templateSettings = null;
 
         private ImplicitAnimationCollection _repositionCollection = null;
 
@@ -220,6 +224,7 @@ namespace CharacterMap.Controls
             // 2 - Use XAML direct to set new properties, rather than through DP's
             // 3 - Access any required data properties from parents through normal properties, 
             //     not DP's - DP access can be order of magnitudes slower.
+            // Note : This will be faster via C++ as it avoids all marshaling costs.
 
             // Assumed Structure:
             // -- Grid
@@ -228,56 +233,68 @@ namespace CharacterMap.Controls
 
             XamlBindingHelper.SuspendRendering(item);
 
-            double size = _templateSettings.Size;
             IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot);
 
             _xamlDirect.SetObjectProperty(go, XamlPropertyIndex.FrameworkElement_Tag, c);
-            _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Width, size);
-            _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Height, size);
+            _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Width, _templateSettings.Size);
+            _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Height, _templateSettings.Size);
 
             IXamlDirectObject cld = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.Panel_Children);
             IXamlDirectObject o = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 0);
-
-            _xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, _templateSettings.FontFamily);
-            _xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStretch, (uint)_templateSettings.FontFace.Stretch);
-            _xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStyle, (uint)_templateSettings.FontFace.Style);
-            _xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontWeight, _templateSettings.FontFace.Weight);
-            _xamlDirect.SetBooleanProperty(o, XamlPropertyIndex.TextBlock_IsColorFontEnabled, _templateSettings.ShowColorGlyphs);
-            _xamlDirect.SetDoubleProperty(o, XamlPropertyIndex.TextBlock_FontSize, size / 2d);
-
-            UpdateColorFont(null, o, _templateSettings.ShowColorGlyphs);
-            UpdateTypography(o, _templateSettings.Typography);
-
-            _xamlDirect.SetStringProperty(o, XamlPropertyIndex.TextBlock_Text, c.Char);
+            SetGlyphProperties(_xamlDirect, o, _templateSettings, c);
 
             IXamlDirectObject o2 = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 1);
-            if (_templateSettings.ShowUnicode)
+            if (o2 != null)
             {
-                _xamlDirect.SetStringProperty(o2, XamlPropertyIndex.TextBlock_Text, c.UnicodeString);
-                _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 0);
+                switch(_templateSettings.Annotation)
+                {
+                    case GlyphAnnotation.None:
+                        _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 1);
+                        break;
+                    default:
+                        _xamlDirect.SetStringProperty(o2, XamlPropertyIndex.TextBlock_Text, c.GetAnnotation(_templateSettings.Annotation));
+                        _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 0);
+                        break;
+                }
             }
-            else
-            {
-                _xamlDirect.SetEnumProperty(o2, XamlPropertyIndex.UIElement_Visibility, 1);
-            }
+            
 
             XamlBindingHelper.ResumeRendering(item);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void UpdateColorFont(TextBlock block, IXamlDirectObject xd, bool value)
+        internal static void SetGlyphProperties(XamlDirect xamlDirect, IXamlDirectObject o, CharacterGridViewTemplateSettings templateSettings, Character c)
+        {
+            if (o == null)
+                return;
+
+            xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, templateSettings.FontFamily);
+            xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStretch, (uint)templateSettings.FontFace.Stretch);
+            xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStyle, (uint)templateSettings.FontFace.Style);
+            xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontWeight, templateSettings.FontFace.Weight);
+            xamlDirect.SetBooleanProperty(o, XamlPropertyIndex.TextBlock_IsColorFontEnabled, templateSettings.ShowColorGlyphs);
+            xamlDirect.SetDoubleProperty(o, XamlPropertyIndex.TextBlock_FontSize, templateSettings.Size / 2d);
+
+            UpdateColorFont(xamlDirect, null, o, templateSettings.ShowColorGlyphs);
+            UpdateTypography(xamlDirect, o, templateSettings.Typography);
+
+            xamlDirect.SetStringProperty(o, XamlPropertyIndex.TextBlock_Text, c.Char);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static void UpdateColorFont(XamlDirect xamlDirect, TextBlock block, IXamlDirectObject xd, bool value)
         {
             if (xd != null)
-                _xamlDirect.SetBooleanProperty(xd, XamlPropertyIndex.TextBlock_IsColorFontEnabled, value);
+                xamlDirect.SetBooleanProperty(xd, XamlPropertyIndex.TextBlock_IsColorFontEnabled, value);
             else
                 block.IsColorFontEnabled = value;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void UpdateTypography(IXamlDirectObject o, TypographyFeatureInfo info)
+        public static void UpdateTypography(XamlDirect xamlDirect, IXamlDirectObject o, TypographyFeatureInfo info)
         {
             CanvasTypographyFeatureName f = info == null ? CanvasTypographyFeatureName.None : info.Feature;
-            TypographyBehavior.SetTypography(o, f, _xamlDirect);
+            TypographyBehavior.SetTypography(o, f, xamlDirect);
         }
 
         void UpdateColorsFonts(bool value)
@@ -289,7 +306,7 @@ namespace CharacterMap.Controls
             {
                 Grid g = (Grid)item.ContentTemplateRoot;
                 TextBlock tb = (TextBlock)g.Children[0];
-                UpdateColorFont(tb, null, value);
+                UpdateColorFont(_xamlDirect, tb, null, value);
             }
         }
 
@@ -300,42 +317,48 @@ namespace CharacterMap.Controls
 
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
-                Grid g = (Grid)item.ContentTemplateRoot;
-                TextBlock tb = (TextBlock)g.Children[0];
-                IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
-                UpdateTypography(o, info);
+                if (item.ContentTemplateRoot is Grid g)
+                {
+                    TextBlock tb = (TextBlock)g.Children[0];
+                    IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
+                    UpdateTypography(_xamlDirect, o, info);
+                }
             }
         }
 
-        void UpdateUnicode(bool value)
+        void UpdateUnicode(GlyphAnnotation value)
         {
             if (ItemsSource == null || ItemsPanelRoot == null)
                 return;
 
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
-                Grid g = (Grid)item.ContentTemplateRoot;
-                if (g.Tag is Character c)
+                if (item.ContentTemplateRoot is Grid g)
                 {
-                    TextBlock tb = (TextBlock)g.Children[1];
-                    tb.Text = c.UnicodeString;
-                    tb.Visibility = value ? Visibility.Visible : Visibility.Collapsed;
+                    if (g.Tag is Character c)
+                    {
+                        TextBlock tb = (TextBlock)g.Children[1];
+                        tb.Text = c.GetAnnotation(value);
+                        tb.Visibility = value != GlyphAnnotation.None ? Visibility.Visible : Visibility.Collapsed;
+                    }
                 }
             }
         }
 
         public void UpdateSize(double value)
         {
-            if (ItemsSource == null || ItemsPanelRoot == null)
+            ItemSize = value;
+            if (this.Items.Count == 0 || ItemsPanelRoot == null)
                 return;
 
-            ItemSize = value;
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
-                Grid g = (Grid)item.ContentTemplateRoot;
-                g.Width = value;
-                g.Height = value;
-                ((TextBlock)g.Children[0]).FontSize = value / 2d;
+                if (item.ContentTemplateRoot is Grid g)
+                {
+                    g.Width = value;
+                    g.Height = value;
+                    ((TextBlock)g.Children[0]).FontSize = value / 2d;
+                }
             }
         }
 

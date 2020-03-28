@@ -112,6 +112,7 @@ namespace CharacterMap.Services
         {
             var file = await _collectionsFolder.CreateFileAsync(
                 $"{fileName ?? Guid.NewGuid().ToString()}", CreationCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
+
             var collection = new UserFontCollection { Name = name, File = file };
             await SaveCollectionAsync(collection).ConfigureAwait(false);
 
@@ -141,16 +142,14 @@ namespace CharacterMap.Services
         {
             return Task.Run(async () =>
             {
-                using (var stream = await collection.File.OpenStreamForWriteAsync().ConfigureAwait(false))
-                using (var reader = new StreamWriter(stream))
+                using var stream = await collection.File.OpenStreamForWriteAsync().ConfigureAwait(false);
+                using var reader = new StreamWriter(stream);
+                stream.SetLength(0);
+                reader.Write(collection.Name);
+                foreach (var item in collection.Fonts)
                 {
-                    stream.SetLength(0);
-                    reader.Write(collection.Name);
-                    foreach (var item in collection.Fonts)
-                    {
-                        reader.WriteLine();
-                        reader.Write(item);
-                    }
+                    reader.WriteLine();
+                    reader.Write(item);
                 }
             });
 

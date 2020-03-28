@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 
 namespace CharacterMap.Helpers
 {
@@ -22,20 +23,43 @@ namespace CharacterMap.Helpers
     {
         private static UserCollectionsService _collections { get; } = ServiceLocator.Current.GetInstance<UserCollectionsService>();
 
+        public static void RequestDelete(InstalledFont font)
+        {
+            MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
+            var d = new ContentDialog
+            {
+                Title = Localization.Get("DlgDeleteFont/Title"),
+                IsPrimaryButtonEnabled = true,
+                IsSecondaryButtonEnabled = true,
+                PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
+                SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+            };
+
+            d.PrimaryButtonClick += (ds, de) =>
+            {
+                _ = MainPage.MainDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    main.TryRemoveFont(font);
+                });
+            };
+            _ = d.ShowAsync();
+        }
+
         public static void CreateMenu(
             MenuFlyout menu,
             InstalledFont font,
-            bool standalone)
+            bool standalone,
+            bool showAdvanced = false)
         {
             MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
 
-            void OpenInNewWindow(object s, RoutedEventArgs args)
+            static void OpenInNewWindow(object s, RoutedEventArgs args)
             {
                 if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
                     _ = FontMapView.CreateNewViewForFontAsync(fnt);
             }
 
-            async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
+            static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
                 {
@@ -45,11 +69,10 @@ namespace CharacterMap.Helpers
 
                     if (result.Success)
                         Messenger.Default.Send(new AppNotificationMessage(true, result));
-                    
                 }
             }
 
-            void CreateCollection_Click(object sender, RoutedEventArgs e)
+            static void CreateCollection_Click(object sender, RoutedEventArgs e)
             {
                 var d = new CreateCollectionDialog
                 {
@@ -57,6 +80,11 @@ namespace CharacterMap.Helpers
                 };
 
                 _ = d.ShowAsync();
+            }
+
+            void Print_Click(object sender, RoutedEventArgs e)
+            {
+                Messenger.Default.Send(new PrintRequestedMessage());
             }
 
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
@@ -69,31 +97,14 @@ namespace CharacterMap.Helpers
 
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
                     Messenger.Default.Send(new CollectionsUpdatedMessage());
-
                 }
             }
 
-            void DeleteMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+            static void DeleteMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is MenuFlyoutItem item && item.Tag is InstalledFont fnt)
                 {
-                    var d = new ContentDialog
-                    {
-                        Title = Localization.Get("DlgDeleteFont/Title"),
-                        IsPrimaryButtonEnabled = true,
-                        IsSecondaryButtonEnabled = true,
-                        PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
-                        SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
-                    };
-
-                    d.PrimaryButtonClick += (ds, de) =>
-                    {
-                        _ = MainPage.MainDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                        {
-                            main.TryRemoveFont(fnt);
-                        });
-                    };
-                    _ = d.ShowAsync();
+                    RequestDelete(fnt);
                 }
             }
 
@@ -118,24 +129,16 @@ namespace CharacterMap.Helpers
                         };
                         newWindow.Click += OpenInNewWindow;
                         menu.Items.Add(newWindow);
-                    }
 
-                    // Add "Delete Font" button
-                    if (!standalone)
-                    {
-                        if (font.HasImportedFiles)
+                        if (showAdvanced)
                         {
-                            var removeFont = new MenuFlyoutItem
+                            newWindow.KeyboardAccelerators.Add(new KeyboardAccelerator
                             {
-                                Text = Localization.Get("RemoveFontFlyout/Text"),
-                                Icon = new SymbolIcon {Symbol = Symbol.Delete},
-                                Tag = font
-                            };
-                            removeFont.Click += DeleteMenuFlyoutItem_Click;
-                            menu.Items.Add(removeFont);
+                                Key = Windows.System.VirtualKey.N,
+                                Modifiers = Windows.System.VirtualKeyModifiers.Control
+                            });
                         }
                     }
-
 
                     // Add "Add to Collection" button
                     MenuFlyoutSubItem newColl = new MenuFlyoutSubItem
@@ -177,29 +180,6 @@ namespace CharacterMap.Helpers
                     menu.Items.Add(coll);
                 }
 
-                // Only show the "Remove from Collection" menu item if:
-                //  -- we are not in a standalone window
-                //  AND
-                //  -- we are in a custom collection
-                //  OR 
-                //  -- we are in the Symbol Font collection, and this is a font that 
-                //     the user has manually tagged as a symbol font
-                if (!standalone)
-                {
-                    if (main.SelectedCollection != null ||
-                        (main.FontListFilter == 1 && !font.FontFace.IsSymbolFont))
-                    {
-                        var removeItem = new MenuFlyoutItem
-                        {
-                            Text = Localization.Get("RemoveFromCollectionItem/Text"),
-                            Icon = new SymbolIcon {Symbol = Symbol.Remove},
-                            Tag = font
-                        };
-                        removeItem.Click += RemoveFrom_Click;
-                        menu.Items.Add(removeItem);
-                    }
-                }
-
                 // Add items for each user Collection
                 if (_collections.Items.Count > 0)
                 {
@@ -207,11 +187,11 @@ namespace CharacterMap.Helpers
                     {
                         coll.Items.Add(new MenuFlyoutSeparator());
 
-                        foreach (var m in 
+                        foreach (var m in
                                 _collections.Items.Select(item => new MenuFlyoutItem
                                 {
-                                    DataContext = item, 
-                                    Text = item.Name, 
+                                    DataContext = item,
+                                    Text = item.Name,
                                     IsEnabled = !item.Fonts.Contains(font.Name)
                                 }))
                         {
@@ -220,7 +200,7 @@ namespace CharacterMap.Helpers
                                 m.Click += async (s, a) =>
                                 {
                                     UserFontCollection collection =
-                                        (UserFontCollection) ((FrameworkElement) s).DataContext;
+                                        (UserFontCollection)((FrameworkElement)s).DataContext;
                                     AddToCollectionResult result =
                                         await _collections.AddToCollectionAsync(font, collection);
 
@@ -235,8 +215,78 @@ namespace CharacterMap.Helpers
                         }
                     }
                 }
+
+                // Only show the "Remove from Collection" menu item if:
+                //  -- we are not in a standalone window
+                //  AND
+                //  -- we are in a custom collection
+                //  OR 
+                //  -- we are in the Symbol Font collection, and this is a font that 
+                //     the user has manually tagged as a symbol font
+                if (!standalone)
+                {
+                    if (main.SelectedCollection != null ||
+                        (main.FontListFilter == 1 && !font.FontFace.IsSymbolFont))
+                    {
+                        menu.Items.Add(new MenuFlyoutSeparator());
+
+                        var removeItem = new MenuFlyoutItem
+                        {
+                            Text = Localization.Get("RemoveFromCollectionItem/Text"),
+                            Icon = new SymbolIcon {Symbol = Symbol.Remove},
+                            Tag = font
+                        };
+                        removeItem.Click += RemoveFrom_Click;
+                        menu.Items.Add(removeItem);
+                    }
+                }
+                if (showAdvanced)
+                {
+                    if (Windows.Graphics.Printing.PrintManager.IsSupported())
+                    {
+                        MenuFlyoutItem item = new MenuFlyoutItem
+                        {
+                            Text = Localization.Get("BtnPrint/Content"),
+                            Icon = new SymbolIcon { Symbol = Symbol.Print }
+                        };
+
+                        item.KeyboardAccelerators.Add(new KeyboardAccelerator
+                        {
+                             Key = Windows.System.VirtualKey.P,
+                             Modifiers = Windows.System.VirtualKeyModifiers.Control
+                        });
+
+                        item.Click += Print_Click;
+                        menu.Items.Insert(standalone ? 0 : 1, item);
+                    }
+                }
+
+                // Add "Delete Font" button
+                if (!standalone)
+                {
+                    if (font.HasImportedFiles)
+                    {
+                        menu.Items.Add(new MenuFlyoutSeparator());
+
+                        var removeFont = new MenuFlyoutItem
+                        {
+                            Text = Localization.Get("RemoveFontFlyout/Text"),
+                            Icon = new SymbolIcon { Symbol = Symbol.Delete },
+                            Tag = font
+                        };
+
+                        if (showAdvanced)
+                            removeFont.KeyboardAccelerators.Add(new KeyboardAccelerator
+                            {
+                                Key = Windows.System.VirtualKey.Delete,
+                                Modifiers = Windows.System.VirtualKeyModifiers.Control
+                            });
+
+                        removeFont.Click += DeleteMenuFlyoutItem_Click;
+                        menu.Items.Add(removeFont);
+                    }
+                }
             }
         }
-
     }
 }

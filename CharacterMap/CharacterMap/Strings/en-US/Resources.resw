@@ -214,7 +214,7 @@
     <value>PNG Resolution (pixel)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
-    <value>Delete Font Family</value>
+    <value>Delete Font</value>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
     <value>Restart app</value>
@@ -499,7 +499,7 @@
     <value>Toggle Fullscreen</value>
   </data>
   <data name="DlgDeleteFont.Title" xml:space="preserve">
-    <value>Are you sure you want to delete this font from your collection?</value>
+    <value>Are you sure you want to delete this font from your library?</value>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>"{0}" collection deleted</value>
@@ -657,5 +657,135 @@ Turning this on can have a minor impact on scrolling performance.</value>
   <data name="TxtLoadingFonts.Text" xml:space="preserve">
     <value>loading fonts</value>
     <comment>intentionally lowercase for design reasons</comment>
+  </data>
+  <data name="AppBtnClear.Label" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="AppBtnReset.Label" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="AppBtnSelectAll.Label" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="BtnApply.Content" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="BtnCancel.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="BtnContinue.Content" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="BtnPrint.Content" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="CbCharacterLabel.Header" xml:space="preserve">
+    <value>Character Label</value>
+  </data>
+  <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
+    <value>Landscape</value>
+  </data>
+  <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
+    <value>Portrait</value>
+  </data>
+  <data name="CbListStyle.Header" xml:space="preserve">
+    <value>List Style</value>
+  </data>
+  <data name="CbShowMargins.Content" xml:space="preserve">
+    <value>Show margins</value>
+  </data>
+  <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
+    <value>Hide whitespace and control characters</value>
+  </data>
+  <data name="ChkBxShowBorders.Content" xml:space="preserve">
+    <value>Show borders</value>
+  </data>
+  <data name="GlyphAnnotation_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
+    <value>Unicode Hex</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
+    <value>Unicode Index</value>
+  </data>
+  <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
+    <value>Choose character groups to display</value>
+  </data>
+  <data name="PrintDataHeader.Text" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="PrintViewCharSize.Text" xml:space="preserve">
+    <value>Character Size</value>
+  </data>
+  <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
+    <value>Horizontal Margin</value>
+  </data>
+  <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="PrintViewOfLabel.Text" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="PrintViewPageOrientation.Header" xml:space="preserve">
+    <value>Page Orientation</value>
+  </data>
+  <data name="PrintViewPageRange.Text" xml:space="preserve">
+    <value>Page Range</value>
+  </data>
+  <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
+    <value>Up to 50 pages can be printed at a time. Select the range of pages to print here.</value>
+  </data>
+  <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
+    <value>Pages to print:</value>
+  </data>
+  <data name="PrintViewPageSelector.Header" xml:space="preserve">
+    <value>Start from page:</value>
+  </data>
+  <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
+    <value>Page Setup</value>
+  </data>
+  <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
+    <value>Previewing page</value>
+  </data>
+  <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
+    <value>This page is outside the current page range and will not be printed.
+You can change the page range in the Page Setup section.</value>
+  </data>
+  <data name="PrintViewPrintingLabel" xml:space="preserve">
+    <value>Printing pages {0} - {1}</value>
+  </data>
+  <data name="PrintViewTitle.Text" xml:space="preserve">
+    <value>Print Configuration</value>
+  </data>
+  <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
+    <value>Vertical Margin</value>
+  </data>
+  <data name="SettingsCharLabel.Text" xml:space="preserve">
+    <value>Character Label</value>
+  </data>
+  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
+    <value>Choose the label to show under each character. May have a minor effect on scrolling performance.</value>
+  </data>
+  <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
+    <value>Manage installed fonts</value>
+  </data>
+  <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
+    <value>Installed Fonts</value>
+  </data>
+  <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
+    <value>Windows theme settings</value>
+  </data>
+  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
+    <value>UNICODE CATEGORY FILTERS</value>
+  </data>
+  <data name="PrintLayout_Grid" xml:space="preserve">
+    <value>Grid</value>
+  </data>
+  <data name="PrintLayout_List" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="PrintLayout_TwoColumn" xml:space="preserve">
+    <value>Two Columns</value>
   </data>
 </root>

@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Services;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Ioc;
@@ -15,6 +16,14 @@ namespace CharacterMap.Core
 {
     public static class Converters
     {
+        public const string Auto = "Auto";
+        public const string Star = "*";
+
+        private static AppSettings _settings;
+        private static UserCollectionsService _userCollections;
+
+
+
         public static bool False(bool b) => !b;
         public static bool FalseFalse(bool b, bool c) => !b && !c;
         public static bool True(bool b) => b;
@@ -28,7 +37,7 @@ namespace CharacterMap.Core
         public static bool IsNull(object obj) => obj == null;
         public static bool IsNotNull(object obj) => obj != null;
 
-        public static string ToHex(int i) => (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1);
+        public static string ToHex(int i) => Unicode.GetHexValue(i);
 
         public static string GetWeightName(Windows.UI.Text.FontWeight weight)
         {
@@ -47,34 +56,29 @@ namespace CharacterMap.Core
         {
             return Utils.IsAccentColorDark() ? ElementTheme.Dark : ElementTheme.Light;
         }
+        public static double GetFontSize(int d) 
+            => d / 2d;
 
-        public static GridLength GridLengthAorB(bool input, string a, string b) 
+        public static GridLength GridLengthAorB(bool input, string a, string b)
             => input ? ReadFromString(a) : ReadFromString(b);
 
-        public static double GetFontSize(int d)
+        private static GridLength ReadFromString(string s) => s switch
         {
-            return d / 2d;
-        }
+            Auto => new GridLength(1, GridUnitType.Auto),
+            Star => new GridLength(1, GridUnitType.Star),
+            _ => new GridLength(double.Parse(s), GridUnitType.Pixel),
+        };
 
-        private static GridLength ReadFromString(string s)
+        public static string GetAnnotation(GlyphAnnotation a, int index) => a switch
         {
-            switch (s)
-            {
-                case Auto:
-                    return new GridLength(1, GridUnitType.Auto);
-                case Star:
-                    return new GridLength(1, GridUnitType.Star);
-                default:
-                    return new GridLength(double.Parse(s), GridUnitType.Pixel);
-            }
-        }
+            GlyphAnnotation.None => string.Empty,
+            GlyphAnnotation.UnicodeHex => $"U+{index:x4}".ToUpper(),
+            GlyphAnnotation.UnicodeIndex => index.ToString(),
+            _ => string.Empty
+        };
 
-
-        public const string Auto = "Auto";
-        public const string Star = "*";
-
-        private static AppSettings _settings;
-        private static UserCollectionsService _userCollections;
+        public static string GetLocalizedEnumName(Enum a) 
+            => Localization.Get($"{a.GetType().Name}_{a}");
 
         public static FontFamily GetPreviewFontSource(FontVariant variant)
         {
@@ -98,11 +102,11 @@ namespace CharacterMap.Core
             if (size < 600)
                 return $"{size:0.00} KB";
 
-            size = size / 1024;
+            size /= 1024;
             return $"{size:0.00} MB";
         }
 
-        public static Models.SupportedLanguage GetSelectedLanguage(string selected, IList<Models.SupportedLanguage> languages) 
+        public static SupportedLanguage GetSelectedLanguage(string selected, IList<Models.SupportedLanguage> languages) 
             => languages.FirstOrDefault(i => i.LanguageID == selected);
 
         public static string GetLanguageDisplayFromID(string id)

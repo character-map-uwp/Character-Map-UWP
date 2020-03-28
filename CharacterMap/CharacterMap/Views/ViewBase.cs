@@ -20,6 +20,18 @@ namespace CharacterMap.Views
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        protected bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (!EqualityComparer<T>.Default.Equals(storage, value))
+            {
+                storage = value;
+                OnPropertyChanged(propertyName);
+                return true;
+            }
+
+            return false;
+        }
+
         protected void RunOnUI(Action a)
         {
             if (Dispatcher.HasThreadAccess)

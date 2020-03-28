@@ -29,10 +29,11 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.ComponentModel;
 using Windows.UI.Core;
 using CharacterMap.Annotations;
+using CharacterMap.Controls;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter
+    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPrintPresenter
     {
         #region Dependency Properties
 
@@ -110,10 +111,8 @@ namespace CharacterMap.Views
                 Window.Current.Closed -= Current_Closed;
                 Window.Current.Closed += Current_Closed;
 
-                LayoutRoot.KeyUp -= LayoutRoot_KeyUp;
                 LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
-                LayoutRoot.KeyUp += LayoutRoot_KeyUp;
                 LayoutRoot.KeyDown += LayoutRoot_KeyDown;
             }
         }
@@ -125,6 +124,11 @@ namespace CharacterMap.Views
 
             Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
+            Messenger.Default.Register<PrintRequestedMessage>(this, m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    TryPrint();
+            });
 
             UpdateSearchStates();
             UpdateCharacterFit();
@@ -134,6 +138,7 @@ namespace CharacterMap.Views
             {
                 ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
             });
+
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -142,7 +147,6 @@ namespace CharacterMap.Views
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
-            LayoutRoot.KeyUp -= LayoutRoot_KeyUp;
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
             Messenger.Default.Unregister(this);
@@ -194,8 +198,8 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.AllowExpensiveAnimations):
                         CharGrid.EnableResizeAnimation = ViewModel.Settings.AllowExpensiveAnimations;
                         break;
-                    case nameof(AppSettings.ShowCharGridUnicode):
-                        CharGrid.ShowUnicodeDescription = ViewModel.Settings.ShowCharGridUnicode;
+                    case nameof(AppSettings.GlyphAnnotation):
+                        CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
                         break;
                     case nameof(AppSettings.DevToolsLanguage):
                         ViewModel.UpdateDevValues();
@@ -248,26 +252,18 @@ namespace CharacterMap.Views
             }
         }
 
-        private void LayoutRoot_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            if (e.Key == VirtualKey.Control)
-                _isCtrlKeyPressed = false;
-        }
-
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.Control)
-            {
-                _isCtrlKeyPressed = true;
-                return;
-            }
-
-            if (_isCtrlKeyPressed)
+            var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
+            if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
                 switch (e.Key)
                 {
                     case VirtualKey.C:
                         TryCopy();
+                        break;
+                    case VirtualKey.P:
+                        Messenger.Default.Send(new PrintRequestedMessage());
                         break;
                 }
             }
@@ -506,7 +502,8 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     menu,
                     font,
-                    IsStandalone);
+                    IsStandalone,
+                    true);
             }
         }
 
@@ -527,6 +524,27 @@ namespace CharacterMap.Views
                     CharGrid.ScrollIntoView(ViewModel.SelectedChar, ScrollIntoViewAlignment.Default);
                 }
             }).AsTask();
+        }
+
+
+
+
+        /* Print Helpers */
+
+        FontMapView IPrintPresenter.GetFontMap() => this;
+
+        Border IPrintPresenter.GetPresenter()
+        {
+            this.FindName(nameof(PrintPresenter));
+            return PrintPresenter;
+        }
+
+        private void TryPrint()
+        {
+            if (this.GetFirstAncestorOfType<MainPage>() is null)
+            {
+                PrintView.Show(this);
+            }
         }
 
 
@@ -594,7 +612,7 @@ namespace CharacterMap.Views
                 return;
 
             IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
-            CharGrid.UpdateTypography(p, info);
+            CharacterGridView.UpdateTypography(_xamlDirect, p, info);
         }
 
 
@@ -619,7 +637,6 @@ namespace CharacterMap.Views
         {
             Composition.SetThemeShadow(sender, 20, ShadowTarget);
         }
-
     }
 
 
