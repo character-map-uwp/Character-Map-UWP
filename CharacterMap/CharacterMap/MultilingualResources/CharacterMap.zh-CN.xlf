@@ -417,7 +417,7 @@
         </trans-unit>
         <trans-unit id="OptionColorFonts.Text" translate="yes" xml:space="preserve">
           <source>Color Fonts</source>
-          <target state="new">Color Fonts</target>
+          <target state="translated">有色字体</target>
         </trans-unit>
         <trans-unit id="OptionDecorativeFonts.Text" translate="yes" xml:space="preserve">
           <source>Decorative Fonts</source>
@@ -433,7 +433,7 @@
         </trans-unit>
         <trans-unit id="BtnSaveSvgRaw.Text" translate="yes" xml:space="preserve">
           <source>Save as SVG</source>
-          <target state="new">Save as SVG</target>
+          <target state="translated">保存为 SVG</target>
         </trans-unit>
         <trans-unit id="StatusBarFontCount" translate="yes" xml:space="preserve">
           <source>{0} Font Families</source>
@@ -441,7 +441,7 @@
         </trans-unit>
         <trans-unit id="FontPropFileSize.Text" translate="yes" xml:space="preserve">
           <source>File Size</source>
-          <target state="new">File Size</target>
+          <target state="translated">文件大小</target>
         </trans-unit>
         <trans-unit id="InstallTypeImported" translate="yes" xml:space="preserve">
           <source>Not Installed (Imported)</source>
@@ -457,7 +457,7 @@
         </trans-unit>
         <trans-unit id="DigSettings.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>OK</source>
-          <target state="new">OK</target>
+          <target state="translated">确定</target>
         </trans-unit>
         <trans-unit id="InstantSearchToggleHeader.Text" translate="yes" xml:space="preserve">
           <source>Instant Search</source>
@@ -485,7 +485,7 @@
         </trans-unit>
         <trans-unit id="NotificationImportFailed" translate="yes" xml:space="preserve">
           <source>Import Failed</source>
-          <target state="new">Import Failed</target>
+          <target state="translated">导入失败</target>
         </trans-unit>
         <trans-unit id="NotificationMultipleFontsAdded" translate="yes" xml:space="preserve">
           <source>{0} files were added to your collection</source>
@@ -513,7 +513,7 @@
         </trans-unit>
         <trans-unit id="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Fullscreen</source>
-          <target state="new">Toggle Fullscreen</target>
+          <target state="translated">切换全屏</target>
         </trans-unit>
         <trans-unit id="DlgDeleteFont.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this font from your library?</source>
@@ -521,7 +521,7 @@
         </trans-unit>
         <trans-unit id="NotificationCollectionDeleted" translate="yes" xml:space="preserve">
           <source>"{0}" collection deleted</source>
-          <target state="new">"{0}" collection deleted</target>
+          <target state="translated">"{0}" 集合已删除</target>
         </trans-unit>
         <trans-unit id="DlgException.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>OK</source>
@@ -557,7 +557,7 @@
         </trans-unit>
         <trans-unit id="BtnXAMLGeometry.Content" translate="yes" xml:space="preserve">
           <source>Click to view</source>
-          <target state="new">Click to view</target>
+          <target state="translated">点击以查看</target>
         </trans-unit>
         <trans-unit id="RbThemeDark.Content" translate="yes" xml:space="preserve">
           <source>Dark</source>
@@ -709,7 +709,7 @@ Turning this on can have a minor impact on scrolling performance.</target>
         </trans-unit>
         <trans-unit id="SettingsUnicodeHeader.Text" translate="yes" xml:space="preserve">
           <source>Show Unicode value in Character Grid</source>
-          <target state="new">Show Unicode value in Character Grid</target>
+          <target state="translated">在字符网格中显示 Unicode 值</target>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
@@ -725,64 +725,64 @@ Turning this on can have a minor impact on scrolling performance.</target>
         </trans-unit>
         <trans-unit id="BtnContributors.Content" translate="yes" xml:space="preserve">
           <source>Contributors</source>
-          <target state="new">Contributors</target>
+          <target state="translated">贡献者</target>
         </trans-unit>
         <trans-unit id="TxtLoadingFonts.Text" translate="yes" xml:space="preserve">
           <source>loading fonts</source>
-          <target state="new">loading fonts</target>
+          <target state="translated">正在加载字体</target>
           <note from="MultilingualBuild" annotates="source" priority="2">intentionally lowercase for design reasons</note>
         </trans-unit>
         <trans-unit id="AppBtnClear.Label" translate="yes" xml:space="preserve">
           <source>Clear</source>
-          <target state="new">Clear</target>
+          <target state="translated">清除</target>
         </trans-unit>
         <trans-unit id="AppBtnReset.Label" translate="yes" xml:space="preserve">
           <source>Reset</source>
-          <target state="new">Reset</target>
+          <target state="translated">重置</target>
         </trans-unit>
         <trans-unit id="AppBtnSelectAll.Label" translate="yes" xml:space="preserve">
           <source>Select All</source>
-          <target state="new">Select All</target>
+          <target state="translated">全选</target>
         </trans-unit>
         <trans-unit id="BtnApply.Content" translate="yes" xml:space="preserve">
           <source>Apply</source>
-          <target state="new">Apply</target>
+          <target state="translated">应用</target>
         </trans-unit>
         <trans-unit id="BtnCancel.Content" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="new">Cancel</target>
+          <target state="translated">取消</target>
         </trans-unit>
         <trans-unit id="BtnContinue.Content" translate="yes" xml:space="preserve">
           <source>Continue</source>
-          <target state="new">Continue</target>
+          <target state="translated">继续</target>
         </trans-unit>
         <trans-unit id="CbCharacterLabel.Header" translate="yes" xml:space="preserve">
           <source>Character Label</source>
-          <target state="new">Character Label</target>
+          <target state="translated">字符标签</target>
         </trans-unit>
         <trans-unit id="CbiPageOrientationLandscape.Content" translate="yes" xml:space="preserve">
           <source>Landscape</source>
-          <target state="new">Landscape</target>
+          <target state="translated">横向</target>
         </trans-unit>
         <trans-unit id="CbiPageOrientationPortrait.Content" translate="yes" xml:space="preserve">
           <source>Portrait</source>
-          <target state="new">Portrait</target>
+          <target state="translated">纵向</target>
         </trans-unit>
         <trans-unit id="CbListStyle.Header" translate="yes" xml:space="preserve">
           <source>List Style</source>
-          <target state="new">List Style</target>
+          <target state="translated">列表样式</target>
         </trans-unit>
         <trans-unit id="CbShowMargins.Content" translate="yes" xml:space="preserve">
           <source>Show margins</source>
-          <target state="new">Show margins</target>
+          <target state="translated">显示边距</target>
         </trans-unit>
         <trans-unit id="ChkBxHideWhitespace.Content" translate="yes" xml:space="preserve">
           <source>Hide whitespace and control characters</source>
-          <target state="new">Hide whitespace and control characters</target>
+          <target state="translated">隐藏空白和控制字符</target>
         </trans-unit>
         <trans-unit id="GlyphAnnotation_None" translate="yes" xml:space="preserve">
           <source>None</source>
-          <target state="new">None</target>
+          <target state="translated">无</target>
         </trans-unit>
         <trans-unit id="PrintCharacterFilterContent.Text" translate="yes" xml:space="preserve">
           <source>Choose character groups to display</source>
@@ -790,19 +790,19 @@ Turning this on can have a minor impact on scrolling performance.</target>
         </trans-unit>
         <trans-unit id="PrintDataHeader.Text" translate="yes" xml:space="preserve">
           <source>Data</source>
-          <target state="new">Data</target>
+          <target state="translated">数据</target>
         </trans-unit>
         <trans-unit id="PrintViewCharSize.Text" translate="yes" xml:space="preserve">
           <source>Character Size</source>
-          <target state="new">Character Size</target>
+          <target state="translated">字符大小</target>
         </trans-unit>
         <trans-unit id="PrintViewHorizontalMarginHeader.Text" translate="yes" xml:space="preserve">
           <source>Horizontal Margin</source>
-          <target state="new">Horizontal Margin</target>
+          <target state="translated">水平边距</target>
         </trans-unit>
         <trans-unit id="PrintViewLayoutHeader.Text" translate="yes" xml:space="preserve">
           <source>Layout</source>
-          <target state="new">Layout</target>
+          <target state="translated">布局</target>
         </trans-unit>
         <trans-unit id="PrintViewOfLabel.Text" translate="yes" xml:space="preserve">
           <source>of</source>
@@ -810,11 +810,11 @@ Turning this on can have a minor impact on scrolling performance.</target>
         </trans-unit>
         <trans-unit id="PrintViewPageOrientation.Header" translate="yes" xml:space="preserve">
           <source>Page Orientation</source>
-          <target state="new">Page Orientation</target>
+          <target state="translated">页面方向</target>
         </trans-unit>
         <trans-unit id="PrintViewPageRange.Text" translate="yes" xml:space="preserve">
           <source>Page Range</source>
-          <target state="new">Page Range</target>
+          <target state="translated">页面范围</target>
         </trans-unit>
         <trans-unit id="PrintViewPageRangeDesc.Text" translate="yes" xml:space="preserve">
           <source>Up to 50 pages can be printed at a time. Select the range of pages to print here.</source>
@@ -822,7 +822,7 @@ Turning this on can have a minor impact on scrolling performance.</target>
         </trans-unit>
         <trans-unit id="PrintViewPageRangeSelector.Header" translate="yes" xml:space="preserve">
           <source>Pages to print:</source>
-          <target state="new">Pages to print:</target>
+          <target state="translated">打印的页面:</target>
         </trans-unit>
         <trans-unit id="PrintViewPageSelector.Header" translate="yes" xml:space="preserve">
           <source>Start from page:</source>
@@ -830,11 +830,11 @@ Turning this on can have a minor impact on scrolling performance.</target>
         </trans-unit>
         <trans-unit id="PrintViewPageSetupHeader.Text" translate="yes" xml:space="preserve">
           <source>Page Setup</source>
-          <target state="new">Page Setup</target>
+          <target state="translated">页面设置</target>
         </trans-unit>
         <trans-unit id="PrintViewPreviewingLabel.Text" translate="yes" xml:space="preserve">
           <source>Previewing page</source>
-          <target state="new">Previewing page</target>
+          <target state="translated">预览页面</target>
         </trans-unit>
         <trans-unit id="PrintViewPreviewOutOfBoundsLabel.Text" translate="yes" xml:space="preserve">
           <source>This page is outside the current page range and will not be printed.
@@ -844,15 +844,15 @@ You can change the page range in the Page Setup section.</target>
         </trans-unit>
         <trans-unit id="PrintViewPrintingLabel" translate="yes" xml:space="preserve">
           <source>Printing pages {0} - {1}</source>
-          <target state="new">Printing pages {0} - {1}</target>
+          <target state="translated">正在打印页面 {0} - {1}</target>
         </trans-unit>
         <trans-unit id="PrintViewTitle.Text" translate="yes" xml:space="preserve">
           <source>Print Configuration</source>
-          <target state="new">Print Configuration</target>
+          <target state="translated">打印设置</target>
         </trans-unit>
         <trans-unit id="PrintViewVerticalMarginHeader.Text" translate="yes" xml:space="preserve">
           <source>Vertical Margin</source>
-          <target state="new">Vertical Margin</target>
+          <target state="translated">垂直距离</target>
         </trans-unit>
         <trans-unit id="UnicodeFiltersTitle.Text" translate="yes" xml:space="preserve">
           <source>UNICODE CATEGORY FILTERS</source>
@@ -864,23 +864,23 @@ You can change the page range in the Page Setup section.</target>
         </trans-unit>
         <trans-unit id="GlyphAnnotation_UnicodeIndex" translate="yes" xml:space="preserve">
           <source>Unicode Index</source>
-          <target state="new">Unicode Index</target>
+          <target state="translated">Unicode 序号</target>
         </trans-unit>
         <trans-unit id="SettingsManageSystemFonts.Content" translate="yes" xml:space="preserve">
           <source>Manage installed fonts</source>
-          <target state="new">Manage installed fonts</target>
+          <target state="translated">管理已安装字体</target>
         </trans-unit>
         <trans-unit id="SettingsSystemFontHeader.Text" translate="yes" xml:space="preserve">
           <source>Installed Fonts</source>
-          <target state="new">Installed Fonts</target>
+          <target state="translated">已安装字体</target>
         </trans-unit>
         <trans-unit id="SettingsWindowsThemeSettings.Content" translate="yes" xml:space="preserve">
           <source>Windows theme settings</source>
-          <target state="new">Windows theme settings</target>
+          <target state="translated">Windows 主题设置</target>
         </trans-unit>
         <trans-unit id="SettingsCharLabel.Text" translate="yes" xml:space="preserve">
           <source>Character Label</source>
-          <target state="new">Character Label</target>
+          <target state="translated">字符标签</target>
         </trans-unit>
         <trans-unit id="SettingsCharLabelDesc.Text" translate="yes" xml:space="preserve">
           <source>Choose the label to show under each character. May have a minor effect on scrolling performance.</source>
@@ -888,23 +888,23 @@ You can change the page range in the Page Setup section.</target>
         </trans-unit>
         <trans-unit id="BtnPrint.Content" translate="yes" xml:space="preserve">
           <source>Print</source>
-          <target state="new">Print</target>
+          <target state="translated">打印</target>
         </trans-unit>
         <trans-unit id="ChkBxShowBorders.Content" translate="yes" xml:space="preserve">
           <source>Show borders</source>
-          <target state="new">Show borders</target>
+          <target state="translated">显示边框</target>
         </trans-unit>
         <trans-unit id="PrintLayout_Grid" translate="yes" xml:space="preserve">
           <source>Grid</source>
-          <target state="new">Grid</target>
+          <target state="translated">网格</target>
         </trans-unit>
         <trans-unit id="PrintLayout_List" translate="yes" xml:space="preserve">
           <source>List</source>
-          <target state="new">List</target>
+          <target state="translated">列表</target>
         </trans-unit>
         <trans-unit id="PrintLayout_TwoColumn" translate="yes" xml:space="preserve">
           <source>Two Columns</source>
-          <target state="new">Two Columns</target>
+          <target state="translated">两列</target>
         </trans-unit>
       </group>
     </body>
