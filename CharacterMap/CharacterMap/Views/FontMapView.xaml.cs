@@ -73,8 +73,6 @@ namespace CharacterMap.Views
 
         public object ThemeLock { get; } = new object();
 
-        private bool _isCtrlKeyPressed = false;
-
         private Debouncer _sizeDebouncer { get; } = new Debouncer();
 
         private XamlDirect _xamlDirect { get; }
@@ -539,6 +537,8 @@ namespace CharacterMap.Views
             return PrintPresenter;
         }
 
+        public GridLength GetTitleBarHeight() => TitleBar.TemplateSettings.GridHeight;
+
         private void TryPrint()
         {
             if (this.GetFirstAncestorOfType<MainPage>() is null)
@@ -630,13 +630,14 @@ namespace CharacterMap.Views
 
         private void TitleGrid_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(sender, 20, MainUIGrid);
+            //Composition.SetThemeShadow(sender, 20, MainUIGrid);
         }
 
         private void GridSplitter_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(sender, 20, ShadowTarget);
+            //Composition.SetThemeShadow(sender, 20, ShadowTarget);
         }
+
     }
 
 

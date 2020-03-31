@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharacterMap.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -109,6 +110,9 @@ namespace CharacterMap.Services
                     if (mainView)
                         MainWindow = info;
                 }
+
+                var settings = ResourceHelper.AppSettings;
+                settings.UpdateTransparency(settings.IsTransparencyEnabled);
             }
 
             if (view.Dispatcher.HasThreadAccess)
@@ -193,6 +197,14 @@ namespace CharacterMap.Services
                     });
                 }
             });
+        }
+
+        public static async Task RunOnViewsAsync(DispatchedHandler a)
+        {
+            await MainWindow.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a);
+
+            if (_childWindows.Count > 0)
+                await Task.WhenAll(_childWindows.Select(w => w.Value.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask()));
         }
     }
 }

@@ -788,4 +788,11 @@ You can change the page range in the Page Setup section.</value>
   <data name="PrintLayout_TwoColumn" xml:space="preserve">
     <value>Two Columns</value>
   </data>
+  <data name="SettingsTransparencyDescription.Text" xml:space="preserve">
+    <value>Enables transparency effects in the UI. If transparency in disabled in Windows settings, this will have no effect.
+May have a minor effect on performance on older or weaker devices.</value>
+  </data>
+  <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
+    <value>Enable transparency</value>
+  </data>
 </root>

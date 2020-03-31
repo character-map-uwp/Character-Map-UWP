@@ -15,6 +15,7 @@
     d:DesignHeight="720"
     d:DesignWidth="1280"
     Background="Transparent"
+    TabFocusNavigation="Cycle"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -147,28 +148,29 @@
 
     </UserControl.Resources>
 
-    <Grid x:Name="LayoutRoot">
+    <Grid x:Name="LayoutRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="{x:Bind TitleBarHeight, Mode=OneWay}" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="AUto" />
         </Grid.RowDefinitions>
 
+        <Border Grid.RowSpan="2" Background="{StaticResource DefaultHostBrush}" />
+
         <Grid
             x:Name="HeaderGrid"
+            Grid.Row="1"
             Height="45"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-            Loading="HeaderGrid_Loading"
-            RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(Settings), Mode=OneWay}">
+            Loading="HeaderGrid_Loading">
             <TextBlock
                 x:Uid="PrintViewTitle"
                 Margin="20 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="22"
-                FontWeight="SemiLight"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}" />
+                FontWeight="Bold" />
 
             <AppBarButton
                 x:Name="BtnClose"
@@ -176,8 +178,7 @@
                 Width="45"
                 Height="45"
                 HorizontalAlignment="Right"
-                Click="{x:Bind Hide}"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}">
+                Click="{x:Bind Hide}">
                 <SymbolIcon Symbol="Cancel" />
             </AppBarButton>
 
@@ -185,7 +186,7 @@
 
         <Grid
             x:Name="ContentPanel"
-            Grid.Row="1"
+            Grid.Row="2"
             ColumnSpacing="24">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.8*" />
@@ -193,10 +194,7 @@
             </Grid.ColumnDefinitions>
 
             <!--  Requires it's own element to enable theme shadows  -->
-            <Border
-                x:Name="ContentBackground"
-                Grid.ColumnSpan="2"
-                Background="{StaticResource DefaultAcrylicBrush}" />
+            <Border x:Name="ContentBackground" Grid.ColumnSpan="2" />
 
             <ScrollViewer x:Name="ContentScroller">
                 <StackPanel
@@ -488,8 +486,6 @@
                         <TextBlock VerticalAlignment="Center">
                             <Run x:Uid="PrintViewOfLabel" />
                             <Run Text="{x:Bind PageCount, Mode=OneWay}" />
-                            <!--<Run Text="(of" />
-                        <Run Text="{x:Bind PageCount, Mode=OneWay}" /><Run Text=")" />-->
                         </TextBlock>
                     </StackPanel>
 
@@ -517,7 +513,7 @@
 
         <Grid
             x:Name="BottomBar"
-            Grid.Row="2"
+            Grid.Row="3"
             Background="{ThemeResource SystemAccentColorDark2}">
 
             <TextBlock

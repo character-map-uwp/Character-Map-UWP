@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Models;
 using CharacterMap.Services;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
@@ -37,6 +38,11 @@ namespace CharacterMap.Helpers
                     return;
 
                 var content = ResourceHelper.InflateDataTemplate("AddedToCollectionNotificationTemplate", added);
+                ShowNotification(presenter, content, 5000);
+            }
+            else if (msg.Data is CollectionUpdatedArgs cua)
+            {
+                var content = ResourceHelper.InflateDataTemplate("RemoveFromCollectionNotification", cua);
                 ShowNotification(presenter, content, 5000);
             }
             else if (msg.Data is string s)

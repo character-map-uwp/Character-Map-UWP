@@ -58,34 +58,28 @@
     <!--
         Background="{ThemeResource SystemChromeHighColor}"
     -->
-    <Grid>
-        <Grid.Background>
-            <AcrylicBrush
-                win1903:TintLuminosityOpacity="0.3"
-                BackgroundSource="Backdrop"
-                FallbackColor="{ThemeResource SystemAltHighColor}"
-                TintColor="{ThemeResource SystemChromeGrayColor}"
-                TintOpacity="0.6" />
-        </Grid.Background>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="{x:Bind TitleBarHeight, Mode=OneWay}" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <Border Grid.RowSpan="2" Background="{StaticResource DefaultHostBrush}" />
+
         <Grid
             x:Name="HeaderGrid"
-            Height="45"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-            RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(Settings), Mode=OneWay}">
+            Grid.Row="1"
+            Height="45">
+
             <TextBlock
                 x:Uid="SettingsHeader"
                 Margin="20 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="22"
-                FontWeight="SemiLight"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}" />
+                FontWeight="Bold" />
 
             <AppBarButton
                 x:Name="BtnClose"
@@ -93,14 +87,13 @@
                 Width="45"
                 Height="45"
                 HorizontalAlignment="Right"
-                Click="{x:Bind Hide}"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}">
+                Click="{x:Bind Hide}">
                 <SymbolIcon Symbol="Cancel" />
             </AppBarButton>
 
         </Grid>
 
-        <ScrollViewer x:Name="ContentScroller" Grid.Row="1">
+        <ScrollViewer x:Name="ContentScroller" Grid.Row="2">
             <Grid
                 x:Name="ContentPanel"
                 ColumnSpacing="16"
@@ -234,22 +227,23 @@
                         <TextBlock x:Uid="FontListDisplayHeader" Style="{StaticResource HeaderStyle}" />
                         <TextBlock x:Uid="SettingsFontListDescription" Style="{StaticResource DescriptionStyle}" />
                         <RadioButton
-                            x:Name="UseSystemFont"
-                            x:Uid="RbUseSystemFont"
-                            Checked="UseSystemFont_Checked"
-                            GroupName="FontList" />
-                        <RadioButton
                             x:Name="UseActualFont"
                             x:Uid="RbUseActualFont"
                             Checked="UseActualFont_Checked"
                             GroupName="FontList" />
+                        <RadioButton
+                            x:Name="UseSystemFont"
+                            x:Uid="RbUseSystemFont"
+                            Checked="UseSystemFont_Checked"
+                            GroupName="FontList" />
+
 
                         <ListView
                             x:Name="LstFontFamily"
                             Width="256"
                             Margin="0 12 0 0"
                             HorizontalAlignment="Left"
-                            Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                            Background="{StaticResource DefaultHostBrush}"
                             IsHitTestVisible="False"
                             IsItemClickEnabled="False"
                             IsSwipeEnabled="False"
@@ -315,6 +309,10 @@
                         <TextBlock x:Uid="SettingsSimpleAnimationHeader" Style="{StaticResource HeaderStyle}" />
                         <TextBlock x:Uid="SettingsSimpleAnimationDescription" Style="{StaticResource DescriptionStyle}" />
                         <ToggleSwitch IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+
+                        <TextBlock x:Uid="SettingsTransparencyHeader" Style="{StaticResource HeaderStyle}" />
+                        <TextBlock x:Uid="SettingsTransparencyDescription" Style="{StaticResource DescriptionStyle}" />
+                        <ToggleSwitch IsOn="{x:Bind Settings.IsTransparencyEnabled, Mode=TwoWay}" />
 
                         <win1903:StackPanel>
                             <win1903:TextBlock x:Uid="SettingsShadowsHeader" Style="{StaticResource HeaderStyle}" />

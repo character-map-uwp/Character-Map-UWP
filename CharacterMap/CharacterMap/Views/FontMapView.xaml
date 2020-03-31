@@ -25,26 +25,20 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:XamlTitleBar x:Name="TitleBar" x:Load="{x:Bind IsStandalone}">
-            <TextBlock
-                Margin="12,0,0,0"
-                VerticalAlignment="Center"
-                FontSize="12"
-                IsHitTestVisible="False">
-                <Run Text="{Binding TitlePrefix}" />
-                <Run x:Uid="TxtTitle" />
-            </TextBlock>
-        </controls:XamlTitleBar>
+        <controls:XamlTitleBar
+            x:Name="TitleBar"
+            x:Load="{x:Bind IsStandalone}"
+            Canvas.ZIndex="101" />
 
         <Grid
             x:Name="TitleGrid"
             x:Load="{x:Bind IsStandalone}"
-            Grid.Row="1"
-            Height="45"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-            Canvas.ZIndex="1"
-            Loading="TitleGrid_Loading"
-            RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(ThemeLock), Mode=OneWay}">
+            Grid.RowSpan="2"
+            Canvas.ZIndex="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, FallbackValue=Auto}" />
+                <RowDefinition Height="45" />
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -53,23 +47,23 @@
             </Grid.ColumnDefinitions>
             <TextBlock
                 x:Name="FontTitleBlock"
+                Grid.Row="1"
                 Grid.Column="0"
-                Margin="12,0"
+                Margin="24,0"
                 VerticalAlignment="Center"
                 FontSize="22"
-                FontWeight="SemiLight"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
+                FontWeight="Bold"
                 Text="{Binding SelectedFont.Name}"
                 TextTrimming="CharacterEllipsis"
                 ToolTipService.ToolTip="{Binding SelectedFont.Name}" />
 
             <Button
+                Grid.Row="1"
                 Grid.Column="1"
                 Height="45"
                 Padding="12,0"
                 HorizontalAlignment="Right"
                 Click="{x:Bind ViewModel.ImportFile}"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                 IsEnabled="{Binding ImportButtonEnabled}"
                 Style="{ThemeResource TransparentButton}"
                 Visibility="{x:Bind ViewModel.IsExternalFile}">
@@ -89,6 +83,7 @@
             <AutoSuggestBox
                 x:Name="SearchBox"
                 x:Uid="SearchBox"
+                Grid.Row="1"
                 Grid.Column="2"
                 Width="290"
                 Margin="6 0 6 0"
@@ -135,10 +130,10 @@
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" MinWidth="250" />
-                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="10" />
                     <ColumnDefinition
                         x:Name="PreviewColumn"
-                        Width="330"
+                        Width="328"
                         MinWidth="125" />
                 </Grid.ColumnDefinitions>
 
@@ -160,7 +155,7 @@
                         x:Name="CharGridHeader"
                         x:FieldModifier="public"
                         ColumnSpacing="12"
-                        Margin="12"
+                        Margin="12 0 12 12"
                         VerticalAlignment="Top">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -174,7 +169,6 @@
 
                             <ComboBox
                                 x:Name="WeightSelector"
-                                x:Uid="WeightSelector"
                                 MinWidth="160"
                                 IsEnabled="{Binding SelectedFont.HasVariants}"
                                 ItemsSource="{Binding SelectedFont.Variants}"
@@ -491,8 +485,8 @@
                     Grid.Column="1">
                     <toolkit:GridSplitter
                         x:Name="Splitter"
-                        Width="8"
-                        Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}"
+                        Width="10"
+                        Background="Transparent"
                         CursorBehavior="ChangeOnSplitterHover"
                         GripperCursor="SizeWestEast"
                         GripperForeground="Transparent"
@@ -504,7 +498,7 @@
                     <FontIcon
                         Grid.RowSpan="2"
                         Grid.Column="1"
-                        Margin="-6,0,0,0"
+                        Margin="-5,0,0,0"
                         VerticalAlignment="Center"
                         Glyph="&#xE784;"
                         IsHitTestVisible="False" />
@@ -1034,7 +1028,7 @@
             Grid.Column="0"
             Grid.ColumnSpan="2"
             Height="26"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}">
+            Background="{StaticResource AltHostBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
@@ -1048,15 +1042,11 @@
                 </Style>
             </Grid.Resources>
 
-            <TextBlock
-                Margin="12,0"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
-                Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant), Mode=OneWay}" />
+            <TextBlock Margin="12,0" Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant), Mode=OneWay}" />
 
             <TextBlock
                 Grid.Column="2"
                 Margin="12,0"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(ThemeLock), Mode=OneWay}"
                 Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
 
@@ -1065,7 +1055,6 @@
         <Border
             x:Name="PrintPresenter"
             x:DeferLoadStrategy="Lazy"
-            Grid.Row="1"
             Grid.RowSpan="10"
             Grid.ColumnSpan="10"
             Canvas.ZIndex="100" />

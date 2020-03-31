@@ -1,6 +1,9 @@
 ﻿using CharacterMap.Controls;
+using CharacterMap.Core;
+using CharacterMap.Models;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
+using GalaSoft.MvvmLight.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -187,10 +190,10 @@ namespace CharacterMap.Helpers
                 // Choose the printer options to be shown.
                 // The order in which the options are appended determines the order in which they appear in the UI
                 displayedOptions.Clear();
-                displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Orientation);
                 displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Duplex);
                 displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.Copies);
                 displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.ColorMode);
+                displayedOptions.Add(Windows.Graphics.Printing.StandardPrintTaskOptions.PrintQuality);
 
 
                 // Print Task event handler is invoked when the print job is completed.
@@ -205,7 +208,7 @@ namespace CharacterMap.Helpers
                     // Notify the user when the print operation fails.
                     if (args.Completion == PrintTaskCompletion.Failed)
                     {
-                        // .....
+                        Messenger.Default.Send(new AppNotificationMessage(true, "Failure encountered whilst printing."));
                     }
                 };
 

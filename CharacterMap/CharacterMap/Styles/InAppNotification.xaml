@@ -48,9 +48,14 @@
                         </Border>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation TargetName="Text" />
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlMSEdgeNotificationPointerOverForegroundBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -61,6 +66,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
+                                        <PointerDownThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlMSEdgeNotificationPointerOverForegroundBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -98,18 +104,12 @@
                         <Storyboard>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
                                 <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                <SplineDoubleKeyFrame
-                                    KeySpline="0.7, 0, 1, 0.5"
-                                    KeyTime="0:0:0.225"
-                                    Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                             </DoubleAnimationUsingKeyFrames>
 
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                 <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                <SplineDoubleKeyFrame
-                                    KeySpline="0.7, 0, 1, 0.5"
-                                    KeyTime="0:0:0.225"
-                                    Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
                             </DoubleAnimationUsingKeyFrames>
 
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
@@ -123,26 +123,17 @@
                         <Storyboard>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Opacity)">
                                 <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                <SplineDoubleKeyFrame
-                                    KeySpline="0.1, 0.9, 0.2, 1"
-                                    KeyTime="0:0:0.3"
-                                    Value="1" />
+                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.3" Value="1" />
                             </DoubleAnimationUsingKeyFrames>
 
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
                                 <EasingDoubleKeyFrame KeyTime="0" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                <SplineDoubleKeyFrame
-                                    KeySpline="0.1, 0.9, 0.2, 1"
-                                    KeyTime="0:0:0.5"
-                                    Value="0" />
+                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
                             </DoubleAnimationUsingKeyFrames>
 
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                 <EasingDoubleKeyFrame KeyTime="0" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                <SplineDoubleKeyFrame
-                                    KeySpline="0.1, 0.9, 0.2, 1"
-                                    KeyTime="0:0:0.5"
-                                    Value="0" />
+                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                     </VisualState>
@@ -176,7 +167,22 @@
                     VerticalContentAlignment="Center"
                     TextWrapping="WrapWholeWords" />
 
-                <Button
+                <AppBarButton
+                    x:Name="PART_DismissButton"
+                    Grid.Column="1"
+                    Width="40"
+                    Height="40"
+                    AutomationProperties.Name="Dismiss">
+                    <Button.RenderTransform>
+                        <TranslateTransform x:Name="DismissButtonTransform" X="18" />
+                    </Button.RenderTransform>
+                    <SymbolIcon
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Symbol="Cancel" />
+                </AppBarButton>
+
+                <!--<Button
                     x:Name="PART_DismissButton"
                     Grid.Column="1"
                     AutomationProperties.Name="Dismiss"
@@ -187,7 +193,7 @@
                     <Button.RenderTransform>
                         <TranslateTransform x:Name="DismissButtonTransform" X="18" />
                     </Button.RenderTransform>
-                </Button>
+                </Button>-->
             </Grid>
         </Grid>
     </ControlTemplate>

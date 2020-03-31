@@ -5,6 +5,7 @@
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:CharacterMap.Models"
     xmlns:services="using:CharacterMap.Services"
     mc:Ignorable="d">
 
@@ -103,19 +104,55 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock
-                VerticalAlignment="Center"
-                FontSize="16"
-                IsColorFontEnabled="True"
-                Text="{x:Bind GetMessage()}"
-                TextWrapping="Wrap" />
+            <TextBlock VerticalAlignment="Center">
+                <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
+                <Run Text="was added to" />
+                <Hyperlink Click="BtnViewCollection_Click">
+                    <Run Text="{x:Bind Collection.Name}" />
+                </Hyperlink>
+            </TextBlock>
 
-            <Button
-                x:Uid="BtnViewCollection"
+            <AppBarButton
                 Grid.Column="1"
+                Width="40"
+                Height="40"
                 Margin="12 0 0 0"
-                Click="BtnViewCollection_Click"
-                Style="{StaticResource ButtonRevealStyle}" />
+                Click="BtnUndo_Click"
+                Tag="{x:Bind}">
+                <SymbolIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Symbol="Undo" />
+            </AppBarButton>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RemoveFromCollectionNotification" x:DataType="models:CollectionUpdatedArgs">
+        <Grid ColumnSpacing="12" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center">
+                <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
+                <Run Text="was removed from" />
+                <Hyperlink>
+                    <Run Text="{x:Bind Collection.Name}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <AppBarButton
+                Grid.Column="1"
+                Width="40"
+                Height="40"
+                Margin="12 0 0 0"
+                Click="BtnUndo_Click"
+                Tag="{x:Bind}">
+                <SymbolIcon
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Symbol="Undo" />
+            </AppBarButton>
         </Grid>
     </DataTemplate>
 

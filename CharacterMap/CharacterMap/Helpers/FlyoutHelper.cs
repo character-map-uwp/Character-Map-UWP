@@ -96,6 +96,7 @@ namespace CharacterMap.Helpers
                         : main.SelectedCollection;
 
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
+                    Messenger.Default.Send(new AppNotificationMessage(true, new CollectionUpdatedArgs(fnt, collection, false)));
                     Messenger.Default.Send(new CollectionsUpdatedMessage());
                 }
             }

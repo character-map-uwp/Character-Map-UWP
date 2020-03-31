@@ -41,6 +41,12 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public bool IsTransparencyEnabled
+        {
+            get => Get(true);
+            set { if (Set(value)) UpdateTransparency(value); }
+        }
+
         public bool UseInstantSearch
         {
             get => Get(true);
@@ -179,6 +185,11 @@ namespace CharacterMap.Core
             {
                 Messenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
             });
+        }
+
+        public void UpdateTransparency(bool value)
+        {
+            _ = ResourceHelper.SetTransparencyAsync(value);
         }
     }
 }

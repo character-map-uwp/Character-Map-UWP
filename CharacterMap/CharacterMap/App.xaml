@@ -21,7 +21,7 @@
                     <x:Boolean x:Key="TrueValue">True</x:Boolean>
                     <x:Boolean x:Key="FalseValue">False</x:Boolean>
                     <TransitionCollection x:Key="NoTransitions" />
-                    <TransitionCollection x:Key="RepositionTransitions" >
+                    <TransitionCollection x:Key="RepositionTransitions">
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
 
@@ -40,13 +40,30 @@
                     <Thickness x:Key="ListViewItemRevealBorderThemeThickness">0</Thickness>
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
+
+                    <AcrylicBrush
+                        x:Key="DefaultHostBrush"
+                        win1903:TintLuminosityOpacity="0.55"
+                        BackgroundSource="HostBackdrop"
+                        FallbackColor="{ThemeResource SystemChromeMediumColor}"
+                        TintColor="{ThemeResource SystemAltHighColor}"
+                        TintOpacity="0.7" />
+
+                    <AcrylicBrush
+                        x:Key="AltHostBrush"
+                        BackgroundSource="HostBackdrop"
+                        FallbackColor="{ThemeResource SystemChromeLowColor}"
+                        TintColor="{ThemeResource SystemAltHighColor}"
+                        TintOpacity="0.75" />
+
                     <AcrylicBrush
                         x:Name="DefaultAcrylicBrush"
                         win1903:TintLuminosityOpacity="0.3"
                         BackgroundSource="Backdrop"
                         FallbackColor="{ThemeResource SystemAltHighColor}"
                         TintColor="{ThemeResource SystemChromeGrayColor}"
-                        TintOpacity="0.6" />
+                        TintOpacity="0.65" />
+
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
                 <ResourceDictionary Source="/Styles/CommandBar.xaml" />

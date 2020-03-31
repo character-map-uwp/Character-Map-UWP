@@ -906,6 +906,16 @@ You can change the page range in the Page Setup section.</target>
           <source>Two Columns</source>
           <target state="new">Two Columns</target>
         </trans-unit>
+        <trans-unit id="SettingsTransparencyDescription.Text" translate="yes" xml:space="preserve">
+          <source>Enables transparency effects in the UI. If transparency in disabled in Windows settings, this will have no effect.
+May have a minor effect on performance on older or weaker devices.</source>
+          <target state="new">Enables transparency effects in the UI. If transparency in disabled in Windows settings, this will have no effect.
+May have a minor effect on performance on older or weaker devices.</target>
+        </trans-unit>
+        <trans-unit id="SettingsTransparencyHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable transparency</source>
+          <target state="new">Enable transparency</target>
+        </trans-unit>
       </group>
     </body>
   </file>
