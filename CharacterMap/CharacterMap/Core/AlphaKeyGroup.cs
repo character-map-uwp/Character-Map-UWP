@@ -8,27 +8,15 @@ namespace CharacterMap.Core
 {
     public class AlphaKeyGroup<T> : List<T>
     {
-        const string GlobeGroupKey = "?";
         public string Key { get; private set; }
-        //public List<T> this { get; private set; }
+
         public AlphaKeyGroup(string key)
         {
             Key = key;
         }
 
-        //private static List<AlphaKeyGroup<T>> CreateDefaultGroups(CharacterGroupings slg)
-        //{
-        //    return (from cg 
-        //            in slg
-        //            where cg.Label != string.Empty
-        //            select cg.Label == "..." ? 
-        //                new AlphaKeyGroup<T>(GlobeGroupKey) : 
-        //                new AlphaKeyGroup<T>(cg.Label))
-        //            .ToList();
-        //}
-
         // Work around for Chinese version of Windows
-        // By default, Chinese lanugage group will create useless "拼音A-Z" groups.
+        // By default, Chinese language group will create useless "拼音A-Z" groups.
         private static List<AlphaKeyGroup<T>> CreateAZGroups()
         {
             char[] alpha = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ&".ToCharArray();

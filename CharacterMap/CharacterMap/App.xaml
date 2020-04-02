@@ -40,6 +40,24 @@
                         <Setter Property="TextLineBounds" Value="Tight" />
                     </Style>
 
+                    <Style x:Key="Mfsi" TargetType="MenuFlyoutSubItem">
+                        <Setter Property="MinHeight" Value="50" />
+                    </Style>
+                    <Style x:Key="Mfi" TargetType="MenuFlyoutItem">
+                        <Setter Property="MinHeight" Value="40" />
+                        <Setter Property="MinWidth" Value="160" />
+                    </Style>
+
+                    <Style x:Key="MFlyoutHeaderStyle" TargetType="MenuFlyoutItem">
+                        <Setter Property="IsEnabled" Value="False" />
+                        <Setter Property="FontSize" Value="13.333" />
+                        <Setter Property="Height" Value="30" />
+                        <Setter Property="Padding" Value="10 16 10 0" />
+                        <Setter Property="Margin" Value="0 0 0 -4" />
+                    </Style>
+                    
+                    
+                    
                     <SolidColorBrush x:Key="WhiteBrush" Color="White" />
                     <SolidColorBrush x:Key="BlackBrush" Color="Black" />
                     <SolidColorBrush x:Key="PrintBorderBrush" Color="LightGray" />
@@ -55,7 +73,7 @@
                         BackgroundSource="HostBackdrop"
                         FallbackColor="{ThemeResource SystemChromeMediumColor}"
                         TintColor="{ThemeResource SystemAltHighColor}"
-                        TintOpacity="0.75" />
+                        TintOpacity="0.775" />
 
                     <AcrylicBrush
                         x:Key="AltHostBrush"
@@ -71,6 +89,8 @@
                         FallbackColor="{ThemeResource SystemAltHighColor}"
                         TintColor="{ThemeResource SystemChromeGrayColor}"
                         TintOpacity="0.65" />
+
+                    <StaticResource x:Key="StatusBarBrush" ResourceKey="AltHostBrush" />
 
                     <x:Double x:Key="StatusBarHeight">26</x:Double>
                     <GridLength x:Key="StatusBarGridHeight">26</GridLength>

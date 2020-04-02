@@ -419,7 +419,7 @@
                     <StackPanel x:Name="DeveloperPanel" Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
                         <TextBlock x:Uid="SettingsDevToolsGroupHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
 
-                        <StackPanel Visibility="Collapsed">
+                        <StackPanel>
                             <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource HeaderStyle}" />
                             <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource DescriptionStyle}" />
                             <ToggleSwitch IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />

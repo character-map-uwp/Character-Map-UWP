@@ -396,16 +396,6 @@ namespace CharacterMap.Views
             ViewModel.Settings.FitCharacter = !ViewModel.Settings.FitCharacter;
         }
 
-        private void BtnSaveAs_OnClick(object sender, RoutedEventArgs e)
-        {
-            SaveAsCommandBar.IsOpen = !SaveAsCommandBar.IsOpen;
-        }
-
-        private void BtnSaveAsSvg_OnClick(object sender, RoutedEventArgs e)
-        {
-            SaveAsSvgCommandBar.IsOpen = !SaveAsSvgCommandBar.IsOpen;
-        }
-
         private void OnCopyGotFocus(object sender, RoutedEventArgs e)
         {
             ((TextBox)sender).SelectAll();
@@ -454,16 +444,6 @@ namespace CharacterMap.Views
                     PreviewColumn.Width = new GridLength((int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth));
                 }
             });
-        }
-
-        private void PreviewGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var newSize = e.NewSize.Width - 2;
-
-            foreach (AppBarButton item in SaveAsCommandBar.SecondaryCommands.Concat(SaveAsSvgCommandBar.SecondaryCommands))
-            {
-                item.Width = newSize;
-            }
         }
 
         private void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
@@ -679,6 +659,26 @@ namespace CharacterMap.Views
             //Composition.SetThemeShadow(sender, 20, ShadowTarget);
         }
 
+        private void MenuFlyout_Opening_1(object sender, object e)
+        {
+            if (sender is MenuFlyout flyout
+                && flyout.GetPresenter() is MenuFlyoutPresenter p)
+            {
+                //flyout.GetPresenter().Width = flyout.Target.ActualWidth;
+                //foreach (var item in flyout.Items)
+                //    item.Width = flyout.Target.ActualWidth;
+            }
+        }
+
+        private void SaveAsFlyout_Opened(object sender, object e)
+        {
+            if (sender is MenuFlyout flyout)
+            {
+                flyout.GetPresenter().Width = flyout.Target.ActualWidth;
+                //foreach (var item in flyout.Items)
+                //    item.Width = flyout.Target.ActualWidth;
+            }
+        }
     }
 
 

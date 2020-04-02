@@ -19,8 +19,9 @@
           <target state="translated">เติมสีดำ</target>
         </trans-unit>
         <trans-unit id="BtnCopy.Text" translate="yes" xml:space="preserve">
-          <source>Copy (character only)</source>
-          <target state="translated">คัดลอกตัวอักษรนี้</target>
+          <source>Copy as text</source>
+          <target state="needs-review-translation">คัดลอกตัวอักษรนี้</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="BtnSavePng.Text" translate="yes" xml:space="preserve">
           <source>Save as PNG</source>
@@ -908,9 +909,9 @@ You can change the page range in the Page Setup section.</target>
           <target state="new">Two Columns</target>
         </trans-unit>
         <trans-unit id="SettingsTransparencyDescription.Text" translate="yes" xml:space="preserve">
-          <source>Enables transparency effects in the UI. If transparency in disabled in Windows settings, this will have no effect.
+          <source>Enables transparency effects in the UI. If transparency is disabled in Windows settings, this will have no effect.
 May have a minor effect on performance on older or weaker devices.</source>
-          <target state="new">Enables transparency effects in the UI. If transparency in disabled in Windows settings, this will have no effect.
+          <target state="new">Enables transparency effects in the UI. If transparency is disabled in Windows settings, this will have no effect.
 May have a minor effect on performance on older or weaker devices.</target>
         </trans-unit>
         <trans-unit id="SettingsTransparencyHeader.Text" translate="yes" xml:space="preserve">

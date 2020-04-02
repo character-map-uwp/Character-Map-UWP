@@ -15,10 +15,12 @@ using Windows.UI;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core
 {
-    public class Utils
+    public static class Utils
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
 
@@ -51,6 +53,14 @@ namespace CharacterMap.Core
             }
             hex = 0;
             return false;
+        }
+
+        public static MenuFlyoutPresenter GetPresenter(this MenuFlyout flyout)
+        {
+            if (flyout.Items.Count == 0)
+                return null;
+
+            return flyout.Items[0].GetFirstAncestorOfType<MenuFlyoutPresenter>();
         }
 
         public static bool IsAccentColorDark()

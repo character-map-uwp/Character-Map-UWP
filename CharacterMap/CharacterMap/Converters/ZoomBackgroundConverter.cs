@@ -10,15 +10,13 @@ namespace CharacterMap.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-
             if (value != null)
             {
                 var count = int.Parse(value.ToString());
                 if (count > 0)
-                    return new SolidColorBrush(Utils.GetAccentColor());
+                    return 1;
             }
-            return new SolidColorBrush(Windows.UI.Colors.Gray);
-
+            return 0.3;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

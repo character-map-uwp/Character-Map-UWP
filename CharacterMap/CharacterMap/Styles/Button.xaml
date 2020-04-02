@@ -451,7 +451,6 @@
                                 </VisualState>
                                 <VisualState x:Name="Checked">
                                     <VisualState.Setters>
-                                        <Setter Target="Border.Background" Value="{ThemeResource SystemAltLowColor}" />
                                         <Setter Target="Text.Content">
                                             <Setter.Value>
                                                 <FontIcon FontSize="14" Glyph="&#xE1D8;" />

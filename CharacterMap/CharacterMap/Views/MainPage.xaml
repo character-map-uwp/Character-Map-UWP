@@ -24,11 +24,6 @@
             IsSourceGrouped="True"
             Source="{Binding GroupedFontList}" />
 
-        <BackEase
-            x:Key="BackOut4"
-            Amplitude="0.4"
-            EasingMode="EaseOut" />
-
     </Page.Resources>
 
     <Grid
@@ -38,9 +33,6 @@
         DragOver="Grid_DragOver"
         Drop="Grid_Drop"
         KeyDown="LayoutRoot_KeyDown">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="{StaticResource PaneGridWidth}" />
             <ColumnDefinition Width="*" />
@@ -134,7 +126,6 @@
                                     <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
                                         <MenuFlyout.MenuFlyoutPresenterStyle>
                                             <Style TargetType="MenuFlyoutPresenter">
-                                                <Setter Property="RequestedTheme" Value="Default" />
                                                 <Setter Property="FontSize" Value="16" />
                                                 <Setter Property="CornerRadius" Value="0" />
                                                 <Setter Property="Margin" Value="0 -4 0 0" />
@@ -322,7 +313,7 @@
                                                         VerticalAlignment="Center"
                                                         FontSize="32"
                                                         FontWeight="Bold"
-                                                        Foreground="{Binding Group.Count, Converter={StaticResource ZoomBackgroundConverter}}"
+                                                        Opacity="{Binding Group.Count, Converter={StaticResource ZoomBackgroundConverter}}"
                                                         Text="{Binding Group.Key}" />
                                                 </Border>
                                             </DataTemplate>
@@ -338,7 +329,7 @@
                     <Grid
                         x:Name="PaneStatusBar"
                         Grid.Row="1"
-                        Background="{StaticResource AltHostBrush}">
+                        Background="{StaticResource StatusBarBrush}">
                         <Grid.Resources>
                             <Style BasedOn="{StaticResource StatusBarTextStyle}" TargetType="TextBlock" />
                         </Grid.Resources>
