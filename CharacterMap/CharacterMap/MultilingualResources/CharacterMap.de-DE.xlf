@@ -915,6 +915,20 @@ May have a minor effect on performance on older or weaker devices.</target>
           <source>Enable transparency</source>
           <target state="new">Enable transparency</target>
         </trans-unit>
+        <trans-unit id="StartupFailedButton.Content" translate="yes" xml:space="preserve">
+          <source>Show Details</source>
+          <target state="new">Show Details</target>
+        </trans-unit>
+        <trans-unit id="StartupFailedHeader.Text" translate="yes" xml:space="preserve">
+          <source>Uh Oh</source>
+          <target state="new">Uh Oh</target>
+        </trans-unit>
+        <trans-unit id="StartupFailedMessage.Text" translate="yes" xml:space="preserve">
+          <source>Something went wrong and we couldn't start the app right now.
+Please consider posting details about this error to GitHub so we can help you fix it.</source>
+          <target state="new">Something went wrong and we couldn't start the app right now.
+Please consider posting details about this error to GitHub so we can help you fix it.</target>
+        </trans-unit>
       </group>
     </body>
   </file>

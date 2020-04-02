@@ -451,7 +451,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Checked">
                                     <VisualState.Setters>
-                                        <Setter Target="Text.Background" Value="{ThemeResource SystemAltLowColor}" />
+                                        <Setter Target="Border.Background" Value="{ThemeResource SystemAltLowColor}" />
                                         <Setter Target="Text.Content">
                                             <Setter.Value>
                                                 <FontIcon FontSize="14" Glyph="&#xE1D8;" />
@@ -464,7 +464,20 @@
                                 </VisualState>
                                 <VisualState x:Name="CheckedPointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="Text.Background" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                        <Setter Target="Border.Background" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                        <Setter Target="Text.Content">
+                                            <Setter.Value>
+                                                <FontIcon FontSize="14" Glyph="&#xE1D8;" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation TargetName="Border" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Border.Background" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
                                         <Setter Target="Text.Content">
                                             <Setter.Value>
                                                 <FontIcon FontSize="14" Glyph="&#xE1D8;" />

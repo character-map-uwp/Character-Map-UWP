@@ -795,4 +795,14 @@ May have a minor effect on performance on older or weaker devices.</value>
   <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
     <value>Enable transparency</value>
   </data>
+  <data name="StartupFailedButton.Content" xml:space="preserve">
+    <value>Show Details</value>
+  </data>
+  <data name="StartupFailedHeader.Text" xml:space="preserve">
+    <value>Uh Oh</value>
+  </data>
+  <data name="StartupFailedMessage.Text" xml:space="preserve">
+    <value>Something went wrong and we couldn't start the app right now.
+Please consider posting details about this error to GitHub so we can help you fix it.</value>
+  </data>
 </root>

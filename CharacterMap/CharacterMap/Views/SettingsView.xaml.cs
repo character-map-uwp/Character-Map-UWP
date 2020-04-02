@@ -84,6 +84,9 @@ namespace CharacterMap.Views
 
         public void Show(FontVariant variant, InstalledFont font)
         {
+            if (IsOpen)
+                return;
+
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
@@ -148,10 +151,9 @@ namespace CharacterMap.Views
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(HeaderGrid, 40, ContentScroller);
+            Composition.SetThemeShadow(ContentScroller, 40, HeaderGrid);
 
             // Set the settings that can't be set with bindings
-
             switch (Settings.UserRequestedTheme)
             {
                 case ElementTheme.Default:

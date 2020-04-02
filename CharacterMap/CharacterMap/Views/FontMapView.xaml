@@ -20,9 +20,9 @@
         DataContext="{x:Bind ViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="{StaticResource TitleRowGridHeight}" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="{StaticResource StatusBarGridHeight}" />
         </Grid.RowDefinitions>
 
         <controls:XamlTitleBar
@@ -30,37 +30,49 @@
             x:Load="{x:Bind IsStandalone}"
             Canvas.ZIndex="101" />
 
+        <!--  Title row  -->
         <Grid
             x:Name="TitleGrid"
-            x:Load="{x:Bind IsStandalone}"
             Grid.RowSpan="2"
             Canvas.ZIndex="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, FallbackValue=Auto}" />
-                <RowDefinition Height="45" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="{StaticResource TitleRowGridHeight}" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="0" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
+            <Border
+                x:Name="TitleBarSpacer"
+                x:Load="{x:Bind IsStandalone}"
+                Grid.ColumnSpan="10"
+                Height="{x:Bind TitleBar.Height, Mode=OneWay}" />
+
+            <ContentPresenter Grid.Row="1" Content="{x:Bind TitleLeftContent, Mode=OneWay}" />
+
             <TextBlock
                 x:Name="FontTitleBlock"
+                x:FieldModifier="public"
                 Grid.Row="1"
-                Grid.Column="0"
-                Margin="24,0"
+                Grid.Column="1"
+                Margin="24 0 8 0"
                 VerticalAlignment="Center"
                 FontSize="22"
                 FontWeight="Bold"
+                Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                 Text="{Binding SelectedFont.Name}"
                 TextTrimming="CharacterEllipsis"
                 ToolTipService.ToolTip="{Binding SelectedFont.Name}" />
 
             <Button
                 Grid.Row="1"
-                Grid.Column="1"
-                Height="45"
+                Grid.Column="2"
+                Height="{StaticResource TitleRowHeight}"
                 Padding="12,0"
                 HorizontalAlignment="Right"
                 Click="{x:Bind ViewModel.ImportFile}"
@@ -83,8 +95,9 @@
             <AutoSuggestBox
                 x:Name="SearchBox"
                 x:Uid="SearchBox"
+                x:FieldModifier="public"
                 Grid.Row="1"
-                Grid.Column="2"
+                Grid.Column="3"
                 Width="290"
                 Margin="6 0 6 0"
                 VerticalAlignment="Center"
@@ -105,8 +118,12 @@
                 </AutoSuggestBox.QueryIcon>
             </AutoSuggestBox>
 
-        </Grid>
+            <ContentPresenter
+                Grid.Row="1"
+                Grid.Column="4"
+                Content="{x:Bind TitleRightContent, Mode=OneWay}" />
 
+        </Grid>
 
         <!--  Main UI Grid  -->
         <Grid
@@ -145,6 +162,7 @@
                     Stretch="UniformToFill"
                     StrokeThickness="0" />
 
+                <!--  Character Grid  -->
                 <Grid x:Name="MapContainer" x:FieldModifier="public">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -503,8 +521,6 @@
                         Glyph="&#xE784;"
                         IsHitTestVisible="False" />
                 </Grid>
-
-
 
                 <!--  Preview Grid  -->
                 <Grid
@@ -1005,6 +1021,7 @@
             </Grid>
         </Grid>
 
+        <!--  Notification Presenter  -->
         <Grid
             x:Name="NotificationRoot"
             x:Load="False"
@@ -1013,7 +1030,7 @@
             <toolkit:InAppNotification x:Name="DefaultNotification" />
         </Grid>
 
-        <!--  Loading Root  -->
+        <!--  Standalone Loading Root  -->
         <ProgressRing
             x:Name="LoadingRing"
             Grid.Row="2"
@@ -1021,13 +1038,11 @@
             Width="50"
             Height="50" />
 
+        <!--  Status Bar  -->
         <Grid
             x:Name="StatusBar"
-            x:Load="{x:Bind IsStandalone}"
             Grid.Row="3"
-            Grid.Column="0"
-            Grid.ColumnSpan="2"
-            Height="26"
+            Height="{StaticResource StatusBarHeight}"
             Background="{StaticResource AltHostBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -1036,22 +1051,33 @@
             </Grid.ColumnDefinitions>
 
             <Grid.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="FontSize" Value="12" />
-                    <Setter Property="VerticalAlignment" Value="Center" />
-                </Style>
+                <Style BasedOn="{StaticResource StatusBarTextStyle}" TargetType="TextBlock" />
             </Grid.Resources>
 
-            <TextBlock Margin="12,0" Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant), Mode=OneWay}" />
+            <ContentPresenter Content="{x:Bind StatusBarLeftContent, Mode=OneWay}" />
+
+            <TextBlock
+                Grid.Column="1"
+                Margin="12,0"
+                Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant), Mode=OneWay}" />
 
             <TextBlock
                 Grid.Column="2"
-                Margin="12,0"
                 Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" />
 
         </Grid>
 
+        <Rectangle
+            Grid.Row="3"
+            Grid.Column="0"
+            Grid.ColumnSpan="2"
+            Height="{StaticResource StatusBarHeight}"
+            VerticalAlignment="Bottom"
+            Canvas.ZIndex="-1"
+            Fill="{x:Bind StatusBar.Background, Mode=OneWay}" />
+
+        <!--  Print Preview Container  -->
         <Border
             x:Name="PrintPresenter"
             x:DeferLoadStrategy="Lazy"
@@ -1059,6 +1085,7 @@
             Grid.ColumnSpan="10"
             Canvas.ZIndex="100" />
 
+        <!--  Off-screen printer render container  -->
         <Canvas x:Name="PrintCanvas" Margin="-10000, -10000, 0, 0" />
 
         <VisualStateManager.VisualStateGroups>
@@ -1085,11 +1112,18 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="SearchStatesGroup">
                 <VisualState x:Name="InstantSearchState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind ViewModel.Settings.UseInstantSearch, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SearchBox.QueryIcon" Value="{x:Null}" />
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="ManualSearchState" />
+                <VisualState x:Name="ManualSearchState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind core:Converters.False(ViewModel.Settings.UseInstantSearch), Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

@@ -103,7 +103,7 @@ namespace CharacterMap.Views
                     {
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
                         if (ViewModel.Settings.UseSelectionAnimations)
-                            Composition.PlayEntrance(FontTitleBlock, 0, 0, 80);
+                            Composition.PlayEntrance(FontMap.FontTitleBlock, 0, 0, 80);
                     }
 
                     break;
@@ -180,8 +180,8 @@ namespace CharacterMap.Views
                             OpenFontPaneButton,
                             FontListFilter,
                             OpenFontButton,
-                            FontTitleBlock,
-                            SearchBox,
+                            FontMap.FontTitleBlock,
+                            FontMap.SearchBox,
                             BtnSettings
                         },
                         new List<UIElement>
@@ -194,9 +194,7 @@ namespace CharacterMap.Views
                         });
                 }
             }
-
         }
-
 
         private void ViewModel_FontListCreated(object sender, EventArgs e)
         {
@@ -289,14 +287,6 @@ namespace CharacterMap.Views
         {
             if (fontList != null)
                 return Localization.Get("StatusBarFontCount", fontList.Count);
-
-            return string.Empty;
-        }
-
-        private string UpdateCharacterCountLabel(FontVariant variant)
-        {
-            if (variant != null)
-                return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
 
             return string.Empty;
         }
@@ -435,33 +425,6 @@ namespace CharacterMap.Views
             }
         }
 
-        private async void PickFonts()
-        {
-            var picker = new FileOpenPicker();
-            foreach (var format in FontFinder.SupportedFormats)
-                picker.FileTypeFilter.Add(format);
-
-            picker.CommitButtonText = Localization.Get("FilePickerConfirm");
-            var files = await picker.PickMultipleFilesAsync();
-            if (files.Any())
-            {
-                ViewModel.IsLoadingFonts = true;
-                try
-                {
-                    if (await FontFinder.ImportFontsAsync(files.ToList()) is FontImportResult result
-                        && result.Imported.Count > 0)
-                    {
-                        ViewModel.RefreshFontList();
-                        ViewModel.TrySetSelectionFromImport(result);
-                    }
-                }
-                finally
-                {
-                    ViewModel.IsLoadingFonts = false;
-                }
-            }
-        }
-
         private async void OpenFont()
         {
             var picker = new FileOpenPicker();
@@ -552,6 +515,7 @@ namespace CharacterMap.Views
         public FontMapView GetFontMap() => FontMap;
 
         public GridLength GetTitleBarHeight() => TitleBar.TemplateSettings.GridHeight;
+
 
 
 

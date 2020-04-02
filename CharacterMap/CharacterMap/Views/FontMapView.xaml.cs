@@ -35,7 +35,48 @@ namespace CharacterMap.Views
 {
     public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPrintPresenter
     {
-        #region Dependency Properties
+        #region Dependency Properties 
+
+        #region TitleLeftContent
+
+        public object TitleLeftContent
+        {
+            get { return (object)GetValue(TitleLeftContentProperty); }
+            set { SetValue(TitleLeftContentProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for TitleLeftContent.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TitleLeftContentProperty =
+            DependencyProperty.Register(nameof(TitleLeftContent), typeof(object), typeof(FontMapView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region TitleRightContent
+
+        public object TitleRightContent
+        {
+            get { return (object)GetValue(TitleRightContentProperty); }
+            set { SetValue(TitleRightContentProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for TitleRightContent.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TitleRightContentProperty =
+            DependencyProperty.Register(nameof(TitleRightContent), typeof(object), typeof(FontMapView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region StatusBarLeftContent
+
+        public object StatusBarLeftContent
+        {
+            get { return (object)GetValue(StatusBarLeftContentProperty); }
+            set { SetValue(StatusBarLeftContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty StatusBarLeftContentProperty =
+            DependencyProperty.Register(nameof(StatusBarLeftContent), typeof(object), typeof(FontMapView), new PropertyMetadata(null));
+
+        #endregion
 
         #region Font
 

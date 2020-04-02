@@ -161,6 +161,7 @@ namespace CharacterMap.Controls
         {
             if (!args.InRecycleQueue && args.ItemContainer is GridViewItem item)
             {
+                item.IsTabStop = false;
                 if (PrintModel.ShowBorders)
                 {
                     item.BorderBrush = ResourceHelper.Get<Brush>("PrintBorderBrush");

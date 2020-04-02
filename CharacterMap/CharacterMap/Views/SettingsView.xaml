@@ -58,7 +58,7 @@
     <!--
         Background="{ThemeResource SystemChromeHighColor}"
     -->
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
 
         <Grid.RowDefinitions>
             <RowDefinition Height="{x:Bind TitleBarHeight, Mode=OneWay}" />
@@ -71,7 +71,7 @@
         <Grid
             x:Name="HeaderGrid"
             Grid.Row="1"
-            Height="45">
+            Height="{StaticResource TitleRowHeight}">
 
             <TextBlock
                 x:Uid="SettingsHeader"
@@ -93,7 +93,10 @@
 
         </Grid>
 
-        <ScrollViewer x:Name="ContentScroller" Grid.Row="2">
+        <ScrollViewer
+            x:Name="ContentScroller"
+            Grid.Row="2"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <Grid
                 x:Name="ContentPanel"
                 ColumnSpacing="16"

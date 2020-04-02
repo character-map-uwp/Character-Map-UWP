@@ -32,6 +32,14 @@
                         <Setter Property="TextAlignment" Value="Center" />
                         <Setter Property="Foreground" Value="#888" />
                     </Style>
+
+                    <Style x:Key="StatusBarTextStyle" TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Margin" Value="12 0" />
+                        <Setter Property="TextLineBounds" Value="Tight" />
+                    </Style>
+
                     <SolidColorBrush x:Key="WhiteBrush" Color="White" />
                     <SolidColorBrush x:Key="BlackBrush" Color="Black" />
                     <SolidColorBrush x:Key="PrintBorderBrush" Color="LightGray" />
@@ -47,14 +55,14 @@
                         BackgroundSource="HostBackdrop"
                         FallbackColor="{ThemeResource SystemChromeMediumColor}"
                         TintColor="{ThemeResource SystemAltHighColor}"
-                        TintOpacity="0.7" />
+                        TintOpacity="0.75" />
 
                     <AcrylicBrush
                         x:Key="AltHostBrush"
                         BackgroundSource="HostBackdrop"
                         FallbackColor="{ThemeResource SystemChromeLowColor}"
                         TintColor="{ThemeResource SystemAltHighColor}"
-                        TintOpacity="0.75" />
+                        TintOpacity="0.8" />
 
                     <AcrylicBrush
                         x:Name="DefaultAcrylicBrush"
@@ -63,6 +71,12 @@
                         FallbackColor="{ThemeResource SystemAltHighColor}"
                         TintColor="{ThemeResource SystemChromeGrayColor}"
                         TintOpacity="0.65" />
+
+                    <x:Double x:Key="StatusBarHeight">26</x:Double>
+                    <GridLength x:Key="StatusBarGridHeight">26</GridLength>
+
+                    <x:Double x:Key="TitleRowHeight">45</x:Double>
+                    <GridLength x:Key="TitleRowGridHeight">45</GridLength>
 
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />

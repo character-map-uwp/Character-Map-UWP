@@ -308,9 +308,9 @@ namespace CharacterMap.Views
                 item.IsSelected = false;
         }
 
-        private void HeaderGrid_Loading(FrameworkElement sender, object args)
+        private void ContentPanel_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(HeaderGrid, 30, ContentPanel);
+            Composition.SetThemeShadow(ContentPanel, 40, HeaderGrid);
         }
 
 
