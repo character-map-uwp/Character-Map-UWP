@@ -94,7 +94,12 @@ namespace CharacterMap.Views
                         return;
 
                     if (ViewModel.Settings.UseSelectionAnimations)
+                    {
                         Composition.PlayEntrance(LstFontFamily, 66, 100);
+                        Composition.PlayEntrance(GroupLabel, 0, 0, 80);
+                        if (InlineLabelCount.Visibility == Visibility.Visible)
+                            Composition.PlayEntrance(InlineLabelCount, 83, 0, 80);
+                    }
 
                     break;
 
@@ -103,7 +108,11 @@ namespace CharacterMap.Views
                     {
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
                         if (ViewModel.Settings.UseSelectionAnimations)
-                            Composition.PlayEntrance(FontMap.FontTitleBlock, 0, 0, 80);
+                        {
+                            Composition.PlayEntrance(FontMap.FontTitleBlock, 0);
+                            Composition.PlayEntrance(FontMap.CharGridHeader, 83);
+                            Composition.PlayEntrance(FontMap.TxtPreviewViewBox, 83);
+                        }
                     }
 
                     break;
@@ -541,7 +550,7 @@ namespace CharacterMap.Views
 
         private void Grid_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(sender, 40, PaneContentRoot);
+            Composition.SetThemeShadow(sender, 40, PaneRoot);
         }
 
         private void FontListGrid_Loading(FrameworkElement sender, object args)

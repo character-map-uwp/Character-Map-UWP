@@ -729,9 +729,8 @@ Turning this on can have a minor impact on scrolling performance.</target>
           <target state="new">Contributors</target>
         </trans-unit>
         <trans-unit id="TxtLoadingFonts.Text" translate="yes" xml:space="preserve">
-          <source>loading fonts</source>
-          <target state="new">loading fonts</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">intentionally lowercase for design reasons</note>
+          <source>Loading Fonts</source>
+          <target state="new">Loading Fonts</target>
         </trans-unit>
         <trans-unit id="AppBtnClear.Label" translate="yes" xml:space="preserve">
           <source>Clear</source>

@@ -157,7 +157,11 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border Grid.RowSpan="2" Background="{StaticResource DefaultHostBrush}" />
+        <Border
+            x:Name="TitleBackground"
+            Grid.RowSpan="2"
+            Margin="0 0 0 -10"
+            Background="{StaticResource DefaultHostBrush}" />
 
         <Grid
             x:Name="HeaderGrid"
@@ -185,6 +189,7 @@
 
         <Grid
             x:Name="ContentPanel"
+            CornerRadius="8 8 0 0"
             Grid.Row="2"
             ColumnSpacing="24"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"

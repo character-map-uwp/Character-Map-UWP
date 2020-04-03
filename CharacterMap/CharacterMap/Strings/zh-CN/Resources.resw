@@ -449,7 +449,6 @@
   </data>
   <data name="TxtLoadingFonts.Text" xml:space="preserve">
     <value>正在加载字体</value>
-    <comment>intentionally lowercase for design reasons</comment>
   </data>
   <data name="AppBtnClear.Label" xml:space="preserve">
     <value>清除</value>

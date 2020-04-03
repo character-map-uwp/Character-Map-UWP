@@ -55,9 +55,9 @@
                         <Setter Property="Padding" Value="10 16 10 0" />
                         <Setter Property="Margin" Value="0 0 0 -4" />
                     </Style>
-                    
-                    
-                    
+
+
+
                     <SolidColorBrush x:Key="WhiteBrush" Color="White" />
                     <SolidColorBrush x:Key="BlackBrush" Color="Black" />
                     <SolidColorBrush x:Key="PrintBorderBrush" Color="LightGray" />
@@ -74,7 +74,7 @@
                         FallbackColor="{ThemeResource SystemChromeMediumColor}"
                         TintColor="{ThemeResource SystemAltHighColor}"
                         TintOpacity="0.775" />
-
+                 
                     <AcrylicBrush
                         x:Key="AltHostBrush"
                         BackgroundSource="HostBackdrop"

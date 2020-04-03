@@ -151,7 +151,7 @@ namespace CharacterMap.Views
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(ContentScroller, 40, HeaderGrid);
+            Composition.SetThemeShadow(ContentScroller, 40, TitleBackground);
 
             // Set the settings that can't be set with bindings
             switch (Settings.UserRequestedTheme)

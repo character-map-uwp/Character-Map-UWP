@@ -18,7 +18,7 @@
     <Style x:Key="TransparentButton" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource ListViewItemRevealBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="8,4,8,5" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -97,7 +97,7 @@
     <Style x:Key="TransparentHintButton" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource ListViewItemRevealBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="8,4,8,5" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -139,7 +139,7 @@
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="RootGrid.(RevealBrush.State)" Value="Pressed" />
-                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonRevealBackgroundPressed}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemRevealBackgroundPressed}" />
                                         <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushPressed}" />
                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundPressed}" />
                                     </VisualState.Setters>

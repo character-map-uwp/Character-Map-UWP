@@ -38,7 +38,7 @@ namespace CharacterMap.Core
         public bool ShowDevUtils
         {
             get => Get(true);
-            set => Set(value);
+            set => BroadcastSet(value);
         }
 
         public bool IsTransparencyEnabled

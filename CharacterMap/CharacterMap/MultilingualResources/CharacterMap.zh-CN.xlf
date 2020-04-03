@@ -729,9 +729,9 @@ Turning this on can have a minor impact on scrolling performance.</target>
           <target state="translated">贡献者</target>
         </trans-unit>
         <trans-unit id="TxtLoadingFonts.Text" translate="yes" xml:space="preserve">
-          <source>loading fonts</source>
-          <target state="translated">正在加载字体</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">intentionally lowercase for design reasons</note>
+          <source>Loading Fonts</source>
+          <target state="needs-review-translation">正在加载字体</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="AppBtnClear.Label" translate="yes" xml:space="preserve">
           <source>Clear</source>

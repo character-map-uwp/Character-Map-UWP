@@ -128,7 +128,7 @@ namespace CharacterMap.Helpers
             return c.CreateAnimationGroup(t, o);
         }
 
-        public static void PlayEntrance(List<UIElement> targets, int delayMs = 0, int fromOffset = 140, int durationMs = 800, int staggerMs = 83)
+        public static void PlayEntrance(List<UIElement> targets, int delayMs = 0, int fromOffsetY = 140, int fromOffsetX = 0, int durationMs = 880, int staggerMs = 83)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
@@ -137,7 +137,7 @@ namespace CharacterMap.Helpers
 
             foreach (var target in targets)
             {
-                var animation = CreateEntranceAnimation(target, new Vector3(0, fromOffset, 0), start, durationMs);
+                var animation = CreateEntranceAnimation(target, new Vector3(fromOffsetX, fromOffsetY, 0), start, durationMs);
                 target.GetElementVisual().StartAnimationGroup(animation);
                 start += staggerMs;
             }

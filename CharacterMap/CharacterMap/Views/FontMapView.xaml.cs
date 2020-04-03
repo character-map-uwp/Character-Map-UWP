@@ -65,19 +65,6 @@ namespace CharacterMap.Views
 
         #endregion
 
-        #region StatusBarLeftContent
-
-        public object StatusBarLeftContent
-        {
-            get { return (object)GetValue(StatusBarLeftContentProperty); }
-            set { SetValue(StatusBarLeftContentProperty, value); }
-        }
-
-        public static readonly DependencyProperty StatusBarLeftContentProperty =
-            DependencyProperty.Register(nameof(StatusBarLeftContent), typeof(object), typeof(FontMapView), new PropertyMetadata(null));
-
-        #endregion
-
         #region Font
 
         public InstalledFont Font
@@ -215,7 +202,10 @@ namespace CharacterMap.Views
             else if (e.PropertyName == nameof(ViewModel.SelectedChar))
             {
                 if (ViewModel.Settings.UseSelectionAnimations)
+                {
                     Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
+                    Composition.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                }
 
                 UpdateTypography(ViewModel.SelectedTypography);
             }
@@ -224,7 +214,7 @@ namespace CharacterMap.Views
                 CharGrid.ItemsSource = ViewModel.Chars;
 
                 if (ViewModel.Settings.UseSelectionAnimations)
-                    Composition.PlayEntrance(CharGrid);
+                    Composition.PlayEntrance(CharGrid, 166);
             }
         }
 
@@ -241,6 +231,7 @@ namespace CharacterMap.Views
                         CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
                         break;
                     case nameof(AppSettings.DevToolsLanguage):
+                    case nameof(AppSettings.ShowDevUtils):
                         ViewModel.UpdateDevValues();
                         break;
                     case nameof(AppSettings.GridSize):

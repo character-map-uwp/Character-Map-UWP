@@ -655,8 +655,7 @@ Turning this on can have a minor impact on scrolling performance.</value>
     <value>Contributors</value>
   </data>
   <data name="TxtLoadingFonts.Text" xml:space="preserve">
-    <value>loading fonts</value>
-    <comment>intentionally lowercase for design reasons</comment>
+    <value>Loading Fonts</value>
   </data>
   <data name="AppBtnClear.Label" xml:space="preserve">
     <value>Clear</value>

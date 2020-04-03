@@ -310,7 +310,7 @@ namespace CharacterMap.Views
 
         private void ContentPanel_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(ContentPanel, 40, HeaderGrid);
+            Composition.SetThemeShadow(ContentPanel, 40, TitleBackground);
         }
 
 
