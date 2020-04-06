@@ -20,6 +20,7 @@ namespace CharacterMap.Provider
     {
         internal const string FONTAWESOME_SEARCH_TABLE = "fontawesomesearch";
         internal const string ICOFONT_SEARCH_TABLE = "icfsearch";
+        internal const string MATERIAL_DESIGN_ICONS_LEGACY_SEARCH_TABLE = "mdilegacysearch";
         internal const string MATERIAL_DESIGN_ICONS_SEARCH_TABLE = "mdisearch";
         internal const string MDL2_SEARCH_TABLE = "mdl2search";
         internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
@@ -52,7 +53,6 @@ namespace CharacterMap.Provider
         }
 #endif
 
-
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
             string desc = null;
@@ -84,11 +84,6 @@ namespace CharacterMap.Provider
                 desc = _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;
 
             return desc;
-        }
-
-        private bool IsFontAwesome(FontVariant variant)
-        {
-            return variant.FamilyName.StartsWith("Font Awesome");
         }
 
         #region SEARCH
