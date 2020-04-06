@@ -36,6 +36,7 @@ namespace CharacterMap.Services
     }
 
     public class MDL2Glyph : GlyphDescription { }
+    public class MaterialDesignIconsLegacyGlyph : GlyphDescription { }
     public class MaterialDesignIconsGlyph : GlyphDescription { }
     public class WebdingsGlyph : GlyphDescription { }
     public class WingdingsGlyph : GlyphDescription { }
