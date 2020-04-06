@@ -805,7 +805,7 @@ May have a minor effect on performance on older or weaker devices.</value>
 Please consider posting details about this error to GitHub so we can help you fix it.</value>
   </data>
   <data name="CharacterKeystrokeLabel" xml:space="preserve">
-    <value>Keystroke: {0:0000}</value>
+    <value>Keystroke: Alt + {0:0000}</value>
   </data>
   <data name="ExportSVGLabel.Text" xml:space="preserve">
     <value>Save as SVG Image</value>
