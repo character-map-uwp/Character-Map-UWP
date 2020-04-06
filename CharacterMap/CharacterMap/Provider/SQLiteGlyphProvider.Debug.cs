@@ -49,7 +49,8 @@ namespace CharacterMap.Provider
 
                 await PopulateMDL2Async(connection).ConfigureAwait(false);
                 await PopulateFontAsync<FontAwesomeGlyph>(connection, "FontAwesome.txt").ConfigureAwait(false);
-                await PopulateFontAsync<MaterialDesignIconsGlyph>(connection, "materialdesignicons.txt").ConfigureAwait(false);
+                await PopulateFontAsync<MaterialDesignIconsLegacyGlyph>(connection, "materialdesignicons.txt").ConfigureAwait(false);
+                await PopulateFontAsync<MaterialDesignIconsGlyph>(connection, "materialdesignicons5.txt").ConfigureAwait(false);
                 await PopulateFontAsync<IcoFontGlyph>(connection, "icofont.txt").ConfigureAwait(false);
 
                 var unicode = await PopulateUnicodeAsync(connection).ConfigureAwait(false);
@@ -245,34 +246,31 @@ namespace CharacterMap.Provider
         {
             return Task.Run(async () =>
             {
-                using (var c = new SQLiteConnection(connection))
+                var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/Data/{fileName}")).AsTask().ConfigureAwait(false);
+                
+                using var c = new SQLiteConnection(connection);
+                using var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false);
+                using var reader = new StreamReader(stream);
+
+                string[] parts;
+                List<T> data = new List<T>();
+                while (!reader.EndOfStream)
                 {
-                    var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri($"ms-appx:///Assets/Data/{fileName}")).AsTask().ConfigureAwait(false);
+                    parts = reader.ReadLine().Split(" ", 2, StringSplitOptions.None);
 
-                    using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
-                    using (var reader = new StreamReader(stream))
+                    string desc = parts[1];
+                    string hex = parts[0].ToUpper();
+                    int code = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+
+                    data.Add(new T
                     {
-                        string[] parts;
-                        List<T> data = new List<T>();
-                        while (!reader.EndOfStream)
-                        {
-                            parts = reader.ReadLine().Split(" ", StringSplitOptions.None);
-
-                            string desc = parts[1];
-                            string hex = parts[0].ToUpper();
-                            int code = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
-
-                            data.Add(new T
-                            {
-                                Description = desc.Humanize(LetterCasing.Title),
-                                UnicodeHex = hex,
-                                UnicodeIndex = code
-                            });
-                        }
-
-                        c.RunInTransaction(() => c.InsertAll(data.OrderBy(d => d.UnicodeIndex).ToList()));
-                    }
+                        Description = desc.Humanize(LetterCasing.Title),
+                        UnicodeHex = hex,
+                        UnicodeIndex = code
+                    });
                 }
+
+                c.RunInTransaction(() => c.InsertAll(data.OrderBy(d => d.UnicodeIndex).ToList()));
             });
         }
 
@@ -297,8 +295,8 @@ namespace CharacterMap.Provider
                         UnicodeIndex = code
                     });
 
-                    // Ding fonts are a little nuts and have duplicate unicode ranges that remap all the glyphs 
-                    // from the original Dings range to the approriate Unicode range... about 60,000+ places away.
+                    // Ding fonts are a little nuts and have duplicate Unicode ranges that remap all the glyphs 
+                    // from the original Dings range to the appropriate Unicode range... about 60,000+ places away.
                     // Whilst still also keeping the original mappings.
                     string hex2 = $"F{hex.Remove(0, 1)}";
                     int code2 = Int32.Parse(hex2, System.Globalization.NumberStyles.HexNumber);
