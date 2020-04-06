@@ -1,12 +1,35 @@
-﻿using System;
+﻿using CharacterMap.Core;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
-namespace CharacterMap.Core
+namespace CharacterMap.Models
 {
+    public class CollectionUpdatedArgs
+    {
+        public InstalledFont Font { get; }
+        public UserFontCollection Collection { get; }
+        public bool IsAdd { get; }
+
+        public CollectionUpdatedArgs(InstalledFont font, UserFontCollection collection, bool isAdd)
+        {
+            Font = font;
+            Collection = collection;
+            IsAdd = isAdd;
+        }
+
+        public string GetMessage()
+        {
+            if (IsAdd)
+                return $"{Font.Name} was added to the \"{Collection.Name}\" collection";
+            else
+                return $"{Font.Name} was removed from the \"{Collection.Name}\" collection";
+        }
+    }
+
     public class ImportMessage
     {
         public ImportMessage(FontImportResult result)

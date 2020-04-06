@@ -13,6 +13,15 @@
     SecondaryButtonStyle="{StaticResource ButtonRevealStyle}"
     mc:Ignorable="d">
 
+    <ContentDialog.TitleTemplate>
+        <DataTemplate>
+            <TextBlock
+                FontSize="22"
+                FontWeight="Bold"
+                Text="{Binding}" />
+        </DataTemplate>
+    </ContentDialog.TitleTemplate>
+
     <TextBox
         x:Name="InputBox"
         x:Uid="CreateCollectionEntryBox"

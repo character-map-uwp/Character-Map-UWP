@@ -38,7 +38,13 @@ namespace CharacterMap.Core
         public bool ShowDevUtils
         {
             get => Get(true);
-            set => Set(value);
+            set => BroadcastSet(value);
+        }
+
+        public bool IsTransparencyEnabled
+        {
+            get => Get(true);
+            set { if (Set(value)) UpdateTransparency(value); }
         }
 
         public bool UseInstantSearch
@@ -55,13 +61,13 @@ namespace CharacterMap.Core
 
         public int MaxSearchResult
         {
-            get => Get(20);
+            get => Get(26);
             set => Set(value);
         }
 
         public double LastColumnWidth
         {
-            get => Get(330d);
+            get => Get(326d);
             set => Set(value);
         }
 
@@ -179,6 +185,11 @@ namespace CharacterMap.Core
             {
                 Messenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
             });
+        }
+
+        public void UpdateTransparency(bool value)
+        {
+            _ = ResourceHelper.SetTransparencyAsync(value);
         }
     }
 }

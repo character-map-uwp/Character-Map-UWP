@@ -78,6 +78,13 @@ namespace CharacterMap.Views
             };
         }
 
+
+        [NotifyPropertyChangedInvocator]
+        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -87,13 +94,26 @@ namespace CharacterMap.Views
                         return;
 
                     if (ViewModel.Settings.UseSelectionAnimations)
+                    {
                         Composition.PlayEntrance(LstFontFamily, 66, 100);
+                        Composition.PlayEntrance(GroupLabel, 0, 0, 80);
+                        if (InlineLabelCount.Visibility == Visibility.Visible)
+                            Composition.PlayEntrance(InlineLabelCount, 83, 0, 80);
+                    }
 
                     break;
 
                 case nameof(ViewModel.SelectedFont):
                     if (ViewModel.SelectedFont != null)
+                    {
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
+                        if (ViewModel.Settings.UseSelectionAnimations)
+                        {
+                            Composition.PlayEntrance(FontMap.FontTitleBlock, 0);
+                            Composition.PlayEntrance(FontMap.CharGridHeader, 83);
+                            Composition.PlayEntrance(FontMap.TxtPreviewViewBox, 83);
+                        }
+                    }
 
                     break;
 
@@ -103,43 +123,6 @@ namespace CharacterMap.Views
 
                     break;
             }
-        }
-
-        private void UpdateLoadingStates()
-        {
-            TitleBar.TryUpdateMetrics();
-
-            if (ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
-                VisualStateManager.GoToState(this, nameof(FontsLoadingState), true);
-            else if (ViewModel.IsLoadingFontsFailed)
-                VisualStateManager.GoToState(this, nameof(FontsFailedState), true);
-            else
-            {
-                VisualStateManager.GoToState(this, nameof(FontsLoadedState), false);
-                if (ViewModel.Settings.UseSelectionAnimations)
-                {
-                    Composition.StartStartUpAnimation(
-                        CommandsGridBackground,
-                        new List<FrameworkElement>
-                        {
-                            OpenFontPaneButton,
-                            FontListFilter,
-                            OpenFontButton,
-                            FontTitleBlock,
-                            SearchBox,
-                            BtnSettings
-                        },
-                        new List<UIElement>
-                        {
-                            FontsSemanticZoom, 
-                            FontMap.CharGridHeader, 
-                            FontMap.SplitterContainer,
-                            FontMap.CharGrid,
-                            FontMap.PreviewGrid
-                        });
-                }
-            }
-
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -154,12 +137,6 @@ namespace CharacterMap.Views
                     OnPropertyChanged(nameof(ThemeLock));
                     break;
             }
-        }
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -181,16 +158,6 @@ namespace CharacterMap.Views
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
         }
 
-        private void ViewModel_FontListCreated(object sender, EventArgs e)
-        {
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
-            {
-                await Task.Delay(50);
-                LstFontFamily.ScrollIntoView(
-                    LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
-            });
-        }
-
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (e.NewSize.Width < 900)
@@ -201,6 +168,51 @@ namespace CharacterMap.Views
             {
                 VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
             }
+        }
+
+        private void UpdateLoadingStates()
+        {
+            TitleBar.TryUpdateMetrics();
+
+            if (ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
+                VisualStateManager.GoToState(this, nameof(FontsLoadingState), true);
+            else if (ViewModel.IsLoadingFontsFailed)
+                VisualStateManager.GoToState(this, nameof(FontsFailedState), true);
+            else
+            {
+                VisualStateManager.GoToState(this, nameof(FontsLoadedState), false);
+                if (ViewModel.Settings.UseSelectionAnimations)
+                {
+                    Composition.StartStartUpAnimation(
+                        new List<FrameworkElement>
+                        {
+                            OpenFontPaneButton,
+                            FontListFilter,
+                            OpenFontButton,
+                            FontMap.FontTitleBlock,
+                            FontMap.SearchBox,
+                            BtnSettings
+                        },
+                        new List<UIElement>
+                        {
+                            FontsSemanticZoom,
+                            FontMap.CharGridHeader,
+                            FontMap.SplitterContainer,
+                            FontMap.CharGrid,
+                            FontMap.PreviewGrid
+                        });
+                }
+            }
+        }
+
+        private void ViewModel_FontListCreated(object sender, EventArgs e)
+        {
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+            {
+                await Task.Delay(50);
+                LstFontFamily.ScrollIntoView(
+                    LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+            });
         }
 
         private void TogglePane_Click(object sender, RoutedEventArgs e)
@@ -284,14 +296,6 @@ namespace CharacterMap.Views
         {
             if (fontList != null)
                 return Localization.Get("StatusBarFontCount", fontList.Count);
-
-            return string.Empty;
-        }
-
-        private string UpdateCharacterCountLabel(FontVariant variant)
-        {
-            if (variant != null)
-                return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
 
             return string.Empty;
         }
@@ -430,33 +434,6 @@ namespace CharacterMap.Views
             }
         }
 
-        private async void PickFonts()
-        {
-            var picker = new FileOpenPicker();
-            foreach (var format in FontFinder.SupportedFormats)
-                picker.FileTypeFilter.Add(format);
-
-            picker.CommitButtonText = Localization.Get("FilePickerConfirm");
-            var files = await picker.PickMultipleFilesAsync();
-            if (files.Any())
-            {
-                ViewModel.IsLoadingFonts = true;
-                try
-                {
-                    if (await FontFinder.ImportFontsAsync(files.ToList()) is FontImportResult result
-                        && result.Imported.Count > 0)
-                    {
-                        ViewModel.RefreshFontList();
-                        ViewModel.TrySetSelectionFromImport(result);
-                    }
-                }
-                finally
-                {
-                    ViewModel.IsLoadingFonts = false;
-                }
-            }
-        }
-
         private async void OpenFont()
         {
             var picker = new FileOpenPicker();
@@ -546,6 +523,8 @@ namespace CharacterMap.Views
 
         public FontMapView GetFontMap() => FontMap;
 
+        public GridLength GetTitleBarHeight() => TitleBar.TemplateSettings.GridHeight;
+
 
 
 
@@ -569,19 +548,9 @@ namespace CharacterMap.Views
 
         /* Composition */
 
-        private void PaneRoot_Loading(FrameworkElement sender, object args)
+        private void Grid_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(sender, 40, FontMap);
-        }
-
-        private void PaneHeaderGrid_Loading(FrameworkElement sender, object args)
-        {
-            Composition.SetThemeShadow(sender, 20, FontListGrid);
-        }
-
-        private void CommandsGrid_Loading(FrameworkElement sender, object args)
-        {
-            Composition.SetThemeShadow(sender, 20, FontMap);
+            Composition.SetThemeShadow(sender, 40, PaneRoot);
         }
 
         private void FontListGrid_Loading(FrameworkElement sender, object args)

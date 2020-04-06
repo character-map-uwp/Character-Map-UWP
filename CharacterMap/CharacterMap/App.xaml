@@ -21,7 +21,7 @@
                     <x:Boolean x:Key="TrueValue">True</x:Boolean>
                     <x:Boolean x:Key="FalseValue">False</x:Boolean>
                     <TransitionCollection x:Key="NoTransitions" />
-                    <TransitionCollection x:Key="RepositionTransitions" >
+                    <TransitionCollection x:Key="RepositionTransitions">
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
 
@@ -32,6 +32,32 @@
                         <Setter Property="TextAlignment" Value="Center" />
                         <Setter Property="Foreground" Value="#888" />
                     </Style>
+
+                    <Style x:Key="StatusBarTextStyle" TargetType="TextBlock">
+                        <Setter Property="FontSize" Value="12" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Margin" Value="12 0" />
+                        <Setter Property="TextLineBounds" Value="Tight" />
+                    </Style>
+
+                    <Style x:Key="Mfsi" TargetType="MenuFlyoutSubItem">
+                        <Setter Property="MinHeight" Value="50" />
+                    </Style>
+                    <Style x:Key="Mfi" TargetType="MenuFlyoutItem">
+                        <Setter Property="MinHeight" Value="40" />
+                        <Setter Property="MinWidth" Value="160" />
+                    </Style>
+
+                    <Style x:Key="MFlyoutHeaderStyle" TargetType="MenuFlyoutItem">
+                        <Setter Property="IsEnabled" Value="False" />
+                        <Setter Property="FontSize" Value="13.333" />
+                        <Setter Property="Height" Value="30" />
+                        <Setter Property="Padding" Value="10 16 10 0" />
+                        <Setter Property="Margin" Value="0 0 0 -4" />
+                    </Style>
+
+
+
                     <SolidColorBrush x:Key="WhiteBrush" Color="White" />
                     <SolidColorBrush x:Key="BlackBrush" Color="Black" />
                     <SolidColorBrush x:Key="PrintBorderBrush" Color="LightGray" />
@@ -40,13 +66,38 @@
                     <Thickness x:Key="ListViewItemRevealBorderThemeThickness">0</Thickness>
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
+
+                    <AcrylicBrush
+                        x:Key="DefaultHostBrush"
+                        win1903:TintLuminosityOpacity="0.55"
+                        BackgroundSource="HostBackdrop"
+                        FallbackColor="{ThemeResource SystemChromeMediumColor}"
+                        TintColor="{ThemeResource SystemAltHighColor}"
+                        TintOpacity="0.775" />
+                 
+                    <AcrylicBrush
+                        x:Key="AltHostBrush"
+                        BackgroundSource="HostBackdrop"
+                        FallbackColor="{ThemeResource SystemChromeLowColor}"
+                        TintColor="{ThemeResource SystemAltHighColor}"
+                        TintOpacity="0.8" />
+
                     <AcrylicBrush
                         x:Name="DefaultAcrylicBrush"
                         win1903:TintLuminosityOpacity="0.3"
                         BackgroundSource="Backdrop"
                         FallbackColor="{ThemeResource SystemAltHighColor}"
                         TintColor="{ThemeResource SystemChromeGrayColor}"
-                        TintOpacity="0.6" />
+                        TintOpacity="0.65" />
+
+                    <StaticResource x:Key="StatusBarBrush" ResourceKey="AltHostBrush" />
+
+                    <x:Double x:Key="StatusBarHeight">26</x:Double>
+                    <GridLength x:Key="StatusBarGridHeight">26</GridLength>
+
+                    <x:Double x:Key="TitleRowHeight">45</x:Double>
+                    <GridLength x:Key="TitleRowGridHeight">45</GridLength>
+
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
                 <ResourceDictionary Source="/Styles/CommandBar.xaml" />

@@ -5,6 +5,7 @@
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:CharacterMap.Models"
     xmlns:services="using:CharacterMap.Services"
     mc:Ignorable="d">
 
@@ -103,19 +104,47 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <TextBlock
-                VerticalAlignment="Center"
-                FontSize="16"
-                IsColorFontEnabled="True"
-                Text="{x:Bind GetMessage()}"
-                TextWrapping="Wrap" />
+            <TextBlock VerticalAlignment="Center">
+                <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
+                <Run x:Uid="NotificationFontAddedBody" />
+                <Hyperlink Click="BtnViewCollection_Click">
+                    <Run Text="{x:Bind Collection.Name}" />
+                </Hyperlink>
+            </TextBlock>
 
             <Button
-                x:Uid="BtnViewCollection"
                 Grid.Column="1"
                 Margin="12 0 0 0"
-                Click="BtnViewCollection_Click"
-                Style="{StaticResource ButtonRevealStyle}" />
+                VerticalAlignment="Center"
+                Click="BtnUndo_Click"
+                Content="Undo"
+                Style="{StaticResource ButtonRevealStyle}"
+                Tag="{x:Bind}" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="RemoveFromCollectionNotification" x:DataType="models:CollectionUpdatedArgs">
+        <Grid ColumnSpacing="12" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock VerticalAlignment="Center">
+                <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
+                <Run x:Uid="NotificationFontRemovedBody" />
+                <Hyperlink>
+                    <Run Text="{x:Bind Collection.Name}" />
+                </Hyperlink>
+            </TextBlock>
+
+            <Button
+                Grid.Column="1"
+                Margin="12 0 0 0"
+                VerticalAlignment="Center"
+                Click="BtnUndo_Click"
+                Content="Undo"
+                Style="{StaticResource ButtonRevealStyle}"
+                Tag="{x:Bind}" />
         </Grid>
     </DataTemplate>
 

@@ -15,6 +15,7 @@
     d:DesignHeight="720"
     d:DesignWidth="1280"
     Background="Transparent"
+    TabFocusNavigation="Cycle"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -150,34 +151,37 @@
     <Grid x:Name="LayoutRoot">
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="{x:Bind TitleBarHeight, Mode=OneWay}" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="AUto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <Border
+            x:Name="TitleBackground"
+            Grid.RowSpan="2"
+            Margin="0 0 0 -10"
+            Background="{StaticResource DefaultHostBrush}" />
 
         <Grid
             x:Name="HeaderGrid"
-            Height="45"
-            Background="{ThemeResource SystemControlBackgroundAccentBrush}"
-            Loading="HeaderGrid_Loading"
-            RequestedTheme="{x:Bind core:Converters.ChooseThemeForAccent(Settings), Mode=OneWay}">
+            Grid.Row="1"
+            Height="{StaticResource TitleRowHeight}">
             <TextBlock
                 x:Uid="PrintViewTitle"
                 Margin="20 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="22"
-                FontWeight="SemiLight"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}" />
+                FontWeight="Bold" />
 
             <AppBarButton
                 x:Name="BtnClose"
                 x:Uid="BtnClose"
-                Width="45"
-                Height="45"
+                Width="{StaticResource TitleRowHeight}"
+                Height="{StaticResource TitleRowHeight}"
                 HorizontalAlignment="Right"
-                Click="{x:Bind Hide}"
-                Foreground="{x:Bind core:Converters.GetForegroundBrush(Settings), Mode=OneWay}">
+                Click="{x:Bind Hide}">
                 <SymbolIcon Symbol="Cancel" />
             </AppBarButton>
 
@@ -185,19 +189,20 @@
 
         <Grid
             x:Name="ContentPanel"
-            Grid.Row="1"
-            ColumnSpacing="24">
+            Grid.Row="2"
+            ColumnSpacing="24"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            CornerRadius="8 8 0 0"
+            Loading="ContentPanel_Loading">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.8*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <!--  Requires it's own element to enable theme shadows  -->
-            <Border
-                x:Name="ContentBackground"
-                Grid.ColumnSpan="2"
-                Background="{StaticResource DefaultAcrylicBrush}" />
+            <Border x:Name="ContentBackground" Grid.ColumnSpan="2" />
 
+            <!--  Options Scroller  -->
             <ScrollViewer x:Name="ContentScroller">
                 <StackPanel
                     x:Name="OptionsPanel"
@@ -454,6 +459,7 @@
                 </StackPanel>
             </ScrollViewer>
 
+            <!--  Page Preview Container  -->
             <Grid
                 Grid.Column="1"
                 Margin="12"
@@ -488,8 +494,6 @@
                         <TextBlock VerticalAlignment="Center">
                             <Run x:Uid="PrintViewOfLabel" />
                             <Run Text="{x:Bind PageCount, Mode=OneWay}" />
-                            <!--<Run Text="(of" />
-                        <Run Text="{x:Bind PageCount, Mode=OneWay}" /><Run Text=")" />-->
                         </TextBlock>
                     </StackPanel>
 
@@ -514,18 +518,16 @@
             </Grid>
         </Grid>
 
-
         <Grid
             x:Name="BottomBar"
-            Grid.Row="2"
-            Background="{ThemeResource SystemAccentColorDark2}">
+            Grid.Row="3"
+            Background="{StaticResource AltHostBrush}">
 
             <TextBlock
                 x:Name="BottomLabel"
                 Margin="12 0"
                 VerticalAlignment="Center"
                 FontSize="12"
-                Foreground="White"
                 TextLineBounds="Tight">
                 <Run Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
             </TextBlock>
@@ -535,7 +537,6 @@
                 Margin="8"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal"
-                RequestedTheme="Dark"
                 Spacing="8">
                 <Button
                     x:Name="BtnContinue"

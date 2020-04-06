@@ -28,9 +28,11 @@
     <SccProvider>
     </SccProvider>
     <PackageCertificateThumbprint>F4C1BC290432ACAE9C11F15DB762EDD9CCF2D498</PackageCertificateThumbprint>
+    <LangVersion>8.0</LangVersion>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
+    <AppxBundlePlatforms>x86|x64|arm|arm64</AppxBundlePlatforms>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppInstallerUpdateFrequency>0</AppInstallerUpdateFrequency>
     <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
@@ -193,7 +195,7 @@
     <Compile Include="Helpers\PrintHelper.cs" />
     <Compile Include="Helpers\Unicode.cs" />
     <Compile Include="Models\Character.cs" />
-    <Compile Include="Core\Messages.cs" />
+    <Compile Include="Models\Messages.cs" />
     <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\ExportManager.cs" />
     <Compile Include="Helpers\Composition.cs" />

@@ -3,6 +3,7 @@
     <Style x:Key="FontListHeaderItem" TargetType="ListViewHeaderItem">
         <Setter Property="Padding" Value="0" />
         <Setter Property="Margin" Value="0" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewHeaderItem">

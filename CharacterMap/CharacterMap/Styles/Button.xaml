@@ -18,7 +18,7 @@
     <Style x:Key="TransparentButton" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource ListViewItemRevealBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="8,4,8,5" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -97,7 +97,7 @@
     <Style x:Key="TransparentHintButton" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource ListViewItemRevealBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="8,4,8,5" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -139,7 +139,7 @@
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="RootGrid.(RevealBrush.State)" Value="Pressed" />
-                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonRevealBackgroundPressed}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemRevealBackgroundPressed}" />
                                         <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushPressed}" />
                                         <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundPressed}" />
                                     </VisualState.Setters>
@@ -313,9 +313,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="AppBarButton">
-                    <Grid
-                        x:Name="Root"
-                        Background="{TemplateBinding Background}">
+                    <Grid x:Name="Root" Background="{TemplateBinding Background}">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -396,9 +394,9 @@
                                 Foreground="{TemplateBinding Foreground}" />
 
                             <TextBlock
-                                FontSize="12"
                                 Margin="12 0 0 0"
                                 VerticalAlignment="Center"
+                                FontSize="12"
                                 Text="{TemplateBinding Label}" />
                         </StackPanel>
 
@@ -419,53 +417,86 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
-                    <ContentPresenter
-                        x:Name="Text"
-                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                        Background="{TemplateBinding Background}"
-                        Content="{TemplateBinding Content}">
+                    <Border x:Name="Border" Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation TargetName="Border" />
+                                    </Storyboard>
+                                </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Background">
+                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Background">
+                                        <PointerDownThemeAnimation TargetName="Border" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundBaseLowBrush}" />
+                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.4" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Checked">
+                                    <VisualState.Setters>
+                                        <Setter Target="Text.Content">
+                                            <Setter.Value>
+                                                <FontIcon FontSize="14" Glyph="&#xE1D8;" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </VisualState.Setters>
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundAccentBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <PointerUpThemeAnimation TargetName="Border" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Border.Background" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                        <Setter Target="Text.Content">
+                                            <Setter.Value>
+                                                <FontIcon FontSize="14" Glyph="&#xE1D8;" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </VisualState.Setters>
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                        </ObjectAnimationUsingKeyFrames>
+                                        <PointerUpThemeAnimation TargetName="Border" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="CheckedPressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Border.Background" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
+                                        <Setter Target="Text.Content">
+                                            <Setter.Value>
+                                                <FontIcon FontSize="14" Glyph="&#xE1D8;" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation TargetName="Border" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                    </ContentPresenter>
+                        <ContentPresenter
+                            x:Name="Text"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            Foreground="{TemplateBinding Foreground}" />
+
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

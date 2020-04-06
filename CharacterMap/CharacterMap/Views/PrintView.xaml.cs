@@ -28,6 +28,7 @@ namespace CharacterMap.Views
     {
         Border GetPresenter();
         FontMapView GetFontMap();
+        GridLength GetTitleBarHeight();
     }
 
     public sealed partial class PrintView : ViewBase
@@ -63,6 +64,13 @@ namespace CharacterMap.Views
             private set => Set(ref _canContinue, value);
         }
 
+        private GridLength _titleBarHeight = new GridLength(32);
+        public GridLength TitleBarHeight
+        {
+            get => _titleBarHeight;
+            set => Set(ref _titleBarHeight, value);
+        }
+
         public List<PrintLayout> Layouts { get; } = new List<PrintLayout>
         {
             PrintLayout.Grid,
@@ -90,6 +98,7 @@ namespace CharacterMap.Views
         public static void Show(IPrintPresenter presenter)
         {
             var view = new PrintView(presenter);
+            view.TitleBarHeight = presenter.GetTitleBarHeight();
             presenter.GetPresenter().Child = view;
             view.Show();
         }
@@ -119,6 +128,9 @@ namespace CharacterMap.Views
             this.Visibility = Visibility.Visible;
             UpdatePreview();
 
+            // Focus the close button to ensure keyboard focus is retained inside the panel
+            BtnClose.Focus(FocusState.Programmatic);
+
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
         }
@@ -128,6 +140,8 @@ namespace CharacterMap.Views
             if (_presenter == null)
                 return;
 
+            this.Bindings.StopTracking();
+
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
             _presenter.GetPresenter().Child = null;
@@ -136,12 +150,17 @@ namespace CharacterMap.Views
 
             _printHelper.UnregisterForPrinting();
             _printHelper.Clear();
+
         }
 
         private void StartShowAnimation()
         {
             if (!Composition.UISettings.AnimationsEnabled)
+            {
+                this.GetElementVisual().Opacity = 1;
+                this.GetElementVisual().Properties.InsertVector3(Composition.TRANSLATION, Vector3.Zero);
                 return;
+            }
 
             List<UIElement> elements = new List<UIElement> { this };
             elements.AddRange(OptionsPanel.Children);
@@ -289,9 +308,9 @@ namespace CharacterMap.Views
                 item.IsSelected = false;
         }
 
-        private void HeaderGrid_Loading(FrameworkElement sender, object args)
+        private void ContentPanel_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(HeaderGrid, 30, ContentPanel);
+            Composition.SetThemeShadow(ContentPanel, 40, TitleBackground);
         }
 
 

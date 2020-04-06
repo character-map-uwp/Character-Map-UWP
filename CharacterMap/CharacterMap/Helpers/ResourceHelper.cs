@@ -1,15 +1,19 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
 {
     public static class ResourceHelper
     {
+        #region Generic
+
         public static bool TryGet<T>(string resourceKey, out T value)
         {
             if (TryGetInternal(Application.Current.Resources, resourceKey, out value))
@@ -51,13 +55,36 @@ namespace CharacterMap.Helpers
             return content;
         }
 
+        #endregion
+
+
 
 
         /* Character Map Specific resources */
+
         private static AppSettings _settings;
         public static AppSettings AppSettings
         {
             get => _settings ?? (_settings = Get<AppSettings>(nameof(AppSettings)));
+        }
+
+        public static ElementTheme GetEffectiveTheme()
+        {
+            return AppSettings.UserRequestedTheme switch
+            {
+                ElementTheme.Default => App.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light,
+                _ => AppSettings.UserRequestedTheme
+            };
+        }
+
+        public static Task SetTransparencyAsync(bool enable)
+        {
+            return WindowService.RunOnViewsAsync(() =>
+            {
+                Get<AcrylicBrush>("DefaultHostBrush").AlwaysUseFallback = !enable;
+                Get<AcrylicBrush>("AltHostBrush").AlwaysUseFallback = !enable;
+                Get<AcrylicBrush>("DefaultAcrylicBrush").AlwaysUseFallback = !enable;
+            });
         }
     }
 

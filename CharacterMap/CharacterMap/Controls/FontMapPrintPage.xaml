@@ -5,6 +5,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    IsTabStop="False"
     RequestedTheme="Light"
     mc:Ignorable="d">
 
@@ -39,6 +40,7 @@
                     ItemsSource="{x:Bind Items}">
                     <ListView.Resources>
                         <Style TargetType="ListViewItem">
+                            <Setter Property="IsTabStop" Value="False" />
                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                             <Setter Property="Padding" Value="0" />

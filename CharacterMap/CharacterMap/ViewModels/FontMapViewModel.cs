@@ -361,10 +361,8 @@ namespace CharacterMap.ViewModels
 
         private void ApplyEffectiveTypography(CanvasTextLayout layout)
         {
-            using (var type = GetEffectiveTypography())
-            {
-                layout.SetTypography(0, 1, type);
-            }
+            using var type = GetEffectiveTypography();
+            layout.SetTypography(0, 1, type);
         }
 
         internal void UpdateDevValues()
@@ -403,16 +401,23 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        public string GetCharName(Character c)
+        {
+            if (SelectedVariant == null || c == null)
+                return null;
+
+            return GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant);
+        }
+
         public string GetCharDescription(Character c)
         {
             if (SelectedVariant == null || c == null)
                 return null;
 
-            string desc = GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant, true);
-            if (!string.IsNullOrEmpty(desc))
-                return $"{desc} - {c.UnicodeString}";
-
-            return c.UnicodeString;
+            if (GlyphService.GetCharacterKeystroke(c.UnicodeIndex) is string k)
+                return $"{c.UnicodeString} - {k}";
+            else
+                return c.UnicodeString;
         }
 
         public void DebounceSearch(string query, int delayMilliseconds = 500, SearchSource from = SearchSource.AutoProperty)

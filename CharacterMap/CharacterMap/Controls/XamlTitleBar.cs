@@ -1,10 +1,15 @@
-﻿using GalaSoft.MvvmLight;
+﻿using CharacterMap.Helpers;
+using CharacterMap.Models;
+using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Messaging;
+using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls
 {
@@ -30,6 +35,13 @@ namespace CharacterMap.Controls
             get => _backgroundColor;
             internal set => Set(ref _backgroundColor, value);
         }
+
+        private GridLength _gridHeight = new GridLength(0);
+        public GridLength GridHeight
+        {
+            get => _gridHeight;
+            internal set => Set(ref _gridHeight, value);
+        }
     }
 
     public sealed class XamlTitleBar : ContentControl
@@ -49,7 +61,13 @@ namespace CharacterMap.Controls
 
             // 32px is the default height at default text scaling. 
             // We'll use this as a placeholder until we get a real value
-            Height = 32;
+            SetHeight(32);
+        }
+
+        void SetHeight(double d)
+        {
+            Height = d;
+            TemplateSettings.GridHeight = new GridLength(d);
         }
 
         protected override void OnApplyTemplate()
@@ -105,12 +123,24 @@ namespace CharacterMap.Controls
             _settings = new UISettings();
             _settings.ColorValuesChanged += _settings_ColorValuesChanged;
 
+            Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
+
             UpdateColors();
             UpdateMetrics(_titleBar);
         }
 
+        private void OnAppSettingsChanged(AppSettingsChangedMessage obj)
+        {
+            if (obj.PropertyName == nameof(Core.AppSettings.UserRequestedTheme))
+            {
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateColors);
+            }
+        }
+
         private void UnhookListeners()
         {
+            Messenger.Default.Unregister(this);
+
             if (_settings != null)
             {
                 _settings.ColorValuesChanged -= _settings_ColorValuesChanged;
@@ -163,25 +193,23 @@ namespace CharacterMap.Controls
 
             bool active = _window != null && _window.ActivationMode == CoreWindowActivationMode.ActivatedInForeground;
 
-            TemplateSettings.BackgroundColor = _settings.GetColorValue(active ? UIColorType.Accent : UIColorType.AccentDark1);
+            TemplateSettings.BackgroundColor = Colors.Transparent;// _settings.GetColorValue(active ? UIColorType.Accent : UIColorType.AccentDark1);
 
-            var accentColor = _settings.GetColorValue(UIColorType.Accent);
             var darkAccent = _settings.GetColorValue(UIColorType.AccentDark1);
             var btnHoverColor = _settings.GetColorValue(UIColorType.AccentLight1);
+            var foreground = ResourceHelper.GetEffectiveTheme() == ElementTheme.Dark ? Colors.White : Colors.Black;
 
             ApplyColorToTitleBar(
-                accentColor,
-                Colors.White,
+                Colors.Transparent,
+                foreground,
                 darkAccent,
                 Colors.Gray);
 
             ApplyColorToTitleButton(
-                Colors.Transparent, Colors.White,
-                btnHoverColor, Colors.White,
-                accentColor, Colors.White,
+                Colors.Transparent, foreground,
+                btnHoverColor, foreground,
+                Colors.Transparent, foreground,
                 Colors.Transparent, Colors.Gray);
-
-            RequestedTheme = !IsAccentColorDark() ? ElementTheme.Light : ElementTheme.Dark;
         }
 
         private static void ApplyColorToTitleBar(Color? titleBackgroundColor,
@@ -234,7 +262,7 @@ namespace CharacterMap.Controls
             bool ltr = FlowDirection == FlowDirection.LeftToRight;
 
             if (bar.Height > 0)
-                Height = bar.Height;
+                SetHeight(bar.Height);
 
             TemplateSettings.LeftColumnWidth 
                 = new GridLength(ltr ? bar.SystemOverlayLeftInset : bar.SystemOverlayRightInset);

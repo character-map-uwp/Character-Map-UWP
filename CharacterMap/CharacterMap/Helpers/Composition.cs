@@ -99,12 +99,12 @@ namespace CharacterMap.Helpers
             e.SetShowAnimation(Composition.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
         }
 
-        public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffset = 140)
+        public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffsetY = 140, int fromOffsetX = 0, int durationMs = 880)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
 
-            var animation = CreateEntranceAnimation(target, new Vector3(0, fromOffset, 0), delayMs);
+            var animation = CreateEntranceAnimation(target, new Vector3(fromOffsetX, fromOffsetY, 0), delayMs, durationMs);
             target.GetElementVisual().StartAnimationGroup(animation);
         }
 
@@ -128,7 +128,7 @@ namespace CharacterMap.Helpers
             return c.CreateAnimationGroup(t, o);
         }
 
-        public static void PlayEntrance(List<UIElement> targets, int delayMs = 0, int fromOffset = 140, int durationMs = 800, int staggerMs = 83)
+        public static void PlayEntrance(List<UIElement> targets, int delayMs = 0, int fromOffsetY = 140, int fromOffsetX = 0, int durationMs = 880, int staggerMs = 83)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
@@ -137,7 +137,7 @@ namespace CharacterMap.Helpers
 
             foreach (var target in targets)
             {
-                var animation = CreateEntranceAnimation(target, new Vector3(0, fromOffset, 0), start, durationMs);
+                var animation = CreateEntranceAnimation(target, new Vector3(fromOffsetX, fromOffsetY, 0), start, durationMs);
                 target.GetElementVisual().StartAnimationGroup(animation);
                 start += staggerMs;
             }
@@ -288,28 +288,16 @@ namespace CharacterMap.Helpers
         }
 
         public static void StartStartUpAnimation(
-            FrameworkElement barBackground,
             List<FrameworkElement> barElements,
             List<UIElement> contentElements)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
 
-            TimeSpan duration = TimeSpan.FromSeconds(0.5);
             TimeSpan duration1 = TimeSpan.FromSeconds(0.7);
 
-            var b = barBackground.EnableTranslation(true).GetElementVisual();
-            var c = b.Compositor;
-
+            var c = barElements[0].GetElementVisual().Compositor;
             var backOut = c.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.885f), new Vector2(0.25f, 1.125f));
-            var ent = c.CreateEntranceEasingFunction();
-
-            var a1 = c.CreateVector3KeyFrameAnimation();
-            a1.Target = TRANSLATION;
-            a1.Duration = duration;
-            a1.InsertKeyFrame(0, new Vector3(0, -45, 0));
-            a1.InsertKeyFrame(1, Vector3.Zero, ent);
-            b.StartAnimationGroup(a1);
 
             double delay = 0.1;
             foreach (var element in barElements)

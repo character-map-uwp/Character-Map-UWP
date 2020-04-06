@@ -19,8 +19,9 @@
           <target state="translated">เติมสีดำ</target>
         </trans-unit>
         <trans-unit id="BtnCopy.Text" translate="yes" xml:space="preserve">
-          <source>Copy (character only)</source>
-          <target state="translated">คัดลอกตัวอักษรนี้</target>
+          <source>Copy as text</source>
+          <target state="needs-review-translation">คัดลอกตัวอักษรนี้</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="BtnSavePng.Text" translate="yes" xml:space="preserve">
           <source>Save as PNG</source>
@@ -39,8 +40,9 @@
           <target state="translated">ตัว</target>
         </trans-unit>
         <trans-unit id="ColoredGlyphLabel.Text" translate="yes" xml:space="preserve">
-          <source>Colorization</source>
-          <target state="translated">เติมสี</target>
+          <source>Colored Glyph</source>
+          <target state="needs-review-translation">เติมสี</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Monochrome glyphs</source>
@@ -262,10 +264,6 @@
         <trans-unit id="OpenFontPickerConfirm" translate="yes" xml:space="preserve">
           <source>Open</source>
           <target state="translated">เปิด</target>
-        </trans-unit>
-        <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
-          <source>Collection Name</source>
-          <target state="translated">ชื่อรายการสะสม</target>
         </trans-unit>
         <trans-unit id="DigCreateCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Create</source>
@@ -729,9 +727,8 @@ Turning this on can have a minor impact on scrolling performance.</source>
           <target state="new">Contributors</target>
         </trans-unit>
         <trans-unit id="TxtLoadingFonts.Text" translate="yes" xml:space="preserve">
-          <source>loading fonts</source>
-          <target state="new">loading fonts</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">intentionally lowercase for design reasons</note>
+          <source>Loading Fonts</source>
+          <target state="new">Loading Fonts</target>
         </trans-unit>
         <trans-unit id="AppBtnClear.Label" translate="yes" xml:space="preserve">
           <source>Clear</source>
@@ -906,6 +903,78 @@ You can change the page range in the Page Setup section.</target>
         <trans-unit id="PrintLayout_TwoColumn" translate="yes" xml:space="preserve">
           <source>Two Columns</source>
           <target state="new">Two Columns</target>
+        </trans-unit>
+        <trans-unit id="SettingsTransparencyDescription.Text" translate="yes" xml:space="preserve">
+          <source>Enables transparency effects in the UI. If transparency is disabled in Windows settings, this will have no effect.
+May have a minor effect on performance on older or weaker devices.</source>
+          <target state="new">Enables transparency effects in the UI. If transparency is disabled in Windows settings, this will have no effect.
+May have a minor effect on performance on older or weaker devices.</target>
+        </trans-unit>
+        <trans-unit id="SettingsTransparencyHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable transparency</source>
+          <target state="new">Enable transparency</target>
+        </trans-unit>
+        <trans-unit id="StartupFailedButton.Content" translate="yes" xml:space="preserve">
+          <source>Show Details</source>
+          <target state="new">Show Details</target>
+        </trans-unit>
+        <trans-unit id="StartupFailedHeader.Text" translate="yes" xml:space="preserve">
+          <source>Uh Oh</source>
+          <target state="new">Uh Oh</target>
+        </trans-unit>
+        <trans-unit id="StartupFailedMessage.Text" translate="yes" xml:space="preserve">
+          <source>Something went wrong and we couldn't start the app right now.
+Please consider posting details about this error to GitHub so we can help you fix it.</source>
+          <target state="new">Something went wrong and we couldn't start the app right now.
+Please consider posting details about this error to GitHub so we can help you fix it.</target>
+        </trans-unit>
+        <trans-unit id="CharacterKeystrokeLabel" translate="yes" xml:space="preserve">
+          <source>Keystroke: {0:0000}</source>
+          <target state="new">Keystroke: {0:0000}</target>
+        </trans-unit>
+        <trans-unit id="ExportSVGLabel.Text" translate="yes" xml:space="preserve">
+          <source>Save as SVG Image</source>
+          <target state="new">Save as SVG Image</target>
+        </trans-unit>
+        <trans-unit id="ExportPNGLabel.Text" translate="yes" xml:space="preserve">
+          <source>Save as PNG Image</source>
+          <target state="new">Save as PNG Image</target>
+        </trans-unit>
+        <trans-unit id="ExportSVGGlyphLabel.Text" translate="yes" xml:space="preserve">
+          <source>SVG Glyph</source>
+          <target state="new">SVG Glyph</target>
+        </trans-unit>
+        <trans-unit id="BtnCopyGlyph.Label" translate="yes" xml:space="preserve">
+          <source>Copy</source>
+          <target state="new">Copy</target>
+        </trans-unit>
+        <trans-unit id="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Copy to clipboard</source>
+          <target state="new">Copy to clipboard</target>
+        </trans-unit>
+        <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
+          <source>Save As</source>
+          <target state="new">Save As</target>
+        </trans-unit>
+        <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Save As</source>
+          <target state="new">Save As</target>
+        </trans-unit>
+        <trans-unit id="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Fit Character</source>
+          <target state="new">Fit Character</target>
+        </trans-unit>
+        <trans-unit id="NotificationFontRemovedBody.Text" translate="yes" xml:space="preserve">
+          <source>was removed from</source>
+          <target state="new">was removed from</target>
+        </trans-unit>
+        <trans-unit id="NotificationFontAddedBody.Text" translate="yes" xml:space="preserve">
+          <source>was added to</source>
+          <target state="new">was added to</target>
+        </trans-unit>
+        <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
+          <source>Collection Name</source>
+          <target state="new">Collection Name</target>
         </trans-unit>
       </group>
     </body>

@@ -39,7 +39,7 @@ namespace CharacterMap.Services
                 // Initialize things like registering background task before the app is loaded
                 await InitializeAsync();
 
-                // We spawn a seperate Window for files.
+                // We spawn a separate Window for files.
                 if (activationArgs is FileActivatedEventArgs fileArgs)
                 {
                     bool mainView = Window.Current.Content == null;
@@ -86,15 +86,9 @@ namespace CharacterMap.Services
                     _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
                     WindowService.MainWindow.CoreView.CoreWindow.Activate();
                 }
-
-
-                //else if (Window.Current.Visible == false
-                //    || WindowService.MainWindow.CoreView.CoreWindow.ActivationMode != CoreWindowActivationMode.ActivatedInForeground)
-                //{
-                //    _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
-                //    WindowService.MainWindow.CoreView.CoreWindow.Activate();
-                //}
             }
+
+           
 
             try
             {

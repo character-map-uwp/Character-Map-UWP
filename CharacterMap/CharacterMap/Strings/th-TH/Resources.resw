@@ -204,9 +204,6 @@
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>เปิด</value>
   </data>
-  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>ชื่อรายการสะสม</value>
-  </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>สร้าง</value>
   </data>

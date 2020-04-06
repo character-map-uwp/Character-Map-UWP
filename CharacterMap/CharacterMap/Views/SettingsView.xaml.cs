@@ -43,6 +43,13 @@ namespace CharacterMap.Views
 
         public bool IsOpen { get; private set; }
 
+        private GridLength _titleBarHeight = new GridLength(32);
+        public GridLength TitleBarHeight
+        {
+            get => _titleBarHeight;
+            set => Set(ref _titleBarHeight, value);
+        }
+
         public List<GlyphAnnotation> Annotations { get; } = new List<GlyphAnnotation>
         {
             GlyphAnnotation.None,
@@ -77,6 +84,9 @@ namespace CharacterMap.Views
 
         public void Show(FontVariant variant, InstalledFont font)
         {
+            if (IsOpen)
+                return;
+
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
@@ -141,10 +151,9 @@ namespace CharacterMap.Views
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(HeaderGrid, 40, ContentScroller);
+            Composition.SetThemeShadow(ContentScroller, 40, TitleBackground);
 
             // Set the settings that can't be set with bindings
-
             switch (Settings.UserRequestedTheme)
             {
                 case ElementTheme.Default:
@@ -216,6 +225,7 @@ namespace CharacterMap.Views
 
         public void SelectedLanguageToString(object selected) => 
             Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "en-US";
+
 
 
 

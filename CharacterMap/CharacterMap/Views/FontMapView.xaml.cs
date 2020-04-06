@@ -35,7 +35,35 @@ namespace CharacterMap.Views
 {
     public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPrintPresenter
     {
-        #region Dependency Properties
+        #region Dependency Properties 
+
+        #region TitleLeftContent
+
+        public object TitleLeftContent
+        {
+            get { return (object)GetValue(TitleLeftContentProperty); }
+            set { SetValue(TitleLeftContentProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for TitleLeftContent.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TitleLeftContentProperty =
+            DependencyProperty.Register(nameof(TitleLeftContent), typeof(object), typeof(FontMapView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region TitleRightContent
+
+        public object TitleRightContent
+        {
+            get { return (object)GetValue(TitleRightContentProperty); }
+            set { SetValue(TitleRightContentProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for TitleRightContent.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty TitleRightContentProperty =
+            DependencyProperty.Register(nameof(TitleRightContent), typeof(object), typeof(FontMapView), new PropertyMetadata(null));
+
+        #endregion
 
         #region Font
 
@@ -72,8 +100,6 @@ namespace CharacterMap.Views
         public bool IsStandalone { get; set; }
 
         public object ThemeLock { get; } = new object();
-
-        private bool _isCtrlKeyPressed = false;
 
         private Debouncer _sizeDebouncer { get; } = new Debouncer();
 
@@ -176,7 +202,10 @@ namespace CharacterMap.Views
             else if (e.PropertyName == nameof(ViewModel.SelectedChar))
             {
                 if (ViewModel.Settings.UseSelectionAnimations)
+                {
                     Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
+                    Composition.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                }
 
                 UpdateTypography(ViewModel.SelectedTypography);
             }
@@ -185,7 +214,7 @@ namespace CharacterMap.Views
                 CharGrid.ItemsSource = ViewModel.Chars;
 
                 if (ViewModel.Settings.UseSelectionAnimations)
-                    Composition.PlayEntrance(CharGrid);
+                    Composition.PlayEntrance(CharGrid, 166);
             }
         }
 
@@ -202,6 +231,7 @@ namespace CharacterMap.Views
                         CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
                         break;
                     case nameof(AppSettings.DevToolsLanguage):
+                    case nameof(AppSettings.ShowDevUtils):
                         ViewModel.UpdateDevValues();
                         break;
                     case nameof(AppSettings.GridSize):
@@ -357,16 +387,6 @@ namespace CharacterMap.Views
             ViewModel.Settings.FitCharacter = !ViewModel.Settings.FitCharacter;
         }
 
-        private void BtnSaveAs_OnClick(object sender, RoutedEventArgs e)
-        {
-            SaveAsCommandBar.IsOpen = !SaveAsCommandBar.IsOpen;
-        }
-
-        private void BtnSaveAsSvg_OnClick(object sender, RoutedEventArgs e)
-        {
-            SaveAsSvgCommandBar.IsOpen = !SaveAsSvgCommandBar.IsOpen;
-        }
-
         private void OnCopyGotFocus(object sender, RoutedEventArgs e)
         {
             ((TextBox)sender).SelectAll();
@@ -415,16 +435,6 @@ namespace CharacterMap.Views
                     PreviewColumn.Width = new GridLength((int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth));
                 }
             });
-        }
-
-        private void PreviewGrid_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            var newSize = e.NewSize.Width - 2;
-
-            foreach (AppBarButton item in SaveAsCommandBar.SecondaryCommands.Concat(SaveAsSvgCommandBar.SecondaryCommands))
-            {
-                item.Width = newSize;
-            }
         }
 
         private void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
@@ -539,6 +549,8 @@ namespace CharacterMap.Views
             return PrintPresenter;
         }
 
+        public GridLength GetTitleBarHeight() => TitleBar.TemplateSettings.GridHeight;
+
         private void TryPrint()
         {
             if (this.GetFirstAncestorOfType<MainPage>() is null)
@@ -620,23 +632,7 @@ namespace CharacterMap.Views
 
         /* Composition */
 
-        private async void DetailsGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            // This avoids strange animation on secondary window
-            await Task.Delay(500);
-            if (this.IsLoaded)
-                Composition.SetStandardReposition(sender, e);
-        }
-
-        private void TitleGrid_Loading(FrameworkElement sender, object args)
-        {
-            Composition.SetThemeShadow(sender, 20, MainUIGrid);
-        }
-
-        private void GridSplitter_Loading(FrameworkElement sender, object args)
-        {
-            Composition.SetThemeShadow(sender, 20, ShadowTarget);
-        }
+        
     }
 
 

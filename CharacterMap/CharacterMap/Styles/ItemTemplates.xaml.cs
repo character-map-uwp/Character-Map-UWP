@@ -1,9 +1,11 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
@@ -54,8 +56,11 @@ namespace CharacterMap.Styles
 
         private void BtnViewCollection_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is Button b && b.DataContext is AddToCollectionResult result)
+            if (sender is Windows.UI.Xaml.Documents.Hyperlink b)
             {
+                var t = b.GetFirstAncestorOfType<TextBlock>();
+                AddToCollectionResult result = (AddToCollectionResult)t.DataContext;
+
                 MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
 
                 if (MainPage.MainDispatcher.HasThreadAccess)
@@ -85,6 +90,38 @@ namespace CharacterMap.Styles
                     menu,
                     font,
                     false);
+            }
+        }
+
+        private async void BtnUndo_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button b)
+            {
+                b.IsEnabled = false;
+                b.GetFirstAncestorOfType<InAppNotification>().Dismiss();
+                var collections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
+
+                if (b.Tag is CollectionUpdatedArgs args)
+                {
+                    if (!args.IsAdd)
+                    {
+                        await collections.AddToCollectionAsync(args.Font, args.Collection);
+                        Messenger.Default.Send(new CollectionsUpdatedMessage());
+                    }
+                    else
+                    {
+                        await collections.RemoveFromCollectionAsync(args.Font, args.Collection);
+                        Messenger.Default.Send(new CollectionsUpdatedMessage());
+                    }
+                }
+                else if (b.Tag is AddToCollectionResult result)
+                {
+                    if (result.Success)
+                    {
+                        await collections.RemoveFromCollectionAsync(result.Font, result.Collection);
+                        Messenger.Default.Send(new CollectionsUpdatedMessage());
+                    }
+                }
             }
         }
     }
