@@ -106,24 +106,20 @@
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center">
                 <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
-                <Run Text="was added to" />
+                <Run x:Uid="NotificationFontAddedBody" />
                 <Hyperlink Click="BtnViewCollection_Click">
                     <Run Text="{x:Bind Collection.Name}" />
                 </Hyperlink>
             </TextBlock>
 
-            <AppBarButton
+            <Button
                 Grid.Column="1"
-                Width="40"
-                Height="40"
                 Margin="12 0 0 0"
+                VerticalAlignment="Center"
                 Click="BtnUndo_Click"
-                Tag="{x:Bind}">
-                <SymbolIcon
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Symbol="Undo" />
-            </AppBarButton>
+                Content="Undo"
+                Style="{StaticResource ButtonRevealStyle}"
+                Tag="{x:Bind}" />
         </Grid>
     </DataTemplate>
 
@@ -135,24 +131,20 @@
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center">
                 <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
-                <Run Text="was removed from" />
+                <Run x:Uid="NotificationFontRemovedBody" />
                 <Hyperlink>
                     <Run Text="{x:Bind Collection.Name}" />
                 </Hyperlink>
             </TextBlock>
 
-            <AppBarButton
+            <Button
                 Grid.Column="1"
-                Width="40"
-                Height="40"
                 Margin="12 0 0 0"
+                VerticalAlignment="Center"
                 Click="BtnUndo_Click"
-                Tag="{x:Bind}">
-                <SymbolIcon
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Symbol="Undo" />
-            </AppBarButton>
+                Content="Undo"
+                Style="{StaticResource ButtonRevealStyle}"
+                Tag="{x:Bind}" />
         </Grid>
     </DataTemplate>
 

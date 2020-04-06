@@ -189,10 +189,10 @@
 
         <Grid
             x:Name="ContentPanel"
-            CornerRadius="8 8 0 0"
             Grid.Row="2"
             ColumnSpacing="24"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            CornerRadius="8 8 0 0"
             Loading="ContentPanel_Loading">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.8*" />

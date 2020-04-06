@@ -40,8 +40,9 @@
           <target state="translated">个字符</target>
         </trans-unit>
         <trans-unit id="ColoredGlyphLabel.Text" translate="yes" xml:space="preserve">
-          <source>Colorization</source>
-          <target state="translated">颜色选择</target>
+          <source>Colored Glyph</source>
+          <target state="needs-review-translation">颜色选择</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Monochrome glyphs</source>
@@ -263,10 +264,6 @@
         <trans-unit id="OpenFontPickerConfirm" translate="yes" xml:space="preserve">
           <source>Open</source>
           <target state="translated">打开</target>
-        </trans-unit>
-        <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
-          <source>Collection Name</source>
-          <target state="translated">收藏名称</target>
         </trans-unit>
         <trans-unit id="DigCreateCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Create</source>
@@ -930,6 +927,54 @@ May have a minor effect on performance on older or weaker devices.</target>
 Please consider posting details about this error to GitHub so we can help you fix it.</source>
           <target state="new">Something went wrong and we couldn't start the app right now.
 Please consider posting details about this error to GitHub so we can help you fix it.</target>
+        </trans-unit>
+        <trans-unit id="CharacterKeystrokeLabel" translate="yes" xml:space="preserve">
+          <source>Keystroke: {0:0000}</source>
+          <target state="new">Keystroke: {0:0000}</target>
+        </trans-unit>
+        <trans-unit id="ExportSVGLabel.Text" translate="yes" xml:space="preserve">
+          <source>Save as SVG Image</source>
+          <target state="new">Save as SVG Image</target>
+        </trans-unit>
+        <trans-unit id="ExportPNGLabel.Text" translate="yes" xml:space="preserve">
+          <source>Save as PNG Image</source>
+          <target state="new">Save as PNG Image</target>
+        </trans-unit>
+        <trans-unit id="ExportSVGGlyphLabel.Text" translate="yes" xml:space="preserve">
+          <source>SVG Glyph</source>
+          <target state="new">SVG Glyph</target>
+        </trans-unit>
+        <trans-unit id="BtnCopyGlyph.Label" translate="yes" xml:space="preserve">
+          <source>Copy</source>
+          <target state="new">Copy</target>
+        </trans-unit>
+        <trans-unit id="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Copy to clipboard</source>
+          <target state="new">Copy to clipboard</target>
+        </trans-unit>
+        <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
+          <source>Save As</source>
+          <target state="new">Save As</target>
+        </trans-unit>
+        <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Save As</source>
+          <target state="new">Save As</target>
+        </trans-unit>
+        <trans-unit id="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Fit Character</source>
+          <target state="new">Fit Character</target>
+        </trans-unit>
+        <trans-unit id="NotificationFontRemovedBody.Text" translate="yes" xml:space="preserve">
+          <source>was removed from</source>
+          <target state="new">was removed from</target>
+        </trans-unit>
+        <trans-unit id="NotificationFontAddedBody.Text" translate="yes" xml:space="preserve">
+          <source>was added to</source>
+          <target state="new">was added to</target>
+        </trans-unit>
+        <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
+          <source>Collection Name</source>
+          <target state="new">Collection Name</target>
         </trans-unit>
       </group>
     </body>

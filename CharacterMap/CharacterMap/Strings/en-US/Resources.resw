@@ -142,7 +142,7 @@
     <value>Char(s)</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
-    <value>Colorization</value>
+    <value>Colored Glyph</value>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
     <value>Monochrome glyphs</value>
@@ -803,5 +803,38 @@ May have a minor effect on performance on older or weaker devices.</value>
   <data name="StartupFailedMessage.Text" xml:space="preserve">
     <value>Something went wrong and we couldn't start the app right now.
 Please consider posting details about this error to GitHub so we can help you fix it.</value>
+  </data>
+  <data name="CharacterKeystrokeLabel" xml:space="preserve">
+    <value>Keystroke: {0:0000}</value>
+  </data>
+  <data name="ExportSVGLabel.Text" xml:space="preserve">
+    <value>Save as SVG Image</value>
+  </data>
+  <data name="ExportPNGLabel.Text" xml:space="preserve">
+    <value>Save as PNG Image</value>
+  </data>
+  <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
+    <value>SVG Glyph</value>
+  </data>
+  <data name="BtnCopyGlyph.Label" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Copy to clipboard</value>
+  </data>
+  <data name="BtnSaveGlyph.Label" xml:space="preserve">
+    <value>Save As</value>
+  </data>
+  <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save As</value>
+  </data>
+  <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Fit Character</value>
+  </data>
+  <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
+    <value>was removed from</value>
+  </data>
+   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
+    <value>was added to</value>
   </data>
 </root>

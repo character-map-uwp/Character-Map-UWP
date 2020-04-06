@@ -632,44 +632,7 @@ namespace CharacterMap.Views
 
         /* Composition */
 
-        private async void DetailsGrid_Loaded(object sender, RoutedEventArgs e)
-        {
-            // This avoids strange animation on secondary window
-            await Task.Delay(500);
-            if (this.IsLoaded)
-                Composition.SetStandardReposition(sender, e);
-        }
-
-        private void TitleGrid_Loading(FrameworkElement sender, object args)
-        {
-            //Composition.SetThemeShadow(sender, 20, MainUIGrid);
-        }
-
-        private void GridSplitter_Loading(FrameworkElement sender, object args)
-        {
-            //Composition.SetThemeShadow(sender, 20, ShadowTarget);
-        }
-
-        private void MenuFlyout_Opening_1(object sender, object e)
-        {
-            if (sender is MenuFlyout flyout
-                && flyout.GetPresenter() is MenuFlyoutPresenter p)
-            {
-                //flyout.GetPresenter().Width = flyout.Target.ActualWidth;
-                //foreach (var item in flyout.Items)
-                //    item.Width = flyout.Target.ActualWidth;
-            }
-        }
-
-        private void SaveAsFlyout_Opened(object sender, object e)
-        {
-            if (sender is MenuFlyout flyout)
-            {
-                flyout.GetPresenter().Width = flyout.Target.ActualWidth;
-                //foreach (var item in flyout.Items)
-                //    item.Width = flyout.Target.ActualWidth;
-            }
-        }
+        
     }
 
 

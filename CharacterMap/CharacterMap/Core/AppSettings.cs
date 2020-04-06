@@ -61,13 +61,13 @@ namespace CharacterMap.Core
 
         public int MaxSearchResult
         {
-            get => Get(20);
+            get => Get(26);
             set => Set(value);
         }
 
         public double LastColumnWidth
         {
-            get => Get(330d);
+            get => Get(326d);
             set => Set(value);
         }
 

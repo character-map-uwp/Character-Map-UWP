@@ -91,9 +91,8 @@ namespace CharacterMap.Services
 
         internal static string GetCharacterKeystroke(int unicodeIndex)
         {
-            // Add Unicode keystroke details
             if (unicodeIndex >= 128 && unicodeIndex <= 255)
-                return $"Keystroke: Alt+{unicodeIndex:0000}";
+                return Localization.Get("CharacterKeystrokeLabel",  unicodeIndex);
 
             return null;
         }

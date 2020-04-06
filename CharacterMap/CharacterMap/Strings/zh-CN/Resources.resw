@@ -204,9 +204,6 @@
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>打开</value>
   </data>
-  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>收藏名称</value>
-  </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>创建</value>
   </data>
