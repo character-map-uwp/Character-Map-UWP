@@ -926,8 +926,8 @@ Please consider posting details about this error to GitHub so we can help you fi
 Please consider posting details about this error to GitHub so we can help you fix it.</target>
         </trans-unit>
         <trans-unit id="CharacterKeystrokeLabel" translate="yes" xml:space="preserve">
-          <source>Keystroke: {0:0000}</source>
-          <target state="new">Keystroke: {0:0000}</target>
+          <source>Keystroke: Alt + {0:0000}</source>
+          <target state="new">Keystroke: Alt + {0:0000}</target>
         </trans-unit>
         <trans-unit id="ExportSVGLabel.Text" translate="yes" xml:space="preserve">
           <source>Save as SVG Image</source>
