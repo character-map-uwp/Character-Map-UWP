@@ -339,6 +339,7 @@
     <Content Include="Assets\Square44x44Logo.scale-200.png" />
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
+    <PRIResource Include="Strings\it-IT\Resources.resw" />
     <PRIResource Include="Strings\th-TH\Resources.resw" />
     <PRIResource Include="Strings\en-GB\Resources.resw" />
   </ItemGroup>
@@ -422,6 +423,7 @@
     <XliffResource Include="MultilingualResources\CharacterMap.de-DE.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.en-GB.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.fr-FR.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.it-IT.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.pl-PL.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.ru-RU.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.th-TH.xlf" />

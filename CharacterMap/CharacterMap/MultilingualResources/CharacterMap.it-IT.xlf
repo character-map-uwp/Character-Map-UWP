@@ -1,0 +1,978 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
+  <file datatype="xml" source-language="en-US" target-language="it-IT" original="CHARACTERMAP/STRINGS/EN-US/RESOURCES.RESW" tool-id="MultilingualAppToolkit" product-name="n/a" product-version="n/a" build-num="n/a">
+    <header>
+      <tool tool-id="MultilingualAppToolkit" tool-name="Multilingual App Toolkit" tool-version="4.0.6915.0" tool-company="Microsoft" />
+    </header>
+    <body>
+      <group id="CHARACTERMAP/STRINGS/EN-US/RESOURCES.RESW" datatype="resx">
+        <trans-unit id="AddToCollectionHint.Text" translate="yes" xml:space="preserve">
+          <source>Add to Library</source>
+          <target state="translated">Aggiungi alla libreria</target>
+        </trans-unit>
+        <trans-unit id="AppName" translate="yes" xml:space="preserve">
+          <source>Character Map</source>
+          <target state="translated">Mappa Caratteri UWP</target>
+        </trans-unit>
+        <trans-unit id="BlackFill.Text" translate="yes" xml:space="preserve">
+          <source>Black Fill</source>
+          <target state="translated">Sfondonero</target>
+        </trans-unit>
+        <trans-unit id="BtnCopy.Text" translate="yes" xml:space="preserve">
+          <source>Copy as text</source>
+          <target state="translated">Copia come testo</target>
+        </trans-unit>
+        <trans-unit id="BtnSavePng.Text" translate="yes" xml:space="preserve">
+          <source>Save as PNG</source>
+          <target state="translated">Salva come PNG</target>
+        </trans-unit>
+        <trans-unit id="BtnSaveSvg.Text" translate="yes" xml:space="preserve">
+          <source>Save as SVG (monochrome only)</source>
+          <target state="translated">Salva come SVG (solo monocromo)</target>
+        </trans-unit>
+        <trans-unit id="BtnSelect.Content" translate="yes" xml:space="preserve">
+          <source>Select</source>
+          <target state="translated">Seleziona</target>
+        </trans-unit>
+        <trans-unit id="CharsLabel.Text" translate="yes" xml:space="preserve">
+          <source>Char(s)</source>
+          <target state="translated">Carattere</target>
+        </trans-unit>
+        <trans-unit id="ColoredGlyphLabel.Text" translate="yes" xml:space="preserve">
+          <source>Colored Glyph</source>
+          <target state="translated">Glifo colorato</target>
+        </trans-unit>
+        <trans-unit id="ColorGlyphToggle.OffContent" translate="yes" xml:space="preserve">
+          <source>Monochrome glyphs</source>
+          <target state="translated">Glifo monocromo</target>
+        </trans-unit>
+        <trans-unit id="ColorGlyphToggle.OnContent" translate="yes" xml:space="preserve">
+          <source>Color glyphs</source>
+          <target state="translated">Colore glifo</target>
+        </trans-unit>
+        <trans-unit id="DigSettings.Title" translate="yes" xml:space="preserve">
+          <source>Settings</source>
+          <target state="translated">Impostazioni</target>
+        </trans-unit>
+        <trans-unit id="FilterAllFonts.Content" translate="yes" xml:space="preserve">
+          <source>All Fonts</source>
+          <target state="translated">Tutti i caratteri</target>
+        </trans-unit>
+        <trans-unit id="FilterImportedFonts.Content" translate="yes" xml:space="preserve">
+          <source>Imported Fonts</source>
+          <target state="translated">Caratteri importati</target>
+        </trans-unit>
+        <trans-unit id="FilterSymbolFonts.Content" translate="yes" xml:space="preserve">
+          <source>Symbol Fonts</source>
+          <target state="translated">Simbolo del carattere</target>
+        </trans-unit>
+        <trans-unit id="FontDisplayHeader.Text" translate="yes" xml:space="preserve">
+          <source>Font Display Options</source>
+          <target state="translated">Opzioni di visualizzazione dei caratteri</target>
+        </trans-unit>
+        <trans-unit id="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Font Rendering Options</source>
+          <target state="translated">Opzioni di rendering dei caratteri</target>
+        </trans-unit>
+        <trans-unit id="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Font Face Properties</source>
+          <target state="translated">Metadati del carattere</target>
+        </trans-unit>
+        <trans-unit id="FontPropFace.Text" translate="yes" xml:space="preserve">
+          <source>Face Name</source>
+          <target state="translated">Tipologia</target>
+        </trans-unit>
+        <trans-unit id="FontPropFamily.Text" translate="yes" xml:space="preserve">
+          <source>Family Name</source>
+          <target state="translated">Nome famiglia</target>
+        </trans-unit>
+        <trans-unit id="FontPropMonospaced.Text" translate="yes" xml:space="preserve">
+          <source>Is Monospaced</source>
+          <target state="translated">È monospaziato</target>
+        </trans-unit>
+        <trans-unit id="FontPropStretch.Text" translate="yes" xml:space="preserve">
+          <source>Stretch</source>
+          <target state="translated">Tratto</target>
+        </trans-unit>
+        <trans-unit id="FontPropStyle.Text" translate="yes" xml:space="preserve">
+          <source>Style</source>
+          <target state="translated">Stile</target>
+        </trans-unit>
+        <trans-unit id="FontPropSymbol.Text" translate="yes" xml:space="preserve">
+          <source>Is Symbol Font</source>
+          <target state="translated">é un carattere simbolo</target>
+        </trans-unit>
+        <trans-unit id="FontPropTitle.Text" translate="yes" xml:space="preserve">
+          <source>Font Face Properties</source>
+          <target state="translated">Metadati del carattere</target>
+        </trans-unit>
+        <trans-unit id="FontPropType.Text" translate="yes" xml:space="preserve">
+          <source>Type</source>
+          <target state="translated">Tipo</target>
+        </trans-unit>
+        <trans-unit id="FontPropWeight.Text" translate="yes" xml:space="preserve">
+          <source>Weight</source>
+          <target state="translated">Dimensione</target>
+        </trans-unit>
+        <trans-unit id="GridSlider.Header" translate="yes" xml:space="preserve">
+          <source>Character Grid Size</source>
+          <target state="translated">Dimensione della griglia caratteri</target>
+        </trans-unit>
+        <trans-unit id="InvalidFontMessage" translate="yes" xml:space="preserve">
+          <source>Sorry, we couldn't find any supported font data in this file.</source>
+          <target state="translated">Siamo spiacenti, non è stato possibile trovare nessun carattere supportato in questo file.</target>
+        </trans-unit>
+        <trans-unit id="InvalidFontTitle" translate="yes" xml:space="preserve">
+          <source>Unsupported File</source>
+          <target state="translated">File non supportato</target>
+        </trans-unit>
+        <trans-unit id="OpenInNewWindow.Text" translate="yes" xml:space="preserve">
+          <source>Open in New Window</source>
+          <target state="translated">Apri in una nuova finestra</target>
+        </trans-unit>
+        <trans-unit id="PngSlider.Header" translate="yes" xml:space="preserve">
+          <source>PNG Resolution (pixel)</source>
+          <target state="translated">Risoluzione PNG (in pixel)</target>
+        </trans-unit>
+        <trans-unit id="RemoveFontFlyout.Text" translate="yes" xml:space="preserve">
+          <source>Delete Font</source>
+          <target state="translated">Elimina carattere</target>
+        </trans-unit>
+        <trans-unit id="RestartButton.Content" translate="yes" xml:space="preserve">
+          <source>Restart app</source>
+          <target state="translated">Riavvia l'app</target>
+        </trans-unit>
+        <trans-unit id="RestartHeader.Text" translate="yes" xml:space="preserve">
+          <source>Requires application restart to take effect.</source>
+          <target state="translated">Riavvio dell'app necessario per apportare le modifiche</target>
+        </trans-unit>
+        <trans-unit id="SearchBox.PlaceholderText" translate="yes" xml:space="preserve">
+          <source>Search character name or unicode hex</source>
+          <target state="translated">Cerca per nome del carattere o codice Unicode</target>
+        </trans-unit>
+        <trans-unit id="Settings_About.Text" translate="yes" xml:space="preserve">
+          <source>About this application</source>
+          <target state="translated">Informazioni sull'app</target>
+        </trans-unit>
+        <trans-unit id="Settings_AboutDescription.Text" translate="yes" xml:space="preserve">
+          <source>This app is designed to replace the Windows Win32 Character Map. It is more DPI aware on high DPI screens.</source>
+          <target state="translated">Questa app è progettata per sostituire la mappa dei caratteri (Win32) preinstallata in Windows, supportando la moderna grafica di Windows 10 ed elevate risoluzioni grafiche.</target>
+        </trans-unit>
+        <trans-unit id="TxtCopiedMessage.Text" translate="yes" xml:space="preserve">
+          <source>Copied</source>
+          <target state="translated">Copiato</target>
+        </trans-unit>
+        <trans-unit id="TxtFontIcon.Header" translate="yes" xml:space="preserve">
+          <source>Font Icon</source>
+          <target state="translated">Icona carattere</target>
+        </trans-unit>
+        <trans-unit id="TxtSymbolIcon.Header" translate="yes" xml:space="preserve">
+          <source>Symbol Icon</source>
+          <target state="translated">Icona simbolo</target>
+        </trans-unit>
+        <trans-unit id="TxtTitle.Text" translate="yes" xml:space="preserve">
+          <source>Character Map</source>
+          <target state="translated">Mappa caratteri</target>
+        </trans-unit>
+        <trans-unit id="TxtUnicode.Header" translate="yes" xml:space="preserve">
+          <source>Unicode</source>
+          <target state="translated">Unicode</target>
+        </trans-unit>
+        <trans-unit id="TxtXamlCode.Header" translate="yes" xml:space="preserve">
+          <source>Glyph Code</source>
+          <target state="translated">Codice glifo</target>
+        </trans-unit>
+        <trans-unit id="TypographyVariantsHeader.Text" translate="yes" xml:space="preserve">
+          <source>Glyph Variants</source>
+          <target state="translated">Varianti glifi</target>
+        </trans-unit>
+        <trans-unit id="WeightSelector.Header" translate="yes" xml:space="preserve">
+          <source>Font Face</source>
+          <target state="translated">Font Face</target>
+        </trans-unit>
+        <trans-unit id="WhiteFill.Text" translate="yes" xml:space="preserve">
+          <source>White Fill</source>
+          <target state="translated">Sfondo bianco</target>
+        </trans-unit>
+        <trans-unit id="FontsCountLabel.Text" translate="yes" xml:space="preserve">
+          <source>Fonts</source>
+          <target state="translated">Caratteri</target>
+        </trans-unit>
+        <trans-unit id="ImportNotAFile" translate="yes" xml:space="preserve">
+          <source>Not a file</source>
+          <target state="translated">Non è un file</target>
+        </trans-unit>
+        <trans-unit id="ImportPendingDelete" translate="yes" xml:space="preserve">
+          <source>Existing font pending delete. Please restart app.</source>
+          <target state="translated">Caratteri esistenti in attesa di eliminazione. Sarà necessario riavviare l'app.</target>
+        </trans-unit>
+        <trans-unit id="ImportUnavailableFile" translate="yes" xml:space="preserve">
+          <source>File not available</source>
+          <target state="translated">File non disponibile</target>
+        </trans-unit>
+        <trans-unit id="ImportUnsupportedFileType" translate="yes" xml:space="preserve">
+          <source>Unsupported File Type</source>
+          <target state="translated">Tipo di file non supportato</target>
+        </trans-unit>
+        <trans-unit id="ImportUnsupportedFontType" translate="yes" xml:space="preserve">
+          <source>Unsupported Font Type</source>
+          <target state="translated">Tipo di carattere non supportato</target>
+        </trans-unit>
+        <trans-unit id="FontsClearedOnNextLaunchNotice" translate="yes" xml:space="preserve">
+          <source>Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.</source>
+          <target state="translated">Alcuni caratteri non possono essere rimossi al momento (pertanto non risulteranno visibili) ma lo saranno al prossimo avvio dell'app.</target>
+        </trans-unit>
+        <trans-unit id="SaveImageError" translate="yes" xml:space="preserve">
+          <source>Sorry, something went wrong whilst we were trying to save the image.</source>
+          <target state="translated">Spiacenti, qualcosa non ha funzionato durante il salvataggio dell'immagine</target>
+        </trans-unit>
+        <trans-unit id="LoadingFontListError" translate="yes" xml:space="preserve">
+          <source>Error Loading Font List</source>
+          <target state="translated">Errore durante il caricamento dell'elenco dei caratteri</target>
+        </trans-unit>
+        <trans-unit id="NoticeLabel.Text" translate="yes" xml:space="preserve">
+          <source>Notice</source>
+          <target state="translated">Avviso</target>
+        </trans-unit>
+        <trans-unit id="ImportFileCopyFail" translate="yes" xml:space="preserve">
+          <source>Something went wrong. Please try again later.</source>
+          <target state="translated">Spiacenti, qualcosa non ha funzionato. Riprova.</target>
+        </trans-unit>
+        <trans-unit id="ImportFontHelpBlock.Text" translate="yes" xml:space="preserve">
+          <source>Drag fonts into the app to copy them to your library.</source>
+          <target state="translated">Trascina i caratteri nell'app per copiarli nella tua libreria.</target>
+        </trans-unit>
+        <trans-unit id="FontPropXaml.Text" translate="yes" xml:space="preserve">
+          <source>XAML FontFamily Source</source>
+          <target state="translated">Origine famiglia caratteri XAML</target>
+        </trans-unit>
+        <trans-unit id="FilePickerConfirm" translate="yes" xml:space="preserve">
+          <source>Import</source>
+          <target state="translated">Importa</target>
+        </trans-unit>
+        <trans-unit id="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Import Fonts</source>
+          <target state="translated">Importa caratteri</target>
+        </trans-unit>
+        <trans-unit id="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Open Font</source>
+          <target state="translated">Apri carattere</target>
+        </trans-unit>
+        <trans-unit id="OpenFontPickerConfirm" translate="yes" xml:space="preserve">
+          <source>Open</source>
+          <target state="translated">Apri</target>
+        </trans-unit>
+        <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
+          <source>Collection Name</source>
+          <target state="translated">Nome collezione</target>
+        </trans-unit>
+        <trans-unit id="DigCreateCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
+          <source>Create</source>
+          <target state="translated">Crea</target>
+        </trans-unit>
+        <trans-unit id="DigCreateCollection.Title" translate="yes" xml:space="preserve">
+          <source>Create Collection</source>
+          <target state="translated">Crea collezione</target>
+        </trans-unit>
+        <trans-unit id="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Delete Collection</source>
+          <target state="translated">Elimina collezione</target>
+        </trans-unit>
+        <trans-unit id="DigCreateCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
+          <source>Cancel</source>
+          <target state="translated">Annulla</target>
+        </trans-unit>
+        <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
+          <source>Delete</source>
+          <target state="translated">Elimina</target>
+        </trans-unit>
+        <trans-unit id="DigDeleteCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
+          <source>Cancel</source>
+          <target state="translated">Annulla</target>
+        </trans-unit>
+        <trans-unit id="DigDeleteCollection.Title" translate="yes" xml:space="preserve">
+          <source>Are you sure you want to delete this collection?</source>
+          <target state="translated">Sei sicuro di voler eliminare questa collezione?</target>
+        </trans-unit>
+        <trans-unit id="DigRenameCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
+          <source>Rename</source>
+          <target state="translated">Rinomina</target>
+        </trans-unit>
+        <trans-unit id="DigRenameCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
+          <source>Cancel</source>
+          <target state="translated">Cancella</target>
+        </trans-unit>
+        <trans-unit id="DigRenameCollection.Title" translate="yes" xml:space="preserve">
+          <source>Rename Collection</source>
+          <target state="translated">Rinomina collezione</target>
+        </trans-unit>
+        <trans-unit id="OptionAllFonts.Text" translate="yes" xml:space="preserve">
+          <source>All Fonts</source>
+          <target state="translated">Tutti i caratteri</target>
+        </trans-unit>
+        <trans-unit id="OptionImportedFonts.Text" translate="yes" xml:space="preserve">
+          <source>Imported Fonts</source>
+          <target state="translated">Caratteri importati</target>
+        </trans-unit>
+        <trans-unit id="OptionSymbolFonts.Text" translate="yes" xml:space="preserve">
+          <source>Symbol Fonts</source>
+          <target state="translated">Simboli</target>
+        </trans-unit>
+        <trans-unit id="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Rename Collection</source>
+          <target state="translated">Rinomina collezione</target>
+        </trans-unit>
+        <trans-unit id="FontListDisplayHeader.Text" translate="yes" xml:space="preserve">
+          <source>Fonts List Display</source>
+          <target state="translated">Visualizzazione elenco caratteri</target>
+        </trans-unit>
+        <trans-unit id="FontListDisplayToggle.OffContent" translate="yes" xml:space="preserve">
+          <source>Show Font names using System default font</source>
+          <target state="translated">Mostra i nomi dei caratteri utilizzando il carattere predefinito di sistema</target>
+        </trans-unit>
+        <trans-unit id="FontListDisplayToggle.OnContent" translate="yes" xml:space="preserve">
+          <source>Show Font names using actual font</source>
+          <target state="translated">Mostra i nomi dei caratteri usando il carattere attuale</target>
+        </trans-unit>
+        <trans-unit id="FontPropCount.Text" translate="yes" xml:space="preserve">
+          <source>Glyph Count</source>
+          <target state="translated">Numero glifi</target>
+        </trans-unit>
+        <trans-unit id="OptionMonospacedFonts.Text" translate="yes" xml:space="preserve">
+          <source>Monospaced Fonts</source>
+          <target state="translated">Caratteri a spaziatura fissa</target>
+        </trans-unit>
+        <trans-unit id="OptionSansSerifFonts.Text" translate="yes" xml:space="preserve">
+          <source>Sans Serif Fonts</source>
+          <target state="translated">Caretteri San Seif </target>
+        </trans-unit>
+        <trans-unit id="OptionSerifFonts.Text" translate="yes" xml:space="preserve">
+          <source>Serif Fonts</source>
+          <target state="translated">Caretteri Serif</target>
+        </trans-unit>
+        <trans-unit id="NewCollectionItem.Text" translate="yes" xml:space="preserve">
+          <source>New Collection</source>
+          <target state="translated">Nuova collezione</target>
+        </trans-unit>
+        <trans-unit id="RemoveFromCollectionItem.Text" translate="yes" xml:space="preserve">
+          <source>Remove from Collection</source>
+          <target state="translated">Rimuovi dalla collezione</target>
+        </trans-unit>
+        <trans-unit id="AddToCollectionFlyout.Text" translate="yes" xml:space="preserve">
+          <source>Add to Collection</source>
+          <target state="translated">Aggiungi alla collezione</target>
+        </trans-unit>
+        <trans-unit id="InstantSearchToggle.OffContent" translate="yes" xml:space="preserve">
+          <source>Instant search disabled</source>
+          <target state="translated">Ricerca istantanea disabilitata</target>
+        </trans-unit>
+        <trans-unit id="InstantSearchToggle.OnContent" translate="yes" xml:space="preserve">
+          <source>Instant search enabled</source>
+          <target state="translated">Ricerca istantanea abilitata</target>
+        </trans-unit>
+        <trans-unit id="SearchResultsSlider.Header" translate="yes" xml:space="preserve">
+          <source>Maximum search results</source>
+          <target state="translated">Numero massimo di risultati</target>
+        </trans-unit>
+        <trans-unit id="FontPropCharCount.Text" translate="yes" xml:space="preserve">
+          <source>Character Count</source>
+          <target state="translated">Conteggio dei caratteri</target>
+        </trans-unit>
+        <trans-unit id="FontPropFilePath.Text" translate="yes" xml:space="preserve">
+          <source>File Path</source>
+          <target state="translated">Percorso del file</target>
+        </trans-unit>
+        <trans-unit id="DWriteSourceAppxPackage" translate="yes" xml:space="preserve">
+          <source>Microsoft Store</source>
+          <target state="translated">Microsoft Store</target>
+        </trans-unit>
+        <trans-unit id="DWriteSourcePerMachine" translate="yes" xml:space="preserve">
+          <source>All Users</source>
+          <target state="translated">Tutti gli utenti</target>
+        </trans-unit>
+        <trans-unit id="DWriteSourcePerUser" translate="yes" xml:space="preserve">
+          <source>Current User only</source>
+          <target state="translated">Solo utente currente</target>
+        </trans-unit>
+        <trans-unit id="DWriteSourceRemoteFontProvider" translate="yes" xml:space="preserve">
+          <source>Cloud Provider</source>
+          <target state="translated">Provider del cloud</target>
+        </trans-unit>
+        <trans-unit id="DWriteSourceUnknown" translate="yes" xml:space="preserve">
+          <source>Undefined</source>
+          <target state="translated">Non definito</target>
+        </trans-unit>
+        <trans-unit id="FontPropInstallType.Text" translate="yes" xml:space="preserve">
+          <source>Install Type</source>
+          <target state="translated">Tipo di installazione</target>
+        </trans-unit>
+        <trans-unit id="OptionAppxFonts.Text" translate="yes" xml:space="preserve">
+          <source>From Microsoft Store</source>
+          <target state="translated">dal Microsoft Store</target>
+        </trans-unit>
+        <trans-unit id="OptionCloudFonts.Text" translate="yes" xml:space="preserve">
+          <source>Cloud-based Fonts</source>
+          <target state="translated">Caratteri basati su cloud</target>
+        </trans-unit>
+        <trans-unit id="OptionColorFonts.Text" translate="yes" xml:space="preserve">
+          <source>Color Fonts</source>
+          <target state="translated">Caratteri colorati</target>
+        </trans-unit>
+        <trans-unit id="OptionDecorativeFonts.Text" translate="yes" xml:space="preserve">
+          <source>Decorative Fonts</source>
+          <target state="translated">Caratteri decorativi</target>
+        </trans-unit>
+        <trans-unit id="OptionMoreFilters.Text" translate="yes" xml:space="preserve">
+          <source>More</source>
+          <target state="translated">Altro</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptFonts.Text" translate="yes" xml:space="preserve">
+          <source>Script Fonts</source>
+          <target state="translated">Caratteri sript</target>
+        </trans-unit>
+        <trans-unit id="BtnSaveSvgRaw.Text" translate="yes" xml:space="preserve">
+          <source>Save as SVG</source>
+          <target state="translated">Salva come SVG</target>
+        </trans-unit>
+        <trans-unit id="StatusBarFontCount" translate="yes" xml:space="preserve">
+          <source>{0} Font Families</source>
+          <target state="translated">{0} Famiglie di caratteri</target>
+        </trans-unit>
+        <trans-unit id="FontPropFileSize.Text" translate="yes" xml:space="preserve">
+          <source>File Size</source>
+          <target state="translated">Dimensione del file</target>
+        </trans-unit>
+        <trans-unit id="InstallTypeImported" translate="yes" xml:space="preserve">
+          <source>Not Installed (Imported)</source>
+          <target state="translated">Non installato (importato)</target>
+        </trans-unit>
+        <trans-unit id="StatusBarCharacterCount" translate="yes" xml:space="preserve">
+          <source>{0} Characters</source>
+          <target state="translated">{0} Caratteri</target>
+        </trans-unit>
+        <trans-unit id="SearchDelaySelector.Header" translate="yes" xml:space="preserve">
+          <source>Delay before search (ms)</source>
+          <target state="translated">Ritardo prima della ricerca (ms)</target>
+        </trans-unit>
+        <trans-unit id="DigSettings.PrimaryButtonText" translate="yes" xml:space="preserve">
+          <source>OK</source>
+          <target state="translated">Ok</target>
+        </trans-unit>
+        <trans-unit id="InstantSearchToggleHeader.Text" translate="yes" xml:space="preserve">
+          <source>Instant Search</source>
+          <target state="translated">Ricerca istantanea</target>
+        </trans-unit>
+        <trans-unit id="CharacterSavedMessage.Text" translate="yes" xml:space="preserve">
+          <source>Saved to</source>
+          <target state="translated">Salvato in</target>
+        </trans-unit>
+        <trans-unit id="NotificationAddedToCollection" translate="yes" xml:space="preserve">
+          <source>{0} was added to "{1}" collection</source>
+          <target state="translated">{0} è stato aggiunti alla "{1}" raccolta</target>
+        </trans-unit>
+        <trans-unit id="BtnOpenFile.Content" translate="yes" xml:space="preserve">
+          <source>Open File</source>
+          <target state="translated">Apri file</target>
+        </trans-unit>
+        <trans-unit id="BtnOpenFolder.Content" translate="yes" xml:space="preserve">
+          <source>Open Folder</source>
+          <target state="translated">Apri cartella</target>
+        </trans-unit>
+        <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Hide font pane</source>
+          <target state="translated">Nascondi il riquadro dei caratteri</target>
+        </trans-unit>
+        <trans-unit id="NotificationImportFailed" translate="yes" xml:space="preserve">
+          <source>Import Failed</source>
+          <target state="translated">Importazione fallita</target>
+        </trans-unit>
+        <trans-unit id="NotificationMultipleFontsAdded" translate="yes" xml:space="preserve">
+          <source>{0} files were added to your collection</source>
+          <target state="translated">{0} file sono stati aggiunti alla tua raccolta</target>
+        </trans-unit>
+        <trans-unit id="NotificationSingleFontAdded" translate="yes" xml:space="preserve">
+          <source>{0} was added to your collection</source>
+          <target state="translated">{0} è stato aggiunto alla tua raccolta</target>
+        </trans-unit>
+        <trans-unit id="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Show font pane</source>
+          <target state="translated">Mostra riquadro caratteri</target>
+        </trans-unit>
+        <trans-unit id="BtnViewCollection.Content" translate="yes" xml:space="preserve">
+          <source>View Collection</source>
+          <target state="translated">Visualizza raccolta</target>
+        </trans-unit>
+        <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>More</source>
+          <target state="translated">Altro</target>
+        </trans-unit>
+        <trans-unit id="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Filter fonts</source>
+          <target state="translated">Filtra caratteri</target>
+        </trans-unit>
+        <trans-unit id="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Toggle Fullscreen</source>
+          <target state="translated">Attiva/disattiva schermo intero</target>
+        </trans-unit>
+        <trans-unit id="DlgDeleteFont.Title" translate="yes" xml:space="preserve">
+          <source>Are you sure you want to delete this font from your library?</source>
+          <target state="translated">Sei sicuro di voler eliminare questo font dalla tua libreria?</target>
+        </trans-unit>
+        <trans-unit id="NotificationCollectionDeleted" translate="yes" xml:space="preserve">
+          <source>"{0}" collection deleted</source>
+          <target state="translated">"{0}" raccolta eliminata</target>
+        </trans-unit>
+        <trans-unit id="DlgException.PrimaryButtonText" translate="yes" xml:space="preserve">
+          <source>OK</source>
+          <target state="translated">Ok</target>
+        </trans-unit>
+        <trans-unit id="DlgException.Title" translate="yes" xml:space="preserve">
+          <source>Something went wrong</source>
+          <target state="translated">Qualcosa non ha funzionato</target>
+        </trans-unit>
+        <trans-unit id="DlgExceptionCopyMessage.Text" translate="yes" xml:space="preserve">
+          <source>Copy error to Clipboard and open GitHub</source>
+          <target state="translated">Copia l'errore negli appunti e apri GitHub</target>
+        </trans-unit>
+        <trans-unit id="DlgExceptionExpander.Header" translate="yes" xml:space="preserve">
+          <source>View Full Exception details</source>
+          <target state="translated">Visualizza i dettagli sull'eccezione</target>
+        </trans-unit>
+        <trans-unit id="DlgExceptionMessage.Text" translate="yes" xml:space="preserve">
+          <source>To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</source>
+          <target state="translated">Per aiutarci a eseguire il debug e risolvere il tuo problema, ti preghiamo di aprire una segnalazione di errore sulla nostra pagina GitHub fornendo i dettagli. Proveremo a risolverlo subito!</target>
+        </trans-unit>
+        <trans-unit id="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Close</source>
+          <target state="translated">Chiudi</target>
+        </trans-unit>
+        <trans-unit id="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Copy</source>
+          <target state="translated">Copia</target>
+        </trans-unit>
+        <trans-unit id="BtnRateAndReview.Content" translate="yes" xml:space="preserve">
+          <source>Rate &amp; Review</source>
+          <target state="translated">Vota e lascia una recensione</target>
+        </trans-unit>
+        <trans-unit id="BtnXAMLGeometry.Content" translate="yes" xml:space="preserve">
+          <source>Click to view</source>
+          <target state="translated">Clicca per vedere</target>
+        </trans-unit>
+        <trans-unit id="RbThemeDark.Content" translate="yes" xml:space="preserve">
+          <source>Dark</source>
+          <target state="translated">Scuro</target>
+        </trans-unit>
+        <trans-unit id="RbThemeLight.Content" translate="yes" xml:space="preserve">
+          <source>Light</source>
+          <target state="translated">Chiaro</target>
+        </trans-unit>
+        <trans-unit id="RbThemeSystem.Content" translate="yes" xml:space="preserve">
+          <source>Windows default</source>
+          <target state="translated">Usa il tema di Windows</target>
+        </trans-unit>
+        <trans-unit id="RbUseActualFont.Content" translate="yes" xml:space="preserve">
+          <source>Use actual font</source>
+          <target state="translated">Usa il carattere attuale</target>
+        </trans-unit>
+        <trans-unit id="RbUseSystemFont.Content" translate="yes" xml:space="preserve">
+          <source>Use system font</source>
+          <target state="translated">Usa il carattere di sistema</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharacterSearchDescription.Text" translate="yes" xml:space="preserve">
+          <source>Toggle instant search. If disabled, you can start a search by using the enter key or pressing the search icon.</source>
+          <target state="translated">Attiva / disattiva la ricerca istantanea. Se disabilitato, è possibile avviare una ricerca utilizzando il tasto Invio o l'icona di ricerca.</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharacterSearchHeader.Text" translate="yes" xml:space="preserve">
+          <source>Character Search</source>
+          <target state="translated">Opzioni di ricerca</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharGridDescription.Text" translate="yes" xml:space="preserve">
+          <source>The size of individual characters inside the character grid. Smaller sizes may affect performance.</source>
+          <target state="translated">La dimensione dei singoli caratteri all'interno della griglia caratteri. Dimensioni più piccole possono influire sulle prestazioni.</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharGridHeader.Text" translate="yes" xml:space="preserve">
+          <source>Character Grid Size</source>
+          <target state="translated">Dimensione griglia caratteri</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharPreviewHint.Text" translate="yes" xml:space="preserve">
+          <source>Character grid preview</source>
+          <target state="translated">Anteprima griglia caratteri</target>
+        </trans-unit>
+        <trans-unit id="SettingsDevToolsDescription.Text" translate="yes" xml:space="preserve">
+          <source>Show the tools for XAML developers, like Symbol Icon and Font Icon.</source>
+          <target state="translated">Mostra gli strumenti XAML per gli sviluppatori, come i codici di simboli e caratteri</target>
+        </trans-unit>
+        <trans-unit id="SettingsDevToolsGroupHeader.Text" translate="yes" xml:space="preserve">
+          <source>Developer Features</source>
+          <target state="translated">Funzionalità per gli sviluppatori</target>
+        </trans-unit>
+        <trans-unit id="SettingsDevToolsHeader.Text" translate="yes" xml:space="preserve">
+          <source>Show developers features</source>
+          <target state="translated">Mostra le funzionalità per gli sviluppatori</target>
+        </trans-unit>
+        <trans-unit id="SettingsDevToolsLangDescription.Text" translate="yes" xml:space="preserve">
+          <source>Choose the dev language for developer features content.</source>
+          <target state="translated">Scegli il linguaggio di sviluppo per il contenuto delle funzionalità per gli sviluppatori.</target>
+        </trans-unit>
+        <trans-unit id="SettingsDevToolsLangHeader.Text" translate="yes" xml:space="preserve">
+          <source>Language</source>
+          <target state="translated">Lingua</target>
+        </trans-unit>
+        <trans-unit id="SettingsExpensiveAnimationDescription.Text" translate="yes" xml:space="preserve">
+          <source>Animates the character grid when resizing the window.
+Turning this on can incur a large performance penalty when resizing the window.</source>
+          <target state="translated">Anima la griglia dei caratteri durante il ridimensionamento della finestra.
+L'attivazione di questa opzione può comportare una elevata riduzione delle prestazioni durante il ridimensionamento della finestra.</target>
+        </trans-unit>
+        <trans-unit id="SettingsExpensiveAnimationHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable window resize animations</source>
+          <target state="translated">Abilita le animazioni durante il ridimensionamento della finestra</target>
+        </trans-unit>
+        <trans-unit id="SettingsExportHeader.Text" translate="yes" xml:space="preserve">
+          <source>Export</source>
+          <target state="translated">Esporta</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontListDescription.Text" translate="yes" xml:space="preserve">
+          <source>Choose the font used to display the names of fonts in the font list.</source>
+          <target state="translated">Scegli il font usato per visualizzare i nomi dei font disponibili nella lista font</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontListPreviewHint.Text" translate="yes" xml:space="preserve">
+          <source>Font list preview</source>
+          <target state="translated">Anteprima lista font</target>
+        </trans-unit>
+        <trans-unit id="SettingsHeader.Text" translate="yes" xml:space="preserve">
+          <source>Settings</source>
+          <target state="translated">Impostazioni</target>
+        </trans-unit>
+        <trans-unit id="SettingsLangOverride.OffContent" translate="yes" xml:space="preserve">
+          <source>Use default language</source>
+          <target state="translated">Usa la lingua predefinita</target>
+        </trans-unit>
+        <trans-unit id="SettingsLangOverride.OnContent" translate="yes" xml:space="preserve">
+          <source>Use override language</source>
+          <target state="translated">Usa lingua alternativa</target>
+        </trans-unit>
+        <trans-unit id="SettingsLanguageDescription.Text" translate="yes" xml:space="preserve">
+          <source>Override the in-app language.
+Requires a restart to take effect.</source>
+          <target state="translated">Sostituisci la lingua in-app.
+Richiede un riavvio per avere effetto.</target>
+        </trans-unit>
+        <trans-unit id="SettingsLanguageHeader.Text" translate="yes" xml:space="preserve">
+          <source>Language override</source>
+          <target state="translated">Sostituzione lingua</target>
+        </trans-unit>
+        <trans-unit id="SettingsPNGExportDescription.Text" translate="yes" xml:space="preserve">
+          <source>The size in pixels of exported PNG images.</source>
+          <target state="translated">La dimensione in pixel delle immagini PNG esportate</target>
+        </trans-unit>
+        <trans-unit id="SettingsPNGExportHeader.Text" translate="yes" xml:space="preserve">
+          <source>PNG Export Size</source>
+          <target state="translated">Dimensioni di esportazione PNG</target>
+        </trans-unit>
+        <trans-unit id="SettingsShadowsDescription.Text" translate="yes" xml:space="preserve">
+          <source>Enables subtle depth shadows on the UI. Only noticeable when using the Light theme.
+Turning this on may have a small performance impact on weaker devices.
+Requires a restart to take effect.</source>
+          <target state="translated">Abilita sottili ombre di profondità nell'interfaccia utente (apprezzabili solo con il tema chiaro attivato).
+L'attivazione di questo effetto potrebbe ridurre leggermente le prestazioni dei dispositivi più datati. 
+Riavvio dell'app necessario.</target>
+        </trans-unit>
+        <trans-unit id="SettingsShadowsHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable shadows</source>
+          <target state="translated">Abilita le ombre</target>
+        </trans-unit>
+        <trans-unit id="SettingsSimpleAnimationDescription.Text" translate="yes" xml:space="preserve">
+          <source>Controls the animation for loading the font list, switching fonts and changing characters.
+Turning this on has negligible performance impact.</source>
+          <target state="translated">Controlla l'animazione durante il caricamento dell'elenco dei caratteri, il cambio tra caratteri e la modifica dei caratteri.
+L'abilitazione dell'animazione ha un impatto trascurabile sulle prestazioni.</target>
+        </trans-unit>
+        <trans-unit id="SettingsSimpleAnimationHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable simple animations</source>
+          <target state="translated">Abilita animazioni semplici</target>
+        </trans-unit>
+        <trans-unit id="SettingsThemeHeader.Text" translate="yes" xml:space="preserve">
+          <source>Theme</source>
+          <target state="translated">Tema</target>
+        </trans-unit>
+        <trans-unit id="SettingsUIHeader.Text" translate="yes" xml:space="preserve">
+          <source>User Interface</source>
+          <target state="translated">Interfaccia utente</target>
+        </trans-unit>
+        <trans-unit id="SettingsUnicodeDescription.Text" translate="yes" xml:space="preserve">
+          <source>Shows the Unicode value of a character underneath the character in the character grid.
+Turning this on can have a minor impact on scrolling performance.</source>
+          <target state="translated">Mostra il valore Unicode di un carattere sotto al carattere selezionato nella griglia dei caratteri.
+L'attivazione può avere un impatto minore sulle prestazioni di scorrimento.</target>
+        </trans-unit>
+        <trans-unit id="SettingsUnicodeHeader.Text" translate="yes" xml:space="preserve">
+          <source>Show Unicode value in Character Grid</source>
+          <target state="translated">Mostra il valore Unicode nella griglia caratteri</target>
+        </trans-unit>
+        <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
+          <source>Path Geometry</source>
+          <target state="translated">Geometria/Grafica</target>
+        </trans-unit>
+        <trans-unit id="UseSystemLanguage" translate="yes" xml:space="preserve">
+          <source>Use system language setting</source>
+          <target state="translated">Usa la lingua di sistema</target>
+        </trans-unit>
+        <trans-unit id="SettingsNeedRestart.Text" translate="yes" xml:space="preserve">
+          <source>Change will apply after restart</source>
+          <target state="translated">I cambiamenti saranno apportati dopo il riavvio dell'app</target>
+        </trans-unit>
+        <trans-unit id="BtnContributors.Content" translate="yes" xml:space="preserve">
+          <source>Contributors</source>
+          <target state="translated">Persone che hanno contribuito allo sviluppo dell'app</target>
+        </trans-unit>
+        <trans-unit id="TxtLoadingFonts.Text" translate="yes" xml:space="preserve">
+          <source>Loading Fonts</source>
+          <target state="translated">Caricamento dei caratteri</target>
+        </trans-unit>
+        <trans-unit id="AppBtnClear.Label" translate="yes" xml:space="preserve">
+          <source>Clear</source>
+          <target state="new">Clear</target>
+        </trans-unit>
+        <trans-unit id="AppBtnReset.Label" translate="yes" xml:space="preserve">
+          <source>Reset</source>
+          <target state="translated">Reimposta</target>
+        </trans-unit>
+        <trans-unit id="AppBtnSelectAll.Label" translate="yes" xml:space="preserve">
+          <source>Select All</source>
+          <target state="translated">Seleziona tutto</target>
+        </trans-unit>
+        <trans-unit id="BtnApply.Content" translate="yes" xml:space="preserve">
+          <source>Apply</source>
+          <target state="translated">Applica</target>
+        </trans-unit>
+        <trans-unit id="BtnCancel.Content" translate="yes" xml:space="preserve">
+          <source>Cancel</source>
+          <target state="translated">Annulla</target>
+        </trans-unit>
+        <trans-unit id="BtnContinue.Content" translate="yes" xml:space="preserve">
+          <source>Continue</source>
+          <target state="translated">Continua</target>
+        </trans-unit>
+        <trans-unit id="BtnPrint.Content" translate="yes" xml:space="preserve">
+          <source>Print</source>
+          <target state="translated">Stampa</target>
+        </trans-unit>
+        <trans-unit id="CbCharacterLabel.Header" translate="yes" xml:space="preserve">
+          <source>Character Label</source>
+          <target state="translated">Etichetta carattere</target>
+        </trans-unit>
+        <trans-unit id="CbiPageOrientationLandscape.Content" translate="yes" xml:space="preserve">
+          <source>Landscape</source>
+          <target state="translated">Orizzontale</target>
+        </trans-unit>
+        <trans-unit id="CbiPageOrientationPortrait.Content" translate="yes" xml:space="preserve">
+          <source>Portrait</source>
+          <target state="translated">Verticale</target>
+        </trans-unit>
+        <trans-unit id="CbListStyle.Header" translate="yes" xml:space="preserve">
+          <source>List Style</source>
+          <target state="translated">Stile elenco</target>
+        </trans-unit>
+        <trans-unit id="CbShowMargins.Content" translate="yes" xml:space="preserve">
+          <source>Show margins</source>
+          <target state="translated">Mostra i magini</target>
+        </trans-unit>
+        <trans-unit id="ChkBxHideWhitespace.Content" translate="yes" xml:space="preserve">
+          <source>Hide whitespace and control characters</source>
+          <target state="translated">Nascondi gli spazi bianchi</target>
+        </trans-unit>
+        <trans-unit id="ChkBxShowBorders.Content" translate="yes" xml:space="preserve">
+          <source>Show borders</source>
+          <target state="translated">Mostra i bordi</target>
+        </trans-unit>
+        <trans-unit id="GlyphAnnotation_None" translate="yes" xml:space="preserve">
+          <source>None</source>
+          <target state="translated">Nessuna</target>
+        </trans-unit>
+        <trans-unit id="GlyphAnnotation_UnicodeHex" translate="yes" xml:space="preserve">
+          <source>Unicode Hex</source>
+          <target state="translated">Unicode Hex</target>
+        </trans-unit>
+        <trans-unit id="GlyphAnnotation_UnicodeIndex" translate="yes" xml:space="preserve">
+          <source>Unicode Index</source>
+          <target state="translated">Indice Unicode</target>
+        </trans-unit>
+        <trans-unit id="PrintCharacterFilterContent.Text" translate="yes" xml:space="preserve">
+          <source>Choose character groups to display</source>
+          <target state="translated">Scegli i gruppi di caratteri da visualizzare</target>
+        </trans-unit>
+        <trans-unit id="PrintDataHeader.Text" translate="yes" xml:space="preserve">
+          <source>Data</source>
+          <target state="translated">Dati</target>
+        </trans-unit>
+        <trans-unit id="PrintViewCharSize.Text" translate="yes" xml:space="preserve">
+          <source>Character Size</source>
+          <target state="translated">Dimensione del carattere</target>
+        </trans-unit>
+        <trans-unit id="PrintViewHorizontalMarginHeader.Text" translate="yes" xml:space="preserve">
+          <source>Horizontal Margin</source>
+          <target state="translated">Margine orizzontale</target>
+        </trans-unit>
+        <trans-unit id="PrintViewLayoutHeader.Text" translate="yes" xml:space="preserve">
+          <source>Layout</source>
+          <target state="translated">Layout</target>
+        </trans-unit>
+        <trans-unit id="PrintViewOfLabel.Text" translate="yes" xml:space="preserve">
+          <source>of</source>
+          <target state="new">of</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPageOrientation.Header" translate="yes" xml:space="preserve">
+          <source>Page Orientation</source>
+          <target state="translated">Orientamento pagina</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPageRange.Text" translate="yes" xml:space="preserve">
+          <source>Page Range</source>
+          <target state="translated">Intervallo di pagine</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPageRangeDesc.Text" translate="yes" xml:space="preserve">
+          <source>Up to 50 pages can be printed at a time. Select the range of pages to print here.</source>
+          <target state="translated">È possibile stampare fino a 50 pagine alla volta. Seleziona l'intervallo di pagine da stampare qui.</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPageRangeSelector.Header" translate="yes" xml:space="preserve">
+          <source>Pages to print:</source>
+          <target state="translated">Pagine da stampare:</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPageSelector.Header" translate="yes" xml:space="preserve">
+          <source>Start from page:</source>
+          <target state="translated">Inizia dalla pagina:</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPageSetupHeader.Text" translate="yes" xml:space="preserve">
+          <source>Page Setup</source>
+          <target state="translated">Impostazioni pagina</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPreviewingLabel.Text" translate="yes" xml:space="preserve">
+          <source>Previewing page</source>
+          <target state="translated">Anteprima pagina</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPreviewOutOfBoundsLabel.Text" translate="yes" xml:space="preserve">
+          <source>This page is outside the current page range and will not be printed.
+You can change the page range in the Page Setup section.</source>
+          <target state="translated">Questa pagina non rientra nell'intervallo di pagine corrente e non verrà stampata.
+È possibile modificare l'intervallo di pagine nella sezione Impostazione pagina.</target>
+        </trans-unit>
+        <trans-unit id="PrintViewPrintingLabel" translate="yes" xml:space="preserve">
+          <source>Printing pages {0} - {1}</source>
+          <target state="translated">Stampa in corso pagine{0} - {1}</target>
+        </trans-unit>
+        <trans-unit id="PrintViewTitle.Text" translate="yes" xml:space="preserve">
+          <source>Print Configuration</source>
+          <target state="translated">Configurazione di stampa</target>
+        </trans-unit>
+        <trans-unit id="PrintViewVerticalMarginHeader.Text" translate="yes" xml:space="preserve">
+          <source>Vertical Margin</source>
+          <target state="translated">Margini verticali</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharLabel.Text" translate="yes" xml:space="preserve">
+          <source>Character Label</source>
+          <target state="translated">Etichetta carattere</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharLabelDesc.Text" translate="yes" xml:space="preserve">
+          <source>Choose the label to show under each character. May have a minor effect on scrolling performance.</source>
+          <target state="translated">Scegli l'etichetta da mostrare sotto ogni carattere. Potrebbe ridurre le prestazioni di scorrimento nell'app.</target>
+        </trans-unit>
+        <trans-unit id="SettingsManageSystemFonts.Content" translate="yes" xml:space="preserve">
+          <source>Manage installed fonts</source>
+          <target state="translated">Gestisci i caratteri installati</target>
+        </trans-unit>
+        <trans-unit id="SettingsSystemFontHeader.Text" translate="yes" xml:space="preserve">
+          <source>Installed Fonts</source>
+          <target state="translated">Caratteri installati</target>
+        </trans-unit>
+        <trans-unit id="SettingsWindowsThemeSettings.Content" translate="yes" xml:space="preserve">
+          <source>Windows theme settings</source>
+          <target state="translated">Impostazioni colori di Windows</target>
+        </trans-unit>
+        <trans-unit id="UnicodeFiltersTitle.Text" translate="yes" xml:space="preserve">
+          <source>UNICODE CATEGORY FILTERS</source>
+          <target state="translated">FILTRI PER LA CATEGORIA UNICODE</target>
+        </trans-unit>
+        <trans-unit id="PrintLayout_Grid" translate="yes" xml:space="preserve">
+          <source>Grid</source>
+          <target state="translated">Griglia</target>
+        </trans-unit>
+        <trans-unit id="PrintLayout_List" translate="yes" xml:space="preserve">
+          <source>List</source>
+          <target state="translated">Lista</target>
+        </trans-unit>
+        <trans-unit id="PrintLayout_TwoColumn" translate="yes" xml:space="preserve">
+          <source>Two Columns</source>
+          <target state="translated">Due colonne</target>
+        </trans-unit>
+        <trans-unit id="SettingsTransparencyDescription.Text" translate="yes" xml:space="preserve">
+          <source>Enables transparency effects in the UI. If transparency is disabled in Windows settings, this will have no effect.
+May have a minor effect on performance on older or weaker devices.</source>
+          <target state="translated">Abilita gli effetti di trasparenza nell'interfaccia utente. Se la trasparenza è disabilitata nelle impostazioni di Windows, ciò non avrà alcun effetto.
+Può ridurre leggermente le prestazioni nei dispositivi più datati.</target>
+        </trans-unit>
+        <trans-unit id="SettingsTransparencyHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable transparency</source>
+          <target state="translated">Abilita le trasparenze</target>
+        </trans-unit>
+        <trans-unit id="StartupFailedButton.Content" translate="yes" xml:space="preserve">
+          <source>Show Details</source>
+          <target state="translated">Mostra i dettagli</target>
+        </trans-unit>
+        <trans-unit id="StartupFailedHeader.Text" translate="yes" xml:space="preserve">
+          <source>Uh Oh</source>
+          <target state="translated">: (  Oh no!</target>
+        </trans-unit>
+        <trans-unit id="StartupFailedMessage.Text" translate="yes" xml:space="preserve">
+          <source>Something went wrong and we couldn't start the app right now.
+Please consider posting details about this error to GitHub so we can help you fix it.</source>
+          <target state="translated">Qualcosa è andato storto e non è stato possibile avviare l'app in questo momento.
+Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che possiamo aiutarti a risolverlo.</target>
+        </trans-unit>
+        <trans-unit id="CharacterKeystrokeLabel" translate="yes" xml:space="preserve">
+          <source>Keystroke: Alt + {0:0000}</source>
+          <target state="translated">Battitura: Alt + {0:0000}</target>
+        </trans-unit>
+        <trans-unit id="ExportSVGLabel.Text" translate="yes" xml:space="preserve">
+          <source>Save as SVG Image</source>
+          <target state="translated">Salva come immagine SVG</target>
+        </trans-unit>
+        <trans-unit id="ExportPNGLabel.Text" translate="yes" xml:space="preserve">
+          <source>Save as PNG Image</source>
+          <target state="translated">Salva come immagine PNG</target>
+        </trans-unit>
+        <trans-unit id="ExportSVGGlyphLabel.Text" translate="yes" xml:space="preserve">
+          <source>SVG Glyph</source>
+          <target state="translated">Glifo SVG</target>
+        </trans-unit>
+        <trans-unit id="BtnCopyGlyph.Label" translate="yes" xml:space="preserve">
+          <source>Copy</source>
+          <target state="translated">Copia</target>
+        </trans-unit>
+        <trans-unit id="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Copy to clipboard</source>
+          <target state="translated">Copia negli appunti</target>
+        </trans-unit>
+        <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
+          <source>Save As</source>
+          <target state="translated">Salva come</target>
+        </trans-unit>
+        <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Save As</source>
+          <target state="translated">Slva come</target>
+        </trans-unit>
+        <trans-unit id="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Fit Character</source>
+          <target state="translated">Carattere adatto</target>
+        </trans-unit>
+        <trans-unit id="NotificationFontRemovedBody.Text" translate="yes" xml:space="preserve">
+          <source>was removed from</source>
+          <target state="translated">è stato rimosso da</target>
+        </trans-unit>
+        <trans-unit id="NotificationFontAddedBody.Text" translate="yes" xml:space="preserve">
+          <source>was added to</source>
+          <target state="translated">è stato aggiunto a</target>
+        </trans-unit>
+      </group>
+    </body>
+  </file>
+</xliff>
