@@ -11,6 +11,7 @@
 #include "DWriteFontFace.h"
 #include "DWriteFontSet.h"
 #include "PathData.h"
+#include "FontFileData.h"
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -40,6 +41,7 @@ namespace CharacterMapCX
 		IVectorView<PathData^>^ GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
 		Platform::String^ GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie);
 		PathData^ GetPathData(CanvasGeometry^ geometry);
+		FontFileData^ GetFileBuffer(CanvasFontFace^ fontFace);
 
 		DWriteFontSet^ GetSystemFonts();
 		DWriteFontSet^ GetFonts(Uri^ uri);

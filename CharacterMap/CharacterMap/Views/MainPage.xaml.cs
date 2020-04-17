@@ -585,5 +585,6 @@ namespace CharacterMap.Views
 
             sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
         }
+
     }
 }

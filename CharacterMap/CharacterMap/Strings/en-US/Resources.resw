@@ -846,4 +846,16 @@ Please consider posting details about this error to GitHub so we can help you fi
   <data name="FontExportedMessage" xml:space="preserve">
     <value>{0} exported</value>
   </data>
+  <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Export Fonts</value>
+  </data>
+  <data name="CollectionExportFolder.Text" xml:space="preserve">
+    <value>To Folder</value>
+  </data>
+  <data name="CollectionExportHeader.Text" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="CollectionExportZip.Text" xml:space="preserve">
+    <value>As Zip Archive</value>
+  </data>
 </root>

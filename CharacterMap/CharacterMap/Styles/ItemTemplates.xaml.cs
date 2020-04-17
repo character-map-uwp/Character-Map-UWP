@@ -46,12 +46,20 @@ namespace CharacterMap.Styles
             }
             else if (sender is Button bb && bb.DataContext is ExportFontFileResult fresult)
             {
-                _ = Launcher.LaunchFolderPathAsync(
+                if (fresult.File != null)
+                {
+                    _ = Launcher.LaunchFolderPathAsync(
                         Path.GetDirectoryName(fresult.File.Path),
                         new FolderLauncherOptions
                         {
                             ItemsToSelect = { fresult.File }
                         });
+                }
+                else if (fresult.Folder != null)
+                {
+                    _ = Launcher.LaunchFolderAsync(fresult.Folder);
+                }
+                
             }
         }
 

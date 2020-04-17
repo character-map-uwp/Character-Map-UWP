@@ -469,3 +469,58 @@ IAsyncOperation<bool>^ Interop::WriteToFileAsync(CanvasFontFace^ fontFace, Stora
 			return task_from_result(false);
 		});
 }
+
+FontFileData^ Interop::GetFileBuffer(CanvasFontFace^ fontFace)
+{
+	// 1. Acquire the underlying FontLoader used to create the CanvasFontFace
+	ComPtr<IDWriteFontFaceReference> fontFaceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
+
+	ComPtr<IDWriteFontFile> file;
+	ComPtr<IDWriteFontFileLoader> loader;
+	ComPtr<IDWriteLocalFontFileLoader> localLoader;
+	if (fontFaceRef->GetFontFile(&file) == S_OK
+		&& file->GetLoader(&loader) == S_OK
+		&& loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK)
+	{
+		// 2. Get the font stream from the loader
+		ComPtr<IDWriteFontFileStream> fileStream;
+
+		const void* refKey = nullptr;
+		uint32 size = 0;
+		if (file->GetReferenceKey(&refKey, &size) == S_OK)
+		{
+			localLoader->CreateStreamFromKey(refKey, size, &fileStream);
+			auto fileSize = fontFaceRef->GetFileSize();
+			void* context;
+			const void* fragment;
+
+			// 3. Read the source file into memory
+			fileStream->ReadFileFragment(&fragment, 0, fileSize, &context);
+			auto b = (byte*)fragment;
+
+			DataWriter^ writer = ref new DataWriter();
+			writer->WriteBytes(Platform::ArrayReference<BYTE>(b, fileSize));
+			IBuffer^ buffer = writer->DetachBuffer();
+
+			delete writer;
+			fileStream->Release();
+
+			// 4. Try to get the file name
+			Platform::String^ name;
+			UINT filePathSize = 0;
+			UINT filePathLength = 0;
+			if (localLoader->GetFilePathLengthFromKey(refKey, size, &filePathLength) == S_OK)
+			{
+				wchar_t* namebuffer = new (std::nothrow) wchar_t[filePathLength + 1];
+				if (localLoader->GetFilePathFromKey(refKey, size, namebuffer, filePathLength + 1) == S_OK)
+				{
+					name = ref new Platform::String(namebuffer);
+				}
+			}
+
+			return ref new FontFileData(buffer, name);
+		}
+	}
+
+	return nullptr;
+}

@@ -99,6 +99,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _isFontSetExpired, value);
         }
 
+        private bool _isCollectionExportEnabled = true;
+        public bool IsCollectionExportEnabled
+        {
+            get => _isCollectionExportEnabled;
+            set => Set(ref _isCollectionExportEnabled, value);
+        }
+
         private List<InstalledFont> _fontList;
         public List<InstalledFont> FontList
         {
@@ -379,6 +386,34 @@ namespace CharacterMap.ViewModels
                  * We'll get em next time the app launches! */
                 MessengerInstance.Send(
                     new AppNotificationMessage(true, Localization.Get("FontsClearedOnNextLaunchNotice"), 6000));
+            }
+        }
+
+        internal async void ExportAsZip()
+        {
+            IsCollectionExportEnabled = false;
+
+            try
+            {
+                await ExportManager.ExportCollectionAsZipAsync(FontList, SelectedCollection);
+            }
+            finally
+            {
+                IsCollectionExportEnabled = true;
+            }
+        }
+
+        internal async void ExportAsFolder()
+        {
+            IsCollectionExportEnabled = false;
+
+            try
+            {
+                await ExportManager.ExportCollectionToFolderAsync(FontList, SelectedCollection);
+            }
+            finally
+            {
+                IsCollectionExportEnabled = true;
             }
         }
     }

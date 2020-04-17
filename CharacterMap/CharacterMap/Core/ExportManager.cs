@@ -48,6 +48,7 @@ namespace CharacterMap.Core
 
     public class ExportFontFileResult
     {
+        public StorageFolder Folder { get; }
         public StorageFile File { get; }
         public bool Success { get; }
 
@@ -57,9 +58,15 @@ namespace CharacterMap.Core
             File = file;
         }
 
+        public ExportFontFileResult(bool success, StorageFolder folder)
+        {
+            Success = success;
+            Folder = folder;
+        }
+
         public string GetMessage()
         {
-            return Localization.Get("FontExportedMessage", File.Name);
+            return Localization.Get("FontExportedMessage", File?.Name ?? Folder?.Name);
         }
     }
 
@@ -450,5 +457,85 @@ namespace CharacterMap.Core
                 return CanvasGeometry.CreateText(layout);
             }
         }
+
+        internal static async Task ExportCollectionAsZipAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
+        {
+            var fonts = fontList.SelectMany(f => f.Variants).ToList();
+
+            if (await PickFileAsync(selectedCollection.Name, "ZIP", new[] { ".zip" }) is StorageFile file)
+            {
+                await Task.Run(async () =>
+                {
+                    var interop = SimpleIoc.Default.GetInstance<Interop>();
+                    using var i = await file.OpenStreamForWriteAsync();
+                    i.SetLength(0);
+                    using ZipArchive z = new ZipArchive(i, ZipArchiveMode.Create);
+                    foreach (var font in fonts)
+                    {
+                        if (interop.GetFileBuffer(font.FontFace) is FontFileData d)
+                        {
+                            ZipArchiveEntry entry = z.CreateEntry(CleanFileName(font, d.FileName));
+                            using (IOutputStream s = entry.Open().AsOutputStream())
+                            {
+                                DataWriter w = new DataWriter(s);
+                                w.WriteBuffer(d.Buffer);
+                                await w.StoreAsync();
+                                await w.FlushAsync();
+                            }
+
+                            d.Dispose();
+                        }
+                    }
+                });
+
+                Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(true, file)));
+            }
+        }
+
+        internal static async Task ExportCollectionToFolderAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
+        {
+            var fonts = fontList.SelectMany(f => f.Variants).ToList();
+
+            FolderPicker picker = new FolderPicker
+            {
+                SuggestedStartLocation = PickerLocationId.DocumentsLibrary
+            };
+            picker.FileTypeFilter.Add("*");
+
+
+            if (await picker.PickSingleFolderAsync() is StorageFolder folder)
+            {
+                await Task.Run(async () =>
+                {
+                    var interop = SimpleIoc.Default.GetInstance<Interop>();
+                    foreach (var font in fonts)
+                    {
+                        if (interop.GetFileBuffer(font.FontFace) is FontFileData d)
+                        {
+                            StorageFile file = await folder.CreateFileAsync(CleanFileName(font, d.FileName), CreationCollisionOption.ReplaceExisting);
+                            
+                            using var stream = await file.OpenStreamForWriteAsync();
+                            stream.SetLength(0);
+
+                            DataWriter w = new DataWriter(stream.AsOutputStream());
+                            w.WriteBuffer(d.Buffer);
+                            await w.StoreAsync();
+                            await w.FlushAsync();
+
+                            d.Dispose();
+                        }
+                    }
+                });
+
+                Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(true, folder)));
+            }
+        }
+
+        private static string CleanFileName(FontVariant font, string fileName)
+        {
+            fileName = fileName ?? $"{font.FamilyName} {font.PreferredName}.ttf";
+            return $"{Humanizer.To.SentenceCase.Transform(Path.GetFileNameWithoutExtension(fileName))}{Path.GetExtension(fileName).ToLower()}";
+        }
+
     }
 }

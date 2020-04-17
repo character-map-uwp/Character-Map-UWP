@@ -91,11 +91,11 @@
                             Height="{StaticResource TitleRowHeight}"
                             VerticalAlignment="Bottom"
                             Click="{x:Bind OpenFont}">
+
                             <Path
                                 Height="16"
                                 Data="M896,320L1012,320L788,768L0,768L0,128L338.5,128L466.5,0L896,0ZM64,192L64,632.5L220.5,320L832,320L832,64L493.5,64L365.5,192ZM748,704L908,384L260,384L99.5,704Z"
                                 Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                Opacity="0.8"
                                 Stretch="Uniform" />
                         </AppBarButton>
 
@@ -249,6 +249,36 @@
                                     Click="DeleteCollection_Click"
                                     Icon="Delete"
                                     ToolTipService.Placement="Bottom" />
+                                <AppBarButton
+                                    x:Uid="CollectionExportButton"
+                                    Height="48"
+                                    IsEnabled="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}">
+                                    <AppBarButton.Flyout>
+                                        <MenuFlyout Placement="Bottom">
+                                            <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
+                                            <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportAsFolder}" />
+                                            <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
+                                        </MenuFlyout>
+                                    </AppBarButton.Flyout>
+                                    <Grid>
+                                        <ProgressRing
+                                            Width="20"
+                                            Height="20"
+                                            MinWidth="20"
+                                            MinHeight="20"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            IsActive="{x:Bind core:Converters.False(ViewModel.IsCollectionExportEnabled), Mode=OneWay}"
+                                            Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsCollectionExportEnabled), Mode=OneWay}" />
+                                        <Path
+                                            Height="16"
+                                            Data="F1 M 38.613281 -43.886719 L 47.167969 -52.500000 L 0.000000 -52.500000 L 0.000000 -60.000000 L 47.167969 -60.000000 L 38.613281 -68.613281 L 43.886719 -73.886719 L 61.523438 -56.250000 L 43.886719 -38.613281 Z M 62.167969 -112.500000 L 120.000000 -112.500000 L 120.000000 -22.500000 L 0.000000 -22.500000 L 0.000000 -45.000000 L 7.500000 -45.000000 L 7.500000 -30.000000 L 112.500000 -30.000000 L 112.500000 -75.000000 L 62.167969 -75.000000 L 47.167969 -90.000000 L 7.500000 -90.000000 L 7.500000 -67.500000 L 0.000000 -67.500000 L 0.000000 -97.500000 L 47.167969 -97.500000 Z M 112.500000 -82.500000 L 112.500000 -105.000000 L 65.332031 -105.000000 L 54.023438 -93.750000 L 65.332031 -82.500000 Z "
+                                            Fill="{ThemeResource ButtonForegroundThemeBrush}"
+                                            Stretch="Uniform"
+                                            Visibility="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}" />
+                                    </Grid>
+
+                                </AppBarButton>
                             </StackPanel>
                         </Grid>
 
@@ -259,7 +289,10 @@
                             Visibility="{x:Bind ViewModel.IsFontSetExpired, Mode=OneWay, FallbackValue=Collapsed}">
                             <Border Background="{StaticResource SystemControlAccentDark1AcrylicElementAccentDark1Brush}" />
 
-                            <Grid ColumnSpacing="12" Margin="12 4 4 4" RequestedTheme="Dark">
+                            <Grid
+                                ColumnSpacing="12"
+                                Margin="12 4 4 4"
+                                RequestedTheme="Dark">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
@@ -274,8 +307,8 @@
 
                                 <AppBarButton
                                     Grid.Column="1"
-                                    VerticalAlignment="Center"
                                     Height="50"
+                                    VerticalAlignment="Center"
                                     Click="{x:Bind ViewModel.ReloadFontSet}"
                                     Icon="Refresh"
                                     ToolTipService.Placement="Bottom" />
