@@ -1005,6 +1005,10 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>As Zip Archive</source>
           <target state="new">As Zip Archive</target>
         </trans-unit>
+        <trans-unit id="SystemFontsExpiredMessage.Text" translate="yes" xml:space="preserve">
+          <source>Font listings are out of date. Click to reload.</source>
+          <target state="new">Font listings are out of date. Click to reload.</target>
+        </trans-unit>
       </group>
     </body>
   </file>

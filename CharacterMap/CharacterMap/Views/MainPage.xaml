@@ -299,10 +299,10 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock
+                                    x:Uid="SystemFontsExpiredMessage"
                                     Margin="0 -2 0 0"
                                     VerticalAlignment="Center"
                                     FontSize="13.333"
-                                    Text="Font listings are out of date. Click to reload."
                                     TextWrapping="Wrap" />
 
                                 <AppBarButton

@@ -858,4 +858,7 @@ Please consider posting details about this error to GitHub so we can help you fi
   <data name="CollectionExportZip.Text" xml:space="preserve">
     <value>As Zip Archive</value>
   </data>
+  <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
+    <value>Font listings are out of date. Click to reload.</value>
+  </data>
 </root>
