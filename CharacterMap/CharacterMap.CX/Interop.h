@@ -12,7 +12,6 @@
 #include "DWriteFontSet.h"
 #include "PathData.h"
 
-
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::Graphics::Canvas::Geometry;
@@ -33,6 +32,8 @@ namespace CharacterMapCX
 
         Interop(CanvasDevice^ device);
 		bool HasValidFonts(Uri^ uri);
+		
+		IAsyncOperation<bool>^ WriteToFileAsync(CanvasFontFace^ fontFace, Windows::Storage::StorageFile^ storageFile);
 		IBuffer^ GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, UINT imageType);
 		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace);
 		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
@@ -48,6 +49,13 @@ namespace CharacterMapCX
 		__inline DWriteProperties^ GetDWriteProperties(ComPtr<IDWriteFontSet3> fontSet, UINT index, ComPtr<IDWriteFontFaceReference1> faceRef, int ls, wchar_t* locale);
 		__inline String^ GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale);
 		__inline DWriteProperties^ GetDWriteProperties(CanvasFontSet^ fontSet, UINT index);
+
+		IAsyncAction^ ListenForFontSetExpirationAsync();
+
+
+		bool m_isFontSetStale = true;
+		ComPtr<IDWriteFontSet3> m_systemFontSet;
+		DWriteFontSet^ m_appFontSet;
 
 		ComPtr<IDWriteFactory7> m_dwriteFactory;
 		ComPtr<ID2D1Factory5> m_d2dFactory;

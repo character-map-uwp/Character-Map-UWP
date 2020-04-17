@@ -472,8 +472,8 @@
           <target state="new">Open File</target>
         </trans-unit>
         <trans-unit id="BtnOpenFolder.Content" translate="yes" xml:space="preserve">
-          <source>Open Folder</source>
-          <target state="new">Open Folder</target>
+          <source>Show in Folder</source>
+          <target state="new">Show in Folder</target>
         </trans-unit>
         <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Hide font pane</source>
@@ -972,6 +972,18 @@ Please consider posting details about this error to GitHub so we can help you fi
         <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
           <source>Collection Name</source>
           <target state="new">Collection Name</target>
+        </trans-unit>
+        <trans-unit id="ExportFontFile.Text" translate="yes" xml:space="preserve">
+          <source>Font File</source>
+          <target state="new">Font File</target>
+        </trans-unit>
+        <trans-unit id="ExportFontFileLabel.Text" translate="yes" xml:space="preserve">
+          <source>Save Font File As</source>
+          <target state="new">Save Font File As</target>
+        </trans-unit>
+        <trans-unit id="FontExportedMessage" translate="yes" xml:space="preserve">
+          <source>{0} exported</source>
+          <target state="new">{0} exported</target>
         </trans-unit>
       </group>
     </body>

@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Media;
 using CharacterMap.Models;
 using System.IO;
 using System.IO.Compression;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace CharacterMap.Core
 {
@@ -45,8 +46,44 @@ namespace CharacterMap.Core
         }
     }
 
+    public class ExportFontFileResult
+    {
+        public StorageFile File { get; }
+        public bool Success { get; }
+
+        public ExportFontFileResult(bool success, StorageFile file)
+        {
+            Success = success;
+            File = file;
+        }
+
+        public string GetMessage()
+        {
+            return Localization.Get("FontExportedMessage", File.Name);
+        }
+    }
+
     public static class ExportManager
     {
+        public static async void RequestExportFontFile(FontVariant variant, CanvasTextLayoutAnalysis ana)
+        {
+            string name = Path.GetFileNameWithoutExtension(ana.FilePath);
+            string ext = Path.GetExtension(ana.FilePath);
+            if (await PickFileAsync(name, Localization.Get("ExportFontFile/Text"), new[] { ext }, PickerLocationId.DocumentsLibrary) is StorageFile file)
+            {
+                try
+                {
+                    var interop = SimpleIoc.Default.GetInstance<Interop>();
+                    bool success = await interop.WriteToFileAsync(variant.FontFace, file);
+                    Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(success, file)));
+                }
+                catch
+                {
+                    Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(false, file)));
+                }
+            }
+        }
+
         public static async Task<ExportResult> ExportSvgAsync(
             ExportStyle style,
             InstalledFont selectedFont,
@@ -337,11 +374,11 @@ namespace CharacterMap.Core
             return $"{selectedFont.Name} {selectedVariant.PreferredName} - {chr}.{ext}";
         }
 
-        private static async Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values)
+        private static async Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values, PickerLocationId suggestedLocation = PickerLocationId.PicturesLibrary)
         {
             var savePicker = new FileSavePicker
             {
-                SuggestedStartLocation = PickerLocationId.PicturesLibrary
+                SuggestedStartLocation = suggestedLocation
             };
 
             savePicker.FileTypeChoices.Add(key, values);

@@ -30,6 +30,7 @@ using System.ComponentModel;
 using Windows.UI.Core;
 using CharacterMap.Annotations;
 using CharacterMap.Controls;
+using CharacterMapCX;
 
 namespace CharacterMap.Views
 {
@@ -251,6 +252,27 @@ namespace CharacterMap.Views
             });
         }
 
+        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
+            if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
+            {
+                switch (e.Key)
+                {
+                    case VirtualKey.C:
+                        TryCopy();
+                        break;
+                    case VirtualKey.P:
+                        Messenger.Default.Send(new PrintRequestedMessage());
+                        break;
+                    case VirtualKey.S:
+                        if (ViewModel.SelectedVariant is FontVariant v && ViewModel.SelectedVariantAnalysis is CanvasTextLayoutAnalysis a)
+                            ExportManager.RequestExportFontFile(v, a);
+                        break;
+                }
+            }
+        }
+
         private void UpdateCharacterFit()
         {
             if (ViewModel.Settings.FitCharacter)
@@ -279,23 +301,6 @@ namespace CharacterMap.Views
                   this,
                   ViewModel.Settings.UseInstantSearch ? nameof(InstantSearchState) : nameof(ManualSearchState),
                   true);
-            }
-        }
-
-        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
-            if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
-            {
-                switch (e.Key)
-                {
-                    case VirtualKey.C:
-                        TryCopy();
-                        break;
-                    case VirtualKey.P:
-                        Messenger.Default.Send(new PrintRequestedMessage());
-                        break;
-                }
             }
         }
 
@@ -512,6 +517,8 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     menu,
                     font,
+                    ViewModel.SelectedVariant,
+                    ViewModel.SelectedVariantAnalysis,
                     IsStandalone,
                     true);
             }

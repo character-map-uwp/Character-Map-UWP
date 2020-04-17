@@ -14,6 +14,8 @@ using CharacterMap.Services;
 using CharacterMap.Models;
 using GalaSoft.MvvmLight.Ioc;
 using CharacterMap.Controls;
+using CharacterMapCX;
+using CharacterMap.Views;
 
 namespace CharacterMap.ViewModels
 {
@@ -90,6 +92,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _hasFonts, value);
         }
 
+        private bool _isFontSetExpired;
+        public bool IsFontSetExpired
+        {
+            get => _isFontSetExpired;
+            set => Set(ref _isFontSetExpired, value);
+        }
+
         private List<InstalledFont> _fontList;
         public List<InstalledFont> FontList
         {
@@ -159,6 +168,9 @@ namespace CharacterMap.ViewModels
                     FontFinder.LoadFontsAsync(),
                     FontCollections.LoadCollectionsAsync());
 
+                var interop = SimpleIoc.Default.GetInstance<Interop>();
+                interop.FontSetInvalidated += FontSetInvalidated;
+
                 RefreshFontList();
             }
             catch (Exception ex)
@@ -175,9 +187,32 @@ namespace CharacterMap.ViewModels
             IsLoadingFonts = false;
         }
 
+        private void FontSetInvalidated(Interop sender, object args)
+        {
+            _ = MainPage.MainDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                IsFontSetExpired = true;
+            });
+        }
+
         public void ShowStartUpException()
         {
             UnhandledExceptionDialog.Show(_startUpException);
+        }
+
+        public void ReloadFontSet()
+        {
+            _ = ReloadFontSetAsync();
+        }
+
+        public async Task ReloadFontSetAsync()
+        {
+            IsLoadingFonts = true;
+            IsFontSetExpired = false;
+            SelectedFont = FontFinder.DefaultFont;
+            await FontFinder.LoadFontsAsync();
+            RefreshFontList(SelectedCollection);
+            IsLoadingFonts = false;
         }
 
         private void ToggleFullScreenMode()

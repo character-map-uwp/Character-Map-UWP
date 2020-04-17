@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -70,6 +71,11 @@ namespace CharacterMap.Helpers
 
         public static ElementTheme GetEffectiveTheme()
         {
+#if DEBUG
+            if (DesignMode.DesignMode2Enabled)
+                return ElementTheme.Default;
+#endif
+
             return AppSettings.UserRequestedTheme switch
             {
                 ElementTheme.Default => App.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light,

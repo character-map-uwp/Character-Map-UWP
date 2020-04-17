@@ -228,7 +228,7 @@
                         <!--  User Collection Control Panel  -->
                         <Grid
                             x:Name="CollectionControlRow"
-                            Grid.Row="1"
+                            Grid.Row="0"
                             Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}">
                             <Border x:Name="CollectionControlBackground" Background="{ThemeResource DefaultAcrylicBrush}" />
                             <StackPanel
@@ -252,10 +252,44 @@
                             </StackPanel>
                         </Grid>
 
+                        <!--  Font List Refresh Grid  -->
+                        <Grid
+                            x:Name="CollectionRefreshRow"
+                            Grid.Row="1"
+                            Visibility="{x:Bind ViewModel.IsFontSetExpired, Mode=OneWay, FallbackValue=Collapsed}">
+                            <Border Background="{StaticResource SystemControlAccentDark1AcrylicElementAccentDark1Brush}" />
+
+                            <Grid ColumnSpacing="12" Margin="12 4 4 4" RequestedTheme="Dark">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Margin="0 -2 0 0"
+                                    VerticalAlignment="Center"
+                                    FontSize="13.333"
+                                    Text="Font listings are out of date. Click to reload."
+                                    TextWrapping="Wrap" />
+
+                                <AppBarButton
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    Height="50"
+                                    Click="{x:Bind ViewModel.ReloadFontSet}"
+                                    Icon="Refresh"
+                                    ToolTipService.Placement="Bottom" />
+
+                            </Grid>
+
+
+
+                        </Grid>
+
                         <TextBlock
                             x:Name="ImportFontHelpBlock"
                             x:Uid="ImportFontHelpBlock"
-                            Grid.Row="2"
+                            Grid.Row="1"
                             Margin="12"
                             FontSize="13"
                             Opacity="0.7"
@@ -348,6 +382,7 @@
                         </SemanticZoom>
                     </Grid>
 
+                    <!--  Pane Footer  -->
                     <Grid
                         Grid.Row="3"
                         Height="32"
