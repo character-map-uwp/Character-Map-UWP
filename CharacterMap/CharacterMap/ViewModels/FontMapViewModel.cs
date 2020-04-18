@@ -22,6 +22,14 @@ using CharacterMap.Models;
 
 namespace CharacterMap.ViewModels
 {
+    public enum FontDisplayMode
+    { 
+        CharacterMap,
+        GlyphMap,
+        TypeRamp
+    }
+
+
     public class FontMapViewModel : ViewModelBase
     {
         #region Properties
@@ -70,6 +78,13 @@ namespace CharacterMap.ViewModels
         {
             get => _searchResults;
             set => Set(ref _searchResults, value);
+        }
+
+        private FontDisplayMode _displayMode = FontDisplayMode.CharacterMap;
+        public FontDisplayMode DisplayMode
+        {
+            get => _displayMode;
+            set => Set(ref _displayMode, value);
         }
 
         private InstalledFont _selectedFont;
@@ -247,7 +262,16 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private string _typeRampText = "The quick brown fox jumps over the lazy dog. 1234567890";
+        public string TypeRampText
+        {
+            get => _typeRampText;
+            set => Set(ref _typeRampText, value);
+        }
+
         #endregion
+
+        public int[] RampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
 
         public FontMapViewModel(IDialogService dialogService, AppSettings settings)
         {
@@ -399,6 +423,14 @@ namespace CharacterMap.ViewModels
                 SelectedChar = Chars?.FirstOrDefault(
                     c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
             }
+        }
+
+        public void ChangeDisplayMode()
+        {
+            if (DisplayMode == FontDisplayMode.TypeRamp)
+                DisplayMode = FontDisplayMode.CharacterMap;
+            else
+                DisplayMode = FontDisplayMode.TypeRamp;
         }
 
         public string GetCharName(Character c)
