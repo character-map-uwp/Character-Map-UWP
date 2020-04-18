@@ -321,8 +321,8 @@ namespace CharacterMap.Views
             if (sender is MenuFlyout menu)
             {
                 // Reset to default menu
-                while (menu.Items.Count > 7)
-                    menu.Items.RemoveAt(7);
+                while (menu.Items.Count > 8)
+                    menu.Items.RemoveAt(8);
 
                 // force menu width to match the source button
                 foreach (var sep in menu.Items.OfType<MenuFlyoutSeparator>())

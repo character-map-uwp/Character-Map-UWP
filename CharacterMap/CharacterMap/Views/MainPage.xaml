@@ -119,6 +119,8 @@
                                     x:Name="GroupLabel"
                                     FontSize="16"
                                     FontWeight="Bold"
+                                    TextWrapping="NoWrap"
+                                    TextTrimming="CharacterEllipsis"
                                     OpticalMarginAlignment="TrimSideBearings"
                                     Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}"
                                     TextLineBounds="Tight" />
@@ -166,6 +168,38 @@
                                         Click="Filter_Click"
                                         FontSize="16"
                                         Tag="1" />
+                                    <MenuFlyoutSubItem FontSize="16" Text="Supported Scripts">
+                                        <MenuFlyoutItem
+                                            Click="Filter_Click"
+                                            FontSize="16"
+                                            Tag="101"
+                                            Text="Arabic" />
+                                        <MenuFlyoutItem
+                                            Click="Filter_Click"
+                                            FontSize="16"
+                                            Tag="102"
+                                            Text="Cyrillic" />
+                                        <MenuFlyoutItem
+                                            Click="Filter_Click"
+                                            FontSize="16"
+                                            Tag="103"
+                                            Text="Greek &amp; Coptic" />
+                                        <MenuFlyoutItem
+                                            Click="Filter_Click"
+                                            FontSize="16"
+                                            Tag="104"
+                                            Text="Hebrew" />
+                                        <MenuFlyoutItem
+                                            Click="Filter_Click"
+                                            FontSize="16"
+                                            Tag="105"
+                                            Text="Thai" />
+                                        <MenuFlyoutItem
+                                            Click="Filter_Click"
+                                            FontSize="16"
+                                            Tag="106"
+                                            Text="CJK" />
+                                    </MenuFlyoutSubItem>
                                     <MenuFlyoutSubItem x:Uid="OptionMoreFilters" FontSize="16">
                                         <MenuFlyoutItem
                                             x:Uid="OptionColorFonts"
@@ -187,6 +221,28 @@
                                             Click="Filter_Click"
                                             FontSize="16"
                                             Tag="3" />
+                                        <MenuFlyoutSubItem FontSize="16" Text="Emoji">
+                                            <MenuFlyoutItem
+                                                Click="Filter_Click"
+                                                FontSize="16"
+                                                Tag="50"
+                                                Text="All Categories" />
+                                            <MenuFlyoutItem
+                                                Click="Filter_Click"
+                                                FontSize="16"
+                                                Tag="51"
+                                                Text="Emoticons" />
+                                            <MenuFlyoutItem
+                                                Click="Filter_Click"
+                                                FontSize="16"
+                                                Tag="52"
+                                                Text="Dingbats" />
+                                            <MenuFlyoutItem
+                                                Click="Filter_Click"
+                                                FontSize="16"
+                                                Tag="53"
+                                                Text="Symbols &amp; Pictographs" />
+                                        </MenuFlyoutSubItem>
                                         <MenuFlyoutSeparator x:Name="FontSourceSeperator" />
                                         <MenuFlyoutItem
                                             x:Name="CloudFontsOption"

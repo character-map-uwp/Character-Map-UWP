@@ -1,4 +1,4 @@
-using CharacterMap.Core;
+﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.Views;
@@ -262,7 +262,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private string _typeRampText = "The quick brown fox jumps over the lazy dog. 1234567890";
+        private string _typeRampText;
         public string TypeRampText
         {
             get => _typeRampText;
@@ -279,11 +279,12 @@ namespace CharacterMap.ViewModels
 
         public List<string> Pangrams { get; } = new List<string>
         {
-            "The quick brown fox jumped over a lazy dog. 1234567890",
+            "The quick brown dog jumps over a lazy fox. 1234567890",
             "How vexingly quick daft zebras jump! 1234567890",
             "The five boxing wizards jump quickly. 1234567890",
             "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "1234567890.:,; ' \" (!?) +-*/= #@�$�%^& {~�} [<>] |\\/",
+            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
+            "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
         };
 
         public int[] RampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };

@@ -268,11 +268,11 @@ namespace CharacterMap.ViewModels
                             FilterTitle = Localization.Get("OptionSansSerifFonts/Text");
                             break;
                         case 6:
-                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.AppxPackage);
+                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == DWriteFontSource.AppxPackage);
                             FilterTitle = Localization.Get("OptionAppxFonts/Text");
                             break;
                         case 7:
-                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.RemoteFontProvider);
+                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == DWriteFontSource.RemoteFontProvider);
                             FilterTitle = Localization.Get("OptionCloudFonts/Text");
                             break;
                         case 8:
@@ -286,6 +286,46 @@ namespace CharacterMap.ViewModels
                         case 10:
                             fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.IsColorFont);
                             FilterTitle = Localization.Get("OptionColorFonts/Text");
+                            break;
+                        case 50:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsEmoji(v)));
+                            FilterTitle = "All Emoji";
+                            break;
+                        case 51:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsRange(v, UnicodeRange.Emoticons)));
+                            FilterTitle = "Emoticons";
+                            break;
+                        case 52:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsRange(v, UnicodeRange.Dingbats)));
+                            FilterTitle = "Dingbats";
+                            break;
+                        case 53:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsEmojiSymbols(v)));
+                            FilterTitle = "Symbols & Pictographs";
+                            break;
+                        case 101:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsRange(v, UnicodeRange.Arabic)));
+                            FilterTitle = "Arabic";
+                            break;
+                        case 102:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsRange(v, UnicodeRange.Cyrillic)));
+                            FilterTitle = "Cyrillic";
+                            break;
+                        case 103:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.SupportsScript(v, UnicodeRange.GreekAndCoptic)));
+                            FilterTitle = "Greek & Coptic";
+                            break;
+                        case 104:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsRange(v, UnicodeRange.Hebrew)));
+                            FilterTitle = "Hebrew";
+                            break;
+                        case 105:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.SupportsScript(v, UnicodeRange.Thai)));
+                            FilterTitle = "Thai";
+                            break;
+                        case 106:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsRange(v, UnicodeRange.CJKUnifiedIdeographs)));
+                            FilterTitle = "CJK";
                             break;
                         default:
                             FilterTitle = Localization.Get("OptionAllFonts/Text");

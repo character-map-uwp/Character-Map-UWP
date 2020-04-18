@@ -207,6 +207,7 @@
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
     <Compile Include="Helpers\PrintHelper.cs" />
     <Compile Include="Helpers\Unicode.cs" />
+    <Compile Include="Models\UnicodeRange.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\Messages.cs" />
     <Compile Include="Core\Converters.cs" />
