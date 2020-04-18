@@ -26,7 +26,7 @@ using CharacterMap.Models;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI.ViewManagement;
 using Windows.UI.Core.AnimationMetrics;
-
+using CharacterMapCX;
 
 namespace CharacterMap.Views
 {
@@ -248,6 +248,10 @@ namespace CharacterMap.Views
                     case VirtualKey.C:
                         FontMap.TryCopy();
                         break;
+                    case VirtualKey.S:
+                        if (FontMap.ViewModel.SelectedVariant is FontVariant v && FontMap.ViewModel.SelectedVariantAnalysis is CanvasTextLayoutAnalysis a)
+                            ExportManager.RequestExportFontFile(v, a);
+                            break;
                     case VirtualKey.N:
                         if (ViewModel.SelectedFont is InstalledFont fnt)
                             _ = FontMapView.CreateNewViewForFontAsync(fnt);
@@ -581,5 +585,6 @@ namespace CharacterMap.Views
 
             sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
         }
+
     }
 }

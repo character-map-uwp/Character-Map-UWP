@@ -32,6 +32,14 @@ namespace CharacterMap.Helpers
                 var content = ResourceHelper.InflateDataTemplate("ExportNotificationTemplate", result);
                 ShowNotification(presenter, content, 5000);
             }
+            if (msg.Data is ExportFontFileResult fontExportResult)
+            {
+                if (!fontExportResult.Success)
+                    return;
+
+                var content = ResourceHelper.InflateDataTemplate("ExportFontNotificationTemplate", fontExportResult);
+                ShowNotification(presenter, content, 5000);
+            }
             else if (msg.Data is AddToCollectionResult added)
             {
                 if (!added.Success)

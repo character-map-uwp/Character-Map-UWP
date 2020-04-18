@@ -38,11 +38,28 @@ namespace CharacterMap.Styles
             if (sender is Button b && b.DataContext is ExportResult result)
             {
                 _ = Launcher.LaunchFolderPathAsync(
-                    Path.GetDirectoryName(result.File.Path), 
-                    new FolderLauncherOptions
-                    {
-                        ItemsToSelect = { result.File }
-                    });
+                        Path.GetDirectoryName(result.File.Path), 
+                        new FolderLauncherOptions
+                        {
+                            ItemsToSelect = { result.File }
+                        });
+            }
+            else if (sender is Button bb && bb.DataContext is ExportFontFileResult fresult)
+            {
+                if (fresult.File != null)
+                {
+                    _ = Launcher.LaunchFolderPathAsync(
+                        Path.GetDirectoryName(fresult.File.Path),
+                        new FolderLauncherOptions
+                        {
+                            ItemsToSelect = { fresult.File }
+                        });
+                }
+                else if (fresult.Folder != null)
+                {
+                    _ = Launcher.LaunchFolderAsync(fresult.Folder);
+                }
+                
             }
         }
 
@@ -89,6 +106,8 @@ namespace CharacterMap.Styles
                 FlyoutHelper.CreateMenu(
                     menu,
                     font,
+                    null,
+                    null,
                     false);
             }
         }

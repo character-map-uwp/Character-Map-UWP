@@ -596,11 +596,13 @@
                         Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
                         <TextBlock
                             FontSize="12"
+                            IsTextSelectionEnabled="True"
                             Text="{x:Bind ViewModel.GetCharName(ViewModel.SelectedChar), Mode=OneWay}"
                             TextWrapping="Wrap" />
                         <TextBlock
                             FontSize="12"
                             Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                            IsTextSelectionEnabled="True"
                             Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}"
                             TextWrapping="Wrap" />
                     </StackPanel>
@@ -980,10 +982,14 @@
             x:DeferLoadStrategy="Lazy"
             Grid.RowSpan="10"
             Grid.ColumnSpan="10"
+            d:IsHidden="True"
             Canvas.ZIndex="100" />
 
         <!--  Off-screen printer render container  -->
-        <Canvas x:Name="PrintCanvas" Margin="-10000, -10000, 0, 0" />
+        <Canvas
+            x:Name="PrintCanvas"
+            Margin="-10000, -10000, 0, 0"
+            d:IsHidden="True" />
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LoadingStates">

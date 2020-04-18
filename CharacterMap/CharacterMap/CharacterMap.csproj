@@ -203,6 +203,7 @@
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
+    <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
     <Compile Include="Helpers\PrintHelper.cs" />
     <Compile Include="Helpers\Unicode.cs" />

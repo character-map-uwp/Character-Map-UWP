@@ -5,6 +5,7 @@ using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
+using CharacterMapCX;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Messaging;
 using System;
@@ -12,6 +13,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -45,13 +49,19 @@ namespace CharacterMap.Helpers
             _ = d.ShowAsync();
         }
 
+        
+
         public static void CreateMenu(
             MenuFlyout menu,
             InstalledFont font,
+            FontVariant variant,
+            CanvasTextLayoutAnalysis variantAnalysis,
             bool standalone,
             bool showAdvanced = false)
         {
             MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
+
+            #region Handlers 
 
             static void OpenInNewWindow(object s, RoutedEventArgs args)
             {
@@ -82,7 +92,15 @@ namespace CharacterMap.Helpers
                 _ = d.ShowAsync();
             }
 
-            void Print_Click(object sender, RoutedEventArgs e)
+            static void SaveFont_Click(object sender, RoutedEventArgs e)
+            {
+                if (sender is MenuFlyoutItem item && item.Tag is (FontVariant fnt, CanvasTextLayoutAnalysis ana))
+                {
+                    ExportManager.RequestExportFontFile(fnt, ana);
+                }
+            }
+
+            static void Print_Click(object sender, RoutedEventArgs e)
             {
                 Messenger.Default.Send(new PrintRequestedMessage());
             }
@@ -91,6 +109,7 @@ namespace CharacterMap.Helpers
             {
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
                 {
+
                     UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == 1)
                         ? _collections.SymbolCollection
                         : main.SelectedCollection;
@@ -108,6 +127,9 @@ namespace CharacterMap.Helpers
                     RequestDelete(fnt);
                 }
             }
+
+            #endregion
+
 
             if (menu.Items != null)
             {
@@ -133,12 +155,21 @@ namespace CharacterMap.Helpers
 
                         if (showAdvanced)
                         {
-                            newWindow.KeyboardAccelerators.Add(new KeyboardAccelerator
-                            {
-                                Key = Windows.System.VirtualKey.N,
-                                Modifiers = Windows.System.VirtualKeyModifiers.Control
-                            });
+                            newWindow.AddKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control);
                         }
+                    }
+
+                    if (variant != null && variantAnalysis != null && !string.IsNullOrWhiteSpace(variantAnalysis.FilePath))
+                    {
+                        var saveButton = new MenuFlyoutItem
+                        {
+                            Text = Localization.Get("ExportFontFileLabel/Text"),
+                            Icon = new FontIcon { Glyph = "\uE792" },
+                            Tag = (variant, variantAnalysis)
+                        }.AddKeyboardAccelerator(VirtualKey.S, VirtualKeyModifiers.Control);
+
+                        saveButton.Click += SaveFont_Click;
+                        menu.Items.Add(saveButton);
                     }
 
                     // Add "Add to Collection" button
@@ -249,13 +280,7 @@ namespace CharacterMap.Helpers
                         {
                             Text = Localization.Get("BtnPrint/Content"),
                             Icon = new SymbolIcon { Symbol = Symbol.Print }
-                        };
-
-                        item.KeyboardAccelerators.Add(new KeyboardAccelerator
-                        {
-                             Key = Windows.System.VirtualKey.P,
-                             Modifiers = Windows.System.VirtualKeyModifiers.Control
-                        });
+                        }.AddKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control);
 
                         item.Click += Print_Click;
                         menu.Items.Insert(standalone ? 0 : 1, item);
@@ -277,11 +302,7 @@ namespace CharacterMap.Helpers
                         };
 
                         if (showAdvanced)
-                            removeFont.KeyboardAccelerators.Add(new KeyboardAccelerator
-                            {
-                                Key = Windows.System.VirtualKey.Delete,
-                                Modifiers = Windows.System.VirtualKeyModifiers.Control
-                            });
+                            removeFont.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
 
                         removeFont.Click += DeleteMenuFlyoutItem_Click;
                         menu.Items.Add(removeFont);

@@ -469,7 +469,7 @@
     <value>Open File</value>
   </data>
   <data name="BtnOpenFolder.Content" xml:space="preserve">
-    <value>Open Folder</value>
+    <value>Show in Folder</value>
   </data>
   <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Hide font pane</value>
@@ -834,7 +834,31 @@ Please consider posting details about this error to GitHub so we can help you fi
   <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
     <value>was removed from</value>
   </data>
-   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
+  <data name="NotificationFontAddedBody.Text" xml:space="preserve">
     <value>was added to</value>
+  </data>
+  <data name="ExportFontFile.Text" xml:space="preserve">
+    <value>Font File</value>
+  </data>
+  <data name="ExportFontFileLabel.Text" xml:space="preserve">
+    <value>Save Font File As</value>
+  </data>
+  <data name="FontExportedMessage" xml:space="preserve">
+    <value>{0} exported</value>
+  </data>
+  <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Export Fonts</value>
+  </data>
+  <data name="CollectionExportFolder.Text" xml:space="preserve">
+    <value>To Folder</value>
+  </data>
+  <data name="CollectionExportHeader.Text" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="CollectionExportZip.Text" xml:space="preserve">
+    <value>As Zip Archive</value>
+  </data>
+  <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
+    <value>Font listings are out of date. Click to reload.</value>
   </data>
 </root>
