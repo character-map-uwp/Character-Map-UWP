@@ -605,7 +605,10 @@
                     Grid.Row="1"
                     HorizontalScrollBarVisibility="Auto"
                     HorizontalScrollMode="Enabled"
-                    Visibility="Visible">
+                    MaxZoomFactor="4"
+                    MinZoomFactor="1"
+                    Visibility="Visible"
+                    ZoomMode="Enabled">
                     <ItemsControl
                         x:Name="TypeRampList"
                         FontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
@@ -631,7 +634,7 @@
                                         Text="{Binding}" />
                                     <TextBlock
                                         FontSize="{Binding}"
-                                        IsColorFontEnabled="{Binding ElementName=TypeRamoRoot, Path=DataContext.ShowColorGlyphs}"
+                                        IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                 </StackPanel>
                             </DataTemplate>
