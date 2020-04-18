@@ -107,12 +107,7 @@ namespace CharacterMap.Views
                     if (ViewModel.SelectedFont != null)
                     {
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
-                        if (ViewModel.Settings.UseSelectionAnimations)
-                        {
-                            Composition.PlayEntrance(FontMap.FontTitleBlock, 0);
-                            Composition.PlayEntrance(FontMap.CharGridHeader, 83);
-                            Composition.PlayEntrance(FontMap.TxtPreviewViewBox, 83);
-                        }
+                        FontMap.PlayFontChanged();
                     }
 
                     break;
