@@ -359,10 +359,10 @@ namespace CharacterMap.Core
             return new ExportResult(false, null);
         }
 
-        private static byte[] GetGlyphBytes(CanvasFontFace fontface, int unicodeIndex, int imageType)
+        private static byte[] GetGlyphBytes(CanvasFontFace fontface, uint unicodeIndex, int imageType)
         {
             Interop interop = SimpleIoc.Default.GetInstance<Interop>();
-            IBuffer buffer = interop.GetImageDataBuffer(fontface, 1024, (uint)unicodeIndex, (uint)imageType);
+            IBuffer buffer = interop.GetImageDataBuffer(fontface, 1024, unicodeIndex, (uint)imageType);
             using (DataReader reader = DataReader.FromBuffer(buffer))
             {
                 byte[] bytes = new byte[buffer.Length];

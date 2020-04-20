@@ -10,17 +10,11 @@ namespace CharacterMap.Core
 {
     public static class TypographyAnalyzer
     {
-        public static string GetCharString(FontVariant variant)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendJoin(string.Empty, variant.GetCharacters().Select(c => c.Char));
-            return sb.ToString();
-        }
 
         public static List<TypographyFeatureInfo> GetSupportedTypographyFeatures(FontVariant variant)
         {
             Dictionary<string, TypographyFeatureInfo> features = new Dictionary<string, TypographyFeatureInfo>();
-            var analyzer = new CanvasTextAnalyzer(GetCharString(variant), CanvasTextDirection.LeftToRightThenTopToBottom);
+            var analyzer = new CanvasTextAnalyzer(variant.GetCharString(), CanvasTextDirection.LeftToRightThenTopToBottom);
             {
                 foreach (var script in analyzer.GetScript())
                 {

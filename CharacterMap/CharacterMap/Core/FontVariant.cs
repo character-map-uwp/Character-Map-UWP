@@ -8,6 +8,7 @@ using Humanizer;
 using Microsoft.Graphics.Canvas.Text;
 using Windows.Storage;
 using CharacterMap.Models;
+using System.Text;
 
 namespace CharacterMap.Core
 {
@@ -15,6 +16,8 @@ namespace CharacterMap.Core
     {
         /* Use a character cache avoids a lot of unnecessary allocations */
         private static Dictionary<int, Character> _characters { get; } = new Dictionary<int, Character>();
+
+        private string _charString { get; set; }
 
 
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
@@ -125,12 +128,7 @@ namespace CharacterMap.Core
                     {
                         if (!_characters.TryGetValue(i, out Character c))
                         {
-                            c = new Character
-                            {
-                                Char = Unicode.GetHexValue(i),
-                                UnicodeIndex = i
-                            };
-
+                            c = new Character((uint)i);
                             _characters[i] = c;
                         }
 
@@ -172,6 +170,19 @@ namespace CharacterMap.Core
             return INFORMATIONS.Select(Get).Where(s => s.Key != null).ToList();
         }
 
+        public string GetCharString()
+        {
+            if (_charString == null)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendJoin(string.Empty, GetCharacters().Select(c => c.Char));
+                _charString = sb.ToString();
+            }
+
+            return _charString;
+        }
+
+
         public void Dispose()
         {
             FontFace.Dispose();
@@ -194,11 +205,7 @@ namespace CharacterMap.Core
                 PreferredName = "",
                 Characters = new List<Character>
                 {
-                    new Character
-                    {
-                        Char = "",
-                        UnicodeIndex = 0
-                    }
+                    new Character(0)
                 }
             };
         }

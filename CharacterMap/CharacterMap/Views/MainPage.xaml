@@ -192,6 +192,11 @@
                                         <MenuFlyoutItem
                                             Click="Filter_Click"
                                             FontSize="16"
+                                            Tag="107"
+                                            Text="Latin" />
+                                        <MenuFlyoutItem
+                                            Click="Filter_Click"
+                                            FontSize="16"
                                             Tag="105"
                                             Text="Thai" />
                                         <MenuFlyoutItem

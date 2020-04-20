@@ -19,11 +19,11 @@ namespace CharacterMap.Helpers
             return ((c == ' ') || (c >= 0x0009 && c <= 0x000d) || c == 0x00a0 || c == 0x0085);
         }
 
-        public static string GetHexValue(int i) => (i <= 0x10FFFF && (i< 0xD800 || i> 0xDFFF)) ? char.ConvertFromUtf32((int) i) : new string ((char) i, 1);
+        public static string GetHexValue(uint i) => (i <= 0x10FFFF && (i< 0xD800 || i> 0xDFFF)) ? char.ConvertFromUtf32((int) i) : new string ((char) i, 1);
 
-        public static bool IsWhiteSpaceOrControl(int c)
+        public static bool IsWhiteSpaceOrControl(uint c)
         {
-            UnicodeGeneralCategory category = UnicodeCharacters.GetGeneralCategory((uint)c);
+            UnicodeGeneralCategory category = UnicodeCharacters.GetGeneralCategory(c);
 
             return category == UnicodeGeneralCategory.Control
                 || category == UnicodeGeneralCategory.SpaceSeparator
@@ -31,9 +31,9 @@ namespace CharacterMap.Helpers
                 || category == UnicodeGeneralCategory.ParagraphSeparator;
         }
 
-        public static bool IsInCategory(int c, UnicodeGeneralCategory cat)
+        public static bool IsInCategory(uint c, UnicodeGeneralCategory cat)
         {
-            return cat == UnicodeCharacters.GetGeneralCategory((uint)c);
+            return cat == UnicodeCharacters.GetGeneralCategory(c);
         }
 
         public static bool ContainsRange(FontVariant v, UnicodeRange range)

@@ -40,7 +40,7 @@ namespace CharacterMap.Core
         public static bool IsNull(object obj) => obj == null;
         public static bool IsNotNull(object obj) => obj != null;
 
-        public static string ToHex(int i) => Unicode.GetHexValue(i);
+        public static string ToHex(int i) => Unicode.GetHexValue((uint)i);
 
         public static string GetWeightName(Windows.UI.Text.FontWeight weight)
         {

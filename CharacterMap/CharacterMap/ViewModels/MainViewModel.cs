@@ -327,6 +327,10 @@ namespace CharacterMap.ViewModels
                             fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsRange(v, UnicodeRange.CJKUnifiedIdeographs)));
                             FilterTitle = "CJK";
                             break;
+                        case 107:
+                            fontList = fontList.Where(f => f.Variants.Any(v => Unicode.ContainsRange(v, UnicodeRange.BasicLatinLetters)));
+                            FilterTitle = "Latin";
+                            break;
                         default:
                             FilterTitle = Localization.Get("OptionAllFonts/Text");
                             break;

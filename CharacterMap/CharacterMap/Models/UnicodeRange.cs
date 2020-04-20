@@ -14,6 +14,7 @@
 
     public partial struct UnicodeRange
     {
+        public static UnicodeRange BasicLatinLetters        { get; } = new UnicodeRange(0x0041, 0x007A);
         public static UnicodeRange Arabic                   { get; } = new UnicodeRange(0x0600, 0x06FF);
         public static UnicodeRange Cyrillic                 { get; } = new UnicodeRange(0x0400, 0x052F);
         public static UnicodeRange Thai                     { get; } = new UnicodeRange(0x0E00, 0x0E7F);

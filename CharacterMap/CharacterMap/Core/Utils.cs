@@ -46,7 +46,7 @@ namespace CharacterMap.Core
         public static bool TryParseHexString(string hexNumber, out int hex)
         {
             hexNumber = hexNumber.Replace("x", string.Empty);
-            if (int.TryParse(hexNumber, System.Globalization.NumberStyles.HexNumber, null, out int result))
+            if (int.TryParse(hexNumber, NumberStyles.HexNumber, null, out int result))
             {
                 hex = result;
                 return true;
@@ -193,7 +193,7 @@ namespace CharacterMap.Core
 
         private static string AsHex(Color c)
         {
-            return $"#{c.R.ToString("x2")}{c.G.ToString("x2")}{c.B.ToString("x2")}";
+            return $"#{c.R:x2}{c.G:x2}{c.B:x2}";
         }
 
         public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)

@@ -173,7 +173,7 @@ namespace CharacterMap.ViewModels
                 _selectedChar = value;
                 if (null != value)
                 {
-                    Settings.LastSelectedCharIndex = value.UnicodeIndex;
+                    Settings.LastSelectedCharIndex = (int)value.UnicodeIndex;
                 }
                 RaisePropertyChanged();
                 UpdateCharAnalysis();
