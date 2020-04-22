@@ -275,17 +275,18 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        #endregion
-
-        public List<string> Pangrams { get; } = new List<string>
+        public List<string> DefaultRampOptions { get; } = new List<string>
         {
             "The quick brown dog jumps over a lazy fox. 1234567890",
-            "How vexingly quick daft zebras jump! 1234567890",
-            "The five boxing wizards jump quickly. 1234567890",
+            Localization.Get("CultureSpecificPangram/Text"),
             "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
             "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
         };
+
+        #endregion
+
+
 
         public int[] RampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
 

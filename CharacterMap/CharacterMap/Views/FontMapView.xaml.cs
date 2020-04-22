@@ -290,10 +290,12 @@ namespace CharacterMap.Views
                 { 
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
                         Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
-                    DevUtilsRoot.Visibility = Visibility.Visible;
+
+                    VisualStateManager.GoToState(this,
+                        ViewModel.Settings.DevToolsLanguage == 0 ? nameof(DevXamlState) : nameof(DevCSharpState), true);
                 }
                 else
-                    DevUtilsRoot.Visibility = Visibility.Collapsed;
+                    VisualStateManager.GoToState(this, nameof(DevHiddenState), true);
             });
         }
 

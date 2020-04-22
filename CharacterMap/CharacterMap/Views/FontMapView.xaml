@@ -406,15 +406,15 @@
                                         <StackPanel Orientation="Horizontal">
                                             <SymbolIcon Margin="8 0 12 0" Symbol="Switch" />
                                             <TextBlock
+                                                x:Uid="LblSwitchToTypeRamp"
                                                 x:Name="SwitchToTypeRampButton"
                                                 VerticalAlignment="Center"
-                                                Text="Switch to Type Ramp view"
                                                 TextLineBounds="Tight"
                                                 Visibility="Collapsed" />
                                             <TextBlock
+                                                x:Uid="LblSwitchToCharMap"
                                                 x:Name="SwitchToCharacterMapButton"
                                                 VerticalAlignment="Center"
-                                                Text="Switch to Character Map view"
                                                 TextLineBounds="Tight"
                                                 Visibility="Collapsed" />
                                         </StackPanel>
@@ -464,45 +464,6 @@
                             </Flyout>
                         </Button.Flyout>
                     </Button>
-
-                    <!--<Button
-                        x:Name="SwitchToTypeRampButton"
-                        Width="47"
-                        MinHeight="47"
-                        Margin="0 0 -12 0"
-                        VerticalAlignment="Stretch"
-                        Click="{x:Bind ViewModel.ChangeDisplayMode}"
-                        Style="{ThemeResource TransparentButton}">
-                        <FontIcon
-                            Margin="0,0,-2,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xE185;" />
-                    </Button>-->
-
-                    <!--<Button
-                        x:Name="SwitchToCharacterMapButton"
-                        Width="47"
-                        MinHeight="47"
-                        Margin="0 0 -12 0"
-                        VerticalAlignment="Stretch"
-                        Click="{x:Bind ViewModel.ChangeDisplayMode}"
-                        Style="{ThemeResource TransparentButton}"
-                        Visibility="Collapsed">
-                        <FontIcon
-                            Margin="0,0,-2,0"
-                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xE138;" />
-                    </Button>-->
-
-                    <!--<TextBlock
-                                Grid.Row="1"
-                                Margin="12 12 0 0"
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                Opacity="0.6"
-
-                                Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.Settings.UseStatusBar), Mode=OneWay}" />-->
-
                 </toolkit:WrapPanel>
 
                 <Button
@@ -587,6 +548,7 @@
                 <Grid x:Name="TypeRampInputRow">
                     <ComboBox
                         x:Name="TypeRampInputBox"
+                        x:Uid="TypeRampInputBox"
                         MinWidth="430"
                         MinHeight="0"
                         Margin="12"
@@ -596,8 +558,7 @@
                         CornerRadius="0"
                         Header="Preview Text"
                         IsEditable="True"
-                        ItemsSource="{x:Bind ViewModel.Pangrams}"
-                        PlaceholderText="Enter or choose text from the dropdown"
+                        ItemsSource="{x:Bind ViewModel.DefaultRampOptions}"
                         SelectedIndex="0"
                         Style="{StaticResource RampComboBoxStyle}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -766,13 +727,28 @@
                                     Width="50"
                                     Height="50"
                                     Click="{x:Bind ToggleDev}">
-                                    <AppBarButton.Icon>
+                                    <Grid Margin="0 -4 0 0">
                                         <PathIcon
-                                            Margin="0 -4 0 0"
+                                            x:Name="ShowCodeIcon"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
-                                            Data="F1 M 2.138672 10 L 4.140625 12.001953 L 3.779297 13.417969 L 0.361328 10 L 4.560547 5.810547 L 5.439453 6.689453 Z M 19.638672 10 L 15.439453 14.189453 L 14.560547 13.310547 L 17.861328 10 L 16.40625 8.544922 C 16.57552 8.375651 16.728516 8.217773 16.865234 8.071289 C 17.001953 7.924805 17.12565 7.770183 17.236328 7.607422 Z M 14.296875 3.75 C 14.570312 3.75 14.825846 3.798828 15.063477 3.896484 C 15.301106 3.994141 15.507813 4.130859 15.683594 4.306641 C 15.859375 4.482422 15.997721 4.6875 16.098633 4.921875 C 16.199543 5.15625 16.25 5.410156 16.25 5.683594 C 16.25 5.9375 16.201172 6.184896 16.103516 6.425781 C 16.005859 6.666668 15.865885 6.878256 15.683594 7.060547 L 8.681641 14.082031 L 5 15 L 5.917969 11.318359 L 12.919922 4.306641 C 13.102213 4.12435 13.313802 3.986004 13.554688 3.891602 C 13.795572 3.797201 14.042968 3.75 14.296875 3.75 Z M 14.794922 6.181641 C 14.93164 6.044922 14.999999 5.878906 15 5.683594 C 14.999999 5.481771 14.933268 5.317384 14.799805 5.19043 C 14.666341 5.063478 14.498697 5.000001 14.296875 5 C 14.205729 5.000001 14.117838 5.014649 14.033203 5.043945 C 13.948567 5.073243 13.873697 5.120443 13.808594 5.185547 L 7.050781 11.962891 L 6.71875 13.28125 L 8.037109 12.949219 Z " />
-                                    </AppBarButton.Icon>
+                                            Data="F1 M 2.138672 10 L 4.140625 12.001953 L 3.779297 13.417969 L 0.361328 10 L 4.560547 5.810547 L 5.439453 6.689453 Z M 19.638672 10 L 15.439453 14.189453 L 14.560547 13.310547 L 17.861328 10 L 16.40625 8.544922 C 16.57552 8.375651 16.728516 8.217773 16.865234 8.071289 C 17.001953 7.924805 17.12565 7.770183 17.236328 7.607422 Z M 14.296875 3.75 C 14.570312 3.75 14.825846 3.798828 15.063477 3.896484 C 15.301106 3.994141 15.507813 4.130859 15.683594 4.306641 C 15.859375 4.482422 15.997721 4.6875 16.098633 4.921875 C 16.199543 5.15625 16.25 5.410156 16.25 5.683594 C 16.25 5.9375 16.201172 6.184896 16.103516 6.425781 C 16.005859 6.666668 15.865885 6.878256 15.683594 7.060547 L 8.681641 14.082031 L 5 15 L 5.917969 11.318359 L 12.919922 4.306641 C 13.102213 4.12435 13.313802 3.986004 13.554688 3.891602 C 13.795572 3.797201 14.042968 3.75 14.296875 3.75 Z M 14.794922 6.181641 C 14.93164 6.044922 14.999999 5.878906 15 5.683594 C 14.999999 5.481771 14.933268 5.317384 14.799805 5.19043 C 14.666341 5.063478 14.498697 5.000001 14.296875 5 C 14.205729 5.000001 14.117838 5.014649 14.033203 5.043945 C 13.948567 5.073243 13.873697 5.120443 13.808594 5.185547 L 7.050781 11.962891 L 6.71875 13.28125 L 8.037109 12.949219 Z "
+                                            Visibility="Collapsed" />
+
+                                        <PathIcon
+                                            x:Name="DevXamlIcon"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="F1 M 15.78125 10.195313 L 12.890625 15.195313 L 7.109375 15.195313 L 4.21875 10.195313 L 7.109375 5.195313 L 12.890625 5.195313 Z M 19.804688 10.195313 L 16.445313 16.015625 L 15 15.195313 L 17.890625 10.195313 L 15 5.195313 L 16.445313 4.375 Z M 0.195313 10.195313 L 3.554688 4.375 L 5 5.195313 L 2.109375 10.195313 L 5 15.195313 L 3.554688 16.015625 Z "
+                                            Visibility="Collapsed" />
+
+                                        <PathIcon
+                                            x:Name="DevCSharpIcon"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="F1 M 0 10.224609 C 0 9.306641 0.144857 8.452148 0.43457 7.661133 C 0.724284 6.870117 1.136068 6.184896 1.669922 5.605469 C 2.203776 5.026043 2.851563 4.571941 3.613281 4.243164 C 4.375 3.914389 5.227864 3.75 6.171875 3.75 C 6.653646 3.75 7.137044 3.78418 7.62207 3.852539 C 8.107096 3.920898 8.574219 4.052734 9.023438 4.248047 L 9.023438 5.761719 C 8.580729 5.514323 8.120117 5.330404 7.641602 5.209961 C 7.163086 5.08952 6.669922 5.029298 6.162109 5.029297 C 5.406901 5.029298 4.737956 5.161134 4.155273 5.424805 C 3.572591 5.688478 3.08431 6.051434 2.69043 6.513672 C 2.296549 6.975912 1.99707 7.517904 1.791992 8.139648 C 1.586914 8.761394 1.484375 9.430339 1.484375 10.146484 C 1.484375 10.823568 1.578776 11.455078 1.767578 12.041016 C 1.95638 12.626953 2.236328 13.138021 2.607422 13.574219 C 2.978515 14.010417 3.435872 14.353842 3.979492 14.604492 C 4.523112 14.855144 5.152995 14.980469 5.869141 14.980469 C 6.429036 14.980469 6.974283 14.91862 7.504883 14.794922 C 8.035481 14.671225 8.541666 14.462891 9.023438 14.169922 L 9.023438 15.546875 C 8.509114 15.820313 7.967122 16.005859 7.397461 16.103516 C 6.827799 16.201172 6.25651 16.25 5.683594 16.25 C 4.785156 16.25 3.984375 16.098633 3.28125 15.795898 C 2.578125 15.493164 1.982422 15.073242 1.494141 14.536133 C 1.005859 13.999023 0.634766 13.362631 0.380859 12.626953 C 0.126953 11.891276 0 11.090495 0 10.224609 Z M 17.470703 8.105469 L 16.923828 10.683594 L 19.335938 10.683594 L 19.101563 11.591797 L 16.748047 11.591797 L 15.986328 15 L 14.912109 15 L 15.644531 11.591797 L 13.505859 11.591797 L 12.783203 15 L 11.708984 15 L 12.431641 11.591797 L 10.175781 11.591797 L 10.351563 10.683594 L 12.626953 10.683594 L 13.154297 8.105469 L 10.771484 8.105469 L 10.947266 7.197266 L 13.330078 7.197266 L 14.052734 3.75 L 15.136719 3.75 L 14.414063 7.197266 L 16.572266 7.197266 L 17.314453 3.75 L 18.369141 3.75 L 17.646484 7.197266 L 19.902344 7.197266 L 19.707031 8.105469 Z M 16.40625 8.105469 L 14.238281 8.105469 L 13.671875 10.683594 L 15.849609 10.683594 Z "
+                                            Visibility="Collapsed" />
+                                    </Grid>
                                 </AppBarButton>
 
                                 <AppBarButton
@@ -1194,6 +1170,25 @@
                         <Setter Target="CharGridHeader.ColumnSpan" Value="3" />
                         <Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
                         <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="DevStates">
+                <VisualState x:Name="DevHiddenState">
+                    <VisualState.Setters>
+                        <Setter Target="ShowCodeIcon.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DevXamlState">
+                    <VisualState.Setters>
+                        <Setter Target="DevXamlIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DevCSharpState">
+                    <VisualState.Setters>
+                        <Setter Target="DevCSharpIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

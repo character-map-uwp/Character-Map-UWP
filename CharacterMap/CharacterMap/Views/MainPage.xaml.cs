@@ -306,7 +306,7 @@ namespace CharacterMap.Views
                 if (!FontsSemanticZoom.IsZoomedInViewActive)
                     FontsSemanticZoom.IsZoomedInViewActive = true;
 
-                var filter = Convert.ToInt32(f.Tag.ToString(), 10);
+                var filter = Properties.GetFilter(f);
                 if (filter == ViewModel.FontListFilter)
                     ViewModel.RefreshFontList();
                 else

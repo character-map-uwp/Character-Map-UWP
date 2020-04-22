@@ -110,7 +110,7 @@ namespace CharacterMap.Helpers
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
                 {
 
-                    UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == 1)
+                    UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == BasicFontFilter.All)
                         ? _collections.SymbolCollection
                         : main.SelectedCollection;
 
@@ -258,7 +258,7 @@ namespace CharacterMap.Helpers
                 if (!standalone)
                 {
                     if (main.SelectedCollection != null ||
-                        (main.FontListFilter == 1 && !font.FontFace.IsSymbolFont))
+                        (main.FontListFilter == BasicFontFilter.All && !font.FontFace.IsSymbolFont))
                     {
                         menu.Items.Add(new MenuFlyoutSeparator());
 

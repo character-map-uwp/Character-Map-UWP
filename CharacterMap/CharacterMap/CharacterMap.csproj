@@ -17,17 +17,8 @@
     <LangVersion>8.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>CharacterMap_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
-    <LangVersion>8.0</LangVersion>
-    <PackageCertificateThumbprint>8894F5E539AFE2722DC62752C9D69346870E0D19</PackageCertificateThumbprint>
+    <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
+    <PackageCertificateThumbprint>F4C1BC290432ACAE9C11F15DB762EDD9CCF2D498</PackageCertificateThumbprint>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm|arm64</AppxBundlePlatforms>
@@ -211,11 +202,13 @@
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
+    <Compile Include="Core\Properties.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
     <Compile Include="Helpers\PrintHelper.cs" />
     <Compile Include="Helpers\Unicode.cs" />
+    <Compile Include="Models\BasicFontFilter.cs" />
     <Compile Include="Models\UnicodeRange.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\Messages.cs" />

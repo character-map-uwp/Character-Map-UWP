@@ -867,4 +867,52 @@ Please consider posting details about this error to GitHub so we can help you fi
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>Path Icon</value>
   </data>
+  <data name="OptionAllEmoji.Text" xml:space="preserve">
+    <value>All Categories</value>
+  </data>
+  <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
+    <value>All Emoji</value>
+  </data>
+  <data name="OptionEmojiDingbats.Text" xml:space="preserve">
+    <value>Dingbats</value>
+  </data>
+  <data name="OptionEmojiEmoticons.Text" xml:space="preserve">
+    <value>Emoticons</value>
+  </data>
+  <data name="OptionEmojiSymbols.Text" xml:space="preserve">
+    <value>Symbols &amp; Pictographs</value>
+  </data>
+  <data name="OptionScriptArabic.Text" xml:space="preserve">
+    <value>Arabic</value>
+  </data>
+  <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
+    <value>Latin</value>
+  </data>
+  <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
+    <value>CJK</value>
+  </data>
+  <data name="OptionScriptCyrillic.Text" xml:space="preserve">
+    <value>Cyrillic</value>
+  </data>
+  <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
+    <value>Greek &amp; Coptic</value>
+  </data>
+  <data name="OptionScriptHebrew.Text" xml:space="preserve">
+    <value>Hebrew</value>
+  </data>
+  <data name="OptionScriptThai.Text" xml:space="preserve">
+    <value>Thai</value>
+  </data>
+  <data name="CultureSpecificPangram.Text" xml:space="preserve">
+    <value>How vexingly quick daft zebras jump! 1234567890</value>
+  </data>
+  <data name="LblSwitchToCharMap.Text" xml:space="preserve">
+    <value>Switch to Character Map view</value>
+  </data>
+  <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
+    <value>Switch to Type Ramp view</value>
+  </data>
+  <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
+    <value>Enter or choose text from the dropdown</value>
+  </data>
 </root>
