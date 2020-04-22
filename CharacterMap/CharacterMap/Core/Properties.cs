@@ -28,9 +28,8 @@ namespace CharacterMap.Core
             {
                 if (d is MenuFlyoutItem item && e.NewValue is BasicFontFilter f)
                 {
-                    item.FontSize = 16;
+                    item.CommandParameter = f;
                     item.Text = f.DisplayTitle;
-                    item.Tag = f;
                 }
             }));
 

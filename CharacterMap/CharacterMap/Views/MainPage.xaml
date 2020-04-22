@@ -151,44 +151,39 @@
                                             <Setter Property="Padding" Value="0" />
                                             <!--<Setter Property="BorderBrush" Value="{ThemeResource SystemAccentColor}" />-->
                                             <Setter Property="BorderThickness" Value="1" />
+                                            <Setter Property="BorderThickness" Value="1" />
                                         </Style>
                                     </MenuFlyout.MenuFlyoutPresenterStyle>
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.All}" Click="Filter_Click" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SerifFonts}" Click="Filter_Click" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SansSerifFonts}" Click="Filter_Click" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SymbolFonts}" Click="Filter_Click" />
+                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.All}" />
+                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SerifFonts}" />
+                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SansSerifFonts}" />
+                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SymbolFonts}" />
                                     <MenuFlyoutSubItem FontSize="16" Text="Supported Scripts">
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptArabic}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCyrillic}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptGreekAndCoptic}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptHebrew}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptBasicLatin}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptThai}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCJKUnifiedIdeographs}" Click="Filter_Click" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptArabic}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCyrillic}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptGreekAndCoptic}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptHebrew}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptBasicLatin}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptThai}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCJKUnifiedIdeographs}" />
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSubItem x:Uid="OptionMoreFilters" FontSize="16">
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ColorFonts}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseDecorativeFonts}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseScriptFonts}" Click="Filter_Click" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.MonospacedFonts}" Click="Filter_Click" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ColorFonts}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseDecorativeFonts}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseScriptFonts}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.MonospacedFonts}" />
                                         <MenuFlyoutSubItem FontSize="16" Text="Emoji">
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiAll}" Click="Filter_Click" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiEmoticons}" Click="Filter_Click" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiDingbats}" Click="Filter_Click" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiSymbols}" Click="Filter_Click" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiAll}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiEmoticons}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiDingbats}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiSymbols}" />
                                         </MenuFlyoutSubItem>
                                         <MenuFlyoutSeparator x:Name="FontSourceSeperator" />
-                                        <MenuFlyoutItem
-                                            x:Name="AppxOption"
-                                            core:Properties.Filter="{x:Bind m:BasicFontFilter.RemoteFonts}"
-                                            Click="Filter_Click" />
-                                        <MenuFlyoutItem
-                                            x:Name="CloudFontsOption"
-                                            core:Properties.Filter="{x:Bind m:BasicFontFilter.AppXFonts}"
-                                            Click="Filter_Click" />
+                                        <MenuFlyoutItem x:Name="AppxOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.RemoteFonts}" />
+                                        <MenuFlyoutItem x:Name="CloudFontsOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.AppXFonts}" />
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSeparator />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ImportedFonts}" Click="Filter_Click" />
+                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ImportedFonts}" />
                                 </MenuFlyout>
                             </Button.Flyout>
                         </Button>

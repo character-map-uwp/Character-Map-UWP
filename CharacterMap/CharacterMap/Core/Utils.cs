@@ -1,4 +1,6 @@
-﻿using Microsoft.Graphics.Canvas;
+﻿using CharacterMapCX;
+using GalaSoft.MvvmLight.Ioc;
+using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
 using System;
@@ -23,6 +25,8 @@ namespace CharacterMap.Core
     public static class Utils
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
+
+        public static Interop GetInterop() => SimpleIoc.Default.GetInstance<Interop>();
 
         public static void RunOnDispatcher(this DependencyObject d, Action a)
         {

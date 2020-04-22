@@ -1077,6 +1077,10 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>Enter or choose text from the dropdown</source>
           <target state="new">Enter or choose text from the dropdown</target>
         </trans-unit>
+        <trans-unit id="ExportedToFolderMessage" translate="yes" xml:space="preserve">
+          <source>Exported to {0}</source>
+          <target state="new">Exported to {0}</target>
+        </trans-unit>
       </group>
     </body>
   </file>

@@ -273,8 +273,8 @@ namespace CharacterMap.Views
                         Messenger.Default.Send(new PrintRequestedMessage());
                         break;
                     case VirtualKey.S:
-                        if (ViewModel.SelectedVariant is FontVariant v && ViewModel.SelectedVariantAnalysis is CanvasTextLayoutAnalysis a)
-                            ExportManager.RequestExportFontFile(v, a);
+                        if (ViewModel.SelectedVariant is FontVariant v)
+                            ExportManager.RequestExportFontFile(v);
                         break;
                 }
             }
@@ -578,7 +578,6 @@ namespace CharacterMap.Views
                     menu,
                     font,
                     ViewModel.SelectedVariant,
-                    ViewModel.SelectedVariantAnalysis,
                     IsStandalone,
                     true);
             }

@@ -74,15 +74,12 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 	// This involves acquiring the FileLoader and querying it
 	// for the file path;
 	ComPtr<IDWriteFontFile> file;
-	if (fontFaceRef->GetFontFile(&file) != S_OK)
-		return;
-
 	ComPtr<IDWriteFontFileLoader> loader;
-	if (file->GetLoader(&loader) != S_OK)
-		return;
-
 	ComPtr<IDWriteLocalFontFileLoader> localLoader;
-	if (loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK)
+
+	if (fontFaceRef->GetFontFile(&file) == S_OK
+		&& file->GetLoader(&loader) == S_OK
+		&& loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK)
 	{
 		const void* refKey = nullptr;
 		uint32 size = 0;
