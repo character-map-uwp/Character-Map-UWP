@@ -218,7 +218,7 @@ DWriteProperties^ Interop::GetDWriteProperties(CanvasFontSet^ fontSet, UINT inde
 	return ref new DWriteProperties(fontSource, sourceName, nullptr, nullptr, face->IsColorFont());
 }
 
-IBuffer^ Interop::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, UINT imageType)
+IBuffer^ Interop::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format)
 {
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
 	ComPtr<IDWriteFontFace3> face;
@@ -235,7 +235,7 @@ IBuffer^ Interop::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerE
 
 	DWRITE_GLYPH_IMAGE_DATA data;
 	void* context;
-	auto formats = face5->GetGlyphImageData(idx, pixelsPerEm, static_cast<DWRITE_GLYPH_IMAGE_FORMATS>(imageType), &data, &context);
+	auto formats = face5->GetGlyphImageData(idx, pixelsPerEm, static_cast<DWRITE_GLYPH_IMAGE_FORMATS>(format), &data, &context);
 
 	auto b = (byte*)data.imageData;
 	DataWriter^ writer = ref new DataWriter();

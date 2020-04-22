@@ -12,6 +12,7 @@
 #include "DWriteFontSet.h"
 #include "PathData.h"
 #include "FontFileData.h"
+#include "GlyphImageFormat.h"
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -35,7 +36,7 @@ namespace CharacterMapCX
 		bool HasValidFonts(Uri^ uri);
 		
 		IAsyncOperation<bool>^ WriteToFileAsync(CanvasFontFace^ fontFace, Windows::Storage::StorageFile^ storageFile);
-		IBuffer^ GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, UINT imageType);
+		IBuffer^ GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format);
 		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace);
 		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
 		IVectorView<PathData^>^ GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);

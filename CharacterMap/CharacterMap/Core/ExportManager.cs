@@ -24,6 +24,7 @@ using CharacterMap.Models;
 using System.IO;
 using System.IO.Compression;
 using GalaSoft.MvvmLight.Messaging;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace CharacterMap.Core
 {
@@ -160,23 +161,20 @@ namespace CharacterMap.Core
                     // If the font uses SVG glyphs, we can extract the raw SVG from the font file
                     if (analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
                     {
-                        byte[] bytes = GetGlyphBytes(selectedVariant.FontFace, selectedChar.UnicodeIndex, 8);
-                        
-                        string str;
-
-                        if (bytes.Length > 2 && bytes[0] == 31 && bytes[1] == 139)
+                        string str = null;
+                        IBuffer b = GetGlyphBuffer(selectedVariant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Svg);
+                        if (b.Length > 2 && b.GetByte(0) == 31 && b.GetByte(1) == 139)
                         {
-                            // Content is GZIP'd. Decompress first.
-                            using (var stream = new MemoryStream(bytes))
-                            using (var gzip = new GZipStream(stream, CompressionMode.Decompress))
-                            using (var reader = new StreamReader(gzip))
-                            {
-                                str = reader.ReadToEnd();
-                            }
+                            using var stream = b.AsStream();
+                            using var gzip = new GZipStream(stream, CompressionMode.Decompress);
+                            using var reader = new StreamReader(gzip);
+                            str = reader.ReadToEnd();
                         }
                         else
                         {
-                            str = Encoding.UTF8.GetString(bytes);
+                            using var dataReader = DataReader.FromBuffer(b);
+                            dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+                            str = dataReader.ReadString(b.Length);
                         }
 
                         if (str.StartsWith("<?xml"))
@@ -287,8 +285,8 @@ namespace CharacterMap.Core
 
                     if (analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
                     {
-                        byte[] bytes = GetGlyphBytes(selectedVariant.FontFace, selectedChar.UnicodeIndex, 16);
-                        await FileIO.WriteBytesAsync(file, bytes);
+                        IBuffer buffer = GetGlyphBuffer(selectedVariant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
+                        await FileIO.WriteBufferAsync(file, buffer);
                     }
                     else
                     {
@@ -359,16 +357,10 @@ namespace CharacterMap.Core
             return new ExportResult(false, null);
         }
 
-        private static byte[] GetGlyphBytes(CanvasFontFace fontface, uint unicodeIndex, int imageType)
+        private static IBuffer GetGlyphBuffer(CanvasFontFace fontface, uint unicodeIndex, GlyphImageFormat format)
         {
             Interop interop = SimpleIoc.Default.GetInstance<Interop>();
-            IBuffer buffer = interop.GetImageDataBuffer(fontface, 1024, unicodeIndex, (uint)imageType);
-            using (DataReader reader = DataReader.FromBuffer(buffer))
-            {
-                byte[] bytes = new byte[buffer.Length];
-                reader.ReadBytes(bytes);
-                return bytes;
-            }
+            return interop.GetImageDataBuffer(fontface, 1024, unicodeIndex, format);
         }
 
         private static string GetFileName(
