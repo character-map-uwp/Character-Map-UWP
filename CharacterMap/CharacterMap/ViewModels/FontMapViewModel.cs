@@ -311,7 +311,7 @@ namespace CharacterMap.ViewModels
                 Chars = variant?.GetCharacters();
                 if (variant != null)
                 {
-                    var chars = TypographyAnalyzer.GetCharString(variant);
+                    var chars = variant.GetCharString();
                     using (CanvasTextFormat format = new CanvasTextFormat
                     {
                         FontSize = 8,

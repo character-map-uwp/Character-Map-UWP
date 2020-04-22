@@ -223,8 +223,6 @@ IBuffer^ Interop::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerE
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
 	ComPtr<IDWriteFontFace3> face;
 	faceRef->CreateFontFace(&face);
-	/*IDWriteFontFace5* face5;
-	face->QueryInterface(__uuidof(IDWriteFontFace5), reinterpret_cast<void**>(&face5));*/
 
 	ComPtr<IDWriteFontFace5> face5;
 	face.As(&face5);
@@ -366,6 +364,10 @@ PathData^ Interop::GetPathData(CanvasGeometry^ geometry)
 
 	ComPtr<ID2D1PathGeometry> p;
 	s.As<ID2D1PathGeometry>(&p);
+
+	sink->SetOffset(m->dx, m->dy);
+	m->dx = 0;
+	m->dy = 0;
 
 	p->Stream(sink.Get());
 

@@ -591,6 +591,7 @@
                         MinHeight="0"
                         Margin="12"
                         HorizontalAlignment="Left"
+                        Background="Transparent"
                         BorderThickness="0 0 0 1"
                         CornerRadius="0"
                         Header="Preview Text"
@@ -598,6 +599,7 @@
                         ItemsSource="{x:Bind ViewModel.Pangrams}"
                         PlaceholderText="Enter or choose text from the dropdown"
                         SelectedIndex="0"
+                        Style="{StaticResource DefaultComboBoxStyle}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
@@ -758,11 +760,32 @@
                                 Grid.Column="1"
                                 HorizontalAlignment="Right"
                                 Orientation="Horizontal">
+
+                                <AppBarButton
+                                    x:Uid="BtnToggleDev"
+                                    Width="50"
+                                    Height="50"
+                                    Click="{x:Bind ToggleDev}">
+                                    <AppBarButton.Icon>
+                                        <PathIcon
+                                            Margin="0 -4 0 0"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="F1 M 2.138672 10 L 4.140625 12.001953 L 3.779297 13.417969 L 0.361328 10 L 4.560547 5.810547 L 5.439453 6.689453 Z M 19.638672 10 L 15.439453 14.189453 L 14.560547 13.310547 L 17.861328 10 L 16.40625 8.544922 C 16.57552 8.375651 16.728516 8.217773 16.865234 8.071289 C 17.001953 7.924805 17.12565 7.770183 17.236328 7.607422 Z M 14.296875 3.75 C 14.570312 3.75 14.825846 3.798828 15.063477 3.896484 C 15.301106 3.994141 15.507813 4.130859 15.683594 4.306641 C 15.859375 4.482422 15.997721 4.6875 16.098633 4.921875 C 16.199543 5.15625 16.25 5.410156 16.25 5.683594 C 16.25 5.9375 16.201172 6.184896 16.103516 6.425781 C 16.005859 6.666668 15.865885 6.878256 15.683594 7.060547 L 8.681641 14.082031 L 5 15 L 5.917969 11.318359 L 12.919922 4.306641 C 13.102213 4.12435 13.313802 3.986004 13.554688 3.891602 C 13.795572 3.797201 14.042968 3.75 14.296875 3.75 Z M 14.794922 6.181641 C 14.93164 6.044922 14.999999 5.878906 15 5.683594 C 14.999999 5.481771 14.933268 5.317384 14.799805 5.19043 C 14.666341 5.063478 14.498697 5.000001 14.296875 5 C 14.205729 5.000001 14.117838 5.014649 14.033203 5.043945 C 13.948567 5.073243 13.873697 5.120443 13.808594 5.185547 L 7.050781 11.962891 L 6.71875 13.28125 L 8.037109 12.949219 Z " />
+                                    </AppBarButton.Icon>
+                                </AppBarButton>
+
                                 <AppBarButton
                                     x:Uid="BtnSaveGlyph"
                                     Width="50"
                                     Height="50">
-                                    <FontIcon FontSize="18" Glyph="&#xE105;" />
+                                    <AppBarButton.Icon>
+                                        <PathIcon
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Data="F1 M 17.5 1.25 C 17.675781 1.25 17.838541 1.282553 17.988281 1.347656 C 18.13802 1.412762 18.269855 1.502279 18.383789 1.616211 C 18.497721 1.730145 18.587238 1.86198 18.652344 2.011719 C 18.717447 2.161459 18.75 2.324219 18.75 2.5 L 18.75 18.75 L 3.486328 18.75 L 1.25 16.503906 L 1.25 2.5 C 1.25 2.324219 1.282552 2.161459 1.347656 2.011719 C 1.41276 1.86198 1.502279 1.730145 1.616211 1.616211 C 1.730143 1.502279 1.861979 1.412762 2.011719 1.347656 C 2.161458 1.282553 2.324219 1.25 2.5 1.25 Z M 5 8.75 L 15 8.75 L 15 2.5 L 5 2.5 Z M 12.5 13.75 L 6.25 13.75 L 6.25 17.5 L 7.5 17.5 L 7.5 15 L 8.75 15 L 8.75 17.5 L 12.5 17.5 Z M 17.5 2.5 L 16.25 2.5 L 16.25 10 L 3.75 10 L 3.75 2.5 L 2.5 2.5 L 2.5 15.986328 L 4.003906 17.5 L 5 17.5 L 5 12.5 L 13.75 12.5 L 13.75 17.5 L 17.5 17.5 Z " />
+                                    </AppBarButton.Icon>
+                                    <!--<FontIcon FontSize="18" Glyph="&#xE105;" />-->
                                     <Button.Flyout>
                                         <MenuFlyout x:Name="SaveAsFlyout" Placement="Top">
                                             <MenuFlyoutItem x:Uid="ExportPNGLabel" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
@@ -816,6 +839,7 @@
                                         </MenuFlyout>
                                     </Button.Flyout>
                                 </AppBarButton>
+
                                 <AppBarButton
                                     x:Uid="BtnCopyGlyph"
                                     Width="50"
@@ -834,20 +858,19 @@
                                 VerticalAlignment="Bottom"
                                 Click="BtnFit_Click">
                                 <Grid>
-                                    <FontIcon
+                                    <PathIcon
                                         x:Name="ZoomGlyph"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="16"
-                                        Glyph="&#xE9A6;"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="F1 M 16.25 8.75 L 16.25 6.25 L 13.75 6.25 L 13.75 5 L 17.5 5 L 17.5 8.75 Z M 3.75 6.25 L 3.75 8.75 L 2.5 8.75 L 2.5 5 L 6.25 5 L 6.25 6.25 Z M 17.5 11.25 L 17.5 15 L 13.75 15 L 13.75 13.75 L 16.25 13.75 L 16.25 11.25 Z M 6.25 13.75 L 6.25 15 L 2.5 15 L 2.5 11.25 L 3.75 11.25 L 3.75 13.75 Z M 0 2.5 L 20 2.5 L 20 17.5 L 0 17.5 Z M 18.75 16.25 L 18.75 3.75 L 1.25 3.75 L 1.25 16.25 Z "
                                         Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
                                         Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.Settings.FitCharacter), Mode=OneTime}" />
-                                    <Path
+                                    <PathIcon
                                         x:Name="ZoomOutGlyph"
-                                        Height="12"
-                                        Data="F1 M 0.000000 -105.000000 L 120.000000 -105.000000 L 120.000000 -15.000000 L 0.000000 -15.000000 Z M 112.500000 -22.500000 L 112.500000 -97.500000 L 7.500000 -97.500000 L 7.500000 -22.500000 Z M 32.519531 -55.019531 L 27.480469 -49.980469 L 13.652344 -63.750000 L 27.480469 -77.519531 L 32.519531 -72.480469 L 27.539063 -67.500000 L 52.500000 -67.500000 L 52.500000 -60.000000 L 27.539063 -60.000000 Z M 87.480469 -55.019531 L 92.460938 -60.000000 L 67.500000 -60.000000 L 67.500000 -67.500000 L 92.460938 -67.500000 L 87.480469 -72.480469 L 92.519531 -77.519531 L 106.347656 -63.750000 L 92.519531 -49.980469 Z "
-                                        Fill="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="F1 M 0 2.5 L 20 2.5 L 20 17.5 L 0 17.5 Z M 18.75 16.25 L 18.75 3.75 L 1.25 3.75 L 1.25 16.25 Z M 5.419922 10.830078 L 4.580078 11.669922 L 2.275391 9.375 L 4.580078 7.080078 L 5.419922 7.919922 L 4.589844 8.75 L 8.75 8.75 L 8.75 10 L 4.589844 10 Z M 14.580078 10.830078 L 15.410156 10 L 11.25 10 L 11.25 8.75 L 15.410156 8.75 L 14.580078 7.919922 L 15.419922 7.080078 L 17.724609 9.375 L 15.419922 11.669922 Z "
                                         Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
-                                        Stretch="Uniform"
                                         Visibility="{x:Bind ViewModel.Settings.FitCharacter, Mode=OneTime}" />
                                 </Grid>
                             </AppBarButton>
@@ -883,9 +906,10 @@
 
                 <!--  Dev Utils  -->
                 <StackPanel
+                    x:Name="DevUtilsRoot"
                     Grid.Row="1"
                     Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
-                    Visibility="{x:Bind ViewModel.Settings.ShowDevUtils, Mode=OneWay}">
+                    Visibility="Collapsed">
 
                     <Rectangle
                         Height="1"
@@ -965,7 +989,7 @@
 
                             <StackPanel Margin="0 0 0 0">
                                 <TextBlock
-                                    x:Uid="TxtPathGeometry"
+                                    x:Uid="TxtPathIcon"
                                     Margin="14 0 0 0"
                                     FontSize="12"
                                     Foreground="{ThemeResource TextControlHeaderForeground}"

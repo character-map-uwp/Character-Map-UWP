@@ -91,12 +91,17 @@
                             Height="{StaticResource TitleRowHeight}"
                             VerticalAlignment="Bottom"
                             Click="{x:Bind OpenFont}">
-
-                            <Path
-                                Height="16"
-                                Data="M896,320L1012,320L788,768L0,768L0,128L338.5,128L466.5,0L896,0ZM64,192L64,632.5L220.5,320L832,320L832,64L493.5,64L365.5,192ZM748,704L908,384L260,384L99.5,704Z"
-                                Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                Stretch="Uniform" />
+                            <AppBarButton.Icon>
+                                <PathIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="F1 M 18.75 7.5 C 18.91927 7.5 19.080402 7.532553 19.233398 7.597656 C 19.386393 7.662762 19.519855 7.752279 19.633789 7.866211 C 19.747721 7.980144 19.837238 8.111979 19.902344 8.261719 C 19.967447 8.411459 20 8.570964 20 8.740234 C 20 8.935547 19.954426 9.12435 19.863281 9.306641 L 15.771484 17.5 L 0 17.5 L 0 3.75 C 0 3.574219 0.032552 3.411459 0.097656 3.261719 C 0.16276 3.11198 0.252279 2.980145 0.366211 2.866211 C 0.480143 2.752279 0.611979 2.662762 0.761719 2.597656 C 0.911458 2.532553 1.074219 2.5 1.25 2.5 L 4.6875 2.5 C 4.980469 2.5 5.232747 2.530926 5.444336 2.592773 C 5.655924 2.654623 5.844727 2.731121 6.010742 2.822266 C 6.176758 2.913412 6.32487 3.014324 6.455078 3.125 C 6.585286 3.235678 6.717122 3.33659 6.850586 3.427734 C 6.984049 3.518881 7.127278 3.595379 7.280273 3.657227 C 7.433268 3.719076 7.610677 3.75 7.8125 3.75 L 15 3.75 C 15.17578 3.75 15.338541 3.782553 15.488281 3.847656 C 15.638021 3.912762 15.769856 4.002279 15.883789 4.116211 C 15.997721 4.230144 16.087238 4.361979 16.152344 4.511719 C 16.217447 4.661459 16.25 4.82422 16.25 5 L 16.25 7.5 Z M 1.25 14.228516 L 4.267578 8.193359 C 4.378255 7.978517 4.532877 7.809246 4.731445 7.685547 C 4.930013 7.56185 5.149739 7.5 5.390625 7.5 L 15 7.5 L 15 5 L 7.8125 5 C 7.519531 5.000001 7.267252 4.969076 7.055664 4.907227 C 6.844075 4.845378 6.655273 4.768881 6.489258 4.677734 C 6.323242 4.586589 6.17513 4.485678 6.044922 4.375 C 5.914713 4.264324 5.782877 4.163412 5.649414 4.072266 C 5.51595 3.981121 5.372721 3.904623 5.219727 3.842773 C 5.066731 3.780926 4.889323 3.75 4.6875 3.75 L 1.25 3.75 Z M 18.75 8.75 L 5.390625 8.75 L 1.640625 16.25 L 15 16.25 Z "
+                                    RenderTransformOrigin="0.5 0.5">
+                                    <PathIcon.RenderTransform>
+                                        <ScaleTransform ScaleX="-1" ScaleY="1" />
+                                    </PathIcon.RenderTransform>
+                                </PathIcon>
+                            </AppBarButton.Icon>
                         </AppBarButton>
 
                         <Button
@@ -119,11 +124,11 @@
                                     x:Name="GroupLabel"
                                     FontSize="16"
                                     FontWeight="Bold"
-                                    TextWrapping="NoWrap"
-                                    TextTrimming="CharacterEllipsis"
                                     OpticalMarginAlignment="TrimSideBearings"
                                     Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}"
-                                    TextLineBounds="Tight" />
+                                    TextLineBounds="Tight"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                                 <Border Opacity="0.5">
                                     <TextBlock
                                         x:Name="InlineLabelCount"
@@ -621,7 +626,7 @@
             x:Load="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}"
             Grid.RowSpan="20"
             Grid.ColumnSpan="20"
-            Background="{StaticResource DefaultHostBrush}"
+            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             Loading="LoadingRoot_Loading">
 
             <StackPanel

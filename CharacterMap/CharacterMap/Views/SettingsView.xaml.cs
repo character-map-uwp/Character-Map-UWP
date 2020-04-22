@@ -77,10 +77,26 @@ namespace CharacterMap.Views
 
         void OnAppSettingsUpdated(AppSettingsChangedMessage msg)
         {
-            if (msg.PropertyName == nameof(Settings.UserRequestedTheme))
-                OnPropertyChanged(nameof(Settings));
+            switch (msg.PropertyName)
+            {
+                case nameof(Settings.UserRequestedTheme):
+                    OnPropertyChanged(nameof(Settings));
+                    break;
+                case nameof(Settings.ShowDevUtils):
+                case nameof(Settings.DevToolsLanguage):
+                    UpdateDevTools();
+                    break;
+            }
         }
 
+        private void UpdateDevTools()
+        {
+            this.RunOnDispatcher(() =>
+            {
+                ToggleDevUtils.IsOn = Settings.ShowDevUtils;
+                RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
+            });
+        }
 
         public void Show(FontVariant variant, InstalledFont font)
         {
@@ -124,7 +140,7 @@ namespace CharacterMap.Views
             LstFontFamily.ItemsSource =  items.OrderBy(f => f.Name).ToList();
             
             // 3. Set correct Developer features language
-            RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
+            UpdateDevTools();
 
             IsOpen = true;
         }
@@ -208,6 +224,11 @@ namespace CharacterMap.Views
         {
             Settings.UseFontForPreview = false;
             ResetFontPreview();
+        }
+
+        private void ToggleDevUtils_Toggled(object sender, RoutedEventArgs e)
+        {
+            Settings.ShowDevUtils = ToggleDevUtils.IsOn;
         }
 
         private void UseActualFont_Checked(object sender, RoutedEventArgs e)

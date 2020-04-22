@@ -861,4 +861,10 @@ Please consider posting details about this error to GitHub so we can help you fi
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
     <value>Font listings are out of date. Click to reload.</value>
   </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Toggle Dev Utils</value>
+  </data>
+  <data name="TxtPathIcon.Text" xml:space="preserve">
+    <value>Path Icon</value>
+  </data>
 </root>

@@ -115,12 +115,20 @@ namespace CharacterMap.Services
             Interop interop = SimpleIoc.Default.GetInstance<Interop>();
 
             string h, f, p, s = null;
-            bool hasSymbol = FontFinder.IsMDL2(v) && Enum.IsDefined(typeof(Symbol), c.UnicodeIndex);
+            bool hasSymbol = FontFinder.IsMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
             
-            string pathData;
-            using (var geom = ExportManager.CreateGeometry(ResourceHelper.AppSettings.GridSize, v, c, a, t))
+            // Add back in future build
+            //string pathData;
+            //using (var geom = ExportManager.CreateGeometry(ResourceHelper.AppSettings.GridSize, v, c, a, t))
+            //{
+            //    pathData = interop.GetPathData(geom).Path;
+            //}
+
+            string pathIconData;
+            using (var geom = ExportManager.CreateGeometry(20, v, c, a, t))
             {
-                pathData = interop.GetPathData(geom).Path;
+                var boounds = geom.ComputeBounds();
+                pathIconData = interop.GetPathData(geom).Path;
             }
 
             var hex = c.UnicodeIndex.ToString("x4").ToUpper();
@@ -128,7 +136,7 @@ namespace CharacterMap.Services
             {
                 h = $"&#x{hex};";
                 f = $@"<FontIcon FontFamily=""{v.XamlFontSource}"" Glyph=""&#x{hex};"" />";
-                p = $"<Path Data=\"{pathData}\" Fill=\"{{ThemeResource SystemControlForegroundBaseHighBrush}}\" Stretch=\"Uniform\" />";
+                p = $"<PathIcon Data=\"{pathIconData}\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />";
 
                 if (hasSymbol)
                     s = $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />";
@@ -137,7 +145,7 @@ namespace CharacterMap.Services
             {
                 h = $"\\u{hex}";
                 f = $"new FontIcon {{ FontFamily = new Windows.UI.Xaml.Media.FontFamily(\"{v.XamlFontSource}\") , Glyph = \"\\u{hex}\" }};";
-                p = $"new Windows.UI.Xaml.Shapes.Path {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Geometry), \"{pathData}\"), Fill = new Windows.UI.Xaml.Media.SolidColorBrush(Windows.UI.Colors.Black), Stretch = Windows.UI.Xaml.Media.Stretch.Uniform }};";
+                p = $"new PathIcon {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Geometry), \"{pathIconData}\"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }};";
 
                 if (hasSymbol)
                     s = $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};";

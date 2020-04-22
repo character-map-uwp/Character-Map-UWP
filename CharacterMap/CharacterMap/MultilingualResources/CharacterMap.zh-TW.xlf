@@ -1007,6 +1007,14 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>Font listings are out of date. Click to reload.</source>
           <target state="new">Font listings are out of date. Click to reload.</target>
         </trans-unit>
+        <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
+          <source>Path Icon</source>
+          <target state="new">Path Icon</target>
+        </trans-unit>
+        <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Toggle Dev Utils</source>
+          <target state="new">Toggle Dev Utils</target>
+        </trans-unit>
       </group>
     </body>
   </file>

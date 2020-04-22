@@ -157,6 +157,7 @@ namespace CharacterMap.Views
                     TryPrint();
             });
 
+            UpdateDevUtils(false);
             UpdateDisplayMode();
             UpdateSearchStates();
             UpdateCharacterFit();
@@ -239,6 +240,7 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.DevToolsLanguage):
                     case nameof(AppSettings.ShowDevUtils):
                         ViewModel.UpdateDevValues();
+                        UpdateDevUtils();
                         break;
                     case nameof(AppSettings.GridSize):
                         UpdateDisplay();
@@ -278,7 +280,22 @@ namespace CharacterMap.Views
             }
         }
 
-
+        private void UpdateDevUtils(bool animate = true)
+        {
+            // We can't bind directly to the setting as it exists 
+            // across multiple dispatchers.
+            RunOnUI(() =>
+            {
+                if (ViewModel.Settings.ShowDevUtils)
+                { 
+                    if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
+                        Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
+                    DevUtilsRoot.Visibility = Visibility.Visible;
+                }
+                else
+                    DevUtilsRoot.Visibility = Visibility.Collapsed;
+            });
+        }
 
         private void UpdateDisplayMode(bool animate = false)
         {
@@ -406,6 +423,24 @@ namespace CharacterMap.Views
 
 
         /* UI Event Handlers */
+
+        private void ToggleDev()
+        {
+            if (!ViewModel.Settings.ShowDevUtils)
+            {
+                ViewModel.Settings.ShowDevUtils = true;
+            }
+            else
+            {
+                if (ViewModel.Settings.DevToolsLanguage == 0)
+                    ViewModel.Settings.DevToolsLanguage = 1;
+                else
+                {
+                    ViewModel.Settings.ShowDevUtils = false;
+                    ViewModel.Settings.DevToolsLanguage = 0;
+                }
+            }
+        }
 
         private void BtnFit_Click(object sender, RoutedEventArgs e)
         {

@@ -342,6 +342,20 @@ namespace CharacterMap.Helpers
             catch { }          
         }
 
+        public static void PlayFullHeightSlideUpEntrance(FrameworkElement target)
+        {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
+            Visual v = target.EnableTranslation(true).GetElementVisual();
+
+            var t = v.Compositor.CreateVector3KeyFrameAnimation();
+            t.Target = TRANSLATION;
+            t.InsertExpressionKeyFrame(0, "Vector3(0, this.Target.Size.Y, 0)");
+            t.InsertExpressionKeyFrame(1, "Vector3(0, 0, 0)");
+            t.Duration = TimeSpan.FromSeconds(DefaultOffsetDuration);
+            v.StartAnimationGroup(t);
+        }
 
 
         /* Adding or removing Receivers is glitchy AF */

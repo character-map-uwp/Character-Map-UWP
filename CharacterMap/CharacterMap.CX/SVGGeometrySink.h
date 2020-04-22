@@ -25,27 +25,40 @@ namespace CharacterMapCX
 	{
 	public:
 
+        virtual void SetOffset(float x, float y)
+        {
+            m_offsetX = x;
+            m_offsetY = y;
+        }
+
+        virtual string ts(float value)
+        {
+            auto str = to_string(value);
+            str.erase(str.find_last_not_of('0') + 1, string::npos); 
+            str.erase(str.find_last_not_of('.') + 1, string::npos);
+            return str;
+        }
+
+        virtual std::string ts(D2D1_POINT_2F p)
+        {
+            return ts(p.x + m_offsetX) + " " + ts(p.y + m_offsetY);
+        }
+
         virtual void STDMETHODCALLTYPE SetFillMode(D2D1_FILL_MODE fillMode)
         {
             b = b + "F" + to_string(fillMode) + " ";
         }
 
-        virtual void STDMETHODCALLTYPE SetSegmentFlags(D2D1_PATH_SEGMENT vertexFlags)
-        {
-
-        }
-
         virtual void STDMETHODCALLTYPE BeginFigure(D2D1_POINT_2F startPoint, D2D1_FIGURE_BEGIN figureBegin)
         {
-            b = b + "M " + to_string(startPoint.x) + " " + to_string(startPoint.y) + " ";
+            b = b + "M " + ts(startPoint) + " ";
         }
 
         virtual void STDMETHODCALLTYPE AddLines(const D2D1_POINT_2F* points, UINT pointsCount)
         {
             for (int i = 0; i < pointsCount; i = i + 1)
             {
-                auto point = points[i];
-                b = b + "L " + to_string(point.x) + " " + to_string(point.y) + " ";
+                b = b + "L " + ts(points[i]) + " ";
             }
         }
 
@@ -54,7 +67,7 @@ namespace CharacterMapCX
             for (int i = 0; i < beziersCount; i = i + 1)
             {
                 auto z = beziers[i];
-                b = b + "C " + to_string(z.point1.x) + " " + to_string(z.point1.y) + " " + to_string(z.point2.x) + " " + to_string(z.point2.y) + " " + to_string(z.point3.x) + " " + to_string(z.point3.y) + " ";
+                b = b + "C " + ts(z.point1) + " " + ts(z.point2) + " " + ts(z.point3) + " ";
             }
         }
 
@@ -62,6 +75,11 @@ namespace CharacterMapCX
         {
             if (figureEnd == D2D1_FIGURE_END::D2D1_FIGURE_END_CLOSED)
                 b = b + "Z ";
+        }
+
+        virtual void STDMETHODCALLTYPE SetSegmentFlags(D2D1_PATH_SEGMENT vertexFlags)
+        {
+
         }
 
         virtual HRESULT STDMETHODCALLTYPE Close()
@@ -123,6 +141,8 @@ namespace CharacterMapCX
         string b = "";
         unsigned long m_refCount;
 
+        float m_offsetX = 0;
+        float m_offsetY = 0;
 
         // Inherited via ID2D1GeometrySink - Not required for text.
         void __stdcall AddLine(D2D1_POINT_2F point)

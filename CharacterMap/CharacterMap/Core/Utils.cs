@@ -24,6 +24,14 @@ namespace CharacterMap.Core
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
 
+        public static void RunOnDispatcher(this DependencyObject d, Action a)
+        {
+            if (d.Dispatcher.HasThreadAccess)
+                a();
+            else
+                _ = d.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => a());
+        }
+
         public static Color GetAccentColor()
         {
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
