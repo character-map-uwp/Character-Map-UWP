@@ -599,7 +599,7 @@
                         ItemsSource="{x:Bind ViewModel.Pangrams}"
                         PlaceholderText="Enter or choose text from the dropdown"
                         SelectedIndex="0"
-                        Style="{StaticResource DefaultComboBoxStyle}"
+                        Style="{StaticResource RampComboBoxStyle}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
