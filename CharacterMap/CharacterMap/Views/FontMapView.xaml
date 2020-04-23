@@ -596,6 +596,7 @@
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                         Text="{Binding}" />
                                     <TextBlock
+                                        core:Properties.Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}"
                                         FontSize="{Binding}"
                                         IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
@@ -1000,7 +1001,7 @@
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
 
-                                                <TextBlock x:Uid="TxtPathGeometry" VerticalAlignment="Center" />
+                                                <TextBlock x:Uid="TxtPathIcon" VerticalAlignment="Center" />
 
                                                 <AppBarButton
                                                     x:Uid="BtnCopyDev"

@@ -694,19 +694,6 @@ namespace CharacterMap.Views
                 IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
                 CharacterGridView.UpdateTypography(_xamlDirect, p, info);
             }
-
-            if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
-            {
-                if (TypeRampList != null && TypeRampList.ItemsPanelRoot != null)
-                {
-                    foreach (var c in TypeRampList.ItemsPanelRoot.Children)
-                    {
-                        var t = c.GetDescendantsOfType<TextBlock>().Skip(1).FirstOrDefault();
-                        IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(t);
-                        CharacterGridView.UpdateTypography(_xamlDirect, p, info);
-                    }
-                }
-            }
         }
 
 
@@ -749,6 +736,7 @@ namespace CharacterMap.Views
                 }
             }
         }
+
     }
 
 
