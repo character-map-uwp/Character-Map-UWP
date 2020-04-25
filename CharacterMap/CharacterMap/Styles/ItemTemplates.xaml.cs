@@ -107,7 +107,6 @@ namespace CharacterMap.Styles
                     menu,
                     font,
                     null,
-                    null,
                     false);
             }
         }

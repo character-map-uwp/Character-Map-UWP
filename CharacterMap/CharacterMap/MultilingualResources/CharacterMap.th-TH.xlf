@@ -1009,6 +1009,82 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>Font listings are out of date. Click to reload.</source>
           <target state="new">Font listings are out of date. Click to reload.</target>
         </trans-unit>
+        <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
+          <source>Path Icon</source>
+          <target state="new">Path Icon</target>
+        </trans-unit>
+        <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Toggle Dev Utils</source>
+          <target state="new">Toggle Dev Utils</target>
+        </trans-unit>
+        <trans-unit id="OptionAllEmoji.Text" translate="yes" xml:space="preserve">
+          <source>All Categories</source>
+          <target state="new">All Categories</target>
+        </trans-unit>
+        <trans-unit id="OptionAllEmojiTitle.Text" translate="yes" xml:space="preserve">
+          <source>All Emoji</source>
+          <target state="new">All Emoji</target>
+        </trans-unit>
+        <trans-unit id="OptionEmojiDingbats.Text" translate="yes" xml:space="preserve">
+          <source>Dingbats</source>
+          <target state="new">Dingbats</target>
+        </trans-unit>
+        <trans-unit id="OptionEmojiEmoticons.Text" translate="yes" xml:space="preserve">
+          <source>Emoticons</source>
+          <target state="new">Emoticons</target>
+        </trans-unit>
+        <trans-unit id="OptionEmojiSymbols.Text" translate="yes" xml:space="preserve">
+          <source>Symbols &amp; Pictographs</source>
+          <target state="new">Symbols &amp; Pictographs</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptArabic.Text" translate="yes" xml:space="preserve">
+          <source>Arabic</source>
+          <target state="new">Arabic</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptBasicLatin.Text" translate="yes" xml:space="preserve">
+          <source>Latin</source>
+          <target state="new">Latin</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
+          <source>CJK</source>
+          <target state="new">CJK</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptCyrillic.Text" translate="yes" xml:space="preserve">
+          <source>Cyrillic</source>
+          <target state="new">Cyrillic</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptGreekAndCoptic.Text" translate="yes" xml:space="preserve">
+          <source>Greek &amp; Coptic</source>
+          <target state="new">Greek &amp; Coptic</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptHebrew.Text" translate="yes" xml:space="preserve">
+          <source>Hebrew</source>
+          <target state="new">Hebrew</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptThai.Text" translate="yes" xml:space="preserve">
+          <source>Thai</source>
+          <target state="new">Thai</target>
+        </trans-unit>
+        <trans-unit id="CultureSpecificPangram.Text" translate="yes" xml:space="preserve">
+          <source>How vexingly quick daft zebras jump! 1234567890</source>
+          <target state="new">How vexingly quick daft zebras jump! 1234567890</target>
+        </trans-unit>
+        <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
+          <source>Switch to Character Map view</source>
+          <target state="new">Switch to Character Map view</target>
+        </trans-unit>
+        <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
+          <source>Switch to Type Ramp view</source>
+          <target state="new">Switch to Type Ramp view</target>
+        </trans-unit>
+        <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
+          <source>Enter or choose text from the dropdown</source>
+          <target state="new">Enter or choose text from the dropdown</target>
+        </trans-unit>
+        <trans-unit id="ExportedToFolderMessage" translate="yes" xml:space="preserve">
+          <source>Exported to {0}</source>
+          <target state="new">Exported to {0}</target>
+        </trans-unit>
       </group>
     </body>
   </file>

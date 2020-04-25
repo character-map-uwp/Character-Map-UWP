@@ -24,6 +24,7 @@ using CharacterMap.Models;
 using System.IO;
 using System.IO.Compression;
 using GalaSoft.MvvmLight.Messaging;
+using System.Runtime.InteropServices.WindowsRuntime;
 
 namespace CharacterMap.Core
 {
@@ -58,7 +59,7 @@ namespace CharacterMap.Core
             File = file;
         }
 
-        public ExportFontFileResult(bool success, StorageFolder folder)
+        public ExportFontFileResult(StorageFolder folder, bool success)
         {
             Success = success;
             Folder = folder;
@@ -66,31 +67,15 @@ namespace CharacterMap.Core
 
         public string GetMessage()
         {
-            return Localization.Get("FontExportedMessage", File?.Name ?? Folder?.Name);
+            if (Folder != null)
+                return Localization.Get("ExportedToFolderMessage", Folder.Name);
+            else
+                return Localization.Get("FontExportedMessage", File.Name);
         }
     }
 
     public static class ExportManager
     {
-        public static async void RequestExportFontFile(FontVariant variant, CanvasTextLayoutAnalysis ana)
-        {
-            string name = Path.GetFileNameWithoutExtension(ana.FilePath);
-            string ext = Path.GetExtension(ana.FilePath);
-            if (await PickFileAsync(name, Localization.Get("ExportFontFile/Text"), new[] { ext }, PickerLocationId.DocumentsLibrary) is StorageFile file)
-            {
-                try
-                {
-                    var interop = SimpleIoc.Default.GetInstance<Interop>();
-                    bool success = await interop.WriteToFileAsync(variant.FontFace, file);
-                    Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(success, file)));
-                }
-                catch
-                {
-                    Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(false, file)));
-                }
-            }
-        }
-
         public static async Task<ExportResult> ExportSvgAsync(
             ExportStyle style,
             InstalledFont selectedFont,
@@ -160,23 +145,20 @@ namespace CharacterMap.Core
                     // If the font uses SVG glyphs, we can extract the raw SVG from the font file
                     if (analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
                     {
-                        byte[] bytes = GetGlyphBytes(selectedVariant.FontFace, selectedChar.UnicodeIndex, 8);
-                        
-                        string str;
-
-                        if (bytes.Length > 2 && bytes[0] == 31 && bytes[1] == 139)
+                        string str = null;
+                        IBuffer b = GetGlyphBuffer(selectedVariant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Svg);
+                        if (b.Length > 2 && b.GetByte(0) == 31 && b.GetByte(1) == 139)
                         {
-                            // Content is GZIP'd. Decompress first.
-                            using (var stream = new MemoryStream(bytes))
-                            using (var gzip = new GZipStream(stream, CompressionMode.Decompress))
-                            using (var reader = new StreamReader(gzip))
-                            {
-                                str = reader.ReadToEnd();
-                            }
+                            using var stream = b.AsStream();
+                            using var gzip = new GZipStream(stream, CompressionMode.Decompress);
+                            using var reader = new StreamReader(gzip);
+                            str = reader.ReadToEnd();
                         }
                         else
                         {
-                            str = Encoding.UTF8.GetString(bytes);
+                            using var dataReader = DataReader.FromBuffer(b);
+                            dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+                            str = dataReader.ReadString(b.Length);
                         }
 
                         if (str.StartsWith("<?xml"))
@@ -287,8 +269,8 @@ namespace CharacterMap.Core
 
                     if (analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
                     {
-                        byte[] bytes = GetGlyphBytes(selectedVariant.FontFace, selectedChar.UnicodeIndex, 16);
-                        await FileIO.WriteBytesAsync(file, bytes);
+                        IBuffer buffer = GetGlyphBuffer(selectedVariant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
+                        await FileIO.WriteBufferAsync(file, buffer);
                     }
                     else
                     {
@@ -359,16 +341,9 @@ namespace CharacterMap.Core
             return new ExportResult(false, null);
         }
 
-        private static byte[] GetGlyphBytes(CanvasFontFace fontface, int unicodeIndex, int imageType)
+        private static IBuffer GetGlyphBuffer(CanvasFontFace fontface, uint unicodeIndex, GlyphImageFormat format)
         {
-            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
-            IBuffer buffer = interop.GetImageDataBuffer(fontface, 1024, (uint)unicodeIndex, (uint)imageType);
-            using (DataReader reader = DataReader.FromBuffer(buffer))
-            {
-                byte[] bytes = new byte[buffer.Length];
-                reader.ReadBytes(bytes);
-                return bytes;
-            }
+            return Utils.GetInterop().GetImageDataBuffer(fontface, 1024, unicodeIndex, format);
         }
 
         private static string GetFileName(
@@ -458,6 +433,32 @@ namespace CharacterMap.Core
             }
         }
 
+        public static async void RequestExportFontFile(FontVariant variant)
+        {
+            var interop = Utils.GetInterop();
+            if (interop.IsFontLocal(variant.FontFace))
+            {
+                string filePath = GetFileName(interop, variant);
+                string name = Path.GetFileNameWithoutExtension(filePath);
+                string ext = Path.GetExtension(filePath);
+
+                if (await PickFileAsync(name, Localization.Get("ExportFontFile/Text"), new[] { ext }, PickerLocationId.DocumentsLibrary) is StorageFile file)
+                {
+                    try
+                    {
+                        bool success = await TryWriteToFileAsync(interop, variant, file);
+                        Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(success, file)));
+                        return;
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+            
+            Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(null, false)));
+        }
+
         internal static async Task ExportCollectionAsZipAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
         {
             var fonts = fontList.SelectMany(f => f.Variants).ToList();
@@ -466,24 +467,19 @@ namespace CharacterMap.Core
             {
                 await Task.Run(async () =>
                 {
-                    var interop = SimpleIoc.Default.GetInstance<Interop>();
+                    var interop = Utils.GetInterop();
                     using var i = await file.OpenStreamForWriteAsync();
                     i.SetLength(0);
+
                     using ZipArchive z = new ZipArchive(i, ZipArchiveMode.Create);
                     foreach (var font in fonts)
                     {
-                        if (interop.GetFileBuffer(font.FontFace) is FontFileData d)
+                        if (interop.IsFontLocal(font.FontFace))
                         {
-                            ZipArchiveEntry entry = z.CreateEntry(CleanFileName(font, d.FileName));
-                            using (IOutputStream s = entry.Open().AsOutputStream())
-                            {
-                                DataWriter w = new DataWriter(s);
-                                w.WriteBuffer(d.Buffer);
-                                await w.StoreAsync();
-                                await w.FlushAsync();
-                            }
-
-                            d.Dispose();
+                            string fileName = GetFileName(interop, font);
+                            ZipArchiveEntry entry = z.CreateEntry(fileName);
+                            using IOutputStream s = entry.Open().AsOutputStream();
+                            await interop.WriteToStreamAsync(font.FontFace, s);
                         }
                     }
                 });
@@ -507,33 +503,43 @@ namespace CharacterMap.Core
             {
                 await Task.Run(async () =>
                 {
-                    var interop = SimpleIoc.Default.GetInstance<Interop>();
+                    var interop = Utils.GetInterop();
                     foreach (var font in fonts)
                     {
-                        if (interop.GetFileBuffer(font.FontFace) is FontFileData d)
+                        if (interop.IsFontLocal(font.FontFace))
                         {
-                            StorageFile file = await folder.CreateFileAsync(CleanFileName(font, d.FileName), CreationCollisionOption.ReplaceExisting);
-                            
-                            using var stream = await file.OpenStreamForWriteAsync();
-                            stream.SetLength(0);
-
-                            DataWriter w = new DataWriter(stream.AsOutputStream());
-                            w.WriteBuffer(d.Buffer);
-                            await w.StoreAsync();
-                            await w.FlushAsync();
-
-                            d.Dispose();
+                            string fileName = GetFileName(interop, font);
+                            StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
+                            await TryWriteToFileAsync(interop, font, file);
                         }
                     }
                 });
 
-                Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(true, folder)));
+                Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(folder, true)));
             }
         }
 
-        private static string CleanFileName(FontVariant font, string fileName)
+        private static async Task<bool> TryWriteToFileAsync(Interop i, FontVariant font, StorageFile file)
         {
-            fileName = fileName ?? $"{font.FamilyName} {font.PreferredName}.ttf";
+            try
+            {
+                using IRandomAccessStream s = await file.OpenAsync(FileAccessMode.ReadWrite);
+                s.Size = 0;
+
+                using IOutputStream o = s.GetOutputStreamAt(0);
+                await i.WriteToStreamAsync(font.FontFace, o);
+                return true;
+            }
+            catch { }
+
+            return false;
+        }
+
+        private static string GetFileName(Interop interop, FontVariant font)
+        {
+            string fileName = interop.GetFileName(font.FontFace);
+            if (string.IsNullOrWhiteSpace(fileName))
+                fileName = $"{font.FamilyName} {font.PreferredName}.ttf";
             return $"{Humanizer.To.SentenceCase.Transform(Path.GetFileNameWithoutExtension(fileName))}{Path.GetExtension(fileName).ToLower()}";
         }
 

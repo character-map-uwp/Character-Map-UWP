@@ -274,7 +274,6 @@
     <ClInclude Include="DWriteFontSet.h" />
     <ClInclude Include="DWriteFontSource.h" />
     <ClInclude Include="DWriteProperties.h" />
-    <ClInclude Include="FontFileData.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GridViewHelper.h" />
     <ClInclude Include="PathData.h" />

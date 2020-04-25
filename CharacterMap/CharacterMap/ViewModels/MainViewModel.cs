@@ -33,8 +33,8 @@ namespace CharacterMap.ViewModels
 
         public RelayCommand CommandToggleFullScreen { get; }
 
-        private int _fontListFilter;
-        public int FontListFilter
+        private BasicFontFilter _fontListFilter = BasicFontFilter.All;
+        public BasicFontFilter FontListFilter
         {
             get => _fontListFilter;
             set { if (Set(ref _fontListFilter, value)) RefreshFontList(); }
@@ -48,7 +48,7 @@ namespace CharacterMap.ViewModels
             { 
                 if (value != null && value.IsSystemSymbolCollection)
                 {
-                    FontListFilter = 1;
+                    FontListFilter = BasicFontFilter.All;
                     return;
                 }
 
@@ -245,52 +245,8 @@ namespace CharacterMap.ViewModels
                 else
                 {
                     SelectedCollection = null;
-                    switch (FontListFilter)
-                    {
-                        case 1:
-                            fontList = fontList.Where(f => f.IsSymbolFont || FontCollections.SymbolCollection.Fonts.Contains(f.Name));
-                            FilterTitle = Localization.Get("OptionSymbolFonts/Text");
-                            break;
-                        case 2:
-                            fontList = fontList.Where(f => f.HasImportedFiles);
-                            FilterTitle = Localization.Get("OptionImportedFonts/Text");
-                            break;
-                        case 3:
-                            fontList = fontList.Where(f => f.DefaultVariant.FontFace.IsMonospaced);
-                            FilterTitle = Localization.Get("OptionMonospacedFonts/Text");
-                            break;
-                        case 4:
-                            fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSerifStyle);
-                            FilterTitle = Localization.Get("OptionSerifFonts/Text");
-                            break;
-                        case 5:
-                            fontList = fontList.Where(f => f.DefaultVariant.Panose.IsSansSerifStyle);
-                            FilterTitle = Localization.Get("OptionSansSerifFonts/Text");
-                            break;
-                        case 6:
-                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.AppxPackage);
-                            FilterTitle = Localization.Get("OptionAppxFonts/Text");
-                            break;
-                        case 7:
-                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.Source == CharacterMapCX.DWriteFontSource.RemoteFontProvider);
-                            FilterTitle = Localization.Get("OptionCloudFonts/Text");
-                            break;
-                        case 8:
-                            fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Decorative);
-                            FilterTitle = Localization.Get("OptionDecorativeFonts/Text");
-                            break;
-                        case 9:
-                            fontList = fontList.Where(f => f.DefaultVariant.Panose.Family == PanoseFamily.Script);
-                            FilterTitle = Localization.Get("OptionScriptFonts/Text");
-                            break;
-                        case 10:
-                            fontList = fontList.Where(f => f.DefaultVariant.DirectWriteProperties.IsColorFont);
-                            FilterTitle = Localization.Get("OptionColorFonts/Text");
-                            break;
-                        default:
-                            FilterTitle = Localization.Get("OptionAllFonts/Text");
-                            break;
-                    }
+                    FilterTitle = FontListFilter.FilterTitle;
+                    fontList = FontListFilter.Query(fontList, FontCollections);
                 }
 
                 FontList = fontList.ToList();

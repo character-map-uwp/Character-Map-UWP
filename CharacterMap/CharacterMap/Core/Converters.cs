@@ -33,13 +33,14 @@ namespace CharacterMap.Core
         public static Visibility TrueToVis(bool b) => b ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility IsNotNullToVis(object obj) => obj != null ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility TrueAndFalseToVis(bool a, bool b) => a && !b ? Visibility.Visible : Visibility.Collapsed;
+        public static Visibility TrueOrTrueToVis(bool a, bool b) => a || b ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility TrueAndTrueAndFalseToVis(bool a, bool b, bool c) => a && b && !c ? Visibility.Visible : Visibility.Collapsed;
 
 
         public static bool IsNull(object obj) => obj == null;
         public static bool IsNotNull(object obj) => obj != null;
 
-        public static string ToHex(int i) => Unicode.GetHexValue(i);
+        public static string ToHex(int i) => Unicode.GetHexValue((uint)i);
 
         public static string GetWeightName(Windows.UI.Text.FontWeight weight)
         {

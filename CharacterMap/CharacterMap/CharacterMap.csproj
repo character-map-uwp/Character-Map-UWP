@@ -201,12 +201,16 @@
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
+    <Compile Include="Core\BasicCommand.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
+    <Compile Include="Core\Properties.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
     <Compile Include="Helpers\PrintHelper.cs" />
     <Compile Include="Helpers\Unicode.cs" />
+    <Compile Include="Models\BasicFontFilter.cs" />
+    <Compile Include="Models\UnicodeRange.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\Messages.cs" />
     <Compile Include="Core\Converters.cs" />

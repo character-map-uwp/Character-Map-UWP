@@ -157,6 +157,8 @@ namespace CharacterMap.Views
                     TryPrint();
             });
 
+            UpdateDevUtils(false);
+            UpdateDisplayMode();
             UpdateSearchStates();
             UpdateCharacterFit();
 
@@ -217,6 +219,10 @@ namespace CharacterMap.Views
                 if (ViewModel.Settings.UseSelectionAnimations)
                     Composition.PlayEntrance(CharGrid, 166);
             }
+            else if (e.PropertyName == nameof(ViewModel.DisplayMode))
+            {
+                UpdateDisplayMode(true);
+            }
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -234,6 +240,7 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.DevToolsLanguage):
                     case nameof(AppSettings.ShowDevUtils):
                         ViewModel.UpdateDevValues();
+                        UpdateDevUtils();
                         break;
                     case nameof(AppSettings.GridSize):
                         UpdateDisplay();
@@ -266,10 +273,42 @@ namespace CharacterMap.Views
                         Messenger.Default.Send(new PrintRequestedMessage());
                         break;
                     case VirtualKey.S:
-                        if (ViewModel.SelectedVariant is FontVariant v && ViewModel.SelectedVariantAnalysis is CanvasTextLayoutAnalysis a)
-                            ExportManager.RequestExportFontFile(v, a);
+                        if (ViewModel.SelectedVariant is FontVariant v)
+                            ExportManager.RequestExportFontFile(v);
                         break;
                 }
+            }
+        }
+
+        private void UpdateDevUtils(bool animate = true)
+        {
+            // We can't bind directly to the setting as it exists 
+            // across multiple dispatchers.
+            RunOnUI(() =>
+            {
+                if (ViewModel.Settings.ShowDevUtils)
+                { 
+                    if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
+                        Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
+
+                    VisualStateManager.GoToState(this,
+                        ViewModel.Settings.DevToolsLanguage == 0 ? nameof(DevXamlState) : nameof(DevCSharpState), true);
+                }
+                else
+                    VisualStateManager.GoToState(this, nameof(DevHiddenState), true);
+            });
+        }
+
+        private void UpdateDisplayMode(bool animate = false)
+        {
+            if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
+                VisualStateManager.GoToState(this, TypeRampState.Name, true);
+            else
+                VisualStateManager.GoToState(this, CharacterMapState.Name, true);
+
+            if (animate)
+            {
+                PlayFontChanged(false);
             }
         }
 
@@ -387,6 +426,24 @@ namespace CharacterMap.Views
 
         /* UI Event Handlers */
 
+        private void ToggleDev()
+        {
+            if (!ViewModel.Settings.ShowDevUtils)
+            {
+                ViewModel.Settings.ShowDevUtils = true;
+            }
+            else
+            {
+                if (ViewModel.Settings.DevToolsLanguage == 0)
+                    ViewModel.Settings.DevToolsLanguage = 1;
+                else
+                {
+                    ViewModel.Settings.ShowDevUtils = false;
+                    ViewModel.Settings.DevToolsLanguage = 0;
+                }
+            }
+        }
+
         private void BtnFit_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Settings.FitCharacter = !ViewModel.Settings.FitCharacter;
@@ -434,10 +491,13 @@ namespace CharacterMap.Views
                 if (!this.IsLoaded)
                     return;
 
-                var size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
-                if (this.ActualWidth < size && this.ActualWidth < 700)
+                if (CharGrid.Visibility == Visibility.Visible)
                 {
-                    PreviewColumn.Width = new GridLength((int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth));
+                    var size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
+                    if (this.ActualWidth < size && this.ActualWidth < 700)
+                    {
+                        PreviewColumn.Width = new GridLength((int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth));
+                    }
                 }
             });
         }
@@ -518,7 +578,6 @@ namespace CharacterMap.Views
                     menu,
                     font,
                     ViewModel.SelectedVariant,
-                    ViewModel.SelectedVariantAnalysis,
                     IsStandalone,
                     true);
             }
@@ -627,11 +686,14 @@ namespace CharacterMap.Views
 
         void UpdateTypography(TypographyFeatureInfo info)
         {
-            if (ViewModel.IsLoadingCharacters || CharGrid.ItemsSource == null || CharGrid.ItemsPanelRoot == null)
+            if (ViewModel.IsLoadingCharacters || ViewModel.Chars == null)
                 return;
-
-            IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
-            CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            
+            if (CharGrid.ItemsSource != null && CharGrid.ItemsPanelRoot != null)
+            {
+                IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
+                CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            }
         }
 
 
@@ -639,7 +701,42 @@ namespace CharacterMap.Views
 
         /* Composition */
 
-        
+        public void PlayFontChanged(bool withHeader = true)
+        {
+            if (ViewModel.Settings.UseSelectionAnimations)
+            {
+                int offset = 0;
+                if (withHeader)
+                {
+                    offset = 83;
+                    Composition.PlayEntrance(FontTitleBlock, 0);
+                    Composition.PlayEntrance(CharGridHeader, 83);
+                }
+
+                if (ViewModel.DisplayMode == FontDisplayMode.CharacterMap)
+                {
+                    if (!withHeader)
+                    {
+                        Composition.PlayEntrance(CharGrid, offset);
+                        offset += 83;
+                    }
+                    Composition.PlayEntrance(TxtPreviewViewBox, offset);
+                }
+                else if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
+                {
+                    Composition.PlayEntrance(TypeRampInputRow, offset * 2, 80);
+                    if (TypeRampList != null && TypeRampList.ItemsPanelRoot != null)
+                    {
+                        Composition.PlayEntrance(TypeRampList.ItemsPanelRoot.Children.ToList(), (offset * 2) + 34, 80, staggerMs: 42);
+                    }
+                    else if (TypeRampList != null) // occurs directly after first x:Load
+                    {
+                        Composition.PlayEntrance(TypeRampList, (offset * 2) + 34, 80);
+                    }
+                }
+            }
+        }
+
     }
 
 

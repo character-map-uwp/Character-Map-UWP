@@ -1,4 +1,4 @@
-using CharacterMap.Core;
+﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.Views;
@@ -22,6 +22,14 @@ using CharacterMap.Models;
 
 namespace CharacterMap.ViewModels
 {
+    public enum FontDisplayMode
+    { 
+        CharacterMap,
+        GlyphMap,
+        TypeRamp
+    }
+
+
     public class FontMapViewModel : ViewModelBase
     {
         #region Properties
@@ -70,6 +78,13 @@ namespace CharacterMap.ViewModels
         {
             get => _searchResults;
             set => Set(ref _searchResults, value);
+        }
+
+        private FontDisplayMode _displayMode = FontDisplayMode.CharacterMap;
+        public FontDisplayMode DisplayMode
+        {
+            get => _displayMode;
+            set => Set(ref _displayMode, value);
         }
 
         private InstalledFont _selectedFont;
@@ -158,7 +173,7 @@ namespace CharacterMap.ViewModels
                 _selectedChar = value;
                 if (null != value)
                 {
-                    Settings.LastSelectedCharIndex = value.UnicodeIndex;
+                    Settings.LastSelectedCharIndex = (int)value.UnicodeIndex;
                 }
                 RaisePropertyChanged();
                 UpdateCharAnalysis();
@@ -247,7 +262,33 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private string _typeRampText;
+        public string TypeRampText
+        {
+            get => _typeRampText;
+            set
+            {
+                if (value != null && value.Length > 100)
+                    value = value.Substring(0, 100);
+
+                Set(ref _typeRampText, value);
+            }
+        }
+
+        public List<string> DefaultRampOptions { get; } = new List<string>
+        {
+            "The quick brown dog jumps over a lazy fox. 1234567890",
+            Localization.Get("CultureSpecificPangram/Text"),
+            "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
+            "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
+        };
+
         #endregion
+
+
+
+        public int[] RampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
 
         public FontMapViewModel(IDialogService dialogService, AppSettings settings)
         {
@@ -271,7 +312,7 @@ namespace CharacterMap.ViewModels
                 Chars = variant?.GetCharacters();
                 if (variant != null)
                 {
-                    var chars = TypographyAnalyzer.GetCharString(variant);
+                    var chars = variant.GetCharString();
                     using (CanvasTextFormat format = new CanvasTextFormat
                     {
                         FontSize = 8,
@@ -399,6 +440,14 @@ namespace CharacterMap.ViewModels
                 SelectedChar = Chars?.FirstOrDefault(
                     c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
             }
+        }
+
+        public void ChangeDisplayMode()
+        {
+            if (DisplayMode == FontDisplayMode.TypeRamp)
+                DisplayMode = FontDisplayMode.CharacterMap;
+            else
+                DisplayMode = FontDisplayMode.TypeRamp;
         }
 
         public string GetCharName(Character c)

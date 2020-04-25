@@ -430,10 +430,10 @@
                         <StackPanel>
                             <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource HeaderStyle}" />
                             <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource DescriptionStyle}" />
-                            <ToggleSwitch IsOn="{x:Bind Settings.ShowDevUtils, Mode=TwoWay}" />
+                            <ToggleSwitch x:Name="ToggleDevUtils" Toggled="ToggleDevUtils_Toggled" />
                         </StackPanel>
 
-                        <StackPanel Visibility="{x:Bind Settings.ShowDevUtils, Mode=OneWay}">
+                        <StackPanel Visibility="{x:Bind ToggleDevUtils.IsOn, Mode=OneWay}">
                             <TextBlock x:Uid="SettingsDevToolsLangHeader" Style="{StaticResource HeaderStyle}" />
                             <TextBlock x:Uid="SettingsDevToolsLangDescription" Style="{StaticResource DescriptionStyle}" />
                             <muxc:RadioButtons x:Name="RbLanguage" SelectionChanged="RadioButtons_SelectionChanged" />

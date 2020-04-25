@@ -27,6 +27,7 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.UI.ViewManagement;
 using Windows.UI.Core.AnimationMetrics;
 using CharacterMapCX;
+using System.Windows.Input;
 
 namespace CharacterMap.Views
 {
@@ -43,6 +44,8 @@ namespace CharacterMap.Views
         public object ThemeLock { get; } = new object();
 
         private UISettings _uiSettings { get; }
+
+        private ICommand FilterCommand { get; } 
 
         public MainPage()
         {
@@ -76,6 +79,8 @@ namespace CharacterMap.Views
                     Messenger.Default.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
                 });
             };
+
+            FilterCommand = new BasicCommand(OnFilterClick);
         }
 
 
@@ -107,12 +112,7 @@ namespace CharacterMap.Views
                     if (ViewModel.SelectedFont != null)
                     {
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
-                        if (ViewModel.Settings.UseSelectionAnimations)
-                        {
-                            Composition.PlayEntrance(FontMap.FontTitleBlock, 0);
-                            Composition.PlayEntrance(FontMap.CharGridHeader, 83);
-                            Composition.PlayEntrance(FontMap.TxtPreviewViewBox, 83);
-                        }
+                        FontMap.PlayFontChanged();
                     }
 
                     break;
@@ -249,8 +249,8 @@ namespace CharacterMap.Views
                         FontMap.TryCopy();
                         break;
                     case VirtualKey.S:
-                        if (FontMap.ViewModel.SelectedVariant is FontVariant v && FontMap.ViewModel.SelectedVariantAnalysis is CanvasTextLayoutAnalysis a)
-                            ExportManager.RequestExportFontFile(v, a);
+                        if (FontMap.ViewModel.SelectedVariant is FontVariant v)
+                            ExportManager.RequestExportFontFile(v);
                             break;
                     case VirtualKey.N:
                         if (ViewModel.SelectedFont is InstalledFont fnt)
@@ -304,14 +304,13 @@ namespace CharacterMap.Views
             return string.Empty;
         }
 
-        private void Filter_Click(object sender, RoutedEventArgs e)
+        private void OnFilterClick(object parameter)
         {
-            if (sender is FrameworkElement f)
+            if (parameter is BasicFontFilter filter)
             {
                 if (!FontsSemanticZoom.IsZoomedInViewActive)
                     FontsSemanticZoom.IsZoomedInViewActive = true;
 
-                var filter = Convert.ToInt32(f.Tag.ToString(), 10);
                 if (filter == ViewModel.FontListFilter)
                     ViewModel.RefreshFontList();
                 else
@@ -326,8 +325,8 @@ namespace CharacterMap.Views
             if (sender is MenuFlyout menu)
             {
                 // Reset to default menu
-                while (menu.Items.Count > 7)
-                    menu.Items.RemoveAt(7);
+                while (menu.Items.Count > 8)
+                    menu.Items.RemoveAt(8);
 
                 // force menu width to match the source button
                 foreach (var sep in menu.Items.OfType<MenuFlyoutSeparator>())
@@ -364,6 +363,21 @@ namespace CharacterMap.Views
                     CloudFontsOption.Visibility = FontFinder.HasRemoteFonts ? Visibility.Visible : Visibility.Collapsed;
                     AppxOption.Visibility = FontFinder.HasAppxFonts ? Visibility.Visible : Visibility.Collapsed;
                 }
+
+                void SetCommand(MenuFlyoutItemBase b, ICommand c)
+                {
+                    b.FontSize = 16;
+                    if (b is MenuFlyoutSubItem i)
+                    {
+                        foreach (var child in i.Items)
+                            SetCommand(child, c);
+                    }
+                    else if (b is MenuFlyoutItem m)
+                        m.Command = c;
+                }
+
+                foreach (var item in menu.Items)
+                    SetCommand(item, FilterCommand);
             }
         }
 

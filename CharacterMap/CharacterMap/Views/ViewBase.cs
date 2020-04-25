@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Annotations;
+using CharacterMap.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,10 +35,7 @@ namespace CharacterMap.Views
 
         protected void RunOnUI(Action a)
         {
-            if (Dispatcher.HasThreadAccess)
-                a();
-            else
-                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => a());
+            this.RunOnDispatcher(a);
         }
     }
 }

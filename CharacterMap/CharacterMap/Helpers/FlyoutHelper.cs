@@ -55,11 +55,11 @@ namespace CharacterMap.Helpers
             MenuFlyout menu,
             InstalledFont font,
             FontVariant variant,
-            CanvasTextLayoutAnalysis variantAnalysis,
             bool standalone,
             bool showAdvanced = false)
         {
             MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
+            Interop interop = Utils.GetInterop();
 
             #region Handlers 
 
@@ -94,9 +94,9 @@ namespace CharacterMap.Helpers
 
             static void SaveFont_Click(object sender, RoutedEventArgs e)
             {
-                if (sender is MenuFlyoutItem item && item.Tag is (FontVariant fnt, CanvasTextLayoutAnalysis ana))
+                if (sender is MenuFlyoutItem item && item.Tag is FontVariant fnt)
                 {
-                    ExportManager.RequestExportFontFile(fnt, ana);
+                    ExportManager.RequestExportFontFile(fnt);
                 }
             }
 
@@ -110,7 +110,7 @@ namespace CharacterMap.Helpers
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
                 {
 
-                    UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == 1)
+                    UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == BasicFontFilter.All)
                         ? _collections.SymbolCollection
                         : main.SelectedCollection;
 
@@ -159,13 +159,13 @@ namespace CharacterMap.Helpers
                         }
                     }
 
-                    if (variant != null && variantAnalysis != null && !string.IsNullOrWhiteSpace(variantAnalysis.FilePath))
+                    if (variant != null && interop.IsFontLocal(variant.FontFace))
                     {
                         var saveButton = new MenuFlyoutItem
                         {
                             Text = Localization.Get("ExportFontFileLabel/Text"),
                             Icon = new FontIcon { Glyph = "\uE792" },
-                            Tag = (variant, variantAnalysis)
+                            Tag = variant
                         }.AddKeyboardAccelerator(VirtualKey.S, VirtualKeyModifiers.Control);
 
                         saveButton.Click += SaveFont_Click;
@@ -258,7 +258,7 @@ namespace CharacterMap.Helpers
                 if (!standalone)
                 {
                     if (main.SelectedCollection != null ||
-                        (main.FontListFilter == 1 && !font.FontFace.IsSymbolFont))
+                        (main.FontListFilter == BasicFontFilter.All && !font.FontFace.IsSymbolFont))
                     {
                         menu.Items.Add(new MenuFlyoutSeparator());
 
