@@ -395,7 +395,7 @@
         </trans-unit>
         <trans-unit id="DWriteSourceRemoteFontProvider" translate="yes" xml:space="preserve">
           <source>Cloud Provider</source>
-          <target state="new">Cloud Provider</target>
+          <target state="translated">云提供商</target>
         </trans-unit>
         <trans-unit id="DWriteSourceUnknown" translate="yes" xml:space="preserve">
           <source>Undefined</source>
@@ -403,7 +403,7 @@
         </trans-unit>
         <trans-unit id="FontPropInstallType.Text" translate="yes" xml:space="preserve">
           <source>Install Type</source>
-          <target state="new">Install Type</target>
+          <target state="translated">安装类型</target>
         </trans-unit>
         <trans-unit id="OptionAppxFonts.Text" translate="yes" xml:space="preserve">
           <source>From Microsoft Store</source>
@@ -411,7 +411,7 @@
         </trans-unit>
         <trans-unit id="OptionCloudFonts.Text" translate="yes" xml:space="preserve">
           <source>Cloud-based Fonts</source>
-          <target state="new">Cloud-based Fonts</target>
+          <target state="translated">云端字体</target>
         </trans-unit>
         <trans-unit id="OptionColorFonts.Text" translate="yes" xml:space="preserve">
           <source>Color Fonts</source>
@@ -532,11 +532,11 @@
         </trans-unit>
         <trans-unit id="DlgExceptionCopyMessage.Text" translate="yes" xml:space="preserve">
           <source>Copy error to Clipboard and open GitHub</source>
-          <target state="new">Copy error to Clipboard and open GitHub</target>
+          <target state="translated">将错误信息复制并打开 GitHub</target>
         </trans-unit>
         <trans-unit id="DlgExceptionExpander.Header" translate="yes" xml:space="preserve">
           <source>View Full Exception details</source>
-          <target state="new">View Full Exception details</target>
+          <target state="translated">查看全部错误详细信息</target>
         </trans-unit>
         <trans-unit id="DlgExceptionMessage.Text" translate="yes" xml:space="preserve">
           <source>To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</source>
@@ -655,8 +655,8 @@ Turning this on can incur a large performance penalty when resizing the window.<
         <trans-unit id="SettingsLanguageDescription.Text" translate="yes" xml:space="preserve">
           <source>Override the in-app language.
 Requires a restart to take effect.</source>
-          <target state="new">Override the in-app language.
-Requires a restart to take effect.</target>
+          <target state="translated">覆盖应用语言设置。
+需要重启应用生效。</target>
         </trans-unit>
         <trans-unit id="SettingsLanguageHeader.Text" translate="yes" xml:space="preserve">
           <source>Language override</source>
@@ -817,7 +817,7 @@ Turning this on can have a minor impact on scrolling performance.</target>
         </trans-unit>
         <trans-unit id="PrintViewPageRangeDesc.Text" translate="yes" xml:space="preserve">
           <source>Up to 50 pages can be printed at a time. Select the range of pages to print here.</source>
-          <target state="new">Up to 50 pages can be printed at a time. Select the range of pages to print here.</target>
+          <target state="translated">一次最多打印50页面。请在此处选择需要打印的页面范围。</target>
         </trans-unit>
         <trans-unit id="PrintViewPageRangeSelector.Header" translate="yes" xml:space="preserve">
           <source>Pages to print:</source>
@@ -838,8 +838,8 @@ Turning this on can have a minor impact on scrolling performance.</target>
         <trans-unit id="PrintViewPreviewOutOfBoundsLabel.Text" translate="yes" xml:space="preserve">
           <source>This page is outside the current page range and will not be printed.
 You can change the page range in the Page Setup section.</source>
-          <target state="new">This page is outside the current page range and will not be printed.
-You can change the page range in the Page Setup section.</target>
+          <target state="translated">该页不在当前页面范围内，不会被打印。
+你可以在页面设置中设定页面范围。</target>
         </trans-unit>
         <trans-unit id="PrintViewPrintingLabel" translate="yes" xml:space="preserve">
           <source>Printing pages {0} - {1}</source>
@@ -913,15 +913,15 @@ May have a minor effect on performance on older or weaker devices.</target>
         </trans-unit>
         <trans-unit id="SettingsTransparencyHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable transparency</source>
-          <target state="new">Enable transparency</target>
+          <target state="translated">启用透明效果</target>
         </trans-unit>
         <trans-unit id="StartupFailedButton.Content" translate="yes" xml:space="preserve">
           <source>Show Details</source>
-          <target state="new">Show Details</target>
+          <target state="translated">显示详细信息</target>
         </trans-unit>
         <trans-unit id="StartupFailedHeader.Text" translate="yes" xml:space="preserve">
           <source>Uh Oh</source>
-          <target state="new">Uh Oh</target>
+          <target state="translated">尴尬</target>
         </trans-unit>
         <trans-unit id="StartupFailedMessage.Text" translate="yes" xml:space="preserve">
           <source>Something went wrong and we couldn't start the app right now.
@@ -935,11 +935,11 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="ExportSVGLabel.Text" translate="yes" xml:space="preserve">
           <source>Save as SVG Image</source>
-          <target state="new">Save as SVG Image</target>
+          <target state="translated">保存为 SVG 图片</target>
         </trans-unit>
         <trans-unit id="ExportPNGLabel.Text" translate="yes" xml:space="preserve">
           <source>Save as PNG Image</source>
-          <target state="new">Save as PNG Image</target>
+          <target state="translated">保存为 PNG 图片</target>
         </trans-unit>
         <trans-unit id="ExportSVGGlyphLabel.Text" translate="yes" xml:space="preserve">
           <source>SVG Glyph</source>
@@ -947,23 +947,23 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="BtnCopyGlyph.Label" translate="yes" xml:space="preserve">
           <source>Copy</source>
-          <target state="new">Copy</target>
+          <target state="translated">复制</target>
         </trans-unit>
         <trans-unit id="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Copy to clipboard</source>
-          <target state="new">Copy to clipboard</target>
+          <target state="translated">复制到剪切板</target>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="new">Save As</target>
+          <target state="translated">另存为</target>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="new">Save As</target>
+          <target state="translated">另存为</target>
         </trans-unit>
         <trans-unit id="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Fit Character</source>
-          <target state="new">Fit Character</target>
+          <target state="translated">适配字符</target>
         </trans-unit>
         <trans-unit id="NotificationFontRemovedBody.Text" translate="yes" xml:space="preserve">
           <source>was removed from</source>
@@ -975,35 +975,35 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
           <source>Collection Name</source>
-          <target state="new">Collection Name</target>
+          <target state="translated">集合名称</target>
         </trans-unit>
         <trans-unit id="ExportFontFile.Text" translate="yes" xml:space="preserve">
           <source>Font File</source>
-          <target state="new">Font File</target>
+          <target state="translated">字体文件</target>
         </trans-unit>
         <trans-unit id="ExportFontFileLabel.Text" translate="yes" xml:space="preserve">
           <source>Save Font File As</source>
-          <target state="new">Save Font File As</target>
+          <target state="translated">将字体文件另存为</target>
         </trans-unit>
         <trans-unit id="FontExportedMessage" translate="yes" xml:space="preserve">
           <source>{0} exported</source>
-          <target state="new">{0} exported</target>
+          <target state="translated">{0} 已导出</target>
         </trans-unit>
         <trans-unit id="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Export Fonts</source>
-          <target state="new">Export Fonts</target>
+          <target state="translated">导出字体</target>
         </trans-unit>
         <trans-unit id="CollectionExportFolder.Text" translate="yes" xml:space="preserve">
           <source>To Folder</source>
-          <target state="new">To Folder</target>
+          <target state="translated">到文件夹</target>
         </trans-unit>
         <trans-unit id="CollectionExportHeader.Text" translate="yes" xml:space="preserve">
           <source>Export</source>
-          <target state="new">Export</target>
+          <target state="translated">导出</target>
         </trans-unit>
         <trans-unit id="CollectionExportZip.Text" translate="yes" xml:space="preserve">
           <source>As Zip Archive</source>
-          <target state="new">As Zip Archive</target>
+          <target state="translated">Zip 压缩包</target>
         </trans-unit>
         <trans-unit id="SystemFontsExpiredMessage.Text" translate="yes" xml:space="preserve">
           <source>Font listings are out of date. Click to reload.</source>
@@ -1015,15 +1015,15 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Dev Utils</source>
-          <target state="new">Toggle Dev Utils</target>
+          <target state="translated">打开或关闭程序猿工具</target>
         </trans-unit>
         <trans-unit id="OptionAllEmoji.Text" translate="yes" xml:space="preserve">
           <source>All Categories</source>
-          <target state="new">All Categories</target>
+          <target state="translated">全部类别</target>
         </trans-unit>
         <trans-unit id="OptionAllEmojiTitle.Text" translate="yes" xml:space="preserve">
           <source>All Emoji</source>
-          <target state="new">All Emoji</target>
+          <target state="translated">所有 Emoji</target>
         </trans-unit>
         <trans-unit id="OptionEmojiDingbats.Text" translate="yes" xml:space="preserve">
           <source>Dingbats</source>
@@ -1039,11 +1039,11 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="OptionScriptArabic.Text" translate="yes" xml:space="preserve">
           <source>Arabic</source>
-          <target state="new">Arabic</target>
+          <target state="translated">阿拉伯语</target>
         </trans-unit>
         <trans-unit id="OptionScriptBasicLatin.Text" translate="yes" xml:space="preserve">
           <source>Latin</source>
-          <target state="new">Latin</target>
+          <target state="translated">拉丁语</target>
         </trans-unit>
         <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
           <source>CJK</source>
@@ -1063,7 +1063,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="OptionScriptThai.Text" translate="yes" xml:space="preserve">
           <source>Thai</source>
-          <target state="new">Thai</target>
+          <target state="translated">泰语</target>
         </trans-unit>
         <trans-unit id="CultureSpecificPangram.Text" translate="yes" xml:space="preserve">
           <source>How vexingly quick daft zebras jump! 1234567890</source>
@@ -1079,11 +1079,11 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter or choose text from the dropdown</source>
-          <target state="new">Enter or choose text from the dropdown</target>
+          <target state="translated">输入或从下拉框中选择文字</target>
         </trans-unit>
         <trans-unit id="ExportedToFolderMessage" translate="yes" xml:space="preserve">
           <source>Exported to {0}</source>
-          <target state="new">Exported to {0}</target>
+          <target state="translated">已导出到 {0}</target>
         </trans-unit>
       </group>
     </body>
