@@ -300,8 +300,17 @@
   <data name="DWriteSourcePerUser" xml:space="preserve">
     <value>仅当前用户</value>
   </data>
+  <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
+    <value>云提供商</value>
+  </data>
+  <data name="FontPropInstallType.Text" xml:space="preserve">
+    <value>安装类型</value>
+  </data>
   <data name="OptionAppxFonts.Text" xml:space="preserve">
     <value>来自微软应用商店</value>
+  </data>
+  <data name="OptionCloudFonts.Text" xml:space="preserve">
+    <value>云端字体</value>
   </data>
   <data name="OptionColorFonts.Text" xml:space="preserve">
     <value>有色字体</value>
@@ -347,6 +356,12 @@
   </data>
   <data name="DlgException.Title" xml:space="preserve">
     <value>有东西爆了</value>
+  </data>
+  <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
+    <value>将错误信息复制并打开 GitHub</value>
+  </data>
+  <data name="DlgExceptionExpander.Header" xml:space="preserve">
+    <value>查看全部错误详细信息</value>
   </data>
   <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>关闭</value>
@@ -413,6 +428,10 @@
   </data>
   <data name="SettingsLangOverride.OnContent" xml:space="preserve">
     <value>使用覆盖语言</value>
+  </data>
+  <data name="SettingsLanguageDescription.Text" xml:space="preserve">
+    <value>覆盖应用语言设置。
+需要重启应用生效。</value>
   </data>
   <data name="SettingsLanguageHeader.Text" xml:space="preserve">
     <value>语言</value>
@@ -504,6 +523,9 @@
   <data name="PrintViewPageRange.Text" xml:space="preserve">
     <value>页面范围</value>
   </data>
+  <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
+    <value>一次最多打印50页面。请在此处选择需要打印的页面范围。</value>
+  </data>
   <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
     <value>打印的页面:</value>
   </data>
@@ -512,6 +534,10 @@
   </data>
   <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
     <value>预览页面</value>
+  </data>
+  <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
+    <value>该页不在当前页面范围内，不会被打印。
+你可以在页面设置中设定页面范围。</value>
   </data>
   <data name="PrintViewPrintingLabel" xml:space="preserve">
     <value>正在打印页面 {0} - {1}</value>
@@ -551,5 +577,83 @@
   </data>
   <data name="PrintLayout_TwoColumn" xml:space="preserve">
     <value>两列</value>
+  </data>
+  <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
+    <value>启用透明效果</value>
+  </data>
+  <data name="StartupFailedButton.Content" xml:space="preserve">
+    <value>显示详细信息</value>
+  </data>
+  <data name="StartupFailedHeader.Text" xml:space="preserve">
+    <value>尴尬</value>
+  </data>
+  <data name="ExportSVGLabel.Text" xml:space="preserve">
+    <value>保存为 SVG 图片</value>
+  </data>
+  <data name="ExportPNGLabel.Text" xml:space="preserve">
+    <value>保存为 PNG 图片</value>
+  </data>
+  <data name="BtnCopyGlyph.Label" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>复制到剪切板</value>
+  </data>
+  <data name="BtnSaveGlyph.Label" xml:space="preserve">
+    <value>另存为</value>
+  </data>
+  <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>另存为</value>
+  </data>
+  <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>适配字符</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>集合名称</value>
+  </data>
+  <data name="ExportFontFile.Text" xml:space="preserve">
+    <value>字体文件</value>
+  </data>
+  <data name="ExportFontFileLabel.Text" xml:space="preserve">
+    <value>将字体文件另存为</value>
+  </data>
+  <data name="FontExportedMessage" xml:space="preserve">
+    <value>{0} 已导出</value>
+  </data>
+  <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>导出字体</value>
+  </data>
+  <data name="CollectionExportFolder.Text" xml:space="preserve">
+    <value>到文件夹</value>
+  </data>
+  <data name="CollectionExportHeader.Text" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="CollectionExportZip.Text" xml:space="preserve">
+    <value>Zip 压缩包</value>
+  </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>打开或关闭程序猿工具</value>
+  </data>
+  <data name="OptionAllEmoji.Text" xml:space="preserve">
+    <value>全部类别</value>
+  </data>
+  <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
+    <value>所有 Emoji</value>
+  </data>
+  <data name="OptionScriptArabic.Text" xml:space="preserve">
+    <value>阿拉伯语</value>
+  </data>
+  <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
+    <value>拉丁语</value>
+  </data>
+  <data name="OptionScriptThai.Text" xml:space="preserve">
+    <value>泰语</value>
+  </data>
+  <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
+    <value>输入或从下拉框中选择文字</value>
+  </data>
+  <data name="ExportedToFolderMessage" xml:space="preserve">
+    <value>已导出到 {0}</value>
   </data>
 </root>
