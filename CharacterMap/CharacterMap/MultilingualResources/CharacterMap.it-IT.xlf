@@ -1034,7 +1034,7 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
           <target state="new">Simboli &amp; Pittogrammi</target>
         </trans-unit>
         <trans-unit id="OptionScriptArabic.Text" translate="yes" xml:space="preserve">
-          <source>Arabo</source>
+          <source>Arabic</source>
           <target state="new">Arabic</target>
         </trans-unit>
         <trans-unit id="OptionScriptBasicLatin.Text" translate="yes" xml:space="preserve">

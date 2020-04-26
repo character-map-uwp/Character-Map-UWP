@@ -118,7 +118,7 @@
     <value>Riavvio dell'app necessario per apportare le modifiche</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
-    <value>Cerca per nome del carattere o codice Unicode</value>
+    <value>Cerca nome carattere o codice Unicode</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>Informazioni sull'app</value>
@@ -544,10 +544,10 @@ L'attivazione può avere un impatto minore sulle prestazioni di scorrimento.</va
     <value>Usa la lingua di sistema</value>
   </data>
   <data name="SettingsNeedRestart.Text" xml:space="preserve">
-    <value>I cambiamenti saranno apportati dopo il riavvio dell'app</value>
+    <value>I cambiamenti saranno applicati dopo il riavvio dell'app</value>
   </data>
   <data name="BtnContributors.Content" xml:space="preserve">
-    <value>Persone che hanno contribuito allo sviluppo dell'app</value>
+    <value>Collaboratori</value>
   </data>
   <data name="TxtLoadingFonts.Text" xml:space="preserve">
     <value>Caricamento dei caratteri</value>
@@ -718,7 +718,7 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
     <value>Slva come</value>
   </data>
   <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Carattere adatto</value>
+    <value>Adatta alla larghezza</value>
   </data>
   <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
     <value>è stato rimosso da</value>
