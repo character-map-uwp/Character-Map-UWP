@@ -148,7 +148,7 @@
         </trans-unit>
         <trans-unit id="SearchBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Search character name or unicode hex</source>
-          <target state="translated">Cerca per nome del carattere o codice Unicode</target>
+          <target state="translated">Cerca nome carattere o codice Unicode</target>
         </trans-unit>
         <trans-unit id="Settings_About.Text" translate="yes" xml:space="preserve">
           <source>About this application</source>
@@ -721,11 +721,11 @@ L'attivazione può avere un impatto minore sulle prestazioni di scorrimento.</ta
         </trans-unit>
         <trans-unit id="SettingsNeedRestart.Text" translate="yes" xml:space="preserve">
           <source>Change will apply after restart</source>
-          <target state="translated">I cambiamenti saranno apportati dopo il riavvio dell'app</target>
+          <target state="translated">I cambiamenti saranno applicati dopo il riavvio dell'app</target>
         </trans-unit>
         <trans-unit id="BtnContributors.Content" translate="yes" xml:space="preserve">
           <source>Contributors</source>
-          <target state="translated">Persone che hanno contribuito allo sviluppo dell'app</target>
+          <target state="translated">Collaboratori</target>
         </trans-unit>
         <trans-unit id="TxtLoadingFonts.Text" translate="yes" xml:space="preserve">
           <source>Loading Fonts</source>
@@ -963,7 +963,7 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
         </trans-unit>
         <trans-unit id="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Fit Character</source>
-          <target state="translated">Carattere adatto</target>
+          <target state="translated">Adatta alla larghezza</target>
         </trans-unit>
         <trans-unit id="NotificationFontRemovedBody.Text" translate="yes" xml:space="preserve">
           <source>was removed from</source>
@@ -975,51 +975,51 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
         </trans-unit>
         <trans-unit id="ExportFontFile.Text" translate="yes" xml:space="preserve">
           <source>Font File</source>
-          <target state="new">Font File</target>
+          <target state="new">File di caratteri</target>
         </trans-unit>
         <trans-unit id="ExportFontFileLabel.Text" translate="yes" xml:space="preserve">
           <source>Save Font File As</source>
-          <target state="new">Save Font File As</target>
+          <target state="new">Salva file di carattere come</target>
         </trans-unit>
         <trans-unit id="FontExportedMessage" translate="yes" xml:space="preserve">
           <source>{0} exported</source>
-          <target state="new">{0} exported</target>
+          <target state="new">{0} eesportato</target>
         </trans-unit>
         <trans-unit id="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Export Fonts</source>
-          <target state="new">Export Fonts</target>
+          <target state="new">Esporta caratteri</target>
         </trans-unit>
         <trans-unit id="CollectionExportFolder.Text" translate="yes" xml:space="preserve">
           <source>To Folder</source>
-          <target state="new">To Folder</target>
+          <target state="new">Nella cartella</target>
         </trans-unit>
         <trans-unit id="CollectionExportHeader.Text" translate="yes" xml:space="preserve">
           <source>Export</source>
-          <target state="new">Export</target>
+          <target state="new">Esporta</target>
         </trans-unit>
         <trans-unit id="CollectionExportZip.Text" translate="yes" xml:space="preserve">
           <source>As Zip Archive</source>
-          <target state="new">As Zip Archive</target>
+          <target state="new">Come archivio .ZIP</target>
         </trans-unit>
         <trans-unit id="SystemFontsExpiredMessage.Text" translate="yes" xml:space="preserve">
           <source>Font listings are out of date. Click to reload.</source>
-          <target state="new">Font listings are out of date. Click to reload.</target>
+          <target state="new">Gli elenchi di caratteri non sono aggiornati. Fai clic per ricaricare.</target>
         </trans-unit>
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
           <source>Path Icon</source>
-          <target state="new">Path Icon</target>
+          <target state="new">Percorso icona</target>
         </trans-unit>
         <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Dev Utils</source>
-          <target state="new">Toggle Dev Utils</target>
+          <target state="new">Attiva/disattiva gli strumenti di sviluppo</target>
         </trans-unit>
         <trans-unit id="OptionAllEmoji.Text" translate="yes" xml:space="preserve">
           <source>All Categories</source>
-          <target state="new">All Categories</target>
+          <target state="new">Tutte le categorie</target>
         </trans-unit>
         <trans-unit id="OptionAllEmojiTitle.Text" translate="yes" xml:space="preserve">
           <source>All Emoji</source>
-          <target state="new">All Emoji</target>
+          <target state="new">Tutte le Emoji</target>
         </trans-unit>
         <trans-unit id="OptionEmojiDingbats.Text" translate="yes" xml:space="preserve">
           <source>Dingbats</source>
@@ -1031,55 +1031,55 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
         </trans-unit>
         <trans-unit id="OptionEmojiSymbols.Text" translate="yes" xml:space="preserve">
           <source>Symbols &amp; Pictographs</source>
-          <target state="new">Symbols &amp; Pictographs</target>
+          <target state="new">Simboli &amp; Pittogrammi</target>
         </trans-unit>
         <trans-unit id="OptionScriptArabic.Text" translate="yes" xml:space="preserve">
-          <source>Arabic</source>
+          <source>Arabo</source>
           <target state="new">Arabic</target>
         </trans-unit>
         <trans-unit id="OptionScriptBasicLatin.Text" translate="yes" xml:space="preserve">
           <source>Latin</source>
-          <target state="new">Latin</target>
+          <target state="new">Latino</target>
         </trans-unit>
         <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
           <source>CJK</source>
-          <target state="new">CJK</target>
+          <target state="new">Cinese Giapponese Coreano</target>
         </trans-unit>
         <trans-unit id="OptionScriptCyrillic.Text" translate="yes" xml:space="preserve">
           <source>Cyrillic</source>
-          <target state="new">Cyrillic</target>
+          <target state="new">Cirillico</target>
         </trans-unit>
         <trans-unit id="OptionScriptGreekAndCoptic.Text" translate="yes" xml:space="preserve">
           <source>Greek &amp; Coptic</source>
-          <target state="new">Greek &amp; Coptic</target>
+          <target state="new">Greco &amp; Coptic</target>
         </trans-unit>
         <trans-unit id="OptionScriptHebrew.Text" translate="yes" xml:space="preserve">
           <source>Hebrew</source>
-          <target state="new">Hebrew</target>
+          <target state="new">Ebraico</target>
         </trans-unit>
         <trans-unit id="OptionScriptThai.Text" translate="yes" xml:space="preserve">
           <source>Thai</source>
-          <target state="new">Thai</target>
+          <target state="new">Tailandese</target>
         </trans-unit>
         <trans-unit id="CultureSpecificPangram.Text" translate="yes" xml:space="preserve">
           <source>How vexingly quick daft zebras jump! 1234567890</source>
-          <target state="new">How vexingly quick daft zebras jump! 1234567890</target>
+          <target state="new">Cantami, o Diva, del Pelìde Achille l'ira funesta che infiniti addusse lutti agli Achei 1234567890</target>
         </trans-unit>
         <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
           <source>Switch to Character Map view</source>
-          <target state="new">Switch to Character Map view</target>
+          <target state="new">Passa alla vista Mappa caratteri</target>
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
           <source>Switch to Type Ramp view</source>
-          <target state="new">Switch to Type Ramp view</target>
+          <target state="new">Passa alla vista di dettagli</target>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter or choose text from the dropdown</source>
-          <target state="new">Enter or choose text from the dropdown</target>
+          <target state="new">Inserisci o scegli il testo dal menu a discesa</target>
         </trans-unit>
         <trans-unit id="ExportedToFolderMessage" translate="yes" xml:space="preserve">
           <source>Exported to {0}</source>
-          <target state="new">Exported to {0}</target>
+          <target state="new">Esportato in {0}</target>
         </trans-unit>
       </group>
     </body>
