@@ -103,6 +103,7 @@ namespace CharacterMap.Views
             if (IsOpen)
                 return;
 
+            MenuItem_Clicked(MenuColumn.Children.First(), null);
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
@@ -156,18 +157,18 @@ namespace CharacterMap.Views
             if (!Composition.UISettings.AnimationsEnabled)
                 return;
 
-            List<UIElement> elements = new List<UIElement> { this };
-            elements.AddRange(LeftPanel.Children);
+            List<UIElement> elements = new List<UIElement> { this, MenuColumn, ContentBorder };
+            //elements.AddRange(LeftPanel.Children);
             Composition.PlayEntrance(elements, 0, 200);
 
-            elements.Clear();
-            elements.AddRange(RightPanel.Children);
-            Composition.PlayEntrance(elements, 0, 200);
+            //elements.Clear();
+            //elements.AddRange(RightPanel.Children);
+            //Composition.PlayEntrance(elements, 0, 200);
         }
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(ContentScroller, 40, TitleBackground);
+            Composition.SetThemeShadow(ContentRoot, 40, TitleBackground);
 
             // Set the settings that can't be set with bindings
             switch (Settings.UserRequestedTheme)
@@ -187,6 +188,11 @@ namespace CharacterMap.Views
                 UseActualFont.IsChecked = true;
             else
                 UseSystemFont.IsChecked = true;
+        }
+
+        private void View_Loaded(object sender, RoutedEventArgs e)
+        {
+            MenuItem_Clicked(MenuColumn.Children.First(), null);
 
         }
 
@@ -247,6 +253,25 @@ namespace CharacterMap.Views
         public void SelectedLanguageToString(object selected) => 
             Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "en-US";
 
+        private void MenuItem_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button item
+               && item.Tag is Panel panel
+               && panel.Visibility == Visibility.Collapsed)
+            {
+                foreach (var child in MenuColumn.Children.OfType<Button>())
+                    VisualStateManager.GoToState(child, "NotSelectedState", true);
+
+                foreach (var child in ContentPanel.Children.OfType<FrameworkElement>())
+                    child.Visibility = Visibility.Collapsed;
+
+                ContentScroller.ChangeView(null, 0, null, true);
+
+                VisualStateManager.GoToState(item, "SelectedState", true);
+                Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 140);
+                panel.Visibility = Visibility.Visible;
+            }
+        }
 
 
 
