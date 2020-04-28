@@ -43,6 +43,13 @@ namespace CharacterMap.Views
 
         public bool IsOpen { get; private set; }
 
+        private bool _isCollectionExportEnabled = true;
+        public bool IsCollectionExportEnabled
+        {
+            get => _isCollectionExportEnabled;
+            set => Set(ref _isCollectionExportEnabled, value);
+        }
+
         private GridLength _titleBarHeight = new GridLength(32);
         public GridLength TitleBarHeight
         {
@@ -68,6 +75,8 @@ namespace CharacterMap.Views
 
             RbLanguage.ItemsSource = new List<String> { "XAML", "C#" };
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
+
+            FontNamingSelection.SelectedIndex = (int)Settings.ExportNamingScheme;
 
             SupportedLanguages = new List<SupportedLanguage>(
                 ApplicationLanguages.ManifestLanguages.
@@ -221,6 +230,11 @@ namespace CharacterMap.Views
             Settings.UserRequestedTheme = ElementTheme.Default;
         }
 
+        private void FontNamingSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Settings.ExportNamingScheme = (ExportNamingScheme)((RadioButtons)sender).SelectedIndex;
+        }
+
         private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Settings.DevToolsLanguage = ((RadioButtons)sender).SelectedIndex;
@@ -271,6 +285,20 @@ namespace CharacterMap.Views
                 Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 140);
                 panel.Visibility = Visibility.Visible;
             }
+        }
+
+        internal async void ExportAsZip()
+        {
+            IsCollectionExportEnabled = false;
+            try { await ExportManager.ExportFontsAsZipAsync(FontFinder.GetImportedVariants(), Localization.Get("OptionImportedFonts/Text")); }
+            finally { IsCollectionExportEnabled = true; }
+        }
+
+        internal async void ExportToFolder()
+        {
+            IsCollectionExportEnabled = false;
+            try { await ExportManager.ExportFontsToFolderAsync(FontFinder.GetImportedVariants()); }
+            finally { IsCollectionExportEnabled = true; }
         }
 
 

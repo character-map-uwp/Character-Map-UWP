@@ -853,7 +853,7 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>To Folder</value>
   </data>
   <data name="CollectionExportHeader.Text" xml:space="preserve">
-    <value>Export</value>
+    <value>Export Fonts</value>
   </data>
   <data name="CollectionExportZip.Text" xml:space="preserve">
     <value>As Zip Archive</value>

@@ -127,7 +127,6 @@ namespace CharacterMap.Services
             string pathIconData;
             using (var geom = ExportManager.CreateGeometry(20, v, c, a, t))
             {
-                var boounds = geom.ComputeBounds();
                 pathIconData = interop.GetPathData(geom).Path;
             }
 

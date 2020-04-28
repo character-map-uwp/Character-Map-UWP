@@ -435,10 +435,12 @@ namespace CharacterMap.Core
 
         public static async void RequestExportFontFile(FontVariant variant)
         {
+            var scheme = ResourceHelper.AppSettings.ExportNamingScheme;
             var interop = Utils.GetInterop();
+
             if (interop.IsFontLocal(variant.FontFace))
             {
-                string filePath = GetFileName(interop, variant);
+                string filePath = GetFileName(interop, variant, scheme);
                 string name = Path.GetFileNameWithoutExtension(filePath);
                 string ext = Path.GetExtension(filePath);
 
@@ -459,15 +461,21 @@ namespace CharacterMap.Core
             Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(null, false)));
         }
 
-        internal static async Task ExportCollectionAsZipAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
+        internal static Task ExportCollectionAsZipAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
         {
             var fonts = fontList.SelectMany(f => f.Variants).ToList();
+            return ExportFontsAsZipAsync(fonts, selectedCollection.Name);
+        }
 
-            if (await PickFileAsync(selectedCollection.Name, "ZIP", new[] { ".zip" }) is StorageFile file)
+        internal static async Task ExportFontsAsZipAsync(List<FontVariant> fonts, string name)
+        {
+            if (await PickFileAsync(name, "ZIP", new[] { ".zip" }) is StorageFile file)
             {
                 await Task.Run(async () =>
                 {
                     var interop = Utils.GetInterop();
+                    ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
+
                     using var i = await file.OpenStreamForWriteAsync();
                     i.SetLength(0);
 
@@ -476,7 +484,7 @@ namespace CharacterMap.Core
                     {
                         if (interop.IsFontLocal(font.FontFace))
                         {
-                            string fileName = GetFileName(interop, font);
+                            string fileName = GetFileName(interop, font, scheme);
                             ZipArchiveEntry entry = z.CreateEntry(fileName);
                             using IOutputStream s = entry.Open().AsOutputStream();
                             await interop.WriteToStreamAsync(font.FontFace, s);
@@ -488,10 +496,14 @@ namespace CharacterMap.Core
             }
         }
 
-        internal static async Task ExportCollectionToFolderAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
+        internal static Task ExportCollectionToFolderAsync(List<InstalledFont> fontList)
         {
             var fonts = fontList.SelectMany(f => f.Variants).ToList();
+            return ExportFontsToFolderAsync(fonts);
+        }
 
+        internal static async Task ExportFontsToFolderAsync(List<FontVariant> fonts)
+        {
             FolderPicker picker = new FolderPicker
             {
                 SuggestedStartLocation = PickerLocationId.DocumentsLibrary
@@ -504,11 +516,13 @@ namespace CharacterMap.Core
                 await Task.Run(async () =>
                 {
                     var interop = Utils.GetInterop();
+                    ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
+
                     foreach (var font in fonts)
                     {
                         if (interop.IsFontLocal(font.FontFace))
                         {
-                            string fileName = GetFileName(interop, font);
+                            string fileName = GetFileName(interop, font, scheme);
                             StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
                             await TryWriteToFileAsync(interop, font, file);
                         }
@@ -535,11 +549,21 @@ namespace CharacterMap.Core
             return false;
         }
 
-        private static string GetFileName(Interop interop, FontVariant font)
+        private static string GetFileName(Interop interop, FontVariant font, ExportNamingScheme scheme)
         {
-            string fileName = interop.GetFileName(font.FontFace);
+            string fileName = null;
+            string ext = ".ttf";
+            
+            var src = interop.GetFileName(font.FontFace);
+            if (!string.IsNullOrWhiteSpace(src))
+                ext = Path.GetExtension(src);
+
+            if (scheme == ExportNamingScheme.System)
+                fileName = src;
+
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = $"{font.FamilyName} {font.PreferredName}.ttf";
+                fileName = $"{font.FamilyName} {font.PreferredName}{ext}";
+
             return $"{Humanizer.To.SentenceCase.Transform(Path.GetFileNameWithoutExtension(fileName))}{Path.GetExtension(fileName).ToLower()}";
         }
 

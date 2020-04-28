@@ -129,6 +129,12 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public ExportNamingScheme ExportNamingScheme
+        {
+            get => (ExportNamingScheme)Get((int)ExportNamingScheme.Optimised);
+            set => Set((int)value);
+        }
+
 
 
 

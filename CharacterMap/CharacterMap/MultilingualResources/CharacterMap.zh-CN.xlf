@@ -998,8 +998,9 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="translated">到文件夹</target>
         </trans-unit>
         <trans-unit id="CollectionExportHeader.Text" translate="yes" xml:space="preserve">
-          <source>Export</source>
-          <target state="translated">导出</target>
+          <source>Export Fonts</source>
+          <target state="needs-review-translation">导出</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="CollectionExportZip.Text" translate="yes" xml:space="preserve">
           <source>As Zip Archive</source>

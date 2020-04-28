@@ -365,7 +365,7 @@ namespace CharacterMap.ViewModels
 
             try
             {
-                await ExportManager.ExportCollectionToFolderAsync(FontList, SelectedCollection);
+                await ExportManager.ExportCollectionToFolderAsync(FontList);
             }
             finally
             {

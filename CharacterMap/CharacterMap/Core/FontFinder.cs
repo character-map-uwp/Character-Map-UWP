@@ -146,6 +146,13 @@ namespace CharacterMap.Core
             HasAppxFonts = HasAppxFonts || set.AppxFontCount > 0;
         }
 
+        internal static List<FontVariant> GetImportedVariants()
+        {
+            return Fonts.Where(f => f.HasImportedFiles)
+                        .SelectMany(f => f.Variants.Where(v => v.IsImported))
+                        .ToList();
+        }
+
         /* 
          * Helper method for adding fonts. 
          */

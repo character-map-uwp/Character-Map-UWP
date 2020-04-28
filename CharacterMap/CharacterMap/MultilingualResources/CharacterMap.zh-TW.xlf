@@ -996,8 +996,8 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="new">To Folder</target>
         </trans-unit>
         <trans-unit id="CollectionExportHeader.Text" translate="yes" xml:space="preserve">
-          <source>Export</source>
-          <target state="new">Export</target>
+          <source>Export Fonts</source>
+          <target state="new">Export Fonts</target>
         </trans-unit>
         <trans-unit id="CollectionExportZip.Text" translate="yes" xml:space="preserve">
           <source>As Zip Archive</source>
