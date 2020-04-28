@@ -1,26 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CharacterMapCX;
 using Microsoft.Graphics.Canvas.Text;
+using Windows.Storage;
 using Windows.UI.Text;
 
 namespace CharacterMap.Core
 {
     public class InstalledFont
     {
-        public string Name { get; set; }
+        private List<FontVariant> _variants;
 
-        public CanvasFontFace FontFace { get; set; }
+        public string Name { get; }
 
-        public bool IsSymbolFont { get; set; }
+        public CanvasFontFace FontFace { get; private set; }
 
-        public List<FontVariant> Variants { get; set; }
+        public bool IsSymbolFont { get; private set; }
 
-        public bool HasVariants => Variants.Count > 1;
+        public IReadOnlyList<FontVariant> Variants => _variants;
 
-        public bool HasImportedFiles { get; set; }
+        public bool HasVariants => _variants.Count > 1;
 
-        public InstalledFont()
+        public bool HasImportedFiles { get; private set; }
+
+        private InstalledFont(string name)
         {
+            Name = name;
+            _variants = new List<FontVariant>();
+        }
+
+        public InstalledFont(string name, DWriteFontFace face, StorageFile file = null) : this(name)
+        {
+            IsSymbolFont = face.FontFace.IsSymbolFont;
+            FontFace = face.FontFace;
+            AddVariant(face, file);
         }
 
         public FontVariant DefaultVariant
@@ -35,14 +48,40 @@ namespace CharacterMap.Core
             }
         }
 
-        public static InstalledFont CreateDefault()
+        public void AddVariant(DWriteFontFace fontFace, StorageFile file = null)
         {
-            InstalledFont font = new InstalledFont()
-            {
-                Name = "",
-                HasImportedFiles = false,
-            };
+            _variants.Add(new FontVariant(fontFace.FontFace, file, fontFace.Properties));
 
+            if (file != null)
+                HasImportedFiles = true;
+        }
+
+        public void SortVariants()
+        {
+            _variants = _variants.OrderBy(v => v.FontFace.Weight.Weight).ToList();
+        }
+
+        public void PrepareForDelete()
+        {
+            FontFace = null;
+        }
+
+        public InstalledFont Clone()
+        {
+            return new InstalledFont(this.Name)
+            {
+                FontFace = this.FontFace,
+                IsSymbolFont = this.IsSymbolFont,
+                _variants = this._variants.ToList(),
+                HasImportedFiles = this.HasImportedFiles
+            };
+        }
+
+        public static InstalledFont CreateDefault(DWriteFontFace face)
+        {
+            var font = new InstalledFont("");
+            font.FontFace = face.FontFace;
+            font._variants.Add(FontVariant.CreateDefault(face.FontFace));
             return font;
         }
         

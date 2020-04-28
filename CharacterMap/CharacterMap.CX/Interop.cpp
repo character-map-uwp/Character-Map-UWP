@@ -88,6 +88,19 @@ DWriteFontSet^ Interop::GetFonts(Uri^ uri)
 	return GetFonts(fontSet);
 }
 
+IVectorView<DWriteFontSet^>^ Interop::GetFonts(IVectorView<Uri^>^ uris)
+{
+	Vector<DWriteFontSet^>^ fontSets = ref new Vector<DWriteFontSet^>();
+
+	for (Uri^ uri : uris)
+	{
+		fontSets->Append(GetFonts(uri));
+	}
+
+	return fontSets->GetView();
+}
+
+
 DWriteFontSet^ Interop::GetFonts(ComPtr<IDWriteFontSet3> fontSet)
 {
 	auto vec = ref new Vector<DWriteFontFace^>();

@@ -246,7 +246,11 @@ namespace CharacterMap.ViewModels
                 {
                     SelectedCollection = null;
                     FilterTitle = FontListFilter.FilterTitle;
-                    fontList = FontListFilter.Query(fontList, FontCollections);
+
+                    if (FontListFilter == BasicFontFilter.ImportedFonts)
+                        fontList = FontFinder.ImportedFonts;
+                    else
+                        fontList = FontListFilter.Query(fontList, FontCollections);
                 }
 
                 FontList = fontList.ToList();

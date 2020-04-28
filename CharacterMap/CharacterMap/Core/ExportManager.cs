@@ -136,10 +136,8 @@ namespace CharacterMap.Core
                     var data = GetGeometry(1024, selectedVariant, selectedChar, analysis, typography);
                     async Task SaveMonochromeAsync()
                     {
-                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor))
-                        {
-                            await Utils.WriteSvgAsync(document, file);
-                        }
+                        using CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor);
+                        await Utils.WriteSvgAsync(document, file);
                     }
 
                     // If the font uses SVG glyphs, we can extract the raw SVG from the font file
@@ -280,52 +278,47 @@ namespace CharacterMap.Core
                         var canvasH = (float)settings.PngSize;
                         var canvasW = (float)settings.PngSize;
 
-                        using (var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi))
+                        using var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
+                        using (var ds = renderTarget.CreateDrawingSession())
                         {
-                            using (var ds = renderTarget.CreateDrawingSession())
+                            ds.Clear(Colors.Transparent);
+                            var d = settings.PngSize;
+                            var r = settings.PngSize / 2;
+
+                            var textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
+                            var fontSize = (float)d;
+
+                            using CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
                             {
-                                ds.Clear(Colors.Transparent);
-                                var d = settings.PngSize;
-                                var r = settings.PngSize / 2;
+                                FontSize = fontSize,
+                                FontFamily = selectedVariant.Source,
+                                FontStretch = selectedVariant.FontFace.Stretch,
+                                FontWeight = selectedVariant.FontFace.Weight,
+                                FontStyle = selectedVariant.FontFace.Style,
+                                HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                                Options = style == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
+                            }, canvasW, canvasH);
 
-                                var textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
-                                var fontSize = (float)d;
+                            if (style == ExportStyle.ColorGlyph)
+                                layout.Options = CanvasDrawTextOptions.EnableColorFont;
 
-                                using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
-                                {
-                                    FontSize = fontSize,
-                                    FontFamily = selectedVariant.Source,
-                                    FontStretch = selectedVariant.FontFace.Stretch,
-                                    FontWeight = selectedVariant.FontFace.Weight,
-                                    FontStyle = selectedVariant.FontFace.Style,
-                                    HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                                    Options = style == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
-                                }, canvasW, canvasH))
-                                {
-                                    if (style == ExportStyle.ColorGlyph)
-                                        layout.Options = CanvasDrawTextOptions.EnableColorFont;
+                            layout.SetTypography(0, 1, typography);
 
-                                    layout.SetTypography(0, 1, typography);
+                            var db = layout.DrawBounds;
+                            double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
+                            var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
+                            var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
 
-                                    var db = layout.DrawBounds;
-                                    double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
-                                    var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
-                                    var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
+                            ds.Transform =
+                                Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
+                                * Matrix3x2.CreateScale(new Vector2((float)scale));
 
-                                    ds.Transform =
-                                        Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
-                                        * Matrix3x2.CreateScale(new Vector2((float)scale));
-
-                                    ds.DrawTextLayout(layout, new Vector2(0), textColor);
-                                }
-                            }
-
-                            using (var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite))
-                            {
-                                fileStream.Size = 0;
-                                await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
-                            }
+                            ds.DrawTextLayout(layout, new Vector2(0), textColor);
                         }
+
+                        using var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite);
+                        fileStream.Size = 0;
+                        await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
                     }
 
                     await CachedFileManager.CompleteUpdatesAsync(file);
@@ -383,24 +376,21 @@ namespace CharacterMap.Core
             CanvasTextLayoutAnalysis analysis,
             CanvasTypography typography)
         {
-            using (CanvasGeometry geom = CreateGeometry(size, selectedVariant, selectedChar, analysis, typography))
-            {
-                /* 
-                 * Unfortunately this only constructs a monochrome path, if we want color
-                 * Win2D does not yet expose the necessary API's to get the individual glyph
-                 * layers that make up a color glyph.
-                 * 
-                 * We'll need to handle this in C++/CX if we want to do this at some point.
-                 */
+            /* 
+             * Note: this only constructs the monochrome version
+             * of the glyph.
+             * 
+             * Drop into C++/CX for color / multi-variant glyphs.
+             */
 
-                var bounds = geom.ComputeBounds();
-                var interop = SimpleIoc.Default.GetInstance<Interop>();
-                var s = interop.GetPathData(geom);
+            using CanvasGeometry geom = CreateGeometry(size, selectedVariant, selectedChar, analysis, typography);
+            var bounds = geom.ComputeBounds();
+            var interop = SimpleIoc.Default.GetInstance<Interop>();
+            var s = interop.GetPathData(geom);
 
-                var t = s.Transform.Translation;
-                bounds = new Rect(t.X - bounds.Left, -bounds.Top + t.Y, bounds.Width, bounds.Height);
-                return (s.Path, bounds);
-            }
+            var t = s.Transform.Translation;
+            bounds = new Rect(t.X - bounds.Left, -bounds.Top + t.Y, bounds.Width, bounds.Height);
+            return (s.Path, bounds);
         }
 
         public static CanvasGeometry CreateGeometry(
