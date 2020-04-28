@@ -29,7 +29,7 @@
             <Setter Property="Margin" Value="0 10 0 4" />
         </Style>
         <Style x:Key="DescriptionStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="Opacity" Value="0.7" />
+            <Setter Property="Foreground" Value="{ThemeResource TextControlPlaceholderForeground}" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Margin" Value="0 4 0 8" />
             <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
@@ -188,6 +188,17 @@
                         Click="MenuItem_Clicked"
                         Content="Font Management"
                         Tag="{x:Bind FontPanel}" />
+                    <Button
+                        Click="MenuItem_Clicked"
+                        Content="Licenses"
+                        Tag="{x:Bind LicensesPanel}">
+                        <core:Properties.Icon>
+                            <PathIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Data="F1 M 17.5 0.302734 L 17.5 15.332031 L 9.375 19.130859 L 1.25 15.332031 L 1.25 0.302734 L 9.375 3.759766 Z M 2.5 14.541016 L 8.75 17.451172 L 8.75 4.853516 L 2.5 2.197266 Z M 16.25 2.197266 L 10 4.853516 L 10 17.451172 L 16.25 14.541016 Z M 15 9.765625 L 11.25 11.640625 L 11.25 6.484375 L 15 4.609375 Z M 13.75 6.640625 L 12.5 7.265625 L 12.5 9.609375 L 13.75 8.984375 Z M 7.5 8.359375 L 7.5 9.765625 L 3.75 7.890625 L 3.75 6.484375 Z M 3.75 10.234375 L 7.5 12.109375 L 7.5 13.515625 L 3.75 11.640625 Z M 11.25 14.765625 L 11.25 13.359375 L 15 11.484375 L 15 12.890625 Z " />
+                        </core:Properties.Icon>
+                    </Button>
                     <Button
                         Click="MenuItem_Clicked"
                         Content="About"
@@ -392,7 +403,10 @@
                                         Checked="ThemeSystem_Checked"
                                         GroupName="ThemeSelector" />
 
-                                    <HyperlinkButton x:Uid="SettingsWindowsThemeSettings" NavigateUri="ms-settings:personalization-colors" />
+                                    <HyperlinkButton
+                                        x:Uid="SettingsWindowsThemeSettings"
+                                        NavigateUri="ms-settings:personalization-colors"
+                                        Style="{StaticResource TextBlockButtonStyle}" />
                                 </StackPanel>
                             </StackPanel>
 
@@ -684,9 +698,49 @@
                                 </StackPanel>
 
 
+                            </StackPanel>
 
+                            <StackPanel x:Name="LicensesPanel" Visibility="Collapsed">
+                                <StackPanel.Resources>
+                                    <Style TargetType="HyperlinkButton">
+                                        <Setter Property="Margin" Value="0 -4 0 0" />
+                                    </Style>
+                                </StackPanel.Resources>
+                                <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Licenses" />
+
+                                <TextBlock Style="{StaticResource DescriptionStyle}">
+                                    This application makes use of the following open source libraries
+                                </TextBlock>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="WinUI" />
+                                    <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/microsoft/microsoft-ui-xaml/blob/master/LICENSE" />
                                 </StackPanel>
 
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Windows Community Toolkit" />
+                                    <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/windows-toolkit/WindowsCommunityToolkit/blob/master/license.md" />
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="MVVM Light" />
+                                    <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/lbugnion/mvvmlight/blob/master/LICENSE" />
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Humanizer" />
+                                    <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/Humanizr/Humanizer/blob/master/LICENSE" />
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Win2D" />
+                                    <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/microsoft/Win2D/blob/master/LICENSE.txt" />
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="SQLitePCLRaw" />
+                                    <HyperlinkButton Content="Apache License 2.0" NavigateUri="https://github.com/ericsink/SQLitePCL.raw/blob/master/LICENSE.TXT" />
+                                </StackPanel>
 
                             </StackPanel>
 
