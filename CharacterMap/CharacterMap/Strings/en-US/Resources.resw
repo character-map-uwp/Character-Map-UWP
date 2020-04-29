@@ -129,17 +129,8 @@
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>Copy as text</value>
   </data>
-  <data name="BtnSavePng.Text" xml:space="preserve">
-    <value>Save as PNG</value>
-  </data>
-  <data name="BtnSaveSvg.Text" xml:space="preserve">
-    <value>Save as SVG (monochrome only)</value>
-  </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Select</value>
-  </data>
-  <data name="CharsLabel.Text" xml:space="preserve">
-    <value>Char(s)</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
     <value>Colored Glyph</value>
@@ -149,18 +140,6 @@
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>Color glyphs</value>
-  </data>
-  <data name="DigSettings.Title" xml:space="preserve">
-    <value>Settings</value>
-  </data>
-  <data name="FilterAllFonts.Content" xml:space="preserve">
-    <value>All Fonts</value>
-  </data>
-  <data name="FilterImportedFonts.Content" xml:space="preserve">
-    <value>Imported Fonts</value>
-  </data>
-  <data name="FilterSymbolFonts.Content" xml:space="preserve">
-    <value>Symbol Fonts</value>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>Font Display Options</value>
@@ -198,9 +177,6 @@
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>Weight</value>
   </data>
-  <data name="GridSlider.Header" xml:space="preserve">
-    <value>Character Grid Size</value>
-  </data>
   <data name="InvalidFontMessage" xml:space="preserve">
     <value>Sorry, we couldn't find any supported font data in this file.</value>
   </data>
@@ -209,9 +185,6 @@
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
     <value>Open in New Window</value>
-  </data>
-  <data name="PngSlider.Header" xml:space="preserve">
-    <value>PNG Resolution (pixel)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
     <value>Delete Font</value>
@@ -252,14 +225,8 @@
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>Glyph Variants</value>
   </data>
-  <data name="WeightSelector.Header" xml:space="preserve">
-    <value>Font Face</value>
-  </data>
   <data name="WhiteFill.Text" xml:space="preserve">
     <value>White Fill</value>
-  </data>
-  <data name="FontsCountLabel.Text" xml:space="preserve">
-    <value>Fonts</value>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>Not a file</value>
@@ -336,9 +303,6 @@
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>Rename</value>
   </data>
-  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>Rename Collection</value>
   </data>
@@ -356,12 +320,6 @@
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>Fonts List Display</value>
-  </data>
-  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
-    <value>Show Font names using System default font</value>
-  </data>
-  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
-    <value>Show Font names using actual font</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
     <value>Glyph Count</value>
@@ -435,9 +393,6 @@
   <data name="OptionScriptFonts.Text" xml:space="preserve">
     <value>Script Fonts</value>
   </data>
-  <data name="BtnSaveSvgRaw.Text" xml:space="preserve">
-    <value>Save as SVG</value>
-  </data>
   <data name="StatusBarFontCount" xml:space="preserve">
     <value>{0} Font Families</value>
   </data>
@@ -452,9 +407,6 @@
   </data>
   <data name="SearchDelaySelector.Header" xml:space="preserve">
     <value>Delay before search (ms)</value>
-  </data>
-  <data name="DigSettings.PrimaryButtonText" xml:space="preserve">
-    <value>OK</value>
   </data>
   <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
     <value>Instant Search</value>
@@ -485,9 +437,6 @@
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Show font pane</value>
-  </data>
-  <data name="BtnViewCollection.Content" xml:space="preserve">
-    <value>View Collection</value>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>More</value>
@@ -595,12 +544,6 @@ Turning this on can incur a large performance penalty when resizing the window.<
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="SettingsLangOverride.OffContent" xml:space="preserve">
-    <value>Use default language</value>
-  </data>
-  <data name="SettingsLangOverride.OnContent" xml:space="preserve">
-    <value>Use override language</value>
-  </data>
   <data name="SettingsLanguageDescription.Text" xml:space="preserve">
     <value>Override the in-app language.
 Requires a restart to take effect.</value>
@@ -634,13 +577,6 @@ Turning this on has negligible performance impact.</value>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
     <value>User Interface</value>
-  </data>
-  <data name="SettingsUnicodeDescription.Text" xml:space="preserve">
-    <value>Shows the Unicode value of a character underneath the character in the character grid.
-Turning this on can have a minor impact on scrolling performance.</value>
-  </data>
-  <data name="SettingsUnicodeHeader.Text" xml:space="preserve">
-    <value>Show Unicode value in Character Grid</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
