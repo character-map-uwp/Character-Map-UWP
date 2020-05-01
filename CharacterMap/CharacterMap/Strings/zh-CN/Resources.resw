@@ -24,17 +24,8 @@
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>复制 (仅字符)</value>
   </data>
-  <data name="BtnSavePng.Text" xml:space="preserve">
-    <value>保存 PNG</value>
-  </data>
-  <data name="BtnSaveSvg.Text" xml:space="preserve">
-    <value>保存 SVG (仅单色)</value>
-  </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>选择</value>
-  </data>
-  <data name="CharsLabel.Text" xml:space="preserve">
-    <value>个字符</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
     <value>颜色选择</value>
@@ -44,18 +35,6 @@
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>着色字符</value>
-  </data>
-  <data name="DigSettings.Title" xml:space="preserve">
-    <value>设置</value>
-  </data>
-  <data name="FilterAllFonts.Content" xml:space="preserve">
-    <value>所有字体</value>
-  </data>
-  <data name="FilterImportedFonts.Content" xml:space="preserve">
-    <value>导入的字体</value>
-  </data>
-  <data name="FilterSymbolFonts.Content" xml:space="preserve">
-    <value>符号字体</value>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>字体显示选项</value>
@@ -93,9 +72,6 @@
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>粗细</value>
   </data>
-  <data name="GridSlider.Header" xml:space="preserve">
-    <value>字符网格尺寸</value>
-  </data>
   <data name="InvalidFontMessage" xml:space="preserve">
     <value>抱歉，我们无法在该文件中找到支持的字体</value>
   </data>
@@ -104,9 +80,6 @@
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
     <value>在新窗口中打开</value>
-  </data>
-  <data name="PngSlider.Header" xml:space="preserve">
-    <value>PNG 分辨率(像素)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
     <value>删除字体全家</value>
@@ -147,14 +120,8 @@
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>字符变体</value>
   </data>
-  <data name="WeightSelector.Header" xml:space="preserve">
-    <value>变体</value>
-  </data>
   <data name="WhiteFill.Text" xml:space="preserve">
     <value>白色填充</value>
-  </data>
-  <data name="FontsCountLabel.Text" xml:space="preserve">
-    <value>字体</value>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>不是一个文件</value>
@@ -228,9 +195,6 @@
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>重命名</value>
   </data>
-  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
-    <value>取消</value>
-  </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>重命名收藏</value>
   </data>
@@ -248,12 +212,6 @@
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>字体显示</value>
-  </data>
-  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
-    <value>使用系统默认字体显示字体名称</value>
-  </data>
-  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
-    <value>使用字体本身显示字体名称</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
     <value>字符数量</value>
@@ -318,14 +276,8 @@
   <data name="OptionMoreFilters.Text" xml:space="preserve">
     <value>更多</value>
   </data>
-  <data name="BtnSaveSvgRaw.Text" xml:space="preserve">
-    <value>保存为 SVG</value>
-  </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
     <value>文件大小</value>
-  </data>
-  <data name="DigSettings.PrimaryButtonText" xml:space="preserve">
-    <value>确定</value>
   </data>
   <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
     <value>即时搜索</value>
@@ -423,12 +375,6 @@
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>设置</value>
   </data>
-  <data name="SettingsLangOverride.OffContent" xml:space="preserve">
-    <value>使用默认语言</value>
-  </data>
-  <data name="SettingsLangOverride.OnContent" xml:space="preserve">
-    <value>使用覆盖语言</value>
-  </data>
   <data name="SettingsLanguageDescription.Text" xml:space="preserve">
     <value>覆盖应用语言设置。
 需要重启应用生效。</value>
@@ -450,9 +396,6 @@
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
     <value>用户界面</value>
-  </data>
-  <data name="SettingsUnicodeHeader.Text" xml:space="preserve">
-    <value>在字符网格中显示 Unicode 值</value>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>跟随系统语言设置</value>

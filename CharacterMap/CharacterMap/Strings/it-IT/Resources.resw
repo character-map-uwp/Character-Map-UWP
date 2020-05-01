@@ -24,17 +24,8 @@
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>Copia come testo</value>
   </data>
-  <data name="BtnSavePng.Text" xml:space="preserve">
-    <value>Salva come PNG</value>
-  </data>
-  <data name="BtnSaveSvg.Text" xml:space="preserve">
-    <value>Salva come SVG (solo monocromo)</value>
-  </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Seleziona</value>
-  </data>
-  <data name="CharsLabel.Text" xml:space="preserve">
-    <value>Carattere</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
     <value>Glifo colorato</value>
@@ -44,18 +35,6 @@
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>Colore glifo</value>
-  </data>
-  <data name="DigSettings.Title" xml:space="preserve">
-    <value>Impostazioni</value>
-  </data>
-  <data name="FilterAllFonts.Content" xml:space="preserve">
-    <value>Tutti i caratteri</value>
-  </data>
-  <data name="FilterImportedFonts.Content" xml:space="preserve">
-    <value>Caratteri importati</value>
-  </data>
-  <data name="FilterSymbolFonts.Content" xml:space="preserve">
-    <value>Simbolo del carattere</value>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>Opzioni di visualizzazione dei caratteri</value>
@@ -93,9 +72,6 @@
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>Dimensione</value>
   </data>
-  <data name="GridSlider.Header" xml:space="preserve">
-    <value>Dimensione della griglia caratteri</value>
-  </data>
   <data name="InvalidFontMessage" xml:space="preserve">
     <value>Siamo spiacenti, non è stato possibile trovare nessun carattere supportato in questo file.</value>
   </data>
@@ -104,9 +80,6 @@
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
     <value>Apri in una nuova finestra</value>
-  </data>
-  <data name="PngSlider.Header" xml:space="preserve">
-    <value>Risoluzione PNG (in pixel)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
     <value>Elimina carattere</value>
@@ -147,14 +120,8 @@
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>Varianti glifi</value>
   </data>
-  <data name="WeightSelector.Header" xml:space="preserve">
-    <value>Font Face</value>
-  </data>
   <data name="WhiteFill.Text" xml:space="preserve">
     <value>Sfondo bianco</value>
-  </data>
-  <data name="FontsCountLabel.Text" xml:space="preserve">
-    <value>Caratteri</value>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>Non è un file</value>
@@ -231,9 +198,6 @@
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>Rinomina</value>
   </data>
-  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Cancella</value>
-  </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>Rinomina collezione</value>
   </data>
@@ -251,12 +215,6 @@
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>Visualizzazione elenco caratteri</value>
-  </data>
-  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
-    <value>Mostra i nomi dei caratteri utilizzando il carattere predefinito di sistema</value>
-  </data>
-  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
-    <value>Mostra i nomi dei caratteri usando il carattere attuale</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
     <value>Numero glifi</value>
@@ -330,9 +288,6 @@
   <data name="OptionScriptFonts.Text" xml:space="preserve">
     <value>Caratteri sript</value>
   </data>
-  <data name="BtnSaveSvgRaw.Text" xml:space="preserve">
-    <value>Salva come SVG</value>
-  </data>
   <data name="StatusBarFontCount" xml:space="preserve">
     <value>{0} Famiglie di caratteri</value>
   </data>
@@ -347,9 +302,6 @@
   </data>
   <data name="SearchDelaySelector.Header" xml:space="preserve">
     <value>Ritardo prima della ricerca (ms)</value>
-  </data>
-  <data name="DigSettings.PrimaryButtonText" xml:space="preserve">
-    <value>Ok</value>
   </data>
   <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
     <value>Ricerca istantanea</value>
@@ -380,9 +332,6 @@
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Mostra riquadro caratteri</value>
-  </data>
-  <data name="BtnViewCollection.Content" xml:space="preserve">
-    <value>Visualizza raccolta</value>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Altro</value>
@@ -490,12 +439,6 @@ L'attivazione di questa opzione può comportare una elevata riduzione delle pres
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>Impostazioni</value>
   </data>
-  <data name="SettingsLangOverride.OffContent" xml:space="preserve">
-    <value>Usa la lingua predefinita</value>
-  </data>
-  <data name="SettingsLangOverride.OnContent" xml:space="preserve">
-    <value>Usa lingua alternativa</value>
-  </data>
   <data name="SettingsLanguageDescription.Text" xml:space="preserve">
     <value>Sostituisci la lingua in-app.
 Richiede un riavvio per avere effetto.</value>
@@ -529,13 +472,6 @@ L'abilitazione dell'animazione ha un impatto trascurabile sulle prestazioni.</va
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
     <value>Interfaccia utente</value>
-  </data>
-  <data name="SettingsUnicodeDescription.Text" xml:space="preserve">
-    <value>Mostra il valore Unicode di un carattere sotto al carattere selezionato nella griglia dei caratteri.
-L'attivazione può avere un impatto minore sulle prestazioni di scorrimento.</value>
-  </data>
-  <data name="SettingsUnicodeHeader.Text" xml:space="preserve">
-    <value>Mostra il valore Unicode nella griglia caratteri</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Geometria/Grafica</value>

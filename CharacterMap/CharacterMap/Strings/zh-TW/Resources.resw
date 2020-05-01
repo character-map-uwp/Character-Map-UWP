@@ -24,17 +24,8 @@
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>復制 (僅字符)</value>
   </data>
-  <data name="BtnSavePng.Text" xml:space="preserve">
-    <value>保存 PNG</value>
-  </data>
-  <data name="BtnSaveSvg.Text" xml:space="preserve">
-    <value>保存 SVG (僅單色)</value>
-  </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>選擇</value>
-  </data>
-  <data name="CharsLabel.Text" xml:space="preserve">
-    <value>個字符</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
     <value>顏色選擇</value>
@@ -44,18 +35,6 @@
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>著色字符</value>
-  </data>
-  <data name="DigSettings.Title" xml:space="preserve">
-    <value>設置</value>
-  </data>
-  <data name="FilterAllFonts.Content" xml:space="preserve">
-    <value>所有字體</value>
-  </data>
-  <data name="FilterImportedFonts.Content" xml:space="preserve">
-    <value>導入的字體</value>
-  </data>
-  <data name="FilterSymbolFonts.Content" xml:space="preserve">
-    <value>符號字體</value>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>字體顯示選項</value>
@@ -93,9 +72,6 @@
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>粗細</value>
   </data>
-  <data name="GridSlider.Header" xml:space="preserve">
-    <value>字符網格尺寸</value>
-  </data>
   <data name="InvalidFontMessage" xml:space="preserve">
     <value>抱歉，我們無法在該文件中找到支持的字體</value>
   </data>
@@ -104,9 +80,6 @@
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
     <value>在新窗口中打開</value>
-  </data>
-  <data name="PngSlider.Header" xml:space="preserve">
-    <value>PNG 分辨率(像素)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
     <value>刪除字體全家</value>
@@ -147,14 +120,8 @@
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>字符變體</value>
   </data>
-  <data name="WeightSelector.Header" xml:space="preserve">
-    <value>變體</value>
-  </data>
   <data name="WhiteFill.Text" xml:space="preserve">
     <value>白色填充</value>
-  </data>
-  <data name="FontsCountLabel.Text" xml:space="preserve">
-    <value>字體</value>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>不是壹個文件</value>
@@ -228,9 +195,6 @@
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>重命名</value>
   </data>
-  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
-    <value>取消</value>
-  </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>重命名收藏</value>
   </data>
@@ -248,12 +212,6 @@
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>字體顯示</value>
-  </data>
-  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
-    <value>使用系統默認字體顯示字體名稱</value>
-  </data>
-  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
-    <value>使用字體本身顯示字體名稱</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
     <value>字符數量</value>

@@ -24,17 +24,8 @@
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>คัดลอกตัวอักษรนี้</value>
   </data>
-  <data name="BtnSavePng.Text" xml:space="preserve">
-    <value>บันทึกเป็นภาพ PNG</value>
-  </data>
-  <data name="BtnSaveSvg.Text" xml:space="preserve">
-    <value>บันทึกเป็นภาพ SVG (ไม่รองรับอักษรสี)</value>
-  </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>เลือก</value>
-  </data>
-  <data name="CharsLabel.Text" xml:space="preserve">
-    <value>ตัว</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
     <value>เติมสี</value>
@@ -44,18 +35,6 @@
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>ตัวอักษรสี</value>
-  </data>
-  <data name="DigSettings.Title" xml:space="preserve">
-    <value>ตั้งค่า</value>
-  </data>
-  <data name="FilterAllFonts.Content" xml:space="preserve">
-    <value>ฟอนต์ทั้งหมด</value>
-  </data>
-  <data name="FilterImportedFonts.Content" xml:space="preserve">
-    <value>ฟอนต์ที่นำเข้า</value>
-  </data>
-  <data name="FilterSymbolFonts.Content" xml:space="preserve">
-    <value>ฟอนต์สัญลักษณ์</value>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
     <value>ตัวเลือกการแสดงผลฟอนต์</value>
@@ -93,9 +72,6 @@
   <data name="FontPropWeight.Text" xml:space="preserve">
     <value>น้ำหนัก</value>
   </data>
-  <data name="GridSlider.Header" xml:space="preserve">
-    <value>ขนาดตารางแสดงตัวอักษร</value>
-  </data>
   <data name="InvalidFontMessage" xml:space="preserve">
     <value>ขออภัย, เราไม่พบข้อมูลใดๆ ที่เป็นฟอนต์ที่รองรับ</value>
   </data>
@@ -104,9 +80,6 @@
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
     <value>เปิดในหน้าต่างใหม่</value>
-  </data>
-  <data name="PngSlider.Header" xml:space="preserve">
-    <value>ความละเอียดของภาพตัวอักษร (พิกเซล)</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
     <value>ลบฟอนต์นี้</value>
@@ -147,14 +120,8 @@
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>รูปแบบอักษร</value>
   </data>
-  <data name="WeightSelector.Header" xml:space="preserve">
-    <value>รูปแบบ</value>
-  </data>
   <data name="WhiteFill.Text" xml:space="preserve">
     <value>เติมสีขาว</value>
-  </data>
-  <data name="FontsCountLabel.Text" xml:space="preserve">
-    <value>ฟอนต์</value>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>ไม่ใช่ไฟล์</value>
@@ -228,9 +195,6 @@
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>เปลี่ยนชื่อ</value>
   </data>
-  <data name="DigRenameCollection.SecondaryButtonText" xml:space="preserve">
-    <value>ยกเลิก</value>
-  </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
     <value>เปลิ่ยนชื่อรายการสะสม</value>
   </data>
@@ -248,12 +212,6 @@
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>รายการแสดงผลฟอนต์</value>
-  </data>
-  <data name="FontListDisplayToggle.OffContent" xml:space="preserve">
-    <value>แสดงชื่อฟอนต์ด้วยฟอนต์ระบบ</value>
-  </data>
-  <data name="FontListDisplayToggle.OnContent" xml:space="preserve">
-    <value>แลดงชื่อฟอนต์โดยใช้ฟอนต์นั้นๆ</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
     <value>จำนวนตัวอักษร</value>
@@ -324,9 +282,6 @@
   <data name="OptionScriptFonts.Text" xml:space="preserve">
     <value>ฟอนต์ตัวเขียน</value>
   </data>
-  <data name="BtnSaveSvgRaw.Text" xml:space="preserve">
-    <value>บันทึกเป็น SVG</value>
-  </data>
   <data name="StatusBarFontCount" xml:space="preserve">
     <value>{0} ฟอนต์</value>
   </data>
@@ -341,9 +296,6 @@
   </data>
   <data name="SearchDelaySelector.Header" xml:space="preserve">
     <value>ดีเลย์ก่อนค้นหา (ms)</value>
-  </data>
-  <data name="DigSettings.PrimaryButtonText" xml:space="preserve">
-    <value>ตกลง</value>
   </data>
   <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
     <value>ค้นหาทันที</value>
@@ -374,9 +326,6 @@
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>แสดงรายการฟอนต์</value>
-  </data>
-  <data name="BtnViewCollection.Content" xml:space="preserve">
-    <value>แสดงรายการสะสม</value>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>อื่นๆ </value>
@@ -484,12 +433,6 @@
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>ตั้งค่า</value>
   </data>
-  <data name="SettingsLangOverride.OffContent" xml:space="preserve">
-    <value>ใช้ภาษาเริ่มต้น</value>
-  </data>
-  <data name="SettingsLangOverride.OnContent" xml:space="preserve">
-    <value>ใช้ภาษากำหนดเอง</value>
-  </data>
   <data name="SettingsLanguageDescription.Text" xml:space="preserve">
     <value>กำหนดภาษาแสดงผลแอป.
 จะมีผลเมื่อเปิดแอปครั้งถัดไป.</value>
@@ -523,13 +466,6 @@
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
     <value>หน้าตาแอป</value>
-  </data>
-  <data name="SettingsUnicodeDescription.Text" xml:space="preserve">
-    <value>แสดงรหัส Unicode ของตัวอักษรนั้นๆ ข้างล่างตารางแสดงผลตัวอักษร.
-เปิดการตั้งค่านี้อาจมีผลต่อความเร็วในการแสดงผลตัวอักษรขณะเลื่อนดูรายการ.</value>
-  </data>
-  <data name="SettingsUnicodeHeader.Text" xml:space="preserve">
-    <value>แสดงรหัส Unicode ของตัวอักษร</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>

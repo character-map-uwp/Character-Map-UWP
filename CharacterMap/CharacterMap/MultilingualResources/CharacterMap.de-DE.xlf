@@ -23,21 +23,9 @@
           <target state="needs-review-translation">Kopie (nur Charakter)</target>
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
-        <trans-unit id="BtnSavePng.Text" translate="yes" xml:space="preserve">
-          <source>Save as PNG</source>
-          <target state="translated">Als PNG speichern</target>
-        </trans-unit>
-        <trans-unit id="BtnSaveSvg.Text" translate="yes" xml:space="preserve">
-          <source>Save as SVG (monochrome only)</source>
-          <target state="new">Save as SVG (monochrome only)</target>
-        </trans-unit>
         <trans-unit id="BtnSelect.Content" translate="yes" xml:space="preserve">
           <source>Select</source>
           <target state="translated">Auswählen</target>
-        </trans-unit>
-        <trans-unit id="CharsLabel.Text" translate="yes" xml:space="preserve">
-          <source>Char(s)</source>
-          <target state="new">Char(s)</target>
         </trans-unit>
         <trans-unit id="ColoredGlyphLabel.Text" translate="yes" xml:space="preserve">
           <source>Colored Glyph</source>
@@ -50,22 +38,6 @@
         <trans-unit id="ColorGlyphToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Color glyphs</source>
           <target state="new">Color glyphs</target>
-        </trans-unit>
-        <trans-unit id="DigSettings.Title" translate="yes" xml:space="preserve">
-          <source>Settings</source>
-          <target state="needs-review-translation">Settings</target>
-        </trans-unit>
-        <trans-unit id="FilterAllFonts.Content" translate="yes" xml:space="preserve">
-          <source>All Fonts</source>
-          <target state="new">All Fonts</target>
-        </trans-unit>
-        <trans-unit id="FilterImportedFonts.Content" translate="yes" xml:space="preserve">
-          <source>Imported Fonts</source>
-          <target state="new">Imported Fonts</target>
-        </trans-unit>
-        <trans-unit id="FilterSymbolFonts.Content" translate="yes" xml:space="preserve">
-          <source>Symbol Fonts</source>
-          <target state="new">Symbol Fonts</target>
         </trans-unit>
         <trans-unit id="FontDisplayHeader.Text" translate="yes" xml:space="preserve">
           <source>Font Display Options</source>
@@ -115,10 +87,6 @@
           <source>Weight</source>
           <target state="new">Weight</target>
         </trans-unit>
-        <trans-unit id="GridSlider.Header" translate="yes" xml:space="preserve">
-          <source>Character Grid Size</source>
-          <target state="new">Character Grid Size</target>
-        </trans-unit>
         <trans-unit id="InvalidFontMessage" translate="yes" xml:space="preserve">
           <source>Sorry, we couldn't find any supported font data in this file.</source>
           <target state="new">Sorry, we couldn't find any supported font data in this file.</target>
@@ -130,10 +98,6 @@
         <trans-unit id="OpenInNewWindow.Text" translate="yes" xml:space="preserve">
           <source>Open in New Window</source>
           <target state="new">Open in New Window</target>
-        </trans-unit>
-        <trans-unit id="PngSlider.Header" translate="yes" xml:space="preserve">
-          <source>PNG Resolution (pixel)</source>
-          <target state="new">PNG Resolution (pixel)</target>
         </trans-unit>
         <trans-unit id="RemoveFontFlyout.Text" translate="yes" xml:space="preserve">
           <source>Delete Font</source>
@@ -187,17 +151,9 @@
           <source>Glyph Variants</source>
           <target state="new">Glyph Variants</target>
         </trans-unit>
-        <trans-unit id="WeightSelector.Header" translate="yes" xml:space="preserve">
-          <source>Font Face</source>
-          <target state="new">Font Face</target>
-        </trans-unit>
         <trans-unit id="WhiteFill.Text" translate="yes" xml:space="preserve">
           <source>White Fill</source>
           <target state="new">White Fill</target>
-        </trans-unit>
-        <trans-unit id="FontsCountLabel.Text" translate="yes" xml:space="preserve">
-          <source>Fonts</source>
-          <target state="new">Fonts</target>
         </trans-unit>
         <trans-unit id="ImportNotAFile" translate="yes" xml:space="preserve">
           <source>Not a file</source>
@@ -295,10 +251,6 @@
           <source>Rename</source>
           <target state="new">Rename</target>
         </trans-unit>
-        <trans-unit id="DigRenameCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="new">Cancel</target>
-        </trans-unit>
         <trans-unit id="DigRenameCollection.Title" translate="yes" xml:space="preserve">
           <source>Rename Collection</source>
           <target state="new">Rename Collection</target>
@@ -322,14 +274,6 @@
         <trans-unit id="FontListDisplayHeader.Text" translate="yes" xml:space="preserve">
           <source>Fonts List Display</source>
           <target state="new">Fonts List Display</target>
-        </trans-unit>
-        <trans-unit id="FontListDisplayToggle.OffContent" translate="yes" xml:space="preserve">
-          <source>Show Font names using System default font</source>
-          <target state="new">Show Font names using System default font</target>
-        </trans-unit>
-        <trans-unit id="FontListDisplayToggle.OnContent" translate="yes" xml:space="preserve">
-          <source>Show Font names using actual font</source>
-          <target state="new">Show Font names using actual font</target>
         </trans-unit>
         <trans-unit id="FontPropCount.Text" translate="yes" xml:space="preserve">
           <source>Glyph Count</source>
@@ -427,10 +371,6 @@
           <source>Script Fonts</source>
           <target state="new">Script Fonts</target>
         </trans-unit>
-        <trans-unit id="BtnSaveSvgRaw.Text" translate="yes" xml:space="preserve">
-          <source>Save as SVG</source>
-          <target state="new">Save as SVG</target>
-        </trans-unit>
         <trans-unit id="StatusBarFontCount" translate="yes" xml:space="preserve">
           <source>{0} Font Families</source>
           <target state="new">{0} Font Families</target>
@@ -450,10 +390,6 @@
         <trans-unit id="SearchDelaySelector.Header" translate="yes" xml:space="preserve">
           <source>Delay before search (ms)</source>
           <target state="new">Delay before search (ms)</target>
-        </trans-unit>
-        <trans-unit id="DigSettings.PrimaryButtonText" translate="yes" xml:space="preserve">
-          <source>OK</source>
-          <target state="new">OK</target>
         </trans-unit>
         <trans-unit id="InstantSearchToggleHeader.Text" translate="yes" xml:space="preserve">
           <source>Instant Search</source>
@@ -494,10 +430,6 @@
         <trans-unit id="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Show font pane</source>
           <target state="new">Show font pane</target>
-        </trans-unit>
-        <trans-unit id="BtnViewCollection.Content" translate="yes" xml:space="preserve">
-          <source>View Collection</source>
-          <target state="new">View Collection</target>
         </trans-unit>
         <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>More</source>
@@ -641,14 +573,6 @@ Turning this on can incur a large performance penalty when resizing the window.<
           <source>Settings</source>
           <target state="needs-review-translation">Settings</target>
         </trans-unit>
-        <trans-unit id="SettingsLangOverride.OffContent" translate="yes" xml:space="preserve">
-          <source>Use default language</source>
-          <target state="new">Use default language</target>
-        </trans-unit>
-        <trans-unit id="SettingsLangOverride.OnContent" translate="yes" xml:space="preserve">
-          <source>Use override language</source>
-          <target state="new">Use override language</target>
-        </trans-unit>
         <trans-unit id="SettingsLanguageDescription.Text" translate="yes" xml:space="preserve">
           <source>Override the in-app language.
 Requires a restart to take effect.</source>
@@ -696,16 +620,6 @@ Turning this on has negligible performance impact.</target>
         <trans-unit id="SettingsUIHeader.Text" translate="yes" xml:space="preserve">
           <source>User Interface</source>
           <target state="new">User Interface</target>
-        </trans-unit>
-        <trans-unit id="SettingsUnicodeDescription.Text" translate="yes" xml:space="preserve">
-          <source>Shows the Unicode value of a character underneath the character in the character grid.
-Turning this on can have a minor impact on scrolling performance.</source>
-          <target state="new">Shows the Unicode value of a character underneath the character in the character grid.
-Turning this on can have a minor impact on scrolling performance.</target>
-        </trans-unit>
-        <trans-unit id="SettingsUnicodeHeader.Text" translate="yes" xml:space="preserve">
-          <source>Show Unicode value in Character Grid</source>
-          <target state="new">Show Unicode value in Character Grid</target>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>

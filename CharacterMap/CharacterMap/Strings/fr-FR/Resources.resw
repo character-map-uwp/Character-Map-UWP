@@ -18,14 +18,8 @@
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>Copier (caractère uniquement)</value>
   </data>
-  <data name="BtnSavePng.Text" xml:space="preserve">
-    <value>Enregistrer en PNG</value>
-  </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Sélectionner</value>
-  </data>
-  <data name="DigSettings.Title" xml:space="preserve">
-    <value>Settings</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
     <value>rechercher Unicode</value>
