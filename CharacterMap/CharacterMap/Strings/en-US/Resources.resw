@@ -918,4 +918,51 @@ Please consider posting details about this error to GitHub so we can help you fi
   <data name="ExportedToFolderMessage" xml:space="preserve">
     <value>Exported to {0}</value>
   </data>
+  <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
+    <value>Drag files from File Explorer or your desktop and drop them here to import them.</value>
+  </data>
+  <data name="ImportDragDropLabel.Text" xml:space="preserve">
+    <value>Drop and drop to import</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>User Interface Advanced</value>
+  </data>
+  <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
+    <value>Export all imported fonts</value>
+  </data>
+  <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
+    <value>Optimized</value>
+  </data>
+  <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="SettingsFontImportDescription.Text" xml:space="preserve">
+    <value>You can import fonts into the application to view them without installing them in Windows. 
+
+Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>Font Management</value>
+  </data>
+  <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
+    <value>Choose how to name font files when exporting them.
+
+System will return the name of the font file Windows uses in uppercase.
+Optimized will create a smart name based on Font Family and Font Name."</value>
+  </data>
+  <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
+    <value>Font File Export Naming</value>
+  </data>
+  <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
+    <value>Imported Fonts</value>
+  </data>
+  <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
+    <value>This application makes use of the following open source libraries</value>
+  </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>Licenses</value>
+  </data>
 </root>

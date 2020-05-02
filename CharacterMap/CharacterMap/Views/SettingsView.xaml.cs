@@ -73,7 +73,7 @@ namespace CharacterMap.Views
             this.InitializeComponent();
             Composition.SetupOverlayPanelAnimation(this);
 
-            RbLanguage.ItemsSource = new List<String> { "XAML", "C#" };
+            RbLanguage.ItemsSource = new List<String> { "XAML", "C#" }; // - WIP - , "Unicode" };
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
 
             FontNamingSelection.SelectedIndex = (int)Settings.ExportNamingScheme;

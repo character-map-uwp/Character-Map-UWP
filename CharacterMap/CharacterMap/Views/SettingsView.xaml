@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
@@ -141,7 +141,7 @@
 
                     <Button
                         Click="MenuItem_Clicked"
-                        Content="User Interface"
+                        Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
                         Tag="{x:Bind UserInterfacePanel}">
                         <core:Properties.Icon>
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
@@ -150,7 +150,7 @@
 
                     <Button
                         Click="MenuItem_Clicked"
-                        Content="Advanced User Interface"
+                        Content="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
                         Tag="{x:Bind UserInterfaceAdvancedPanel}">
                         <core:Properties.Icon>
                             <PathIcon
@@ -161,7 +161,7 @@
                     </Button>
                     <Button
                         Click="MenuItem_Clicked"
-                        Content="Export"
+                        Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
                         Tag="{x:Bind ExportPanel}">
                         <core:Properties.Icon>
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE2B4;" />
@@ -169,7 +169,7 @@
                     </Button>
                     <Button
                         Click="MenuItem_Clicked"
-                        Content="Character Search"
+                        Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
                         Tag="{x:Bind SearchPanel}">
                         <core:Properties.Icon>
                             <SymbolIcon Symbol="Find" />
@@ -177,7 +177,7 @@
                     </Button>
                     <Button
                         Click="MenuItem_Clicked"
-                        Content="Developer Features"
+                        Content="{x:Bind h:Localization.Get('SettingsDevToolsGroupHeader/Text')}"
                         Tag="{x:Bind DeveloperPanel}">
                         <core:Properties.Icon>
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
@@ -186,11 +186,11 @@
                     <Button
                         core:Properties.Icon="Font"
                         Click="MenuItem_Clicked"
-                        Content="Font Management"
+                        Content="{x:Bind h:Localization.Get('SettingsFontManagementLabel/Text')}"
                         Tag="{x:Bind FontPanel}" />
                     <Button
                         Click="MenuItem_Clicked"
-                        Content="Licenses"
+                        Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
                         Tag="{x:Bind LicensesPanel}">
                         <core:Properties.Icon>
                             <PathIcon
@@ -201,7 +201,7 @@
                     </Button>
                     <Button
                         Click="MenuItem_Clicked"
-                        Content="About"
+                        Content="{x:Bind h:Localization.Get('SettingsAboutLabel/Text')}"
                         Tag="{x:Bind AboutPanel}">
                         <core:Properties.Icon>
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
@@ -213,7 +213,7 @@
                     x:Name="ContentBorder"
                     Grid.Column="1"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
+                    Loaded="{x:Bind h:Composition.SetStandardReposition}">
                     <!--  RepositionAnimation on the ScrollViewer itself breaks hit testing  -->
                     <ScrollViewer x:Name="ContentScroller">
                         <Grid
@@ -412,7 +412,7 @@
 
                             <StackPanel x:Name="UserInterfaceAdvancedPanel" Visibility="Collapsed">
 
-                                <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Advanced User Interface" />
+                                <TextBlock x:Uid="SettingsAdvancedUILabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <StackPanel>
                                     <TextBlock
@@ -485,18 +485,13 @@
                                 </StackPanel>
 
                                 <StackPanel>
-                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Font File Export Naming" />
-                                    <TextBlock Style="{StaticResource DescriptionStyle}">
-                                        <Run Text="Choose how to name font files when exporting them." />
-                                        <LineBreak />
-                                        <LineBreak /><Run Text="System will return the name of the font file Windows uses in uppercase." />
-                                        <LineBreak /><Run Text="Optimized will create a smart name based on Font Family and Font Name." />
-                                    </TextBlock>
+                                    <TextBlock x:Uid="SettingsFontNameExportLabel" Style="{StaticResource HeaderStyle}" />
+                                    <TextBlock x:Uid="SettingsFontNameExportDescription" Style="{StaticResource DescriptionStyle}" />
 
                                     <muxc:RadioButtons x:Name="FontNamingSelection" SelectionChanged="FontNamingSelection_SelectionChanged">
                                         <RadioButton>
                                             <TextBlock>
-                                                <Run Text="System" />
+                                                <Run x:Uid="SettingsFontExportSystemLabel" />
                                                 <Run
                                                     FontSize="13.333"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
@@ -505,11 +500,11 @@
                                         </RadioButton>
                                         <RadioButton>
                                             <TextBlock>
-                                                <Run Text="Optimized" />
+                                                <Run x:Uid="SettingsFontExportOptimizedLabel" />
                                                 <Run
                                                     FontSize="13.333"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text=" e.g. Microsoft Office Symbol Regular.ttf" />
+                                                    Text=" e.g. MS Office Symbol Regular.ttf" />
                                             </TextBlock>
                                         </RadioButton>
                                     </muxc:RadioButtons>
@@ -556,7 +551,7 @@
                                     AcceptsExpression="False"
                                     Header="#Search Results"
                                     LargeChange="10"
-                                    Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
+                                    Loaded="{x:Bind h:Composition.SetStandardReposition}"
                                     Maximum="100"
                                     Minimum="5"
                                     SmallChange="5"
@@ -585,9 +580,9 @@
                             <StackPanel x:Name="FontPanel" Visibility="Collapsed">
 
                                 <TextBlock
+                                    x:Uid="SettingsFontManagementLabel"
                                     OpticalMarginAlignment="None"
-                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
-                                    Text="Font Management" />
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <TextBlock
                                     x:Uid="SettingsSystemFontHeader"
@@ -601,16 +596,12 @@
 
                                 <StackPanel>
                                     <TextBlock
+                                        x:Uid="SettingsImportedFontsLabel"
                                         Margin="0 24 0 0"
                                         OpticalMarginAlignment="None"
-                                        Style="{StaticResource SubheaderTextBlockStyle}"
-                                        Text="Imported Fonts" />
+                                        Style="{StaticResource SubheaderTextBlockStyle}" />
 
-                                    <TextBlock Style="{StaticResource DescriptionStyle}">
-                                        <Run>You can import fonts into the application to view them without installing them on Windows.</Run>
-                                        <LineBreak /><LineBreak /><Run>Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</Run>
-                                    </TextBlock>
-
+                                    <TextBlock x:Uid="SettingsFontImportDescription" Style="{StaticResource DescriptionStyle}" />
                                 </StackPanel>
 
                                 <StackPanel Spacing="6">
@@ -640,15 +631,15 @@
                                                 Glyph="&#xE1E3;" />
 
                                             <StackPanel Grid.Column="1" Margin="12">
-                                                <TextBlock FontWeight="SemiBold" Opacity="0.7">
-                                                    Drop and drop to import
-                                                </TextBlock>
                                                 <TextBlock
+                                                    x:Uid="ImportDragDropLabel"
+                                                    FontWeight="SemiBold"
+                                                    Opacity="0.7" />
+                                                <TextBlock
+                                                    x:Uid="ImportDragDropDescriptionLabel"
                                                     FontSize="12"
                                                     Opacity="0.6"
-                                                    TextWrapping="Wrap">
-                                                    Drag files from File Explorer or your desktop and drop them here to import them.
-                                                </TextBlock>
+                                                    TextWrapping="Wrap" />
                                             </StackPanel>
 
                                         </Grid>
@@ -658,7 +649,7 @@
                                 </StackPanel>
 
                                 <StackPanel Spacing="6">
-                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Export" />
+                                    <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource HeaderStyle}" />
                                     <Button
                                         Width="340"
                                         Padding="12 10 12 10"
@@ -674,10 +665,10 @@
                                                 VerticalAlignment="Center"
                                                 Data="F1 M 18.046875 8.75 C 18.320313 8.75 18.575846 8.798828 18.813477 8.896484 C 19.051105 8.994141 19.257813 9.129232 19.433594 9.301758 C 19.609375 9.474284 19.747721 9.679362 19.848633 9.916992 C 19.949543 10.154623 20 10.410156 20 10.683594 C 20 10.9375 19.951172 11.184896 19.853516 11.425781 C 19.755859 11.666667 19.615885 11.878256 19.433594 12.060547 L 12.431641 19.0625 L 8.75 19.980469 L 9.667969 16.298828 L 16.669922 9.306641 C 16.858723 9.117839 17.070313 8.977865 17.304688 8.886719 C 17.539063 8.795573 17.786457 8.75 18.046875 8.75 Z M 18.544922 11.181641 C 18.681641 11.044922 18.75 10.878906 18.75 10.683594 C 18.75 10.481771 18.683268 10.317383 18.549805 10.19043 C 18.41634 10.063477 18.248697 10 18.046875 10 C 17.955729 10 17.867838 10.014648 17.783203 10.043945 C 17.698566 10.073242 17.623697 10.120443 17.558594 10.185547 L 10.800781 16.943359 L 10.46875 18.261719 L 11.787109 17.929688 Z M 7.5 15 L 8.75 15 L 7.5 16.25 L 2.861328 16.25 L 1.25 14.638672 L 1.25 2.5 C 1.25 2.324219 1.282552 2.161459 1.347656 2.011719 C 1.41276 1.86198 1.502279 1.730145 1.616211 1.616211 C 1.730143 1.502279 1.861979 1.412762 2.011719 1.347656 C 2.161458 1.282553 2.324219 1.25 2.5 1.25 L 15 1.25 C 15.17578 1.25 15.338541 1.282553 15.488281 1.347656 C 15.638021 1.412762 15.769856 1.502279 15.883789 1.616211 C 15.997721 1.730145 16.087238 1.86198 16.152344 2.011719 C 16.217447 2.161459 16.25 2.324219 16.25 2.5 L 16.25 7.5 L 15 8.75 L 15 2.5 L 13.75 2.5 L 13.75 8.75 L 3.75 8.75 L 3.75 2.5 L 2.5 2.5 L 2.5 14.111328 L 3.388672 15 L 3.75 15 L 3.75 10 L 12.5 10 L 12.5 11.25 L 11.25 12.5 L 11.25 11.25 L 5 11.25 L 5 15 L 6.25 15 L 6.25 12.5 L 7.5 12.5 Z M 5 7.5 L 12.5 7.5 L 12.5 2.5 L 5 2.5 Z " />
                                             <TextBlock
+                                                x:Uid="SettingsExportImportedLabel"
                                                 VerticalAlignment="Center"
                                                 FontWeight="SemiBold"
-                                                Opacity="0.7"
-                                                Text="Export all imported fonts" />
+                                                Opacity="0.7" />
                                             <ProgressRing
                                                 Width="20"
                                                 Height="20"
@@ -706,11 +697,9 @@
                                         <Setter Property="Margin" Value="0 -4 0 0" />
                                     </Style>
                                 </StackPanel.Resources>
-                                <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Licenses" />
+                                <TextBlock x:Uid="SettingsLicensesLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
-                                <TextBlock Style="{StaticResource DescriptionStyle}">
-                                    This application makes use of the following open source libraries
-                                </TextBlock>
+                                <TextBlock x:Uid="SettingsLicensesDescriptionLabel" Style="{StaticResource DescriptionStyle}" />
 
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource HeaderStyle}" Text="WinUI" />
@@ -746,7 +735,7 @@
 
                             <StackPanel x:Name="AboutPanel" Visibility="Collapsed">
 
-                                <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="About" />
+                                <TextBlock x:Uid="SettingsAboutLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <Image
                                     Width="150"
@@ -788,19 +777,11 @@
                                         Style="{StaticResource ButtonRevealStyle}" />
                                 </StackPanel>
 
-
                             </StackPanel>
                         </Grid>
                     </ScrollViewer>
-
                 </Border>
-
             </Grid>
-
-
-
-
         </Grid>
-
     </Grid>
 </views:ViewBase>

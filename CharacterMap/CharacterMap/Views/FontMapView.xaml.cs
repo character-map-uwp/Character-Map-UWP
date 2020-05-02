@@ -278,15 +278,22 @@ namespace CharacterMap.Views
             RunOnUI(() =>
             {
                 if (ViewModel.Settings.ShowDevUtils)
-                { 
+                {
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
                         Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
 
-                    VisualStateManager.GoToState(this,
-                        ViewModel.Settings.DevToolsLanguage == 0 ? nameof(DevXamlState) : nameof(DevCSharpState), true);
+                    string state = ViewModel.Settings.DevToolsLanguage switch
+                    {
+                        0 => nameof(DevXamlState),
+                        1 => nameof(DevCSharpState),
+                        2 => nameof(DevUnicodeState),
+                        _ => nameof(DevHiddenState)
+                    };
+                    
+                    VisualStateManager.GoToState(this, state, animate);
                 }
                 else
-                    VisualStateManager.GoToState(this, nameof(DevHiddenState), true);
+                    VisualStateManager.GoToState(this, nameof(DevHiddenState), animate);
             });
         }
 
@@ -425,8 +432,8 @@ namespace CharacterMap.Views
             }
             else
             {
-                if (ViewModel.Settings.DevToolsLanguage == 0)
-                    ViewModel.Settings.DevToolsLanguage = 1;
+                if (ViewModel.Settings.DevToolsLanguage < 1)
+                    ViewModel.Settings.DevToolsLanguage += 1;
                 else
                 {
                     ViewModel.Settings.ShowDevUtils = false;

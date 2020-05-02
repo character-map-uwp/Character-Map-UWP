@@ -1081,6 +1081,72 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>Exported to {0}</source>
           <target state="new">Exported to {0}</target>
         </trans-unit>
+        <trans-unit id="SettingsAboutLabel.Text" translate="yes" xml:space="preserve">
+          <source>About</source>
+          <target state="new">About</target>
+        </trans-unit>
+        <trans-unit id="SettingsAdvancedUILabel.Text" translate="yes" xml:space="preserve">
+          <source>User Interface Advanced</source>
+          <target state="new">User Interface Advanced</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontManagementLabel.Text" translate="yes" xml:space="preserve">
+          <source>Font Management</source>
+          <target state="new">Font Management</target>
+        </trans-unit>
+        <trans-unit id="SettingsLicensesLabel.Text" translate="yes" xml:space="preserve">
+          <source>Licenses</source>
+          <target state="new">Licenses</target>
+        </trans-unit>
+        <trans-unit id="ImportDragDropDescriptionLabel.Text" translate="yes" xml:space="preserve">
+          <source>Drag files from File Explorer or your desktop and drop them here to import them.</source>
+          <target state="new">Drag files from File Explorer or your desktop and drop them here to import them.</target>
+        </trans-unit>
+        <trans-unit id="ImportDragDropLabel.Text" translate="yes" xml:space="preserve">
+          <source>Drop and drop to import</source>
+          <target state="new">Drop and drop to import</target>
+        </trans-unit>
+        <trans-unit id="SettingsExportImportedLabel.Text" translate="yes" xml:space="preserve">
+          <source>Export all imported fonts</source>
+          <target state="new">Export all imported fonts</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontExportOptimizedLabel.Text" translate="yes" xml:space="preserve">
+          <source>Optimized</source>
+          <target state="new">Optimized</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontExportSystemLabel.Text" translate="yes" xml:space="preserve">
+          <source>System</source>
+          <target state="new">System</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontImportDescription.Text" translate="yes" xml:space="preserve">
+          <source>You can import fonts into the application to view them without installing them in Windows. 
+
+Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</source>
+          <target state="new">You can import fonts into the application to view them without installing them in Windows. 
+
+Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontNameExportDescription.Text" translate="yes" xml:space="preserve">
+          <source>Choose how to name font files when exporting them.
+
+System will return the name of the font file Windows uses in uppercase.
+Optimized will create a smart name based on Font Family and Font Name."</source>
+          <target state="new">Choose how to name font files when exporting them.
+
+System will return the name of the font file Windows uses in uppercase.
+Optimized will create a smart name based on Font Family and Font Name."</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontNameExportLabel.Text" translate="yes" xml:space="preserve">
+          <source>Font File Export Naming</source>
+          <target state="new">Font File Export Naming</target>
+        </trans-unit>
+        <trans-unit id="SettingsImportedFontsLabel.Text" translate="yes" xml:space="preserve">
+          <source>Imported Fonts</source>
+          <target state="new">Imported Fonts</target>
+        </trans-unit>
+        <trans-unit id="SettingsLicensesDescriptionLabel.Text" translate="yes" xml:space="preserve">
+          <source>This application makes use of the following open source libraries</source>
+          <target state="new">This application makes use of the following open source libraries</target>
+        </trans-unit>
       </group>
     </body>
   </file>
