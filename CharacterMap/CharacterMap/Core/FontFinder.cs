@@ -7,8 +7,10 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMapCX;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using Windows.Storage;
 using Windows.UI.Text;
 
@@ -130,6 +132,8 @@ namespace CharacterMap.Core
                 ImportedFonts = CreateFontList(imports);
 
                 _loadSemaphore.Release();
+
+                Messenger.Default.Send(new FontListCreatedMessage());
             });
         }
 

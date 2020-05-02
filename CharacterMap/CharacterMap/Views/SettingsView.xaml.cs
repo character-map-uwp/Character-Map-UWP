@@ -69,6 +69,7 @@ namespace CharacterMap.Views
             Settings = ResourceHelper.AppSettings;
             FontCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsUpdated);
+            Messenger.Default.Register<FontListCreatedMessage>(this, _ => UpdateExport());
 
             this.InitializeComponent();
             Composition.SetupOverlayPanelAnimation(this);
@@ -104,6 +105,14 @@ namespace CharacterMap.Views
             {
                 ToggleDevUtils.IsOn = Settings.ShowDevUtils;
                 RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
+            });
+        }
+
+        private void UpdateExport()
+        {
+            this.RunOnUI(() =>
+            {
+                ImportedExportPanel.SetVisible(FontFinder.ImportedFonts.Count > 0);
             });
         }
 
@@ -151,6 +160,7 @@ namespace CharacterMap.Views
             
             // 3. Set correct Developer features language
             UpdateDevTools();
+            UpdateExport();
 
             IsOpen = true;
         }

@@ -140,7 +140,7 @@ namespace CharacterMap.Controls
             t.Height = t.Width = PrintModel.GlyphSize;
 
             TextBlock unicodeId = ((TextBlock)((StackPanel)g.Children[1]).Children[0]);
-            unicodeId.Visibility = PrintModel.Annotation == GlyphAnnotation.None ? Visibility.Collapsed : Visibility.Visible;
+            unicodeId.SetVisible(PrintModel.Annotation != GlyphAnnotation.None);
             unicodeId.Text = c.GetAnnotation(PrintModel.Annotation);
 
             TextBlock description = ((TextBlock)((StackPanel)g.Children[1]).Children[1]);
@@ -154,7 +154,7 @@ namespace CharacterMap.Controls
             CharacterGridView.SetGlyphProperties(_xamlDirect, o, PrintModel.GetTemplateSettings(), c);
 
             foreach (var r in g.GetFirstLevelDescendantsOfType<Rectangle>())
-                r.Visibility = PrintModel.ShowBorders ? Visibility.Visible : Visibility.Collapsed;
+                r.SetVisible(PrintModel.ShowBorders);
         }
 
         private void ItemsPanel_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

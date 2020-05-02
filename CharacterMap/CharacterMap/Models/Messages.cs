@@ -30,6 +30,8 @@ namespace CharacterMap.Models
         }
     }
 
+    public class FontListCreatedMessage { }
+
     public class ImportMessage
     {
         public ImportMessage(FontImportResult result)

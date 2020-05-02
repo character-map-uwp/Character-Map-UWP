@@ -16,5 +16,10 @@ namespace CharacterMap.Helpers
             u.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = key, Modifiers = modifiers });
             return u;
         }
+
+        public static void SetVisible(this FrameworkElement e, bool b)
+        {
+            e.Visibility = b ? Visibility.Visible : Visibility.Collapsed;
+        }
     }
 }

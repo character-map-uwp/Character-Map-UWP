@@ -648,7 +648,7 @@
                                     </Grid>
                                 </StackPanel>
 
-                                <StackPanel Spacing="6">
+                                <StackPanel Spacing="6" x:Name="ImportedExportPanel">
                                     <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource HeaderStyle}" />
                                     <Button
                                         Width="340"
