@@ -63,9 +63,20 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 	auto vec = ref new Vector<GlyphImageFormat>(std::move(analyzer->GlyphFormats));
 	m_glyphFormats = vec->GetView();
 
+
+	//
 	// If we're analyzing the character only, we're done here.
+	//
 	if (analyzer->IsCharacterAnalysisMode || fontFaceRef == nullptr)
 		return;
+
+
+
+	/*
+	 *
+	 * FONT ANALYSIS
+	 *
+	 */
 
 	// Get File Size
 	m_fileSize = fontFaceRef->GetFileSize();

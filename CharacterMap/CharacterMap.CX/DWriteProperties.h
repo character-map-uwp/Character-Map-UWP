@@ -22,12 +22,23 @@ namespace CharacterMapCX
 	public:
 		static DWriteProperties^ CreateDefault()
 		{
-			return ref new DWriteProperties(DWriteFontSource::PerMachine, nullptr, "Segoe UI", "Regular", false);
+			return ref new DWriteProperties(DWriteFontSource::PerMachine, nullptr, "Segoe UI", "Regular", false, false);
 		}
 
-		property bool IsColorFont
+		property bool IsColorFont	{ bool get() { return m_isColorFont; } }
+
+		property bool HasVariations { bool get() { return m_hasVariations; } }
+
+		property String^ FamilyName { String^ get() { return m_familyName; } }
+
+		property String^ FaceName	{ String^ get() { return m_faceName; } }
+
+		/// <summary>
+		/// Friendly name of the remote provider, if applicable
+		/// </summary>
+		property String^ RemoteProviderName
 		{
-			bool get() { return m_isColorFont; }
+			String^ get() { return m_remoteSource; }
 		}
 
 		/// <summary>
@@ -38,41 +49,25 @@ namespace CharacterMapCX
 			DWriteFontSource get() { return m_source; }
 		}
 
-		/// <summary>
-		/// Friendly name of the remote provider, if applicable
-		/// </summary>
-		property String^ RemoteProviderName
-		{
-			String^ get() { return m_remoteSource; }
-		}
-
-		property String^ FamilyName
-		{
-			String^ get() { return m_familyName; }
-		}
-
-		property String^ FaceName
-		{
-			String^ get() { return m_faceName; }
-		}
-
 	internal:
-		DWriteProperties(DWriteFontSource source, String^ remoteSource, String^ familyName, String^ faceName, bool isColor)
+		DWriteProperties(DWriteFontSource source, String^ remoteSource, String^ familyName, String^ faceName, bool isColor, bool hasVariations)
 		{
 			m_isColorFont = isColor;
 			m_source = source;
 			m_remoteSource = remoteSource;
 			m_familyName = familyName;
 			m_faceName = faceName;
+			m_hasVariations = hasVariations;
 		}
 
 	private:
 		inline DWriteProperties() { }
 
+		bool m_hasVariations = false;
 		bool m_isColorFont = false;
-		DWriteFontSource m_source = DWriteFontSource::Unknown;
 		String^ m_remoteSource = nullptr;
 		String^ m_familyName = nullptr;
 		String^ m_faceName = nullptr;
+		DWriteFontSource m_source = DWriteFontSource::Unknown;
 	};
 }
