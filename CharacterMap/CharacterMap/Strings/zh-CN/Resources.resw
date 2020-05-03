@@ -261,6 +261,9 @@
   <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
     <value>云提供商</value>
   </data>
+  <data name="DWriteSourceUnknown" xml:space="preserve">
+    <value>未定义</value>
+  </data>
   <data name="FontPropInstallType.Text" xml:space="preserve">
     <value>安装类型</value>
   </data>
@@ -273,11 +276,29 @@
   <data name="OptionColorFonts.Text" xml:space="preserve">
     <value>有色字体</value>
   </data>
+  <data name="OptionDecorativeFonts.Text" xml:space="preserve">
+    <value>装饰字体</value>
+  </data>
   <data name="OptionMoreFilters.Text" xml:space="preserve">
     <value>更多</value>
   </data>
+  <data name="OptionScriptFonts.Text" xml:space="preserve">
+    <value>脚本字体</value>
+  </data>
+  <data name="StatusBarFontCount" xml:space="preserve">
+    <value>{0} 个字体家族</value>
+  </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
     <value>文件大小</value>
+  </data>
+  <data name="InstallTypeImported" xml:space="preserve">
+    <value>未安装 (导入)</value>
+  </data>
+  <data name="StatusBarCharacterCount" xml:space="preserve">
+    <value>{0} 个字符</value>
+  </data>
+  <data name="SearchDelaySelector.Header" xml:space="preserve">
+    <value>搜索延迟 (毫秒)</value>
   </data>
   <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
     <value>即时搜索</value>
@@ -291,14 +312,32 @@
   <data name="BtnOpenFolder.Content" xml:space="preserve">
     <value>打开文件夹</value>
   </data>
+  <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>隐藏字体面板</value>
+  </data>
   <data name="NotificationImportFailed" xml:space="preserve">
     <value>导入失败</value>
+  </data>
+  <data name="NotificationMultipleFontsAdded" xml:space="preserve">
+    <value>{0} 个文件被添加到您的收藏中</value>
+  </data>
+  <data name="NotificationSingleFontAdded" xml:space="preserve">
+    <value>{0} 被添加到您的收藏中</value>
+  </data>
+  <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>显示字体面板</value>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>更多</value>
   </data>
+  <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>筛选字体</value>
+  </data>
   <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>切换全屏</value>
+  </data>
+  <data name="DlgDeleteFont.Title" xml:space="preserve">
+    <value>你确定要将改字体从库中删除吗？ </value>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>"{0}" 集合已删除</value>
@@ -397,6 +436,9 @@
   <data name="SettingsUIHeader.Text" xml:space="preserve">
     <value>用户界面</value>
   </data>
+  <data name="TxtPathGeometry.Text" xml:space="preserve">
+    <value>路径几何坐标</value>
+  </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>跟随系统语言设置</value>
   </data>
@@ -472,6 +514,9 @@
   <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
     <value>打印的页面:</value>
   </data>
+  <data name="PrintViewPageSelector.Header" xml:space="preserve">
+    <value>从第几页开始:</value>
+  </data>
   <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
     <value>页面设置</value>
   </data>
@@ -530,11 +575,17 @@
   <data name="StartupFailedHeader.Text" xml:space="preserve">
     <value>尴尬</value>
   </data>
+  <data name="CharacterKeystrokeLabel" xml:space="preserve">
+    <value>按键: Alt + {0:0000}</value>
+  </data>
   <data name="ExportSVGLabel.Text" xml:space="preserve">
     <value>保存为 SVG 图片</value>
   </data>
   <data name="ExportPNGLabel.Text" xml:space="preserve">
     <value>保存为 PNG 图片</value>
+  </data>
+  <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
+    <value>SVG 图像</value>
   </data>
   <data name="BtnCopyGlyph.Label" xml:space="preserve">
     <value>复制</value>
@@ -550,6 +601,12 @@
   </data>
   <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>适配字符</value>
+  </data>
+  <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
+    <value>被移除</value>
+  </data>
+  <data name="NotificationFontAddedBody.Text" xml:space="preserve">
+    <value>被添加到</value>
   </data>
   <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
     <value>集合名称</value>
@@ -593,10 +650,63 @@
   <data name="OptionScriptThai.Text" xml:space="preserve">
     <value>泰语</value>
   </data>
+  <data name="LblSwitchToCharMap.Text" xml:space="preserve">
+    <value>切换到字符集视图</value>
+  </data>
+  <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
+    <value>切换到字体预览视图</value>
+  </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>输入或从下拉框中选择文字</value>
   </data>
   <data name="ExportedToFolderMessage" xml:space="preserve">
     <value>已导出到 {0}</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>高级用户界面</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>字体管理</value>
+  </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>协议</value>
+  </data>
+  <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
+    <value>从文件资源管理器中拖放文件到此处以导入</value>
+  </data>
+  <data name="ImportDragDropLabel.Text" xml:space="preserve">
+    <value>拖拽以导入</value>
+  </data>
+  <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
+    <value>导出所有导入的字体</value>
+  </data>
+  <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
+    <value>优化</value>
+  </data>
+  <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
+    <value>系统</value>
+  </data>
+  <data name="SettingsFontImportDescription.Text" xml:space="preserve">
+    <value>你可以在不将字体安装到 Windows 的情况下导入字体到本应用。
+
+导入的字体文件会复制到应用的私有存储中，因此即便将源字体文件删除，应用还是能显示该字体。</value>
+  </data>
+  <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
+    <value>选择导出字体文件的时候如何命名它们。
+
+"系统" 使用Windows所采用的字体文件的大写名称。
+"优化" 根据字体家族和字体名称智能创建一个新名字。</value>
+  </data>
+  <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
+    <value>导出的字体文件命名</value>
+  </data>
+  <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
+    <value>导入的字体</value>
+  </data>
+  <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
+    <value>该应用使用了以下的开源库</value>
   </data>
 </root>

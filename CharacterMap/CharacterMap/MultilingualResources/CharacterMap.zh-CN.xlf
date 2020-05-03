@@ -343,7 +343,7 @@
         </trans-unit>
         <trans-unit id="DWriteSourceUnknown" translate="yes" xml:space="preserve">
           <source>Undefined</source>
-          <target state="new">Undefined</target>
+          <target state="translated">未定义</target>
         </trans-unit>
         <trans-unit id="FontPropInstallType.Text" translate="yes" xml:space="preserve">
           <source>Install Type</source>
@@ -363,7 +363,7 @@
         </trans-unit>
         <trans-unit id="OptionDecorativeFonts.Text" translate="yes" xml:space="preserve">
           <source>Decorative Fonts</source>
-          <target state="new">Decorative Fonts</target>
+          <target state="translated">装饰字体</target>
         </trans-unit>
         <trans-unit id="OptionMoreFilters.Text" translate="yes" xml:space="preserve">
           <source>More</source>
@@ -371,11 +371,11 @@
         </trans-unit>
         <trans-unit id="OptionScriptFonts.Text" translate="yes" xml:space="preserve">
           <source>Script Fonts</source>
-          <target state="new">Script Fonts</target>
+          <target state="translated">脚本字体</target>
         </trans-unit>
         <trans-unit id="StatusBarFontCount" translate="yes" xml:space="preserve">
           <source>{0} Font Families</source>
-          <target state="new">{0} Font Families</target>
+          <target state="translated">{0} 个字体家族</target>
         </trans-unit>
         <trans-unit id="FontPropFileSize.Text" translate="yes" xml:space="preserve">
           <source>File Size</source>
@@ -383,15 +383,15 @@
         </trans-unit>
         <trans-unit id="InstallTypeImported" translate="yes" xml:space="preserve">
           <source>Not Installed (Imported)</source>
-          <target state="new">Not Installed (Imported)</target>
+          <target state="translated">未安装 (导入)</target>
         </trans-unit>
         <trans-unit id="StatusBarCharacterCount" translate="yes" xml:space="preserve">
           <source>{0} Characters</source>
-          <target state="new">{0} Characters</target>
+          <target state="translated">{0} 个字符</target>
         </trans-unit>
         <trans-unit id="SearchDelaySelector.Header" translate="yes" xml:space="preserve">
           <source>Delay before search (ms)</source>
-          <target state="new">Delay before search (ms)</target>
+          <target state="translated">搜索延迟 (毫秒)</target>
         </trans-unit>
         <trans-unit id="InstantSearchToggleHeader.Text" translate="yes" xml:space="preserve">
           <source>Instant Search</source>
@@ -416,7 +416,7 @@
         </trans-unit>
         <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Hide font pane</source>
-          <target state="new">Hide font pane</target>
+          <target state="translated">隐藏字体面板</target>
         </trans-unit>
         <trans-unit id="NotificationImportFailed" translate="yes" xml:space="preserve">
           <source>Import Failed</source>
@@ -424,15 +424,15 @@
         </trans-unit>
         <trans-unit id="NotificationMultipleFontsAdded" translate="yes" xml:space="preserve">
           <source>{0} files were added to your collection</source>
-          <target state="new">{0} files were added to your collection</target>
+          <target state="translated">{0} 个文件被添加到您的收藏中</target>
         </trans-unit>
         <trans-unit id="NotificationSingleFontAdded" translate="yes" xml:space="preserve">
           <source>{0} was added to your collection</source>
-          <target state="new">{0} was added to your collection</target>
+          <target state="translated">{0} 被添加到您的收藏中</target>
         </trans-unit>
         <trans-unit id="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Show font pane</source>
-          <target state="new">Show font pane</target>
+          <target state="translated">显示字体面板</target>
         </trans-unit>
         <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>More</source>
@@ -440,7 +440,7 @@
         </trans-unit>
         <trans-unit id="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Filter fonts</source>
-          <target state="new">Filter fonts</target>
+          <target state="translated">筛选字体</target>
         </trans-unit>
         <trans-unit id="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Fullscreen</source>
@@ -448,7 +448,7 @@
         </trans-unit>
         <trans-unit id="DlgDeleteFont.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this font from your library?</source>
-          <target state="new">Are you sure you want to delete this font from your library?</target>
+          <target state="translated">你确定要将改字体从库中删除吗？ </target>
         </trans-unit>
         <trans-unit id="NotificationCollectionDeleted" translate="yes" xml:space="preserve">
           <source>"{0}" collection deleted</source>
@@ -626,7 +626,7 @@ Turning this on has negligible performance impact.</target>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
-          <target state="new">Path Geometry</target>
+          <target state="translated">路径几何坐标</target>
         </trans-unit>
         <trans-unit id="UseSystemLanguage" translate="yes" xml:space="preserve">
           <source>Use system language setting</source>
@@ -739,7 +739,7 @@ Turning this on has negligible performance impact.</target>
         </trans-unit>
         <trans-unit id="PrintViewPageSelector.Header" translate="yes" xml:space="preserve">
           <source>Start from page:</source>
-          <target state="new">Start from page:</target>
+          <target state="translated">从第几页开始:</target>
         </trans-unit>
         <trans-unit id="PrintViewPageSetupHeader.Text" translate="yes" xml:space="preserve">
           <source>Page Setup</source>
@@ -845,7 +845,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="CharacterKeystrokeLabel" translate="yes" xml:space="preserve">
           <source>Keystroke: Alt + {0:0000}</source>
-          <target state="new">Keystroke: Alt + {0:0000}</target>
+          <target state="translated">按键: Alt + {0:0000}</target>
         </trans-unit>
         <trans-unit id="ExportSVGLabel.Text" translate="yes" xml:space="preserve">
           <source>Save as SVG Image</source>
@@ -857,7 +857,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="ExportSVGGlyphLabel.Text" translate="yes" xml:space="preserve">
           <source>SVG Glyph</source>
-          <target state="new">SVG Glyph</target>
+          <target state="translated">SVG 图像</target>
         </trans-unit>
         <trans-unit id="BtnCopyGlyph.Label" translate="yes" xml:space="preserve">
           <source>Copy</source>
@@ -881,11 +881,11 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="NotificationFontRemovedBody.Text" translate="yes" xml:space="preserve">
           <source>was removed from</source>
-          <target state="new">was removed from</target>
+          <target state="translated">被移除</target>
         </trans-unit>
         <trans-unit id="NotificationFontAddedBody.Text" translate="yes" xml:space="preserve">
           <source>was added to</source>
-          <target state="new">was added to</target>
+          <target state="translated">被添加到</target>
         </trans-unit>
         <trans-unit id="CreateCollectionEntryBox.Header" translate="yes" xml:space="preserve">
           <source>Collection Name</source>
@@ -986,11 +986,11 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
           <source>Switch to Character Map view</source>
-          <target state="new">Switch to Character Map view</target>
+          <target state="translated">切换到字符集视图</target>
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
           <source>Switch to Type Ramp view</source>
-          <target state="new">Switch to Type Ramp view</target>
+          <target state="translated">切换到字体预览视图</target>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter or choose text from the dropdown</source>
@@ -1002,69 +1002,69 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="SettingsAboutLabel.Text" translate="yes" xml:space="preserve">
           <source>About</source>
-          <target state="new">About</target>
+          <target state="translated">关于</target>
         </trans-unit>
         <trans-unit id="SettingsAdvancedUILabel.Text" translate="yes" xml:space="preserve">
           <source>User Interface Advanced</source>
-          <target state="new">User Interface Advanced</target>
+          <target state="translated">高级用户界面</target>
         </trans-unit>
         <trans-unit id="SettingsFontManagementLabel.Text" translate="yes" xml:space="preserve">
           <source>Font Management</source>
-          <target state="new">Font Management</target>
+          <target state="translated">字体管理</target>
         </trans-unit>
         <trans-unit id="SettingsLicensesLabel.Text" translate="yes" xml:space="preserve">
           <source>Licenses</source>
-          <target state="new">Licenses</target>
+          <target state="translated">协议</target>
         </trans-unit>
         <trans-unit id="ImportDragDropDescriptionLabel.Text" translate="yes" xml:space="preserve">
           <source>Drag files from File Explorer or your desktop and drop them here to import them.</source>
-          <target state="new">Drag files from File Explorer or your desktop and drop them here to import them.</target>
+          <target state="translated">从文件资源管理器中拖放文件到此处以导入</target>
         </trans-unit>
         <trans-unit id="ImportDragDropLabel.Text" translate="yes" xml:space="preserve">
           <source>Drop and drop to import</source>
-          <target state="new">Drop and drop to import</target>
+          <target state="translated">拖拽以导入</target>
         </trans-unit>
         <trans-unit id="SettingsExportImportedLabel.Text" translate="yes" xml:space="preserve">
           <source>Export all imported fonts</source>
-          <target state="new">Export all imported fonts</target>
+          <target state="translated">导出所有导入的字体</target>
         </trans-unit>
         <trans-unit id="SettingsFontExportOptimizedLabel.Text" translate="yes" xml:space="preserve">
           <source>Optimized</source>
-          <target state="new">Optimized</target>
+          <target state="translated">优化</target>
         </trans-unit>
         <trans-unit id="SettingsFontExportSystemLabel.Text" translate="yes" xml:space="preserve">
           <source>System</source>
-          <target state="new">System</target>
+          <target state="translated">系统</target>
         </trans-unit>
         <trans-unit id="SettingsFontImportDescription.Text" translate="yes" xml:space="preserve">
           <source>You can import fonts into the application to view them without installing them in Windows. 
 
 Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</source>
-          <target state="new">You can import fonts into the application to view them without installing them in Windows. 
+          <target state="translated">你可以在不将字体安装到 Windows 的情况下导入字体到本应用。
 
-Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</target>
+导入的字体文件会复制到应用的私有存储中，因此即便将源字体文件删除，应用还是能显示该字体。</target>
         </trans-unit>
         <trans-unit id="SettingsFontNameExportDescription.Text" translate="yes" xml:space="preserve">
           <source>Choose how to name font files when exporting them.
 
 System will return the name of the font file Windows uses in uppercase.
 Optimized will create a smart name based on Font Family and Font Name."</source>
-          <target state="new">Choose how to name font files when exporting them.
+          <target state="translated">选择导出字体文件的时候如何命名它们。
 
-System will return the name of the font file Windows uses in uppercase.
-Optimized will create a smart name based on Font Family and Font Name."</target>
+"系统" 使用Windows所采用的字体文件的大写名称。
+"优化" 根据字体家族和字体名称智能创建一个新名字。</target>
         </trans-unit>
         <trans-unit id="SettingsFontNameExportLabel.Text" translate="yes" xml:space="preserve">
           <source>Font File Export Naming</source>
-          <target state="new">Font File Export Naming</target>
+          <target state="translated">导出的字体文件命名</target>
         </trans-unit>
         <trans-unit id="SettingsImportedFontsLabel.Text" translate="yes" xml:space="preserve">
           <source>Imported Fonts</source>
-          <target state="new">Imported Fonts</target>
+          <target state="translated">导入的字体</target>
         </trans-unit>
         <trans-unit id="SettingsLicensesDescriptionLabel.Text" translate="yes" xml:space="preserve">
           <source>This application makes use of the following open source libraries</source>
-          <target state="new">This application makes use of the following open source libraries</target>
+          <target state="translated">该应用使用了以下的开源库</target>
         </trans-unit>
       </group>
     </body>
