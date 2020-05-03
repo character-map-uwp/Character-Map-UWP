@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "CanvasTextLayoutAnalysis.h"
+#include "DirectWrite.h"
+#include "DWriteFontAxis.h"
 
 using namespace Platform;
 using namespace Platform::Collections;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::UI;
+using namespace CharacterMapCX;
 
 CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> fontFaceRef)
 {
@@ -77,6 +80,8 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 	 * FONT ANALYSIS
 	 *
 	 */
+
+	m_axis = DirectWrite::GetAxis(fontFaceRef);
 
 	// Get File Size
 	m_fileSize = fontFaceRef->GetFileSize();

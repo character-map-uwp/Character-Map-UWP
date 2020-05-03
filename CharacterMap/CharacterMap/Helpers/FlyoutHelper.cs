@@ -59,7 +59,6 @@ namespace CharacterMap.Helpers
             bool showAdvanced = false)
         {
             MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
-            Interop interop = Utils.GetInterop();
 
             #region Handlers 
 
@@ -159,7 +158,7 @@ namespace CharacterMap.Helpers
                         }
                     }
 
-                    if (variant != null && interop.IsFontLocal(variant.FontFace))
+                    if (variant != null && DirectWrite.IsFontLocal(variant.FontFace))
                     {
                         var saveButton = new MenuFlyoutItem
                         {

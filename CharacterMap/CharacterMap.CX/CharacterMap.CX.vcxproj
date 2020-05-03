@@ -269,10 +269,16 @@
   <ItemGroup>
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DWHelpers.h" />
+    <ClInclude Include="DWriteFontAxis.h" />
+    <ClInclude Include="DWriteFontAxisAttribute.h" />
+    <ClInclude Include="DWriteFontAxisRange.h" />
     <ClInclude Include="DWriteFontFace.h" />
     <ClInclude Include="DWriteFontSet.h" />
     <ClInclude Include="DWriteFontSource.h" />
+    <ClInclude Include="DWriteKnownFontAxisValues.h" />
+    <ClInclude Include="DWriteNamedFontAxisValue.h" />
     <ClInclude Include="DWriteProperties.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GridViewHelper.h" />
@@ -284,6 +290,7 @@
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
+    <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="Interop.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

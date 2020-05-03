@@ -6,6 +6,7 @@
 #include <dwrite_3.h>
 #include "ColorTextAnalyzer.h"
 #include "GlyphImageFormat.h"
+#include "DWriteFontAxis.h"
 #include <vector>
 
 using namespace Microsoft::Graphics::Canvas;
@@ -14,6 +15,7 @@ using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Platform;
+using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {
@@ -73,6 +75,11 @@ namespace CharacterMapCX
 			Platform::String^ get() { return m_filePath; }
 		}
 
+		property IVectorView<DWriteFontAxis^>^ Axis
+		{
+			IVectorView<DWriteFontAxis^>^ get() { return m_axis; }
+		}
+
 		property IVectorView<GlyphImageFormat>^ GlyphFormats
 		{
 			IVectorView<GlyphImageFormat>^ get() { return m_glyphFormats; }
@@ -98,6 +105,7 @@ namespace CharacterMapCX
 		int m_glyphLayerCount = 1;
 		int m_fileSize = 0;
 		Platform::String^ m_filePath = nullptr;
+		IVectorView<DWriteFontAxis^>^ m_axis;
 		IVectorView<GlyphImageFormat>^ m_glyphFormats;
 		Array<Windows::UI::Color>^ m_colors;
 		Array<IVectorView<uint16>^>^ m_indicies;

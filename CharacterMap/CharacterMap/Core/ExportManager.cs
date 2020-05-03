@@ -336,7 +336,7 @@ namespace CharacterMap.Core
 
         private static IBuffer GetGlyphBuffer(CanvasFontFace fontface, uint unicodeIndex, GlyphImageFormat format)
         {
-            return Utils.GetInterop().GetImageDataBuffer(fontface, 1024, unicodeIndex, format);
+            return DirectWrite.GetImageDataBuffer(fontface, 1024, unicodeIndex, format);
         }
 
         private static string GetFileName(
@@ -428,9 +428,9 @@ namespace CharacterMap.Core
             var scheme = ResourceHelper.AppSettings.ExportNamingScheme;
             var interop = Utils.GetInterop();
 
-            if (interop.IsFontLocal(variant.FontFace))
+            if (DirectWrite.IsFontLocal(variant.FontFace))
             {
-                string filePath = GetFileName(interop, variant, scheme);
+                string filePath = GetFileName(variant, scheme);
                 string name = Path.GetFileNameWithoutExtension(filePath);
                 string ext = Path.GetExtension(filePath);
 
@@ -438,7 +438,7 @@ namespace CharacterMap.Core
                 {
                     try
                     {
-                        bool success = await TryWriteToFileAsync(interop, variant, file);
+                        bool success = await TryWriteToFileAsync(variant, file);
                         Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(success, file)));
                         return;
                     }
@@ -463,7 +463,6 @@ namespace CharacterMap.Core
             {
                 await Task.Run(async () =>
                 {
-                    var interop = Utils.GetInterop();
                     ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
 
                     using var i = await file.OpenStreamForWriteAsync();
@@ -472,12 +471,12 @@ namespace CharacterMap.Core
                     using ZipArchive z = new ZipArchive(i, ZipArchiveMode.Create);
                     foreach (var font in fonts)
                     {
-                        if (interop.IsFontLocal(font.FontFace))
+                        if (DirectWrite.IsFontLocal(font.FontFace))
                         {
-                            string fileName = GetFileName(interop, font, scheme);
+                            string fileName = GetFileName(font, scheme);
                             ZipArchiveEntry entry = z.CreateEntry(fileName);
                             using IOutputStream s = entry.Open().AsOutputStream();
-                            await interop.WriteToStreamAsync(font.FontFace, s);
+                            await DirectWrite.WriteToStreamAsync(font.FontFace, s);
                         }
                     }
                 });
@@ -505,16 +504,15 @@ namespace CharacterMap.Core
             {
                 await Task.Run(async () =>
                 {
-                    var interop = Utils.GetInterop();
                     ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
 
                     foreach (var font in fonts)
                     {
-                        if (interop.IsFontLocal(font.FontFace))
+                        if (DirectWrite.IsFontLocal(font.FontFace))
                         {
-                            string fileName = GetFileName(interop, font, scheme);
+                            string fileName = GetFileName(font, scheme);
                             StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-                            await TryWriteToFileAsync(interop, font, file);
+                            await TryWriteToFileAsync(font, file);
                         }
                     }
                 });
@@ -523,7 +521,7 @@ namespace CharacterMap.Core
             }
         }
 
-        private static async Task<bool> TryWriteToFileAsync(Interop i, FontVariant font, StorageFile file)
+        private static async Task<bool> TryWriteToFileAsync(FontVariant font, StorageFile file)
         {
             try
             {
@@ -531,7 +529,7 @@ namespace CharacterMap.Core
                 s.Size = 0;
 
                 using IOutputStream o = s.GetOutputStreamAt(0);
-                await i.WriteToStreamAsync(font.FontFace, o);
+                await DirectWrite.WriteToStreamAsync(font.FontFace, o);
                 return true;
             }
             catch { }
@@ -539,12 +537,12 @@ namespace CharacterMap.Core
             return false;
         }
 
-        private static string GetFileName(Interop interop, FontVariant font, ExportNamingScheme scheme)
+        private static string GetFileName(FontVariant font, ExportNamingScheme scheme)
         {
             string fileName = null;
             string ext = ".ttf";
             
-            var src = interop.GetFileName(font.FontFace);
+            var src = DirectWrite.GetFileName(font.FontFace);
             if (!string.IsNullOrWhiteSpace(src))
                 ext = Path.GetExtension(src);
 

@@ -12,6 +12,7 @@ using System.Text;
 
 namespace CharacterMap.Core
 {
+    [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
     public partial class FontVariant : IDisposable
     {
         /* Use a character cache avoids a lot of unnecessary allocations */

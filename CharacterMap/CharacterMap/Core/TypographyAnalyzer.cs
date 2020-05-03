@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using Humanizer;
+using CharacterMapCX;
 
 namespace CharacterMap.Core
 {
@@ -154,11 +155,7 @@ namespace CharacterMap.Core
                 // using the feature name.
                 //
                 uint id = (uint)(Feature);
-                DisplayName = ("Custom: ") +
-                    ((char)((id >> 24) & 0xFF)) +
-                    ((char)((id >> 16) & 0xFF)) +
-                    ((char)((id >> 8) & 0xFF)) +
-                    ((char)((id >> 0) & 0xFF));
+                DisplayName = DirectWrite.GetTagName(id);
             }
         }
 

@@ -328,6 +328,7 @@ namespace CharacterMap.ViewModels
                         layout.Options = CanvasDrawTextOptions.EnableColorFont;
                         ApplyEffectiveTypography(layout);
                         SelectedVariantAnalysis = _interop.AnalyzeFontLayout(layout, variant.FontFace);
+                        var axis = DirectWrite.GetNamedAxisValues(variant.FontFace).ToDictionary(a => a.Name, b => b.Values.ToList());
                         HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     }
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;

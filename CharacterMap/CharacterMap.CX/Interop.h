@@ -10,6 +10,8 @@
 #include "DWriteProperties.h"
 #include "DWriteFontFace.h"
 #include "DWriteFontSet.h"
+#include "DWriteFontAxis.h"
+#include "DWriteFontAxisAttribute.h"
 #include "PathData.h"
 #include "GlyphImageFormat.h"
 
@@ -20,6 +22,7 @@ using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::Storage::Streams;
+using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {
@@ -33,35 +36,13 @@ namespace CharacterMapCX
 
         Interop(CanvasDevice^ device);
 
-		/// <summary>
-		/// Verifies if a font file actually contains a font(s) usable by the system.
-		/// </summary>
-		bool HasValidFonts(Uri^ uri);
-		
-		/// <summary>
-		/// Verifies if a font is actually completely on a users system. Some cloud fonts may only be partially downloaded.
-		/// </summary>
-		bool IsFontLocal(CanvasFontFace^ fontFace);
-
-		/// <summary>
-		/// Writes the underlying source file of a FontFace to a stream. 
-		/// </summary>
-		IAsyncOperation<bool>^ WriteToStreamAsync(CanvasFontFace^ fontFace, IOutputStream^ stream);
-
-		/// <summary>
-		/// Get a buffer representing an SVG or Bitmap image glyph. SVG glyphs may be compressed.
-		/// </summary>
-		IBuffer^ GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format);
-
 		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace);
-		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
-		IVectorView<PathData^>^ GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
-		Platform::String^ GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie);
 
-		/// <summary>
-		/// Attempts to get the source filename of a font. Will return NULL for cloud fonts.
-		/// </summary>
-		Platform::String^ GetFileName(CanvasFontFace^ fontFace);
+		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
+
+		IVectorView<PathData^>^ GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
+
+		Platform::String^ GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie);
 
 		/// <summary>
 		/// Returns an SVG-Path syntax compatible representation of the Canvas Text Geometry.
@@ -69,19 +50,10 @@ namespace CharacterMapCX
 		PathData^ GetPathData(CanvasGeometry^ geometry);
 
 		DWriteFontSet^ GetSystemFonts();
-		__inline DWriteFontSet^ GetFonts(Uri^ uri);
-		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
 
 	private:
-		__inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
-		__inline DWriteProperties^ GetDWriteProperties(ComPtr<IDWriteFontSet3> fontSet, UINT index, ComPtr<IDWriteFontFaceReference1> faceRef, int ls, wchar_t* locale);
-		__inline DWriteProperties^ GetDWriteProperties(CanvasFontSet^ fontSet, UINT index);
-		__inline String^ GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale);
-		
-		__inline bool IsLocalFont(ComPtr<IDWriteFontFileLoader> loader, const void* refKey, uint32 size);
 
 		IAsyncAction^ ListenForFontSetExpirationAsync();
-
 
 		bool m_isFontSetStale = true;
 		ComPtr<IDWriteFontSet3> m_systemFontSet;
