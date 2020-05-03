@@ -69,5 +69,21 @@ namespace CharacterMap.Core
 
         #endregion
 
+        #region ICON
+
+        public static IconElement GetIcon(DependencyObject obj)
+        {
+            return (IconElement)obj.GetValue(IconProperty);
+        }
+
+        public static void SetIcon(DependencyObject obj, IconElement value)
+        {
+            obj.SetValue(IconProperty, value);
+        }
+
+        public static readonly DependencyProperty IconProperty =
+            DependencyProperty.RegisterAttached("Icon", typeof(IconElement), typeof(Properties), new PropertyMetadata(null));
+
+        #endregion
     }
 }

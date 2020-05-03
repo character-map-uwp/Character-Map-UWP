@@ -88,6 +88,19 @@ DWriteFontSet^ Interop::GetFonts(Uri^ uri)
 	return GetFonts(fontSet);
 }
 
+IVectorView<DWriteFontSet^>^ Interop::GetFonts(IVectorView<Uri^>^ uris)
+{
+	Vector<DWriteFontSet^>^ fontSets = ref new Vector<DWriteFontSet^>();
+
+	for (Uri^ uri : uris)
+	{
+		fontSets->Append(GetFonts(uri));
+	}
+
+	return fontSets->GetView();
+}
+
+
 DWriteFontSet^ Interop::GetFonts(ComPtr<IDWriteFontSet3> fontSet)
 {
 	auto vec = ref new Vector<DWriteFontFace^>();
@@ -143,9 +156,12 @@ DWriteProperties^ Interop::GetDWriteProperties(
 
 	// The following is known to fail if Microsoft Office with cloud fonts
 	// is currently running on the users system. 
-	ComPtr<IDWriteFontFace3> face;
-	if (faceRef->CreateFontFace(&face) == S_OK)
+	ComPtr<IDWriteFontFace3> f3;
+	if (faceRef->CreateFontFace(&f3) == S_OK)
 	{
+		ComPtr<IDWriteFontFace5> face;
+		f3.As(&face);
+
 		// 2. Attempt to get FAMILY locale index
 		String^ family = nullptr;
 		ComPtr<IDWriteLocalizedStrings> names;
@@ -158,7 +174,7 @@ DWriteProperties^ Interop::GetDWriteProperties(
 		if (SUCCEEDED(face->GetFaceNames(&names)))
 			fname = GetLocaleString(names, ls, locale);
 
-		return ref new DWriteProperties(fontSource, nullptr, family, fname, face->IsColorFont());
+		return ref new DWriteProperties(fontSource, nullptr, family, fname, face->IsColorFont(),face->HasVariations());
 	};
 
 	return nullptr;
@@ -199,8 +215,10 @@ DWriteProperties^ Interop::GetDWriteProperties(CanvasFontSet^ fontSet, UINT inde
 
 	auto fontFace = fontSet->Fonts->GetAt(index);
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-	ComPtr<IDWriteFontFace3> face;
-	faceRef->CreateFontFace(&face);
+	ComPtr<IDWriteFontFace3> f3;
+	ComPtr<IDWriteFontFace5> face;
+	faceRef->CreateFontFace(&f3);
+	f3.As(&face);
 
 	// 2. Get Font Provider Name
 	Platform::String^ sourceName = nullptr;
@@ -215,7 +233,7 @@ DWriteProperties^ Interop::GetDWriteProperties(CanvasFontSet^ fontSet, UINT inde
 		}
 	}*/
 
-	return ref new DWriteProperties(fontSource, sourceName, nullptr, nullptr, face->IsColorFont());
+	return ref new DWriteProperties(fontSource, sourceName, nullptr, nullptr, face->IsColorFont(), face->HasVariations());
 }
 
 IBuffer^ Interop::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format)

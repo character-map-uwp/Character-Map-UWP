@@ -360,8 +360,8 @@ namespace CharacterMap.Views
                 else
                 {
                     FontSourceSeperator.Visibility = Visibility.Visible;
-                    CloudFontsOption.Visibility = FontFinder.HasRemoteFonts ? Visibility.Visible : Visibility.Collapsed;
-                    AppxOption.Visibility = FontFinder.HasAppxFonts ? Visibility.Visible : Visibility.Collapsed;
+                    CloudFontsOption.SetVisible(FontFinder.HasRemoteFonts);
+                    AppxOption.SetVisible(FontFinder.HasAppxFonts);
                 }
 
                 void SetCommand(MenuFlyoutItemBase b, ICommand c)

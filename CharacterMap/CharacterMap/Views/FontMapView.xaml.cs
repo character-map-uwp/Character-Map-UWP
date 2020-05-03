@@ -5,32 +5,23 @@ using CharacterMap.ViewModels;
 using CommonServiceLocator;
 using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
-using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
-using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using CharacterMap.Models;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.ComponentModel;
 using Windows.UI.Core;
-using CharacterMap.Annotations;
 using CharacterMap.Controls;
-using CharacterMapCX;
 
 namespace CharacterMap.Views
 {
@@ -287,15 +278,22 @@ namespace CharacterMap.Views
             RunOnUI(() =>
             {
                 if (ViewModel.Settings.ShowDevUtils)
-                { 
+                {
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
                         Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
 
-                    VisualStateManager.GoToState(this,
-                        ViewModel.Settings.DevToolsLanguage == 0 ? nameof(DevXamlState) : nameof(DevCSharpState), true);
+                    string state = ViewModel.Settings.DevToolsLanguage switch
+                    {
+                        0 => nameof(DevXamlState),
+                        1 => nameof(DevCSharpState),
+                        2 => nameof(DevUnicodeState),
+                        _ => nameof(DevHiddenState)
+                    };
+                    
+                    VisualStateManager.GoToState(this, state, animate);
                 }
                 else
-                    VisualStateManager.GoToState(this, nameof(DevHiddenState), true);
+                    VisualStateManager.GoToState(this, nameof(DevHiddenState), animate);
             });
         }
 
@@ -434,8 +432,8 @@ namespace CharacterMap.Views
             }
             else
             {
-                if (ViewModel.Settings.DevToolsLanguage == 0)
-                    ViewModel.Settings.DevToolsLanguage = 1;
+                if (ViewModel.Settings.DevToolsLanguage < 1)
+                    ViewModel.Settings.DevToolsLanguage += 1;
                 else
                 {
                     ViewModel.Settings.ShowDevUtils = false;

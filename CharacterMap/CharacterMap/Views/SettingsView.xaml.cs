@@ -43,6 +43,13 @@ namespace CharacterMap.Views
 
         public bool IsOpen { get; private set; }
 
+        private bool _isCollectionExportEnabled = true;
+        public bool IsCollectionExportEnabled
+        {
+            get => _isCollectionExportEnabled;
+            set => Set(ref _isCollectionExportEnabled, value);
+        }
+
         private GridLength _titleBarHeight = new GridLength(32);
         public GridLength TitleBarHeight
         {
@@ -62,12 +69,15 @@ namespace CharacterMap.Views
             Settings = ResourceHelper.AppSettings;
             FontCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
             Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsUpdated);
+            Messenger.Default.Register<FontListCreatedMessage>(this, _ => UpdateExport());
 
             this.InitializeComponent();
             Composition.SetupOverlayPanelAnimation(this);
 
-            RbLanguage.ItemsSource = new List<String> { "XAML", "C#" };
+            RbLanguage.ItemsSource = new List<String> { "XAML", "C#" }; // - WIP - , "Unicode" };
             RbLanguage.SelectedIndex = Settings.DevToolsLanguage;
+
+            FontNamingSelection.SelectedIndex = (int)Settings.ExportNamingScheme;
 
             SupportedLanguages = new List<SupportedLanguage>(
                 ApplicationLanguages.ManifestLanguages.
@@ -98,11 +108,20 @@ namespace CharacterMap.Views
             });
         }
 
+        private void UpdateExport()
+        {
+            this.RunOnUI(() =>
+            {
+                ImportedExportPanel.SetVisible(FontFinder.ImportedFonts.Count > 0);
+            });
+        }
+
         public void Show(FontVariant variant, InstalledFont font)
         {
             if (IsOpen)
                 return;
 
+            MenuItem_Clicked(MenuColumn.Children.First(), null);
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
@@ -141,6 +160,7 @@ namespace CharacterMap.Views
             
             // 3. Set correct Developer features language
             UpdateDevTools();
+            UpdateExport();
 
             IsOpen = true;
         }
@@ -156,18 +176,18 @@ namespace CharacterMap.Views
             if (!Composition.UISettings.AnimationsEnabled)
                 return;
 
-            List<UIElement> elements = new List<UIElement> { this };
-            elements.AddRange(LeftPanel.Children);
+            List<UIElement> elements = new List<UIElement> { this, MenuColumn, ContentBorder };
+            //elements.AddRange(LeftPanel.Children);
             Composition.PlayEntrance(elements, 0, 200);
 
-            elements.Clear();
-            elements.AddRange(RightPanel.Children);
-            Composition.PlayEntrance(elements, 0, 200);
+            //elements.Clear();
+            //elements.AddRange(RightPanel.Children);
+            //Composition.PlayEntrance(elements, 0, 200);
         }
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(ContentScroller, 40, TitleBackground);
+            Composition.SetThemeShadow(ContentRoot, 40, TitleBackground);
 
             // Set the settings that can't be set with bindings
             switch (Settings.UserRequestedTheme)
@@ -187,6 +207,11 @@ namespace CharacterMap.Views
                 UseActualFont.IsChecked = true;
             else
                 UseSystemFont.IsChecked = true;
+        }
+
+        private void View_Loaded(object sender, RoutedEventArgs e)
+        {
+            MenuItem_Clicked(MenuColumn.Children.First(), null);
 
         }
 
@@ -213,6 +238,11 @@ namespace CharacterMap.Views
         private void ThemeSystem_Checked(object sender, RoutedEventArgs e)
         {
             Settings.UserRequestedTheme = ElementTheme.Default;
+        }
+
+        private void FontNamingSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Settings.ExportNamingScheme = (ExportNamingScheme)((RadioButtons)sender).SelectedIndex;
         }
 
         private void RadioButtons_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -247,6 +277,39 @@ namespace CharacterMap.Views
         public void SelectedLanguageToString(object selected) => 
             Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "en-US";
 
+        private void MenuItem_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button item
+               && item.Tag is Panel panel
+               && panel.Visibility == Visibility.Collapsed)
+            {
+                foreach (var child in MenuColumn.Children.OfType<Button>())
+                    VisualStateManager.GoToState(child, "NotSelectedState", true);
+
+                foreach (var child in ContentPanel.Children.OfType<FrameworkElement>())
+                    child.Visibility = Visibility.Collapsed;
+
+                ContentScroller.ChangeView(null, 0, null, true);
+
+                VisualStateManager.GoToState(item, "SelectedState", true);
+                Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 140);
+                panel.Visibility = Visibility.Visible;
+            }
+        }
+
+        internal async void ExportAsZip()
+        {
+            IsCollectionExportEnabled = false;
+            try { await ExportManager.ExportFontsAsZipAsync(FontFinder.GetImportedVariants(), Localization.Get("OptionImportedFonts/Text")); }
+            finally { IsCollectionExportEnabled = true; }
+        }
+
+        internal async void ExportToFolder()
+        {
+            IsCollectionExportEnabled = false;
+            try { await ExportManager.ExportFontsToFolderAsync(FontFinder.GetImportedVariants()); }
+            finally { IsCollectionExportEnabled = true; }
+        }
 
 
 

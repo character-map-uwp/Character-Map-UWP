@@ -69,7 +69,8 @@ namespace CharacterMapCX
 		PathData^ GetPathData(CanvasGeometry^ geometry);
 
 		DWriteFontSet^ GetSystemFonts();
-		DWriteFontSet^ GetFonts(Uri^ uri);
+		__inline DWriteFontSet^ GetFonts(Uri^ uri);
+		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
 
 	private:
 		__inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);

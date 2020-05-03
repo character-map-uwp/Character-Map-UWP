@@ -7,8 +7,10 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMapCX;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using Windows.Storage;
 using Windows.UI.Text;
 
@@ -41,7 +43,8 @@ namespace CharacterMap.Core
 
         private static StorageFolder _importFolder => ApplicationData.Current.LocalFolder;
 
-        public static List<InstalledFont> Fonts { get; private set; }
+        public static IReadOnlyList<InstalledFont> Fonts         { get; private set; }
+        public static IReadOnlyList<InstalledFont> ImportedFonts { get; private set; }
 
         public static InstalledFont DefaultFont { get; private set; }
 
@@ -75,14 +78,7 @@ namespace CharacterMap.Core
                         && f.FontFace.Style == FontStyle.Normal);
 
                     if (segoe != null)
-                    {
-                        DefaultFont = new InstalledFont
-                        {
-                            Name = "",
-                            FontFace = segoe.FontFace,
-                            Variants = new List<FontVariant> { FontVariant.CreateDefault(segoe.FontFace) }
-                        };
-                    }
+                        DefaultFont = InstalledFont.CreateDefault(segoe);
                 }
             }
             finally
@@ -92,7 +88,6 @@ namespace CharacterMap.Core
 
             return systemFonts;
         }
-
         public static Task LoadFontsAsync()
         {
             Fonts = null;
@@ -105,45 +100,80 @@ namespace CharacterMap.Core
                 await _loadSemaphore.WaitAsync().ConfigureAwait(false);
 
                 var interop = SimpleIoc.Default.GetInstance<Interop>();
+                var files = await _importFolder.GetFilesAsync().AsTask().ConfigureAwait(false);
+
                 var resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
 
-                /* Add all system fonts */
-                foreach(var font in systemFonts.Fonts)
-                {
-                    AddFont(resultList, font, interop);
-                }
-
                 /* Add imported fonts */
-                var files = await _importFolder.GetFilesAsync().AsTask().ConfigureAwait(false);
-                foreach (var file in files.OfType<StorageFile>())
+                IReadOnlyList<DWriteFontSet> sets = interop.GetFonts(files.Select(f => new Uri(GetAppPath(f))).ToList());
+                for (int i = 0; i < files.Count; i++)
                 {
+                    var file = files[i];
                     if (_ignoredFonts.Contains(file.Name))
                         continue;
 
-                    var importedFonts = interop.GetFonts(new Uri(GetAppPath(file)));
+                    DWriteFontSet importedFonts = sets[i];
                     UpdateMeta(importedFonts);
-                    foreach (var font in importedFonts.Fonts)
+                    foreach (DWriteFontFace font in importedFonts.Fonts)
                     {
-                        AddFont(resultList, font, interop, file);
+                        AddFont(resultList, font, file);
                     }
                 }
 
+                var imports = resultList.ToDictionary(d => d.Key, v => v.Value.Clone());
+
+                /* Add all system fonts */
+                foreach (var font in systemFonts.Fonts)
+                    AddFont(resultList, font);
+                
+
                 /* Order everything appropriately */
-                Fonts = resultList.OrderBy(f => f.Key).Select(f =>
-                {
-                    f.Value.Variants = f.Value.Variants.OrderBy(v => v.FontFace.Weight.Weight).ToList();
-                    return f.Value;
-                }).ToList();
+                Fonts = CreateFontList(resultList);
+                ImportedFonts = CreateFontList(imports);
 
                 _loadSemaphore.Release();
+
+                Messenger.Default.Send(new FontListCreatedMessage());
             });
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static Dictionary<string, InstalledFont> CreateFontCollection(Interop interop, IReadOnlyList<DWriteFontFace> fonts)
+        {
+            var resultList = new Dictionary<string, InstalledFont>(fonts.Count);
+
+            /* Add all system fonts */
+            foreach (var font in fonts)
+            {
+                AddFont(resultList, font);
+            }
+
+            return resultList;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static List<InstalledFont> CreateFontList(Dictionary<string, InstalledFont> fonts)
+        {
+            return fonts.OrderBy(f => f.Key).Select(f =>
+            {
+                f.Value.SortVariants();
+                return f.Value;
+            }).ToList();
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void UpdateMeta(DWriteFontSet set)
         {
             HasRemoteFonts = HasRemoteFonts || set.CloudFontCount > 0;
             HasAppxFonts = HasAppxFonts || set.AppxFontCount > 0;
+        }
+
+        internal static List<FontVariant> GetImportedVariants()
+        {
+            return Fonts.Where(f => f.HasImportedFiles)
+                        .SelectMany(f => f.Variants.Where(v => v.IsImported))
+                        .ToList();
         }
 
         /* 
@@ -153,7 +183,6 @@ namespace CharacterMap.Core
         private static void AddFont(
             IDictionary<string, InstalledFont> fontList,
             DWriteFontFace font,
-            Interop interop = null,
             StorageFile file = null)
         {
             try
@@ -164,22 +193,11 @@ namespace CharacterMap.Core
                     /* Check if we already have a listing for this fontFamily */
                     if (fontList.TryGetValue(familyName, out var fontFamily))
                     {
-                        var variant = new FontVariant(font.FontFace, file, font.Properties);
-                        if (file != null)
-                            fontFamily.HasImportedFiles = true;
-
-                        fontFamily.Variants.Add(variant);
+                        fontFamily.AddVariant(font);
                     }
                     else
                     {
-                        fontList[familyName] = new InstalledFont
-                        {
-                            Name = familyName,
-                            IsSymbolFont = font.FontFace.IsSymbolFont,
-                            FontFace = font.FontFace,
-                            Variants = new List<FontVariant> { new FontVariant(font.FontFace, file, font.Properties) },
-                            HasImportedFiles = file != null
-                        };
+                        fontList[familyName] = new InstalledFont(familyName, font, file);
                     }
                 }
             }
@@ -231,7 +249,7 @@ namespace CharacterMap.Core
                     {
                         // TODO : What do we do if a font with the same file name already exists?
 
-                        /* Explicilty not using StorageFile/Folder API's here because there
+                        /* Explicitly not using StorageFile/Folder API's here because there
                          * are some strange import bugs when checking a file exists */
                         if (!File.Exists(Path.Combine(_importFolder.Path, file.Name)))
                         {
@@ -288,14 +306,13 @@ namespace CharacterMap.Core
         internal static async Task<bool> RemoveFontAsync(InstalledFont font)
         {
             Fonts = null;
-            font.FontFace = null;
-            var variants = font.Variants.Where(v => v.IsImported).ToList();
+            font.PrepareForDelete();
 
+            var variants = font.Variants.Where(v => v.IsImported).ToList();
             var success = true;
 
             foreach (var variant in variants)
             {
-                font.Variants.Remove(variant);
                 variant.Dispose();
 
                 GC.Collect(); // required to prevent "File in use" exception
@@ -412,7 +429,7 @@ namespace CharacterMap.Core
             var fontSet = interop.GetFonts(new Uri(GetAppPath(localFile)));
             foreach (var font in fontSet.Fonts)
             {
-                AddFont(resultList, font, interop, localFile);
+                AddFont(resultList, font, localFile);
             }
 
             GC.Collect();

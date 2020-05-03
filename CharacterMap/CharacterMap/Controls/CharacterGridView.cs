@@ -339,7 +339,7 @@ namespace CharacterMap.Controls
                     {
                         TextBlock tb = (TextBlock)g.Children[1];
                         tb.Text = c.GetAnnotation(value);
-                        tb.Visibility = value != GlyphAnnotation.None ? Visibility.Visible : Visibility.Collapsed;
+                        tb.SetVisible(value != GlyphAnnotation.None);
                     }
                 }
             }
