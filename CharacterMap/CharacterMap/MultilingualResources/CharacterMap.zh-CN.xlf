@@ -1021,7 +1021,7 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="translated">从文件资源管理器中拖放文件到此处以导入</target>
         </trans-unit>
         <trans-unit id="ImportDragDropLabel.Text" translate="yes" xml:space="preserve">
-          <source>Drop and drop to import</source>
+          <source>Drag and drop to import</source>
           <target state="translated">拖拽以导入</target>
         </trans-unit>
         <trans-unit id="SettingsExportImportedLabel.Text" translate="yes" xml:space="preserve">
