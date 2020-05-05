@@ -754,8 +754,8 @@
                                 </StackPanel>
 
                                 <StackPanel Margin="0 12 0 0">
-                                    <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/EdiWang/UWP-CharacterMap" />
-                                    <HyperlinkButton x:Uid="BtnContributors" NavigateUri="https://github.com/EdiWang/Character-Map-UWP/graphs/contributors" />
+                                    <HyperlinkButton Content="GitHub" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP" />
+                                    <HyperlinkButton x:Uid="BtnContributors" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/graphs/contributors" />
                                 </StackPanel>
 
                                 <StackPanel>
