@@ -858,7 +858,7 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>Drag files from File Explorer or your desktop and drop them here to import them.</value>
   </data>
   <data name="ImportDragDropLabel.Text" xml:space="preserve">
-    <value>Drop and drop to import</value>
+    <value>Drag and drop to import</value>
   </data>
   <data name="SettingsAboutLabel.Text" xml:space="preserve">
     <value>About</value>

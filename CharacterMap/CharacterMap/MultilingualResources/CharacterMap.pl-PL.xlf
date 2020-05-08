@@ -1016,8 +1016,8 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="new">Drag files from File Explorer or your desktop and drop them here to import them.</target>
         </trans-unit>
         <trans-unit id="ImportDragDropLabel.Text" translate="yes" xml:space="preserve">
-          <source>Drop and drop to import</source>
-          <target state="new">Drop and drop to import</target>
+          <source>Drag and drop to import</source>
+          <target state="new">Drag and drop to import</target>
         </trans-unit>
         <trans-unit id="SettingsExportImportedLabel.Text" translate="yes" xml:space="preserve">
           <source>Export all imported fonts</source>
