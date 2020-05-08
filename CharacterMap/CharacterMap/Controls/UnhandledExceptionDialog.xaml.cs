@@ -44,7 +44,7 @@ namespace CharacterMap.Controls
             sb.AppendLine($"**App Culture**: {SystemInformation.Culture.Name}");
 
             Utils.CopyToClipBoard(sb.ToString());
-            var uri = new Uri("https://github.com/EdiWang/Character-Map-UWP/issues/new");
+            var uri = new Uri("https://github.com/character-map-uwp/Character-Map-UWP/issues/new");
             _ = Launcher.LaunchUriAsync(uri);
         }
     }
