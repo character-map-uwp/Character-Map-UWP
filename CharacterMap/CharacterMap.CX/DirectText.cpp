@@ -27,6 +27,7 @@ using namespace Windows::Graphics::DirectX;
 using namespace Windows::Graphics::DirectX::Direct3D11;
 using namespace Microsoft::Graphics::Canvas::UI::Composition;
 
+DependencyProperty^ DirectText::_AxisProperty = nullptr;
 DependencyProperty^ DirectText::_UnicodeIndexProperty = nullptr;
 DependencyProperty^ DirectText::_TextProperty = nullptr;
 DependencyProperty^ DirectText::_FontFaceProperty = nullptr;
@@ -131,6 +132,18 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         format->FontStretch = FontStretch;
         format->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
 
+        if (Axis->Size > 0)
+        {
+            DWRITE_FONT_AXIS_VALUE* values = new DWRITE_FONT_AXIS_VALUE[Axis->Size];
+            for (int i = 0; i < Axis->Size; i++)
+            {
+                values[i] = Axis->GetAt(i)->GetDWriteValue();
+            }
+
+            ComPtr<IDWriteTextFormat3> dformat = GetWrappedResource< IDWriteTextFormat3>(format);
+            dformat->SetFontAxisValues(values, Axis->Size);
+        }
+
         auto typography = ref new CanvasTypography();
 
         if (Typography->Feature != CanvasTypographyFeatureName::None)
@@ -140,6 +153,10 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         auto layout = ref new CanvasTextLayout(device, text, format, device->MaximumBitmapSizeInPixels, device->MaximumBitmapSizeInPixels);
         layout->SetTypography(0, layout->LineMetrics[0].CharacterCount, typography);
         layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
+
+
+       
+
 
         m_layout = layout;
         m_render = true;

@@ -192,6 +192,7 @@
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DirectTextBlock.cs" />
     <Compile Include="Controls\FontMapPrintPage.xaml.cs">
       <DependentUpon>FontMapPrintPage.xaml</DependentUpon>
     </Compile>

@@ -1,12 +1,11 @@
+#pragma once
 #include "pch.h"
 #include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_2.h>
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include "CanvasTextLayoutAnalysis.h"
-#include "DirectWrite.h"
-#include "DWriteFontAxis.h"
-#include "DWriteFontSet.h"
+
 #include "DWriteNamedFontAxisValue.h"
 #include "DWriteKnownFontAxisValues.h"
 
@@ -89,13 +88,7 @@ String^ DirectWrite::GetTagName(String^ tag)
 /// </summary>
 String^ DirectWrite::GetFeatureTag(UINT32 value)
 {
-	wchar_t buffer[] = L"    ";
-	buffer[3] = (wchar_t)((value >> 24) & 0xFF);
-	buffer[2] = (wchar_t)((value >> 16) & 0xFF);
-	buffer[1] = (wchar_t)((value >> 8) & 0xFF);
-	buffer[0] = (wchar_t)((value >> 0) & 0xFF);
-
-	return ref new String(buffer);
+	return GetOpenTypeFeatureTag(value);
 }
 
 
@@ -166,7 +159,7 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 			def, 
 			values[i], 
 			//instances->GetView(), 
-			GetFeatureTag(def.axisTag));
+			def.axisTag);
 
 		items->Append(item);
 	}

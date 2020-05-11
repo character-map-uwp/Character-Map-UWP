@@ -735,6 +735,10 @@ namespace CharacterMap.Views
             }
         }
 
+        private void Slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            ViewModel.UpdateVariations();
+        }
     }
 
 

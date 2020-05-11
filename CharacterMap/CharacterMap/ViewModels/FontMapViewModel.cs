@@ -135,6 +135,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _chars, value);
         }
 
+        private IReadOnlyList<DWriteFontAxis> _variationAxis;
+        public IReadOnlyList<DWriteFontAxis> VariationAxis
+        {
+            get => _variationAxis;
+            set => Set(ref _variationAxis, value);
+        }
+
         private FontFamily _fontFamily;
         public FontFamily FontFamily
         {
@@ -328,6 +335,7 @@ namespace CharacterMap.ViewModels
                         layout.Options = CanvasDrawTextOptions.EnableColorFont;
                         ApplyEffectiveTypography(layout);
                         SelectedVariantAnalysis = _interop.AnalyzeFontLayout(layout, variant.FontFace);
+                        UpdateVariations();
                         var axis = DirectWrite.GetNamedAxisValues(variant.FontFace).ToDictionary(a => a.Name, b => b.Values.ToList());
                         HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     }
@@ -362,6 +370,11 @@ namespace CharacterMap.ViewModels
                         LoadChars(variant);
                 });
             }
+        }
+
+        internal void UpdateVariations()
+        {
+            VariationAxis = SelectedVariantAnalysis.Axis.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList();
         }
 
         private void UpdateCharAnalysis()

@@ -83,6 +83,15 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 
 	m_axis = DirectWrite::GetAxis(fontFaceRef);
 
+	Vector<DWriteFontAxis^>^ variable = ref new Vector<DWriteFontAxis^>();
+	for each (auto a in m_axis)
+	{
+		if (a->Attribute == DWriteFontAxisAttribute::Variable)
+			variable->Append(a);
+	}
+	m_variableAxis = variable->GetView();
+
+
 	// Get File Size
 	m_fileSize = fontFaceRef->GetFileSize();
 

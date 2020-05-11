@@ -1,5 +1,5 @@
 #pragma once
-
+#include <pch.h>
 #include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_2.h>
 #include <d2d1_3.h>
@@ -34,7 +34,7 @@ namespace CharacterMapCX
 
 		property String^ Tag		{ String^ get() { return m_tag; } }
 
-		property float Value		{ float get() { return m_value; } }
+		property float Value;
 
 		property float Default		{ float get() { return m_defaultValue; } }
 
@@ -53,7 +53,7 @@ namespace CharacterMapCX
 			DWRITE_FONT_AXIS_VALUE def,
 			DWRITE_FONT_AXIS_VALUE value,
 			//IVectorView<DWriteNamedFontAxisValue^>^ instances,
-			String^ tag)
+			UINT32 tag)
 		{
 			m_attribute = static_cast<DWriteFontAxisAttribute>(attribute);
 			//m_instances = instances;
@@ -62,18 +62,29 @@ namespace CharacterMapCX
 			m_maximumValue = range.maxValue;
 			m_defaultValue = def.value;
 
-			m_value = value.value;
-			m_tag = tag;
+			Value = value.value;
+			m_tag = GetOpenTypeFeatureTag(tag);
+			m_tag_raw = tag;
 		};
+
+		DWRITE_FONT_AXIS_VALUE GetDWriteValue()
+		{
+			auto value = DWRITE_FONT_AXIS_VALUE();
+			value.axisTag = static_cast<DWRITE_FONT_AXIS_TAG>(m_tag_raw);
+			value.value = this->Value;
+			return value;
+		}
 
 	private:
 		inline DWriteFontAxis() { };
+
+		
 
 		DWriteFontAxisAttribute m_attribute;
 		//IVectorView<DWriteNamedFontAxisValue^>^ m_instances;
 		String^ m_tag;
 
-		float m_value;
+		UINT32 m_tag_raw = 0;
 		float m_defaultValue;
 		float m_minimumValue;
 		float m_maximumValue;

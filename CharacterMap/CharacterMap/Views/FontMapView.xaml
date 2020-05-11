@@ -4,11 +4,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX"
+    xmlns:cxc="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:views="using:CharacterMap.Views" xmlns:controls1="using:CharacterMapCX.Controls"
+    xmlns:views="using:CharacterMap.Views"
     d:DesignHeight="800"
     d:DesignWidth="1280"
     BorderThickness="0"
@@ -542,6 +544,7 @@
                 Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -564,8 +567,26 @@
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
-                <ScrollViewer
+                <ItemsControl
                     Grid.Row="1"
+                    Margin="12 0"
+                    ItemsSource="{x:Bind ViewModel.SelectedVariantAnalysis.VariableAxis, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="cx:DWriteFontAxis">
+                            <StackPanel>
+                                <Slider
+                                    Header="{x:Bind Tag}"
+                                    Maximum="{x:Bind Maximum}"
+                                    Minimum="{x:Bind Minimum}"
+                                    ValueChanged="Slider_ValueChanged"
+                                    Value="{x:Bind Value, Mode=TwoWay}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ScrollViewer
+                    Grid.Row="2"
                     HorizontalScrollBarVisibility="Auto"
                     HorizontalScrollMode="Enabled"
                     MaxZoomFactor="4"
@@ -595,11 +616,12 @@
                                         FontWeight="Normal"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                         Text="{Binding}" />
-                                    <controls1:DirectText
-                                        Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}"
-                                        FontSize="{Binding}"
+                                    <cxc:DirectText
+                                        Axis="{Binding ElementName=TypeRampRoot, Path=DataContext.VariationAxis}"
                                         FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
-                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
+                                        FontSize="{Binding}"
+                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}"
+                                        Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>

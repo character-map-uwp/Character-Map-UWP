@@ -80,6 +80,11 @@ namespace CharacterMapCX
 			IVectorView<DWriteFontAxis^>^ get() { return m_axis; }
 		}
 
+		property IVectorView<DWriteFontAxis^>^ VariableAxis
+		{
+			IVectorView<DWriteFontAxis^>^ get() { return m_variableAxis; }
+		}
+
 		property IVectorView<GlyphImageFormat>^ GlyphFormats
 		{
 			IVectorView<GlyphImageFormat>^ get() { return m_glyphFormats; }
@@ -105,6 +110,7 @@ namespace CharacterMapCX
 		int m_glyphLayerCount = 1;
 		int m_fileSize = 0;
 		Platform::String^ m_filePath = nullptr;
+		IVectorView<DWriteFontAxis^>^ m_variableAxis;
 		IVectorView<DWriteFontAxis^>^ m_axis;
 		IVectorView<GlyphImageFormat>^ m_glyphFormats;
 		Array<Windows::UI::Color>^ m_colors;

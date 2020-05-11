@@ -5,6 +5,7 @@
 
 #pragma once
 #include "ITypographyInfo.h"
+#include <DWriteFontAxis.h>
 
 
 using namespace Platform;
@@ -44,6 +45,11 @@ namespace CharacterMapCX
 				DependencyProperty^ get() { return _TextProperty; }
 			}
 
+			static property DependencyProperty^ AxisProperty
+			{
+				DependencyProperty^ get() { return _AxisProperty; }
+			}
+
 			static property DependencyProperty^ UnicodeIndexProperty
 			{
 				DependencyProperty^ get() { return _UnicodeIndexProperty; }
@@ -71,6 +77,12 @@ namespace CharacterMapCX
 				void set(String^ value) { SetValue(TextProperty, value); }
 			}
 
+			property IVectorView<DWriteFontAxis^>^ Axis
+			{
+				IVectorView<DWriteFontAxis^>^ get() { return (IVectorView<DWriteFontAxis^>^)GetValue(AxisProperty); }
+				void set(IVectorView<DWriteFontAxis^>^ value) { SetValue(AxisProperty, value); }
+			}
+
 			property CanvasFontFace^ FontFace
 			{
 				CanvasFontFace^ get() { return (CanvasFontFace^)GetValue(FontFaceProperty); }
@@ -87,6 +99,7 @@ namespace CharacterMapCX
 		private:
 			static DependencyProperty^ _UnicodeIndexProperty;
 			static DependencyProperty^ _TextProperty;
+			static DependencyProperty^ _AxisProperty;
 			static DependencyProperty^ _FontFaceProperty;
 			static DependencyProperty^ _TypographyProperty;
 
@@ -133,6 +146,12 @@ namespace CharacterMapCX
 			{
 				_TextProperty = DependencyProperty::Register(
 					"Text", Platform::String::typeid, DirectText::typeid, callback);
+			}
+
+			if (_AxisProperty == nullptr)
+			{
+				_AxisProperty = DependencyProperty::Register(
+					"Axis", IVectorView<DWriteFontAxis^>::typeid, DirectText::typeid, callback);
 			}
 
 			if (_FontFaceProperty == nullptr)
