@@ -172,6 +172,7 @@
                                         <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseDecorativeFonts}" />
                                         <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseScriptFonts}" />
                                         <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.MonospacedFonts}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.VariableFonts}" />
                                         <MenuFlyoutSubItem FontSize="16" Text="Emoji">
                                             <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiAll}" />
                                             <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiEmoticons}" />

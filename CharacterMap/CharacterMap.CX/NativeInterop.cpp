@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Interop.h"
+#include "NativeInterop.h"
 #include "CanvasTextLayoutAnalysis.h"
 #include "DWriteFontSource.h"
 #include <string>
@@ -20,7 +20,7 @@ using namespace Windows::Foundation::Numerics;
 using namespace concurrency;
 
 
-Interop::Interop(CanvasDevice^ device)
+NativeInterop::NativeInterop(CanvasDevice^ device)
 {
 	DWriteCreateFactory(DWRITE_FACTORY_TYPE::DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory7), &m_dwriteFactory);
 
@@ -41,7 +41,7 @@ Interop::Interop(CanvasDevice^ device)
 		&m_d2dContext);
 }
 
-IAsyncAction^ Interop::ListenForFontSetExpirationAsync()
+IAsyncAction^ NativeInterop::ListenForFontSetExpirationAsync()
 {
 	return create_async([this]
 		{
@@ -56,7 +56,7 @@ IAsyncAction^ Interop::ListenForFontSetExpirationAsync()
 		});
 }
 
-DWriteFontSet^ Interop::GetSystemFonts()
+DWriteFontSet^ NativeInterop::GetSystemFonts()
 {
 	if (m_isFontSetStale)
 	{
@@ -83,7 +83,7 @@ DWriteFontSet^ Interop::GetSystemFonts()
 	return m_appFontSet;
 }
 
-Platform::String^ Interop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie)
+Platform::String^ NativeInterop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie)
 {
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
 	ComPtr<IDWriteFontFace3> face;
@@ -117,7 +117,7 @@ Platform::String^ Interop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphInd
 	return sink->GetPathData();
 }
 
-IVectorView<PathData^>^ Interop::GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies)
+IVectorView<PathData^>^ NativeInterop::GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies)
 {
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
 	ComPtr<IDWriteFontFace3> face;
@@ -179,7 +179,7 @@ IVectorView<PathData^>^ Interop::GetPathDatas(CanvasFontFace^ fontFace, const Pl
 	return paths->GetView();
 }
 
-PathData^ Interop::GetPathData(CanvasGeometry^ geometry)
+PathData^ NativeInterop::GetPathData(CanvasGeometry^ geometry)
 {
 	ComPtr<ID2D1GeometryGroup> geom = GetWrappedResource<ID2D1GeometryGroup>(geometry);
 	ComPtr<SVGGeometrySink> sink = new (std::nothrow) SVGGeometrySink();
@@ -212,7 +212,7 @@ PathData^ Interop::GetPathData(CanvasGeometry^ geometry)
 	return data;
 }
 
-CanvasTextLayoutAnalysis^ Interop::AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace)
+CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace)
 {
 	ComPtr<IDWriteTextLayout4> context = GetWrappedResource<IDWriteTextLayout4>(layout);
 
@@ -228,7 +228,7 @@ CanvasTextLayoutAnalysis^ Interop::AnalyzeFontLayout(CanvasTextLayout^ layout, C
 }
 
 
-CanvasTextLayoutAnalysis^ Interop::AnalyzeCharacterLayout(CanvasTextLayout^ layout)
+CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(CanvasTextLayout^ layout)
 {
 	ComPtr<IDWriteTextLayout4> context = GetWrappedResource<IDWriteTextLayout4>(layout);
 

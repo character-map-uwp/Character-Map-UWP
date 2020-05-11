@@ -34,7 +34,7 @@ namespace CharacterMap.ViewModels
     {
         #region Properties
 
-        private Interop _interop { get; }
+        private NativeInterop _interop { get; }
 
         private Debouncer _searchDebouncer { get; }
 
@@ -122,7 +122,7 @@ namespace CharacterMap.ViewModels
                     FontFamily = value == null ? null : new FontFamily(value.Source);
                     LoadChars(value);
                     RaisePropertyChanged();
-                    SelectedTypography = value?.XamlTypographyFeatures?.FirstOrDefault();
+                    SelectedTypography = value?.XamlTypographyFeatures?.FirstOrDefault() ?? TypographyFeatureInfo.None;
                     SetDefaultChar();
                 }
             }
@@ -298,7 +298,7 @@ namespace CharacterMap.ViewModels
             CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<ExportStyle>(async (b) => await SaveSvgAsync(b));
 
-            _interop = SimpleIoc.Default.GetInstance<Interop>();
+            _interop = Utils.GetInterop();
 
             _searchDebouncer = new Debouncer();
             _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();

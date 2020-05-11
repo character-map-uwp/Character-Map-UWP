@@ -8,17 +8,22 @@
     <Filter Include="DWrite">
       <UniqueIdentifier>{0d3a2023-5d62-4d35-a20e-6b883fa0b130}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{dfed4610-7d58-4092-984c-0dde1ea6f8e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
-    <ClCompile Include="Interop.cpp" />
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="DirectText.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="NativeInterop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Interop.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
@@ -54,8 +59,16 @@
       <Filter>DWrite</Filter>
     </ClInclude>
     <ClInclude Include="DirectWrite.h" />
+    <ClInclude Include="ITypographyInfo.h" />
+    <ClInclude Include="DirectText.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="NativeInterop.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
 </Project>

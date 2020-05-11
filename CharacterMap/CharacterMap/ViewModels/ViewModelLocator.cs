@@ -22,7 +22,7 @@ namespace CharacterMap.ViewModels
                 SimpleIoc.Default.Register(() => _navigationService);
                 SimpleIoc.Default.Register<IDialogService, DialogService>();
                 SimpleIoc.Default.Register(() => ResourceHelper.Get<AppSettings>(nameof(AppSettings)));
-                SimpleIoc.Default.Register(() => new Interop(Utils.CanvasDevice));
+                SimpleIoc.Default.Register(() => new NativeInterop(Utils.CanvasDevice));
 
                 SimpleIoc.Default.Register<MainViewModel>();
                 SimpleIoc.Default.Register<UserCollectionsService>();

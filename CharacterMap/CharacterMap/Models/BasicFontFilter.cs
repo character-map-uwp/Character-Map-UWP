@@ -76,6 +76,9 @@ namespace CharacterMap.Models
         public static BasicFontFilter ColorFonts { get; }
             = new BasicFontFilter((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsColorFont), Localization.Get("OptionColorFonts/Text"));
 
+        public static BasicFontFilter VariableFonts { get; }
+            = new BasicFontFilter((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.HasVariations), "Variable Fonts");
+
 
 
 

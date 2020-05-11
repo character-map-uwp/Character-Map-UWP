@@ -26,7 +26,7 @@ namespace CharacterMap.Core
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
 
-        public static Interop GetInterop() => SimpleIoc.Default.GetInstance<Interop>();
+        public static NativeInterop GetInterop() => SimpleIoc.Default.GetInstance<NativeInterop>();
 
         public static void RunOnDispatcher(this DependencyObject d, Action a)
         {

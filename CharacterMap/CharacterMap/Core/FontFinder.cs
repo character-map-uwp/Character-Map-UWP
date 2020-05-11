@@ -61,7 +61,7 @@ namespace CharacterMap.Core
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
 
-            var interop = SimpleIoc.Default.GetInstance<Interop>();
+            var interop = SimpleIoc.Default.GetInstance<NativeInterop>();
             var systemFonts = interop.GetSystemFonts();
 
             try
@@ -99,7 +99,7 @@ namespace CharacterMap.Core
 
                 await _loadSemaphore.WaitAsync().ConfigureAwait(false);
 
-                var interop = SimpleIoc.Default.GetInstance<Interop>();
+                var interop = SimpleIoc.Default.GetInstance<NativeInterop>();
                 var files = await _importFolder.GetFilesAsync().AsTask().ConfigureAwait(false);
 
                 var resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
@@ -154,7 +154,7 @@ namespace CharacterMap.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Dictionary<string, InstalledFont> CreateFontCollection(Interop interop, IReadOnlyList<DWriteFontFace> fonts)
+        private static Dictionary<string, InstalledFont> CreateFontCollection(NativeInterop interop, IReadOnlyList<DWriteFontFace> fonts)
         {
             var resultList = new Dictionary<string, InstalledFont>(fonts.Count);
 

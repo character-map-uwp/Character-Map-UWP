@@ -8,7 +8,7 @@
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:views="using:CharacterMap.Views"
+    xmlns:views="using:CharacterMap.Views" xmlns:controls1="using:CharacterMapCX.Controls"
     d:DesignHeight="800"
     d:DesignWidth="1280"
     BorderThickness="0"
@@ -595,10 +595,10 @@
                                         FontWeight="Normal"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                         Text="{Binding}" />
-                                    <TextBlock
-                                        core:Properties.Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}"
+                                    <controls1:DirectText
+                                        Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}"
                                         FontSize="{Binding}"
-                                        IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
+                                        FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                 </StackPanel>
                             </DataTemplate>

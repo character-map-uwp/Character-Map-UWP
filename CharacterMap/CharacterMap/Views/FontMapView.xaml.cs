@@ -359,8 +359,8 @@ namespace CharacterMap.Views
         {
             if (null != ch)
             {
-                CharGrid.SelectedItem = ch;
-                CharGrid.ScrollIntoView(ch);
+                //CharGrid.SelectedItem = ch;
+                //CharGrid.ScrollIntoView(ch);
             }
         }
 

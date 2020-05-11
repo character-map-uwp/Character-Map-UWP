@@ -98,7 +98,7 @@ namespace CharacterMap.Core
                     // If COLR format (e.g. Segoe UI Emoji), we have special export path.
                     if (style == ExportStyle.ColorGlyph && analysis.HasColorGlyphs && !analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
                     {
-                        Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+                        NativeInterop interop = Utils.GetInterop();
                         List<string> paths = new List<string>();
                         Rect bounds = Rect.Empty;
 
@@ -385,7 +385,7 @@ namespace CharacterMap.Core
 
             using CanvasGeometry geom = CreateGeometry(size, selectedVariant, selectedChar, analysis, typography);
             var bounds = geom.ComputeBounds();
-            var interop = SimpleIoc.Default.GetInstance<Interop>();
+            var interop = Utils.GetInterop();
             var s = interop.GetPathData(geom);
 
             var t = s.Transform.Translation;

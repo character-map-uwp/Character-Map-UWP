@@ -26,15 +26,15 @@ using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {
-	ref class Interop;
-	public delegate void SystemFontSetInvalidated(Interop^ sender, Platform::Object^ args);
+	ref class NativeInterop;
+	public delegate void SystemFontSetInvalidated(NativeInterop^ sender, Platform::Object^ args);
 
-    public ref class Interop sealed
+    public ref class NativeInterop sealed
     {
     public:
 		event SystemFontSetInvalidated^ FontSetInvalidated;
 
-        Interop(CanvasDevice^ device);
+        NativeInterop(CanvasDevice^ device);
 
 		CanvasTextLayoutAnalysis^ AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace);
 
