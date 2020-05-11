@@ -428,12 +428,11 @@
                                         Width="300"
                                         Padding="0"
                                         ItemContainerTransitions="{StaticResource NoTransitions}"
-                                        ItemsSource="{x:Bind ViewModel.SelectedVariant.XamlTypographyFeatures, Mode=OneWay}"
+                                        ItemsSource="{x:Bind ViewModel.TypographyFeatures, Mode=OneWay}"
                                         SelectedItem="{Binding SelectedTypography, Mode=TwoWay}"
                                         SelectionMode="Single"
                                         ShowsScrollingPlaceholders="False"
-                                        SingleSelectionFollowsFocus="True"
-                                        Visibility="{x:Bind core:Converters.TrueOrTrueToVis(ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, ViewModel.SelectedVariant.HasXamlTypographyFeatures), Mode=OneWay}">
+                                        SingleSelectionFollowsFocus="True">
                                         <ListView.Header>
                                             <StackPanel Margin="12,4" Spacing="12">
                                                 <TextBlock

@@ -144,12 +144,16 @@ namespace CharacterMap.Core
 
         private void LoadTypographyFeatures()
         {
-            _typographyFeatures = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
-            var xaml = _typographyFeatures.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
-            if (xaml.Count > 0)
-                xaml.Insert(0, new TypographyFeatureInfo(CanvasTypographyFeatureName.None));
+            var features = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
 
+            var xaml = features.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
+            if (xaml.Count > 0)
+                xaml.Insert(0, TypographyFeatureInfo.None);
             _xamlTypographyFeatures = xaml;
+
+            if (features.Count > 0)
+                features.Insert(0, TypographyFeatureInfo.None);
+            _typographyFeatures = features;
         }
 
         private List<KeyValuePair<string, string>> LoadFontInformation()

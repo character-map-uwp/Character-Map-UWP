@@ -84,7 +84,7 @@ namespace CharacterMap.ViewModels
         public FontDisplayMode DisplayMode
         {
             get => _displayMode;
-            set => Set(ref _displayMode, value);
+            set { if (Set(ref _displayMode, value)) { UpdateTypography(); } }
         }
 
         private InstalledFont _selectedFont;
@@ -122,10 +122,18 @@ namespace CharacterMap.ViewModels
                     FontFamily = value == null ? null : new FontFamily(value.Source);
                     LoadChars(value);
                     RaisePropertyChanged();
-                    SelectedTypography = value?.XamlTypographyFeatures?.FirstOrDefault() ?? TypographyFeatureInfo.None;
+                    UpdateTypography();
+                    SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyFeatureInfo.None;
                     SetDefaultChar();
                 }
             }
+        }
+
+        private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures;
+        public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
+        {
+            get => _typographyFeatures;
+            private set => Set(ref _typographyFeatures, value);
         }
 
         private IReadOnlyList<Character> _chars;
@@ -149,18 +157,18 @@ namespace CharacterMap.ViewModels
             private set => Set(ref _fontFamily, value);
         }
 
-        private TypographyFeatureInfo _selectedTypography;
+        private TypographyFeatureInfo _selectedTypography = TypographyFeatureInfo.None;
         public TypographyFeatureInfo SelectedTypography
         {
             get => _selectedTypography;
-            set => Set(ref _selectedTypography, value);
+            set => Set(ref _selectedTypography, value ?? TypographyFeatureInfo.None);
         }
 
         private CanvasTextLayoutAnalysis _selectedVariantAnalysis;
         public CanvasTextLayoutAnalysis SelectedVariantAnalysis
         {
             get => _selectedVariantAnalysis;
-            set => Set(ref _selectedVariantAnalysis, value);
+            set { if (Set(ref _selectedVariantAnalysis, value)) { UpdateVariations(); } }
         }
 
         private CanvasTextLayoutAnalysis _selectedCharAnalysis;
@@ -335,7 +343,6 @@ namespace CharacterMap.ViewModels
                         layout.Options = CanvasDrawTextOptions.EnableColorFont;
                         ApplyEffectiveTypography(layout);
                         SelectedVariantAnalysis = _interop.AnalyzeFontLayout(layout, variant.FontFace);
-                        UpdateVariations();
                         var axis = DirectWrite.GetNamedAxisValues(variant.FontFace).ToDictionary(a => a.Name, b => b.Values.ToList());
                         HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     }
@@ -349,7 +356,7 @@ namespace CharacterMap.ViewModels
                     ImportButtonEnabled = false;
                 }
 
-                SelectedTypography = null;
+                SelectedTypography = TypographyFeatureInfo.None;
                 SearchResults = null;
                 DebounceSearch(SearchQuery, 100);
                 IsLoadingCharacters = false;
@@ -374,7 +381,22 @@ namespace CharacterMap.ViewModels
 
         internal void UpdateVariations()
         {
-            VariationAxis = SelectedVariantAnalysis.Axis.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList();
+            VariationAxis = SelectedVariantAnalysis?.Axis.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList() ?? new List<DWriteFontAxis>();
+        }
+
+        private void UpdateTypography()
+        {
+            var current = this.SelectedTypography;
+
+            if (SelectedVariant == null)
+                TypographyFeatures = new List<TypographyFeatureInfo>();
+            else if (DisplayMode == FontDisplayMode.TypeRamp)
+                TypographyFeatures = SelectedVariant.TypographyFeatures;
+            else
+                TypographyFeatures = SelectedVariant.XamlTypographyFeatures;
+
+            this.SelectedTypography = TypographyFeatures.FirstOrDefault(t => t.Feature == current.Feature);
+            RaisePropertyChanged(nameof(SelectedTypography)); // Required.
         }
 
         private void UpdateCharAnalysis()
