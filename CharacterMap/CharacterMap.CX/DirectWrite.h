@@ -63,6 +63,7 @@ namespace CharacterMapCX
 		/// </summary>
 		static Platform::String^ GetFileName(CanvasFontFace^ fontFace);
 
+		static IMapView<UINT32, UINT32>^ GetSupportedTypography(CanvasFontFace^ fontFace);
 
 	internal:
 		static __inline String^ GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale);
@@ -72,6 +73,8 @@ namespace CharacterMapCX
 		static IVectorView<DWriteKnownFontAxisValues^>^ GetNamedAxisValues(ComPtr<IDWriteFontFaceReference> faceRef);
 
 		static IVectorView<DWriteFontAxis^>^ GetAxis(ComPtr<IDWriteFontFaceReference> faceRef);
+
+		static IMapView<UINT32, UINT32>^ GetSupportedTypography(ComPtr<IDWriteFontFaceReference> faceRef);
 
 		static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
 

@@ -288,6 +288,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="NativeInterop.h" />
     <ClInclude Include="SVGGeometrySink.h" />
+    <ClInclude Include="TableReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />

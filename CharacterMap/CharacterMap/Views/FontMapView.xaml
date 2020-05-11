@@ -574,7 +574,7 @@
                         <DataTemplate x:DataType="cx:DWriteFontAxis">
                             <StackPanel>
                                 <Slider
-                                    Header="{x:Bind Tag}"
+                                    Header="{x:Bind cx:DirectWrite.GetTagName(Tag)}"
                                     Maximum="{x:Bind Maximum}"
                                     Minimum="{x:Bind Minimum}"
                                     ValueChanged="Slider_ValueChanged"

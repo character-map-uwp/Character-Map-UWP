@@ -5,6 +5,7 @@
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include "CanvasTextLayoutAnalysis.h"
+#include "TableReader.h"
 
 #include "DWriteNamedFontAxisValue.h"
 #include "DWriteKnownFontAxisValues.h"
@@ -167,12 +168,76 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 	return items->GetView();
 }
 
+IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(CanvasFontFace^ canvasFontFace)
+{
+	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFontFace);
+	return GetSupportedTypography(faceRef);
+}
+
+IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(ComPtr<IDWriteFontFaceReference> faceRef)
+{
+	// https://docs.microsoft.com/en-us/typography/opentype/spec/gsub
+	// https://docs.microsoft.com/en-us/typography/opentype/spec/chapter2#flTbl
+
+	ComPtr<IDWriteFontFace3> f3;
+	faceRef->CreateFontFace(&f3);
+
+	ComPtr<IDWriteFontFace5> face;
+	f3.As(&face);
+
+	ComPtr<IDWriteFontResource> resource;
+	face->GetFontResource(&resource);
+
+	const void* tableData;
+	UINT32 tableSize;
+	BOOL exists;
+	void* context;
+	face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('G', 'S', 'U', 'B'), &tableData, &tableSize, &context, &exists);
+
+	Map<UINT32, UINT32>^ map = ref new Map<UINT32, UINT32>();
+
+
+	if (exists)
+	{
+		auto reader = ref new TableReader(tableData, tableSize);
+		auto major = reader->GetUInt16();
+		auto minor = reader->GetUInt16();
+		auto scriptOffset = reader->GetUInt16();
+		auto featureOffset = reader->GetUInt16();
+		reader->GoToPosition(featureOffset);
+		auto count = reader->GetUInt16();
+
+		wchar_t str[] = L"    ";
+		for (int i = 0; i < count - 1; i++)
+		{
+			auto tag = reader->GetUInt32();
+
+			if (!map->HasKey(tag))
+			{
+				str[3] = (wchar_t)((tag >> 24) & 0xFF);
+				str[2] = (wchar_t)((tag >> 16) & 0xFF);
+				str[1] = (wchar_t)((tag >> 8) & 0xFF);
+				str[0] = (wchar_t)((tag >> 0) & 0xFF);
+
+				map->Insert(tag, DWRITE_MAKE_OPENTYPE_TAG(str[3], str[2], str[1], str[0]));
+			}
+
+			auto offset = reader->GetUInt16();
+		}
+
+		delete reader;
+	}
+
+	face->ReleaseFontTable(context);
+	
+	return map->GetView();
+}
+
 IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(CanvasFontFace^ canvasFontFace)
 {
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFontFace);
 	return GetNamedAxisValues(faceRef);
 }
-
 
 IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(ComPtr<IDWriteFontFaceReference> faceRef)
 {

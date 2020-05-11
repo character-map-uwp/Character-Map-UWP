@@ -27,12 +27,9 @@ namespace CharacterMapCX
 			DWriteFontAxisAttribute get() { return m_attribute; }
 		}
 
-		/*property IVectorView<DWriteNamedFontAxisValue^>^ NamedInstances
-		{
-			IVectorView<DWriteNamedFontAxisValue^>^ get() { return m_instances;  }
-		}*/
+		property String^ TagName	{ String^ get() { return m_tag; } }
 
-		property String^ Tag		{ String^ get() { return m_tag; } }
+		property UINT32 Tag			{ UINT32 get() { return m_tag_raw; } }
 
 		property float Value;
 
@@ -52,11 +49,9 @@ namespace CharacterMapCX
 			DWRITE_FONT_AXIS_RANGE range,
 			DWRITE_FONT_AXIS_VALUE def,
 			DWRITE_FONT_AXIS_VALUE value,
-			//IVectorView<DWriteNamedFontAxisValue^>^ instances,
 			UINT32 tag)
 		{
 			m_attribute = static_cast<DWriteFontAxisAttribute>(attribute);
-			//m_instances = instances;
 
 			m_minimumValue = range.minValue;
 			m_maximumValue = range.maxValue;
@@ -78,10 +73,7 @@ namespace CharacterMapCX
 	private:
 		inline DWriteFontAxis() { };
 
-		
-
 		DWriteFontAxisAttribute m_attribute;
-		//IVectorView<DWriteNamedFontAxisValue^>^ m_instances;
 		String^ m_tag;
 
 		UINT32 m_tag_raw = 0;

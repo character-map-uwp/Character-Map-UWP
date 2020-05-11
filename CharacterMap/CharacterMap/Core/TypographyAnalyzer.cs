@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Text;
 using Humanizer;
 using CharacterMapCX;
+using System.Diagnostics;
 
 namespace CharacterMap.Core
 {
@@ -14,23 +15,9 @@ namespace CharacterMap.Core
 
         public static List<TypographyFeatureInfo> GetSupportedTypographyFeatures(FontVariant variant)
         {
-            Dictionary<string, TypographyFeatureInfo> features = new Dictionary<string, TypographyFeatureInfo>();
-            var analyzer = new CanvasTextAnalyzer(variant.GetCharString(), CanvasTextDirection.LeftToRightThenTopToBottom);
-            {
-                foreach (var script in analyzer.GetScript())
-                {
-                    foreach (var feature in variant.FontFace.GetSupportedTypographicFeatureNames(script.Value))
-                    {
-                        var info = new TypographyFeatureInfo(feature);
-                        if (!features.ContainsKey(info.DisplayName))
-                        {
-                            features.Add(info.DisplayName, info);
-                        }
-                    }
-                }
-            }
-
-            return features.Values.OrderBy(f => f.DisplayName).ToList();
+            var features = DirectWrite.GetSupportedTypography(variant.FontFace).Values.ToList();
+            var list = features.Select(f => new TypographyFeatureInfo((CanvasTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
+            return list;
         }
     }
 

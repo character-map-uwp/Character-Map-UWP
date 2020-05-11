@@ -64,6 +64,9 @@
       <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="NativeInterop.h" />
+    <ClInclude Include="TableReader.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
