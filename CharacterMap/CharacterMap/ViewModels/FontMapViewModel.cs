@@ -164,8 +164,8 @@ namespace CharacterMap.ViewModels
             set => Set(ref _selectedTypography, value ?? TypographyFeatureInfo.None);
         }
 
-        private CanvasTextLayoutAnalysis _selectedVariantAnalysis;
-        public CanvasTextLayoutAnalysis SelectedVariantAnalysis
+        private FontAnalysis _selectedVariantAnalysis;
+        public FontAnalysis SelectedVariantAnalysis
         {
             get => _selectedVariantAnalysis;
             set { if (Set(ref _selectedVariantAnalysis, value)) { UpdateVariations(); } }
@@ -327,30 +327,13 @@ namespace CharacterMap.ViewModels
                 Chars = variant?.GetCharacters();
                 if (variant != null)
                 {
-                    var chars = variant.GetCharString();
-                    using (CanvasTextFormat format = new CanvasTextFormat
-                    {
-                        FontSize = 8,
-                        FontFamily = variant.Source,
-                        FontStretch = variant.FontFace.Stretch,
-                        FontWeight = variant.FontFace.Weight,
-                        FontStyle = variant.FontFace.Style,
-                        HorizontalAlignment = CanvasHorizontalAlignment.Left,
-                    })
-                    using (CanvasTextLayout layout = new CanvasTextLayout(
-                        Utils.CanvasDevice, chars, format, 1024, 1024))
-                    {
-                        layout.Options = CanvasDrawTextOptions.EnableColorFont;
-                        ApplyEffectiveTypography(layout);
-                        SelectedVariantAnalysis = _interop.AnalyzeFontLayout(layout, variant.FontFace);
-                        var axis = DirectWrite.GetNamedAxisValues(variant.FontFace).ToDictionary(a => a.Name, b => b.Values.ToList());
-                        HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
-                    }
+                    SelectedVariantAnalysis = new FontAnalysis(variant.FontFace);
+                    HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
                 }
                 else
                 {
-                    SelectedVariantAnalysis = new CanvasTextLayoutAnalysis();
+                    SelectedVariantAnalysis = new FontAnalysis();
                     HasFontOptions = false;
                     ShowColorGlyphs = false;
                     ImportButtonEnabled = false;

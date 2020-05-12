@@ -15,11 +15,8 @@ namespace CharacterMap.Core
     [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
     public partial class FontVariant : IDisposable
     {
-        /* Use a character cache avoids a lot of unnecessary allocations */
+        /* Using a character cache avoids a lot of unnecessary allocations */
         private static Dictionary<int, Character> _characters { get; } = new Dictionary<int, Character>();
-
-        private string _charString { get; set; }
-
 
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
@@ -174,19 +171,6 @@ namespace CharacterMap.Core
 
             return INFORMATIONS.Select(Get).Where(s => s.Key != null).ToList();
         }
-
-        public string GetCharString()
-        {
-            if (_charString == null)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendJoin(string.Empty, GetCharacters().Select(c => c.Char));
-                _charString = sb.ToString();
-            }
-
-            return _charString;
-        }
-
 
         public void Dispose()
         {

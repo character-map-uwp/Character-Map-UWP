@@ -59,31 +59,6 @@ namespace CharacterMapCX
 			int get() { return m_glyphLayerCount; }
 		}
 
-		/// <summary>
-		/// Size of the underlying font file in bytes
-		/// </summary>
-		property int FileSize
-		{
-			int get() { return m_fileSize; }
-		}
-
-		/// <summary>
-		/// Absolute path to the underlying font file
-		/// </summary>
-		property Platform::String^ FilePath
-		{
-			Platform::String^ get() { return m_filePath; }
-		}
-
-		property IVectorView<DWriteFontAxis^>^ Axis
-		{
-			IVectorView<DWriteFontAxis^>^ get() { return m_axis; }
-		}
-
-		property IVectorView<DWriteFontAxis^>^ VariableAxis
-		{
-			IVectorView<DWriteFontAxis^>^ get() { return m_variableAxis; }
-		}
 
 		property IVectorView<GlyphImageFormat>^ GlyphFormats
 		{
@@ -108,10 +83,7 @@ namespace CharacterMapCX
 		bool m_containsBitmapGlyphs = false;
 		bool m_containsVectorColorGlyphs = false;
 		int m_glyphLayerCount = 1;
-		int m_fileSize = 0;
-		Platform::String^ m_filePath = nullptr;
-		IVectorView<DWriteFontAxis^>^ m_variableAxis;
-		IVectorView<DWriteFontAxis^>^ m_axis;
+		
 		IVectorView<GlyphImageFormat>^ m_glyphFormats;
 		Array<Windows::UI::Color>^ m_colors;
 		Array<IVectorView<uint16>^>^ m_indicies;

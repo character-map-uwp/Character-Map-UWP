@@ -210,22 +210,6 @@ PathData^ NativeInterop::GetPathData(CanvasGeometry^ geometry)
 	return data;
 }
 
-CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeFontLayout(CanvasTextLayout^ layout, CanvasFontFace^ fontFace)
-{
-	ComPtr<IDWriteTextLayout4> context = GetWrappedResource<IDWriteTextLayout4>(layout);
-
-	ComPtr<ColorTextAnalyzer> ana = new (std::nothrow) ColorTextAnalyzer(m_d2dFactory, m_dwriteFactory, m_d2dContext);
-	context->Draw(m_d2dContext.Get(), ana.Get(), 0, 0);
-
-	ComPtr<IDWriteFontFaceReference> fontFaceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-	CanvasTextLayoutAnalysis^ analysis = ref new CanvasTextLayoutAnalysis(ana, fontFaceRef);
-
-	fontFaceRef = nullptr;
-	ana = nullptr;
-	return analysis;
-}
-
-
 CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(CanvasTextLayout^ layout)
 {
 	ComPtr<IDWriteTextLayout4> context = GetWrappedResource<IDWriteTextLayout4>(layout);

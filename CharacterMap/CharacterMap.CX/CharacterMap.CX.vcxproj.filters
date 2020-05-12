@@ -11,6 +11,9 @@
     <Filter Include="Controls">
       <UniqueIdentifier>{dfed4610-7d58-4092-984c-0dde1ea6f8e4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tables">
+      <UniqueIdentifier>{52e13f94-331a-4e73-b14e-086c5ab7995b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -65,8 +68,21 @@
     </ClInclude>
     <ClInclude Include="NativeInterop.h" />
     <ClInclude Include="TableReader.h">
-      <Filter>DWrite</Filter>
+      <Filter>Tables</Filter>
     </ClInclude>
+    <ClInclude Include="SbixTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="ColrTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="SvgTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="CblcTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="FontAnalysis.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

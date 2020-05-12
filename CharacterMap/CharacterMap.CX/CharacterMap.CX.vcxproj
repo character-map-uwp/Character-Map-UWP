@@ -268,7 +268,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
+    <ClInclude Include="CblcTableReader.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="ColrTableReader.h" />
     <ClInclude Include="DirectText.h" />
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DWHelpers.h" />
@@ -281,13 +283,16 @@
     <ClInclude Include="DWriteKnownFontAxisValues.h" />
     <ClInclude Include="DWriteNamedFontAxisValue.h" />
     <ClInclude Include="DWriteProperties.h" />
+    <ClInclude Include="FontAnalysis.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GridViewHelper.h" />
     <ClInclude Include="ITypographyInfo.h" />
     <ClInclude Include="PathData.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NativeInterop.h" />
+    <ClInclude Include="SbixTableReader.h" />
     <ClInclude Include="SVGGeometrySink.h" />
+    <ClInclude Include="SvgTableReader.h" />
     <ClInclude Include="TableReader.h" />
   </ItemGroup>
   <ItemGroup>
