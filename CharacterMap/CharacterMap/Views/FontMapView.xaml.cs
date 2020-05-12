@@ -22,6 +22,8 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.ComponentModel;
 using Windows.UI.Core;
 using CharacterMap.Controls;
+using CharacterMapCX;
+using System.Collections.Generic;
 
 namespace CharacterMap.Views
 {
@@ -130,7 +132,6 @@ namespace CharacterMap.Views
                 Window.Current.Closed += Current_Closed;
 
                 LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
-
                 LayoutRoot.KeyDown += LayoutRoot_KeyDown;
             }
         }
@@ -359,8 +360,8 @@ namespace CharacterMap.Views
         {
             if (null != ch)
             {
-                //CharGrid.SelectedItem = ch;
-                //CharGrid.ScrollIntoView(ch);
+                CharGrid.SelectedItem = ch;
+                CharGrid.ScrollIntoView(ch);
             }
         }
 
@@ -415,6 +416,7 @@ namespace CharacterMap.Views
                 }
 
                 Clipboard.SetContent(dp);
+                Clipboard.Flush();
             }
             BorderFadeInStoryboard.Begin();
         }
@@ -600,6 +602,21 @@ namespace CharacterMap.Views
             }).AsTask();
         }
 
+        private void Slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            ViewModel.UpdateVariations();
+        }
+
+        private void AxisReset_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement b
+                && b.Tag is Slider s
+                && b.DataContext is DWriteFontAxis axis)
+            {
+                s.Value = axis.DefaultValue;
+            }
+        }
+
 
 
 
@@ -723,21 +740,20 @@ namespace CharacterMap.Views
                 else if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
                 {
                     Composition.PlayEntrance(TypeRampInputRow, offset * 2, 80);
+
                     if (TypeRampList != null && TypeRampList.ItemsPanelRoot != null)
                     {
-                        Composition.PlayEntrance(TypeRampList.ItemsPanelRoot.Children.ToList(), (offset * 2) + 34, 80, staggerMs: 42);
+                        var items = new List<UIElement> { VariableAxis };
+                        items.AddRange(TypeRampList.TryGetChildren());
+                        Composition.PlayEntrance(items, (offset * 2) + 34, 80, staggerMs: 42);
                     }
                     else if (TypeRampList != null) // occurs directly after first x:Load
                     {
+                        Composition.PlayEntrance(VariableAxis, (offset * 2) + 34, 80);
                         Composition.PlayEntrance(TypeRampList, (offset * 2) + 34, 80);
                     }
                 }
             }
-        }
-
-        private void Slider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-        {
-            ViewModel.UpdateVariations();
         }
     }
 

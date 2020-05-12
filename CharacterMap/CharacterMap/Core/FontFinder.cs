@@ -52,6 +52,8 @@ namespace CharacterMap.Core
                 
         public static bool HasRemoteFonts              { get; private set; }
 
+        public static bool HasVariableFonts            { get; private set; }
+
         public static HashSet<string> SupportedFormats { get; } = new HashSet<string>
         {
             ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
@@ -94,6 +96,9 @@ namespace CharacterMap.Core
 
             return Task.Run(async () =>
             {
+                // Reset meta to false;
+                UpdateMeta(null);
+
                 var systemFonts = await InitialiseAsync().ConfigureAwait(false);
                 UpdateMeta(systemFonts);
 
@@ -181,8 +186,15 @@ namespace CharacterMap.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void UpdateMeta(DWriteFontSet set)
         {
+            if (set == null)
+            {
+                HasRemoteFonts = HasAppxFonts = HasVariableFonts = false;
+                return;
+            }
+
             HasRemoteFonts = HasRemoteFonts || set.CloudFontCount > 0;
             HasAppxFonts = HasAppxFonts || set.AppxFontCount > 0;
+            HasVariableFonts = HasVariableFonts || set.VariableFontCount > 0;
         }
 
         internal static List<FontVariant> GetImportedVariants()

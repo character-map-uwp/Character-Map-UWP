@@ -53,6 +53,7 @@ namespace CharacterMap.Core
             };
             dp.SetText(str);
             Clipboard.SetContent(dp);
+            Clipboard.Flush();
         }
 
         public static bool TryParseHexString(string hexNumber, out int hex)

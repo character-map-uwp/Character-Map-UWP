@@ -567,19 +567,46 @@
                 </Grid>
 
                 <ItemsControl
+                    x:Name="VariableAxis"
                     Grid.Row="1"
-                    Margin="12 0"
+                    Margin="24 0"
+                    Padding="12"
+                    Background="LightGray"
                     ItemsSource="{x:Bind ViewModel.SelectedVariantAnalysis.VariableAxis, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="cx:DWriteFontAxis">
-                            <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
                                 <Slider
+                                    x:Name="AxisSlider"
                                     Header="{x:Bind cx:DirectWrite.GetTagName(Tag)}"
                                     Maximum="{x:Bind Maximum}"
                                     Minimum="{x:Bind Minimum}"
                                     ValueChanged="Slider_ValueChanged"
-                                    Value="{x:Bind Value, Mode=TwoWay}" />
-                            </StackPanel>
+                                    Value="{x:Bind Value, Mode=TwoWay}">
+                                    <Slider.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                Text="{Binding}" />
+                                        </DataTemplate>
+                                    </Slider.HeaderTemplate>
+                                </Slider>
+                                <Button
+                                    Grid.Column="1"
+                                    Margin="0 0 0 4"
+                                    VerticalAlignment="Bottom"
+                                    Click="AxisReset_Click"
+                                    Content="Reset"
+                                    FontSize="12"
+                                    Style="{StaticResource TextBlockButtonStyle}"
+                                    Tag="{Binding ElementName=AxisSlider}" />
+                            </Grid>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
