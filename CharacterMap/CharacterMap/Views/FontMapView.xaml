@@ -185,6 +185,10 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
                 <toolkit:WrapPanel
                     x:Name="OptionsPanel"
@@ -492,7 +496,20 @@
                         Glyph="&#xE10C;" />
                 </Button>
 
+                <!--  Notifications  -->
+                <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=Collapsed}">
+                    <TextBlock
+                        x:Name="VariableFeaturesMessage"
+                        x:Uid="VariableFeaturesMessage"
+                        Margin="12 6 0 -12"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                        TextWrapping="Wrap" />
+                </Grid>
+
             </Grid>
+
+
 
             <!--  The One And Only, The Character Map  -->
             <controls:CharacterGridView
@@ -575,22 +592,24 @@
                     ItemsSource="{x:Bind ViewModel.SelectedVariantAnalysis.VariableAxis, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="cx:DWriteFontAxis">
-                            <Grid>
+                            <Grid Margin="0 0 0 2">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-
                                 <Slider
                                     x:Name="AxisSlider"
                                     Header="{x:Bind Label}"
                                     Maximum="{x:Bind Maximum}"
                                     Minimum="{x:Bind Minimum}"
+                                    SmallChange="0.1"
+                                    StepFrequency="0.1"
                                     ValueChanged="Slider_ValueChanged"
                                     Value="{x:Bind Value, Mode=TwoWay}">
                                     <Slider.HeaderTemplate>
                                         <DataTemplate>
                                             <TextBlock
+                                                Margin="0 0 0 -8"
                                                 FontSize="12"
                                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                 Text="{Binding}" />
@@ -598,11 +617,11 @@
                                     </Slider.HeaderTemplate>
                                 </Slider>
                                 <Button
+                                    x:Uid="BtnReset"
                                     Grid.Column="1"
                                     Margin="0 0 0 4"
                                     VerticalAlignment="Bottom"
                                     Click="AxisReset_Click"
-                                    Content="Reset"
                                     FontSize="12"
                                     Style="{StaticResource TextBlockButtonStyle}"
                                     Tag="{Binding ElementName=AxisSlider}" />
@@ -645,8 +664,8 @@
                                     <cxc:DirectText
                                         Axis="{Binding ElementName=TypeRampRoot, Path=DataContext.VariationAxis}"
                                         FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
-                                        IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
                                         FontSize="{Binding}"
+                                        IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}"
                                         Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}" />
                                 </StackPanel>
@@ -1224,6 +1243,7 @@
                         <Setter Target="CharGridHeader.ColumnSpan" Value="3" />
                         <Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
                         <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />
+                        <Setter Target="VariableFeaturesMessage.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

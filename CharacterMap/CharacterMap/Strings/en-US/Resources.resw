@@ -887,7 +887,7 @@ Imported font files are copied into the app's private storage, so will still sho
     <value>Choose how to name font files when exporting them.
 
 System will return the name of the font file Windows uses in uppercase.
-Optimized will create a smart name based on Font Family and Font Name."</value>
+Optimized will create a smart name based on Font Family and Font Name.</value>
   </data>
   <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
     <value>Font File Export Naming</value>
@@ -900,5 +900,14 @@ Optimized will create a smart name based on Font Family and Font Name."</value>
   </data>
   <data name="SettingsLicensesLabel.Text" xml:space="preserve">
     <value>Licenses</value>
+  </data>
+  <data name="BtnReset.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="OptionVariableFonts.Text" xml:space="preserve">
+    <value>Variable Fonts</value>
+  </data>
+  <data name="VariableFeaturesMessage.Text" xml:space="preserve">
+    <value>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</value>
   </data>
 </root>

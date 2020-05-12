@@ -1048,11 +1048,12 @@ Imported font files are copied into the app's private storage, so will still sho
           <source>Choose how to name font files when exporting them.
 
 System will return the name of the font file Windows uses in uppercase.
-Optimized will create a smart name based on Font Family and Font Name."</source>
-          <target state="translated">选择导出字体文件的时候如何命名它们。
+Optimized will create a smart name based on Font Family and Font Name.</source>
+          <target state="needs-review-translation">选择导出字体文件的时候如何命名它们。
 
 "系统" 使用Windows所采用的字体文件的大写名称。
 "优化" 根据字体家族和字体名称智能创建一个新名字。</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="SettingsFontNameExportLabel.Text" translate="yes" xml:space="preserve">
           <source>Font File Export Naming</source>
@@ -1065,6 +1066,18 @@ Optimized will create a smart name based on Font Family and Font Name."</source>
         <trans-unit id="SettingsLicensesDescriptionLabel.Text" translate="yes" xml:space="preserve">
           <source>This application makes use of the following open source libraries</source>
           <target state="translated">该应用使用了以下的开源库</target>
+        </trans-unit>
+        <trans-unit id="OptionVariableFonts.Text" translate="yes" xml:space="preserve">
+          <source>Variable Fonts</source>
+          <target state="new">Variable Fonts</target>
+        </trans-unit>
+        <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
+          <source>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</source>
+          <target state="new">This font has variable features. To explore them, switch to Type Ramp view using the view button above.</target>
+        </trans-unit>
+        <trans-unit id="BtnReset.Content" translate="yes" xml:space="preserve">
+          <source>Reset</source>
+          <target state="new">Reset</target>
         </trans-unit>
       </group>
     </body>
