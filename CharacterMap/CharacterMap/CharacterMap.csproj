@@ -192,6 +192,7 @@
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\DirectTextBlock.cs" />
     <Compile Include="Controls\FontMapPrintPage.xaml.cs">
       <DependentUpon>FontMapPrintPage.xaml</DependentUpon>
     </Compile>
@@ -202,6 +203,7 @@
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\BasicCommand.cs" />
+    <Compile Include="Core\Diagnostics.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />

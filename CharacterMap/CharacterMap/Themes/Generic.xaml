@@ -1,7 +1,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CharacterMap.Controls">
+    xmlns:controls="using:CharacterMap.Controls"
+    xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml">
 
     <Style TargetType="controls:XamlTitleBar">
         <Setter Property="IsTabStop" Value="False" />
@@ -28,6 +29,26 @@
                                 ContentTransitions="{TemplateBinding ContentTransitions}" />
                         </Grid>
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:DirectTextBlock">
+        <Setter Property="MinHeight" Value="10" />
+        <Setter Property="MinWidth" Value="10" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:DirectTextBlock">
+                    <win2d:CanvasControl
+                        x:Name="TextCanvas"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch" />
+                    <!--<Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    </Border>-->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

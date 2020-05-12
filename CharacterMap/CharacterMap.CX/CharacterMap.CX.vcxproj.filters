@@ -5,29 +5,92 @@
       <UniqueIdentifier>c22c2172-02fd-453e-994f-fbf2184cd5c2</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="DWrite">
+      <UniqueIdentifier>{0d3a2023-5d62-4d35-a20e-6b883fa0b130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{dfed4610-7d58-4092-984c-0dde1ea6f8e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Tables">
+      <UniqueIdentifier>{52e13f94-331a-4e73-b14e-086c5ab7995b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
-    <ClCompile Include="Interop.cpp" />
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
+    <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="DirectText.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="NativeInterop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Interop.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
-    <ClInclude Include="DWriteFontSource.h" />
-    <ClInclude Include="DWriteProperties.h" />
-    <ClInclude Include="DWHelpers.h" />
     <ClInclude Include="SVGGeometrySink.h" />
-    <ClInclude Include="DWriteFontFace.h" />
-    <ClInclude Include="DWriteFontSet.h" />
     <ClInclude Include="PathData.h" />
     <ClInclude Include="GridViewHelper.h" />
+    <ClInclude Include="DWriteFontAxis.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteFontAxisAttribute.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteFontAxisRange.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteFontFace.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteFontSet.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteFontSource.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteNamedFontAxisValue.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWriteProperties.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DWHelpers.h" />
+    <ClInclude Include="DWriteKnownFontAxisValues.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectWrite.h" />
+    <ClInclude Include="ITypographyInfo.h" />
+    <ClInclude Include="DirectText.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="NativeInterop.h" />
+    <ClInclude Include="TableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="SbixTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="ColrTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="SvgTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="CblcTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="FontAnalysis.h" />
+    <ClInclude Include="DWriteFallbackFont.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
 </Project>

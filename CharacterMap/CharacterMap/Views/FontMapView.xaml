@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX"
+    xmlns:cxc="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -183,6 +185,10 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
                 <toolkit:WrapPanel
                     x:Name="OptionsPanel"
@@ -426,12 +432,11 @@
                                         Width="300"
                                         Padding="0"
                                         ItemContainerTransitions="{StaticResource NoTransitions}"
-                                        ItemsSource="{x:Bind ViewModel.SelectedVariant.XamlTypographyFeatures, Mode=OneWay}"
+                                        ItemsSource="{x:Bind ViewModel.TypographyFeatures, Mode=OneWay}"
                                         SelectedItem="{Binding SelectedTypography, Mode=TwoWay}"
                                         SelectionMode="Single"
                                         ShowsScrollingPlaceholders="False"
-                                        SingleSelectionFollowsFocus="True"
-                                        Visibility="{x:Bind core:Converters.TrueOrTrueToVis(ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, ViewModel.SelectedVariant.HasXamlTypographyFeatures), Mode=OneWay}">
+                                        SingleSelectionFollowsFocus="True">
                                         <ListView.Header>
                                             <StackPanel Margin="12,4" Spacing="12">
                                                 <TextBlock
@@ -491,7 +496,20 @@
                         Glyph="&#xE10C;" />
                 </Button>
 
+                <!--  Notifications  -->
+                <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=Collapsed}">
+                    <TextBlock
+                        x:Name="VariableFeaturesMessage"
+                        x:Uid="VariableFeaturesMessage"
+                        Margin="12 6 0 -12"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                        TextWrapping="Wrap" />
+                </Grid>
+
             </Grid>
+
+
 
             <!--  The One And Only, The Character Map  -->
             <controls:CharacterGridView
@@ -542,6 +560,7 @@
                 Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -558,14 +577,61 @@
                         CornerRadius="0"
                         Header="Preview Text"
                         IsEditable="True"
-                        ItemsSource="{x:Bind ViewModel.DefaultRampOptions}"
+                        ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
                         SelectedIndex="0"
                         Style="{StaticResource RampComboBoxStyle}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
-                <ScrollViewer
+                <ItemsControl
+                    x:Name="VariableAxis"
                     Grid.Row="1"
+                    Margin="24 0"
+                    Padding="12"
+                    Background="LightGray"
+                    ItemsSource="{x:Bind ViewModel.SelectedVariantAnalysis.VariableAxis, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="cx:DWriteFontAxis">
+                            <Grid Margin="0 0 0 2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Slider
+                                    x:Name="AxisSlider"
+                                    Header="{x:Bind Label}"
+                                    Maximum="{x:Bind Maximum}"
+                                    Minimum="{x:Bind Minimum}"
+                                    SmallChange="0.1"
+                                    StepFrequency="0.1"
+                                    ValueChanged="Slider_ValueChanged"
+                                    Value="{x:Bind Value, Mode=TwoWay}">
+                                    <Slider.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                Margin="0 0 0 -8"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                Text="{Binding}" />
+                                        </DataTemplate>
+                                    </Slider.HeaderTemplate>
+                                </Slider>
+                                <Button
+                                    x:Uid="BtnReset"
+                                    Grid.Column="1"
+                                    Margin="0 0 0 4"
+                                    VerticalAlignment="Bottom"
+                                    Click="AxisReset_Click"
+                                    FontSize="12"
+                                    Style="{StaticResource TextBlockButtonStyle}"
+                                    Tag="{Binding ElementName=AxisSlider}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ScrollViewer
+                    Grid.Row="2"
                     HorizontalScrollBarVisibility="Auto"
                     HorizontalScrollMode="Enabled"
                     MaxZoomFactor="4"
@@ -595,11 +661,14 @@
                                         FontWeight="Normal"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                         Text="{Binding}" />
-                                    <TextBlock
-                                        core:Properties.Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}"
+                                    <cxc:DirectText
+                                        Axis="{Binding ElementName=TypeRampRoot, Path=DataContext.VariationAxis}"
+                                        FallbackFont="{Binding ElementName=TypeRampRoot, Path=DataContext.FallbackFont}"
+                                        FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
                                         FontSize="{Binding}"
                                         IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
-                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
+                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}"
+                                        Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -1175,6 +1244,7 @@
                         <Setter Target="CharGridHeader.ColumnSpan" Value="3" />
                         <Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
                         <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />
+                        <Setter Target="VariableFeaturesMessage.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

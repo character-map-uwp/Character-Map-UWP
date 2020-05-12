@@ -12,13 +12,11 @@ using System.Text;
 
 namespace CharacterMap.Core
 {
+    [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
     public partial class FontVariant : IDisposable
     {
-        /* Use a character cache avoids a lot of unnecessary allocations */
+        /* Using a character cache avoids a lot of unnecessary allocations */
         private static Dictionary<int, Character> _characters { get; } = new Dictionary<int, Character>();
-
-        private string _charString { get; set; }
-
 
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
@@ -143,12 +141,16 @@ namespace CharacterMap.Core
 
         private void LoadTypographyFeatures()
         {
-            _typographyFeatures = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
-            var xaml = _typographyFeatures.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
-            if (xaml.Count > 0)
-                xaml.Insert(0, new TypographyFeatureInfo(CanvasTypographyFeatureName.None));
+            var features = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
 
+            var xaml = features.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
+            if (xaml.Count > 0)
+                xaml.Insert(0, TypographyFeatureInfo.None);
             _xamlTypographyFeatures = xaml;
+
+            if (features.Count > 0)
+                features.Insert(0, TypographyFeatureInfo.None);
+            _typographyFeatures = features;
         }
 
         private List<KeyValuePair<string, string>> LoadFontInformation()
@@ -167,21 +169,27 @@ namespace CharacterMap.Core
                 return KeyValuePair.Create(name, infos.First().Value);
             }
 
-            return INFORMATIONS.Select(Get).Where(s => s.Key != null).ToList();
+            return INFORMATIONS.Select(i => GetInfoKey(FontFace, i)).Where(s => s.Key != null).ToList();
         }
 
-        public string GetCharString()
+        public string TryGetSampleText()
         {
-            if (_charString == null)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendJoin(string.Empty, GetCharacters().Select(c => c.Char));
-                _charString = sb.ToString();
-            }
-
-            return _charString;
+            return GetInfoKey(FontFace, CanvasFontInformation.SampleText).Value;
         }
 
+        private static KeyValuePair<string, string> GetInfoKey(CanvasFontFace fontFace, CanvasFontInformation info)
+        {
+            var infos = fontFace.GetInformationalStrings(info);
+            if (infos.Count == 0)
+                return new KeyValuePair<string, string>();
+
+            var name = info.Humanize().Transform(To.TitleCase);
+            var dic = infos.ToDictionary(k => k.Key, k => k.Value);
+            if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
+                || infos.TryGetValue("en-us", out value))
+                return KeyValuePair.Create(name, value);
+            return KeyValuePair.Create(name, infos.First().Value);
+        }
 
         public void Dispose()
         {

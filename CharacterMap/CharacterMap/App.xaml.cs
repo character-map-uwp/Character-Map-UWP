@@ -5,6 +5,7 @@ using CharacterMap.Core;
 using CharacterMap.Services;
 using CharacterMap.Controls;
 using UnhandledExceptionEventArgs = CharacterMap.Core.UnhandledExceptionEventArgs;
+using CharacterMapCX.Controls;
 
 namespace CharacterMap
 {
@@ -32,6 +33,8 @@ namespace CharacterMap
             this.UnhandledException += OnUnhandledException;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
             Current = this;
+
+            DirectText.RegisterDependencyProperties();
         }
 
         private void RegisterExceptionHandlingSynchronizationContext()

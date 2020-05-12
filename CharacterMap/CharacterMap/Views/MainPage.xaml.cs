@@ -353,6 +353,8 @@ namespace CharacterMap.Views
                     }
                 }
 
+                VariableOption.SetVisible(FontFinder.HasVariableFonts);
+
                 if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
                 {
                     FontSourceSeperator.Visibility = CloudFontsOption.Visibility = AppxOption.Visibility = Visibility.Collapsed;

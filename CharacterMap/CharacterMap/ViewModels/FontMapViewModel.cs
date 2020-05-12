@@ -34,7 +34,7 @@ namespace CharacterMap.ViewModels
     {
         #region Properties
 
-        private Interop _interop { get; }
+        private NativeInterop _interop { get; }
 
         private Debouncer _searchDebouncer { get; }
 
@@ -55,6 +55,8 @@ namespace CharacterMap.ViewModels
         internal bool IsLoadingCharacters { get; private set; }
 
         public bool IsDarkAccent => Utils.IsAccentColorDark();
+
+        public DWriteFallbackFont FallbackFont => FontFinder.Fallback;
 
         public bool IsExternalFile { get; set; }
 
@@ -84,7 +86,7 @@ namespace CharacterMap.ViewModels
         public FontDisplayMode DisplayMode
         {
             get => _displayMode;
-            set => Set(ref _displayMode, value);
+            set { if (Set(ref _displayMode, value)) { UpdateTypography(); } }
         }
 
         private InstalledFont _selectedFont;
@@ -120,12 +122,20 @@ namespace CharacterMap.ViewModels
                     Chars = null;
                     _selectedVariant = value;
                     FontFamily = value == null ? null : new FontFamily(value.Source);
-                    LoadChars(value);
+                    LoadVariant(value);
                     RaisePropertyChanged();
-                    SelectedTypography = value?.XamlTypographyFeatures?.FirstOrDefault();
+                    UpdateTypography();
+                    SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyFeatureInfo.None;
                     SetDefaultChar();
                 }
             }
+        }
+
+        private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures;
+        public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
+        {
+            get => _typographyFeatures;
+            private set => Set(ref _typographyFeatures, value);
         }
 
         private IReadOnlyList<Character> _chars;
@@ -135,6 +145,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _chars, value);
         }
 
+        private IReadOnlyList<DWriteFontAxis> _variationAxis;
+        public IReadOnlyList<DWriteFontAxis> VariationAxis
+        {
+            get => _variationAxis;
+            set => Set(ref _variationAxis, value);
+        }
+
         private FontFamily _fontFamily;
         public FontFamily FontFamily
         {
@@ -142,18 +159,18 @@ namespace CharacterMap.ViewModels
             private set => Set(ref _fontFamily, value);
         }
 
-        private TypographyFeatureInfo _selectedTypography;
+        private TypographyFeatureInfo _selectedTypography = TypographyFeatureInfo.None;
         public TypographyFeatureInfo SelectedTypography
         {
             get => _selectedTypography;
-            set => Set(ref _selectedTypography, value);
+            set => Set(ref _selectedTypography, value ?? TypographyFeatureInfo.None);
         }
 
-        private CanvasTextLayoutAnalysis _selectedVariantAnalysis;
-        public CanvasTextLayoutAnalysis SelectedVariantAnalysis
+        private FontAnalysis _selectedVariantAnalysis;
+        public FontAnalysis SelectedVariantAnalysis
         {
             get => _selectedVariantAnalysis;
-            set => Set(ref _selectedVariantAnalysis, value);
+            set { if (Set(ref _selectedVariantAnalysis, value)) { UpdateVariations(); } }
         }
 
         private CanvasTextLayoutAnalysis _selectedCharAnalysis;
@@ -275,13 +292,25 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public List<string> DefaultRampOptions { get; } = new List<string>
+        private IReadOnlyList<string> _rampOptions;
+        public IReadOnlyList<string> RampOptions
+        {
+            get => _rampOptions;
+            set => Set(ref _rampOptions, value);
+        }
+
+        // todo : refactor into classes with description + writing direction
+        private IReadOnlyList<string> DefaultRampOptions { get; } = new List<string>
         {
             "The quick brown dog jumps over a lazy fox. 1234567890",
             Localization.Get("CultureSpecificPangram/Text"),
             "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
             "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
+            "Do bạch kim rất quý nên sẽ dùng để lắp vô xương.", // Vietnamese
+            "Ταχίστη αλώπηξ βαφής ψημένη γη, δρασκελίζει υπέρ νωθρού κυνός", // Greek
+            "עטלף אבק נס דרך מזגן שהתפוצץ כי חם", // Hebrew
+            "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق" // Arabic
         };
 
         #endregion
@@ -298,13 +327,13 @@ namespace CharacterMap.ViewModels
             CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<ExportStyle>(async (b) => await SaveSvgAsync(b));
 
-            _interop = SimpleIoc.Default.GetInstance<Interop>();
+            _interop = Utils.GetInterop();
 
             _searchDebouncer = new Debouncer();
             _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
         }
 
-        private void LoadChars(FontVariant variant)
+        private void LoadVariant(FontVariant variant)
         {
             try
             {
@@ -312,35 +341,20 @@ namespace CharacterMap.ViewModels
                 Chars = variant?.GetCharacters();
                 if (variant != null)
                 {
-                    var chars = variant.GetCharString();
-                    using (CanvasTextFormat format = new CanvasTextFormat
-                    {
-                        FontSize = 8,
-                        FontFamily = variant.Source,
-                        FontStretch = variant.FontFace.Stretch,
-                        FontWeight = variant.FontFace.Weight,
-                        FontStyle = variant.FontFace.Style,
-                        HorizontalAlignment = CanvasHorizontalAlignment.Left,
-                    })
-                    using (CanvasTextLayout layout = new CanvasTextLayout(
-                        Utils.CanvasDevice, chars, format, 1024, 1024))
-                    {
-                        layout.Options = CanvasDrawTextOptions.EnableColorFont;
-                        ApplyEffectiveTypography(layout);
-                        SelectedVariantAnalysis = _interop.AnalyzeFontLayout(layout, variant.FontFace);
-                        HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
-                    }
+                    SelectedVariantAnalysis = new FontAnalysis(variant.FontFace);
+                    HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
                 }
                 else
                 {
-                    SelectedVariantAnalysis = new CanvasTextLayoutAnalysis();
+                    SelectedVariantAnalysis = new FontAnalysis();
                     HasFontOptions = false;
                     ShowColorGlyphs = false;
                     ImportButtonEnabled = false;
                 }
 
-                SelectedTypography = null;
+                RampOptions = GetRampOptions(variant);
+                SelectedTypography = TypographyFeatureInfo.None;
                 SearchResults = null;
                 DebounceSearch(SearchQuery, 100);
                 IsLoadingCharacters = false;
@@ -358,9 +372,47 @@ namespace CharacterMap.ViewModels
                 {
                     await Task.Delay(100);
                     if (variant == SelectedVariant)
-                        LoadChars(variant);
+                        LoadVariant(variant);
                 });
             }
+        }
+        private IReadOnlyList<String> GetRampOptions(FontVariant variant)
+        {
+            var list = DefaultRampOptions.ToList();
+            
+            if (variant?.TryGetSampleText() is String s)
+            {
+                list.Insert(0, s);
+            }
+
+            if (Unicode.ContainsRange(variant, UnicodeRange.Emoticons))
+            {
+                string emoji = "😂😍😭💁👍💋🐱🦉🌺🌲🍓🍕🎂🏰🏠🚄🚒🛫🛍";
+                if (!list.Contains(emoji))
+                    list.Add(emoji);
+            }
+
+            return list.Count == DefaultRampOptions.Count ? DefaultRampOptions : list;
+        }
+
+        internal void UpdateVariations()
+        {
+            VariationAxis = SelectedVariantAnalysis?.Axis.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList() ?? new List<DWriteFontAxis>();
+        }
+
+        private void UpdateTypography()
+        {
+            var current = this.SelectedTypography;
+
+            if (SelectedVariant == null)
+                TypographyFeatures = new List<TypographyFeatureInfo>();
+            else if (DisplayMode == FontDisplayMode.TypeRamp)
+                TypographyFeatures = SelectedVariant.TypographyFeatures;
+            else
+                TypographyFeatures = SelectedVariant.XamlTypographyFeatures;
+
+            this.SelectedTypography = TypographyFeatures.FirstOrDefault(t => t.Feature == current.Feature);
+            RaisePropertyChanged(nameof(SelectedTypography)); // Required.
         }
 
         private void UpdateCharAnalysis()

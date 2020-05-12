@@ -268,23 +268,40 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
+    <ClInclude Include="CblcTableReader.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
+    <ClInclude Include="ColrTableReader.h" />
+    <ClInclude Include="DirectText.h" />
+    <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DWHelpers.h" />
+    <ClInclude Include="DWriteFallbackFont.h" />
+    <ClInclude Include="DWriteFontAxis.h" />
+    <ClInclude Include="DWriteFontAxisAttribute.h" />
+    <ClInclude Include="DWriteFontAxisRange.h" />
     <ClInclude Include="DWriteFontFace.h" />
     <ClInclude Include="DWriteFontSet.h" />
     <ClInclude Include="DWriteFontSource.h" />
+    <ClInclude Include="DWriteKnownFontAxisValues.h" />
+    <ClInclude Include="DWriteNamedFontAxisValue.h" />
     <ClInclude Include="DWriteProperties.h" />
+    <ClInclude Include="FontAnalysis.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GridViewHelper.h" />
+    <ClInclude Include="ITypographyInfo.h" />
     <ClInclude Include="PathData.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Interop.h" />
+    <ClInclude Include="NativeInterop.h" />
+    <ClInclude Include="SbixTableReader.h" />
     <ClInclude Include="SVGGeometrySink.h" />
+    <ClInclude Include="SvgTableReader.h" />
+    <ClInclude Include="TableReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
-    <ClCompile Include="Interop.cpp" />
+    <ClCompile Include="DirectText.cpp" />
+    <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -298,6 +315,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

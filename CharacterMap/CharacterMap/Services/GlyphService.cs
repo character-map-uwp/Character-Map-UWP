@@ -112,7 +112,7 @@ namespace CharacterMap.Services
             if (v == FontFinder.DefaultFont.DefaultVariant)
                 return (string.Empty, string.Empty, string.Empty, string.Empty);
 
-            Interop interop = SimpleIoc.Default.GetInstance<Interop>();
+            NativeInterop interop = Utils.GetInterop();
 
             string h, f, p, s = null;
             bool hasSymbol = FontFinder.IsMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);

@@ -175,7 +175,7 @@ namespace CharacterMap.ViewModels
                     FontFinder.LoadFontsAsync(),
                     FontCollections.LoadCollectionsAsync());
 
-                var interop = SimpleIoc.Default.GetInstance<Interop>();
+                var interop = Utils.GetInterop();
                 interop.FontSetInvalidated += FontSetInvalidated;
 
                 RefreshFontList();
@@ -194,7 +194,7 @@ namespace CharacterMap.ViewModels
             IsLoadingFonts = false;
         }
 
-        private void FontSetInvalidated(Interop sender, object args)
+        private void FontSetInvalidated(NativeInterop sender, object args)
         {
             _ = MainPage.MainDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
             {

@@ -707,6 +707,11 @@
                                 </StackPanel>
 
                                 <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Win2D" />
+                                    <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/microsoft/Win2D/blob/master/LICENSE.txt" />
+                                </StackPanel>
+
+                                <StackPanel>
                                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Windows Community Toolkit" />
                                     <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/windows-toolkit/WindowsCommunityToolkit/blob/master/license.md" />
                                 </StackPanel>
@@ -719,11 +724,6 @@
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Humanizer" />
                                     <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/Humanizr/Humanizer/blob/master/LICENSE" />
-                                </StackPanel>
-
-                                <StackPanel>
-                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Win2D" />
-                                    <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/microsoft/Win2D/blob/master/LICENSE.txt" />
                                 </StackPanel>
 
                                 <StackPanel>

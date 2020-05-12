@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "CanvasTextLayoutAnalysis.h"
+#include "DirectWrite.h"
+#include "DWriteFontAxis.h"
 
 using namespace Platform;
 using namespace Platform::Collections;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::UI;
+using namespace CharacterMapCX;
 
 CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorTextAnalyzer> analyzer, ComPtr<IDWriteFontFaceReference> fontFaceRef)
 {
@@ -63,49 +66,4 @@ CharacterMapCX::CanvasTextLayoutAnalysis::CanvasTextLayoutAnalysis(ComPtr<ColorT
 	auto vec = ref new Vector<GlyphImageFormat>(std::move(analyzer->GlyphFormats));
 	m_glyphFormats = vec->GetView();
 
-
-	//
-	// If we're analyzing the character only, we're done here.
-	//
-	if (analyzer->IsCharacterAnalysisMode || fontFaceRef == nullptr)
-		return;
-
-
-
-	/*
-	 *
-	 * FONT ANALYSIS
-	 *
-	 */
-
-	// Get File Size
-	m_fileSize = fontFaceRef->GetFileSize();
-
-	// Attempt to get FilePath. 
-	// This involves acquiring the FileLoader and querying it
-	// for the file path;
-	ComPtr<IDWriteFontFile> file;
-	ComPtr<IDWriteFontFileLoader> loader;
-	ComPtr<IDWriteLocalFontFileLoader> localLoader;
-
-	if (fontFaceRef->GetFontFile(&file) == S_OK
-		&& file->GetLoader(&loader) == S_OK
-		&& loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK)
-	{
-		const void* refKey = nullptr;
-		uint32 size = 0;
-		if (file->GetReferenceKey(&refKey, &size) == S_OK)
-		{
-			UINT filePathSize = 0;
-			UINT filePathLength = 0;
-			if (localLoader->GetFilePathLengthFromKey(refKey, size, &filePathLength) == S_OK)
-			{
-				wchar_t* buffer = new (std::nothrow) wchar_t[filePathLength + 1];
-				if (localLoader->GetFilePathFromKey(refKey, size, buffer, filePathLength + 1) == S_OK)
-				{
-					m_filePath = ref new Platform::String(buffer);
-				}
-			}
-		}
-	}
 }

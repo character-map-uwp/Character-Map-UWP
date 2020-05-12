@@ -52,6 +52,10 @@ namespace CharacterMap.Core
                 
         public static bool HasRemoteFonts              { get; private set; }
 
+        public static bool HasVariableFonts            { get; private set; }
+
+        public static DWriteFallbackFont Fallback       { get; private set; }
+
         public static HashSet<string> SupportedFormats { get; } = new HashSet<string>
         {
             ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
@@ -61,7 +65,7 @@ namespace CharacterMap.Core
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
 
-            var interop = SimpleIoc.Default.GetInstance<Interop>();
+            var interop = SimpleIoc.Default.GetInstance<NativeInterop>();
             var systemFonts = interop.GetSystemFonts();
 
             try
@@ -94,18 +98,21 @@ namespace CharacterMap.Core
 
             return Task.Run(async () =>
             {
+                // Reset meta to false;
+                UpdateMeta(null);
+
                 var systemFonts = await InitialiseAsync().ConfigureAwait(false);
                 UpdateMeta(systemFonts);
 
                 await _loadSemaphore.WaitAsync().ConfigureAwait(false);
 
-                var interop = SimpleIoc.Default.GetInstance<Interop>();
+                var interop = SimpleIoc.Default.GetInstance<NativeInterop>();
                 var files = await _importFolder.GetFilesAsync().AsTask().ConfigureAwait(false);
 
                 var resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
 
                 /* Add imported fonts */
-                IReadOnlyList<DWriteFontSet> sets = interop.GetFonts(files.Select(f => new Uri(GetAppPath(f))).ToList());
+                IReadOnlyList<DWriteFontSet> sets = DirectWrite.GetFonts(files.Select(f => new Uri(GetAppPath(f))).ToList());
                 for (int i = 0; i < files.Count; i++)
                 {
                     var file = files[i];
@@ -131,6 +138,10 @@ namespace CharacterMap.Core
                 Fonts = CreateFontList(resultList);
                 ImportedFonts = CreateFontList(imports);
 
+
+                if (Fallback == null)
+                    Fallback = interop.CreateEmptyFallback();
+
                 _loadSemaphore.Release();
 
                 Messenger.Default.Send(new FontListCreatedMessage());
@@ -138,7 +149,7 @@ namespace CharacterMap.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Dictionary<string, InstalledFont> CreateFontCollection(Interop interop, IReadOnlyList<DWriteFontFace> fonts)
+        private static Dictionary<string, InstalledFont> CreateFontCollection(NativeInterop interop, IReadOnlyList<DWriteFontFace> fonts)
         {
             var resultList = new Dictionary<string, InstalledFont>(fonts.Count);
 
@@ -165,8 +176,15 @@ namespace CharacterMap.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void UpdateMeta(DWriteFontSet set)
         {
+            if (set == null)
+            {
+                HasRemoteFonts = HasAppxFonts = HasVariableFonts = false;
+                return;
+            }
+
             HasRemoteFonts = HasRemoteFonts || set.CloudFontCount > 0;
             HasAppxFonts = HasAppxFonts || set.AppxFontCount > 0;
+            HasVariableFonts = HasVariableFonts || set.VariableFontCount > 0;
         }
 
         internal static List<FontVariant> GetImportedVariants()
@@ -223,8 +241,6 @@ namespace CharacterMap.Core
                 var existing = new List<StorageFile>();
                 var invalid = new List<(IStorageItem, string)>();
 
-                var interop = SimpleIoc.Default.GetInstance<Interop>();
-
                 foreach (var item in items)
                 {
                     if (!(item is StorageFile file))
@@ -269,7 +285,7 @@ namespace CharacterMap.Core
 
                             /* Avoid Garbage Collection (?) issue preventing immediate file deletion 
                              * by dropping to C++ */
-                            if (interop.HasValidFonts(new Uri(GetAppPath(fontFile))))
+                            if (DirectWrite.HasValidFonts(new Uri(GetAppPath(fontFile))))
                             {
                                 imported.Add(fontFile);
                             }
@@ -425,8 +441,7 @@ namespace CharacterMap.Core
 
             var resultList = new Dictionary<string, InstalledFont>();
 
-            var interop = SimpleIoc.Default.GetInstance<Interop>();
-            var fontSet = interop.GetFonts(new Uri(GetAppPath(localFile)));
+            var fontSet = DirectWrite.GetFonts(new Uri(GetAppPath(localFile)));
             foreach (var font in fontSet.Fonts)
             {
                 AddFont(resultList, font, localFile);

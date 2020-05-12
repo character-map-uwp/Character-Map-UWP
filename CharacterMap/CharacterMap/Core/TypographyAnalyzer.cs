@@ -5,6 +5,8 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using Humanizer;
+using CharacterMapCX;
+using System.Diagnostics;
 
 namespace CharacterMap.Core
 {
@@ -13,23 +15,9 @@ namespace CharacterMap.Core
 
         public static List<TypographyFeatureInfo> GetSupportedTypographyFeatures(FontVariant variant)
         {
-            Dictionary<string, TypographyFeatureInfo> features = new Dictionary<string, TypographyFeatureInfo>();
-            var analyzer = new CanvasTextAnalyzer(variant.GetCharString(), CanvasTextDirection.LeftToRightThenTopToBottom);
-            {
-                foreach (var script in analyzer.GetScript())
-                {
-                    foreach (var feature in variant.FontFace.GetSupportedTypographicFeatureNames(script.Value))
-                    {
-                        var info = new TypographyFeatureInfo(feature);
-                        if (!features.ContainsKey(info.DisplayName))
-                        {
-                            features.Add(info.DisplayName, info);
-                        }
-                    }
-                }
-            }
-
-            return features.Values.OrderBy(f => f.DisplayName).ToList();
+            var features = DirectWrite.GetSupportedTypography(variant.FontFace).Values.ToList();
+            var list = features.Select(f => new TypographyFeatureInfo((CanvasTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
+            return list;
         }
     }
 
@@ -133,8 +121,13 @@ namespace CharacterMap.Core
         public Matrix3x2 Transform => System.Numerics.Matrix3x2.Identity;
     }
 
-    public class TypographyFeatureInfo
+    public class TypographyFeatureInfo : ITypographyInfo
     {
+        private static HashSet<CanvasTypographyFeatureName> _allValues { get; } = new HashSet<CanvasTypographyFeatureName>(
+            Enum.GetValues(typeof(CanvasTypographyFeatureName)).Cast<CanvasTypographyFeatureName>());
+
+        public static TypographyFeatureInfo None { get; } = new TypographyFeatureInfo(CanvasTypographyFeatureName.None);
+
         public CanvasTypographyFeatureName Feature { get; }
 
         public string DisplayName { get; }
@@ -154,11 +147,7 @@ namespace CharacterMap.Core
                 // using the feature name.
                 //
                 uint id = (uint)(Feature);
-                DisplayName = ("Custom: ") +
-                    ((char)((id >> 24) & 0xFF)) +
-                    ((char)((id >> 16) & 0xFF)) +
-                    ((char)((id >> 8) & 0xFF)) +
-                    ((char)((id >> 0) & 0xFF));
+                DisplayName = DirectWrite.GetTagName(id);
             }
         }
 
@@ -193,8 +182,5 @@ namespace CharacterMap.Core
 
             return _allValues.Contains(name);
         }
-
-        private static HashSet<CanvasTypographyFeatureName> _allValues { get; } = new HashSet<CanvasTypographyFeatureName>(
-            Enum.GetValues(typeof(CanvasTypographyFeatureName)).Cast<CanvasTypographyFeatureName>());
     }
 }
