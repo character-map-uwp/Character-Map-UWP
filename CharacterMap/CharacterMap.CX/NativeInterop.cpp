@@ -81,6 +81,18 @@ DWriteFontSet^ NativeInterop::GetSystemFonts()
 	return m_appFontSet;
 }
 
+DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()
+{
+	ComPtr<IDWriteFontFallbackBuilder> builder;
+	m_dwriteFactory->CreateFontFallbackBuilder(&builder);
+
+	ComPtr<IDWriteFontFallback> fallback;
+	builder->CreateFontFallback(&fallback);
+
+	return ref new DWriteFallbackFont(fallback);
+}
+
+
 Platform::String^ NativeInterop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie)
 {
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);

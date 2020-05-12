@@ -4,6 +4,7 @@
 //
 
 #include "pch.h"
+#include "DWriteFallbackFont.h"
 
 using namespace CharacterMapCX;
 using namespace CharacterMapCX::Controls;
@@ -27,6 +28,7 @@ using namespace Windows::Graphics::DirectX;
 using namespace Windows::Graphics::DirectX::Direct3D11;
 using namespace Microsoft::Graphics::Canvas::UI::Composition;
 
+DependencyProperty^ DirectText::_FallbackFontProperty = nullptr;
 DependencyProperty^ DirectText::_IsColorFontEnabledProperty = nullptr;
 DependencyProperty^ DirectText::_AxisProperty = nullptr;
 DependencyProperty^ DirectText::_UnicodeIndexProperty = nullptr;
@@ -38,8 +40,6 @@ DirectText::DirectText()
 {
 	DefaultStyleKey = "CharacterMapCX.Controls.DirectText";
     m_isStale = true;
-
-    //this->Loaded += ref new RoutedEventHandler(this, &DirectText::OnLoaded);
 }
 
 void DirectText::OnApplyTemplate()
@@ -95,36 +95,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
         Platform::String^ text = Text;
 
-        /* 
-            FILTER UNSUPPORTED CHARACTERS.
-            - This is a bad way of doing this, should be done with
-              custom text renderer
-        */
-    /*    if (UnicodeIndex > 0)
-        {
-            wchar_t* newData = new wchar_t[2];
-            newData[0] = UnicodeIndex;
-            text = ref new Platform::String(newData, 1);
-        }
-        else
-        {
-            text = Text;
-
-            auto data = text->Data();
-            auto l = text->Length();
-            wchar_t* newData = new wchar_t[l];
-            for (int i = 0; i < l; i++)
-            {
-                wchar_t c = data[i];
-                if (fontFace->HasCharacter(c))
-                    newData[i] = c;
-                else
-                    newData[i] = 0;
-            }
-
-            text = ref new Platform::String(newData, l);
-        }*/
-
+        /* CREATE FORMAT */
         auto format = ref new CanvasTextFormat();
         format->FontFamily = FontFamily->Source;
         format->FontSize = FontSize;
@@ -137,6 +108,12 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         else
             format->Options = CanvasDrawTextOptions::Clip;
 
+        /* SET FALLBACK */
+        ComPtr<IDWriteTextFormat3> dformat = GetWrappedResource<IDWriteTextFormat3>(format);
+        if (FallbackFont != nullptr)
+            dformat->SetFontFallback(FallbackFont->Fallback.Get());
+
+        /* SET AXIS */
         if (Axis->Size > 0)
         {
             DWRITE_FONT_AXIS_VALUE* values = new DWRITE_FONT_AXIS_VALUE[Axis->Size];
@@ -145,12 +122,13 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
                 values[i] = Axis->GetAt(i)->GetDWriteValue();
             }
 
-            ComPtr<IDWriteTextFormat3> dformat = GetWrappedResource< IDWriteTextFormat3>(format);
             dformat->SetFontAxisValues(values, Axis->Size);
         }
 
-        auto typography = ref new CanvasTypography();
+        dformat = nullptr;
 
+        /* CREATE LAYOUT */
+        auto typography = ref new CanvasTypography();
         if (Typography->Feature != CanvasTypographyFeatureName::None)
             typography->AddFeature(Typography->Feature, 1);
 
@@ -161,6 +139,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
         else
             layout->Options = CanvasDrawTextOptions::Clip;
+
 
         m_layout = layout;
         m_render = true;

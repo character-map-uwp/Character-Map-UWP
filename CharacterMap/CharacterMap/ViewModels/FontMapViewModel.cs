@@ -56,6 +56,8 @@ namespace CharacterMap.ViewModels
 
         public bool IsDarkAccent => Utils.IsAccentColorDark();
 
+        public DWriteFallbackFont FallbackFont => FontFinder.Fallback;
+
         public bool IsExternalFile { get; set; }
 
 

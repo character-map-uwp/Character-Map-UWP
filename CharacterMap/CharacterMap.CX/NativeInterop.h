@@ -14,6 +14,7 @@
 #include "DWriteFontAxisAttribute.h"
 #include "PathData.h"
 #include "GlyphImageFormat.h"
+#include "DWriteFallbackFont.h"
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -48,6 +49,8 @@ namespace CharacterMapCX
 		PathData^ GetPathData(CanvasGeometry^ geometry);
 
 		DWriteFontSet^ GetSystemFonts();
+
+		DWriteFallbackFont^ CreateEmptyFallback();
 
 	private:
 

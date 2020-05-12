@@ -83,6 +83,9 @@
       <Filter>Tables</Filter>
     </ClInclude>
     <ClInclude Include="FontAnalysis.h" />
+    <ClInclude Include="DWriteFallbackFont.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

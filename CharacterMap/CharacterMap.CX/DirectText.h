@@ -6,6 +6,7 @@
 #pragma once
 #include "ITypographyInfo.h"
 #include <DWriteFontAxis.h>
+#include "DWriteFallbackFont.h"
 
 
 using namespace Platform;
@@ -45,6 +46,11 @@ namespace CharacterMapCX
 				DependencyProperty^ get() { return _IsColorFontEnabledProperty; }
 			}
 
+			static property DependencyProperty^ FallbackFontProperty
+			{
+				DependencyProperty^ get() { return _FallbackFontProperty; }
+			}
+
 			static property DependencyProperty^ TextProperty
 			{
 				DependencyProperty^ get() { return _TextProperty; }
@@ -68,6 +74,12 @@ namespace CharacterMapCX
 			static property DependencyProperty^ TypographyProperty
 			{
 				DependencyProperty^ get() { return _TypographyProperty; }
+			}
+
+			property DWriteFallbackFont^ FallbackFont
+			{
+				DWriteFallbackFont^ get() { return (DWriteFallbackFont^)GetValue(FallbackFontProperty); }
+				void set(DWriteFallbackFont^ value) { SetValue(FallbackFontProperty, value); }
 			}
 
 			property bool IsColorFontEnabled
@@ -108,6 +120,7 @@ namespace CharacterMapCX
 #pragma endregion
 
 		private:
+			static DependencyProperty^ _FallbackFontProperty;
 			static DependencyProperty^ _IsColorFontEnabledProperty;
 			static DependencyProperty^ _UnicodeIndexProperty;
 			static DependencyProperty^ _TextProperty;
@@ -146,6 +159,12 @@ namespace CharacterMapCX
 		{
 			auto callback = ref new PropertyChangedCallback(&DirectText::OnRenderPropertyChanged);
 			auto meta = ref new PropertyMetadata(nullptr, callback);
+
+			if (_FallbackFontProperty == nullptr)
+			{
+				_FallbackFontProperty = DependencyProperty::Register(
+					"FallbackFont", DWriteFallbackFont::typeid, DirectText::typeid, meta);
+			}
 
 			if (_IsColorFontEnabledProperty == nullptr)
 			{

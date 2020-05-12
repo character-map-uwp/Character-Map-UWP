@@ -54,6 +54,8 @@ namespace CharacterMap.Core
 
         public static bool HasVariableFonts            { get; private set; }
 
+        public static DWriteFallbackFont Fallback       { get; private set; }
+
         public static HashSet<string> SupportedFormats { get; } = new HashSet<string>
         {
             ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
@@ -135,6 +137,10 @@ namespace CharacterMap.Core
                 /* Order everything appropriately */
                 Fonts = CreateFontList(resultList);
                 ImportedFonts = CreateFontList(imports);
+
+
+                if (Fallback == null)
+                    Fallback = interop.CreateEmptyFallback();
 
                 _loadSemaphore.Release();
 

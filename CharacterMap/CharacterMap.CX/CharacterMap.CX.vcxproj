@@ -274,6 +274,7 @@
     <ClInclude Include="DirectText.h" />
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DWHelpers.h" />
+    <ClInclude Include="DWriteFallbackFont.h" />
     <ClInclude Include="DWriteFontAxis.h" />
     <ClInclude Include="DWriteFontAxisAttribute.h" />
     <ClInclude Include="DWriteFontAxisRange.h" />

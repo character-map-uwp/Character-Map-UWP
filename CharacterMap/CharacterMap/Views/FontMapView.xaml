@@ -663,6 +663,7 @@
                                         Text="{Binding}" />
                                     <cxc:DirectText
                                         Axis="{Binding ElementName=TypeRampRoot, Path=DataContext.VariationAxis}"
+                                        FallbackFont="{Binding ElementName=TypeRampRoot, Path=DataContext.FallbackFont}"
                                         FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
                                         FontSize="{Binding}"
                                         IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
