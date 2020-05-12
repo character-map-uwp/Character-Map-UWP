@@ -378,14 +378,21 @@ namespace CharacterMap.ViewModels
         }
         private IReadOnlyList<String> GetRampOptions(FontVariant variant)
         {
+            var list = DefaultRampOptions.ToList();
+            
             if (variant?.TryGetSampleText() is String s)
             {
-                var list = DefaultRampOptions.ToList();
                 list.Insert(0, s);
-                return list;
             }
 
-            return DefaultRampOptions;
+            if (Unicode.ContainsRange(variant, UnicodeRange.Emoticons))
+            {
+                string emoji = "😂😍😭💁👍💋🐱🦉🌺🌲🍓🍕🎂🏰🏠🚄🚒🛫🛍";
+                if (!list.Contains(emoji))
+                    list.Add(emoji);
+            }
+
+            return list.Count == DefaultRampOptions.Count ? DefaultRampOptions : list;
         }
 
         internal void UpdateVariations()
