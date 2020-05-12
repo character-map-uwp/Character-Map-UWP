@@ -27,7 +27,7 @@ namespace CharacterMapCX
 			DWriteFontAxisAttribute get() { return m_attribute; }
 		}
 
-		property String^ TagName	{ String^ get() { return m_tag; } }
+		property String^ Label		{ String^ get() { return m_label; } }
 
 		property UINT32 Tag			{ UINT32 get() { return m_tag_raw; } }
 
@@ -41,9 +41,6 @@ namespace CharacterMapCX
 
 		property float Maximum		{ float get() { return m_maximumValue; } }
 
-		
-
-
 
 	internal:
 		DWriteFontAxis(
@@ -51,7 +48,8 @@ namespace CharacterMapCX
 			DWRITE_FONT_AXIS_RANGE range,
 			DWRITE_FONT_AXIS_VALUE def,
 			DWRITE_FONT_AXIS_VALUE value,
-			UINT32 tag)
+			UINT32 tag,
+			String^ name)
 		{
 			m_attribute = static_cast<DWriteFontAxisAttribute>(attribute);
 
@@ -61,7 +59,7 @@ namespace CharacterMapCX
 
 			Value = value.value;
 			m_originalValue = value.value;
-			m_tag = GetOpenTypeFeatureTag(tag);
+			m_label = name == nullptr ? GetOpenTypeFeatureTag(tag) : name;
 			m_tag_raw = tag;
 		};
 
@@ -77,7 +75,7 @@ namespace CharacterMapCX
 		inline DWriteFontAxis() { };
 
 		DWriteFontAxisAttribute m_attribute;
-		String^ m_tag;
+		String^ m_label;
 
 		UINT32 m_tag_raw = 0;
 		float m_originalValue;

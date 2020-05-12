@@ -583,7 +583,7 @@
 
                                 <Slider
                                     x:Name="AxisSlider"
-                                    Header="{x:Bind cx:DirectWrite.GetTagName(Tag)}"
+                                    Header="{x:Bind Label}"
                                     Maximum="{x:Bind Maximum}"
                                     Minimum="{x:Bind Minimum}"
                                     ValueChanged="Slider_ValueChanged"
@@ -645,6 +645,7 @@
                                     <cxc:DirectText
                                         Axis="{Binding ElementName=TypeRampRoot, Path=DataContext.VariationAxis}"
                                         FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
+                                        IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
                                         FontSize="{Binding}"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}"
                                         Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}" />

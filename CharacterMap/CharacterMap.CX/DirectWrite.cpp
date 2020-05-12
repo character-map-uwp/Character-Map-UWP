@@ -106,82 +106,6 @@ String^ DirectWrite::GetFeatureTag(UINT32 value)
 	return GetOpenTypeFeatureTag(value);
 }
 
-
-IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(CanvasFontFace^ canvasFontFace)
-{
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFontFace);
-	return GetAxis(faceRef);
-}
-
-IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReference> faceRef)
-{
-	// 1. Get native DirectWrite resources
-	ComPtr<IDWriteFontFace3> f3;
-	faceRef->CreateFontFace(&f3);
-
-	ComPtr<IDWriteFontFace5> face;
-	f3.As(&face);
-
-	ComPtr<IDWriteFontResource> resource;
-	face->GetFontResource(&resource);
-
-	// 2. Get axis data
-	auto axisCount = resource->GetFontAxisCount();
-	auto fontaxisCount = face->GetFontAxisValueCount();
-
-	DWRITE_FONT_AXIS_RANGE* ranges = new (std::nothrow) DWRITE_FONT_AXIS_RANGE[axisCount];
-	resource->GetFontAxisRanges(ranges, axisCount);
-
-	DWRITE_FONT_AXIS_VALUE* defaults = new (std::nothrow) DWRITE_FONT_AXIS_VALUE[axisCount];
-	resource->GetDefaultFontAxisValues(defaults, axisCount);
-
-	DWRITE_FONT_AXIS_VALUE* values = new (std::nothrow) DWRITE_FONT_AXIS_VALUE[fontaxisCount];
-	face->GetFontAxisValues(values, fontaxisCount);
-
-	// 3. Create list
-	Vector<DWriteFontAxis^>^ items = ref new Vector<DWriteFontAxis^>();
-	for (int i = 0; i < axisCount; i++)
-	{
-		auto attribute = resource->GetFontAxisAttributes(i);
-		auto range = ranges[i];
-		auto def = defaults[i];
-
-		//auto namedCount = resource->GetAxisValueNameCount(i);
-
-		//// Get named instances for this axis
-		//Vector<DWriteNamedFontAxisValue^>^ instances = ref new Vector<DWriteNamedFontAxisValue^>();
-		//String^ name;
-		//for (int a = 0; a < namedCount; a++)
-		//{
-		//	DWRITE_FONT_AXIS_RANGE range;
-		//	ComPtr<IDWriteLocalizedStrings> strings;
-		//	resource->GetAxisValueNames(i, a, &range, &strings);
-
-		//	uint32 lgt;
-		//	strings->GetStringLength(0, &lgt);
-		//	lgt += 1;
-		//	wchar_t* buffer = new wchar_t[lgt];
-
-		//	strings->GetString(0, buffer, lgt);
-		//	name = ref new String(buffer);
-
-		//	instances->Append(ref new DWriteNamedFontAxisValue(range, GetFeatureTag(range.axisTag), name));
-		//}
-
-		auto item = ref new DWriteFontAxis(
-			attribute, 
-			range, 
-			def, 
-			values[i], 
-			//instances->GetView(), 
-			def.axisTag);
-
-		items->Append(item);
-	}
-
-	return items->GetView();
-}
-
 IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(CanvasFontFace^ canvasFontFace)
 {
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFontFace);
@@ -232,7 +156,7 @@ IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(ComPtr<IDWriteFont
 				str[1] = (wchar_t)((tag >> 16) & 0xFF);
 				str[2] = (wchar_t)((tag >> 8) & 0xFF);
 				str[3] = (wchar_t)((tag >> 0) & 0xFF);
-				
+
 				// Check not a design-time feature
 				if (str[0] != 'z' && str[1] != '0')
 					map->Insert(tag, DWRITE_MAKE_OPENTYPE_TAG(str[0], str[1], str[2], str[3]));
@@ -245,8 +169,66 @@ IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(ComPtr<IDWriteFont
 	}
 
 	face->ReleaseFontTable(context);
-	
+
 	return map->GetView();
+}
+
+IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(CanvasFontFace^ canvasFontFace)
+{
+	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFontFace);
+	return GetAxis(faceRef);
+}
+
+IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReference> faceRef)
+{
+	// 1. Get native DirectWrite resources
+	ComPtr<IDWriteFontFace3> f3;
+	faceRef->CreateFontFace(&f3);
+
+	ComPtr<IDWriteFontFace5> face;
+	f3.As(&face);
+
+	ComPtr<IDWriteFontResource> resource;
+	face->GetFontResource(&resource);
+
+	// 2. Get axis data
+	auto axisCount = resource->GetFontAxisCount();
+	auto fontaxisCount = face->GetFontAxisValueCount();
+
+	DWRITE_FONT_AXIS_RANGE* ranges = new (std::nothrow) DWRITE_FONT_AXIS_RANGE[axisCount];
+	resource->GetFontAxisRanges(ranges, axisCount);
+
+	DWRITE_FONT_AXIS_VALUE* defaults = new (std::nothrow) DWRITE_FONT_AXIS_VALUE[axisCount];
+	resource->GetDefaultFontAxisValues(defaults, axisCount);
+
+	DWRITE_FONT_AXIS_VALUE* values = new (std::nothrow) DWRITE_FONT_AXIS_VALUE[fontaxisCount];
+	face->GetFontAxisValues(values, fontaxisCount);
+
+	// 3. Create list
+	Vector<DWriteFontAxis^>^ items = ref new Vector<DWriteFontAxis^>();
+	for (int i = 0; i < axisCount; i++)
+	{
+		auto attribute = resource->GetFontAxisAttributes(i);
+		auto range = ranges[i];
+		auto def = defaults[i];
+
+		ComPtr<IDWriteLocalizedStrings> strings;
+		resource->GetAxisNames(i, &strings);
+
+		auto str = GetLocaleString(strings, 0, nullptr);
+
+		auto item = ref new DWriteFontAxis(
+			attribute, 
+			range, 
+			def, 
+			values[i], 
+			def.axisTag, 
+			str);
+
+		items->Append(item);
+	}
+
+	return items->GetView();
 }
 
 IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(CanvasFontFace^ canvasFontFace)
@@ -437,14 +419,14 @@ DWriteProperties^ DirectWrite::GetDWriteProperties(CanvasFontSet^ fontSet, UINT 
 
 String^ DirectWrite::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale)
 {
-	HRESULT hr = S_OK;
+	HRESULT hr = E_FAIL;
 	UINT32 fidx = 0;
 	BOOL exists = false;
 
-	if (ls)
+	if (ls && locale != nullptr)
 		hr = strings->FindLocaleName(locale, &fidx, &exists);
 
-	if (SUCCEEDED(hr) && !exists) // if the above find did not find a match, retry with US English
+	if (!SUCCEEDED(hr) || !exists) // if the above find did not find a match, retry with US English
 		hr = strings->FindLocaleName(L"en-us", &fidx, &exists);
 
 	// 3. Get FAMILY Locale string

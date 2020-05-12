@@ -27,6 +27,7 @@ using namespace Windows::Graphics::DirectX;
 using namespace Windows::Graphics::DirectX::Direct3D11;
 using namespace Microsoft::Graphics::Canvas::UI::Composition;
 
+DependencyProperty^ DirectText::_IsColorFontEnabledProperty = nullptr;
 DependencyProperty^ DirectText::_AxisProperty = nullptr;
 DependencyProperty^ DirectText::_UnicodeIndexProperty = nullptr;
 DependencyProperty^ DirectText::_TextProperty = nullptr;
@@ -130,7 +131,11 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         format->FontWeight = FontWeight;
         format->FontStyle = FontStyle;
         format->FontStretch = FontStretch;
-        format->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
+
+        if (IsColorFontEnabled)
+            format->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
+        else
+            format->Options = CanvasDrawTextOptions::Clip;
 
         if (Axis->Size > 0)
         {
@@ -152,11 +157,10 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         auto device = m_canvas->Device;
         auto layout = ref new CanvasTextLayout(device, text, format, device->MaximumBitmapSizeInPixels, device->MaximumBitmapSizeInPixels);
         layout->SetTypography(0, layout->LineMetrics[0].CharacterCount, typography);
-        layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
-
-
-       
-
+        if(IsColorFontEnabled)
+            layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
+        else
+            layout->Options = CanvasDrawTextOptions::Clip;
 
         m_layout = layout;
         m_render = true;
@@ -166,13 +170,18 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         delete format;
     }
 
+    auto dpis = m_canvas->DpiScale;
+    auto dpi = m_canvas->Dpi / 96.0f;
+
+    auto m = m_layout->Device->MaximumBitmapSizeInPixels / dpi;
+
     auto minh = min(m_layout->DrawBounds.Top, m_layout->LayoutBounds.Top);
     auto maxh = max(m_layout->DrawBounds.Bottom, m_layout->LayoutBounds.Bottom);
 
     auto minw = min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);
     auto maxw = max(m_layout->DrawBounds.Right, m_layout->LayoutBounds.Right);
 
-    auto targetsize = Size(ceil(maxw - minw), ceil(maxh - minh));
+    auto targetsize = Size(min(m, ceil(maxw - minw)), min(m, ceil(maxh - minh)));
     return targetsize;
 }
 

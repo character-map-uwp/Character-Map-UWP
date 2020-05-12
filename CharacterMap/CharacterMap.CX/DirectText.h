@@ -40,6 +40,11 @@ namespace CharacterMapCX
 
 			static void RegisterDependencyProperties();
 
+			static property DependencyProperty^ IsColorFontEnabledProperty
+			{
+				DependencyProperty^ get() { return _IsColorFontEnabledProperty; }
+			}
+
 			static property DependencyProperty^ TextProperty
 			{
 				DependencyProperty^ get() { return _TextProperty; }
@@ -63,6 +68,12 @@ namespace CharacterMapCX
 			static property DependencyProperty^ TypographyProperty
 			{
 				DependencyProperty^ get() { return _TypographyProperty; }
+			}
+
+			property bool IsColorFontEnabled
+			{
+				bool get() { return (bool)GetValue(IsColorFontEnabledProperty); }
+				void set(bool value) { SetValue(IsColorFontEnabledProperty, value); }
 			}
 
 			property UINT32 UnicodeIndex
@@ -97,6 +108,7 @@ namespace CharacterMapCX
 #pragma endregion
 
 		private:
+			static DependencyProperty^ _IsColorFontEnabledProperty;
 			static DependencyProperty^ _UnicodeIndexProperty;
 			static DependencyProperty^ _TextProperty;
 			static DependencyProperty^ _AxisProperty;
@@ -132,38 +144,43 @@ namespace CharacterMapCX
 		// to register the properties
 		void DirectText::RegisterDependencyProperties()
 		{
-			auto callback = ref new PropertyMetadata(nullptr,
-				ref new PropertyChangedCallback(&DirectText::OnRenderPropertyChanged));
+			auto callback = ref new PropertyChangedCallback(&DirectText::OnRenderPropertyChanged);
+			auto meta = ref new PropertyMetadata(nullptr, callback);
+
+			if (_IsColorFontEnabledProperty == nullptr)
+			{
+				_IsColorFontEnabledProperty = DependencyProperty::Register(
+					"IsColorFontEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(true, callback));
+			}
 
 			if (_UnicodeIndexProperty == nullptr)
 			{
 				_UnicodeIndexProperty = DependencyProperty::Register(
-					"UnicodeIndex", UINT32::typeid, DirectText::typeid, ref new PropertyMetadata((UINT32)0,
-						ref new PropertyChangedCallback(&DirectText::OnRenderPropertyChanged)));
+					"UnicodeIndex", UINT32::typeid, DirectText::typeid, ref new PropertyMetadata((UINT32)0, callback));
 			}
 
 			if (_TextProperty == nullptr)
 			{
 				_TextProperty = DependencyProperty::Register(
-					"Text", Platform::String::typeid, DirectText::typeid, callback);
+					"Text", Platform::String::typeid, DirectText::typeid, meta);
 			}
 
 			if (_AxisProperty == nullptr)
 			{
 				_AxisProperty = DependencyProperty::Register(
-					"Axis", IVectorView<DWriteFontAxis^>::typeid, DirectText::typeid, callback);
+					"Axis", IVectorView<DWriteFontAxis^>::typeid, DirectText::typeid, meta);
 			}
 
 			if (_FontFaceProperty == nullptr)
 			{
 				_FontFaceProperty = DependencyProperty::Register(
-					"FontFace", Microsoft::Graphics::Canvas::Text::CanvasFontFace::typeid, DirectText::typeid, callback);
+					"FontFace", Microsoft::Graphics::Canvas::Text::CanvasFontFace::typeid, DirectText::typeid, meta);
 			}
 
 			if (_TypographyProperty == nullptr)
 			{
 				_TypographyProperty = DependencyProperty::Register(
-					"Typography", ITypographyInfo::typeid, DirectText::typeid, callback);
+					"Typography", ITypographyInfo::typeid, DirectText::typeid, meta);
 			}
 		}
 	}
