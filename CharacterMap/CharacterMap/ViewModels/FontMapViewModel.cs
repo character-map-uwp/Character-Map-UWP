@@ -299,6 +299,7 @@ namespace CharacterMap.ViewModels
             set => Set(ref _rampOptions, value);
         }
 
+        // todo : refactor into classes with description + writing direction
         private IReadOnlyList<string> DefaultRampOptions { get; } = new List<string>
         {
             "The quick brown dog jumps over a lazy fox. 1234567890",
@@ -306,6 +307,10 @@ namespace CharacterMap.ViewModels
             "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
             "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
             "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
+            "Do bạch kim rất quý nên sẽ dùng để lắp vô xương.", // Vietnamese
+            "Ταχίστη αλώπηξ βαφής ψημένη γη, δρασκελίζει υπέρ νωθρού κυνός", // Greek
+            "עטלף אבק נס דרך מזגן שהתפוצץ כי חם", // Hebrew
+            "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق" // Arabic
         };
 
         #endregion
