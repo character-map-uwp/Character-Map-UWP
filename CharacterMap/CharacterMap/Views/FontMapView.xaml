@@ -560,7 +560,7 @@
                         CornerRadius="0"
                         Header="Preview Text"
                         IsEditable="True"
-                        ItemsSource="{x:Bind ViewModel.DefaultRampOptions}"
+                        ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
                         SelectedIndex="0"
                         Style="{StaticResource RampComboBoxStyle}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

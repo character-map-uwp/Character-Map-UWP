@@ -136,22 +136,6 @@ namespace CharacterMap.Core
                 Fonts = CreateFontList(resultList);
                 ImportedFonts = CreateFontList(imports);
 
-                //HashSet<string> tt = new HashSet<string>();
-
-                //foreach (var font in Fonts)
-                //{
-                //    foreach (var v in font.Variants)
-                //    {
-                //        foreach (var f in v.TypographyFeatures)
-                //        {
-                //            if (!tt.Contains(f.DisplayName))
-                //                tt.Add(f.DisplayName);
-                //        }
-                //    }
-                //}
-
-                //var s = string.Join("\n", tt.OrderBy(t => t));
-
                 _loadSemaphore.Release();
 
                 Messenger.Default.Send(new FontListCreatedMessage());

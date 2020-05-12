@@ -120,7 +120,7 @@ namespace CharacterMap.ViewModels
                     Chars = null;
                     _selectedVariant = value;
                     FontFamily = value == null ? null : new FontFamily(value.Source);
-                    LoadChars(value);
+                    LoadVariant(value);
                     RaisePropertyChanged();
                     UpdateTypography();
                     SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyFeatureInfo.None;
@@ -290,7 +290,14 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public List<string> DefaultRampOptions { get; } = new List<string>
+        private IReadOnlyList<string> _rampOptions;
+        public IReadOnlyList<string> RampOptions
+        {
+            get => _rampOptions;
+            set => Set(ref _rampOptions, value);
+        }
+
+        private IReadOnlyList<string> DefaultRampOptions { get; } = new List<string>
         {
             "The quick brown dog jumps over a lazy fox. 1234567890",
             Localization.Get("CultureSpecificPangram/Text"),
@@ -319,7 +326,7 @@ namespace CharacterMap.ViewModels
             _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
         }
 
-        private void LoadChars(FontVariant variant)
+        private void LoadVariant(FontVariant variant)
         {
             try
             {
@@ -339,6 +346,7 @@ namespace CharacterMap.ViewModels
                     ImportButtonEnabled = false;
                 }
 
+                RampOptions = GetRampOptions(variant);
                 SelectedTypography = TypographyFeatureInfo.None;
                 SearchResults = null;
                 DebounceSearch(SearchQuery, 100);
@@ -357,9 +365,20 @@ namespace CharacterMap.ViewModels
                 {
                     await Task.Delay(100);
                     if (variant == SelectedVariant)
-                        LoadChars(variant);
+                        LoadVariant(variant);
                 });
             }
+        }
+        private IReadOnlyList<String> GetRampOptions(FontVariant variant)
+        {
+            if (variant?.TryGetSampleText() is String s)
+            {
+                var list = DefaultRampOptions.ToList();
+                list.Insert(0, s);
+                return list;
+            }
+
+            return DefaultRampOptions;
         }
 
         internal void UpdateVariations()

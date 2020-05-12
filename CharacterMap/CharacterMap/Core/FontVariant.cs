@@ -169,7 +169,26 @@ namespace CharacterMap.Core
                 return KeyValuePair.Create(name, infos.First().Value);
             }
 
-            return INFORMATIONS.Select(Get).Where(s => s.Key != null).ToList();
+            return INFORMATIONS.Select(i => GetInfoKey(FontFace, i)).Where(s => s.Key != null).ToList();
+        }
+
+        public string TryGetSampleText()
+        {
+            return GetInfoKey(FontFace, CanvasFontInformation.SampleText).Value;
+        }
+
+        private static KeyValuePair<string, string> GetInfoKey(CanvasFontFace fontFace, CanvasFontInformation info)
+        {
+            var infos = fontFace.GetInformationalStrings(info);
+            if (infos.Count == 0)
+                return new KeyValuePair<string, string>();
+
+            var name = info.Humanize().Transform(To.TitleCase);
+            var dic = infos.ToDictionary(k => k.Key, k => k.Value);
+            if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
+                || infos.TryGetValue("en-us", out value))
+                return KeyValuePair.Create(name, value);
+            return KeyValuePair.Create(name, infos.First().Value);
         }
 
         public void Dispose()
