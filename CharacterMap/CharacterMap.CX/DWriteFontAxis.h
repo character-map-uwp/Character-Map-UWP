@@ -33,7 +33,9 @@ namespace CharacterMapCX
 
 		property float Value;
 
-		property float Default		{ float get() { return m_defaultValue; } }
+		property float DefaultValue { float get() { return m_originalValue; } }
+
+		property float AxisDefault	{ float get() { return m_defaultValue; } }
 
 		property float Minimum		{ float get() { return m_minimumValue; } }
 
@@ -58,6 +60,7 @@ namespace CharacterMapCX
 			m_defaultValue = def.value;
 
 			Value = value.value;
+			m_originalValue = value.value;
 			m_tag = GetOpenTypeFeatureTag(tag);
 			m_tag_raw = tag;
 		};
@@ -77,6 +80,7 @@ namespace CharacterMapCX
 		String^ m_tag;
 
 		UINT32 m_tag_raw = 0;
+		float m_originalValue;
 		float m_defaultValue;
 		float m_minimumValue;
 		float m_maximumValue;

@@ -26,9 +26,19 @@ String^ DirectWrite::GetTagName(UINT32 tag)
 
 String^ DirectWrite::GetTagName(String^ tag)
 {
+	/* Variation Tags */
 	if (tag == "wght") return "Weight";
 	else if (tag == "slnt") return "Slant";
+	else if (tag == "CONT") return "Contrast";
+	else if (tag == "MIDL") return "Midline";
 	else if (tag == "wdth") return "Width";
+
+	/* OpenType feature Tags */
+	/* Only a subset of common tags are identified here */
+	/* TODO: Implement this better, including details of rendering 
+	         properties for tags, like is it for single characters
+			 or glyph runs, editable, etc.
+    */
 	else if (tag == "aalt") return "Access All Alternates";
 	else if (tag == "abvf") return "Above-base Forms";
 	else if (tag == "abvm") return "Above-base Mark Positioning";
@@ -77,7 +87,14 @@ String^ DirectWrite::GetTagName(String^ tag)
 	else if (tag == "vkna") return "Vertical Kana Alternates";
 	else if (tag == "vkrn") return "Vertical Kerning";
 	else if (tag == "vpal") return "Proportional Alternate Vertical Metrics";
-	else return tag;
+	else
+	{
+		auto d = tag->Data();
+		if (d[0] == 'c' && d[1] == 'v')
+			return "Character Variant " + d[2] + d[3];
+
+		else return tag;
+	}
 }
 
 /// <summary>
@@ -211,12 +228,14 @@ IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(ComPtr<IDWriteFont
 
 			if (!map->HasKey(tag))
 			{
-				str[3] = (wchar_t)((tag >> 24) & 0xFF);
-				str[2] = (wchar_t)((tag >> 16) & 0xFF);
-				str[1] = (wchar_t)((tag >> 8) & 0xFF);
-				str[0] = (wchar_t)((tag >> 0) & 0xFF);
-
-				map->Insert(tag, DWRITE_MAKE_OPENTYPE_TAG(str[3], str[2], str[1], str[0]));
+				str[0] = (wchar_t)((tag >> 24) & 0xFF);
+				str[1] = (wchar_t)((tag >> 16) & 0xFF);
+				str[2] = (wchar_t)((tag >> 8) & 0xFF);
+				str[3] = (wchar_t)((tag >> 0) & 0xFF);
+				
+				// Check not a design-time feature
+				if (str[0] != 'z' && str[1] != '0')
+					map->Insert(tag, DWRITE_MAKE_OPENTYPE_TAG(str[0], str[1], str[2], str[3]));
 			}
 
 			auto offset = reader->GetUInt16();
@@ -315,6 +334,7 @@ DWriteFontSet^ DirectWrite::GetFonts(ComPtr<IDWriteFontSet3> fontSet)
 
 	int appxCount = 0;
 	int cloudCount = 0;
+	int variableCount = 0;
 
 	for (uint32_t i = 0; i < fontCount; ++i)
 	{
@@ -338,13 +358,16 @@ DWriteFontSet^ DirectWrite::GetFonts(ComPtr<IDWriteFontSet3> fontSet)
 					appxCount++;
 				else if (properties->Source == DWriteFontSource::RemoteFontProvider)
 					cloudCount++;
+				
+				if (properties->HasVariations)
+					variableCount++;
 
 				vec->Append(fontface);
 			}
 		}
 	}
 
-	return ref new DWriteFontSet(vec->GetView(), appxCount, cloudCount);
+	return ref new DWriteFontSet(vec->GetView(), appxCount, cloudCount, variableCount);
 }
 
 DWriteProperties^ DirectWrite::GetDWriteProperties(
@@ -469,7 +492,6 @@ Platform::String^ DirectWrite::GetFileName(CanvasFontFace^ fontFace)
 
 	return name;
 }
-
 
 bool DirectWrite::HasValidFonts(Uri^ uri)
 {
