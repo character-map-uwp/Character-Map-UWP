@@ -115,6 +115,9 @@
                 HorizontalAlignment="Right"
                 Click="{x:Bind Hide}">
                 <SymbolIcon Symbol="Cancel" />
+                <AppBarButton.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="None" Key="Escape"/>
+                </AppBarButton.KeyboardAccelerators>
             </AppBarButton>
 
         </Grid>

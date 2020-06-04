@@ -559,6 +559,12 @@ namespace CharacterMap.Views
             OnSearchBoxSubmittedQuery(sender);
         }
 
+        private void SearchBox_ShortcutInvoked(KeyboardAccelerator sender, KeyboardAcceleratorInvokedEventArgs args)
+        {
+            if (SearchBox.FocusState == FocusState.Unfocused)
+                SearchBox.Focus(FocusState.Keyboard);
+        }
+
         private void InfoFlyout_Opened(object sender, object e)
         {
             if (sender is Flyout f)

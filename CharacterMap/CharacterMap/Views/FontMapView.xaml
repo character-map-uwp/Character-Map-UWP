@@ -124,6 +124,9 @@
                 <AutoSuggestBox.QueryIcon>
                     <SymbolIcon Symbol="Find" />
                 </AutoSuggestBox.QueryIcon>
+                <AutoSuggestBox.KeyboardAccelerators>
+                    <KeyboardAccelerator Modifiers="Control" Key="F" Invoked="SearchBox_ShortcutInvoked"/>
+                </AutoSuggestBox.KeyboardAccelerators>
             </AutoSuggestBox>
 
             <ContentPresenter
