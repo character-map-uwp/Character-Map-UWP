@@ -24,6 +24,7 @@ using Windows.UI.Core;
 using CharacterMap.Controls;
 using CharacterMapCX;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace CharacterMap.Views
 {
@@ -384,43 +385,14 @@ namespace CharacterMap.Views
             }
         }
 
-        private void TryCopyInternal()
+        private async void TryCopyInternal()
         {
-            if (CharGrid.SelectedItem is Character character)
+            if (CharGrid.SelectedItem is Character character
+                && await Utils.TryCopyToClipboardAsync(character, ViewModel))
             {
-                DataPackage dp = new DataPackage
-                {
-                    RequestedOperation = DataPackageOperation.Copy,
-                };
-
-                dp.SetText(character.Char);
-
-                if (!ViewModel.SelectedVariant.IsImported)
-                {
-                    // We can allow users to also copy the glyph with the font meta-data included,
-                    // so when they paste into a supported program like Microsoft Word or 
-                    // Adobe Photoshop the correct font is automatically applied to the paste.
-                    // This can't include any Typographic variations unfortunately.
-
-                    var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {ViewModel.FontFamily.Source};}}}} " +
-                               $@"{{\colortbl;\red0\green0\blue0; }}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs24\u{character.UnicodeIndex}?}}";
-                    dp.SetRtf(rtf);
-
-                    var longName = ViewModel.FontFamily.Source;
-                    if (ViewModel.SelectedVariant.FontInformation.FirstOrDefault(i => i.Key == "Full Name") is var p)
-                    {
-                        if (p.Value != longName)
-                            longName = $"{ViewModel.FontFamily.Source}, {p.Value}";
-                    }
-                    dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{character.Char}</p>");
-                }
-
-                Clipboard.SetContent(dp);
-                Clipboard.Flush();
+                BorderFadeInStoryboard.Begin();
             }
-            BorderFadeInStoryboard.Begin();
         }
-
 
 
 

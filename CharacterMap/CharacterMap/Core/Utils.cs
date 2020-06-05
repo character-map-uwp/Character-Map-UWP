@@ -1,4 +1,6 @@
-﻿using CharacterMapCX;
+﻿using CharacterMap.Models;
+using CharacterMap.ViewModels;
+using CharacterMapCX;
 using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
@@ -6,6 +8,7 @@ using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -54,6 +57,64 @@ namespace CharacterMap.Core
             dp.SetText(str);
             Clipboard.SetContent(dp);
             Clipboard.Flush();
+        }
+
+        public static async Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
+        {
+            // Internal helper method to set clipboard
+            static void TrySetClipboard(Character c, FontMapViewModel v)
+            {
+                DataPackage dp = new DataPackage
+                {
+                    RequestedOperation = DataPackageOperation.Copy,
+                };
+
+                dp.SetText(c.Char);
+
+                if (!v.SelectedVariant.IsImported)
+                {
+                    // We can allow users to also copy the glyph with the font meta-data included,
+                    // so when they paste into a supported program like Microsoft Word or 
+                    // Adobe Photoshop the correct font is automatically applied to the paste.
+                    // This can't include any Typographic variations unfortunately.
+
+                    var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {v.FontFamily.Source};}}}} " +
+                               $@"{{\colortbl;\red0\green0\blue0; }}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs24\u{c.UnicodeIndex}?}}";
+                    dp.SetRtf(rtf);
+
+                    var longName = v.FontFamily.Source;
+                    if (v.SelectedVariant.FontInformation.FirstOrDefault(i => i.Key == "Full Name") is var p)
+                    {
+                        if (p.Value != longName)
+                            longName = $"{v.FontFamily.Source}, {p.Value}";
+                    }
+                    dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{c.Char}</p>");
+                }
+
+                Clipboard.SetContent(dp);
+
+                // Possibly causing crashes.
+                //Clipboard.Flush();
+            }
+
+            // Clipboard can fail when setting. 
+            // We will try 5 times. If that fails, we must 
+            int i = 0;
+            while (i < 5)
+            {
+                try
+                {
+                    TrySetClipboard(character, viewModel);
+                    return true;
+                }
+                catch (Exception ex) when (i < 4)
+                {
+                    await Task.Delay(150);
+                    i++;
+                }
+            }
+
+            return false;
         }
 
         public static bool TryParseHexString(string hexNumber, out int hex)
