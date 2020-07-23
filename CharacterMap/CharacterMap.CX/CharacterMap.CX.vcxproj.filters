@@ -88,9 +88,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Themes\Generic.xaml" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
