@@ -889,189 +889,190 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
         </trans-unit>
         <trans-unit id="ExportFontFile.Text" translate="yes" xml:space="preserve">
           <source>Font File</source>
-          <target state="new">File di caratteri</target>
+          <target state="translated">File di caratteri</target>
         </trans-unit>
         <trans-unit id="ExportFontFileLabel.Text" translate="yes" xml:space="preserve">
           <source>Save Font File As</source>
-          <target state="new">Salva file di carattere come</target>
+          <target state="translated">Salva file di carattere come</target>
         </trans-unit>
         <trans-unit id="FontExportedMessage" translate="yes" xml:space="preserve">
           <source>{0} exported</source>
-          <target state="new">{0} eesportato</target>
+          <target state="translated">{0} esportato</target>
         </trans-unit>
         <trans-unit id="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Export Fonts</source>
-          <target state="new">Esporta caratteri</target>
+          <target state="translated">Esporta caratteri</target>
         </trans-unit>
         <trans-unit id="CollectionExportFolder.Text" translate="yes" xml:space="preserve">
           <source>To Folder</source>
-          <target state="new">Nella cartella</target>
+          <target state="translated">Nella cartella</target>
         </trans-unit>
         <trans-unit id="CollectionExportHeader.Text" translate="yes" xml:space="preserve">
           <source>Export Fonts</source>
-          <target state="new">Esporta</target>
+          <target state="translated">Esporta Caratteri</target>
         </trans-unit>
         <trans-unit id="CollectionExportZip.Text" translate="yes" xml:space="preserve">
           <source>As Zip Archive</source>
-          <target state="new">Come archivio .ZIP</target>
+          <target state="translated">Come archivio .ZIP</target>
         </trans-unit>
         <trans-unit id="SystemFontsExpiredMessage.Text" translate="yes" xml:space="preserve">
           <source>Font listings are out of date. Click to reload.</source>
-          <target state="new">Gli elenchi di caratteri non sono aggiornati. Fai clic per ricaricare.</target>
+          <target state="translated">Gli elenchi dei caratteri non sono aggiornati. Fai clic per ricaricare.</target>
         </trans-unit>
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
           <source>Path Icon</source>
-          <target state="new">Percorso icona</target>
+          <target state="translated">Percorso icona</target>
         </trans-unit>
         <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Dev Utils</source>
-          <target state="new">Attiva/disattiva gli strumenti di sviluppo</target>
+          <target state="translated">Attiva/disattiva gli strumenti di sviluppo</target>
         </trans-unit>
         <trans-unit id="OptionAllEmoji.Text" translate="yes" xml:space="preserve">
           <source>All Categories</source>
-          <target state="new">Tutte le categorie</target>
+          <target state="translated">Tutte le categorie</target>
         </trans-unit>
         <trans-unit id="OptionAllEmojiTitle.Text" translate="yes" xml:space="preserve">
           <source>All Emoji</source>
-          <target state="new">Tutte le Emoji</target>
+          <target state="translated">Tutte le Emoji</target>
         </trans-unit>
         <trans-unit id="OptionEmojiDingbats.Text" translate="yes" xml:space="preserve">
           <source>Dingbats</source>
-          <target state="new">Dingbats</target>
+          <target state="translated">Dingbats</target>
         </trans-unit>
         <trans-unit id="OptionEmojiEmoticons.Text" translate="yes" xml:space="preserve">
           <source>Emoticons</source>
-          <target state="new">Emoticons</target>
+          <target state="translated">Emoticons</target>
         </trans-unit>
         <trans-unit id="OptionEmojiSymbols.Text" translate="yes" xml:space="preserve">
           <source>Symbols &amp; Pictographs</source>
-          <target state="new">Simboli &amp; Pittogrammi</target>
+          <target state="translated">Simboli &amp; Pittogrammi</target>
         </trans-unit>
         <trans-unit id="OptionScriptArabic.Text" translate="yes" xml:space="preserve">
           <source>Arabic</source>
-          <target state="new">Arabic</target>
+          <target state="translated">Arabo</target>
         </trans-unit>
         <trans-unit id="OptionScriptBasicLatin.Text" translate="yes" xml:space="preserve">
           <source>Latin</source>
-          <target state="new">Latino</target>
+          <target state="translated">Latino</target>
         </trans-unit>
         <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
           <source>CJK</source>
-          <target state="new">Cinese Giapponese Coreano</target>
+          <target state="translated">Cinese Giapponese Coreano</target>
         </trans-unit>
         <trans-unit id="OptionScriptCyrillic.Text" translate="yes" xml:space="preserve">
           <source>Cyrillic</source>
-          <target state="new">Cirillico</target>
+          <target state="translated">Cirillico</target>
         </trans-unit>
         <trans-unit id="OptionScriptGreekAndCoptic.Text" translate="yes" xml:space="preserve">
           <source>Greek &amp; Coptic</source>
-          <target state="new">Greco &amp; Coptic</target>
+          <target state="translated">Greco &amp; Coptic</target>
         </trans-unit>
         <trans-unit id="OptionScriptHebrew.Text" translate="yes" xml:space="preserve">
           <source>Hebrew</source>
-          <target state="new">Ebraico</target>
+          <target state="translated">Ebraico</target>
         </trans-unit>
         <trans-unit id="OptionScriptThai.Text" translate="yes" xml:space="preserve">
           <source>Thai</source>
-          <target state="new">Tailandese</target>
+          <target state="translated">Tailandese</target>
         </trans-unit>
         <trans-unit id="CultureSpecificPangram.Text" translate="yes" xml:space="preserve">
           <source>How vexingly quick daft zebras jump! 1234567890</source>
-          <target state="new">Cantami, o Diva, del Pelìde Achille l'ira funesta che infiniti addusse lutti agli Achei 1234567890</target>
+          <target state="translated">Cantami, o Diva, del Pelìde Achille l'ira funesta che infiniti addusse lutti agli Achei 1234567890</target>
         </trans-unit>
         <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
           <source>Switch to Character Map view</source>
-          <target state="new">Passa alla vista Mappa caratteri</target>
+          <target state="translated">Passa alla vista Mappa caratteri</target>
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
           <source>Switch to Type Ramp view</source>
-          <target state="new">Passa alla vista di dettagli</target>
+          <target state="translated">Passa alla vista di dettagli</target>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter or choose text from the dropdown</source>
-          <target state="new">Inserisci o scegli il testo dal menu a discesa</target>
+          <target state="translated">Inserisci o scegli il testo dal menu a discesa</target>
         </trans-unit>
         <trans-unit id="ExportedToFolderMessage" translate="yes" xml:space="preserve">
           <source>Exported to {0}</source>
-          <target state="new">Esportato in {0}</target>
+          <target state="translated">Esportato in {0}</target>
         </trans-unit>
         <trans-unit id="SettingsAboutLabel.Text" translate="yes" xml:space="preserve">
           <source>About</source>
-          <target state="new">About</target>
+          <target state="translated">About</target>
         </trans-unit>
         <trans-unit id="SettingsAdvancedUILabel.Text" translate="yes" xml:space="preserve">
           <source>User Interface Advanced</source>
-          <target state="new">User Interface Advanced</target>
+          <target state="translated">Interfaccia utente avanzata</target>
         </trans-unit>
         <trans-unit id="SettingsFontManagementLabel.Text" translate="yes" xml:space="preserve">
           <source>Font Management</source>
-          <target state="new">Font Management</target>
+          <target state="translated">Gestione dei caratteri</target>
         </trans-unit>
         <trans-unit id="SettingsLicensesLabel.Text" translate="yes" xml:space="preserve">
           <source>Licenses</source>
-          <target state="new">Licenses</target>
+          <target state="translated">Licenze</target>
         </trans-unit>
         <trans-unit id="ImportDragDropDescriptionLabel.Text" translate="yes" xml:space="preserve">
           <source>Drag files from File Explorer or your desktop and drop them here to import them.</source>
-          <target state="new">Drag files from File Explorer or your desktop and drop them here to import them.</target>
+          <target state="translated">Trascina i file da Esplora file o dal desktop e rilasciali qui per importarli.</target>
         </trans-unit>
         <trans-unit id="ImportDragDropLabel.Text" translate="yes" xml:space="preserve">
           <source>Drag and drop to import</source>
-          <target state="new">Drag and drop to import</target>
+          <target state="translated">Trascina e rilascia per importare</target>
         </trans-unit>
         <trans-unit id="SettingsExportImportedLabel.Text" translate="yes" xml:space="preserve">
           <source>Export all imported fonts</source>
-          <target state="new">Export all imported fonts</target>
+          <target state="translated">Esporta tutti i caratteri importati</target>
         </trans-unit>
         <trans-unit id="SettingsFontExportOptimizedLabel.Text" translate="yes" xml:space="preserve">
           <source>Optimized</source>
-          <target state="new">Optimized</target>
+          <target state="translated">Ottimizzato</target>
         </trans-unit>
         <trans-unit id="SettingsFontExportSystemLabel.Text" translate="yes" xml:space="preserve">
           <source>System</source>
-          <target state="new">System</target>
+          <target state="translated">Sistema</target>
         </trans-unit>
         <trans-unit id="SettingsFontImportDescription.Text" translate="yes" xml:space="preserve">
           <source>You can import fonts into the application to view them without installing them in Windows. 
 
 Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</source>
-          <target state="new">You can import fonts into the application to view them without installing them in Windows. 
+          <target state="translated">Puoi importare i caratteri nell'applicazione per visualizzarli senza installarli in Windows. 
 
-Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</target>
+I file dei caratteri importati vengono copiati nella memoria privata dell'app, quindi verranno comunque visualizzati se elimini il file originale sul tuo computer.</target>
         </trans-unit>
         <trans-unit id="SettingsFontNameExportDescription.Text" translate="yes" xml:space="preserve">
           <source>Choose how to name font files when exporting them.
 
 System will return the name of the font file Windows uses in uppercase.
 Optimized will create a smart name based on Font Family and Font Name.</source>
-          <target state="new">Choose how to name font files when exporting them.
+          <target state="translated">Scegli come assegnare un nome ai file dei caratteri che esporti.
 
-System will return the name of the font file Windows uses in uppercase.
-Optimized will create a smart name based on Font Family and Font Name.</target>
+
+Il sistema restituirà in maiuscolo il nome del file del carattere che Windows utilizza.
+La funzione di ottimizzazione creerà un nome intelligente basato sulla famiglia di caratteri e sul nome del carattere.</target>
         </trans-unit>
         <trans-unit id="SettingsFontNameExportLabel.Text" translate="yes" xml:space="preserve">
           <source>Font File Export Naming</source>
-          <target state="new">Font File Export Naming</target>
+          <target state="translated">Denominazione esportazione file font</target>
         </trans-unit>
         <trans-unit id="SettingsImportedFontsLabel.Text" translate="yes" xml:space="preserve">
           <source>Imported Fonts</source>
-          <target state="new">Imported Fonts</target>
+          <target state="translated">Caratteri importati</target>
         </trans-unit>
         <trans-unit id="SettingsLicensesDescriptionLabel.Text" translate="yes" xml:space="preserve">
           <source>This application makes use of the following open source libraries</source>
-          <target state="new">This application makes use of the following open source libraries</target>
+          <target state="translated">Questa applicazione utilizza le seguenti librerie open source</target>
         </trans-unit>
         <trans-unit id="OptionVariableFonts.Text" translate="yes" xml:space="preserve">
           <source>Variable Fonts</source>
-          <target state="new">Variable Fonts</target>
+          <target state="translated">Caratteri variabili</target>
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
           <source>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</source>
-          <target state="new">This font has variable features. To explore them, switch to Type Ramp view using the view button above.</target>
+          <target state="translated">Questo carattere ha caratteristiche variabili. Per visualizzarle, passa alla modalità di visualizzazione Dettagli.</target>
         </trans-unit>
         <trans-unit id="BtnReset.Content" translate="yes" xml:space="preserve">
           <source>Reset</source>
-          <target state="new">Reset</target>
+          <target state="translated">Ripristina</target>
         </trans-unit>
       </group>
     </body>
