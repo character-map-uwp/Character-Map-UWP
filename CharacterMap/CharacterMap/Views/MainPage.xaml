@@ -465,6 +465,9 @@
                             Height="45"
                             Margin="-6 0 0 0"
                             Click="BtnSettings_OnClick">
+                            <ToolTipService.ToolTip>
+                                <TextBlock x:Uid="SettingsHeader" Text="Settings"/>
+                            </ToolTipService.ToolTip>
                             <FontIcon
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
