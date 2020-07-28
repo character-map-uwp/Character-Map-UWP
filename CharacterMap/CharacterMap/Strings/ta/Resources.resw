@@ -1,0 +1,792 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddToCollectionHint.Text" xml:space="preserve">
+    <value>நூலகத்தில் சேர்</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>எழுத்துக்குறி வரைபடம்</value>
+  </data>
+  <data name="BlackFill.Text" xml:space="preserve">
+    <value>கருப்பு நிரப்பு</value>
+  </data>
+  <data name="BtnCopy.Text" xml:space="preserve">
+    <value>உரையாக நகலெடு</value>
+  </data>
+  <data name="BtnSelect.Content" xml:space="preserve">
+    <value>தேர்ந்தெடு</value>
+  </data>
+  <data name="ColoredGlyphLabel.Text" xml:space="preserve">
+    <value>வண்ணமிட்ட கிளிஃப்</value>
+  </data>
+  <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
+    <value>ஒற்றைகுருமம் கிளிஃப்கள்</value>
+  </data>
+  <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
+    <value>வண்ண கிளிஃப்கள்</value>
+  </data>
+  <data name="FontDisplayHeader.Text" xml:space="preserve">
+    <value>எழுத்துரு காட்சி விருப்பங்கள்</value>
+  </data>
+  <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துரு வரைதல் விருப்பங்கள்</value>
+  </data>
+  <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துரு முக பண்புகள்</value>
+  </data>
+  <data name="FontPropFace.Text" xml:space="preserve">
+    <value>முகத்தின் பெயர்</value>
+  </data>
+  <data name="FontPropFamily.Text" xml:space="preserve">
+    <value>குடும்பப் பெயர்</value>
+  </data>
+  <data name="FontPropMonospaced.Text" xml:space="preserve">
+    <value>ஒற்றையிடமுள்ள எழுத்துருவா</value>
+  </data>
+  <data name="FontPropStretch.Text" xml:space="preserve">
+    <value>விரி</value>
+  </data>
+  <data name="FontPropStyle.Text" xml:space="preserve">
+    <value>நடை</value>
+  </data>
+  <data name="FontPropSymbol.Text" xml:space="preserve">
+    <value>சின்ன எழுத்துருவா</value>
+  </data>
+  <data name="FontPropTitle.Text" xml:space="preserve">
+    <value>எழுத்துரு முக பண்புகள்</value>
+  </data>
+  <data name="FontPropType.Text" xml:space="preserve">
+    <value>வகை</value>
+  </data>
+  <data name="FontPropWeight.Text" xml:space="preserve">
+    <value>எடை</value>
+  </data>
+  <data name="InvalidFontMessage" xml:space="preserve">
+    <value>மன்னிக்கவும், இந்த கோப்பில் ஆதரிக்கப்படும் எந்த எழுத்துரு தரவை எங்களால் கண்டுபிடிக்க முடியவில்லை.</value>
+  </data>
+  <data name="InvalidFontTitle" xml:space="preserve">
+    <value>ஆதரவளிக்கப்படாத கோப்பு</value>
+  </data>
+  <data name="OpenInNewWindow.Text" xml:space="preserve">
+    <value>புதியச் சாளரத்தில் திற</value>
+  </data>
+  <data name="RemoveFontFlyout.Text" xml:space="preserve">
+    <value>எழுத்துருவை நீக்கு</value>
+  </data>
+  <data name="RestartButton.Content" xml:space="preserve">
+    <value>பயன்பாட்டை மறுதொடக்கம் செய்</value>
+  </data>
+  <data name="RestartHeader.Text" xml:space="preserve">
+    <value>செயற்படுத்து பயன்பாட்டு மறுதொடக்கம் தேவை.</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>எழுத்து பெயர் அல்லது Unicode Hexஐ தேடு</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>இந்தப் பயன்பாட்டை பற்றி</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>Windows Win32 எழுத்துக்குறி வரைபடம் பதிலாகப் பயன்படுத்த இந்த பயன்பாடு வடிவமைக்கப்பட்டுள்ளது. இது உயர் DPI திரைகளில் அதிக DPI விழிப்புணர்வு கொண்டது.</value>
+  </data>
+  <data name="TxtCopiedMessage.Text" xml:space="preserve">
+    <value>நகலெடுக்கப்பட்டது</value>
+  </data>
+  <data name="TxtFontIcon.Header" xml:space="preserve">
+    <value>எழுத்துரு படவுரு</value>
+  </data>
+  <data name="TxtSymbolIcon.Header" xml:space="preserve">
+    <value>சின்ன படவுரு</value>
+  </data>
+  <data name="TxtTitle.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி வரைபடம்</value>
+  </data>
+  <data name="TxtUnicode.Header" xml:space="preserve">
+    <value>Unicode</value>
+  </data>
+  <data name="TxtXamlCode.Header" xml:space="preserve">
+    <value>கிளிஃப் குறியீடு</value>
+  </data>
+  <data name="TypographyVariantsHeader.Text" xml:space="preserve">
+    <value>கிளிஃப் வகைகள்</value>
+  </data>
+  <data name="WhiteFill.Text" xml:space="preserve">
+    <value>வெள்ளை நிரப்பு</value>
+  </data>
+  <data name="ImportNotAFile" xml:space="preserve">
+    <value>கோப்பில்லை</value>
+  </data>
+  <data name="ImportPendingDelete" xml:space="preserve">
+    <value>எழுத்துரு நீக்கம் நிலுவையில் உள்ளது. தயவுசெய்து பயன்பாட்டை மறுதொடக்கம் செய்யுங்கள்.</value>
+  </data>
+  <data name="ImportUnavailableFile" xml:space="preserve">
+    <value>கோப்பு கிடைக்கவில்லை</value>
+  </data>
+  <data name="ImportUnsupportedFileType" xml:space="preserve">
+    <value>ஆதரவளிக்கப்படாத கோப்பு வகை</value>
+  </data>
+  <data name="ImportUnsupportedFontType" xml:space="preserve">
+    <value>ஆதரவளிக்கப்படாதக் எழுத்துரு வகை</value>
+  </data>
+  <data name="FontsClearedOnNextLaunchNotice" xml:space="preserve">
+    <value>Some fonts could not be completely removed right now. These fonts will not show in the application and will be completely removed next time the app is launched.</value>
+  </data>
+  <data name="SaveImageError" xml:space="preserve">
+    <value>மன்னிக்கவும், நாங்கள் படத்தை சேமிக்கும் போது ஏதோ தவறு நடந்தது.</value>
+  </data>
+  <data name="LoadingFontListError" xml:space="preserve">
+    <value>எழுத்துரு பட்டியலை ஏற்றுவதில் பிழை</value>
+  </data>
+  <data name="NoticeLabel.Text" xml:space="preserve">
+    <value>அறிக்கை</value>
+  </data>
+  <data name="ImportFileCopyFail" xml:space="preserve">
+    <value>ஏதோ தவறாகிவிட்டது. பிறகு மீண்டும் முயலவும்.</value>
+  </data>
+  <data name="ImportFontHelpBlock.Text" xml:space="preserve">
+    <value>உங்கள் நூலகத்திற்கு நகலெடுக்க எழுத்துருக்களை பயன்பாட்டிற்குள் இழுக்கவும்.</value>
+  </data>
+  <data name="FontPropXaml.Text" xml:space="preserve">
+    <value>XAML FontFamily மூலம்</value>
+  </data>
+  <data name="FilePickerConfirm" xml:space="preserve">
+    <value>இறக்குமதி</value>
+  </data>
+  <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துருக்களை இறக்குமதி செய்</value>
+  </data>
+  <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துருகவை திற</value>
+  </data>
+  <data name="OpenFontPickerConfirm" xml:space="preserve">
+    <value>திற</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>தொகுப்புப் பெயர்</value>
+  </data>
+  <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
+    <value>உருவாக்கு</value>
+  </data>
+  <data name="DigCreateCollection.Title" xml:space="preserve">
+    <value>தொகுப்பை உருவாக்கு</value>
+  </data>
+  <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>தொகுப்பை நீக்கு</value>
+  </data>
+  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
+    <value>இரத்து</value>
+  </data>
+  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+    <value>நீக்கு</value>
+  </data>
+  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
+    <value>இரத்து</value>
+  </data>
+  <data name="DigDeleteCollection.Title" xml:space="preserve">
+    <value>இந்தத் தொகுப்பை நிச்சயமாக நீக்க விரும்புகிறீர்களா?</value>
+  </data>
+  <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
+    <value>மறுபெயரிடு</value>
+  </data>
+  <data name="DigRenameCollection.Title" xml:space="preserve">
+    <value>தொகுப்பை மறுபெயரிடு</value>
+  </data>
+  <data name="OptionAllFonts.Text" xml:space="preserve">
+    <value>அனைத்து எழுத்துருக்கள்</value>
+  </data>
+  <data name="OptionImportedFonts.Text" xml:space="preserve">
+    <value>இறக்குமதி செய்யப்பட்ட எழுத்துருக்கள்</value>
+  </data>
+  <data name="OptionSymbolFonts.Text" xml:space="preserve">
+    <value>சின்ன எழுத்துருக்கள்</value>
+  </data>
+  <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>தொகுப்பை மறுபெயரிடு</value>
+  </data>
+  <data name="FontListDisplayHeader.Text" xml:space="preserve">
+    <value>எழுத்துருக்கள் பட்டியல் காட்சி</value>
+  </data>
+  <data name="FontPropCount.Text" xml:space="preserve">
+    <value>கிளிஃப் எண்ணிக்கை</value>
+  </data>
+  <data name="OptionMonospacedFonts.Text" xml:space="preserve">
+    <value>Choose the label to show under each character. May have a minor effect on scrolling performance.</value>
+  </data>
+  <data name="OptionSansSerifFonts.Text" xml:space="preserve">
+    <value>Sans Serif எழுத்துருக்கள்</value>
+  </data>
+  <data name="OptionSerifFonts.Text" xml:space="preserve">
+    <value>Serif எழுத்துருக்கள்</value>
+  </data>
+  <data name="NewCollectionItem.Text" xml:space="preserve">
+    <value>புதியத் தொகுப்பு</value>
+  </data>
+  <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
+    <value>தொகுப்பிலிருந்து அகற்று</value>
+  </data>
+  <data name="AddToCollectionFlyout.Text" xml:space="preserve">
+    <value>தொகுப்பில் சேர்</value>
+  </data>
+  <data name="InstantSearchToggle.OffContent" xml:space="preserve">
+    <value>உடனடித் தேடல் முடக்கப்பட்டுள்ளது</value>
+  </data>
+  <data name="InstantSearchToggle.OnContent" xml:space="preserve">
+    <value>உடனடித் தேடல் இயக்கப்பட்டுள்ளது</value>
+  </data>
+  <data name="SearchResultsSlider.Header" xml:space="preserve">
+    <value>அதிகபட்ச தேடல் முடிவுகள்</value>
+  </data>
+  <data name="FontPropCharCount.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி எண்ணிக்கை</value>
+  </data>
+  <data name="FontPropFilePath.Text" xml:space="preserve">
+    <value>கோப்புப் பாதை</value>
+  </data>
+  <data name="DWriteSourcePerMachine" xml:space="preserve">
+    <value>அனைத்து பயனர்கள்</value>
+  </data>
+  <data name="DWriteSourcePerUser" xml:space="preserve">
+    <value>நடப்புப் பயனர் மட்டும்</value>
+  </data>
+  <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
+    <value>மேக வழங்குநர்</value>
+  </data>
+  <data name="DWriteSourceUnknown" xml:space="preserve">
+    <value>விளக்கப்படாதவை</value>
+  </data>
+  <data name="FontPropInstallType.Text" xml:space="preserve">
+    <value>நிறுவல் வகை</value>
+  </data>
+  <data name="OptionAppxFonts.Text" xml:space="preserve">
+    <value>Microsoft Store இலிருந்து</value>
+  </data>
+  <data name="OptionCloudFonts.Text" xml:space="preserve">
+    <value>Cloud-சார்ந்த எழுத்துருக்கள்</value>
+  </data>
+  <data name="OptionColorFonts.Text" xml:space="preserve">
+    <value>வண்ண எழுத்துருக்கள்</value>
+  </data>
+  <data name="OptionDecorativeFonts.Text" xml:space="preserve">
+    <value>அலங்கார எழுத்துருக்கள்</value>
+  </data>
+  <data name="OptionMoreFilters.Text" xml:space="preserve">
+    <value>மேலும்</value>
+  </data>
+  <data name="OptionScriptFonts.Text" xml:space="preserve">
+    <value>அரிச்சுவடி எழுத்துருக்கள்</value>
+  </data>
+  <data name="StatusBarFontCount" xml:space="preserve">
+    <value>{0} எழுத்துரு குடும்பங்கள்</value>
+  </data>
+  <data name="FontPropFileSize.Text" xml:space="preserve">
+    <value>கோப்பின் அளவு</value>
+  </data>
+  <data name="InstallTypeImported" xml:space="preserve">
+    <value>நிறுவப்படவில்லை (இறக்குமதி செய்யபட்டது)</value>
+  </data>
+  <data name="StatusBarCharacterCount" xml:space="preserve">
+    <value>{0} எழுத்துக்குறிகள்</value>
+  </data>
+  <data name="SearchDelaySelector.Header" xml:space="preserve">
+    <value>தேடல் முன்பு தாமதம் (ms)</value>
+  </data>
+  <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
+    <value>உடனடித் தேடல்</value>
+  </data>
+  <data name="CharacterSavedMessage.Text" xml:space="preserve">
+    <value>இதில் சேமிக்கப்பட்டது</value>
+  </data>
+  <data name="NotificationAddedToCollection" xml:space="preserve">
+    <value>"{1}" தொகுப்பில் {0} சேர்க்கப்பட்டது</value>
+  </data>
+  <data name="BtnOpenFile.Content" xml:space="preserve">
+    <value>கோப்பைத் திற</value>
+  </data>
+  <data name="BtnOpenFolder.Content" xml:space="preserve">
+    <value>கோப்புறையில் காண்பி</value>
+  </data>
+  <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துரு பலகையை மறை</value>
+  </data>
+  <data name="NotificationImportFailed" xml:space="preserve">
+    <value>இறக்குமதி தோல்வியடைந்தது</value>
+  </data>
+  <data name="NotificationMultipleFontsAdded" xml:space="preserve">
+    <value>{0} கோப்புகள் உங்கள் தொகுப்பில் சேர்க்கப்பட்டன</value>
+  </data>
+  <data name="NotificationSingleFontAdded" xml:space="preserve">
+    <value>{0} உங்கள் தொகுப்பில் சேர்க்கப்பட்டது</value>
+  </data>
+  <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துரு பலகையைக் காண்பி</value>
+  </data>
+  <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>மேலும்</value>
+  </data>
+  <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துருக்களை வடிகட்டவும்</value>
+  </data>
+  <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>முழுத் திரைக்கு செல் அல்லது முழுத் திரையிலிருந்து வெளியேறு</value>
+  </data>
+  <data name="DlgDeleteFont.Title" xml:space="preserve">
+    <value>உங்கள் நூலகத்திலிருந்து இந்த எழுத்துருவை நீக்க நிச்சயமாக விரும்புகிறீர்களா?</value>
+  </data>
+  <data name="NotificationCollectionDeleted" xml:space="preserve">
+    <value>"{0}" தொகுப்பு நீக்கப்பட்டது</value>
+  </data>
+  <data name="DlgException.PrimaryButtonText" xml:space="preserve">
+    <value>சரி</value>
+  </data>
+  <data name="DlgException.Title" xml:space="preserve">
+    <value>ஏதோ தவறாகிவிட்டது</value>
+  </data>
+  <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
+    <value>பிழையை நகலகத்திற்கு நகலெடுத்து GitHubஐ திற</value>
+  </data>
+  <data name="DlgExceptionExpander.Header" xml:space="preserve">
+    <value>முழு பிழை விவரங்களைக் காண்க</value>
+  </data>
+  <data name="DlgExceptionMessage.Text" xml:space="preserve">
+    <value>To help us debug and fix this for you, please consider opening an issue on our GitHub page and posting the details. We'll try and fix it right away!</value>
+  </data>
+  <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>மூடு</value>
+  </data>
+  <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>நகலெடு</value>
+  </data>
+  <data name="BtnRateAndReview.Content" xml:space="preserve">
+    <value>தரமதிப்பிட்டு &amp; மதிப்பாய்வு</value>
+  </data>
+  <data name="BtnXAMLGeometry.Content" xml:space="preserve">
+    <value>பார்க்க கிளிக் செய்க</value>
+  </data>
+  <data name="RbThemeDark.Content" xml:space="preserve">
+    <value>இருள்</value>
+  </data>
+  <data name="RbThemeLight.Content" xml:space="preserve">
+    <value>வெளிச்சம்</value>
+  </data>
+  <data name="RbThemeSystem.Content" xml:space="preserve">
+    <value>Windows இயல்புநிலை</value>
+  </data>
+  <data name="RbUseActualFont.Content" xml:space="preserve">
+    <value>உண்மையான எழுத்துருவை பயன்படுத்து
+</value>
+  </data>
+  <data name="RbUseSystemFont.Content" xml:space="preserve">
+    <value>முறைமை எழுத்துருவை பயன்படுத்து</value>
+  </data>
+  <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
+    <value>உடனடி தேடலை இயக்கு/அணை. முடக்கப்பட்டிருந்தால், நீங்கள் தேடலை enter விசை அல்லது தேடல் படவுரு மூலம் துவங்கலாம்.</value>
+  </data>
+  <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி தேடல்</value>
+  </data>
+  <data name="SettingsCharGridDescription.Text" xml:space="preserve">
+    <value>எழுத்துக்குறிகள் கட்டத்திற்குள் உள்ள தனிப்பட்ட எழுத்துக்குறியின் அளவு. சிறிய அளவுகள் செயல்திறனை பாதிக்கலாம்.</value>
+  </data>
+  <data name="SettingsCharGridHeader.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி கட்ட அளவு</value>
+  </data>
+  <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி கட்ட முன்னோட்டம்</value>
+  </data>
+  <data name="SettingsDevToolsDescription.Text" xml:space="preserve">
+    <value>சின்ன படவுரு மற்றும் எழுத்துரு படவுரு போன்ற XAML உருவாக்குநர்களுக்கான கருவிகளைக் காண்பி.</value>
+  </data>
+  <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
+    <value>உருவாக்குநர் அம்சங்கள்</value>
+  </data>
+  <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
+    <value>உருவாக்குநர்கள் அமைப்புகளைக் காண்பி</value>
+  </data>
+  <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
+    <value>உருவாக்குநர்கள் அம்சங்கள் உள்ளடக்கதிற்கான Dev மொழியைத் தேர்வுசெய்க.</value>
+  </data>
+  <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
+    <value>மொழி</value>
+  </data>
+  <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
+    <value>சாளரத்தை மறுஅளவிடும் போது எழுத்துக்குறி கட்டத்தை அசைவூட்டம் செய்யும்.
+இதை இயக்கினால், சாளரத்தை மறுஅளவிடும் போது ஒரு பெரிய செயல்திறன் அபராதம் ஏற்படலாம்.</value>
+  </data>
+  <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
+    <value>சாளர மறுஅளவாக்கல் அசைவூட்டங்களை செயற்படுத்து</value>
+  </data>
+  <data name="SettingsExportHeader.Text" xml:space="preserve">
+    <value>ஏற்றுமதிசெய்</value>
+  </data>
+  <data name="SettingsFontListDescription.Text" xml:space="preserve">
+    <value>எழுத்துரு பட்டியலில் எழுத்துருக்களின் பெயர்களைக் காட்ட பயன்படுத்தப்படும் எழுத்துருவைத் தேர்வுசெய்க.</value>
+  </data>
+  <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
+    <value>எழுத்துருக்கள் பட்டியல் முன்னோட்டம்</value>
+  </data>
+  <data name="SettingsHeader.Text" xml:space="preserve">
+    <value>அமைப்புகள்</value>
+  </data>
+  <data name="SettingsLanguageDescription.Text" xml:space="preserve">
+    <value>பயன்பாட்டிலுள்ள மொழியை மாற்றவும்.
+செயற்படுத்து மறுதொடக்கம் தேவை.</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text" xml:space="preserve">
+    <value>மொழி மேலெழுதல்</value>
+  </data>
+  <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
+    <value>ஏற்றுமதி செய்யப்பட்ட PNG படங்களின் அளவு.</value>
+  </data>
+  <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
+    <value>PNG ஏற்றுமதி அளவு</value>
+  </data>
+  <data name="SettingsShadowsDescription.Text" xml:space="preserve">
+    <value>UI இல் நுட்பமான ஆழ நிழல்களை இயக்கும். வெளிச்சப் பயன்முறையை பயன்படுத்தும் போது மட்டுமே குறிப்பிடத்தக்கது.
+இதை இயக்குவது பலவீனமான சாதனங்களில் ஒரு சிறிய செயல்திறன் தாக்கத்தை ஏற்படுத்தலாம்.
+செயற்படுத்த மறுதொடக்கம் தேவை.</value>
+  </data>
+  <data name="SettingsShadowsHeader.Text" xml:space="preserve">
+    <value>நிழல்களை செயற்படுத்து</value>
+  </data>
+  <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
+    <value>எழுத்துரு பட்டியலை ஏற்றுதல், எழுத்துருக்களை மாற்றுதல் மற்றும் எழுத்துக்குறிகளை மாற்றுதல் ஆகிய அசைவூட்டத்தை கட்டுப்படுத்துகிறது.
+இதை இயக்குவதன் மூலம் செயல்திறன் பாதிப்பு மிகவும் குறைவாக இருக்கும்.</value>
+  </data>
+  <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
+    <value>எளிய அசைவூட்டங்களை செயற்படுத்து</value>
+  </data>
+  <data name="SettingsThemeHeader.Text" xml:space="preserve">
+    <value>கருப்பொருள்</value>
+  </data>
+  <data name="SettingsUIHeader.Text" xml:space="preserve">
+    <value>பயனர் இடைமுகம்</value>
+  </data>
+  <data name="TxtPathGeometry.Text" xml:space="preserve">
+    <value>பாதை வடிவியல்</value>
+  </data>
+  <data name="UseSystemLanguage" xml:space="preserve">
+    <value>முறைமை மொழி அமைப்பைப் பயன்படுத்து</value>
+  </data>
+  <data name="SettingsNeedRestart.Text" xml:space="preserve">
+    <value>மறுதொடக்கம் செய்த பின் மாற்றம் செயற்படுத்தப்படும்</value>
+  </data>
+  <data name="BtnContributors.Content" xml:space="preserve">
+    <value>பங்களிப்பாளர்கள்</value>
+  </data>
+  <data name="TxtLoadingFonts.Text" xml:space="preserve">
+    <value>எழுத்துருக்களை ஏற்றுகிறது
+</value>
+  </data>
+  <data name="AppBtnClear.Label" xml:space="preserve">
+    <value>அழி</value>
+  </data>
+  <data name="AppBtnReset.Label" xml:space="preserve">
+    <value>மீட்டமை</value>
+  </data>
+  <data name="AppBtnSelectAll.Label" xml:space="preserve">
+    <value>எல்லாம் தேர்ந்தெடு</value>
+  </data>
+  <data name="BtnApply.Content" xml:space="preserve">
+    <value>செயற்படுத்து</value>
+  </data>
+  <data name="BtnCancel.Content" xml:space="preserve">
+    <value>இரத்து</value>
+  </data>
+  <data name="BtnContinue.Content" xml:space="preserve">
+    <value>தொடரவும்</value>
+  </data>
+  <data name="BtnPrint.Content" xml:space="preserve">
+    <value>அச்சிடு</value>
+  </data>
+  <data name="CbCharacterLabel.Header" xml:space="preserve">
+    <value>எழுத்துக்குறி பெயர் பலகை</value>
+  </data>
+  <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
+    <value>நிலைபரப்பு</value>
+  </data>
+  <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
+    <value>நிலைபதிப்பு</value>
+  </data>
+  <data name="CbListStyle.Header" xml:space="preserve">
+    <value>பட்டியல் நடை</value>
+  </data>
+  <data name="CbShowMargins.Content" xml:space="preserve">
+    <value>ஓரங்களை காட்டு</value>
+  </data>
+  <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
+    <value>வெள்ளையிடம் மற்றும் கட்டுப்பாட்டு எழுத்துக்குறிகளை மறை</value>
+  </data>
+  <data name="ChkBxShowBorders.Content" xml:space="preserve">
+    <value>எல்லைகளைக் காட்டு</value>
+  </data>
+  <data name="GlyphAnnotation_None" xml:space="preserve">
+    <value>ஏதுமில்லை</value>
+  </data>
+  <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
+    <value>காண்பிக்க எழுத்துக்குறி குழுக்களைத் தேர்வுசெய்க</value>
+  </data>
+  <data name="PrintDataHeader.Text" xml:space="preserve">
+    <value>தரவு</value>
+  </data>
+  <data name="PrintViewCharSize.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி அளவு</value>
+  </data>
+  <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
+    <value>கிடைமட்ட ஓரம்</value>
+  </data>
+  <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
+    <value>தளவமைப்பு</value>
+  </data>
+  <data name="PrintViewPageOrientation.Header" xml:space="preserve">
+    <value>பக்கத் திசை</value>
+  </data>
+  <data name="PrintViewPageRange.Text" xml:space="preserve">
+    <value>பக்க வரம்பு</value>
+  </data>
+  <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
+    <value>ஒரு நேரத்தில் 50 பக்கங்கள் வரை அச்சிட முடியும். இங்கு அச்சிட வேண்டிய பக்கங்களின் வரம்பைத் தேர்ந்தெடுக்கவும்.</value>
+  </data>
+  <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
+    <value>அச்சிட வேண்டிய பக்கங்கள்:</value>
+  </data>
+  <data name="PrintViewPageSelector.Header" xml:space="preserve">
+    <value>பக்கத்திலிருந்து தொடங்கு:</value>
+  </data>
+  <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
+    <value>பக்க அமைவு</value>
+  </data>
+  <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
+    <value>முன்னோட்டமிடும் பக்கம்</value>
+  </data>
+  <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
+    <value>இந்தப் பக்கம் நடப்புப் பக்க வரம்பிற்கு வெளியே உள்ளது, அதனால் அச்சிடப்படாது.
+பக்க வரம்பை நீங்கள் பக்க அமைவு பகுதியில் மாற்றலாம்..</value>
+  </data>
+  <data name="PrintViewPrintingLabel" xml:space="preserve">
+    <value>பக்கங்களை அச்சிடுதல் {0} - {1}</value>
+  </data>
+  <data name="PrintViewTitle.Text" xml:space="preserve">
+    <value>Print Configuration
+</value>
+  </data>
+  <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
+    <value>செங்குத்து ஓரம்</value>
+  </data>
+  <data name="SettingsCharLabel.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி பெயர் பலகை</value>
+  </data>
+  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
+    <value>Choose the label to show under each character. May have a minor effect on scrolling performance.</value>
+  </data>
+  <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
+    <value>நிறுவப்பட்ட எழுத்துருக்களை நிர்வகி</value>
+  </data>
+  <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
+    <value>நிறுவப்பட்ட எழுத்துரு</value>
+  </data>
+  <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
+    <value>Windows கருப்பொருள் அமைப்புகள்</value>
+  </data>
+  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
+    <value>Unicode வகை வடிகட்டிகள்</value>
+  </data>
+  <data name="PrintLayout_Grid" xml:space="preserve">
+    <value>கட்டம்</value>
+  </data>
+  <data name="PrintLayout_List" xml:space="preserve">
+    <value>பட்டியல்</value>
+  </data>
+  <data name="PrintLayout_TwoColumn" xml:space="preserve">
+    <value>இரண்டு பத்திகள்</value>
+  </data>
+  <data name="SettingsTransparencyDescription.Text" xml:space="preserve">
+    <value>UI இல் வெளிப்படைத்தன்மை விளைவுகளை செயல்படுத்தும். Windows அமைப்புகளில் வெளிப்படைத்தன்மை முடக்கப்பட்டால், இது எந்த விளைவையும் ஏற்படுத்தாது.
+பழைய அல்லது பலவீனமான சாதனங்களில் செயல்திறன் மீது ஒரு சிறிய விளைவை ஏற்படுத்தலாம்.</value>
+  </data>
+  <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
+    <value>வெளிப்படைத்தன்மையை செயற்படுத்து</value>
+  </data>
+  <data name="StartupFailedButton.Content" xml:space="preserve">
+    <value>விவரங்களைக் காண்பி</value>
+  </data>
+  <data name="StartupFailedHeader.Text" xml:space="preserve">
+    <value>அட டா</value>
+  </data>
+  <data name="StartupFailedMessage.Text" xml:space="preserve">
+    <value>ஏதோ தவறு நடந்தது, தற்போது பயன்பாட்டை தொடங்க முடியவில்லை.
+இந்த பிழை பற்றிய விவரங்களை GitHubக்கு இடுகையிடுவதை கருத்தில் கொள்ளவும், எனவே அதை சரிசெய்ய நாங்கள் உங்களுக்கு உதவ முடியும்.</value>
+  </data>
+  <data name="CharacterKeystrokeLabel" xml:space="preserve">
+    <value>விசைத்தட்டு: Alt + {0:0000}</value>
+  </data>
+  <data name="ExportSVGLabel.Text" xml:space="preserve">
+    <value>SVG படிமமாகச் சேமி</value>
+  </data>
+  <data name="ExportPNGLabel.Text" xml:space="preserve">
+    <value>PNG படிமமாகச் சேமி</value>
+  </data>
+  <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
+    <value>SVG கிளிஃப்</value>
+  </data>
+  <data name="BtnCopyGlyph.Label" xml:space="preserve">
+    <value>நகலெடு</value>
+  </data>
+  <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>நகலகத்திற்கு நகலெடு</value>
+  </data>
+  <data name="BtnSaveGlyph.Label" xml:space="preserve">
+    <value>இவ்வாறு சேமி</value>
+  </data>
+  <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>இவ்வாறு சேமி</value>
+  </data>
+  <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துக்குறியைப் பொருத்து</value>
+  </data>
+  <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
+    <value>இருந்து அகற்றப்பட்டது</value>
+  </data>
+  <data name="NotificationFontAddedBody.Text" xml:space="preserve">
+    <value>இல் சேர்க்கப்பட்டது</value>
+  </data>
+  <data name="ExportFontFile.Text" xml:space="preserve">
+    <value>எழுத்துரு கோப்பு</value>
+  </data>
+  <data name="ExportFontFileLabel.Text" xml:space="preserve">
+    <value>எழுத்துரு கோப்பை இவ்வாறு சேமி</value>
+  </data>
+  <data name="FontExportedMessage" xml:space="preserve">
+    <value>{0} ஏற்றுமதி செய்யப்பட்டது</value>
+  </data>
+  <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>எழுத்துருக்களை ஏற்றுமதி செய்</value>
+  </data>
+  <data name="CollectionExportFolder.Text" xml:space="preserve">
+    <value>கோப்புறைக்கு</value>
+  </data>
+  <data name="CollectionExportHeader.Text" xml:space="preserve">
+    <value>எழுத்துருக்களை ஏற்றுமதி செய்</value>
+  </data>
+  <data name="CollectionExportZip.Text" xml:space="preserve">
+    <value>Zip காப்பகமாக</value>
+  </data>
+  <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
+    <value>எழுத்துரு பட்டியல்கள் காலாவதியாகிவிட்டது. மீண்டும் ஏற்ற கிளிக் செய்க.</value>
+  </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>உருவாக்குநர் கருவிகளைக் காண்பி/மறை</value>
+  </data>
+  <data name="TxtPathIcon.Text" xml:space="preserve">
+    <value>பாதை படவுரு</value>
+  </data>
+  <data name="OptionAllEmoji.Text" xml:space="preserve">
+    <value>எல்லா வகைகளும்</value>
+  </data>
+  <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
+    <value>எல்லா ஈமோஜிக்கள்</value>
+  </data>
+  <data name="OptionEmojiEmoticons.Text" xml:space="preserve">
+    <value>ஈமோஜிக்கள்</value>
+  </data>
+  <data name="OptionEmojiSymbols.Text" xml:space="preserve">
+    <value>சின்னங்கள் &amp; உருவப்படங்கள்</value>
+  </data>
+  <data name="OptionScriptArabic.Text" xml:space="preserve">
+    <value>அரபிக்</value>
+  </data>
+  <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
+    <value>லத்தீன்</value>
+  </data>
+  <data name="OptionScriptCyrillic.Text" xml:space="preserve">
+    <value>சிரில்லிக்</value>
+  </data>
+  <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
+    <value>கிரேக்கம் &amp; காப்டிக்</value>
+  </data>
+  <data name="OptionScriptHebrew.Text" xml:space="preserve">
+    <value>ஹீப்ரு</value>
+  </data>
+  <data name="OptionScriptThai.Text" xml:space="preserve">
+    <value>தாய்</value>
+  </data>
+  <data name="CultureSpecificPangram.Text" xml:space="preserve">
+    <value>எவ்வளவு மிகவேகமாக வரிக்குதிரைகள் குதிக்கிறது! 1234567890</value>
+  </data>
+  <data name="LblSwitchToCharMap.Text" xml:space="preserve">
+    <value>எழுத்துக்குறி வரைபடம் காட்சிக்கு மாறு</value>
+  </data>
+  <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
+    <value>வகை ராம்ப் காட்சிக்கு மாறு</value>
+  </data>
+  <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
+    <value>உள்ளிடு அல்லது கீழ்பட்டியலிலிருந்து உரையைத் தேர்ந்தெடு</value>
+  </data>
+  <data name="ExportedToFolderMessage" xml:space="preserve">
+    <value>{0} இற்கு ஏற்றுமதி செய்யப்பட்டது</value>
+  </data>
+  <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
+    <value>இங்கு இறக்குமதி செய்ய கோப்பு உலவி அல்லது உங்கள் திரைப்பலகத்தில் கோப்புகளை இழுத்து விடவும்.</value>
+  </data>
+  <data name="ImportDragDropLabel.Text" xml:space="preserve">
+    <value>இறக்குமதி செய்ய இழுத்து விடவும்</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>பற்றி</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>
+மேம்பட்ட பயனர் இடைமுகம்</value>
+  </data>
+  <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
+    <value>Export all imported fonts
+</value>
+  </data>
+  <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
+    <value>உகந்ததாக்கியவை</value>
+  </data>
+  <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
+    <value>முறைமை</value>
+  </data>
+  <data name="SettingsFontImportDescription.Text" xml:space="preserve">
+    <value>You can import fonts into the application to view them without installing them in Windows. 
+
+Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>எழுத்துரு மேலாண்மை</value>
+  </data>
+  <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
+    <value>Font File Export Naming</value>
+  </data>
+  <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
+    <value>எழுத்துரு கோப்பு ஏற்றுமதி பெயரிடல்</value>
+  </data>
+  <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
+    <value>இறக்குமதி செய்யப்பட்ட எழுத்துருக்கள்</value>
+  </data>
+  <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
+    <value>இந்த பயன்பாடு பின்வரும் திற மூல மென்பொருள்களைப் பயன்படுத்துகிறது</value>
+  </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>உரிமங்கள்</value>
+  </data>
+  <data name="BtnReset.Content" xml:space="preserve">
+    <value>மீட்டமை</value>
+  </data>
+  <data name="OptionVariableFonts.Text" xml:space="preserve">
+    <value>மாறி எழுத்துருக்கள்</value>
+  </data>
+  <data name="VariableFeaturesMessage.Text" xml:space="preserve">
+    <value>இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</value>
+  </data>
+</root>
