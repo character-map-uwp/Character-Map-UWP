@@ -138,7 +138,7 @@
           <source>Character Map</source>
           <target state="translated" state-qualifier="tm-suggestion">எழுத்துக்குறி வரைபடம்</target>
         </trans-unit>
-        <trans-unit id="TxtUnicode.Header" translate="no" xml:space="preserve">
+        <trans-unit id="TxtUnicode.Header" translate="yes" xml:space="preserve">
           <source>Unicode</source>
           <target state="final">Unicode</target>
         </trans-unit>
@@ -326,9 +326,9 @@
           <source>File Path</source>
           <target state="translated" state-qualifier="tm-suggestion">கோப்புப் பாதை</target>
         </trans-unit>
-        <trans-unit id="DWriteSourceAppxPackage" translate="no" xml:space="preserve">
+        <trans-unit id="DWriteSourceAppxPackage" translate="yes" xml:space="preserve">
           <source>Microsoft Store</source>
-          <target state="final">Microsoft Store</target>
+          <target state="new">Microsoft Store</target>
         </trans-unit>
         <trans-unit id="DWriteSourcePerMachine" translate="yes" xml:space="preserve">
           <source>All Users</source>
@@ -706,13 +706,13 @@ Turning this on has negligible performance impact.</source>
           <source>None</source>
           <target state="translated" state-qualifier="tm-suggestion">ஏதுமில்லை</target>
         </trans-unit>
-        <trans-unit id="GlyphAnnotation_UnicodeHex" translate="no" xml:space="preserve">
+        <trans-unit id="GlyphAnnotation_UnicodeHex" translate="yes" xml:space="preserve">
           <source>Unicode Hex</source>
-          <target state="final">Unicode Hex</target>
+          <target state="new">Unicode Hex</target>
         </trans-unit>
-        <trans-unit id="GlyphAnnotation_UnicodeIndex" translate="no" xml:space="preserve">
+        <trans-unit id="GlyphAnnotation_UnicodeIndex" translate="yes" xml:space="preserve">
           <source>Unicode Index</source>
-          <target state="final">Unicode Index</target>
+          <target state="new">Unicode Index</target>
         </trans-unit>
         <trans-unit id="PrintCharacterFilterContent.Text" translate="yes" xml:space="preserve">
           <source>Choose character groups to display</source>
@@ -737,7 +737,6 @@ Turning this on has negligible performance impact.</source>
         <trans-unit id="PrintViewOfLabel.Text" translate="yes" xml:space="preserve">
           <source>of</source>
           <target state="new">of</target>
-          <note from="MultilingualEditor" annotates="source" priority="4">Where is this used? Can you give a sample?</note>
         </trans-unit>
         <trans-unit id="PrintViewPageOrientation.Header" translate="yes" xml:space="preserve">
           <source>Page Orientation</source>
@@ -938,9 +937,9 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>All Emoji</source>
           <target state="translated">எல்லா ஈமோஜிக்கள்</target>
         </trans-unit>
-        <trans-unit id="OptionEmojiDingbats.Text" translate="no" xml:space="preserve">
+        <trans-unit id="OptionEmojiDingbats.Text" translate="yes" xml:space="preserve">
           <source>Dingbats</source>
-          <target state="final">Dingbats</target>
+          <target state="new">Dingbats</target>
         </trans-unit>
         <trans-unit id="OptionEmojiEmoticons.Text" translate="yes" xml:space="preserve">
           <source>Emoticons</source>
@@ -958,9 +957,9 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>Latin</source>
           <target state="translated" state-qualifier="tm-suggestion">லத்தீன்</target>
         </trans-unit>
-        <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="no" xml:space="preserve">
+        <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
           <source>CJK</source>
-          <target state="final">CJK</target>
+          <target state="new">CJK</target>
         </trans-unit>
         <trans-unit id="OptionScriptCyrillic.Text" translate="yes" xml:space="preserve">
           <source>Cyrillic</source>

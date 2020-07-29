@@ -662,4 +662,142 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
     <value>è stato aggiunto a</value>
   </data>
+  <data name="ExportFontFile.Text" xml:space="preserve">
+    <value>File di caratteri</value>
+  </data>
+  <data name="ExportFontFileLabel.Text" xml:space="preserve">
+    <value>Salva file di carattere come</value>
+  </data>
+  <data name="FontExportedMessage" xml:space="preserve">
+    <value>{0} esportato</value>
+  </data>
+  <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Esporta caratteri</value>
+  </data>
+  <data name="CollectionExportFolder.Text" xml:space="preserve">
+    <value>Nella cartella</value>
+  </data>
+  <data name="CollectionExportHeader.Text" xml:space="preserve">
+    <value>Esporta Caratteri</value>
+  </data>
+  <data name="CollectionExportZip.Text" xml:space="preserve">
+    <value>Come archivio .ZIP</value>
+  </data>
+  <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
+    <value>Gli elenchi dei caratteri non sono aggiornati. Fai clic per ricaricare.</value>
+  </data>
+  <data name="TxtPathIcon.Text" xml:space="preserve">
+    <value>Percorso icona</value>
+  </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Attiva/disattiva gli strumenti di sviluppo</value>
+  </data>
+  <data name="OptionAllEmoji.Text" xml:space="preserve">
+    <value>Tutte le categorie</value>
+  </data>
+  <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
+    <value>Tutte le Emoji</value>
+  </data>
+  <data name="OptionEmojiDingbats.Text" xml:space="preserve">
+    <value>Dingbats</value>
+  </data>
+  <data name="OptionEmojiEmoticons.Text" xml:space="preserve">
+    <value>Emoticons</value>
+  </data>
+  <data name="OptionEmojiSymbols.Text" xml:space="preserve">
+    <value>Simboli &amp; Pittogrammi</value>
+  </data>
+  <data name="OptionScriptArabic.Text" xml:space="preserve">
+    <value>Arabo</value>
+  </data>
+  <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
+    <value>Latino</value>
+  </data>
+  <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
+    <value>Cinese Giapponese Coreano</value>
+  </data>
+  <data name="OptionScriptCyrillic.Text" xml:space="preserve">
+    <value>Cirillico</value>
+  </data>
+  <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
+    <value>Greco &amp; Coptic</value>
+  </data>
+  <data name="OptionScriptHebrew.Text" xml:space="preserve">
+    <value>Ebraico</value>
+  </data>
+  <data name="OptionScriptThai.Text" xml:space="preserve">
+    <value>Tailandese</value>
+  </data>
+  <data name="CultureSpecificPangram.Text" xml:space="preserve">
+    <value>Cantami, o Diva, del Pelìde Achille l'ira funesta che infiniti addusse lutti agli Achei 1234567890</value>
+  </data>
+  <data name="LblSwitchToCharMap.Text" xml:space="preserve">
+    <value>Passa alla vista Mappa caratteri</value>
+  </data>
+  <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
+    <value>Passa alla vista di dettagli</value>
+  </data>
+  <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
+    <value>Inserisci o scegli il testo dal menu a discesa</value>
+  </data>
+  <data name="ExportedToFolderMessage" xml:space="preserve">
+    <value>Esportato in {0}</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>Interfaccia utente avanzata</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>Gestione dei caratteri</value>
+  </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>Licenze</value>
+  </data>
+  <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
+    <value>Trascina i file da Esplora file o dal desktop e rilasciali qui per importarli.</value>
+  </data>
+  <data name="ImportDragDropLabel.Text" xml:space="preserve">
+    <value>Trascina e rilascia per importare</value>
+  </data>
+  <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
+    <value>Esporta tutti i caratteri importati</value>
+  </data>
+  <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
+    <value>Ottimizzato</value>
+  </data>
+  <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
+    <value>Sistema</value>
+  </data>
+  <data name="SettingsFontImportDescription.Text" xml:space="preserve">
+    <value>Puoi importare i caratteri nell'applicazione per visualizzarli senza installarli in Windows. 
+
+I file dei caratteri importati vengono copiati nella memoria privata dell'app, quindi verranno comunque visualizzati se elimini il file originale sul tuo computer.</value>
+  </data>
+  <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
+    <value>Scegli come assegnare un nome ai file dei caratteri che esporti.
+
+
+Il sistema restituirà in maiuscolo il nome del file del carattere che Windows utilizza.
+La funzione di ottimizzazione creerà un nome intelligente basato sulla famiglia di caratteri e sul nome del carattere.</value>
+  </data>
+  <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
+    <value>Denominazione esportazione file font</value>
+  </data>
+  <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
+    <value>Caratteri importati</value>
+  </data>
+  <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
+    <value>Questa applicazione utilizza le seguenti librerie open source</value>
+  </data>
+  <data name="OptionVariableFonts.Text" xml:space="preserve">
+    <value>Caratteri variabili</value>
+  </data>
+  <data name="VariableFeaturesMessage.Text" xml:space="preserve">
+    <value>Questo carattere ha caratteristiche variabili. Per visualizzarle, passa alla modalità di visualizzazione Dettagli.</value>
+  </data>
+  <data name="BtnReset.Content" xml:space="preserve">
+    <value>Ripristina</value>
+  </data>
 </root>

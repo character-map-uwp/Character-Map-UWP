@@ -19,7 +19,7 @@
     <value>ผังอักขระ</value>
   </data>
   <data name="BlackFill.Text" xml:space="preserve">
-    <value>เติมสีดำ</value>
+    <value>อักษรสีดำ</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
     <value>คัดลอกตัวอักษรนี้</value>
@@ -28,7 +28,7 @@
     <value>เลือก</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
-    <value>เติมสี</value>
+    <value>อักษรสี</value>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
     <value>ตัวอักษรขาวดำ</value>
@@ -82,7 +82,7 @@
     <value>เปิดในหน้าต่างใหม่</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
-    <value>ลบฟอนต์นี้</value>
+    <value>ลบฟอนต์</value>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
     <value>รีสตาร์ท</value>
@@ -103,7 +103,7 @@
     <value>คัดลอกเรียบร้อย</value>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
-    <value>ฟอนต์ไอคอน</value>
+    <value>Font Icon</value>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>ฟอนต์สัญลักษณ์</value>
@@ -115,13 +115,13 @@
     <value>Unicode</value>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>XAML Code</value>
+    <value>Glyph Code</value>
   </data>
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
     <value>รูปแบบอักษร</value>
   </data>
   <data name="WhiteFill.Text" xml:space="preserve">
-    <value>เติมสีขาว</value>
+    <value>อักษรสีขาว</value>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>ไม่ใช่ไฟล์</value>
@@ -249,6 +249,9 @@
   <data name="FontPropFilePath.Text" xml:space="preserve">
     <value>ที่ตั้งของไฟล์</value>
   </data>
+  <data name="DWriteSourceAppxPackage" xml:space="preserve">
+    <value>Microsoft Store</value>
+  </data>
   <data name="DWriteSourcePerMachine" xml:space="preserve">
     <value>ผู้ใช้ทั้งหมด</value>
   </data>
@@ -337,7 +340,7 @@
     <value>สลับเต็มจอ</value>
   </data>
   <data name="DlgDeleteFont.Title" xml:space="preserve">
-    <value>คุณแน่ใจว่าคุณต้องการลบฟอนต์นี้ออกจากรายการสะสม?</value>
+    <value>คุณแน่ใจว่าคุณต้องการลบฟอนต์นี้ออกจากรายการฟอนต์ของคุณ?</value>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>ลบรายการสะสม "{0}" แล้ว</value>
@@ -475,5 +478,334 @@
   </data>
   <data name="SettingsNeedRestart.Text" xml:space="preserve">
     <value>จะมีผลเมื่อเปิดแอปครั้งหน้า (เริ่มต้นแอปใหม่)</value>
+  </data>
+  <data name="BtnContributors.Content" xml:space="preserve">
+    <value>ผู้ร่วมพัฒนา</value>
+  </data>
+  <data name="TxtLoadingFonts.Text" xml:space="preserve">
+    <value>กำลังโหลดฟอนต์</value>
+  </data>
+  <data name="AppBtnClear.Label" xml:space="preserve">
+    <value>ไม่เลือกทุกอัน</value>
+  </data>
+  <data name="AppBtnReset.Label" xml:space="preserve">
+    <value>รีเซทเลือก</value>
+  </data>
+  <data name="AppBtnSelectAll.Label" xml:space="preserve">
+    <value>เลือกทั้งหมด</value>
+  </data>
+  <data name="BtnApply.Content" xml:space="preserve">
+    <value>เลือกกลุ่มอักษร</value>
+  </data>
+  <data name="BtnCancel.Content" xml:space="preserve">
+    <value>ยกเลิกพิมพ์</value>
+  </data>
+  <data name="BtnContinue.Content" xml:space="preserve">
+    <value>ส่งพิมพ์</value>
+  </data>
+  <data name="CbCharacterLabel.Header" xml:space="preserve">
+    <value>แสดงชื่ออักษร</value>
+  </data>
+  <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
+    <value>แนวนอน</value>
+  </data>
+  <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
+    <value>แนวตั้ง</value>
+  </data>
+  <data name="CbListStyle.Header" xml:space="preserve">
+    <value>รูปแบบรายการ</value>
+  </data>
+  <data name="CbShowMargins.Content" xml:space="preserve">
+    <value>แสดงขอบกระดาษ</value>
+  </data>
+  <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
+    <value>ซ่อนอักขระว่าง</value>
+  </data>
+  <data name="GlyphAnnotation_None" xml:space="preserve">
+    <value>ไม่แสดง</value>
+  </data>
+  <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
+    <value>เลือกกลุ่มอักษรที่จะพิมพ์</value>
+  </data>
+  <data name="PrintDataHeader.Text" xml:space="preserve">
+    <value>ตั้งค่าข้อมูลอักษร</value>
+  </data>
+  <data name="PrintViewCharSize.Text" xml:space="preserve">
+    <value>ขนาดอักษร</value>
+  </data>
+  <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
+    <value>ขนาดขอบแนวนอน</value>
+  </data>
+  <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
+    <value>ตั้งค่าอักษรพิมพ์</value>
+  </data>
+  <data name="PrintViewOfLabel.Text" xml:space="preserve">
+    <value>จาก</value>
+  </data>
+  <data name="PrintViewPageOrientation.Header" xml:space="preserve">
+    <value>แนวหน้ากระดาษ</value>
+  </data>
+  <data name="PrintViewPageRange.Text" xml:space="preserve">
+    <value>ระยะหน้าที่พิมพ์</value>
+  </data>
+  <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
+    <value>เลือกระยะหน้าที่จะพิมพ์ข้างล่างนี้
+สามารถพิมพ์ได้สูงสุดแค่ 50 หน้าในแต่ละครั้ง</value>
+  </data>
+  <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
+    <value>พิมพ์เป็นจำนวน (หน้า):</value>
+  </data>
+  <data name="PrintViewPageSelector.Header" xml:space="preserve">
+    <value>เริ่มจากหน้า:</value>
+  </data>
+  <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
+    <value>ตั้งค่าหน้ากระดาษ</value>
+  </data>
+  <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
+    <value>กำลังแสดงตัวอย่างหน้า</value>
+  </data>
+  <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
+    <value>หน้านี้อยู่นอกเหนือจากจำนวนหน้าที่จะพิมพ์จึงจะไม่ถูกพิมพ์
+หากต้องการพิมพ์หน้านี้ให้ตั้งค่าจำนวนหน้าที่จะพิมพ์ในส่วน "ตั้งค่าหน้ากระดาษ"</value>
+  </data>
+  <data name="PrintViewPrintingLabel" xml:space="preserve">
+    <value>พิมพ์หน้าที่ {0} ถึง {1}</value>
+  </data>
+  <data name="PrintViewTitle.Text" xml:space="preserve">
+    <value>ตั้งค่าก่อนพิมพ์</value>
+  </data>
+  <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
+    <value>ขนาดขอบแนวตั้ง</value>
+  </data>
+  <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
+    <value>กรองกลุ่มอักษรที่พิมพ์</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
+    <value>รหัสอักษร</value>
+  </data>
+  <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
+    <value>ที่อยู่อักษร</value>
+  </data>
+  <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
+    <value>จัดการฟอนต์ที่ติดตั้งในเครื่อง</value>
+  </data>
+  <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
+    <value>ฟอนต์ที่ติดตั้งไว้ในเครื่อง</value>
+  </data>
+  <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
+    <value>ตั้งค่าสีของระบบ</value>
+  </data>
+  <data name="SettingsCharLabel.Text" xml:space="preserve">
+    <value>ชื่ออักษร</value>
+  </data>
+  <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
+    <value>เลือกการแสดงผลข้อมูลใต้อักษร
+อาจมีผลเสียขณะเลือนดูารางอักษรเล็กน้อย</value>
+  </data>
+  <data name="BtnPrint.Content" xml:space="preserve">
+    <value>พิมพ์</value>
+  </data>
+  <data name="ChkBxShowBorders.Content" xml:space="preserve">
+    <value>แสดงขอบตาราง</value>
+  </data>
+  <data name="PrintLayout_Grid" xml:space="preserve">
+    <value>ตาราง</value>
+  </data>
+  <data name="PrintLayout_List" xml:space="preserve">
+    <value>รายการ</value>
+  </data>
+  <data name="PrintLayout_TwoColumn" xml:space="preserve">
+    <value>2 แถว</value>
+  </data>
+  <data name="SettingsTransparencyDescription.Text" xml:space="preserve">
+    <value>เปิดใช้การแสดงผลหน้าตาโปร่งใส. หากการตั้งค่านี้ถูกปิดในระบบจะไม่มีผลใดๆ เมื่อเปิด
+อาจหน่วงการแสดงผลในอุปกรณ์เก่าหรืออุปกรณ์ที่ไม่แรงพอ</value>
+  </data>
+  <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
+    <value>เปิดใช้หน้าตาโปร่งใส</value>
+  </data>
+  <data name="StartupFailedButton.Content" xml:space="preserve">
+    <value>แสดงรายละเอียดข้อผิดพลาด</value>
+  </data>
+  <data name="StartupFailedHeader.Text" xml:space="preserve">
+    <value>โอ้.. ซวยละ..</value>
+  </data>
+  <data name="StartupFailedMessage.Text" xml:space="preserve">
+    <value>มีบางอย่างผิดพลาดทำให้ไม่สามารถเปิดแอปได้
+ช่วยกรุณาโพสต์รายละเอียดข้อผิดพลาดนี้บน GitHub เพื่อให้เราได้แก้ไข</value>
+  </data>
+  <data name="CharacterKeystrokeLabel" xml:space="preserve">
+    <value>คีย์ลัด: Alt + {0:0000}</value>
+  </data>
+  <data name="ExportSVGLabel.Text" xml:space="preserve">
+    <value>บันทึกเป็นรูป SVG</value>
+  </data>
+  <data name="ExportPNGLabel.Text" xml:space="preserve">
+    <value>บันทึกเป็นรูป PNG</value>
+  </data>
+  <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
+    <value>อักษร SVG</value>
+  </data>
+  <data name="BtnCopyGlyph.Label" xml:space="preserve">
+    <value>คัดลอก</value>
+  </data>
+  <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>คัดลอกไปยังคลิปบอร์ด</value>
+  </data>
+  <data name="BtnSaveGlyph.Label" xml:space="preserve">
+    <value>บันทึกเป็น</value>
+  </data>
+  <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>บันทึกเป็น</value>
+  </data>
+  <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ขยายอักษรตัวอย่าง</value>
+  </data>
+  <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
+    <value>ถูกลบออกจาก</value>
+  </data>
+  <data name="NotificationFontAddedBody.Text" xml:space="preserve">
+    <value>ถูกเพิ่มเข้าไปยัง</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>ชื่อรายการสะสม</value>
+  </data>
+  <data name="ExportFontFile.Text" xml:space="preserve">
+    <value>ไฟล์ฟอนต์</value>
+  </data>
+  <data name="ExportFontFileLabel.Text" xml:space="preserve">
+    <value>บันทึกไฟล์ฟอนต์เป็น</value>
+  </data>
+  <data name="FontExportedMessage" xml:space="preserve">
+    <value>ส่งออก {0} ฟอนต์</value>
+  </data>
+  <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ส่งออกฟอนต์</value>
+  </data>
+  <data name="CollectionExportFolder.Text" xml:space="preserve">
+    <value>ไปยังโฟลเดอร์</value>
+  </data>
+  <data name="CollectionExportHeader.Text" xml:space="preserve">
+    <value>ส่งออกฟอนต์</value>
+  </data>
+  <data name="CollectionExportZip.Text" xml:space="preserve">
+    <value>บันทึกเป็น Zip</value>
+  </data>
+  <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
+    <value>มีฟอนต์ถูกเพิ่มหรือลบออก กรุณาโหลดรายการใหม่</value>
+  </data>
+  <data name="TxtPathIcon.Text" xml:space="preserve">
+    <value>Path Icon</value>
+  </data>
+  <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ซ่อน/แสดง เครื่องมือนักพัฒนา</value>
+  </data>
+  <data name="OptionAllEmoji.Text" xml:space="preserve">
+    <value>ทุกกลุ่ม</value>
+  </data>
+  <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
+    <value>ทุกอีโมจิ</value>
+  </data>
+  <data name="OptionEmojiDingbats.Text" xml:space="preserve">
+    <value>ดิงแบท</value>
+  </data>
+  <data name="OptionEmojiEmoticons.Text" xml:space="preserve">
+    <value>อีโมติคอน</value>
+  </data>
+  <data name="OptionEmojiSymbols.Text" xml:space="preserve">
+    <value>สัญลักษณ์ภาพและอักษร</value>
+  </data>
+  <data name="OptionScriptArabic.Text" xml:space="preserve">
+    <value>อารบิค</value>
+  </data>
+  <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
+    <value>ละติน</value>
+  </data>
+  <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
+    <value>จีน/ญี่ปุ่น/เกาหลี</value>
+  </data>
+  <data name="OptionScriptCyrillic.Text" xml:space="preserve">
+    <value>ซิริลลิก</value>
+  </data>
+  <data name="OptionScriptGreekAndCoptic.Text" xml:space="preserve">
+    <value>กรีกและคอปติก</value>
+  </data>
+  <data name="OptionScriptHebrew.Text" xml:space="preserve">
+    <value>ฮิบรู</value>
+  </data>
+  <data name="OptionScriptThai.Text" xml:space="preserve">
+    <value>ไทย</value>
+  </data>
+  <data name="CultureSpecificPangram.Text" xml:space="preserve">
+    <value>เป็นมนุษย์สุดประเสริฐเลิศคุณค่ากว่าบรรดาฝูงสัตว์เดรัจฉาน ๑๒๓๔๕๖๗๘๙๐</value>
+  </data>
+  <data name="LblSwitchToCharMap.Text" xml:space="preserve">
+    <value>สลับเป็นมุมมองผังอักษร</value>
+  </data>
+  <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
+    <value>สลับเป็นมุมมองแสดงตัวอย่างอักษร</value>
+  </data>
+  <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
+    <value>พิมพ์หรือเลือกข้อความจากรายการ</value>
+  </data>
+  <data name="ExportedToFolderMessage" xml:space="preserve">
+    <value>ส่งออกไปยัง {0}</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>เกี่ยวกับ</value>
+  </data>
+  <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
+    <value>การแสดงผลขั้นสูง</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>จัดการฟอนต์</value>
+  </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>สิทธิ์การใช้งาน</value>
+  </data>
+  <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
+    <value>ลากไฟล์จากตัวจัดการไฟล์หรือ Desktop แล้ววางไว้ตรงนี้เพื่อนำเข้าฟอนต์.</value>
+  </data>
+  <data name="ImportDragDropLabel.Text" xml:space="preserve">
+    <value>ลากและวางเพื่อนำเข้า</value>
+  </data>
+  <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
+    <value>ส่งออกฟอนต์ที่นำเข้าทั้งหมด</value>
+  </data>
+  <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
+    <value>ปรับให้เหมาะสม</value>
+  </data>
+  <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
+    <value>ตามระบบ</value>
+  </data>
+  <data name="SettingsFontImportDescription.Text" xml:space="preserve">
+    <value>คุณสามารถนำเข้าฟอนต์เข้าแอพพลิเคชั่นเพื่อดูได้ โดยไม่ต้องติดตั้งเข้าระบบ
+
+ฟอนต์ที่นำเข้าจะถูกเก็บไว้ในแอปต่างหาก เพราะฉะนั้นหากไฟล์ต้นฉบับถูกลบไปแล้ว ฟอนต์นั้นจะยังแสดงอยู่ในแอพพลิเคชั่นได้</value>
+  </data>
+  <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
+    <value>เลือกวิธีตั้งชื่อฟอนต์ที่จะส่งออก
+
+หากเลือก "ตามระบบ" ทุกฟอนต์จะถูกตั้งตามที่ระบบตั้งไว้
+หากเลือก "ปรับให้เหมาะสม" แอแปจะไล่ตั้งชื่อไฟล์ตามชื่อของฟอนต์</value>
+  </data>
+  <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
+    <value>การตั้งชื่อไฟล์ฟอนต์ที่จะส่งออก</value>
+  </data>
+  <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
+    <value>ฟอนต์ที่นำเข้า</value>
+  </data>
+  <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
+    <value>แอพพลิเคชั่นนี้ได้ใช้ไลบรารี่โอเพนซอร์สเหล่านี้</value>
+  </data>
+  <data name="OptionVariableFonts.Text" xml:space="preserve">
+    <value>ฟอนต์ตัวแปร</value>
+  </data>
+  <data name="VariableFeaturesMessage.Text" xml:space="preserve">
+    <value>ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่าง.
+</value>
+  </data>
+  <data name="BtnReset.Content" xml:space="preserve">
+    <value>รีเซท</value>
   </data>
 </root>
