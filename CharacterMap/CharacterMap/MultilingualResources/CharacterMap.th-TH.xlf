@@ -1075,6 +1075,14 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <source>Reset</source>
           <target state="translated">รีเซท</target>
         </trans-unit>
+        <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
+          <source>Show a preview pane on a right side, with addition functionality on the buttom</source>
+          <target state="new">Show a preview pane on a right side, with addition functionality on the buttom</target>
+        </trans-unit>
+        <trans-unit id="SettingsEnablePaneHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable Preview Pane</source>
+          <target state="new">Enable Preview Pane</target>
+        </trans-unit>
       </group>
     </body>
   </file>
