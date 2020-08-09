@@ -135,7 +135,11 @@ namespace CharacterMap.Core
             set => Set((int)value);
         }
 
-
+        public bool EnablePreviewPane
+        {
+            get => Get(true);
+            set => Set(value);
+        }
 
 
         /* INFRASTRUCTURE */
