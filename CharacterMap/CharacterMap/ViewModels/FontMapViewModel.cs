@@ -51,6 +51,7 @@ namespace CharacterMap.ViewModels
         public IDialogService DialogService { get; }
         public RelayCommand<ExportStyle> CommandSavePng { get; }
         public RelayCommand<ExportStyle> CommandSaveSvg { get; }
+        public RelayCommand CommandToggleOverlay { get; }
 
         internal bool IsLoadingCharacters { get; private set; }
 
@@ -326,6 +327,7 @@ namespace CharacterMap.ViewModels
 
             CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<ExportStyle>(async (b) => await SaveSvgAsync(b));
+            CommandToggleOverlay = new RelayCommand(() => MessengerInstance.Send(new ToggleCompactOverlayMessage()));
 
             _interop = Utils.GetInterop();
 

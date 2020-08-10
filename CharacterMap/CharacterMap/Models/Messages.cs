@@ -113,4 +113,6 @@ namespace CharacterMap.Models
             Analysis = ca;
         }
     }
+
+    public class ToggleCompactOverlayMessage { }
 }

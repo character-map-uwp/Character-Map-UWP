@@ -927,4 +927,7 @@ Enable this will considurably increase the memory usage and possibly hinder the 
   <data name="CopyPathIconCode.Text" xml:space="preserve">
     <value>Copy PathIcon Code</value>
   </data>
+  <data name="SearchBoxShorter" xml:space="preserve">
+    <value>Search...</value>
+  </data>
 </root>

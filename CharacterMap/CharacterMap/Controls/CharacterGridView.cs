@@ -306,8 +306,7 @@ namespace CharacterMap.Controls
                 CharacterMapCX.CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeCharacterLayout(layout);
 
                 //Insert Tooltip with name
-                FontMapViewModel VM = SimpleIoc.Default.GetInstance<FontMapViewModel>($"{_templateSettings.FontFamily.Source}");
-                _xamlDirect.SetObjectProperty(go, XamlPropertyIndex.ToolTipService_ToolTip, GlyphService.GetCharacterDescription(c.UnicodeIndex, VM.SelectedVariant));
+                _xamlDirect.SetObjectProperty(go, XamlPropertyIndex.ToolTipService_ToolTip, GlyphService.GetCharacterDescription(c.UnicodeIndex, FontVariant.CreateDefault(_templateSettings.FontFace)));
 
                 //.ContextFlyout
                 IXamlDirectObject flyout = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.UIElement_ContextFlyout);

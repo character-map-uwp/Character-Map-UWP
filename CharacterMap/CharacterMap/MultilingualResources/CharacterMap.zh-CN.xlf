@@ -1103,6 +1103,10 @@ Enable this will considurably increase the memory usage and possibly hinder the 
           <source>Copy PathIcon Code</source>
           <target state="new">Copy PathIcon Code</target>
         </trans-unit>
+        <trans-unit id="SearchBoxShorter" translate="yes" xml:space="preserve">
+          <source>Search...</source>
+          <target state="new">Search...</target>
+        </trans-unit>
       </group>
     </body>
   </file>

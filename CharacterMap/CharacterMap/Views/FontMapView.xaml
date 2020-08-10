@@ -31,7 +31,18 @@
         <controls:XamlTitleBar
             x:Name="TitleBar"
             x:Load="{x:Bind IsStandalone}"
-            Canvas.ZIndex="101" />
+            Canvas.ZIndex="101">
+            <StackPanel Orientation="Horizontal">
+                <ToggleButton
+                    Width="45"
+                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                    Command="{Binding CommandToggleOverlay}"
+                    Style="{StaticResource IconToggleButtonStyle}"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.Settings.EnablePreviewPane), Mode=OneWay}">
+                    <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                </ToggleButton>
+            </StackPanel>
+        </controls:XamlTitleBar>
 
         <!--  Title row  -->
         <Grid

@@ -160,10 +160,11 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                     await ViewModel.RequestCopyToClipboard(m);
             });
-            if (SimpleIoc.Default.IsRegistered<FontMapViewModel>())
-                SimpleIoc.Default.Unregister<FontMapViewModel>();
-            SimpleIoc.Default.Register(() => ViewModel);
-
+            Messenger.Default.Register<ToggleCompactOverlayMessage>(this, async m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    await ToggleCompactOverlay();
+            });
 
             UpdateDevUtils(false);
             UpdateDisplayMode();
@@ -430,6 +431,35 @@ namespace CharacterMap.Views
             }
         }
 
+        private async Task ToggleCompactOverlay()
+        {
+            var view = ApplicationView.GetForCurrentView();
+            if (view.ViewMode != ApplicationViewMode.CompactOverlay)
+            {
+                ViewModePreferences pref = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                pref.CustomSize = new Windows.Foundation.Size(420, 300);
+                pref.ViewSizePreference = ViewSizePreference.Custom;
+                await view.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, pref);
+                Grid.SetRow(CharGrid, 0);
+                Grid.SetRowSpan(CharGrid, 3);
+                Grid.SetColumnSpan(CharGrid, 3);
+                Canvas.SetZIndex(CharGrid, 99);
+                CharGridHeader.Visibility = Visibility.Collapsed;
+                SearchBox.PlaceholderText = Localization.Get("SearchBoxShorter");
+                SearchBox.Width = 150;
+            }
+            else
+            {
+                await view.TryEnterViewModeAsync(ApplicationViewMode.Default);
+                Grid.SetRow(CharGrid, 2);
+                Grid.SetRowSpan(CharGrid, 1);
+                Grid.SetColumnSpan(CharGrid, 1);
+                Canvas.SetZIndex(CharGrid, 0);
+                CharGridHeader.Visibility = Visibility.Visible;
+                SearchBox.PlaceholderText = Localization.Get("SearchBox/PlaceholderText");
+                SearchBox.Width = 290;
+            }
+        }
 
 
         /* UI Event Handlers */
