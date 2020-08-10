@@ -1075,9 +1075,11 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
           <source>If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
-If Disable will Hide a preview pane, and will subtitude the funtionality with right click menu on Character Grid</source>
+If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
+Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</source>
           <target state="new">If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
-If Disable will Hide a preview pane, and will subtitude the funtionality with right click menu on Character Grid</target>
+If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
+Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</target>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable Preview Pane</source>
