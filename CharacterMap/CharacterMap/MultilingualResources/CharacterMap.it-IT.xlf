@@ -1082,6 +1082,18 @@ La funzione di ottimizzazione creerà un nome intelligente basato sulla famiglia
           <source>Enable Preview Pane</source>
           <target state="new">Enable Preview Pane</target>
         </trans-unit>
+        <trans-unit id="CopyFontIconCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy FontIcon Code</source>
+          <target state="new">Copy FontIcon Code</target>
+        </trans-unit>
+        <trans-unit id="CopyGlyphCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy Glyph Code</source>
+          <target state="new">Copy Glyph Code</target>
+        </trans-unit>
+        <trans-unit id="CopyPathIconCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy PathIcon Code</source>
+          <target state="new">Copy PathIcon Code</target>
+        </trans-unit>
       </group>
     </body>
   </file>
