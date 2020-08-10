@@ -445,7 +445,6 @@
                 <!--  Character Map  -->
                 <views:FontMapView
                     x:Name="FontMap"
-                    x:FieldModifier="public"
                     Grid.Row="1"
                     Font="{x:Bind ViewModel.SelectedFont, Mode=OneWay}">
                     <views:FontMapView.TitleLeftContent>

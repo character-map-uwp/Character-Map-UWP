@@ -635,11 +635,6 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        internal NativeInterop GetNativeInterop()
-        {
-            return _interop;
-        }
-
         public async Task RequestSaveAsync(SaveAsPictureMessage message)
         {
             ExportResult result = null;
