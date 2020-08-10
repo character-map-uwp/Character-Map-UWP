@@ -263,6 +263,7 @@ namespace CharacterMap.Controls
             }
 
             var Settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
+            //Disable if preview pane is enable
             if (!Settings.EnablePreviewPane)
             {
                 //Attemp adding bunch of bindings into Context Flyout item
@@ -293,8 +294,6 @@ namespace CharacterMap.Controls
                 layout.SetTypography(0, 1, type);
                 CharacterMapCX.CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeCharacterLayout(layout);
 
-                //Insert ContextFlyout into grid
-                _xamlDirect.SetObjectProperty(go, XamlPropertyIndex.UIElement_ContextFlyout, ResourceHelper.Get<MenuFlyout>("CharacterGridMenu"));
                 //.ContextFlyout
                 IXamlDirectObject flyout = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.UIElement_ContextFlyout);
                 //<MenuFlyout>
