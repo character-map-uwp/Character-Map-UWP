@@ -158,7 +158,7 @@ namespace CharacterMap.Views
             Messenger.Default.Register<CopyToClipboardMessage>(this, async m =>
             {
                 if (Dispatcher.HasThreadAccess)
-                    await ViewModel.RequestCopyToClipboard(m);
+                    await ViewModel.RequestCopyToClipboardAsync(m);
             });
             Messenger.Default.Register<ToggleCompactOverlayMessage>(this, async m =>
             {

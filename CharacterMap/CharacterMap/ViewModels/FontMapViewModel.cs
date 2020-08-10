@@ -444,7 +444,7 @@ namespace CharacterMap.ViewModels
             IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
         }
 
-        public CanvasTypography GetEffectiveTypography()
+        private CanvasTypography GetEffectiveTypography()
         {
             CanvasTypography typo = new CanvasTypography();
             if (SelectedTypography != null && SelectedTypography.Feature != CanvasTypographyFeatureName.None)
@@ -664,7 +664,7 @@ namespace CharacterMap.ViewModels
                 MessengerInstance.Send(new AppNotificationMessage(true, result));
         }
 
-        public async Task RequestCopyToClipboard(CopyToClipboardMessage message)
+        public async Task RequestCopyToClipboardAsync(CopyToClipboardMessage message)
         {
             if (message.CopyItem == CopyToClipboardMessage.MessageType.Char)
                 await Utils.TryCopyToClipboardAsync(message.RequestedItem, this);
