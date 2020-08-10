@@ -25,6 +25,7 @@ using CharacterMap.Controls;
 using CharacterMapCX;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace CharacterMap.Views
 {
@@ -159,6 +160,10 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                     await ViewModel.RequestCopyToClipboard(m);
             });
+            if (SimpleIoc.Default.IsRegistered<FontMapViewModel>())
+                SimpleIoc.Default.Unregister<FontMapViewModel>();
+            SimpleIoc.Default.Register(() => ViewModel);
+
 
             UpdateDevUtils(false);
             UpdateDisplayMode();

@@ -1,9 +1,11 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Graphics.Canvas.Text;
 using System;
@@ -264,6 +266,15 @@ namespace CharacterMap.Controls
 
             var Settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
             //Disable if preview pane is enable
+            if (Settings.EnablePreviewPane)
+            {
+                //Disable the context flyout
+                Windows.UI.Xaml.Style style = new Style(typeof(MenuFlyoutPresenter));
+                style.Setters.Add(new Setter(MenuFlyoutPresenter.VisibilityProperty, Visibility.Collapsed));
+                //.ContextFlyout
+                IXamlDirectObject flyout = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.UIElement_ContextFlyout);
+                _xamlDirect.SetObjectProperty(flyout, XamlPropertyIndex.MenuFlyout_MenuFlyoutPresenterStyle, style);
+            }
             if (!Settings.EnablePreviewPane)
             {
                 //Attemp adding bunch of bindings into Context Flyout item
@@ -293,6 +304,10 @@ namespace CharacterMap.Controls
                 using var type = _templateSettings.Typography.GetEffectiveTypography();
                 layout.SetTypography(0, 1, type);
                 CharacterMapCX.CanvasTextLayoutAnalysis analysis = Utils.GetInterop().AnalyzeCharacterLayout(layout);
+
+                //Insert Tooltip with name
+                FontMapViewModel VM = SimpleIoc.Default.GetInstance<FontMapViewModel>($"{_templateSettings.FontFamily.Source}");
+                _xamlDirect.SetObjectProperty(go, XamlPropertyIndex.ToolTipService_ToolTip, GlyphService.GetCharacterDescription(c.UnicodeIndex, VM.SelectedVariant));
 
                 //.ContextFlyout
                 IXamlDirectObject flyout = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.UIElement_ContextFlyout);
