@@ -138,7 +138,7 @@ namespace CharacterMap.Core
         public bool EnablePreviewPane
         {
             get => Get(true);
-            set => Set(value);
+            set => BroadcastSet(value);
         }
 
 

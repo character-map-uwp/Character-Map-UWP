@@ -154,8 +154,8 @@
             </Grid.Resources>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="250" />
-                <ColumnDefinition Width="10" />
+                <ColumnDefinition x:Name="CharGridColumn" Width="*" MinWidth="250" />
+                <ColumnDefinition x:Name="SplitterColumn" Width="10" />
                 <ColumnDefinition
                     x:Name="PreviewColumn"
                     Width="326"
@@ -736,7 +736,8 @@
                 x:Name="SplitterContainer"
                 x:FieldModifier="public"
                 Grid.RowSpan="3"
-                Grid.Column="1">
+                Grid.Column="1"
+                Visibility="{x:Bind ViewModel.Settings.EnablePreviewPane, Mode=OneWay}">
                 <toolkit:GridSplitter
                     x:Name="Splitter"
                     Width="12"
@@ -746,7 +747,7 @@
                     GripperForeground="Transparent"
                     ParentLevel="1"
                     ResizeBehavior="BasedOnAlignment"
-                    ResizeDirection="Columns" />
+                    ResizeDirection="Columns"/>
 
                 <TextBlock
                     Margin="3 0 0 0"
@@ -764,7 +765,8 @@
                 x:Name="PreviewGrid"
                 x:FieldModifier="public"
                 Grid.RowSpan="3"
-                Grid.Column="2">
+                Grid.Column="2"
+                Visibility="{x:Bind ViewModel.Settings.EnablePreviewPane, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />

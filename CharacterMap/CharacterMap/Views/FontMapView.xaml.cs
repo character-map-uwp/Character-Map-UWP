@@ -164,6 +164,7 @@ namespace CharacterMap.Views
             UpdateDisplayMode();
             UpdateSearchStates();
             UpdateCharacterFit();
+            UpdatePaneAndGridSizing();
 
             PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
             _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
@@ -257,6 +258,9 @@ namespace CharacterMap.Views
                         break;
                     case nameof(AppSettings.FitCharacter):
                         UpdateCharacterFit();
+                        break;
+                    case nameof(AppSettings.EnablePreviewPane):
+                        UpdatePaneAndGridSizing();
                         break;
                 }
             });
@@ -362,6 +366,23 @@ namespace CharacterMap.Views
                 true);
         }
 
+        private void UpdatePaneAndGridSizing()
+        {
+            if (ViewModel.Settings.EnablePreviewPane)
+            {
+                CharGridColumn.Width = new GridLength(1, GridUnitType.Star);
+                SplitterColumn.Width = new GridLength(10);
+                PreviewColumn.Width = new GridLength(326);
+                PreviewColumn.MinWidth = 150;
+            }
+            else
+            {
+                CharGridColumn.Width = new GridLength(1, GridUnitType.Star);
+                SplitterColumn.Width = new GridLength(0);
+                PreviewColumn.Width = new GridLength(0);
+                PreviewColumn.MinWidth = 0;
+            }
+        }
 
 
 
