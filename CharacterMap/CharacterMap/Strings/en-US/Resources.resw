@@ -911,7 +911,8 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
     <value>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
-    <value>Show a preview pane on a right side, with addition functionality on the buttom</value>
+    <value>If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
+If Disable will Hide a preview pane, and will subtitude the funtionality with right click menu on Character Grid</value>
   </data>
   <data name="SettingsEnablePaneHeader.Text" xml:space="preserve">
     <value>Enable Preview Pane</value>

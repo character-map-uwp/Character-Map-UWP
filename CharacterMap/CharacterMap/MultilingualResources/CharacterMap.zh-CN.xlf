@@ -1080,8 +1080,10 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <target state="new">Reset</target>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
-          <source>Show a preview pane on a right side, with addition functionality on the buttom</source>
-          <target state="new">Show a preview pane on a right side, with addition functionality on the buttom</target>
+          <source>If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
+If Disable will Hide a preview pane, and will subtitude the funtionality with right click menu on Character Grid</source>
+          <target state="new">If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
+If Disable will Hide a preview pane, and will subtitude the funtionality with right click menu on Character Grid</target>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneHeader.Text" translate="yes" xml:space="preserve">
           <source>Enable Preview Pane</source>
