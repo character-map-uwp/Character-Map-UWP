@@ -149,6 +149,16 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
+            Messenger.Default.Register<SaveAsPictureMessage>(this, async m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    await ViewModel.RequestSaveAsync(m);
+            });
+            Messenger.Default.Register<CopyToClipboardMessage>(this, async m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    await ViewModel.RequestCopyToClipboard(m);
+            });
 
             UpdateDevUtils(false);
             UpdateDisplayMode();

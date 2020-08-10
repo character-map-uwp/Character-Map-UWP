@@ -442,7 +442,7 @@ namespace CharacterMap.ViewModels
             IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
         }
 
-        private CanvasTypography GetEffectiveTypography()
+        public CanvasTypography GetEffectiveTypography()
         {
             CanvasTypography typo = new CanvasTypography();
             if (SelectedTypography != null && SelectedTypography.Feature != CanvasTypographyFeatureName.None)
@@ -632,6 +632,60 @@ namespace CharacterMap.ViewModels
             if (SelectedFont is InstalledFont font)
             {
                 _ = FontMapView.CreateNewViewForFontAsync(font);
+            }
+        }
+
+        internal NativeInterop GetNativeInterop()
+        {
+            return _interop;
+        }
+
+        public async Task RequestSaveAsync(SaveAsPictureMessage message)
+        {
+            ExportResult result = null;
+            if (message.Save == SaveAsPictureMessage.SaveAs.PNG)
+            {
+                result = await ExportManager.ExportPngAsync(message.Style,
+                    SelectedFont,
+                    SelectedVariant,
+                    message.Character,
+                    message.Analysis,
+                    GetEffectiveTypography(),
+                    Settings);
+            }
+            else if (message.Save == SaveAsPictureMessage.SaveAs.SVG)
+            {
+                result = await ExportManager.ExportSvgAsync(message.Style,
+                    SelectedFont,
+                    SelectedVariant,
+                    message.Character,
+                    message.Analysis,
+                    GetEffectiveTypography());
+            }
+
+            if (result.Success)
+                MessengerInstance.Send(new AppNotificationMessage(true, result));
+        }
+
+        public async Task RequestCopyToClipboard(CopyToClipboardMessage message)
+        {
+            if (message.CopyItem == CopyToClipboardMessage.MessageType.Char)
+                await Utils.TryCopyToClipboardAsync(message.RequestedItem, this);
+            else
+            {
+                var data = GlyphService.GetDevValues(message.RequestedItem, SelectedVariant, message.Analysis, GetEffectiveTypography(), Settings.DevToolsLanguage == 0);
+                switch (message.CopyItem)
+                {
+                    case CopyToClipboardMessage.MessageType.DevGlyph:
+                        Utils.CopyToClipBoard(data.Hex);
+                        break;
+                    case CopyToClipboardMessage.MessageType.DevFont:
+                        Utils.CopyToClipBoard(data.FontIcon);
+                        break;
+                    case CopyToClipboardMessage.MessageType.DevPath:
+                        Utils.CopyToClipBoard(data.Path);
+                        break;
+                }
             }
         }
     }

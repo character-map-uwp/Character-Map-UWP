@@ -1,6 +1,10 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.ViewModels;
+using CharacterMap.Views;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Messaging;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
@@ -257,9 +261,171 @@ namespace CharacterMap.Controls
                         break;
                 }
             }
-            
 
+            SetContextFlyoutProperties(item, c);
+            
             XamlBindingHelper.ResumeRendering(item);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void SetContextFlyoutProperties(GridViewItem item, Character c)
+        {
+            //Attemp adding bunch of bindings into Context Flyout item
+            /* Copy character
+             * [Separator]
+             * Save PNG
+             *   Color fill
+             *   Black fill
+             *   White fill
+             * Save SVG
+             *   Color fill
+             *   Black fill
+             *   White fill
+             * [Separator]
+             * Dev kit
+             *   Copy glyph
+             *   Copy font
+             *   Show path preview
+             */
+            //I don't know how I can get the viewmodel that aren't register
+            //So, I'll take it from Current window instead
+            FontMapViewModel VM = null;
+            if (Window.Current.Content is Frame)
+                VM = ((Window.Current.Content as Frame).Content as MainPage).FontMap.ViewModel;
+            else if (Window.Current.Content is FontMapView)
+                VM = (Window.Current.Content as FontMapView).ViewModel;
+            //Forge the command to send message
+            RelayCommand<SaveAsPictureMessage> savemsg = new RelayCommand<SaveAsPictureMessage>((SaveAsPictureMessage msg) =>
+            {
+                Messenger.Default.Send(msg);
+            });
+            RelayCommand<CopyToClipboardMessage> copymsg = new RelayCommand<CopyToClipboardMessage>((CopyToClipboardMessage msg) =>
+            {
+                Messenger.Default.Send(msg);
+            });
+            //Data for export
+            CanvasTextLayout layout = new CanvasTextLayout(Utils.CanvasDevice, c.Char, new CanvasTextFormat()
+            {
+                FontSize = (float)Core.Converters.GetFontSize(VM.Settings.GridSize),
+                FontFamily = VM.SelectedVariant.Source,
+                FontStretch = VM.SelectedVariant.FontFace.Stretch,
+                FontWeight = VM.SelectedVariant.FontFace.Weight,
+                FontStyle = VM.SelectedVariant.FontFace.Style,
+                HorizontalAlignment = CanvasHorizontalAlignment.Left,
+            }, VM.Settings.GridSize, VM.Settings.GridSize)
+            {
+                Options = CanvasDrawTextOptions.EnableColorFont
+            };
+            var analysis = VM.GetNativeInterop().AnalyzeCharacterLayout(layout);
+
+            //Content template
+            IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot);
+            //.ContextFlyout
+            IXamlDirectObject flyout = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.UIElement_ContextFlyout);
+            //<MenuFlyout>
+            IXamlDirectObject subFlyout = _xamlDirect.GetXamlDirectObjectProperty(flyout, XamlPropertyIndex.MenuFlyout_Items);
+            //-Copy character
+            IXamlDirectObject flyout_copyChar = _xamlDirect.GetXamlDirectObjectFromCollectionAt(subFlyout, 0);
+            _xamlDirect.SetObjectProperty(flyout_copyChar, XamlPropertyIndex.MenuFlyoutItem_Command, copymsg);
+            _xamlDirect.SetObjectProperty(flyout_copyChar, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, new CopyToClipboardMessage(c));
+            //-Save PNG
+            IXamlDirectObject fo_spng = _xamlDirect.GetXamlDirectObjectFromCollectionAt(subFlyout, 2);
+            //-Save PNG.Items
+            IXamlDirectObject fo_spng_i = _xamlDirect.GetXamlDirectObjectProperty(fo_spng, XamlPropertyIndex.MenuFlyoutSubItem_Items);
+            //Save PNG > Colored Glyph
+            IXamlDirectObject fo_spng_cf = _xamlDirect.GetXamlDirectObjectFromCollectionAt(fo_spng_i, 0);
+            //Save PNG > Colored Glyph.Visibility
+            _xamlDirect.SetObjectProperty(fo_spng_cf, XamlPropertyIndex.UIElement_Visibility, analysis.HasColorGlyphs ? Visibility.Visible : Visibility.Collapsed);
+            if (analysis.HasColorGlyphs)
+            {
+                //Save PNG > Colored Glyph.Command & .CommandParameter
+                _xamlDirect.SetObjectProperty(fo_spng_cf, XamlPropertyIndex.MenuFlyoutItem_Command, savemsg);
+                _xamlDirect.SetObjectProperty(fo_spng_cf, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, new SaveAsPictureMessage(c,
+                    analysis,
+                    SaveAsPictureMessage.SaveAs.PNG,
+                    ExportStyle.ColorGlyph));
+            }
+
+            //Save PNG > Black Fill
+            IXamlDirectObject fo_spng_bf = _xamlDirect.GetXamlDirectObjectFromCollectionAt(fo_spng_i, 1);
+            _xamlDirect.SetObjectProperty(fo_spng_bf, XamlPropertyIndex.MenuFlyoutItem_Command, savemsg);
+            _xamlDirect.SetObjectProperty(fo_spng_bf, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, new SaveAsPictureMessage(c,
+                analysis,
+                SaveAsPictureMessage.SaveAs.PNG,
+                ExportStyle.Black));
+            //Save PNG > White Fill
+            IXamlDirectObject fo_spng_wf = _xamlDirect.GetXamlDirectObjectFromCollectionAt(fo_spng_i, 2);
+            _xamlDirect.SetObjectProperty(fo_spng_wf, XamlPropertyIndex.MenuFlyoutItem_Command, savemsg);
+            _xamlDirect.SetObjectProperty(fo_spng_wf, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, 
+                new SaveAsPictureMessage(c,
+                analysis,
+                SaveAsPictureMessage.SaveAs.PNG,
+                ExportStyle.White));
+
+            //-Save SVG
+            IXamlDirectObject fo_ssvg = _xamlDirect.GetXamlDirectObjectFromCollectionAt(subFlyout, 3);
+            //-Save SVG.Items
+            IXamlDirectObject fo_ssvg_i = _xamlDirect.GetXamlDirectObjectProperty(fo_ssvg, XamlPropertyIndex.MenuFlyoutSubItem_Items);
+            //Save SVG > Colored Glyph
+            IXamlDirectObject fo_ssvg_cf = _xamlDirect.GetXamlDirectObjectFromCollectionAt(fo_ssvg_i, 0);
+            //Save SVG > Colored Glyph.Visibility
+            _xamlDirect.SetObjectProperty(fo_ssvg_cf, XamlPropertyIndex.UIElement_Visibility, analysis.HasColorGlyphs ? Visibility.Visible : Visibility.Collapsed);
+            if (analysis.HasColorGlyphs)
+            {
+                //Save SVG > Colored Glyph.Command & .CommandParameter
+                _xamlDirect.SetObjectProperty(fo_ssvg_cf, XamlPropertyIndex.MenuFlyoutItem_Command, savemsg);
+                _xamlDirect.SetObjectProperty(fo_ssvg_cf, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, 
+                    new SaveAsPictureMessage(c,
+                    analysis,
+                    SaveAsPictureMessage.SaveAs.SVG,
+                    ExportStyle.ColorGlyph));
+            }
+
+            //Save SVG > Black Fill
+            IXamlDirectObject fo_ssvg_bf = _xamlDirect.GetXamlDirectObjectFromCollectionAt(fo_ssvg_i, 1);
+            _xamlDirect.SetObjectProperty(fo_ssvg_bf, XamlPropertyIndex.MenuFlyoutItem_Command, savemsg);
+            _xamlDirect.SetObjectProperty(fo_ssvg_bf, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, 
+                new SaveAsPictureMessage(c,
+                analysis,
+                SaveAsPictureMessage.SaveAs.SVG,
+                ExportStyle.Black));
+            //Save SVG > White Fill
+            IXamlDirectObject fo_ssvg_wf = _xamlDirect.GetXamlDirectObjectFromCollectionAt(fo_ssvg_i, 2);
+            _xamlDirect.SetObjectProperty(fo_ssvg_wf, XamlPropertyIndex.MenuFlyoutItem_Command, savemsg);
+            _xamlDirect.SetObjectProperty(fo_ssvg_wf, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, 
+                new SaveAsPictureMessage(c,
+                analysis,
+                SaveAsPictureMessage.SaveAs.SVG,
+                ExportStyle.White));
+
+            //Separator before devkit
+            IXamlDirectObject dk_separator = _xamlDirect.GetXamlDirectObjectFromCollectionAt(subFlyout, 4);
+            _xamlDirect.SetObjectProperty(dk_separator, XamlPropertyIndex.UIElement_Visibility, VM.Settings.ShowDevUtils ? Visibility.Visible : Visibility.Collapsed);
+
+            //Developer Utilities
+            IXamlDirectObject dk = _xamlDirect.GetXamlDirectObjectFromCollectionAt(subFlyout, 5);
+            _xamlDirect.SetObjectProperty(dk, XamlPropertyIndex.UIElement_Visibility, VM.Settings.ShowDevUtils ? Visibility.Visible : Visibility.Collapsed);
+
+            if (VM.Settings.ShowDevUtils)
+            {
+                //Developer Utilities.Items
+                IXamlDirectObject dk_items = _xamlDirect.GetXamlDirectObjectProperty(dk, XamlPropertyIndex.MenuFlyoutSubItem_Items);
+                //Developer Utilities > Glyph Code
+                IXamlDirectObject dk_glyph = _xamlDirect.GetXamlDirectObjectFromCollectionAt(dk_items, 0);
+                _xamlDirect.SetObjectProperty(dk_glyph, XamlPropertyIndex.MenuFlyoutItem_Command, copymsg);
+                _xamlDirect.SetObjectProperty(dk_glyph, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, 
+                    new CopyToClipboardMessage(CopyToClipboardMessage.MessageType.DevGlyph, c, analysis));
+                //Developer Utilities > Font Icon
+                IXamlDirectObject dk_font = _xamlDirect.GetXamlDirectObjectFromCollectionAt(dk_items, 1);
+                _xamlDirect.SetObjectProperty(dk_font, XamlPropertyIndex.MenuFlyoutItem_Command, copymsg);
+                _xamlDirect.SetObjectProperty(dk_font, XamlPropertyIndex.MenuFlyoutItem_CommandParameter,
+                    new CopyToClipboardMessage(CopyToClipboardMessage.MessageType.DevFont, c, analysis));
+                //Developer Utilities > Path Icon
+                IXamlDirectObject dk_path = _xamlDirect.GetXamlDirectObjectFromCollectionAt(dk_items, 2);
+                _xamlDirect.SetObjectProperty(dk_path, XamlPropertyIndex.MenuFlyoutItem_Command, copymsg);
+                _xamlDirect.SetObjectProperty(dk_path, XamlPropertyIndex.MenuFlyoutItem_CommandParameter, 
+                    new CopyToClipboardMessage(CopyToClipboardMessage.MessageType.DevPath, c, analysis));
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
