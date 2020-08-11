@@ -1074,6 +1074,34 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <source>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</source>
           <target state="translated">இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</target>
         </trans-unit>
+        <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
+          <source>If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
+If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
+Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</source>
+          <target state="new">If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
+If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
+Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</target>
+        </trans-unit>
+        <trans-unit id="SettingsEnablePaneHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable Preview Pane</source>
+          <target state="new">Enable Preview Pane</target>
+        </trans-unit>
+        <trans-unit id="CopyFontIconCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy FontIcon Code</source>
+          <target state="new">Copy FontIcon Code</target>
+        </trans-unit>
+        <trans-unit id="CopyGlyphCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy Glyph Code</source>
+          <target state="new">Copy Glyph Code</target>
+        </trans-unit>
+        <trans-unit id="CopyPathIconCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy PathIcon Code</source>
+          <target state="new">Copy PathIcon Code</target>
+        </trans-unit>
+        <trans-unit id="SearchBoxShorter" translate="yes" xml:space="preserve">
+          <source>Search...</source>
+          <target state="new">Search...</target>
+        </trans-unit>
       </group>
     </body>
   </file>

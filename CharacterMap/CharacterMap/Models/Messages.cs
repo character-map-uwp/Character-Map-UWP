@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMapCX;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,4 +74,45 @@ namespace CharacterMap.Models
         public object Data { get; }
         public int DurationInMilliseconds { get; }
     }
+
+    public class SaveAsPictureMessage
+    {
+        public enum SaveAs { PNG, SVG}
+        public SaveAs Save { get; }
+        public Character Character { get; }
+        public CanvasTextLayoutAnalysis Analysis { get; }
+        public ExportStyle Style { get; }
+
+        public SaveAsPictureMessage(Character c, CanvasTextLayoutAnalysis ctla, SaveAs s, ExportStyle style)
+        {
+            Save = s;
+            Character = c;
+            Analysis = ctla;
+            Style = style;
+        }
+    }
+
+    public class CopyToClipboardMessage
+    {
+        public enum MessageType { Char, DevGlyph, DevFont, DevPath }
+        public MessageType CopyItem { get; }
+        public Character RequestedItem { get; }
+        public CanvasTextLayoutAnalysis Analysis { get; }
+
+        public CopyToClipboardMessage(Character c)
+        {
+            CopyItem = MessageType.Char;
+            RequestedItem = c;
+            Analysis = null;
+        }
+
+        public CopyToClipboardMessage(MessageType copy, Character requested, CanvasTextLayoutAnalysis ca)
+        {
+            CopyItem = copy;
+            RequestedItem = requested;
+            Analysis = ca;
+        }
+    }
+
+    public class ToggleCompactOverlayMessage { }
 }

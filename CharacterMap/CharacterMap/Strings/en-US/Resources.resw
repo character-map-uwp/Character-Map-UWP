@@ -910,4 +910,24 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</value>
   </data>
+  <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
+    <value>If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
+If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
+Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</value>
+  </data>
+  <data name="SettingsEnablePaneHeader.Text" xml:space="preserve">
+    <value>Enable Preview Pane</value>
+  </data>
+  <data name="CopyFontIconCode.Text" xml:space="preserve">
+    <value>Copy FontIcon Code</value>
+  </data>
+  <data name="CopyGlyphCode.Text" xml:space="preserve">
+    <value>Copy Glyph Code</value>
+  </data>
+  <data name="CopyPathIconCode.Text" xml:space="preserve">
+    <value>Copy PathIcon Code</value>
+  </data>
+  <data name="SearchBoxShorter" xml:space="preserve">
+    <value>Search...</value>
+  </data>
 </root>

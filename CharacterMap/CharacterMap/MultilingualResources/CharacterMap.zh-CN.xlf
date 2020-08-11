@@ -1079,6 +1079,34 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <source>Reset</source>
           <target state="new">Reset</target>
         </trans-unit>
+        <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
+          <source>If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
+If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
+Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</source>
+          <target state="new">If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
+If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
+Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</target>
+        </trans-unit>
+        <trans-unit id="SettingsEnablePaneHeader.Text" translate="yes" xml:space="preserve">
+          <source>Enable Preview Pane</source>
+          <target state="new">Enable Preview Pane</target>
+        </trans-unit>
+        <trans-unit id="CopyFontIconCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy FontIcon Code</source>
+          <target state="new">Copy FontIcon Code</target>
+        </trans-unit>
+        <trans-unit id="CopyGlyphCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy Glyph Code</source>
+          <target state="new">Copy Glyph Code</target>
+        </trans-unit>
+        <trans-unit id="CopyPathIconCode.Text" translate="yes" xml:space="preserve">
+          <source>Copy PathIcon Code</source>
+          <target state="new">Copy PathIcon Code</target>
+        </trans-unit>
+        <trans-unit id="SearchBoxShorter" translate="yes" xml:space="preserve">
+          <source>Search...</source>
+          <target state="new">Search...</target>
+        </trans-unit>
       </group>
     </body>
   </file>

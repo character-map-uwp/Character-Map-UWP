@@ -287,5 +287,14 @@ namespace CharacterMap.Core
 
         public static bool Supports1903 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8);
 
+        public static CanvasTypography GetEffectiveTypography(this TypographyFeatureInfo canvas)
+        {
+            CanvasTypography typo = new CanvasTypography();
+            if (canvas != null && canvas.Feature != CanvasTypographyFeatureName.None)
+            {
+                typo.AddFeature(canvas.Feature, 1u);
+            }
+            return typo;
+        }
     }
 }

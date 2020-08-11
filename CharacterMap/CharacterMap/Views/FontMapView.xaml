@@ -31,7 +31,18 @@
         <controls:XamlTitleBar
             x:Name="TitleBar"
             x:Load="{x:Bind IsStandalone}"
-            Canvas.ZIndex="101" />
+            Canvas.ZIndex="101">
+            <StackPanel Orientation="Horizontal">
+                <ToggleButton
+                    Width="45"
+                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                    Command="{Binding CommandToggleOverlay}"
+                    Style="{StaticResource IconToggleButtonStyle}"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.Settings.EnablePreviewPane), Mode=OneWay}">
+                    <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                </ToggleButton>
+            </StackPanel>
+        </controls:XamlTitleBar>
 
         <!--  Title row  -->
         <Grid
@@ -154,8 +165,8 @@
             </Grid.Resources>
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MinWidth="250" />
-                <ColumnDefinition Width="10" />
+                <ColumnDefinition x:Name="CharGridColumn" Width="*" MinWidth="250" />
+                <ColumnDefinition x:Name="SplitterColumn" Width="10" />
                 <ColumnDefinition
                     x:Name="PreviewColumn"
                     Width="326"
@@ -540,6 +551,57 @@
                     <DataTemplate>
                         <!--  For performance reasons, all bindings are done in C#  -->
                         <Grid Padding="4">
+                            <Grid.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem x:Uid="BtnCopy" Icon="Copy"/>
+                                    <MenuFlyoutSeparator/>
+                                    <MenuFlyoutSubItem x:Uid="ExportPNGLabel" Icon="Save">
+                                        <MenuFlyoutItem x:Uid="ColoredGlyphLabel">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Foreground="{ThemeResource SystemAccentColor}" Glyph="&#xE002;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="BlackFill">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="WhiteFill">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Foreground="White" Glyph="&#xE002;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSubItem x:Uid="ExportSVGLabel" Icon="Save">
+                                        <MenuFlyoutItem x:Uid="ColoredGlyphLabel">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Foreground="{ThemeResource SystemAccentColor}" Glyph="&#xE002;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="BlackFill">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                        <MenuFlyoutItem x:Uid="WhiteFill">
+                                            <MenuFlyoutItem.Icon>
+                                                <FontIcon Foreground="White" Glyph="&#xE002;" />
+                                            </MenuFlyoutItem.Icon>
+                                        </MenuFlyoutItem>
+                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutSeparator/>
+                                    <MenuFlyoutSubItem x:Uid="SettingsDevToolsGroupHeader">
+                                        <MenuFlyoutSubItem.Icon>
+                                            <PathIcon HorizontalAlignment="Center"
+                                                      VerticalAlignment="Center"
+                                                      Data="F1 M 2.138672 10 L 4.140625 12.001953 L 3.779297 13.417969 L 0.361328 10 L 4.560547 5.810547 L 5.439453 6.689453 Z M 19.638672 10 L 15.439453 14.189453 L 14.560547 13.310547 L 17.861328 10 L 16.40625 8.544922 C 16.57552 8.375651 16.728516 8.217773 16.865234 8.071289 C 17.001953 7.924805 17.12565 7.770183 17.236328 7.607422 Z M 14.296875 3.75 C 14.570312 3.75 14.825846 3.798828 15.063477 3.896484 C 15.301106 3.994141 15.507813 4.130859 15.683594 4.306641 C 15.859375 4.482422 15.997721 4.6875 16.098633 4.921875 C 16.199543 5.15625 16.25 5.410156 16.25 5.683594 C 16.25 5.9375 16.201172 6.184896 16.103516 6.425781 C 16.005859 6.666668 15.865885 6.878256 15.683594 7.060547 L 8.681641 14.082031 L 5 15 L 5.917969 11.318359 L 12.919922 4.306641 C 13.102213 4.12435 13.313802 3.986004 13.554688 3.891602 C 13.795572 3.797201 14.042968 3.75 14.296875 3.75 Z M 14.794922 6.181641 C 14.93164 6.044922 14.999999 5.878906 15 5.683594 C 14.999999 5.481771 14.933268 5.317384 14.799805 5.19043 C 14.666341 5.063478 14.498697 5.000001 14.296875 5 C 14.205729 5.000001 14.117838 5.014649 14.033203 5.043945 C 13.948567 5.073243 13.873697 5.120443 13.808594 5.185547 L 7.050781 11.962891 L 6.71875 13.28125 L 8.037109 12.949219 Z " />
+                                        </MenuFlyoutSubItem.Icon>
+                                        <MenuFlyoutItem x:Uid="CopyGlyphCode"/>
+                                        <MenuFlyoutItem x:Uid="CopyFontIconCode"/>
+                                        <MenuFlyoutItem x:Uid="CopyPathIconCode"/>
+                                    </MenuFlyoutSubItem>
+                                </MenuFlyout>
+                            </Grid.ContextFlyout>
                             <TextBlock
                                 Margin="0 -2 0 0"
                                 Padding="0,0,0,8"
@@ -685,7 +747,8 @@
                 x:Name="SplitterContainer"
                 x:FieldModifier="public"
                 Grid.RowSpan="3"
-                Grid.Column="1">
+                Grid.Column="1"
+                Visibility="{x:Bind ViewModel.Settings.EnablePreviewPane, Mode=OneWay}">
                 <toolkit:GridSplitter
                     x:Name="Splitter"
                     Width="12"
@@ -695,7 +758,7 @@
                     GripperForeground="Transparent"
                     ParentLevel="1"
                     ResizeBehavior="BasedOnAlignment"
-                    ResizeDirection="Columns" />
+                    ResizeDirection="Columns"/>
 
                 <TextBlock
                     Margin="3 0 0 0"
@@ -713,7 +776,8 @@
                 x:Name="PreviewGrid"
                 x:FieldModifier="public"
                 Grid.RowSpan="3"
-                Grid.Column="2">
+                Grid.Column="2"
+                Visibility="{x:Bind ViewModel.Settings.EnablePreviewPane, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />

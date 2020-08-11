@@ -389,6 +389,12 @@
                                 </StackPanel>
 
                                 <StackPanel>
+                                    <TextBlock x:Uid="SettingsEnablePaneHeader" Style="{StaticResource HeaderStyle}" />
+                                    <TextBlock x:Uid="SettingsEnablePaneDescription" Style="{StaticResource DescriptionStyle}" />
+                                    <ToggleSwitch IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
+                                </StackPanel>
+                                
+                                <StackPanel>
                                     <TextBlock x:Uid="SettingsThemeHeader" Style="{StaticResource HeaderStyle}" />
                                     <RadioButton
                                         x:Name="ThemeLight"

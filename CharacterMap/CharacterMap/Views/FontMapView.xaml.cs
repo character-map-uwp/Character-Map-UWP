@@ -25,6 +25,7 @@ using CharacterMap.Controls;
 using CharacterMapCX;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace CharacterMap.Views
 {
@@ -149,11 +150,27 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
+            Messenger.Default.Register<SaveAsPictureMessage>(this, async m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    await ViewModel.RequestSaveAsync(m);
+            });
+            Messenger.Default.Register<CopyToClipboardMessage>(this, async m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    await ViewModel.RequestCopyToClipboardAsync(m);
+            });
+            Messenger.Default.Register<ToggleCompactOverlayMessage>(this, async m =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    await ToggleCompactOverlay();
+            });
 
             UpdateDevUtils(false);
             UpdateDisplayMode();
             UpdateSearchStates();
             UpdateCharacterFit();
+            UpdatePaneAndGridSizing();
 
             PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
             _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
@@ -247,6 +264,9 @@ namespace CharacterMap.Views
                         break;
                     case nameof(AppSettings.FitCharacter):
                         UpdateCharacterFit();
+                        break;
+                    case nameof(AppSettings.EnablePreviewPane):
+                        UpdatePaneAndGridSizing();
                         break;
                 }
             });
@@ -352,6 +372,23 @@ namespace CharacterMap.Views
                 true);
         }
 
+        private void UpdatePaneAndGridSizing()
+        {
+            if (ViewModel.Settings.EnablePreviewPane)
+            {
+                CharGridColumn.Width = new GridLength(1, GridUnitType.Star);
+                SplitterColumn.Width = new GridLength(10);
+                PreviewColumn.Width = new GridLength(326);
+                PreviewColumn.MinWidth = 150;
+            }
+            else
+            {
+                CharGridColumn.Width = new GridLength(1, GridUnitType.Star);
+                SplitterColumn.Width = new GridLength(0);
+                PreviewColumn.Width = new GridLength(0);
+                PreviewColumn.MinWidth = 0;
+            }
+        }
 
 
 
@@ -394,6 +431,35 @@ namespace CharacterMap.Views
             }
         }
 
+        private async Task ToggleCompactOverlay()
+        {
+            var view = ApplicationView.GetForCurrentView();
+            if (view.ViewMode != ApplicationViewMode.CompactOverlay)
+            {
+                ViewModePreferences pref = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                pref.CustomSize = new Windows.Foundation.Size(420, 300);
+                pref.ViewSizePreference = ViewSizePreference.Custom;
+                await view.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, pref);
+                Grid.SetRow(CharGrid, 0);
+                Grid.SetRowSpan(CharGrid, 3);
+                Grid.SetColumnSpan(CharGrid, 3);
+                Canvas.SetZIndex(CharGrid, 99);
+                CharGridHeader.Visibility = Visibility.Collapsed;
+                SearchBox.PlaceholderText = Localization.Get("SearchBoxShorter");
+                SearchBox.Width = 150;
+            }
+            else
+            {
+                await view.TryEnterViewModeAsync(ApplicationViewMode.Default);
+                Grid.SetRow(CharGrid, 2);
+                Grid.SetRowSpan(CharGrid, 1);
+                Grid.SetColumnSpan(CharGrid, 1);
+                Canvas.SetZIndex(CharGrid, 0);
+                CharGridHeader.Visibility = Visibility.Visible;
+                SearchBox.PlaceholderText = Localization.Get("SearchBox/PlaceholderText");
+                SearchBox.Width = 290;
+            }
+        }
 
 
         /* UI Event Handlers */
