@@ -38,6 +38,7 @@
             <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Margin" Value="0 20 0 0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
         <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
             <Setter Property="Margin" Value="4 4 0 12" />

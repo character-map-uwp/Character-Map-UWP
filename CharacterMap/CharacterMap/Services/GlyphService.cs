@@ -124,6 +124,7 @@ namespace CharacterMap.Services
             //    pathData = interop.GetPathData(geom).Path;
             //}
 
+            // Creating geometry is expensive. It may be worth delaying this.
             string pathIconData;
             using (var geom = ExportManager.CreateGeometry(20, v, c, a, t))
             {

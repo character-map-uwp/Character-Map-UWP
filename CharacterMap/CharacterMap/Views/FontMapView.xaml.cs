@@ -26,6 +26,9 @@ using CharacterMapCX;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using GalaSoft.MvvmLight.Ioc;
+using Windows.UI.Xaml.Controls.Primitives;
+using System.Windows.Input;
+using Windows.ApplicationModel.VoiceCommands;
 
 namespace CharacterMap.Views
 {
@@ -149,11 +152,6 @@ namespace CharacterMap.Views
             {
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
-            });
-            Messenger.Default.Register<SaveAsPictureMessage>(this, async m =>
-            {
-                if (Dispatcher.HasThreadAccess)
-                    await ViewModel.RequestSaveAsync(m);
             });
             Messenger.Default.Register<CopyToClipboardMessage>(this, async m =>
             {
@@ -661,6 +659,47 @@ namespace CharacterMap.Views
             }
         }
 
+        private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            /* Context menu for character grid */
+            args.Handled = true;
+            FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, (FrameworkElement)sender, ViewModel);
+        }
+
+        private void SavePng_Click(object sender, RoutedEventArgs e)
+        {
+            /* Save from Character Grid Context Menu */
+            if (sender is MenuFlyoutItem item
+                && item.DataContext is Character c
+                && item.CommandParameter is ExportStyle style)
+            {
+                _ = ViewModel.SavePngAsync(style, c);
+            }
+        }
+
+        private void SaveSvg_Click(object sender, RoutedEventArgs e)
+        {
+            /* Save from Character Grid Context Menu */
+            if (sender is MenuFlyoutItem item
+                && item.DataContext is Character c
+                && item.CommandParameter is ExportStyle style)
+            {
+                _ = ViewModel.SaveSvgAsync(style, c);
+            }
+        }
+
+        private void CopyClick(object sender, RoutedEventArgs e)
+        {
+            /* Copy from Character Grid Context Menu */
+            if (sender is MenuFlyoutItem item
+              && item.DataContext is Character c
+              && item.Tag is DevValueType type)
+            {
+                _ = ViewModel.RequestCopyToClipboardAsync(
+                    new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));
+            }
+        }
+
 
 
 
@@ -755,6 +794,14 @@ namespace CharacterMap.Views
             }
         }
 
+        void SavePng(object character, ICommand command, object parameter)
+        {
+            if (character is Character c)
+            {
+                command.Execute(parameter);
+            }
+        }
+
 
 
 
@@ -799,6 +846,8 @@ namespace CharacterMap.Views
                 }
             }
         }
+
+        
     }
 
 

@@ -19,6 +19,7 @@ using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
 namespace CharacterMap.Helpers
@@ -308,6 +309,76 @@ namespace CharacterMap.Helpers
                     }
                 }
             }
+        }
+
+        public static void ShowCharacterGridContext(MenuFlyout menu, FrameworkElement target, FontMapViewModel viewmodel)
+        {
+            if (target.Tag is Character c)
+            {
+                // 1. Attach the flyout to the selected grid item and apply the correct context
+                FlyoutBase.SetAttachedFlyout(target, menu);
+                menu.SetItemsDataContext(target.Tag);
+
+                // 2. Analyse the character to know which options we should show in the menu
+                var analysis = viewmodel.GetCharAnalysis(c);
+
+                // 3. Handle PNG options
+                var pngRoot = menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "PngRoot");
+                foreach (var child in pngRoot.Items.OfType<MenuFlyoutItem>())
+                {
+                    if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
+                        child.SetVisible(analysis.HasColorGlyphs);
+                    else
+                        child.SetVisible(!analysis.ContainsBitmapGlyphs); // Bitmap glyphs must *always* be saved as colour version
+                }
+
+                // 4. Handle SVG options
+                var svgRoot = menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "SvgRoot");
+                
+                // 4.1. We can only save as SVG is all layers of the glyph are created with vectors
+                svgRoot.SetVisible(analysis.IsFullVectorBased);
+                if (analysis.IsFullVectorBased)
+                {
+                    // Glyphs that are actually stored as individual SVG files inside a font, and not
+                    // typical font vector data, must always be saved as colourised / raw SVG.
+                    bool svgChar = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+
+                    foreach (var child in svgRoot.Items.OfType<MenuFlyoutItem>())
+                    {
+                        if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
+                        {
+                           
+                            child.Text = svgChar ? Localization.Get("ExportSVGGlyphLabel/Text") : Localization.Get("ColoredGlyphLabel/Text");
+                            child.SetVisible(svgChar || (analysis.IsFullVectorBased && analysis.HasColorGlyphs));
+                        }
+                        else
+                        {
+                            child.SetVisible(!svgChar);
+                        }
+                    }
+                }
+               
+
+                // 5. Show complete flyout
+                FlyoutBase.ShowAttachedFlyout(target);
+            }
+        }
+
+
+        public static void SetItemsDataContext(this MenuFlyout flyout, object dataContext)
+        {
+            static void SetContext(IList<MenuFlyoutItemBase> items, object context)
+            {
+                foreach (var item in items)
+                {
+                    if (item is MenuFlyoutSubItem sub)
+                        SetContext(sub.Items, context);
+
+                    item.DataContext = context;
+                }
+            }
+
+            SetContext(flyout.Items, dataContext);
         }
     }
 }
