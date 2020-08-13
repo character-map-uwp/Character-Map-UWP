@@ -110,7 +110,7 @@ namespace CharacterMap.Helpers
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
                 {
 
-                    UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == BasicFontFilter.All)
+                    UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == BasicFontFilter.SymbolFonts)
                         ? _collections.SymbolCollection
                         : main.SelectedCollection;
 
@@ -258,7 +258,7 @@ namespace CharacterMap.Helpers
                 if (!standalone)
                 {
                     if (main.SelectedCollection != null ||
-                        (main.FontListFilter == BasicFontFilter.All && !font.FontFace.IsSymbolFont))
+                        (main.FontListFilter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
                     {
                         menu.Items.Add(new MenuFlyoutSeparator());
 
@@ -363,7 +363,6 @@ namespace CharacterMap.Helpers
                 FlyoutBase.ShowAttachedFlyout(target);
             }
         }
-
 
         public static void SetItemsDataContext(this MenuFlyout flyout, object dataContext)
         {
