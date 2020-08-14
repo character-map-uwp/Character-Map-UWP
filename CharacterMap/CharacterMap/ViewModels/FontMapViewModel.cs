@@ -676,6 +676,9 @@ namespace CharacterMap.ViewModels
                     case DevValueType.PathIcon:
                         Utils.CopyToClipBoard(data.Path);
                         break;
+                    case DevValueType.UnicodeValue:
+                        Utils.CopyToClipBoard(message.RequestedItem.UnicodeString);
+                        break;
                 }
             }
         }

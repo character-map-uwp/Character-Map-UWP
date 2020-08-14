@@ -357,9 +357,21 @@ namespace CharacterMap.Helpers
                         }
                     }
                 }
-               
 
-                // 5. Show complete flyout
+                // 5. Handle Dev values
+                var devRoot = menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "DevRoot");
+                foreach (var child in devRoot.Items.OfType<MenuFlyoutItem>())
+                {
+                    if (child.CommandParameter is DevValueType d)
+                    {
+                        if (d == DevValueType.UnicodeValue)
+                            child.Tag = c.UnicodeString;
+                        else if (d == DevValueType.Glyph)
+                            child.Tag = GlyphService.GetDevValues(c, null, null, null, ResourceHelper.AppSettings.DevToolsLanguage == 0).Hex;
+                    }
+                }
+
+                // 6. Show complete flyout
                 FlyoutBase.ShowAttachedFlyout(target);
             }
         }

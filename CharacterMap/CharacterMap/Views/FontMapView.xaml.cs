@@ -693,7 +693,7 @@ namespace CharacterMap.Views
             /* Copy from Character Grid Context Menu */
             if (sender is MenuFlyoutItem item
               && item.DataContext is Character c
-              && item.Tag is DevValueType type)
+              && item.CommandParameter is DevValueType type)
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));

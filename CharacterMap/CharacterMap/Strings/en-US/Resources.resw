@@ -930,4 +930,7 @@ Enable this will considurably increase the memory usage and possibly hinder the 
   <data name="SearchBoxShorter" xml:space="preserve">
     <value>Search...</value>
   </data>
+  <data name="CopyUnicodeValue.Text" xml:space="preserve">
+    <value>Copy Unicode Value</value>
+  </data>
 </root>

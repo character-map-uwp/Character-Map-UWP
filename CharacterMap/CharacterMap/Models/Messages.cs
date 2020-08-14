@@ -80,7 +80,8 @@ namespace CharacterMap.Models
         Char,
         Glyph,
         FontIcon,
-        PathIcon
+        PathIcon,
+        UnicodeValue,
     }
 
 
