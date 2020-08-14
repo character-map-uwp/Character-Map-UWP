@@ -574,7 +574,7 @@
                                 <TextBlock x:Uid="SettingsDevToolsGroupHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <StackPanel>
-                                    <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource HeaderStyle}" />
+                                    <TextBlock x:Uid="SettingsDevToolsHeader" Style="{StaticResource HeaderStyle}" />
                                     <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource DescriptionStyle}" />
                                     <ToggleSwitch x:Name="ToggleDevUtils" Toggled="ToggleDevUtils_Toggled" />
                                 </StackPanel>

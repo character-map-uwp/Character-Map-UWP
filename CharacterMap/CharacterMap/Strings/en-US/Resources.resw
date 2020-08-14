@@ -911,12 +911,10 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
     <value>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
-    <value>If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
-If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
-Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</value>
+    <value>Shows or hides the preview pane on the right of the screen. If turned off, many functions can still be accessed by right clicking or touch holding on a character inside the character grid.</value>
   </data>
   <data name="SettingsEnablePaneHeader.Text" xml:space="preserve">
-    <value>Enable Preview Pane</value>
+    <value>Preview Pane Display</value>
   </data>
   <data name="CopyFontIconCode.Text" xml:space="preserve">
     <value>Copy FontIcon Code</value>
