@@ -682,6 +682,11 @@ namespace CharacterMap.ViewModels
                 }
             }
         }
+
+        public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);
+        public void DecreaseCharacterSize() => Settings.ChangeGridSize(-4);
+        public void ShowPane() => Settings.EnablePreviewPane = true;
+        public void HidePane() => Settings.EnablePreviewPane = false;
     }
 
     public enum SearchSource

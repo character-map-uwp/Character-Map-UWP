@@ -18,11 +18,47 @@
     SizeChanged="UserControl_SizeChanged"
     mc:Ignorable="d">
 
+    <Control.Tag>
+        <Grid x:Name="MoreOptionsBar">
+            <Grid.Resources>
+                <Style BasedOn="{StaticResource AppBarButtonRevealStyle}" TargetType="AppBarButton">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                </Style>
+            </Grid.Resources>
+            <CommandBar Background="Transparent" OverflowButtonVisibility="Collapsed">
+                <AppBarButton
+                    x:Name="IncreaseSizeButton"
+                    x:Uid="IncreaseSizeButton"
+                    Click="{x:Bind ViewModel.IncreaseCharacterSize}"
+                    Icon="FontIncrease" />
+                <AppBarButton
+                    x:Name="DecreaseSizeButton"
+                    x:Uid="DecreaseSizeButton"
+                    Click="{x:Bind ViewModel.DecreaseCharacterSize}"
+                    Icon="FontDecrease" />
+                <AppBarButton
+                    x:Uid="SwtichViewButton"
+                    Click="{x:Bind ViewModel.ChangeDisplayMode}"
+                    Icon="Switch" />
+                <AppBarToggleButton
+                    x:Name="TogglePaneButton"
+                    x:Uid="TogglePaneButton"
+                    Checked="{x:Bind ViewModel.HidePane}"
+                    Icon="OpenPane"
+                    Loaded="PaneButton_Loaded"
+                    Unchecked="{x:Bind ViewModel.ShowPane}" />
+            </CommandBar>
+        </Grid>
+    </Control.Tag>
+
     <Control.Resources>
+
         <BitmapIconSource
             x:Name="ColourSource"
             ShowAsMonochrome="False"
             UriSource="/Assets/ColourIcon.png" />
+
         <MenuFlyout x:Name="GridContextFlyout" Placement="Bottom">
             <MenuFlyoutItem
                 x:Uid="BtnCopy"
@@ -101,15 +137,13 @@
                     Click="CopyClick"
                     CommandParameter="{x:Bind models:DevValueType.UnicodeValue}"
                     Icon="Copy"
-                    Style="{StaticResource HintMenuFlyoutItem}"
-                    Tag="U+01AF" />
+                    Style="{StaticResource HintMenuFlyoutItem}" />
                 <MenuFlyoutItem
                     x:Uid="CopyGlyphCode"
                     Click="CopyClick"
                     CommandParameter="{x:Bind models:DevValueType.Glyph}"
                     Icon="Copy"
-                    Style="{StaticResource HintMenuFlyoutItem}"
-                    Tag="U01AF" />
+                    Style="{StaticResource HintMenuFlyoutItem}" />
                 <MenuFlyoutItem
                     x:Uid="CopyFontIconCode"
                     Click="CopyClick"
@@ -122,6 +156,7 @@
                     Icon="Copy" />
             </MenuFlyoutSubItem>
         </MenuFlyout>
+
     </Control.Resources>
 
     <Grid
@@ -141,11 +176,11 @@
             Canvas.ZIndex="101">
             <StackPanel Orientation="Horizontal">
                 <ToggleButton
+                    x:Name="OverlayButton"
                     Width="45"
                     Command="{Binding CommandToggleOverlay}"
                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                    Style="{StaticResource IconToggleButtonStyle}"
-                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.Settings.EnablePreviewPane), Mode=OneWay}">
+                    Style="{StaticResource IconToggleButtonStyle}">
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                 </ToggleButton>
             </StackPanel>
@@ -598,30 +633,42 @@
                     </Button>
                 </toolkit:WrapPanel>
 
-                <Button
-                    x:Name="MoreOptionsButton"
-                    x:Uid="BtnMoreIcon"
-                    x:Load="{x:Bind core:Converters.False(ViewModel.IsExternalFile)}"
+                <StackPanel
                     Grid.Column="1"
-                    Width="44"
                     Height="44"
                     VerticalAlignment="Bottom"
-                    DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
-                    Style="{ThemeResource TransparentButton}">
-                    <Button.Flyout>
-                        <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
-                            <MenuFlyout.MenuFlyoutPresenterStyle>
-                                <Style TargetType="MenuFlyoutPresenter">
-                                    <Setter Property="FontSize" Value="16" />
-                                </Style>
-                            </MenuFlyout.MenuFlyoutPresenterStyle>
-                        </MenuFlyout>
-                    </Button.Flyout>
-                    <FontIcon
-                        Margin="0,0,-2,0"
-                        Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                        Glyph="&#xE10C;" />
-                </Button>
+                    Orientation="Horizontal"
+                    Spacing="8">
+
+                    <Button
+                        x:Name="MoreOptionsButton"
+                        x:Uid="BtnMoreIcon"
+                        x:Load="{x:Bind core:Converters.False(ViewModel.IsExternalFile)}"
+                        Width="44"
+                        Height="44"
+                        DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
+                        Style="{ThemeResource TransparentButton}">
+                        <Button.Flyout>
+                            <MenuFlyout
+                                x:Name="MoreMenu"
+                                Opening="MenuFlyout_Opening"
+                                Placement="BottomEdgeAlignedRight">
+                                <MenuFlyout.MenuFlyoutPresenterStyle>
+                                    <Style TargetType="MenuFlyoutPresenter">
+                                        <Setter Property="FontSize" Value="16" />
+                                    </Style>
+                                </MenuFlyout.MenuFlyoutPresenterStyle>
+                            </MenuFlyout>
+
+                        </Button.Flyout>
+                        <FontIcon
+                            Margin="0,0,-2,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Glyph="&#xE10C;" />
+                    </Button>
+                </StackPanel>
+
+
 
                 <!--  Notifications  -->
                 <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=Collapsed}">
@@ -809,8 +856,7 @@
                 x:Name="SplitterContainer"
                 x:FieldModifier="public"
                 Grid.RowSpan="3"
-                Grid.Column="1"
-                Visibility="{x:Bind ViewModel.Settings.EnablePreviewPane, Mode=OneWay}">
+                Grid.Column="1">
                 <toolkit:GridSplitter
                     x:Name="Splitter"
                     Width="12"
@@ -838,8 +884,7 @@
                 x:Name="PreviewGrid"
                 x:FieldModifier="public"
                 Grid.RowSpan="3"
-                Grid.Column="2"
-                Visibility="{x:Bind ViewModel.Settings.EnablePreviewPane, Mode=OneWay}">
+                Grid.Column="2">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
@@ -1373,6 +1418,13 @@
                         <Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
                         <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />
                         <Setter Target="VariableFeaturesMessage.Visibility" Value="Collapsed" />
+                        <!--  Popup menu options  -->
+                        <Setter Target="IncreaseSizeButton.IsEnabled" Value="False" />
+                        <Setter Target="DecreaseSizeButton.IsEnabled" Value="False" />
+                        <!--  Don't disable this button, breaks the binding  -->
+                        <Setter Target="TogglePaneButton.IsHitTestVisible" Value="False" />
+                        <Setter Target="TogglePaneButton.Opacity" Value="0.4" />
+                        <Setter Target="TogglePaneButton.IsTabStop" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -1398,6 +1450,28 @@
                     <VisualState.Setters>
                         <Setter Target="DevUnicodeIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="PreviewPaneStates">
+                <VisualState x:Name="PreviewPaneEnabledState">
+                    <VisualState.Setters>
+                        <Setter Target="PreviewGrid.Visibility" Value="Visible" />
+                        <Setter Target="SplitterContainer.Visibility" Value="Visible" />
+                        <Setter Target="CharGridColumn.Width" Value="*" />
+                        <Setter Target="SplitterColumn.Width" Value="10" />
+                        <Setter Target="PreviewColumn.Width" Value="326" />
+                        <Setter Target="PreviewColumn.MinWidth" Value="150" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PreviewPaneDisabledState">
+                    <VisualState.Setters>
+                        <Setter Target="PreviewGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="SplitterContainer.Visibility" Value="Collapsed" />
+                        <Setter Target="CharGridColumn.Width" Value="*" />
+                        <Setter Target="SplitterColumn.Width" Value="0" />
+                        <Setter Target="PreviewColumn.Width" Value="0" />
+                        <Setter Target="PreviewColumn.MinWidth" Value="0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

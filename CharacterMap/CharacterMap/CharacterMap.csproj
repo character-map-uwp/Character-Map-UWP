@@ -199,6 +199,7 @@
     <Compile Include="Controls\FontMapPrintPage.xaml.cs">
       <DependentUpon>FontMapPrintPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\MenuFlyoutContentHost.cs" />
     <Compile Include="Controls\UnhandledExceptionDialog.xaml.cs">
       <DependentUpon>UnhandledExceptionDialog.xaml</DependentUpon>
     </Compile>

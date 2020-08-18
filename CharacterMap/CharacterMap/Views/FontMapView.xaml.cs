@@ -29,6 +29,11 @@ using GalaSoft.MvvmLight.Ioc;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.Windows.Input;
 using Windows.ApplicationModel.VoiceCommands;
+using Windows.UI.Xaml.Printing;
+using SQLitePCL;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Composition;
+using System.Numerics;
 
 namespace CharacterMap.Views
 {
@@ -176,6 +181,12 @@ namespace CharacterMap.Views
                 ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
             });
 
+
+            ElementCompositionPreview.SetIsTranslationEnabled(PreviewGrid, true);
+            Visual v = ElementCompositionPreview.GetElementVisual(PreviewGrid);
+
+            ElementCompositionPreview.SetImplicitHideAnimation(PreviewGrid, Composition.CreateSlideOut(PreviewGrid));
+            ElementCompositionPreview.SetImplicitShowAnimation(PreviewGrid, Composition.CreateSlideIn(PreviewGrid));
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -372,20 +383,16 @@ namespace CharacterMap.Views
 
         private void UpdatePaneAndGridSizing()
         {
-            if (ViewModel.Settings.EnablePreviewPane)
-            {
-                CharGridColumn.Width = new GridLength(1, GridUnitType.Star);
-                SplitterColumn.Width = new GridLength(10);
-                PreviewColumn.Width = new GridLength(326);
-                PreviewColumn.MinWidth = 150;
-            }
-            else
-            {
-                CharGridColumn.Width = new GridLength(1, GridUnitType.Star);
-                SplitterColumn.Width = new GridLength(0);
-                PreviewColumn.Width = new GridLength(0);
-                PreviewColumn.MinWidth = 0;
-            }
+            VisualStateManager.GoToState(
+                  this,
+                  ViewModel.Settings.EnablePreviewPane ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState),
+                  true);
+
+            //if (ViewModel.Settings.EnablePreviewPane)
+            //    PreviewGrid.SetTranslation(Vector3.Zero);
+
+            // OverlayButton might not be inflated so can't use VisualState
+            OverlayButton?.SetVisible(IsStandalone && !ViewModel.Settings.EnablePreviewPane);
         }
 
 
@@ -532,7 +539,7 @@ namespace CharacterMap.Views
                     var size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
                     if (this.ActualWidth < size && this.ActualWidth < 700)
                     {
-                        PreviewColumn.Width = new GridLength((int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth));
+                        PreviewColumn.Width = new GridLength(Math.Max(0, (int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth)));
                     }
                 }
             });
@@ -614,12 +621,13 @@ namespace CharacterMap.Views
 
         private void MenuFlyout_Opening(object sender, object e)
         {
-            if (sender is MenuFlyout menu && ViewModel.SelectedFont is InstalledFont font)
+            if (ViewModel.SelectedFont is InstalledFont font)
             {
                 FlyoutHelper.CreateMenu(
-                    menu,
+                    MoreMenu,
                     font,
                     ViewModel.SelectedVariant,
+                    this.Tag as FrameworkElement,
                     IsStandalone,
                     true);
             }
@@ -698,6 +706,11 @@ namespace CharacterMap.Views
                 _ = ViewModel.RequestCopyToClipboardAsync(
                     new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));
             }
+        }
+
+        private void PaneButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((AppBarToggleButton)sender).IsChecked = !ResourceHelper.AppSettings.EnablePreviewPane;
         }
 
 
@@ -846,8 +859,6 @@ namespace CharacterMap.Views
                 }
             }
         }
-
-        
     }
 
 

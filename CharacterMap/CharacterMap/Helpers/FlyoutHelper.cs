@@ -56,6 +56,7 @@ namespace CharacterMap.Helpers
             MenuFlyout menu,
             InstalledFont font,
             FontVariant variant,
+            FrameworkElement headerContent,
             bool standalone,
             bool showAdvanced = false)
         {
@@ -140,6 +141,16 @@ namespace CharacterMap.Helpers
                     // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
                     // render, meaning we can't dynamically update items. Instead we need to make an entirely
                     // new one.
+
+                    if (headerContent != null && headerContent.Parent is MenuFlyoutContentHost host)
+                        host.Content = null;
+
+                    menu.Items.Add(new MenuFlyoutContentHost
+                    {
+                        Content = headerContent
+                    });
+
+                    menu.Items.Add(new MenuFlyoutSeparator().SetVisible(headerContent != null));
 
                     // Add "Open in New Window" button
                     if (!standalone)
@@ -283,7 +294,7 @@ namespace CharacterMap.Helpers
                         }.AddKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control);
 
                         item.Click += Print_Click;
-                        menu.Items.Insert(standalone ? 0 : 1, item);
+                        menu.Items.Insert(standalone ? 2 : 3, item);
                     }
                 }
 

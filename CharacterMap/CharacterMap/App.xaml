@@ -213,7 +213,7 @@
                         BackgroundSource="HostBackdrop"
                         FallbackColor="{ThemeResource SystemChromeMediumColor}"
                         TintColor="{ThemeResource SystemAltHighColor}"
-                        TintOpacity="0.775" />
+                        TintOpacity="0.8" />
 
                     <AcrylicBrush
                         x:Key="AltHostBrush"

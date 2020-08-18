@@ -1101,6 +1101,22 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
           <source>Copy Unicode Value</source>
           <target state="new">Copy Unicode Value</target>
         </trans-unit>
+        <trans-unit id="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Decrease Character Size</source>
+          <target state="new">Decrease Character Size</target>
+        </trans-unit>
+        <trans-unit id="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Increase Character Size</source>
+          <target state="new">Increase Character Size</target>
+        </trans-unit>
+        <trans-unit id="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Switch View</source>
+          <target state="new">Switch View</target>
+        </trans-unit>
+        <trans-unit id="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Toggle Preview Pane</source>
+          <target state="new">Toggle Preview Pane</target>
+        </trans-unit>
       </group>
     </body>
   </file>
