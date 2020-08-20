@@ -66,7 +66,7 @@ namespace CharacterMap.Helpers
         private static AppSettings _settings;
         public static AppSettings AppSettings
         {
-            get => _settings ?? (_settings = Get<AppSettings>(nameof(AppSettings)));
+            get => _settings ??= Get<AppSettings>(nameof(AppSettings));
         }
 
         public static ElementTheme GetEffectiveTheme()

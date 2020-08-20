@@ -11,6 +11,9 @@ namespace CharacterMap.Core
 {
     public class AppSettings : INotifyPropertyChanged
     {
+        public const int MinGridSize = 64;
+        public const int MaxGridSize = 192;
+
         public double PngSize
         {
             get => Get(1024.00d);
@@ -118,7 +121,7 @@ namespace CharacterMap.Core
             get => Get(80);
             set
             {
-                if (Set(value))
+                if (Set(Math.Clamp(value, MinGridSize, MaxGridSize)))
                     DebounceGrid();
             }
         }
@@ -154,6 +157,7 @@ namespace CharacterMap.Core
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
         }
+
 
         private bool Set(object value, [CallerMemberName]string key = null)
         {
@@ -200,6 +204,19 @@ namespace CharacterMap.Core
         public void UpdateTransparency(bool value)
         {
             _ = ResourceHelper.SetTransparencyAsync(value);
+        }
+
+
+        /// <summary>
+        /// Apply an offset to the GridSize without a delay.
+        /// </summary>
+        /// <param name="change"></param>
+        public void ChangeGridSize(int change)
+        {
+            if (Set(Math.Clamp(GridSize + change, MinGridSize, MaxGridSize), nameof(GridSize)))
+            {
+                Messenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
+            }
         }
     }
 }

@@ -56,7 +56,6 @@ namespace CharacterMap.Core
             };
             dp.SetText(str);
             Clipboard.SetContent(dp);
-            Clipboard.Flush();
         }
 
         public static async Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)

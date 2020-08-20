@@ -56,6 +56,12 @@ namespace CharacterMap.Helpers
             return element;
         }
 
+        public static UIElement SetTranslation(this UIElement element, Vector3 value)
+        {
+            element.GetElementVisual().Properties.InsertVector3("Translation", value);
+            return element;
+        }
+
         public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
         {
             return c.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));

@@ -357,6 +357,47 @@ namespace CharacterMap.Helpers
             v.StartAnimationGroup(t);
         }
 
+        public static Vector3KeyFrameAnimation CreateSlideOut(UIElement e, float x, float y)
+        {
+            ElementCompositionPreview.SetIsTranslationEnabled(e, true);
+            Visual v = ElementCompositionPreview.GetElementVisual(e);
+
+            var o = v.Compositor.CreateVector3KeyFrameAnimation();
+            o.Target = "Translation";
+            o.InsertExpressionKeyFrame(0, "this.StartingValue");
+            o.InsertKeyFrame(1, new System.Numerics.Vector3(x ,y, 0));
+            o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
+
+            return o;
+        }
+
+        public static Vector3KeyFrameAnimation CreateSlideOut(UIElement e)
+        {
+            ElementCompositionPreview.SetIsTranslationEnabled(e, true);
+            Visual v = ElementCompositionPreview.GetElementVisual(e);
+
+            var o = v.Compositor.CreateVector3KeyFrameAnimation();
+            o.Target = "Translation";
+            o.InsertExpressionKeyFrame(0, "this.StartingValue");
+            o.InsertExpressionKeyFrame(1, "Vector3(this.Target.Size.Y, 0, 0)");
+            o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
+
+            return o;
+        }
+
+        public static Vector3KeyFrameAnimation CreateSlideIn(UIElement e)
+        {
+            ElementCompositionPreview.SetIsTranslationEnabled(e, true);
+            Visual v = ElementCompositionPreview.GetElementVisual(e);
+
+            var o = v.Compositor.CreateVector3KeyFrameAnimation();
+            o.Target = "Translation";
+            o.InsertExpressionKeyFrame(1, "Vector3(0, 0, 0)");
+            o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
+
+            return o;
+        }
+
 
         /* Adding or removing Receivers is glitchy AF */
 

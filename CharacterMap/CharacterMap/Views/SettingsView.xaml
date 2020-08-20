@@ -38,6 +38,7 @@
             <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
             <Setter Property="FontWeight" Value="Bold" />
             <Setter Property="Margin" Value="0 20 0 0" />
+            <Setter Property="TextWrapping" Value="Wrap" />
         </Style>
         <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
             <Setter Property="Margin" Value="4 4 0 12" />
@@ -249,8 +250,8 @@
                                     <Slider
                                         HorizontalAlignment="Stretch"
                                         IsThumbToolTipEnabled="True"
-                                        Maximum="192"
-                                        Minimum="64"
+                                        Maximum="{x:Bind core:AppSettings.MaxGridSize}"
+                                        Minimum="{x:Bind core:AppSettings.MinGridSize}"
                                         StepFrequency="8"
                                         TickFrequency="8"
                                         TickPlacement="Outside"
@@ -573,7 +574,7 @@
                                 <TextBlock x:Uid="SettingsDevToolsGroupHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <StackPanel>
-                                    <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource HeaderStyle}" />
+                                    <TextBlock x:Uid="SettingsDevToolsHeader" Style="{StaticResource HeaderStyle}" />
                                     <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource DescriptionStyle}" />
                                     <ToggleSwitch x:Name="ToggleDevUtils" Toggled="ToggleDevUtils_Toggled" />
                                 </StackPanel>
