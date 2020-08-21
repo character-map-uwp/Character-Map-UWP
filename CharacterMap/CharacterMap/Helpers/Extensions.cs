@@ -18,9 +18,10 @@ namespace CharacterMap.Helpers
             return u;
         }
 
-        public static void SetVisible(this FrameworkElement e, bool b)
+        public static T SetVisible<T>(this T e, bool b) where T : FrameworkElement
         {
             e.Visibility = b ? Visibility.Visible : Visibility.Collapsed;
+            return e;
         }
 
         public static List<UIElement> TryGetChildren(this ItemsControl control)

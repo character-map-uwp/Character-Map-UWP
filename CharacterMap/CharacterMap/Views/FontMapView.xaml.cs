@@ -26,6 +26,14 @@ using CharacterMapCX;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using GalaSoft.MvvmLight.Ioc;
+using Windows.UI.Xaml.Controls.Primitives;
+using System.Windows.Input;
+using Windows.ApplicationModel.VoiceCommands;
+using Windows.UI.Xaml.Printing;
+using SQLitePCL;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Composition;
+using System.Numerics;
 
 namespace CharacterMap.Views
 {
@@ -150,11 +158,6 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
-            Messenger.Default.Register<SaveAsPictureMessage>(this, async m =>
-            {
-                if (Dispatcher.HasThreadAccess)
-                    await ViewModel.RequestSaveAsync(m);
-            });
             Messenger.Default.Register<CopyToClipboardMessage>(this, async m =>
             {
                 if (Dispatcher.HasThreadAccess)
@@ -178,6 +181,12 @@ namespace CharacterMap.Views
                 ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
             });
 
+
+            ElementCompositionPreview.SetIsTranslationEnabled(PreviewGrid, true);
+            Visual v = ElementCompositionPreview.GetElementVisual(PreviewGrid);
+
+            ElementCompositionPreview.SetImplicitHideAnimation(PreviewGrid, Composition.CreateSlideOut(PreviewGrid));
+            ElementCompositionPreview.SetImplicitShowAnimation(PreviewGrid, Composition.CreateSlideIn(PreviewGrid));
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -374,20 +383,16 @@ namespace CharacterMap.Views
 
         private void UpdatePaneAndGridSizing()
         {
-            if (ViewModel.Settings.EnablePreviewPane)
-            {
-                CharGridColumn.Width = new GridLength(1, GridUnitType.Star);
-                SplitterColumn.Width = new GridLength(10);
-                PreviewColumn.Width = new GridLength(326);
-                PreviewColumn.MinWidth = 150;
-            }
-            else
-            {
-                CharGridColumn.Width = new GridLength(1, GridUnitType.Star);
-                SplitterColumn.Width = new GridLength(0);
-                PreviewColumn.Width = new GridLength(0);
-                PreviewColumn.MinWidth = 0;
-            }
+            VisualStateManager.GoToState(
+                  this,
+                  ViewModel.Settings.EnablePreviewPane ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState),
+                  true);
+
+            //if (ViewModel.Settings.EnablePreviewPane)
+            //    PreviewGrid.SetTranslation(Vector3.Zero);
+
+            // OverlayButton might not be inflated so can't use VisualState
+            OverlayButton?.SetVisible(IsStandalone && !ViewModel.Settings.EnablePreviewPane);
         }
 
 
@@ -534,7 +539,7 @@ namespace CharacterMap.Views
                     var size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
                     if (this.ActualWidth < size && this.ActualWidth < 700)
                     {
-                        PreviewColumn.Width = new GridLength((int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth));
+                        PreviewColumn.Width = new GridLength(Math.Max(0, (int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth)));
                     }
                 }
             });
@@ -616,12 +621,13 @@ namespace CharacterMap.Views
 
         private void MenuFlyout_Opening(object sender, object e)
         {
-            if (sender is MenuFlyout menu && ViewModel.SelectedFont is InstalledFont font)
+            if (ViewModel.SelectedFont is InstalledFont font)
             {
                 FlyoutHelper.CreateMenu(
-                    menu,
+                    MoreMenu,
                     font,
                     ViewModel.SelectedVariant,
+                    this.Tag as FrameworkElement,
                     IsStandalone,
                     true);
             }
@@ -659,6 +665,52 @@ namespace CharacterMap.Views
             {
                 s.Value = axis.DefaultValue;
             }
+        }
+
+        private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            /* Context menu for character grid */
+            args.Handled = true;
+            FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, (FrameworkElement)sender, ViewModel);
+        }
+
+        private void SavePng_Click(object sender, RoutedEventArgs e)
+        {
+            /* Save from Character Grid Context Menu */
+            if (sender is MenuFlyoutItem item
+                && item.DataContext is Character c
+                && item.CommandParameter is ExportStyle style)
+            {
+                _ = ViewModel.SavePngAsync(style, c);
+            }
+        }
+
+        private void SaveSvg_Click(object sender, RoutedEventArgs e)
+        {
+            /* Save from Character Grid Context Menu */
+            if (sender is MenuFlyoutItem item
+                && item.DataContext is Character c
+                && item.CommandParameter is ExportStyle style)
+            {
+                _ = ViewModel.SaveSvgAsync(style, c);
+            }
+        }
+
+        private void CopyClick(object sender, RoutedEventArgs e)
+        {
+            /* Copy from Character Grid Context Menu */
+            if (sender is MenuFlyoutItem item
+              && item.DataContext is Character c
+              && item.CommandParameter is DevValueType type)
+            {
+                _ = ViewModel.RequestCopyToClipboardAsync(
+                    new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));
+            }
+        }
+
+        private void PaneButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((AppBarToggleButton)sender).IsChecked = !ResourceHelper.AppSettings.EnablePreviewPane;
         }
 
 
@@ -752,6 +804,14 @@ namespace CharacterMap.Views
             {
                 IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
                 CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            }
+        }
+
+        void SavePng(object character, ICommand command, object parameter)
+        {
+            if (character is Character c)
+            {
+                command.Execute(parameter);
             }
         }
 

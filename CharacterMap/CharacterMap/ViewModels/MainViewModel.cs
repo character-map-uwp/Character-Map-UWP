@@ -48,7 +48,7 @@ namespace CharacterMap.ViewModels
             { 
                 if (value != null && value.IsSystemSymbolCollection)
                 {
-                    FontListFilter = BasicFontFilter.All;
+                    FontListFilter = BasicFontFilter.SymbolFonts;
                     return;
                 }
 

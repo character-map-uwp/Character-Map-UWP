@@ -36,13 +36,7 @@ namespace CharacterMap.Styles
             ElementCompositionPreview.SetIsTranslationEnabled(f, true);
             Visual v = ElementCompositionPreview.GetElementVisual(f);
 
-            var o = v.Compositor.CreateVector3KeyFrameAnimation();
-            o.Target = "Translation";
-            o.InsertExpressionKeyFrame(0, "this.StartingValue");
-            o.InsertKeyFrame(1, new System.Numerics.Vector3(-256, 0, 0));
-            o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
-
-            ElementCompositionPreview.SetImplicitHideAnimation(f, o);
+            ElementCompositionPreview.SetImplicitHideAnimation(f, Composition.CreateSlideOut(f, -256, 0));
 
             var o2 = v.Compositor.CreateVector3KeyFrameAnimation();
             o2.Target = "Translation";

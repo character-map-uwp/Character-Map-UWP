@@ -1076,16 +1076,12 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <target state="translated">รีเซท</target>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
-          <source>If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
-If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
-Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</source>
-          <target state="new">If Enable will Show a preview pane on right side, but will disable right click on Character Grid functionality
-If Disable will Hide a preview pane. Will substitude the funtionality with right click menu function and Character Name tooltip on Character Grid
-Enable this will considurably increase the memory usage and possibly hinder the scrolling performance</target>
+          <source>Shows or hides the preview pane on the right of the screen. If turned off, many functions can still be accessed by right clicking or touch holding on a character inside the character grid.</source>
+          <target state="new">Shows or hides the preview pane on the right of the screen. If turned off, many functions can still be accessed by right clicking or touch holding on a character inside the character grid.</target>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneHeader.Text" translate="yes" xml:space="preserve">
-          <source>Enable Preview Pane</source>
-          <target state="new">Enable Preview Pane</target>
+          <source>Preview Pane Display</source>
+          <target state="new">Preview Pane Display</target>
         </trans-unit>
         <trans-unit id="CopyFontIconCode.Text" translate="yes" xml:space="preserve">
           <source>Copy FontIcon Code</source>
@@ -1102,6 +1098,26 @@ Enable this will considurably increase the memory usage and possibly hinder the 
         <trans-unit id="SearchBoxShorter" translate="yes" xml:space="preserve">
           <source>Search...</source>
           <target state="new">Search...</target>
+        </trans-unit>
+        <trans-unit id="CopyUnicodeValue.Text" translate="yes" xml:space="preserve">
+          <source>Copy Unicode Value</source>
+          <target state="new">Copy Unicode Value</target>
+        </trans-unit>
+        <trans-unit id="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Decrease Character Size</source>
+          <target state="new">Decrease Character Size</target>
+        </trans-unit>
+        <trans-unit id="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Increase Character Size</source>
+          <target state="new">Increase Character Size</target>
+        </trans-unit>
+        <trans-unit id="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Switch View</source>
+          <target state="new">Switch View</target>
+        </trans-unit>
+        <trans-unit id="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Toggle Preview Pane</source>
+          <target state="new">Toggle Preview Pane</target>
         </trans-unit>
       </group>
     </body>

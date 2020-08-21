@@ -306,7 +306,7 @@ namespace CharacterMap.ViewModels
             "The quick brown dog jumps over a lazy fox. 1234567890",
             Localization.Get("CultureSpecificPangram/Text"),
             "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ",
+            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ", // Cyrillic Alphabet
             "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
             "Do bạch kim rất quý nên sẽ dùng để lắp vô xương.", // Vietnamese
             "Ταχίστη αλώπηξ βαφής ψημένη γη, δρασκελίζει υπέρ νωθρού κυνός", // Greek
@@ -426,7 +426,13 @@ namespace CharacterMap.ViewModels
                 return;
             }
 
-            using (CanvasTextLayout layout = new CanvasTextLayout(Utils.CanvasDevice, $"{SelectedChar.Char}", new CanvasTextFormat
+            SelectedCharAnalysis = GetCharAnalysis(SelectedChar);
+            IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+        }
+
+        internal CanvasTextLayoutAnalysis GetCharAnalysis(Character c)
+        {
+            using CanvasTextLayout layout = new CanvasTextLayout(Utils.CanvasDevice, $"{c.Char}", new CanvasTextFormat
             {
                 FontSize = (float)Core.Converters.GetFontSize(Settings.GridSize),
                 FontFamily = SelectedVariant.Source,
@@ -434,14 +440,11 @@ namespace CharacterMap.ViewModels
                 FontWeight = SelectedVariant.FontFace.Weight,
                 FontStyle = SelectedVariant.FontFace.Style,
                 HorizontalAlignment = CanvasHorizontalAlignment.Left,
-            }, Settings.GridSize, Settings.GridSize))
-            {
-                layout.Options = CanvasDrawTextOptions.EnableColorFont;
-                ApplyEffectiveTypography(layout);
-                SelectedCharAnalysis = _interop.AnalyzeCharacterLayout(layout);
-            }
+            }, Settings.GridSize, Settings.GridSize);
 
-            IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+            layout.Options = CanvasDrawTextOptions.EnableColorFont;
+            ApplyEffectiveTypography(layout);
+            return _interop.AnalyzeCharacterLayout(layout);
         }
 
         private CanvasTypography GetEffectiveTypography()
@@ -544,14 +547,23 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private async Task SavePngAsync(ExportStyle style)
+        internal async Task SavePngAsync(ExportStyle style, Character c = null)
         {
+            Character character = SelectedChar;
+            CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
+
+            if (c != null)
+            {
+                character = c;
+                analysis = GetCharAnalysis(c);
+            }
+
             ExportResult result = await ExportManager.ExportPngAsync(
                 style,
                 SelectedFont,
                 SelectedVariant,
-                SelectedChar,
-                SelectedCharAnalysis,
+                character,
+                analysis,
                 GetEffectiveTypography(),
                 Settings);
 
@@ -559,14 +571,23 @@ namespace CharacterMap.ViewModels
                 MessengerInstance.Send(new AppNotificationMessage(true, result));
         }
 
-        private async Task SaveSvgAsync(ExportStyle style)
+        internal async Task SaveSvgAsync(ExportStyle style, Character c = null)
         {
+            Character character = SelectedChar;
+            CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
+
+            if (c != null)
+            {
+                character = c;
+                analysis = GetCharAnalysis(c);
+            }
+
             ExportResult result = await ExportManager.ExportSvgAsync(
                 style,
                 SelectedFont,
                 SelectedVariant,
-                SelectedChar,
-                SelectedCharAnalysis,
+                  character,
+                analysis,
                 GetEffectiveTypography());
 
             if (result.Success)
@@ -637,54 +658,35 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public async Task RequestSaveAsync(SaveAsPictureMessage message)
-        {
-            ExportResult result = null;
-            if (message.Save == SaveAsPictureMessage.SaveAs.PNG)
-            {
-                result = await ExportManager.ExportPngAsync(message.Style,
-                    SelectedFont,
-                    SelectedVariant,
-                    message.Character,
-                    message.Analysis,
-                    GetEffectiveTypography(),
-                    Settings);
-            }
-            else if (message.Save == SaveAsPictureMessage.SaveAs.SVG)
-            {
-                result = await ExportManager.ExportSvgAsync(message.Style,
-                    SelectedFont,
-                    SelectedVariant,
-                    message.Character,
-                    message.Analysis,
-                    GetEffectiveTypography());
-            }
-
-            if (result.Success)
-                MessengerInstance.Send(new AppNotificationMessage(true, result));
-        }
-
         public async Task RequestCopyToClipboardAsync(CopyToClipboardMessage message)
         {
-            if (message.CopyItem == CopyToClipboardMessage.MessageType.Char)
+            if (message.CopyType == DevValueType.Char)
                 await Utils.TryCopyToClipboardAsync(message.RequestedItem, this);
             else
             {
                 var data = GlyphService.GetDevValues(message.RequestedItem, SelectedVariant, message.Analysis, GetEffectiveTypography(), Settings.DevToolsLanguage == 0);
-                switch (message.CopyItem)
+                switch (message.CopyType)
                 {
-                    case CopyToClipboardMessage.MessageType.DevGlyph:
+                    case DevValueType.Glyph:
                         Utils.CopyToClipBoard(data.Hex);
                         break;
-                    case CopyToClipboardMessage.MessageType.DevFont:
+                    case DevValueType.FontIcon:
                         Utils.CopyToClipBoard(data.FontIcon);
                         break;
-                    case CopyToClipboardMessage.MessageType.DevPath:
+                    case DevValueType.PathIcon:
                         Utils.CopyToClipBoard(data.Path);
+                        break;
+                    case DevValueType.UnicodeValue:
+                        Utils.CopyToClipBoard(message.RequestedItem.UnicodeString);
                         break;
                 }
             }
         }
+
+        public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);
+        public void DecreaseCharacterSize() => Settings.ChangeGridSize(-4);
+        public void ShowPane() => Settings.EnablePreviewPane = true;
+        public void HidePane() => Settings.EnablePreviewPane = false;
     }
 
     public enum SearchSource
