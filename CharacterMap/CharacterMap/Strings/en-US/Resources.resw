@@ -424,7 +424,7 @@
     <value>Show in Folder</value>
   </data>
   <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Hide font pane</value>
+    <value>Hide font pane (Ctrl+L)</value>
   </data>
   <data name="NotificationImportFailed" xml:space="preserve">
     <value>Import Failed</value>
@@ -436,7 +436,7 @@
     <value>{0} was added to your collection</value>
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Show font pane</value>
+    <value>Show font pane (Ctrl+L)</value>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>More</value>
@@ -843,10 +843,10 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>How vexingly quick daft zebras jump! 1234567890</value>
   </data>
   <data name="LblSwitchToCharMap.Text" xml:space="preserve">
-    <value>Switch to Character Map view</value>
+    <value>Switch to Character Map view (Ctrl+T)</value>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
-    <value>Switch to Type Ramp view</value>
+    <value>Switch to Type Ramp view (Ctrl+T)</value>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>Enter or choose text from the dropdown</value>
@@ -932,15 +932,21 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
     <value>Copy Unicode Value</value>
   </data>
   <data name="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Decrease Character Size</value>
+    <value>Decrease Character Size (Ctrl+-)</value>
   </data>
   <data name="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Increase Character Size</value>
+    <value>Increase Character Size (Ctrl++)</value>
   </data>
   <data name="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Switch View</value>
+    <value>Switch View (Ctrl+T)</value>
   </data>
   <data name="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Toggle Preview Pane</value>
+    <value>Toggle Preview Pane (Ctrl+R)</value>
+  </data>
+  <data name="NotificationCopied" xml:space="preserve">
+    <value>Copied</value>
+  </data>
+  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Toggle Copy Pane (Ctrl+B)</value>
   </data>
 </root>

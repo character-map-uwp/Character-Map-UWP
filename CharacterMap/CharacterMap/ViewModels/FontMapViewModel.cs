@@ -693,8 +693,12 @@ namespace CharacterMap.ViewModels
                     case DevValueType.UnicodeValue:
                         Utils.CopyToClipBoard(message.RequestedItem.UnicodeString);
                         break;
+                    default:
+                        return;
                 }
             }
+
+            MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
 
         public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);

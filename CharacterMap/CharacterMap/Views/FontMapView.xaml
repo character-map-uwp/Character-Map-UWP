@@ -40,7 +40,7 @@
                 Columns="5"
                 Rows="1">
                 <AppBarButton
-                    x:Uid="SwtichViewButton"
+                    x:Uid="SwitchViewButton"
                     Click="{x:Bind ViewModel.ChangeDisplayMode}"
                     Icon="Switch" />
                 <AppBarButton
@@ -55,14 +55,15 @@
                     Icon="FontDecrease" />
                 <AppBarToggleButton
                     x:Name="ToggleCopyPaneButton"
-                    Loaded="ToggleCopyPaneButton_Loaded"
+                    x:Uid="ToggleCopyPaneButton"
                     Checked="{x:Bind ViewModel.ShowCopyPane}"
+                    Loaded="ToggleCopyPaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.HideCopyPane}">
                     <AppBarToggleButton.Icon>
                         <PathIcon
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Data="F1 M 20 1.25 L 20 8.173828 C 19.811197 8.0306 19.612629 7.913412 19.404297 7.822266 C 19.195963 7.73112 18.977863 7.659506 18.75 7.607422 L 18.75 2.5 L 1.25 2.5 L 1.25 13.75 L 10.458984 13.75 L 9.199219 15 L 0 15 L 0 1.25 Z M 16.669922 9.306641 C 16.852213 9.12435 17.06543 8.990886 17.30957 8.90625 C 17.553711 8.821615 17.799479 8.779297 18.046875 8.779297 C 18.320312 8.779297 18.574219 8.826498 18.808594 8.920898 C 19.042969 9.0153 19.246418 9.147136 19.418945 9.316406 C 19.591471 9.485678 19.728189 9.6875 19.829102 9.921875 C 19.930012 10.15625 19.980469 10.410156 19.980469 10.683594 C 19.980469 10.9375 19.931641 11.184896 19.833984 11.425781 C 19.736328 11.666667 19.596354 11.878256 19.414062 12.060547 L 12.431641 19.0625 L 8.75 19.980469 L 9.667969 16.298828 Z M 18.544922 11.181641 C 18.681641 11.044922 18.75 10.878906 18.75 10.683594 C 18.75 10.475261 18.683268 10.310873 18.549805 10.19043 C 18.41634 10.069987 18.248697 10.009766 18.046875 10.009766 C 17.955729 10.009766 17.867838 10.022787 17.783203 10.048828 C 17.698566 10.07487 17.623697 10.120443 17.558594 10.185547 L 10.800781 16.943359 L 10.46875 18.261719 L 11.787109 17.929688 Z M 14.208984 10 L 2.5 10 L 2.5 8.75 L 15.458984 8.75 Z M 2.5 11.25 L 12.958984 11.25 L 11.708984 12.5 L 2.5 12.5 Z " />
+                            Data="F1 M 20 2.5 L 20 17.5 L 0 17.5 L 0 2.5 Z M 18.75 12.5 L 1.25 12.5 L 1.25 16.25 L 18.75 16.25 Z M 18.75 11.25 L 18.75 3.75 L 1.25 3.75 L 1.25 11.25 Z " />
                     </AppBarToggleButton.Icon>
                 </AppBarToggleButton>
                 <AppBarToggleButton
@@ -87,8 +88,13 @@
             <MenuFlyoutItem
                 x:Uid="BtnCopy"
                 Click="CopyClick"
-                Icon="Copy"
-                Tag="{x:Bind models:DevValueType.Char}" />
+                CommandParameter="{x:Bind models:DevValueType.Char}"
+                Icon="Copy" />
+            <MenuFlyoutItem
+                x:Name="AddSelectionButton"
+                Click="AddClick"
+                Text="Add to selection"
+                Icon="Add" />
             <MenuFlyoutSeparator />
             <MenuFlyoutSubItem
                 x:Name="PngRoot"
@@ -758,16 +764,35 @@
                     x:Name="CopySequenceRoot"
                     x:Load="False"
                     Grid.Row="3"
-                    Height="132"
+                    Height="120"
+                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                     Loading="CopySequenceRoot_Loading"
                     Visibility="Collapsed">
-                    <Grid.Background>
-                        <SolidColorBrush Color="{ThemeResource SystemControlForegroundBaseHighBrush}" />
-                    </Grid.Background>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
+
+                    <Rectangle
+                        Height="1"
+                        VerticalAlignment="Top"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Stretch"
+                        Fill="{ThemeResource ApplicationForegroundThemeBrush}"
+                        Opacity="0.15" />
+
+                    <TextBlock
+                        x:Name="CopySequencePlaceholder"
+                        Margin="24"
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                        IsTextScaleFactorEnabled="False"
+                        Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
+                        Text="add a character using the Add button"
+                        TextAlignment="Center"
+                        TextLineBounds="Tight"
+                        Visibility="{x:Bind core:Converters.IsNullOrEmptyToVis(ViewModel.Sequence), Mode=OneWay}" />
 
                     <TextBlock
                         x:Name="CopySequenceText"
@@ -791,9 +816,10 @@
                         FontSize="48"
                         TextWrapping="Wrap" />-->
 
-                    <Grid Grid.Column="1" Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
+                    <Grid Grid.Column="1" Loaded="{x:Bind helpers:Composition.SetStandardReposition}" >
                         <Grid.Resources>
                             <Style BasedOn="{StaticResource LabelAppBarButtonStyle}" TargetType="AppBarButton">
+                                <Setter Property="Padding" Value="12 6" />
                                 <Setter Property="Margin" Value="0" />
                                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                                 <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -808,15 +834,18 @@
                         <AppBarButton
                             Click="AppBarButton_Click_2"
                             Icon="Add"
+                            IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar), Mode=OneWay}"
                             Label="Add" />
                         <AppBarButton
                             Grid.Row="1"
                             Click="AppBarButton_Click_1"
                             Icon="Copy"
+                            IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
                             Label="Copy" />
                         <AppBarButton
                             Grid.Row="2"
                             Click="AppBarButton_Click"
+                            IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
                             Label="Clear">
                             <AppBarButton.Icon>
                                 <PathIcon

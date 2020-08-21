@@ -414,8 +414,8 @@
           <target state="new">Show in Folder</target>
         </trans-unit>
         <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Hide font pane</source>
-          <target state="new">Hide font pane</target>
+          <source>Hide font pane (Ctrl+L)</source>
+          <target state="new">Hide font pane (Ctrl+L)</target>
         </trans-unit>
         <trans-unit id="NotificationImportFailed" translate="yes" xml:space="preserve">
           <source>Import Failed</source>
@@ -430,8 +430,8 @@
           <target state="new">{0} was added to your collection</target>
         </trans-unit>
         <trans-unit id="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Show font pane</source>
-          <target state="new">Show font pane</target>
+          <source>Show font pane (Ctrl+L)</source>
+          <target state="new">Show font pane (Ctrl+L)</target>
         </trans-unit>
         <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>More</source>
@@ -982,12 +982,12 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="new">How vexingly quick daft zebras jump! 1234567890</target>
         </trans-unit>
         <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
-          <source>Switch to Character Map view</source>
-          <target state="new">Switch to Character Map view</target>
+          <source>Switch to Character Map view (Ctrl+T)</source>
+          <target state="new">Switch to Character Map view (Ctrl+T)</target>
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
-          <source>Switch to Type Ramp view</source>
-          <target state="new">Switch to Type Ramp view</target>
+          <source>Switch to Type Ramp view (Ctrl+T)</source>
+          <target state="new">Switch to Type Ramp view (Ctrl+T)</target>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter or choose text from the dropdown</source>
@@ -1104,20 +1104,28 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
           <target state="new">Copy Unicode Value</target>
         </trans-unit>
         <trans-unit id="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Decrease Character Size</source>
-          <target state="new">Decrease Character Size</target>
+          <source>Decrease Character Size (Ctrl+-)</source>
+          <target state="new">Decrease Character Size (Ctrl+-)</target>
         </trans-unit>
         <trans-unit id="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Increase Character Size</source>
-          <target state="new">Increase Character Size</target>
+          <source>Increase Character Size (Ctrl++)</source>
+          <target state="new">Increase Character Size (Ctrl++)</target>
         </trans-unit>
         <trans-unit id="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Switch View</source>
-          <target state="new">Switch View</target>
+          <source>Switch View (Ctrl+T)</source>
+          <target state="new">Switch View (Ctrl+T)</target>
         </trans-unit>
         <trans-unit id="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Toggle Preview Pane</source>
-          <target state="new">Toggle Preview Pane</target>
+          <source>Toggle Preview Pane (Ctrl+R)</source>
+          <target state="new">Toggle Preview Pane (Ctrl+R)</target>
+        </trans-unit>
+        <trans-unit id="NotificationCopied" translate="yes" xml:space="preserve">
+          <source>Copied</source>
+          <target state="new">Copied</target>
+        </trans-unit>
+        <trans-unit id="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Toggle Copy Pane (Ctrl+B)</source>
+          <target state="new">Toggle Copy Pane (Ctrl+B)</target>
         </trans-unit>
       </group>
     </body>

@@ -39,6 +39,10 @@ namespace CharacterMap.Core
 
         public static bool IsNull(object obj) => obj == null;
         public static bool IsNotNull(object obj) => obj != null;
+        public static bool IsNullOrEmpty(string obj) => string.IsNullOrEmpty(obj);
+        public static bool IsNotNullOrEmpty(string obj) => !string.IsNullOrEmpty(obj);
+        public static Visibility IsNullOrEmptyToVis(string obj) => string.IsNullOrEmpty(obj) ? Visibility.Visible : Visibility.Collapsed;
+
 
         public static string ToHex(int i) => Unicode.GetHexValue((uint)i);
 

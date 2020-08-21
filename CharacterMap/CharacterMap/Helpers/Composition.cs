@@ -363,7 +363,7 @@ namespace CharacterMap.Helpers
             Visual v = ElementCompositionPreview.GetElementVisual(e);
 
             var o = v.Compositor.CreateVector3KeyFrameAnimation();
-            o.Target = "Translation";
+            o.Target = TRANSLATION;
             o.InsertExpressionKeyFrame(0, "this.StartingValue");
             o.InsertKeyFrame(1, new System.Numerics.Vector3(x ,y, 0));
             o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
@@ -377,7 +377,7 @@ namespace CharacterMap.Helpers
             Visual v = ElementCompositionPreview.GetElementVisual(e);
 
             var o = v.Compositor.CreateVector3KeyFrameAnimation();
-            o.Target = "Translation";
+            o.Target = TRANSLATION;
             o.InsertExpressionKeyFrame(0, "this.StartingValue");
             o.InsertExpressionKeyFrame(1, "Vector3(this.Target.Size.X, 0, 0)");
             o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
@@ -390,7 +390,7 @@ namespace CharacterMap.Helpers
             Visual v = ElementCompositionPreview.GetElementVisual(e);
 
             var o = v.Compositor.CreateVector3KeyFrameAnimation();
-            o.Target = "Translation";
+            o.Target = TRANSLATION;
             o.InsertExpressionKeyFrame(0, "this.StartingValue");
             o.InsertExpressionKeyFrame(1, "Vector3(0, this.Target.Size.Y, 0)");
             o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
@@ -405,7 +405,7 @@ namespace CharacterMap.Helpers
             Visual v = ElementCompositionPreview.GetElementVisual(e);
 
             var o = v.Compositor.CreateVector3KeyFrameAnimation();
-            o.Target = "Translation";
+            o.Target = TRANSLATION;
             o.InsertExpressionKeyFrame(1, "Vector3(0, 0, 0)");
             o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
 

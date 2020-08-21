@@ -15,6 +15,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -141,6 +142,17 @@ namespace CharacterMap.Styles
                         Messenger.Default.Send(new CollectionsUpdatedMessage());
                     }
                 }
+            }
+        }
+
+        private void Grid_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            var pointer = e.GetCurrentPoint(sender as FrameworkElement);
+            if (pointer.Properties.IsMiddleButtonPressed 
+                && sender is FrameworkElement f 
+                && f.DataContext is InstalledFont font)
+            {
+                _ = FontMapView.CreateNewViewForFontAsync(font);
             }
         }
     }

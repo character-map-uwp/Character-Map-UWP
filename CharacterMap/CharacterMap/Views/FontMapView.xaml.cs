@@ -303,6 +303,23 @@ namespace CharacterMap.Views
                         if (ViewModel.SelectedVariant is FontVariant v)
                             ExportManager.RequestExportFontFile(v);
                         break;
+                    case VirtualKey.Add:
+                    case (VirtualKey)187:
+                        ViewModel.IncreaseCharacterSize();
+                        break;
+                    case VirtualKey.Subtract:
+                    case (VirtualKey)189:
+                        ViewModel.DecreaseCharacterSize();
+                        break;
+                    case VirtualKey.R:
+                        ViewModel.Settings.EnablePreviewPane = !ViewModel.Settings.EnablePreviewPane;
+                        break;
+                    case VirtualKey.B:
+                        ViewModel.Settings.EnableCopyPane = !ViewModel.Settings.EnableCopyPane;
+                        break;
+                    case VirtualKey.T:
+                        ViewModel.ChangeDisplayMode();
+                        break;
                 }
             }
         }
@@ -722,6 +739,15 @@ namespace CharacterMap.Views
             }
         }
 
+        private void AddClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item
+              && item.DataContext is Character c)
+            {
+                ViewModel.Sequence += c.Char;
+            }
+        }
+
         private void PaneButton_Loaded(object sender, RoutedEventArgs e)
         {
             ((AppBarToggleButton)sender).IsChecked = !ResourceHelper.AppSettings.EnablePreviewPane;
@@ -740,6 +766,7 @@ namespace CharacterMap.Views
         private void AppBarButton_Click_1(object sender, RoutedEventArgs e)
         {
             Utils.CopyToClipBoard(CopySequenceText.Text);
+            Messenger.Default.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
 
         private void AppBarButton_Click_2(object sender, RoutedEventArgs e)
@@ -933,9 +960,10 @@ namespace CharacterMap.Views
             CopySequenceRoot.SetShowAnimation(Composition.CreateSlideIn(sender));
 
             CopySequenceRoot.SetTranslation(new Vector3(0, (float)CopySequenceRoot.Height, 0));
-            CopySequenceRoot.GetElementVisual().StartAnimation("Translation", Composition.CreateSlideIn(sender));
+            CopySequenceRoot.GetElementVisual().StartAnimation(Composition.TRANSLATION, Composition.CreateSlideIn(sender));
+
+            //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
-        
     }
 
 
