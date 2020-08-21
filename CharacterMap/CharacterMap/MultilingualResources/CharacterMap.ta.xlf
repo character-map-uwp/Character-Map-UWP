@@ -1130,6 +1130,18 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <source>Toggle Copy Pane (Ctrl+B)</source>
           <target state="new">Toggle Copy Pane (Ctrl+B)</target>
         </trans-unit>
+        <trans-unit id="AddButton.Label" translate="yes" xml:space="preserve">
+          <source>Add</source>
+          <target state="new">Add</target>
+        </trans-unit>
+        <trans-unit id="CopySequencePlaceholder.Text" translate="yes" xml:space="preserve">
+          <source>add a character using the Add button</source>
+          <target state="new">add a character using the Add button</target>
+        </trans-unit>
+        <trans-unit id="AddSelectionItem.Text" translate="yes" xml:space="preserve">
+          <source>Add to selection</source>
+          <target state="new">Add to selection</target>
+        </trans-unit>
       </group>
     </body>
   </file>

@@ -701,6 +701,13 @@ namespace CharacterMap.ViewModels
             MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
 
+        public void CopySequence()
+        {
+            Utils.CopyToClipBoard(Sequence);
+            MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+        }
+        public void ClearSequence() => Sequence = string.Empty;
+        public void AddCharToSequence() => Sequence += SelectedChar.Char;
         public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);
         public void DecreaseCharacterSize() => Settings.ChangeGridSize(-4);
         public void ShowPane() => Settings.EnablePreviewPane = true;

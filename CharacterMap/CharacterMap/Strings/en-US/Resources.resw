@@ -946,6 +946,15 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
   <data name="NotificationCopied" xml:space="preserve">
     <value>Copied</value>
   </data>
+  <data name="AddButton.Label" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AddSelectionItem.Text" xml:space="preserve">
+    <value>Add to selection</value>
+  </data>
+  <data name="CopySequencePlaceholder.Text" xml:space="preserve">
+    <value>add a character using the Add button</value>
+  </data>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Toggle Copy Pane (Ctrl+B)</value>
   </data>

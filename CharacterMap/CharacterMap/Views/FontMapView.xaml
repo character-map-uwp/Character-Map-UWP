@@ -92,8 +92,8 @@
                 Icon="Copy" />
             <MenuFlyoutItem
                 x:Name="AddSelectionButton"
+                x:Uid="AddSelectionItem"
                 Click="AddClick"
-                Text="Add to selection"
                 Icon="Add" />
             <MenuFlyoutSeparator />
             <MenuFlyoutSubItem
@@ -774,22 +774,22 @@
                     </Grid.ColumnDefinitions>
 
                     <Rectangle
-                        Height="1"
-                        VerticalAlignment="Top"
                         Grid.ColumnSpan="2"
+                        Height="1"
                         HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
                         Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                         Opacity="0.15" />
 
                     <TextBlock
                         x:Name="CopySequencePlaceholder"
+                        x:Uid="CopySequencePlaceholder"
                         Margin="24"
                         VerticalAlignment="Center"
                         FontSize="14"
                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                         IsTextScaleFactorEnabled="False"
                         Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
-                        Text="add a character using the Add button"
                         TextAlignment="Center"
                         TextLineBounds="Tight"
                         Visibility="{x:Bind core:Converters.IsNullOrEmptyToVis(ViewModel.Sequence), Mode=OneWay}" />
@@ -816,7 +816,7 @@
                         FontSize="48"
                         TextWrapping="Wrap" />-->
 
-                    <Grid Grid.Column="1" Loaded="{x:Bind helpers:Composition.SetStandardReposition}" >
+                    <Grid Grid.Column="1" Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
                         <Grid.Resources>
                             <Style BasedOn="{StaticResource LabelAppBarButtonStyle}" TargetType="AppBarButton">
                                 <Setter Property="Padding" Value="12 6" />
@@ -832,21 +832,21 @@
                         </Grid.RowDefinitions>
 
                         <AppBarButton
-                            Click="AppBarButton_Click_2"
+                            x:Uid="AddButton"
+                            Click="{x:Bind ViewModel.AddCharToSequence}"
                             Icon="Add"
-                            IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar), Mode=OneWay}"
-                            Label="Add" />
+                            IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar), Mode=OneWay}" />
                         <AppBarButton
+                            x:Uid="BtnCopyGlyph"
                             Grid.Row="1"
-                            Click="AppBarButton_Click_1"
+                            Click="{x:Bind ViewModel.CopySequence}"
                             Icon="Copy"
-                            IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
-                            Label="Copy" />
+                            IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}" />
                         <AppBarButton
+                            x:Uid="AppBtnClear"
                             Grid.Row="2"
-                            Click="AppBarButton_Click"
-                            IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
-                            Label="Clear">
+                            Click="{x:Bind ViewModel.ClearSequence}"
+                            IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}">
                             <AppBarButton.Icon>
                                 <PathIcon
                                     HorizontalAlignment="Center"

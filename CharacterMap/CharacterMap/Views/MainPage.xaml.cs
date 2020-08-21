@@ -272,7 +272,7 @@ namespace CharacterMap.Views
                         FontMap.ViewModel.DecreaseCharacterSize();
                         break;
                     case VirtualKey.L:
-                        SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
+                        TogglePane_Click(null, null);
                         break;
                     case VirtualKey.R:
                         ViewModel.Settings.EnablePreviewPane = !ViewModel.Settings.EnablePreviewPane;

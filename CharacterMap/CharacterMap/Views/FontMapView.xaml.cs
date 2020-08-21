@@ -742,7 +742,7 @@ namespace CharacterMap.Views
         private void AddClick(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem item
-              && item.DataContext is Character c)
+                && item.DataContext is Character c)
             {
                 ViewModel.Sequence += c.Char;
             }
@@ -756,22 +756,6 @@ namespace CharacterMap.Views
         private void ToggleCopyPaneButton_Loaded(object sender, RoutedEventArgs e)
         {
             ((AppBarToggleButton)sender).IsChecked = ResourceHelper.AppSettings.EnableCopyPane;
-        }
-
-        private void AppBarButton_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Sequence = string.Empty;
-        }
-
-        private void AppBarButton_Click_1(object sender, RoutedEventArgs e)
-        {
-            Utils.CopyToClipBoard(CopySequenceText.Text);
-            Messenger.Default.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
-        }
-
-        private void AppBarButton_Click_2(object sender, RoutedEventArgs e)
-        {
-            ViewModel.Sequence += ViewModel.SelectedChar.Char;
         }
 
         /// <summary>
