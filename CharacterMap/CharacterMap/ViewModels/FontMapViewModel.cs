@@ -280,6 +280,20 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private bool _isSequenceRootVisible = false;
+        public bool IsSequenceRootVisible
+        {
+            get => _isSequenceRootVisible;
+            set => Set(ref _isSequenceRootVisible, value);
+        }
+
+        private string _sequence;
+        public string Sequence
+        {
+            get => _sequence;
+            set => Set(ref _sequence, value);
+        }
+
         private string _typeRampText;
         public string TypeRampText
         {
@@ -687,6 +701,8 @@ namespace CharacterMap.ViewModels
         public void DecreaseCharacterSize() => Settings.ChangeGridSize(-4);
         public void ShowPane() => Settings.EnablePreviewPane = true;
         public void HidePane() => Settings.EnablePreviewPane = false;
+        public void ShowCopyPane() => Settings.EnableCopyPane = true;
+        public void HideCopyPane() => Settings.EnableCopyPane = false;
     }
 
     public enum SearchSource

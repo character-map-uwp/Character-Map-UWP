@@ -21,12 +21,28 @@
     <Control.Tag>
         <Grid x:Name="MoreOptionsBar">
             <Grid.Resources>
-                <Style BasedOn="{StaticResource AppBarButtonRevealStyle}" TargetType="AppBarButton">
+                <Style BasedOn="{StaticResource CommandBarFlyoutAppBarButtonStyle}" TargetType="AppBarButton">
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="Width" Value="Auto" />
+                </Style>
+                <Style BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyle}" TargetType="AppBarToggleButton">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="HorizontalAlignment" Value="Stretch" />
+                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="Width" Value="Auto" />
                 </Style>
             </Grid.Resources>
-            <CommandBar Background="Transparent" OverflowButtonVisibility="Collapsed">
+            <toolkit:UniformGrid
+                ColumnSpacing="0"
+                Background="Transparent"
+                Columns="5"
+                Rows="1">
+                <AppBarButton
+                    x:Uid="SwtichViewButton"
+                    Click="{x:Bind ViewModel.ChangeDisplayMode}"
+                    Icon="Switch" />
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
                     x:Uid="IncreaseSizeButton"
@@ -37,10 +53,18 @@
                     x:Uid="DecreaseSizeButton"
                     Click="{x:Bind ViewModel.DecreaseCharacterSize}"
                     Icon="FontDecrease" />
-                <AppBarButton
-                    x:Uid="SwtichViewButton"
-                    Click="{x:Bind ViewModel.ChangeDisplayMode}"
-                    Icon="Switch" />
+                <AppBarToggleButton
+                    x:Name="ToggleCopyPaneButton"
+                    Loaded="ToggleCopyPaneButton_Loaded"
+                    Checked="{x:Bind ViewModel.ShowCopyPane}"
+                    Unchecked="{x:Bind ViewModel.HideCopyPane}">
+                    <AppBarToggleButton.Icon>
+                        <PathIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Data="F1 M 20 1.25 L 20 8.173828 C 19.811197 8.0306 19.612629 7.913412 19.404297 7.822266 C 19.195963 7.73112 18.977863 7.659506 18.75 7.607422 L 18.75 2.5 L 1.25 2.5 L 1.25 13.75 L 10.458984 13.75 L 9.199219 15 L 0 15 L 0 1.25 Z M 16.669922 9.306641 C 16.852213 9.12435 17.06543 8.990886 17.30957 8.90625 C 17.553711 8.821615 17.799479 8.779297 18.046875 8.779297 C 18.320312 8.779297 18.574219 8.826498 18.808594 8.920898 C 19.042969 9.0153 19.246418 9.147136 19.418945 9.316406 C 19.591471 9.485678 19.728189 9.6875 19.829102 9.921875 C 19.930012 10.15625 19.980469 10.410156 19.980469 10.683594 C 19.980469 10.9375 19.931641 11.184896 19.833984 11.425781 C 19.736328 11.666667 19.596354 11.878256 19.414062 12.060547 L 12.431641 19.0625 L 8.75 19.980469 L 9.667969 16.298828 Z M 18.544922 11.181641 C 18.681641 11.044922 18.75 10.878906 18.75 10.683594 C 18.75 10.475261 18.683268 10.310873 18.549805 10.19043 C 18.41634 10.069987 18.248697 10.009766 18.046875 10.009766 C 17.955729 10.009766 17.867838 10.022787 17.783203 10.048828 C 17.698566 10.07487 17.623697 10.120443 17.558594 10.185547 L 10.800781 16.943359 L 10.46875 18.261719 L 11.787109 17.929688 Z M 14.208984 10 L 2.5 10 L 2.5 8.75 L 15.458984 8.75 Z M 2.5 11.25 L 12.958984 11.25 L 11.708984 12.5 L 2.5 12.5 Z " />
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
                 <AppBarToggleButton
                     x:Name="TogglePaneButton"
                     x:Uid="TogglePaneButton"
@@ -48,7 +72,7 @@
                     Icon="OpenPane"
                     Loaded="PaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.ShowPane}" />
-            </CommandBar>
+            </toolkit:UniformGrid>
         </Grid>
     </Control.Tag>
 
@@ -686,41 +710,127 @@
 
 
             <!--  The One And Only, The Character Map  -->
-            <controls:CharacterGridView
-                x:Name="CharGrid"
-                x:FieldModifier="public"
+            <Grid
+                x:Name="CharGridRoot"
                 Grid.Row="2"
                 Grid.Column="0"
-                Margin="0"
-                Padding="10 10 6 10"
-                EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
-                IsItemClickEnabled="False"
-                ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
-                ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
-                ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
-                ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
-                ItemsSource="{Binding Chars, Mode=OneWay}"
-                SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
-                SelectionMode="Single"
-                ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
-                ShowsScrollingPlaceholders="False">
-                <GridView.ItemContainerTransitions>
-                    <TransitionCollection />
-                </GridView.ItemContainerTransitions>
-                <GridView.ItemTemplate>
-                    <DataTemplate>
-                        <!--  For performance reasons, all bindings are done in C#  -->
-                        <Grid Padding="4" ContextRequested="Grid_ContextRequested">
-                            <TextBlock
-                                Margin="0 -2 0 0"
-                                Padding="0,0,0,8"
-                                IsTextScaleFactorEnabled="False"
-                                TextAlignment="Center" />
-                            <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
-                        </Grid>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </controls:CharacterGridView>
+                Margin="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <controls:CharacterGridView
+                    x:Name="CharGrid"
+                    x:FieldModifier="public"
+                    Padding="10 10 6 10"
+                    EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
+                    IsItemClickEnabled="False"
+                    ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
+                    ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
+                    ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
+                    ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
+                    ItemsSource="{Binding Chars, Mode=OneWay}"
+                    SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
+                    SelectionMode="Single"
+                    ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
+                    ShowsScrollingPlaceholders="False">
+                    <GridView.ItemContainerTransitions>
+                        <TransitionCollection />
+                    </GridView.ItemContainerTransitions>
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <!--  For performance reasons, all bindings are done in C#  -->
+                            <Grid Padding="4" ContextRequested="Grid_ContextRequested">
+                                <TextBlock
+                                    Margin="0 -2 0 0"
+                                    Padding="0,0,0,8"
+                                    IsTextScaleFactorEnabled="False"
+                                    TextAlignment="Center" />
+                                <TextBlock Style="{StaticResource CharItemUnicodeStyle}" />
+                            </Grid>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                </controls:CharacterGridView>
+
+                <!--  Character Copy Pane  -->
+                <Grid
+                    x:Name="CopySequenceRoot"
+                    x:Load="False"
+                    Grid.Row="3"
+                    Height="132"
+                    Loading="CopySequenceRoot_Loading"
+                    Visibility="Collapsed">
+                    <Grid.Background>
+                        <SolidColorBrush Color="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+                    </Grid.Background>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        x:Name="CopySequenceText"
+                        Margin="24"
+                        VerticalAlignment="Center"
+                        FontFamily="{Binding FontFamily}"
+                        FontSize="48"
+                        FontStretch="{Binding SelectedVariant.FontFace.Stretch}"
+                        FontStyle="{Binding SelectedVariant.FontFace.Style}"
+                        FontWeight="{Binding SelectedVariant.FontFace.Weight}"
+                        Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                        IsColorFontEnabled="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
+                        IsTextScaleFactorEnabled="False"
+                        Text="{x:Bind GetSafeString(ViewModel.SelectedVariant.FontFace, ViewModel.Sequence), Mode=OneWay}"
+                        TextLineBounds="Tight" />
+
+                    <!--<TextBlock
+                        x:Name="CopySequenceText"
+                        Padding="24"
+                        FontFamily="{Binding FontFamily, Mode=OneWay}"
+                        FontSize="48"
+                        TextWrapping="Wrap" />-->
+
+                    <Grid Grid.Column="1" Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
+                        <Grid.Resources>
+                            <Style BasedOn="{StaticResource LabelAppBarButtonStyle}" TargetType="AppBarButton">
+                                <Setter Property="Margin" Value="0" />
+                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="VerticalAlignment" Value="Stretch" />
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+
+                        <AppBarButton
+                            Click="AppBarButton_Click_2"
+                            Icon="Add"
+                            Label="Add" />
+                        <AppBarButton
+                            Grid.Row="1"
+                            Click="AppBarButton_Click_1"
+                            Icon="Copy"
+                            Label="Copy" />
+                        <AppBarButton
+                            Grid.Row="2"
+                            Click="AppBarButton_Click"
+                            Label="Clear">
+                            <AppBarButton.Icon>
+                                <PathIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="F1 M 10.888672 17.5 L 13.75 17.5 L 13.75 18.75 L 4.423828 18.75 L 1.113281 15.429688 C 0.957031 15.273438 0.836589 15.089519 0.751953 14.87793 C 0.667318 14.666342 0.625 14.446615 0.625 14.21875 C 0.625 13.990886 0.667318 13.771159 0.751953 13.55957 C 0.836589 13.347982 0.960286 13.160808 1.123047 12.998047 L 11.875 2.246094 L 19.003906 9.375 Z M 11.875 4.003906 L 5.253906 10.625 L 10.625 15.996094 L 17.246094 9.375 Z M 9.111328 17.5 L 9.746094 16.875 L 4.375 11.503906 L 2.011719 13.876953 C 1.920573 13.9681 1.875 14.082031 1.875 14.21875 C 1.875 14.355469 1.920573 14.469401 2.011719 14.560547 L 4.941406 17.5 Z M 18.75 6.25 L 17.5 6.25 L 17.5 5 L 18.75 5 Z M 18.75 3.75 L 17.5 3.75 L 17.5 2.5 L 18.75 2.5 Z M 18.75 1.25 L 17.5 1.25 L 17.5 0 L 18.75 0 Z M 16.25 1.25 L 15 1.25 L 15 0 L 16.25 0 Z M 13.75 1.25 L 12.5 1.25 L 12.5 0 L 13.75 0 Z M 11.25 1.25 L 10 1.25 L 10 0 L 11.25 0 Z M 8.75 1.25 L 7.5 1.25 L 7.5 0 L 8.75 0 Z M 6.25 1.25 L 5 1.25 L 5 0 L 6.25 0 Z M 3.75 1.25 L 2.5 1.25 L 2.5 0 L 3.75 0 Z M 1.25 1.25 L 0 1.25 L 0 0 L 1.25 0 Z M 1.25 3.75 L 0 3.75 L 0 2.5 L 1.25 2.5 Z M 1.25 6.25 L 0 6.25 L 0 5 L 1.25 5 Z M 1.25 8.75 L 0 8.75 L 0 7.5 L 1.25 7.5 Z M 1.25 11.25 L 0 11.25 L 0 10 L 1.25 10 Z M 15 17.5 L 16.25 17.5 L 16.25 18.75 L 15 18.75 Z M 17.5 12.5 L 18.75 12.5 L 18.75 13.75 L 17.5 13.75 Z M 17.5 15 L 18.75 15 L 18.75 16.25 L 17.5 16.25 Z M 17.5 17.5 L 18.75 17.5 L 18.75 18.75 L 17.5 18.75 Z " />
+                            </AppBarButton.Icon>
+                        </AppBarButton>
+                    </Grid>
+
+                </Grid>
+            </Grid>
+
+
 
             <!--  Type Ramp  -->
             <Grid
@@ -1333,11 +1443,13 @@
 
         </Grid>
 
+
+
         <!--  Notification Presenter  -->
         <Grid
             x:Name="NotificationRoot"
             x:Load="False"
-            Grid.RowSpan="3"
+            Grid.RowSpan="4"
             Grid.ColumnSpan="10">
             <toolkit:InAppNotification x:Name="DefaultNotification" />
         </Grid>
@@ -1346,6 +1458,7 @@
         <ProgressRing
             x:Name="LoadingRing"
             Grid.Row="2"
+            Grid.RowSpan="2"
             Grid.ColumnSpan="2"
             Width="50"
             Height="50" />
@@ -1410,7 +1523,7 @@
                 </VisualState>
                 <VisualState x:Name="TypeRampState">
                     <VisualState.Setters>
-                        <Setter Target="CharGrid.Visibility" Value="Collapsed" />
+                        <Setter Target="CharGridRoot.Visibility" Value="Collapsed" />
                         <Setter Target="SplitterContainer.Visibility" Value="Collapsed" />
                         <Setter Target="PreviewGrid.Visibility" Value="Collapsed" />
                         <Setter Target="TypeRampRoot.Visibility" Value="Visible" />
@@ -1422,6 +1535,9 @@
                         <Setter Target="IncreaseSizeButton.IsEnabled" Value="False" />
                         <Setter Target="DecreaseSizeButton.IsEnabled" Value="False" />
                         <!--  Don't disable this button, breaks the binding  -->
+                        <Setter Target="ToggleCopyPaneButton.IsHitTestVisible" Value="False" />
+                        <Setter Target="ToggleCopyPaneButton.Opacity" Value="0.4" />
+                        <Setter Target="ToggleCopyPaneButton.IsTabStop" Value="False" />
                         <Setter Target="TogglePaneButton.IsHitTestVisible" Value="False" />
                         <Setter Target="TogglePaneButton.Opacity" Value="0.4" />
                         <Setter Target="TogglePaneButton.IsTabStop" Value="False" />
@@ -1472,6 +1588,14 @@
                         <Setter Target="SplitterColumn.Width" Value="0" />
                         <Setter Target="PreviewColumn.Width" Value="0" />
                         <Setter Target="PreviewColumn.MinWidth" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="CopySequenceStates">
+                <VisualState x:Name="CopySequenceDisabledState" />
+                <VisualState x:Name="CopySequenceEnabledState">
+                    <VisualState.Setters>
+                        <Setter Target="CopySequenceRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

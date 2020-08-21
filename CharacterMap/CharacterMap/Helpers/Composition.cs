@@ -371,7 +371,7 @@ namespace CharacterMap.Helpers
             return o;
         }
 
-        public static Vector3KeyFrameAnimation CreateSlideOut(UIElement e)
+        public static Vector3KeyFrameAnimation CreateSlideOutX(UIElement e)
         {
             ElementCompositionPreview.SetIsTranslationEnabled(e, true);
             Visual v = ElementCompositionPreview.GetElementVisual(e);
@@ -379,11 +379,25 @@ namespace CharacterMap.Helpers
             var o = v.Compositor.CreateVector3KeyFrameAnimation();
             o.Target = "Translation";
             o.InsertExpressionKeyFrame(0, "this.StartingValue");
-            o.InsertExpressionKeyFrame(1, "Vector3(this.Target.Size.Y, 0, 0)");
+            o.InsertExpressionKeyFrame(1, "Vector3(this.Target.Size.X, 0, 0)");
             o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
 
             return o;
         }
+        public static Vector3KeyFrameAnimation CreateSlideOutY(UIElement e)
+        {
+            ElementCompositionPreview.SetIsTranslationEnabled(e, true);
+            Visual v = ElementCompositionPreview.GetElementVisual(e);
+
+            var o = v.Compositor.CreateVector3KeyFrameAnimation();
+            o.Target = "Translation";
+            o.InsertExpressionKeyFrame(0, "this.StartingValue");
+            o.InsertExpressionKeyFrame(1, "Vector3(0, this.Target.Size.Y, 0)");
+            o.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
+
+            return o;
+        }
+
 
         public static Vector3KeyFrameAnimation CreateSlideIn(UIElement e)
         {
