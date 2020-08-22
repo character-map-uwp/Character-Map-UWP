@@ -701,10 +701,10 @@ namespace CharacterMap.ViewModels
             MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
 
-        public void CopySequence()
+        public async void CopySequence()
         {
-            Utils.CopyToClipBoard(Sequence);
-            MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+            if (await Utils.TryCopyToClipboardAsync(Sequence, this))
+                MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
         public void ClearSequence() => Sequence = string.Empty;
         public void AddCharToSequence() => Sequence += SelectedChar.Char;

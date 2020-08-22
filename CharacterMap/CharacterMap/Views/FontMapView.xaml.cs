@@ -35,6 +35,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
 using System.Numerics;
 using Microsoft.Graphics.Canvas.Text;
+using System.Text;
 
 namespace CharacterMap.Views
 {
@@ -498,6 +499,8 @@ namespace CharacterMap.Views
         }
 
 
+
+
         /* UI Event Handlers */
 
         private void ToggleDev()
@@ -776,13 +779,29 @@ namespace CharacterMap.Views
             string r = string.Empty;
             if (s != null && fontFace != null)
             {
-                foreach (var c in s)
+                for (int i = 0; i < s.Length; i++)
                 {
-                    if (fontFace.HasCharacter(c))
+                    var c = s[i];
+
+                    /* Surrogate pair handling is pain */
+                    if (char.IsSurrogate(c)
+                        && char.IsSurrogatePair(c, s[i + 1]))
+                    {
+                        var c1 = s[i + 1];
+                        int val = char.ConvertToUtf32(c, c1);
+                        if (fontFace.HasCharacter((uint)val))
+                            r += new string(new char[] { c, c1 });
+                        else
+                            r += '\uFFFD';
+
+                        i += 1;
+                    }
+                    else if (fontFace.HasCharacter(c))
                         r += c;
                     else
                         r += '\uFFFD';
                 }
+               
             }
 
             return r;
