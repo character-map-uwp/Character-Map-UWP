@@ -34,6 +34,8 @@ using SQLitePCL;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
 using System.Numerics;
+using Microsoft.Graphics.Canvas.Text;
+using System.Text;
 
 namespace CharacterMap.Views
 {
@@ -174,6 +176,7 @@ namespace CharacterMap.Views
             UpdateSearchStates();
             UpdateCharacterFit();
             UpdatePaneAndGridSizing();
+            UpdateCopyPane();
 
             PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
             _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
@@ -185,7 +188,7 @@ namespace CharacterMap.Views
             ElementCompositionPreview.SetIsTranslationEnabled(PreviewGrid, true);
             Visual v = ElementCompositionPreview.GetElementVisual(PreviewGrid);
 
-            ElementCompositionPreview.SetImplicitHideAnimation(PreviewGrid, Composition.CreateSlideOut(PreviewGrid));
+            ElementCompositionPreview.SetImplicitHideAnimation(PreviewGrid, Composition.CreateSlideOutX(PreviewGrid));
             ElementCompositionPreview.SetImplicitShowAnimation(PreviewGrid, Composition.CreateSlideIn(PreviewGrid));
         }
 
@@ -277,6 +280,9 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.EnablePreviewPane):
                         UpdatePaneAndGridSizing();
                         break;
+                    case nameof(AppSettings.EnableCopyPane):
+                        UpdateCopyPane();
+                        break;
                 }
             });
         }
@@ -297,6 +303,23 @@ namespace CharacterMap.Views
                     case VirtualKey.S:
                         if (ViewModel.SelectedVariant is FontVariant v)
                             ExportManager.RequestExportFontFile(v);
+                        break;
+                    case VirtualKey.Add:
+                    case (VirtualKey)187:
+                        ViewModel.IncreaseCharacterSize();
+                        break;
+                    case VirtualKey.Subtract:
+                    case (VirtualKey)189:
+                        ViewModel.DecreaseCharacterSize();
+                        break;
+                    case VirtualKey.R:
+                        ViewModel.Settings.EnablePreviewPane = !ViewModel.Settings.EnablePreviewPane;
+                        break;
+                    case VirtualKey.B:
+                        ViewModel.Settings.EnableCopyPane = !ViewModel.Settings.EnableCopyPane;
+                        break;
+                    case VirtualKey.T:
+                        ViewModel.ChangeDisplayMode();
                         break;
                 }
             }
@@ -395,6 +418,15 @@ namespace CharacterMap.Views
             OverlayButton?.SetVisible(IsStandalone && !ViewModel.Settings.EnablePreviewPane);
         }
 
+        private void UpdateCopyPane()
+        {
+            VisualStateManager.GoToState(
+                 this,
+                 ViewModel.Settings.EnableCopyPane ? nameof(CopySequenceEnabledState) : nameof(CopySequenceDisabledState),
+                 true);
+        }
+
+
 
 
         /* Public surface-area methods */
@@ -465,6 +497,8 @@ namespace CharacterMap.Views
                 SearchBox.Width = 290;
             }
         }
+
+
 
 
         /* UI Event Handlers */
@@ -708,9 +742,69 @@ namespace CharacterMap.Views
             }
         }
 
+        private void AddClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item
+                && item.DataContext is Character c)
+            {
+                ViewModel.Sequence += c.Char;
+            }
+        }
+
         private void PaneButton_Loaded(object sender, RoutedEventArgs e)
         {
             ((AppBarToggleButton)sender).IsChecked = !ResourceHelper.AppSettings.EnablePreviewPane;
+        }
+
+        private void ToggleCopyPaneButton_Loaded(object sender, RoutedEventArgs e)
+        {
+            ((AppBarToggleButton)sender).IsChecked = ResourceHelper.AppSettings.EnableCopyPane;
+        }
+
+        /// <summary>
+        /// Returns a string attempting to show only characters a font supports
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        string GetSafeString(CanvasFontFace fontFace, string s)
+        {
+            /* 
+             * Ideally we actually want to use DirectTextBlock
+             * instead of TextBlock to get correct display of 
+             * Fallback characters, but there is some bug preventing
+             * rendering I can't figure out, so this is our hack for
+             * now.
+             */
+
+            string r = string.Empty;
+            if (s != null && fontFace != null)
+            {
+                for (int i = 0; i < s.Length; i++)
+                {
+                    var c = s[i];
+
+                    /* Surrogate pair handling is pain */
+                    if (char.IsSurrogate(c)
+                        && char.IsSurrogatePair(c, s[i + 1]))
+                    {
+                        var c1 = s[i + 1];
+                        int val = char.ConvertToUtf32(c, c1);
+                        if (fontFace.HasCharacter((uint)val))
+                            r += new string(new char[] { c, c1 });
+                        else
+                            r += '\uFFFD';
+
+                        i += 1;
+                    }
+                    else if (fontFace.HasCharacter(c))
+                        r += c;
+                    else
+                        r += '\uFFFD';
+                }
+               
+            }
+
+            return r;
         }
 
 
@@ -840,6 +934,9 @@ namespace CharacterMap.Views
                         offset += 83;
                     }
                     Composition.PlayEntrance(TxtPreviewViewBox, offset);
+
+                    if (CopySequenceRoot != null && CopySequenceRoot.Visibility == Visibility.Visible)
+                        Composition.PlayEntrance(CopySequenceRoot, offset);
                 }
                 else if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
                 {
@@ -858,6 +955,17 @@ namespace CharacterMap.Views
                     }
                 }
             }
+        }
+
+        private void CopySequenceRoot_Loading(FrameworkElement sender, object args)
+        {
+            CopySequenceRoot.SetHideAnimation(Composition.CreateSlideOutY(sender));
+            CopySequenceRoot.SetShowAnimation(Composition.CreateSlideIn(sender));
+
+            CopySequenceRoot.SetTranslation(new Vector3(0, (float)CopySequenceRoot.Height, 0));
+            CopySequenceRoot.GetElementVisual().StartAnimation(Composition.TRANSLATION, Composition.CreateSlideIn(sender));
+
+            //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
     }
 

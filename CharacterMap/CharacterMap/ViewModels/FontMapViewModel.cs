@@ -280,6 +280,20 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private bool _isSequenceRootVisible = false;
+        public bool IsSequenceRootVisible
+        {
+            get => _isSequenceRootVisible;
+            set => Set(ref _isSequenceRootVisible, value);
+        }
+
+        private string _sequence;
+        public string Sequence
+        {
+            get => _sequence;
+            set => Set(ref _sequence, value);
+        }
+
         private string _typeRampText;
         public string TypeRampText
         {
@@ -679,14 +693,27 @@ namespace CharacterMap.ViewModels
                     case DevValueType.UnicodeValue:
                         Utils.CopyToClipBoard(message.RequestedItem.UnicodeString);
                         break;
+                    default:
+                        return;
                 }
             }
+
+            MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
 
+        public async void CopySequence()
+        {
+            if (await Utils.TryCopyToClipboardAsync(Sequence, this))
+                MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+        }
+        public void ClearSequence() => Sequence = string.Empty;
+        public void AddCharToSequence() => Sequence += SelectedChar.Char;
         public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);
         public void DecreaseCharacterSize() => Settings.ChangeGridSize(-4);
         public void ShowPane() => Settings.EnablePreviewPane = true;
         public void HidePane() => Settings.EnablePreviewPane = false;
+        public void ShowCopyPane() => Settings.EnableCopyPane = true;
+        public void HideCopyPane() => Settings.EnableCopyPane = false;
     }
 
     public enum SearchSource

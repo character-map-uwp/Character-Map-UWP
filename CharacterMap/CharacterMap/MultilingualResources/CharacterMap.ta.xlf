@@ -415,8 +415,9 @@
           <target state="translated">கோப்புறையில் காண்பி</target>
         </trans-unit>
         <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Hide font pane</source>
-          <target state="translated">எழுத்துரு பலகையை மறை</target>
+          <source>Hide font pane (Ctrl+L)</source>
+          <target state="needs-review-translation">எழுத்துரு பலகையை மறை</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="NotificationImportFailed" translate="yes" xml:space="preserve">
           <source>Import Failed</source>
@@ -431,8 +432,9 @@
           <target state="translated">{0} உங்கள் தொகுப்பில் சேர்க்கப்பட்டது</target>
         </trans-unit>
         <trans-unit id="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Show font pane</source>
-          <target state="translated">எழுத்துரு பலகையைக் காண்பி</target>
+          <source>Show font pane (Ctrl+L)</source>
+          <target state="needs-review-translation">எழுத்துரு பலகையைக் காண்பி</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>More</source>
@@ -982,12 +984,14 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="translated">எவ்வளவு மிகவேகமாக வரிக்குதிரைகள் குதிக்கிறது! 1234567890</target>
         </trans-unit>
         <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
-          <source>Switch to Character Map view</source>
-          <target state="translated">எழுத்துக்குறி வரைபடம் காட்சிக்கு மாறு</target>
+          <source>Switch to Character Map view (Ctrl+T)</source>
+          <target state="needs-review-translation">எழுத்துக்குறி வரைபடம் காட்சிக்கு மாறு</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
-          <source>Switch to Type Ramp view</source>
-          <target state="translated">வகை ராம்ப் காட்சிக்கு மாறு</target>
+          <source>Switch to Type Ramp view (Ctrl+T)</source>
+          <target state="needs-review-translation">வகை ராம்ப் காட்சிக்கு மாறு</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter or choose text from the dropdown</source>
@@ -1103,20 +1107,40 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <target state="new">Copy Unicode Value</target>
         </trans-unit>
         <trans-unit id="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Decrease Character Size</source>
-          <target state="new">Decrease Character Size</target>
+          <source>Decrease Character Size (Ctrl+-)</source>
+          <target state="new">Decrease Character Size (Ctrl+-)</target>
         </trans-unit>
         <trans-unit id="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Increase Character Size</source>
-          <target state="new">Increase Character Size</target>
+          <source>Increase Character Size (Ctrl++)</source>
+          <target state="new">Increase Character Size (Ctrl++)</target>
         </trans-unit>
         <trans-unit id="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Switch View</source>
-          <target state="new">Switch View</target>
+          <source>Switch View (Ctrl+T)</source>
+          <target state="new">Switch View (Ctrl+T)</target>
         </trans-unit>
         <trans-unit id="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Toggle Preview Pane</source>
-          <target state="new">Toggle Preview Pane</target>
+          <source>Toggle Preview Pane (Ctrl+R)</source>
+          <target state="new">Toggle Preview Pane (Ctrl+R)</target>
+        </trans-unit>
+        <trans-unit id="NotificationCopied" translate="yes" xml:space="preserve">
+          <source>Copied</source>
+          <target state="new">Copied</target>
+        </trans-unit>
+        <trans-unit id="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Toggle Copy Pane (Ctrl+B)</source>
+          <target state="new">Toggle Copy Pane (Ctrl+B)</target>
+        </trans-unit>
+        <trans-unit id="AddButton.Label" translate="yes" xml:space="preserve">
+          <source>Add</source>
+          <target state="new">Add</target>
+        </trans-unit>
+        <trans-unit id="CopySequencePlaceholder.Text" translate="yes" xml:space="preserve">
+          <source>add a character using the Add button</source>
+          <target state="new">add a character using the Add button</target>
+        </trans-unit>
+        <trans-unit id="AddSelectionItem.Text" translate="yes" xml:space="preserve">
+          <source>Add to selection</source>
+          <target state="new">Add to selection</target>
         </trans-unit>
       </group>
     </body>

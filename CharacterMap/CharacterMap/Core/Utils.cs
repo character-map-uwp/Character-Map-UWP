@@ -58,17 +58,29 @@ namespace CharacterMap.Core
             Clipboard.SetContent(dp);
         }
 
-        public static async Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
+        public static Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
+        {
+            string c = @$"\u{character.UnicodeIndex}?";
+            return TryCopyToClipboardInternalAsync(character.Char, c, viewModel);
+        }
+
+        public static Task<bool> TryCopyToClipboardAsync(string s, FontMapViewModel viewModel)
+        {
+            string c = string.Join(string.Empty, s.Select(ch => @$"\u{(uint)ch}?"));
+            return TryCopyToClipboardInternalAsync(s, c, viewModel);
+        }
+
+        public static async Task<bool> TryCopyToClipboardInternalAsync(string rawString, string formattedString, FontMapViewModel viewModel)
         {
             // Internal helper method to set clipboard
-            static void TrySetClipboard(Character c, FontMapViewModel v)
+            static void TrySetClipboard(string raw, string formatted, FontMapViewModel v)
             {
                 DataPackage dp = new DataPackage
                 {
                     RequestedOperation = DataPackageOperation.Copy,
                 };
 
-                dp.SetText(c.Char);
+                dp.SetText(raw);
 
                 if (!v.SelectedVariant.IsImported)
                 {
@@ -78,7 +90,7 @@ namespace CharacterMap.Core
                     // This can't include any Typographic variations unfortunately.
 
                     var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {v.FontFamily.Source};}}}} " +
-                               $@"{{\colortbl;\red0\green0\blue0; }}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs24\u{c.UnicodeIndex}?}}";
+                               $@"{{\colortbl;\red0\green0\blue0; }}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs24{formatted}}}";
                     dp.SetRtf(rtf);
 
                     var longName = v.FontFamily.Source;
@@ -87,7 +99,7 @@ namespace CharacterMap.Core
                         if (p.Value != longName)
                             longName = $"{v.FontFamily.Source}, {p.Value}";
                     }
-                    dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{c.Char}</p>");
+                    dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{raw}</p>");
                 }
 
                 Clipboard.SetContent(dp);
@@ -103,7 +115,7 @@ namespace CharacterMap.Core
             {
                 try
                 {
-                    TrySetClipboard(character, viewModel);
+                    TrySetClipboard(rawString, formattedString, viewModel);
                     return true;
                 }
                 catch (Exception ex) when (i < 4)

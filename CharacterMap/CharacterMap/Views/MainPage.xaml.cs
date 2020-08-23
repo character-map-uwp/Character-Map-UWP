@@ -263,6 +263,26 @@ namespace CharacterMap.Views
                         if (ViewModel.SelectedFont is InstalledFont font && font.HasImportedFiles)
                             FlyoutHelper.RequestDelete(font);
                         break;
+                    case VirtualKey.Add:
+                    case (VirtualKey)187:
+                        FontMap.ViewModel.IncreaseCharacterSize();
+                        break;
+                    case VirtualKey.Subtract:
+                    case (VirtualKey)189:
+                        FontMap.ViewModel.DecreaseCharacterSize();
+                        break;
+                    case VirtualKey.L:
+                        TogglePane_Click(null, null);
+                        break;
+                    case VirtualKey.R:
+                        ViewModel.Settings.EnablePreviewPane = !ViewModel.Settings.EnablePreviewPane;
+                        break;
+                    case VirtualKey.B:
+                        ViewModel.Settings.EnableCopyPane = !ViewModel.Settings.EnableCopyPane;
+                        break;
+                    case VirtualKey.T:
+                        FontMap.ViewModel.ChangeDisplayMode();
+                        break;
                 }
             }
         }

@@ -346,7 +346,7 @@ namespace CharacterMap.Helpers
                 // 4. Handle SVG options
                 var svgRoot = menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "SvgRoot");
                 
-                // 4.1. We can only save as SVG is all layers of the glyph are created with vectors
+                // 4.1. We can only save as SVG if all layers of the glyph are created with vectors
                 svgRoot.SetVisible(analysis.IsFullVectorBased);
                 if (analysis.IsFullVectorBased)
                 {
@@ -382,7 +382,13 @@ namespace CharacterMap.Helpers
                     }
                 }
 
-                // 6. Show complete flyout
+                // 6. Handle Add Selection Button
+                if (menu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Name == "AddSelectionButton") is MenuFlyoutItem add)
+                {
+                    add.SetVisible(ResourceHelper.AppSettings.EnableCopyPane);
+                }
+
+                // 7. Show complete flyout
                 FlyoutBase.ShowAttachedFlyout(target);
             }
         }

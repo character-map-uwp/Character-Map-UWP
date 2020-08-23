@@ -115,7 +115,7 @@ namespace CharacterMap.Services
             NativeInterop interop = Utils.GetInterop();
 
             string h, f, p, s = null;
-            bool hasSymbol = FontFinder.IsMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
+            bool hasSymbol = FontFinder.IsSegoeMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
 
             // Add back in future build
             //string pathData;

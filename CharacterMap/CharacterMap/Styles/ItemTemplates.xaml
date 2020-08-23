@@ -40,7 +40,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
-        <Grid ColumnSpacing="12" Background="Transparent">
+        <Grid ColumnSpacing="12" Background="Transparent" PointerPressed="Grid_PointerPressed">
             <Grid.ContextFlyout>
                 <!--  Menu content created dynamically  -->
                 <MenuFlyout Opening="FontContextFlyout_Opening" />

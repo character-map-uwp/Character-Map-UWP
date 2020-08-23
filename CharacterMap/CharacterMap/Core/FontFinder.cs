@@ -452,6 +452,7 @@ namespace CharacterMap.Core
         }
 
         public static bool IsMDL2(FontVariant variant) => variant != null && variant.FamilyName.Contains("MDL2");
+        public static bool IsSegoeMDL2(FontVariant variant) => variant != null && variant.FamilyName.Equals("Segoe MDL2 Assets");
 
     }
 }

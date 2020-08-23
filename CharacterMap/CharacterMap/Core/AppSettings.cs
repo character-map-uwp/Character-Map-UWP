@@ -144,6 +144,12 @@ namespace CharacterMap.Core
             set => BroadcastSet(value);
         }
 
+        public bool EnableCopyPane
+        {
+            get => Get(true);
+            set => BroadcastSet(value);
+        }
+
 
         /* INFRASTRUCTURE */
 
