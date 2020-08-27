@@ -113,6 +113,8 @@ namespace CharacterMap.Views
 
         private long _previewColumnToken = long.MinValue;
 
+        private bool _isCompactOverlay = false;
+
         public FontMapView()
         {
             RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
@@ -164,11 +166,6 @@ namespace CharacterMap.Views
             {
                 if (Dispatcher.HasThreadAccess)
                     await ViewModel.RequestCopyToClipboardAsync(m);
-            });
-            Messenger.Default.Register<ToggleCompactOverlayMessage>(this, async m =>
-            {
-                if (Dispatcher.HasThreadAccess)
-                    await ToggleCompactOverlay();
             });
 
             UpdateDevUtils(false);
@@ -408,22 +405,51 @@ namespace CharacterMap.Views
         {
             VisualStateManager.GoToState(
                   this,
-                  ViewModel.Settings.EnablePreviewPane ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState),
+                  ViewModel.Settings.EnablePreviewPane && !_isCompactOverlay ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState),
                   true);
 
-            //if (ViewModel.Settings.EnablePreviewPane)
-            //    PreviewGrid.SetTranslation(Vector3.Zero);
-
             // OverlayButton might not be inflated so can't use VisualState
-            OverlayButton?.SetVisible(IsStandalone && !ViewModel.Settings.EnablePreviewPane);
+            OverlayButton?.SetVisible(IsStandalone);
         }
 
         private void UpdateCopyPane()
         {
             VisualStateManager.GoToState(
                  this,
-                 ViewModel.Settings.EnableCopyPane ? nameof(CopySequenceEnabledState) : nameof(CopySequenceDisabledState),
+                 ViewModel.Settings.EnableCopyPane && !_isCompactOverlay ? nameof(CopySequenceEnabledState) : nameof(CopySequenceDisabledState),
                  true);
+        }
+
+        private async Task UpdateCompactOverlayAsync()
+        {
+            var view = ApplicationView.GetForCurrentView();
+            if (_isCompactOverlay)
+            {
+                if (view.ViewMode != ApplicationViewMode.CompactOverlay)
+                {
+                    ViewModePreferences pref = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
+                    pref.CustomSize = new Windows.Foundation.Size(420, 300);
+                    pref.ViewSizePreference = ViewSizePreference.Custom;
+                    if (await view.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, pref))
+                    {
+                        VisualStateManager.GoToState(this, nameof(CompactOverlayState), true);
+                        SearchBox.PlaceholderText = Localization.Get("SearchBoxShorter");
+                        _isCompactOverlay = true;
+                    }
+                }
+            }
+            else
+            {
+                if (await view.TryEnterViewModeAsync(ApplicationViewMode.Default))
+                {
+                    VisualStateManager.GoToState(this, nameof(NonCompactState), true);
+                    SearchBox.PlaceholderText = Localization.Get("SearchBox/PlaceholderText");
+                    _isCompactOverlay = false;
+                }
+            }
+
+            UpdatePaneAndGridSizing();
+            UpdateCopyPane();
         }
 
 
@@ -468,40 +494,16 @@ namespace CharacterMap.Views
             }
         }
 
-        private async Task ToggleCompactOverlay()
-        {
-            var view = ApplicationView.GetForCurrentView();
-            if (view.ViewMode != ApplicationViewMode.CompactOverlay)
-            {
-                ViewModePreferences pref = ViewModePreferences.CreateDefault(ApplicationViewMode.CompactOverlay);
-                pref.CustomSize = new Windows.Foundation.Size(420, 300);
-                pref.ViewSizePreference = ViewSizePreference.Custom;
-                await view.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, pref);
-                Grid.SetRow(CharGrid, 0);
-                Grid.SetRowSpan(CharGrid, 3);
-                Grid.SetColumnSpan(CharGrid, 3);
-                Canvas.SetZIndex(CharGrid, 99);
-                CharGridHeader.Visibility = Visibility.Collapsed;
-                SearchBox.PlaceholderText = Localization.Get("SearchBoxShorter");
-                SearchBox.Width = 150;
-            }
-            else
-            {
-                await view.TryEnterViewModeAsync(ApplicationViewMode.Default);
-                Grid.SetRow(CharGrid, 2);
-                Grid.SetRowSpan(CharGrid, 1);
-                Grid.SetColumnSpan(CharGrid, 1);
-                Canvas.SetZIndex(CharGrid, 0);
-                CharGridHeader.Visibility = Visibility.Visible;
-                SearchBox.PlaceholderText = Localization.Get("SearchBox/PlaceholderText");
-                SearchBox.Width = 290;
-            }
-        }
-
 
 
 
         /* UI Event Handlers */
+
+        private void ToggleCompactOverlay()
+        {
+            _isCompactOverlay = !_isCompactOverlay;
+            _ = UpdateCompactOverlayAsync();
+        }
 
         private void ToggleDev()
         {

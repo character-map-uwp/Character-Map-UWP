@@ -958,4 +958,7 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Toggle Copy Pane (Ctrl+B)</value>
   </data>
+  <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Keep on top</value>
+  </data>
 </root>
