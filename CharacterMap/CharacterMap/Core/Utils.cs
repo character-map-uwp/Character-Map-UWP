@@ -90,7 +90,7 @@ namespace CharacterMap.Core
                     // This can't include any Typographic variations unfortunately.
 
                     var rtf = $@"{{\rtf1\fbidis\ansi\ansicpg1252\deff0\nouicompat\deflang2057{{\fonttbl{{\f0\fnil {v.FontFamily.Source};}}}} " +
-                               $@"{{\colortbl;\red0\green0\blue0; }}\viewkind4\uc1\pard\ltrpar\tx720\cf1\f0\fs24{formatted}}}";
+                               $@"{{\colortbl;\red0\green0\blue0; }}\pard\plain\f0 {formatted}}}";
                     dp.SetRtf(rtf);
 
                     var longName = v.FontFamily.Source;

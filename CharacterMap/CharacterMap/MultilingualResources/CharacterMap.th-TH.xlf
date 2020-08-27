@@ -1143,6 +1143,10 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <source>Add to selection</source>
           <target state="new">Add to selection</target>
         </trans-unit>
+        <trans-unit id="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Keep on top</source>
+          <target state="new">Keep on top</target>
+        </trans-unit>
       </group>
     </body>
   </file>

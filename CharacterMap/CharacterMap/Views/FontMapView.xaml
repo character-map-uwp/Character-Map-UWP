@@ -206,9 +206,10 @@
             Canvas.ZIndex="101">
             <StackPanel Orientation="Horizontal">
                 <ToggleButton
+                    x:Uid="CompactOverlayButton"
                     x:Name="OverlayButton"
                     Width="45"
-                    Command="{Binding CommandToggleOverlay}"
+                    Click="{x:Bind ToggleCompactOverlay}"
                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                     Style="{StaticResource IconToggleButtonStyle}">
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
@@ -1625,6 +1626,15 @@
                 <VisualState x:Name="CopySequenceEnabledState">
                     <VisualState.Setters>
                         <Setter Target="CopySequenceRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="CompactOverlayStates">
+                <VisualState x:Name="NonCompactState" />
+                <VisualState x:Name="CompactOverlayState">
+                    <VisualState.Setters>
+                        <Setter Target="SearchBox.Width" Value="150" />
+                        <Setter Target="CharGridHeader.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
