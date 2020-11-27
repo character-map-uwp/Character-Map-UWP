@@ -2,7 +2,6 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using GalaSoft.MvvmLight;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
@@ -68,7 +67,7 @@ namespace CharacterMap.ViewModels
                 {
                     _hideWhitespace = value;
                     UpdateCharacters();
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -163,7 +162,7 @@ namespace CharacterMap.ViewModels
         {
             _categories = value;
             UpdateCharacters();
-            RaisePropertyChanged(nameof(Categories));
+            OnPropertyChanged(nameof(Categories));
         }
 
         private void UpdateCharacters()

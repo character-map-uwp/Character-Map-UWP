@@ -6,8 +6,8 @@ using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
 using CharacterMapCX;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,11 +26,11 @@ namespace CharacterMap.Helpers
 {
     public static class FlyoutHelper
     {
-        private static UserCollectionsService _collections { get; } = ServiceLocator.Current.GetInstance<UserCollectionsService>();
+        private static UserCollectionsService _collections { get; } = Ioc.Default.GetService<UserCollectionsService>();
 
         public static void RequestDelete(InstalledFont font)
         {
-            MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
+            MainViewModel main = Ioc.Default.GetService<MainViewModel>();
             var d = new ContentDialog
             {
                 Title = Localization.Get("DlgDeleteFont/Title"),
@@ -60,7 +60,7 @@ namespace CharacterMap.Helpers
             bool standalone,
             bool showAdvanced = false)
         {
-            MainViewModel main = ResourceHelper.Get<ViewModelLocator>("Locator").Main;
+            MainViewModel main = Ioc.Default.GetService<MainViewModel>();
 
             #region Handlers 
 
@@ -76,10 +76,10 @@ namespace CharacterMap.Helpers
                 {
                     var result = await _collections.AddToCollectionAsync(fnt, _collections.SymbolCollection);
 
-                    Messenger.Default.Send(new CollectionsUpdatedMessage());
+                    WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
 
                     if (result.Success)
-                        Messenger.Default.Send(new AppNotificationMessage(true, result));
+                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
                 }
             }
 
@@ -103,7 +103,7 @@ namespace CharacterMap.Helpers
 
             static void Print_Click(object sender, RoutedEventArgs e)
             {
-                Messenger.Default.Send(new PrintRequestedMessage());
+                WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
             }
 
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
@@ -116,8 +116,8 @@ namespace CharacterMap.Helpers
                         : main.SelectedCollection;
 
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
-                    Messenger.Default.Send(new AppNotificationMessage(true, new CollectionUpdatedArgs(fnt, collection, false)));
-                    Messenger.Default.Send(new CollectionsUpdatedMessage());
+                    WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new CollectionUpdatedArgs(fnt, collection, false)));
+                    WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
                 }
             }
 
@@ -249,7 +249,7 @@ namespace CharacterMap.Helpers
 
                                     if (result.Success)
                                     {
-                                        Messenger.Default.Send(new AppNotificationMessage(true, result));
+                                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
                                     }
                                 };
                             }

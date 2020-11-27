@@ -4,18 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using CharacterMap.Core;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
 using System.Collections.Generic;
 using CharacterMap.Helpers;
 using Windows.Storage;
 using CharacterMap.Services;
 using CharacterMap.Models;
-using GalaSoft.MvvmLight.Ioc;
 using CharacterMap.Controls;
 using CharacterMapCX;
 using CharacterMap.Views;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
 
 namespace CharacterMap.ViewModels
 {
@@ -116,7 +115,7 @@ namespace CharacterMap.ViewModels
                 {
                     _fontList = value;
                     CreateFontListGroup();
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -143,7 +142,7 @@ namespace CharacterMap.ViewModels
                 else
                     TitlePrefix = string.Empty;
 
-                RaisePropertyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -160,7 +159,7 @@ namespace CharacterMap.ViewModels
 
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
 
-            FontCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
+            FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             InitialLoad = LoadAsync();
         }
 
@@ -288,7 +287,7 @@ namespace CharacterMap.ViewModels
                     }
                     else
                     {
-                        RaisePropertyChanged("FontSelectionDebounce");
+                        OnPropertyChanged("FontSelectionDebounce");
                     }
                 }
                 else
@@ -344,7 +343,7 @@ namespace CharacterMap.ViewModels
             {
                 /* looks like we couldn't delete some fonts :'(. 
                  * We'll get em next time the app launches! */
-                MessengerInstance.Send(
+                Messenger.Send(
                     new AppNotificationMessage(true, Localization.Get("FontsClearedOnNextLaunchNotice"), 6000));
             }
         }

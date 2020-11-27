@@ -2,13 +2,9 @@
 using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Views;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.ViewManagement;
@@ -24,18 +20,13 @@ using Windows.UI.Core;
 using CharacterMap.Controls;
 using CharacterMapCX;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using GalaSoft.MvvmLight.Ioc;
-using Windows.UI.Xaml.Controls.Primitives;
 using System.Windows.Input;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.UI.Xaml.Printing;
-using SQLitePCL;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Composition;
 using System.Numerics;
 using Microsoft.Graphics.Canvas.Text;
-using System.Text;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
 
 namespace CharacterMap.Views
 {
@@ -125,7 +116,7 @@ namespace CharacterMap.Views
             Unloaded += FontMapView_Unloaded;
 
             ViewModel = new FontMapViewModel(
-                ServiceLocator.Current.GetInstance<IDialogService>(), 
+                Ioc.Default.GetService<IDialogService>(), 
                 ResourceHelper.AppSettings);
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -155,14 +146,14 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
-            Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
-            Messenger.Default.Register<PrintRequestedMessage>(this, m =>
+            WeakReferenceMessenger.Default.Register<AppNotificationMessage>(this, (o,m) => OnNotificationMessage(m));
+            WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
+            WeakReferenceMessenger.Default.Register<PrintRequestedMessage>(this, (o,m) =>
             {
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
-            Messenger.Default.Register<CopyToClipboardMessage>(this, async m =>
+            WeakReferenceMessenger.Default.Register<CopyToClipboardMessage>(this, async (o, m) =>
             {
                 if (Dispatcher.HasThreadAccess)
                     await ViewModel.RequestCopyToClipboardAsync(m);
@@ -197,7 +188,7 @@ namespace CharacterMap.Views
 
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
-            Messenger.Default.Unregister(this);
+            WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
         private void Current_Closed(object sender, CoreWindowEventArgs e)
@@ -295,7 +286,7 @@ namespace CharacterMap.Views
                         TryCopy();
                         break;
                     case VirtualKey.P:
-                        Messenger.Default.Send(new PrintRequestedMessage());
+                        WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
                         break;
                     case VirtualKey.S:
                         if (ViewModel.SelectedVariant is FontVariant v)
@@ -899,6 +890,12 @@ namespace CharacterMap.Views
             if (CharGrid.ItemsSource != null && CharGrid.ItemsPanelRoot != null)
             {
                 IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
+                CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            }
+
+            if (CopySequenceText != null)
+            {
+                IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(CopySequenceText);
                 CharacterGridView.UpdateTypography(_xamlDirect, p, info);
             }
         }

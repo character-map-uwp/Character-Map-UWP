@@ -1,10 +1,10 @@
 ﻿using CharacterMap.Models;
 using CharacterMap.ViewModels;
 using CharacterMapCX;
-using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,7 +29,7 @@ namespace CharacterMap.Core
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
 
-        public static NativeInterop GetInterop() => SimpleIoc.Default.GetInstance<NativeInterop>();
+        public static NativeInterop GetInterop() => Ioc.Default.GetService<NativeInterop>();
 
         public static void RunOnDispatcher(this DependencyObject d, Action a)
         {

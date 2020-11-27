@@ -5,7 +5,6 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Provider;
 using CharacterMapCX;
-using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Graphics.Canvas.Text;
 using SQLite;
 using System;

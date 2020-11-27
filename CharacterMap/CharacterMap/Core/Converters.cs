@@ -1,8 +1,6 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core
@@ -92,7 +91,7 @@ namespace CharacterMap.Core
             if (_settings == null)
             {
                 _settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
-                _userCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
+                _userCollections = Ioc.Default.GetService<UserCollectionsService>();
             }
 
             if (_settings.UseFontForPreview

@@ -1,6 +1,6 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Models;
-using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -179,7 +179,7 @@ namespace CharacterMap.Core
         {
             bool result = Set(value, key);
             if (result)
-                Messenger.Default.Send(new AppSettingsChangedMessage(key));
+                WeakReferenceMessenger.Default.Send(new AppSettingsChangedMessage(key));
             return result;
         }
 
@@ -203,7 +203,7 @@ namespace CharacterMap.Core
         {
             _gridDebouncer.Debounce(1000, () =>
             {
-                Messenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
+                WeakReferenceMessenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
             });
         }
 
@@ -221,7 +221,7 @@ namespace CharacterMap.Core
         {
             if (Set(Math.Clamp(GridSize + change, MinGridSize, MaxGridSize), nameof(GridSize)))
             {
-                Messenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
+                WeakReferenceMessenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
             }
         }
     }

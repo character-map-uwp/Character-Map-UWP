@@ -3,40 +3,58 @@ using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.Views;
 using CharacterMapCX;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Views;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using System;
+using System.Threading.Tasks;
+using Windows.UI.Popups;
 
 namespace CharacterMap.ViewModels
 {
+    public class DialogService : IDialogService
+    {
+        public Task ShowMessageAsync(string message, string title)
+        {
+            try
+            {
+                var md = new MessageDialog(message, title);
+                return md.ShowAsync().AsTask();
+            }
+            catch { }
+
+            return Task.CompletedTask;
+        }
+
+        public void ShowMessageBox(string message, string title)
+        {
+            _ = ShowMessageAsync(message, title);
+        }
+    }
+
     public class ViewModelLocator
     {
-        private readonly NavigationServiceEx _navigationService = new NavigationServiceEx();
-
-        public ViewModelLocator()
+        static ViewModelLocator()
         {
-            if (!ServiceLocator.IsLocationProviderSet)
+            NavigationServiceEx _navigationService = new NavigationServiceEx();
+
+            void Register<VM, V>(IServiceCollection services) where VM : class
             {
-                ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-
-                SimpleIoc.Default.Register(() => _navigationService);
-                SimpleIoc.Default.Register<IDialogService, DialogService>();
-                SimpleIoc.Default.Register(() => ResourceHelper.Get<AppSettings>(nameof(AppSettings)));
-                SimpleIoc.Default.Register(() => new NativeInterop(Utils.CanvasDevice));
-
-                SimpleIoc.Default.Register<MainViewModel>();
-                SimpleIoc.Default.Register<UserCollectionsService>();
-                Register<MainViewModel, MainPage>();
+                //services.AddTransient<VM>();
+                _navigationService.Configure(typeof(VM).FullName, typeof(V));
             }
+
+            ServiceCollection services = new ServiceCollection();
+            services.AddSingleton<IDialogService, DialogService>();
+            services.AddSingleton(s => _navigationService);
+            services.AddSingleton(s => ResourceHelper.Get<AppSettings>(nameof(AppSettings)));
+            services.AddSingleton(s => new NativeInterop(Utils.CanvasDevice));
+            services.AddSingleton<UserCollectionsService>();
+            services.AddSingleton<MainViewModel>();
+            Register<MainViewModel, MainPage>(services);
+            Ioc.Default.ConfigureServices(services.BuildServiceProvider());
         }
 
-        public MainViewModel Main => ServiceLocator.Current.GetInstance<MainViewModel>();
-
-        public void Register<VM, V>() where VM : class
-        {
-            SimpleIoc.Default.Register<VM>();
-            _navigationService.Configure(typeof(VM).FullName, typeof(V));
-        }
+        public MainViewModel Main => Ioc.Default.GetService<MainViewModel>();
 
         public static void Cleanup()
         {

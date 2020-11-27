@@ -3,10 +3,6 @@ using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMap.Views;
 using CharacterMapCX;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Views;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
@@ -19,6 +15,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using CharacterMap.Models;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
 
 namespace CharacterMap.ViewModels
 {
@@ -98,7 +96,7 @@ namespace CharacterMap.ViewModels
                 if (value == _selectedFont) return;
                 _selectedFont = value;
                 TitleBarHelper.SetTitle(value?.Name);
-                RaisePropertyChanged();
+                OnPropertyChanged();
                 if (null != _selectedFont)
                 {
                     if (value != null) TitlePrefix = value.Name + " -";
@@ -123,7 +121,7 @@ namespace CharacterMap.ViewModels
                     _selectedVariant = value;
                     FontFamily = value == null ? null : new FontFamily(value.Source);
                     LoadVariant(value);
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                     UpdateTypography();
                     SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyFeatureInfo.None;
                     SetDefaultChar();
@@ -192,7 +190,7 @@ namespace CharacterMap.ViewModels
                 {
                     Settings.LastSelectedCharIndex = (int)value.UnicodeIndex;
                 }
-                RaisePropertyChanged();
+                OnPropertyChanged();
                 UpdateCharAnalysis();
                 UpdateDevValues();
             }
@@ -356,6 +354,14 @@ namespace CharacterMap.ViewModels
                 if (variant != null)
                 {
                     SelectedVariantAnalysis = new FontAnalysis(variant.FontFace);
+                    //if (SelectedVariantAnalysis.GlyphNames != null)
+                    //{
+                    //    var name = SelectedVariantAnalysis.GlyphNames.Where(n => n != "MacPost").ToList();
+                    //    if (name.Count > 0)
+                    //    {
+
+                    //    }
+                    //}
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
                 }
@@ -392,6 +398,9 @@ namespace CharacterMap.ViewModels
         }
         private IReadOnlyList<String> GetRampOptions(FontVariant variant)
         {
+            if (variant == null)
+                return new List<string>();
+
             var list = DefaultRampOptions.ToList();
             
             if (variant?.TryGetSampleText() is String s)
@@ -411,7 +420,7 @@ namespace CharacterMap.ViewModels
 
         internal void UpdateVariations()
         {
-            VariationAxis = SelectedVariantAnalysis?.Axis.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList() ?? new List<DWriteFontAxis>();
+            VariationAxis = SelectedVariantAnalysis?.Axis?.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList() ?? new List<DWriteFontAxis>();
         }
 
         private void UpdateTypography()
@@ -426,7 +435,7 @@ namespace CharacterMap.ViewModels
                 TypographyFeatures = SelectedVariant.XamlTypographyFeatures;
 
             this.SelectedTypography = TypographyFeatures.FirstOrDefault(t => t.Feature == current.Feature);
-            RaisePropertyChanged(nameof(SelectedTypography)); // Required.
+            OnPropertyChanged(nameof(SelectedTypography)); // Required.
         }
 
         private void UpdateCharAnalysis()
@@ -580,7 +589,7 @@ namespace CharacterMap.ViewModels
                 Settings);
 
             if (result.Success)
-                MessengerInstance.Send(new AppNotificationMessage(true, result));
+                Messenger.Send(new AppNotificationMessage(true, result));
         }
 
         internal async Task SaveSvgAsync(ExportStyle style, Character c = null)
@@ -603,7 +612,7 @@ namespace CharacterMap.ViewModels
                 GetEffectiveTypography());
 
             if (result.Success)
-                MessengerInstance.Send(new AppNotificationMessage(true, result));
+                Messenger.Send(new AppNotificationMessage(true, result));
         }
 
         public async Task<bool> LoadFromFileArgsAsync(FileActivatedEventArgs args)
@@ -623,7 +632,7 @@ namespace CharacterMap.ViewModels
                     return true;
                 }
 
-                await DialogService.ShowMessage(
+                await DialogService.ShowMessageAsync(
                     Localization.Get("InvalidFontMessage"),
                     Localization.Get("InvalidFontTitle"));
 
@@ -652,7 +661,7 @@ namespace CharacterMap.ViewModels
                     await Task.Delay(100);
                     await CoreApplication.MainView.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
                     {
-                        MessengerInstance.Send(new ImportMessage(result));
+                        Messenger.Send(new ImportMessage(result));
                     });
                 }
             }
@@ -696,13 +705,13 @@ namespace CharacterMap.ViewModels
                 }
             }
 
-            MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+            Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
 
         public async void CopySequence()
         {
             if (await Utils.TryCopyToClipboardAsync(Sequence, this))
-                MessengerInstance.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+                Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
         public void ClearSequence() => Sequence = string.Empty;
         public void AddCharToSequence() => Sequence += SelectedChar.Char;

@@ -3,7 +3,7 @@ using CharacterMap.Core;
 using CharacterMap.Models;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
-using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -208,7 +208,7 @@ namespace CharacterMap.Helpers
                     // Notify the user when the print operation fails.
                     if (args.Completion == PrintTaskCompletion.Failed)
                     {
-                        Messenger.Default.Send(new AppNotificationMessage(true, "Failure encountered whilst printing."));
+                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, "Failure encountered whilst printing."));
                     }
                 };
 

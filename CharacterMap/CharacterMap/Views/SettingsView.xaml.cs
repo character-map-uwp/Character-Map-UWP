@@ -3,8 +3,8 @@ using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
-using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -67,9 +67,9 @@ namespace CharacterMap.Views
         public SettingsView()
         {
             Settings = ResourceHelper.AppSettings;
-            FontCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
-            Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsUpdated);
-            Messenger.Default.Register<FontListCreatedMessage>(this, _ => UpdateExport());
+            FontCollections = Ioc.Default.GetService<UserCollectionsService>();
+            WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsUpdated(m));
+            WeakReferenceMessenger.Default.Register<FontListCreatedMessage>(this, (o, m) => UpdateExport());
 
             this.InitializeComponent();
             Composition.SetupOverlayPanelAnimation(this);

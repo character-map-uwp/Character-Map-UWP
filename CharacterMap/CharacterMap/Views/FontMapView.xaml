@@ -206,8 +206,8 @@
             Canvas.ZIndex="101">
             <StackPanel Orientation="Horizontal">
                 <ToggleButton
-                    x:Uid="CompactOverlayButton"
                     x:Name="OverlayButton"
+                    x:Uid="CompactOverlayButton"
                     Width="45"
                     Click="{x:Bind ToggleCompactOverlay}"
                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
