@@ -19,6 +19,33 @@ namespace CharacterMap.Core
             var list = features.Select(f => new TypographyFeatureInfo((CanvasTypographyFeatureName)f)).OrderBy(f => f.DisplayName).ToList();
             return list;
         }
+
+        /// <summary>
+        /// Returns a list of Typographic Variants for a character supported by the font.
+        /// </summary>
+        /// <param name="font"></param>
+        /// <param name="character">A single string character. If more characters are present, they are ignored.</param>
+        public static List<TypographyFeatureInfo> GetCharacterVariants(FontVariant font, Models.Character character)
+        {
+            var textAnalyzer = new CanvasTextAnalyzer(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
+            KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
+
+            List<TypographyFeatureInfo> supported = new List<TypographyFeatureInfo>();
+
+            foreach (var feature in font.TypographyFeatures)
+            {
+                if (feature == TypographyFeatureInfo.None)
+                    continue;
+
+                var glyphs = textAnalyzer.GetGlyphs(analyzed.Key, font.FontFace, 24, false, false, analyzed.Value);
+                bool[] results = font.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
+
+                if (results.Any(r => r))
+                    supported.Add(feature);
+            }
+
+            return supported;
+        }
     }
 
     public class TypographyHandler : ICanvasTextRenderer
