@@ -61,16 +61,34 @@ namespace CharacterMap.Services
                 var folder = _collectionsFolder = await GetCollectionsFolderAsync().AsTask().ConfigureAwait(false);
                 var files = await folder.GetFilesAsync().AsTask().ConfigureAwait(false);
 
-                foreach (var file in files)
+                var tasks = files.Select(file =>
                 {
-                    try
+                    return Task.Run(async () =>
                     {
-                        UserFontCollection collection;
-                        if (file.FileType == ".json")
-                            collection = await ConvertFromLegacyFormatAsync(file, folder).ConfigureAwait(false);
-                        else
-                            collection = await LoadCollectionAsync(file).ConfigureAwait(false);
+                        try
+                        {
+                            UserFontCollection collection;
+                            if (file.FileType == ".json")
+                                collection = await ConvertFromLegacyFormatAsync(file, folder).ConfigureAwait(false);
+                            else
+                                collection = await LoadCollectionAsync(file).ConfigureAwait(false);
 
+                            return collection;
+                        }
+                        catch
+                        {
+                            // Possibly corrupted. What to do? Delete file?
+                            return null;
+                        }
+                    });
+                }).ToList();
+
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+
+                foreach (var task in tasks)
+                {
+                    if (task.Result is UserFontCollection collection)
+                    {
                         if (collection.File.DisplayName != "Symbol")
                         {
                             collections.Add(collection);
@@ -79,10 +97,6 @@ namespace CharacterMap.Services
                         {
                             SymbolCollection = collection;
                         }
-                    }
-                    catch
-                    {
-                        // Possibly corrupted. What to do? Delete file?
                     }
                 }
 
