@@ -1141,6 +1141,10 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
           <source>Keep on top</source>
           <target state="new">Keep on top</target>
         </trans-unit>
+        <trans-unit id="TypographyVariationsSelectorRun.Text" translate="yes" xml:space="preserve">
+          <source>Typography Variations</source>
+          <target state="new">Typography Variations</target>
+        </trans-unit>
       </group>
     </body>
   </file>

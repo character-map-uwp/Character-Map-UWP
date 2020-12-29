@@ -1064,13 +1064,17 @@
                         x:Name="PreviewTypographySelector"
                         Grid.Row="1"
                         Height="Auto"
-                        Margin="0 0 0 12"
+                        Margin="0 0 0 8"
                         Padding="12 -2 12 0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Top"
                         VerticalContentAlignment="Center"
                         BorderThickness="1"
+                        FontFamily="{Binding FontFamily}"
                         FontSize="12"
+                        FontStretch="{Binding SelectedVariant.FontFace.Stretch}"
+                        FontStyle="{Binding SelectedVariant.FontFace.Style}"
+                        FontWeight="{Binding SelectedVariant.FontFace.Weight}"
                         ItemsSource="{x:Bind ViewModel.SelectedCharVariations, Mode=OneWay}"
                         Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
                         SelectedItem="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
@@ -1078,11 +1082,41 @@
                         Style="{StaticResource RevealComboBoxStyle}"
                         Visibility="{x:Bind GetAlternatesVis(ViewModel.SelectedTypography, ViewModel.SelectedCharVariations), Mode=OneWay}">
                         <ComboBox.Header>
-                            <TextBlock FontSize="12">
+                            <TextBlock
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="12"
+                                FontStyle="Normal"
+                                FontWeight="Normal">
                                 <Run Text="{x:Bind ViewModel.SelectedCharVariations.Count, Mode=OneWay}" />
-                                <Run Text="Typography Variations" />
+                                <Run x:Uid="TypographyVariationsSelectorRun" />
                             </TextBlock>
                         </ComboBox.Header>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="core:TypographyFeatureInfo">
+                                <Grid Margin="-12 0" Height="40">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        core:Properties.Typography="{x:Bind}"
+                                        FontSize="24"
+                                        Text="{Binding ElementName=TxtPreview, Path=Text}" />
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                        FontSize="12"
+                                        FontStyle="Normal"
+                                        FontWeight="Normal"
+                                        Text="{x:Bind DisplayName}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </ComboBox>
 
                     <!--  Character Description  -->
@@ -1232,12 +1266,6 @@
                             </Style>
                         </StackPanel.Resources>
 
-                        <!--<Rectangle
-                            Height="1"
-                            HorizontalAlignment="Stretch"
-                            Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                            Opacity="0.15" />-->
-
                         <Grid MinHeight="50">
 
                             <Grid.ColumnDefinitions>
@@ -1363,7 +1391,7 @@
                             <AppBarButton
                                 x:Uid="BtnToggleDev"
                                 Click="{x:Bind ToggleDev}"
-                                Label="Dev">
+                                Label="Tools">
                                 <Grid Margin="0 -4 0 0">
                                     <PathIcon
                                         x:Name="ShowCodeIcon"
@@ -1434,8 +1462,8 @@
                     Visibility="Collapsed">
 
                     <Rectangle
-                        Margin="0 6 0 0"
                         Height="1"
+                        Margin="0 6 0 0"
                         HorizontalAlignment="Stretch"
                         Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                         Opacity="0.15" />

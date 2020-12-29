@@ -478,11 +478,16 @@
                                 FlowDirection="{TemplateBinding FlowDirection}"
                                 FontFamily="Segoe UI"
                                 FontSize="12"
-                                IsHitTestVisible="False"
                                 FontWeight="Normal"
                                 Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}"
+                                IsHitTestVisible="False"
                                 Visibility="Collapsed" />
-                            <ContentPresenter Content="{TemplateBinding SelectedItem}" FontSize="{TemplateBinding FontSize}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding SelectedItem}"
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontStyle="Normal"
+                                FontWeight="Normal" />
                         </StackPanel>
                         <FontIcon
                             x:Name="DropDownGlyph"

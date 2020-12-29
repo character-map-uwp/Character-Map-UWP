@@ -961,4 +961,7 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
   <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Keep on top</value>
   </data>
+  <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
+    <value>Typography Variations</value>
+  </data>
 </root>
