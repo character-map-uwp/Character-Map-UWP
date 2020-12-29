@@ -15,6 +15,7 @@ using CharacterMap.Views;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
+using Windows.ApplicationModel.Core;
 
 namespace CharacterMap.ViewModels
 {
@@ -208,7 +209,10 @@ namespace CharacterMap.ViewModels
 
         public void ReloadFontSet()
         {
-            _ = ReloadFontSetAsync();
+            // Bug #152: Sometimes XAML font cache doesn't update after a new font is installed on system.
+            // Currently only way to force this is to reload the app from scratch
+            //_ = ReloadFontSetAsync();
+            _ = CoreApplication.RequestRestartAsync(string.Empty);
         }
 
         public async Task ReloadFontSetAsync()

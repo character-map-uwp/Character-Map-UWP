@@ -918,8 +918,9 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
           <target state="translated">Come archivio .ZIP</target>
         </trans-unit>
         <trans-unit id="SystemFontsExpiredMessage.Text" translate="yes" xml:space="preserve">
-          <source>Font listings are out of date. Click to reload.</source>
-          <target state="translated">Gli elenchi dei caratteri non sono aggiornati. Fai clic per ricaricare.</target>
+          <source>Font listings are out of date. Click to relaunch the app.</source>
+          <target state="needs-review-translation">Gli elenchi dei caratteri non sono aggiornati. Fai clic per ricaricare.</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
           <source>Path Icon</source>

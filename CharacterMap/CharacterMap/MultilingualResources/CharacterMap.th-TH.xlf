@@ -919,8 +919,9 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="translated">บันทึกเป็น Zip</target>
         </trans-unit>
         <trans-unit id="SystemFontsExpiredMessage.Text" translate="yes" xml:space="preserve">
-          <source>Font listings are out of date. Click to reload.</source>
-          <target state="translated">มีฟอนต์ถูกเพิ่มหรือลบออก กรุณาโหลดรายการใหม่</target>
+          <source>Font listings are out of date. Click to relaunch the app.</source>
+          <target state="needs-review-translation">มีฟอนต์ถูกเพิ่มหรือลบออก กรุณาโหลดรายการใหม่</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
           <source>Path Icon</source>

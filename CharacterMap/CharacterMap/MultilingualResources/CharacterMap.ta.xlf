@@ -920,8 +920,9 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="translated">Zip காப்பகமாக</target>
         </trans-unit>
         <trans-unit id="SystemFontsExpiredMessage.Text" translate="yes" xml:space="preserve">
-          <source>Font listings are out of date. Click to reload.</source>
-          <target state="translated">எழுத்துரு பட்டியல்கள் காலாவதியாகிவிட்டது. மீண்டும் ஏற்ற கிளிக் செய்க.</target>
+          <source>Font listings are out of date. Click to relaunch the app.</source>
+          <target state="needs-review-translation">எழுத்துரு பட்டியல்கள் காலாவதியாகிவிட்டது. மீண்டும் ஏற்ற கிளிக் செய்க.</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Dev Utils</source>

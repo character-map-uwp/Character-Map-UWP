@@ -923,8 +923,8 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="translated">Zip 压缩包</target>
         </trans-unit>
         <trans-unit id="SystemFontsExpiredMessage.Text" translate="yes" xml:space="preserve">
-          <source>Font listings are out of date. Click to reload.</source>
-          <target state="new">Font listings are out of date. Click to reload.</target>
+          <source>Font listings are out of date. Click to relaunch the app.</source>
+          <target state="new">Font listings are out of date. Click to relaunch the app.</target>
         </trans-unit>
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
           <source>Path Icon</source>
