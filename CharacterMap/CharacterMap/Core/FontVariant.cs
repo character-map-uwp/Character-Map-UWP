@@ -9,6 +9,7 @@ using Microsoft.Graphics.Canvas.Text;
 using Windows.Storage;
 using CharacterMap.Models;
 using System.Text;
+using CharacterMap.Services;
 
 namespace CharacterMap.Core
 {
@@ -143,6 +144,11 @@ namespace CharacterMap.Core
             return Characters;
         }
 
+        public uint[] GetIndexes()
+        {
+            return GetCharacters().Select(c => c.UnicodeIndex).ToArray();
+        }
+
         private void LoadTypographyFeatures()
         {
             var features = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
@@ -199,50 +205,22 @@ namespace CharacterMap.Core
 
 
         /* SEARCHING */
-        private string _charString;
-        private string GetCharString()
+
+        public Dictionary<Character, GlyphNameMap> SearchMap { get; set; }
+
+        public string GetDescription(Character c)
         {
-            if (_charString == null)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendJoin(string.Empty, GetCharacters().Select(c => c.Char));
-                _charString = sb.ToString();
-            }
+            if (SearchMap == null 
+                || !SearchMap.TryGetValue(c, out GlyphNameMap mapping)
+                || string.IsNullOrWhiteSpace(mapping.Name))
+                return GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
 
-            return _charString;
-        }
-
-        public void TryGetSearchIndex()
-        {
-            // IF HAS 
-            if (true)
-            {
-                string chars = GetCharString();
-
-                var analyzer = new CanvasTextAnalyzer(chars, CanvasTextDirection.LeftToRightThenTopToBottom);
-                {
-                    foreach (var script in analyzer.GetScript())
-                    {
-                        //script.Value.
-
-                        //foreach (var feature in variant.FontFace.GetSupportedTypographicFeatureNames(script.Value))
-                        //{
-                        //    var info = new TypographyFeatureInfo(feature);
-                        //    if (!features.ContainsKey(info.DisplayName))
-                        //    {
-                        //        features.Add(info.DisplayName, info);
-                        //    }
-                        //}
-                    }
-                }
-
-            }
+            return mapping.Name;
         }
 
 
 
-
-
+        /* .NET */
 
         public void Dispose()
         {

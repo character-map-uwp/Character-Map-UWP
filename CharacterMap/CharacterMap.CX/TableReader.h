@@ -57,6 +57,25 @@ namespace CharacterMapCX
 			return reader->ReadUInt32();
 		}
 
+		int GetUInt24()
+		{
+			position += 3;
+			byte highByte = reader->ReadByte();
+			return (highByte << 16) | reader->ReadUInt16();
+		}
+
+		float GetFixed()
+		{
+			position += 4;
+			return reader->ReadUInt32() / (1 << 16);
+		}
+
+		INT16 GetFWord()
+		{
+			position += 2;
+			return reader->ReadInt16();
+		}
+
 		string GetString(int length)
 		{
 			wchar_t* buffer = new wchar_t(length);
@@ -70,6 +89,12 @@ namespace CharacterMapCX
 			string str(ws.begin(), ws.end());
 
 			return str;
+		}
+
+		Platform::String^ GetNativeString(UINT length)
+		{
+			position += length;
+			return reader->ReadString(length);
 		}
 
 		void GoToPosition(int i)

@@ -1085,6 +1085,7 @@
                             <TextBlock
                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                 FontSize="12"
+                                TextTrimming="CharacterEllipsis"
                                 FontStyle="Normal"
                                 FontWeight="Normal">
                                 <Run Text="{x:Bind ViewModel.SelectedCharVariations.Count, Mode=OneWay}" />
@@ -1111,6 +1112,7 @@
                                         VerticalAlignment="Center"
                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                         FontSize="12"
+                                        TextWrapping="Wrap"
                                         FontStyle="Normal"
                                         FontWeight="Normal"
                                         Text="{x:Bind DisplayName}" />
@@ -1389,6 +1391,7 @@
                             </StackPanel>
 
                             <AppBarButton
+                                x:Name="BtnToggleDev"
                                 x:Uid="BtnToggleDev"
                                 Click="{x:Bind ToggleDev}"
                                 Label="Tools">
@@ -1764,23 +1767,27 @@
             <VisualStateGroup x:Name="DevStates">
                 <VisualState x:Name="DevHiddenState">
                     <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="Tools" />
                         <Setter Target="ShowCodeIcon.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DevXamlState">
                     <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="XAML" />
                         <Setter Target="DevXamlIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DevCSharpState">
                     <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="C#" />
                         <Setter Target="DevCSharpIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DevUnicodeState">
                     <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="Unicode" />
                         <Setter Target="DevUnicodeIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>

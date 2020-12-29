@@ -291,6 +291,7 @@
     <ClInclude Include="PathData.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NativeInterop.h" />
+    <ClInclude Include="PostTableReader.h" />
     <ClInclude Include="SbixTableReader.h" />
     <ClInclude Include="SVGGeometrySink.h" />
     <ClInclude Include="SvgTableReader.h" />

@@ -5,12 +5,13 @@ using System.Numerics;
 using System.Text;
 using CharacterMapCX;
 using System.Diagnostics;
+using Microsoft.Graphics.Canvas;
+using CharacterMap.Models;
 
 namespace CharacterMap.Core
 {
     public static class TypographyAnalyzer
     {
-
         public static List<TypographyFeatureInfo> GetSupportedTypographyFeatures(FontVariant variant)
         {
             var features = DirectWrite.GetSupportedTypography(variant.FontFace).Values.ToList();
@@ -45,105 +46,44 @@ namespace CharacterMap.Core
 
             return supported;
         }
-    }
 
-    public class TypographyHandler : ICanvasTextRenderer
-    {
-        IReadOnlyList<KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript>> _analyzedScript { get; }
-
-        public List<TypographyFeatureInfo> TypographyOptions { get; }
-
-        public TypographyHandler(string text)
+        /// <summary>
+        /// Creates a FontAnalysis object for a FontVariant and ensures the custom
+        /// search map for the font is loaded
+        /// </summary>
+        /// <param name="variant"></param>
+        /// <returns></returns>
+        public static FontAnalysis Analyze(FontVariant variant)
         {
-            var textAnalyzer = new CanvasTextAnalyzer(text, CanvasTextDirection.TopToBottomThenLeftToRight);
-            _analyzedScript = textAnalyzer.GetScript();
+            var analysis = new FontAnalysis(variant.FontFace);
 
-            TypographyOptions = new List<TypographyFeatureInfo>
+            if (analysis.GlyphNames != null
+                && analysis.GlyphNames.Count > 0)
             {
-                new TypographyFeatureInfo(CanvasTypographyFeatureName.None)
-            };
-        }
-
-        private CanvasAnalyzedScript GetScript(uint textPosition)
-        {
-            foreach (KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> range in _analyzedScript)
-            {
-                if (textPosition >= range.Key.CharacterIndex && textPosition < range.Key.CharacterIndex + range.Key.CharacterCount)
-                {
-                    return range.Value;
-                }
+                PrepareSearchMap(variant, analysis.GlyphNames.ToList());
             }
 
-            return _analyzedScript[_analyzedScript.Count - 1].Value;
+            return analysis;
         }
 
-        public void DrawGlyphRun(
-            Vector2 position,
-            CanvasFontFace fontFace,
-            float fontSize,
-            CanvasGlyph[] glyphs,
-            bool isSideways,
-            uint bidiLevel,
-            object brush,
-            CanvasTextMeasuringMode measuringMode,
-            string locale,
-            string textString,
-            int[] clusterMapIndices,
-            uint textPosition,
-            CanvasGlyphOrientation glyphOrientation)
+        private static void PrepareSearchMap(FontVariant variant, List<GlyphNameMap> names)
         {
-            var script = GetScript(textPosition);
-
-            CanvasTypographyFeatureName[] features = fontFace.GetSupportedTypographicFeatureNames(script);
-            foreach (var featureName in features)
+            if (variant.SearchMap == null)
             {
-                TypographyFeatureInfo featureInfo = new TypographyFeatureInfo(featureName);
-                if (!TypographyOptions.Contains(featureInfo))
+                var idxs = variant.GetIndexes();
+                var rng = variant.FontFace.GetGlyphIndices(idxs);
+
+                Dictionary<Character, GlyphNameMap> map = new Dictionary<Character, GlyphNameMap>();
+
+                var list = variant.GetCharacters();
+                for (int i = 0; i < list.Count; i++)
                 {
-                    TypographyOptions.Add(featureInfo);
+                    var c = list[i];
+                    map.Add(c, names[rng[i]]);
                 }
+
+                variant.SearchMap = map;
             }
         }
-
-        public void DrawStrikethrough(
-            Vector2 position,
-            float strikethroughWidth,
-            float strikethroughThickness,
-            float strikethroughOffset,
-            CanvasTextDirection textDirection,
-            object brush,
-            CanvasTextMeasuringMode measuringMode,
-            string locale,
-            CanvasGlyphOrientation glyphOrientation)
-        {
-        }
-
-        public void DrawUnderline(
-            Vector2 position,
-            float underlineWidth,
-            float underlineThickness,
-            float underlineOffset,
-            float runHeight,
-            CanvasTextDirection textDirection,
-            object brush,
-            CanvasTextMeasuringMode measuringMode,
-            string locale,
-            CanvasGlyphOrientation glyphOrientation)
-        {
-        }
-
-        public void DrawInlineObject(
-            Vector2 baselineOrigin,
-            ICanvasTextInlineObject inlineObject,
-            bool isSideways,
-            bool isRightToLeft,
-            object brush,
-            CanvasGlyphOrientation glyphOrientation)
-        {
-        }
-
-        public float Dpi => 96;
-        public bool PixelSnappingDisabled => false;
-        public Matrix3x2 Transform => System.Numerics.Matrix3x2.Identity;
     }
 }

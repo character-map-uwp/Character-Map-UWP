@@ -4,6 +4,7 @@
 #include "SbixTableReader.h"
 #include "ColrTableReader.h"
 #include "CblcTableReader.h"
+#include "PostTableReader.h"
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -25,6 +26,8 @@ namespace CharacterMapCX
 		property bool HasSVGGlyphs { bool get() { return m_hasSVG; } }
 
 		property bool ContainsVectorColorGlyphs { bool get() { return m_hasSVG || m_hasCOLR; } }
+		
+		property bool HasGlyphNames { bool get() { return m_hasGlyphNames; } }
 
 		/// <summary>
 		/// Size of the underlying font file in bytes
@@ -46,6 +49,8 @@ namespace CharacterMapCX
 			IVectorView<DWriteFontAxis^>^ get() { return m_variableAxis; }
 		}
 
+		property IVectorView<GlyphNameMap^>^ GlyphNames;
+
 		FontAnalysis() { }
 
 		FontAnalysis(CanvasFontFace^ fontFace)
@@ -60,6 +65,7 @@ namespace CharacterMapCX
 		bool m_hasBitmap = false;
 		bool m_hasCOLR = false;
 		bool m_hasSVG = false;
+		bool m_hasGlyphNames = false;
 
 		int m_fileSize = 0;
 		Platform::String^ m_filePath = nullptr;
@@ -169,6 +175,16 @@ namespace CharacterMapCX
 				}
 				face->ReleaseFontTable(context);
 			}
+
+			// POST
+			face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('p', 'o', 's', 't'), &tableData, &tableSize, &context, &exists);
+			if (exists)
+			{
+				auto reader = ref new PostTableReader(tableData, tableSize);
+				GlyphNames = reader->Map;
+				delete reader;
+			}
+			face->ReleaseFontTable(context);
 		}
 	};
 }

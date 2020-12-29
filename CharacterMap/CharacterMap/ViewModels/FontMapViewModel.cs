@@ -360,15 +360,7 @@ namespace CharacterMap.ViewModels
                 Chars = variant?.GetCharacters();
                 if (variant != null)
                 {
-                    SelectedVariantAnalysis = new FontAnalysis(variant.FontFace);
-                    //if (SelectedVariantAnalysis.GlyphNames != null)
-                    //{
-                    //    var name = SelectedVariantAnalysis.GlyphNames.Where(n => n != "MacPost").ToList();
-                    //    if (name.Count > 0)
-                    //    {
-
-                    //    }
-                    //}
+                    SelectedVariantAnalysis = TypographyAnalyzer.Analyze(variant);
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
                 }
@@ -545,7 +537,9 @@ namespace CharacterMap.ViewModels
             if (SelectedVariant == null || c == null)
                 return null;
 
-            return GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant);
+            return SelectedVariant.GetDescription(c);
+
+           // return GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant);
         }
 
         public string GetCharDescription(Character c)

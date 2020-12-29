@@ -172,8 +172,8 @@ namespace CharacterMap.Views
             });
 
             Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
-            PreviewGrid.SetShowAnimation(Composition.CreateSlideOutX(PreviewGrid));
-            PreviewGrid.SetHideAnimation(Composition.CreateSlideIn(PreviewGrid));
+            PreviewGrid.SetHideAnimation(Composition.CreateSlideOutX(PreviewGrid));
+            PreviewGrid.SetShowAnimation(Composition.CreateSlideIn(PreviewGrid));
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)

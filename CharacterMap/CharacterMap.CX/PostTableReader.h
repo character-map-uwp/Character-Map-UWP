@@ -17,6 +17,13 @@ using namespace std;
 
 namespace CharacterMapCX
 {
+	public ref class GlyphNameMap sealed
+	{
+	public:
+		property int Index;
+		property String^ Name;
+	};
+
 	ref class PostTableReader sealed : TableReader
 	{
 	public:
@@ -39,7 +46,7 @@ namespace CharacterMapCX
 
 		property uint32 NumGlyphs;
 		property IVectorView<uint16>^ GlyphNameIndex;
-		property IVectorView<String^>^ Names;
+		property IVectorView<GlyphNameMap^>^ Map;
 
 	internal:
 		PostTableReader(
@@ -68,19 +75,29 @@ namespace CharacterMapCX
 
 				GlyphNameIndex = vec->GetView();
 
-				auto nvec = ref new Vector<String^>();
+				auto nvec = ref new Vector<GlyphNameMap^>();
 				for (int i = 0; i < NumGlyphs; i++) 
 				{
-					if (i < 258)
-						nvec->Append("MacPost");
+					int idx = vec->GetAt(i);
+
+					auto item = ref new GlyphNameMap();
+					item->Index = idx;
+
+					if (idx < 258)
+					{
+						// do nothing for now (use default MACPOST name?)
+					}
 					else
 					{
 						auto length = GetUInt8();
-						nvec->Append(GetNativeString(length));
+						auto str = GetNativeString(length);
+						item->Name = str;
 					}
+
+					nvec->Append(item);
 				}
 
-				Names = nvec->GetView();
+				Map = nvec->GetView();
 			}
 		};
 
