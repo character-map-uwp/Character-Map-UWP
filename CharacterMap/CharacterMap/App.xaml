@@ -209,7 +209,7 @@
 
                     <AcrylicBrush
                         x:Key="DefaultHostBrush"
-                        win1903:TintLuminosityOpacity="0.55"
+                        win1903:TintLuminosityOpacity="0.8"
                         BackgroundSource="HostBackdrop"
                         FallbackColor="{ThemeResource SystemChromeMediumColor}"
                         TintColor="{ThemeResource SystemAltHighColor}"

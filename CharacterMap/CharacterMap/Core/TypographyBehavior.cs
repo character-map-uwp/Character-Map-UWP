@@ -144,7 +144,7 @@ namespace CharacterMap.Core
 
     public partial class TypographyBehavior
     {
-        private static HashSet<CanvasTypographyFeatureName> _supportedFeatures { get; } = new HashSet<CanvasTypographyFeatureName>
+        private static HashSet<CanvasTypographyFeatureName> _supportedSingleGlyphFeatures { get; } = new HashSet<CanvasTypographyFeatureName>
         {
             CanvasTypographyFeatureName.None,
             CanvasTypographyFeatureName.StylisticSet1,
@@ -200,8 +200,8 @@ namespace CharacterMap.Core
             CanvasTypographyFeatureName.StylisticAlternates
         };
 
-        public static bool IsXamlSupported(CanvasTypographyFeatureName feature)
-            => _supportedFeatures.Contains(feature);
+        public static bool IsXamlSingleGlyphSupported(CanvasTypographyFeatureName feature)
+            => _supportedSingleGlyphFeatures.Contains(feature);
     }
 
 }

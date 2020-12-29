@@ -1,10 +1,8 @@
 ﻿using Microsoft.Graphics.Canvas.Text;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
-using Humanizer;
 using CharacterMapCX;
 using System.Diagnostics;
 
@@ -23,16 +21,17 @@ namespace CharacterMap.Core
         /// <summary>
         /// Returns a list of Typographic Variants for a character supported by the font.
         /// </summary>
-        /// <param name="font"></param>
-        /// <param name="character">A single string character. If more characters are present, they are ignored.</param>
         public static List<TypographyFeatureInfo> GetCharacterVariants(FontVariant font, Models.Character character)
         {
             var textAnalyzer = new CanvasTextAnalyzer(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
             KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
 
-            List<TypographyFeatureInfo> supported = new List<TypographyFeatureInfo>();
+            List<TypographyFeatureInfo> supported = new List<TypographyFeatureInfo>
+            {
+                TypographyFeatureInfo.None
+            };
 
-            foreach (var feature in font.TypographyFeatures)
+            foreach (var feature in font.XamlTypographyFeatures)
             {
                 if (feature == TypographyFeatureInfo.None)
                     continue;
@@ -146,68 +145,5 @@ namespace CharacterMap.Core
         public float Dpi => 96;
         public bool PixelSnappingDisabled => false;
         public Matrix3x2 Transform => System.Numerics.Matrix3x2.Identity;
-    }
-
-    public class TypographyFeatureInfo : ITypographyInfo
-    {
-        private static HashSet<CanvasTypographyFeatureName> _allValues { get; } = new HashSet<CanvasTypographyFeatureName>(
-            Enum.GetValues(typeof(CanvasTypographyFeatureName)).Cast<CanvasTypographyFeatureName>());
-
-        public static TypographyFeatureInfo None { get; } = new TypographyFeatureInfo(CanvasTypographyFeatureName.None);
-
-        public CanvasTypographyFeatureName Feature { get; }
-
-        public string DisplayName { get; }
-
-        public TypographyFeatureInfo(CanvasTypographyFeatureName n)
-        {
-            Feature = n;
-
-            if (IsNamedFeature(Feature))
-            {
-                DisplayName = Feature.Humanize().Transform(To.TitleCase);
-            }
-            else
-            {
-                //
-                // For custom font features, we can produce the OpenType feature tag
-                // using the feature name.
-                //
-                uint id = (uint)(Feature);
-                DisplayName = DirectWrite.GetTagName(id);
-            }
-        }
-
-
-        public override string ToString()
-        {
-            return DisplayName;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is TypographyFeatureInfo other)
-                return Feature == other.Feature;
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
-
-        bool IsNamedFeature(CanvasTypographyFeatureName name)
-        {
-            //
-            // DWrite and Win2D support a pre-defined list of typographic features.
-            // However, fonts are free to expose features outside of that list.
-            // In fact, many built-in fonts have such custom features. 
-            // 
-            // These custom features are also accessible through Win2D, and 
-            // are reported by GetSupportedTypographicFeatureNames.
-            //
-
-            return _allValues.Contains(name);
-        }
     }
 }

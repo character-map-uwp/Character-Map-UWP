@@ -139,7 +139,7 @@
       <Version>2.8.26</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection">
-      <Version>5.0.0</Version>
+      <Version>5.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
@@ -213,6 +213,7 @@
     <Compile Include="Core\Diagnostics.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Core\Properties.cs" />
+    <Compile Include="Core\TypographyFeatureInfo.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="Helpers\Unicode.cs" />
     <Compile Include="Models\BasicFontFilter.cs" />
     <Compile Include="Models\ExportNamingScheme.cs" />
+    <Compile Include="Models\ExportParameters.cs" />
     <Compile Include="Models\UnicodeRange.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\Messages.cs" />

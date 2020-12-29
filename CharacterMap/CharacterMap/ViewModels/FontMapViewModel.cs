@@ -47,8 +47,8 @@ namespace CharacterMap.ViewModels
         public ExportStyle GlyphColor { get; } = ExportStyle.ColorGlyph;
 
         public IDialogService DialogService { get; }
-        public RelayCommand<ExportStyle> CommandSavePng { get; }
-        public RelayCommand<ExportStyle> CommandSaveSvg { get; }
+        public RelayCommand<ExportParameters> CommandSavePng { get; }
+        public RelayCommand<ExportParameters> CommandSaveSvg { get; }
 
         internal bool IsLoadingCharacters { get; private set; }
 
@@ -176,6 +176,13 @@ namespace CharacterMap.ViewModels
         {
             get => _selectedCharAnalysis;
             set => Set(ref _selectedCharAnalysis, value);
+        }
+
+        private List<TypographyFeatureInfo> _selectedCharVariations;
+        public List<TypographyFeatureInfo> SelectedCharVariations
+        {
+            get => _selectedCharVariations;
+            set => Set(ref _selectedCharVariations, value);
         }
 
         private Character _selectedChar;
@@ -336,8 +343,8 @@ namespace CharacterMap.ViewModels
             DialogService = dialogService;
             Settings = settings;
 
-            CommandSavePng = new RelayCommand<ExportStyle>(async (b) => await SavePngAsync(b));
-            CommandSaveSvg = new RelayCommand<ExportStyle>(async (b) => await SaveSvgAsync(b));
+            CommandSavePng = new RelayCommand<ExportParameters>(async (b) => await SavePngAsync(b));
+            CommandSaveSvg = new RelayCommand<ExportParameters>(async (b) => await SaveSvgAsync(b));
 
             _interop = Utils.GetInterop();
 
@@ -444,10 +451,12 @@ namespace CharacterMap.ViewModels
             {
                 SelectedCharAnalysis = new CanvasTextLayoutAnalysis();
                 IsSvgChar = false;
+                SelectedCharVariations = new List<TypographyFeatureInfo>();
                 return;
             }
 
             SelectedCharAnalysis = GetCharAnalysis(SelectedChar);
+            SelectedCharVariations = TypographyAnalyzer.GetCharacterVariants(SelectedVariant, SelectedChar);
             IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
         }
 
@@ -468,12 +477,15 @@ namespace CharacterMap.ViewModels
             return _interop.AnalyzeCharacterLayout(layout);
         }
 
-        private CanvasTypography GetEffectiveTypography()
+        private CanvasTypography GetEffectiveTypography(TypographyFeatureInfo typography = null)
         {
+            if (typography == null)
+                typography = SelectedTypography;
+
             CanvasTypography typo = new CanvasTypography();
-            if (SelectedTypography != null && SelectedTypography.Feature != CanvasTypographyFeatureName.None)
+            if (typography != null && typography.Feature != CanvasTypographyFeatureName.None)
             {
-                typo.AddFeature(SelectedTypography.Feature, 1u);
+                typo.AddFeature(typography.Feature, 1u);
             }
             return typo;
         }
@@ -568,7 +580,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        internal async Task SavePngAsync(ExportStyle style, Character c = null)
+        internal async Task SavePngAsync(ExportParameters args, Character c = null)
         {
             Character character = SelectedChar;
             CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
@@ -580,19 +592,19 @@ namespace CharacterMap.ViewModels
             }
 
             ExportResult result = await ExportManager.ExportPngAsync(
-                style,
+                args.Style,
                 SelectedFont,
                 SelectedVariant,
                 character,
                 analysis,
-                GetEffectiveTypography(),
+                GetEffectiveTypography(args.Typography),
                 Settings);
 
             if (result.Success)
                 Messenger.Send(new AppNotificationMessage(true, result));
         }
 
-        internal async Task SaveSvgAsync(ExportStyle style, Character c = null)
+        internal async Task SaveSvgAsync(ExportParameters args, Character c = null)
         {
             Character character = SelectedChar;
             CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
@@ -604,12 +616,12 @@ namespace CharacterMap.ViewModels
             }
 
             ExportResult result = await ExportManager.ExportSvgAsync(
-                style,
+                args.Style,
                 SelectedFont,
                 SelectedVariant,
-                  character,
+                character,
                 analysis,
-                GetEffectiveTypography());
+                GetEffectiveTypography(args.Typography));
 
             if (result.Success)
                 Messenger.Send(new AppNotificationMessage(true, result));

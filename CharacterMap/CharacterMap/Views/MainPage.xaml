@@ -292,9 +292,6 @@
                                     ToolTipService.Placement="Bottom" />
 
                             </Grid>
-
-
-
                         </Grid>
 
                         <TextBlock

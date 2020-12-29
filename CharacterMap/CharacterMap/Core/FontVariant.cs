@@ -23,7 +23,7 @@ namespace CharacterMap.Core
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
 
         public IReadOnlyList<KeyValuePair<string, string>> FontInformation
-            => _fontInformation ?? (_fontInformation = LoadFontInformation());
+            => _fontInformation ??= LoadFontInformation();
 
         public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
         {
@@ -35,6 +35,10 @@ namespace CharacterMap.Core
             }
         }
 
+        /// <summary>
+        /// Supported XAML typographer features for A SINGLE GLYPH. 
+        /// Does not include features like Alternates which are used for strings of text.
+        /// </summary>
         public IReadOnlyList<TypographyFeatureInfo> XamlTypographyFeatures
         {
             get
@@ -143,7 +147,7 @@ namespace CharacterMap.Core
         {
             var features = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
 
-            var xaml = features.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
+            var xaml = features.Where(f => TypographyBehavior.IsXamlSingleGlyphSupported(f.Feature)).ToList();
             if (xaml.Count > 0)
                 xaml.Insert(0, TypographyFeatureInfo.None);
             _xamlTypographyFeatures = xaml;
@@ -190,6 +194,55 @@ namespace CharacterMap.Core
                 return KeyValuePair.Create(name, value);
             return KeyValuePair.Create(name, infos.First().Value);
         }
+
+
+
+
+        /* SEARCHING */
+        private string _charString;
+        private string GetCharString()
+        {
+            if (_charString == null)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendJoin(string.Empty, GetCharacters().Select(c => c.Char));
+                _charString = sb.ToString();
+            }
+
+            return _charString;
+        }
+
+        public void TryGetSearchIndex()
+        {
+            // IF HAS 
+            if (true)
+            {
+                string chars = GetCharString();
+
+                var analyzer = new CanvasTextAnalyzer(chars, CanvasTextDirection.LeftToRightThenTopToBottom);
+                {
+                    foreach (var script in analyzer.GetScript())
+                    {
+                        //script.Value.
+
+                        //foreach (var feature in variant.FontFace.GetSupportedTypographicFeatureNames(script.Value))
+                        //{
+                        //    var info = new TypographyFeatureInfo(feature);
+                        //    if (!features.ContainsKey(info.DisplayName))
+                        //    {
+                        //        features.Add(info.DisplayName, info);
+                        //    }
+                        //}
+                    }
+                }
+
+            }
+        }
+
+
+
+
+
 
         public void Dispose()
         {
