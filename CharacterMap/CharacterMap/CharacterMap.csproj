@@ -206,8 +206,6 @@
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
-    <Compile Include="Core\BasicCommand.cs" />
-    <Compile Include="Core\Diagnostics.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />

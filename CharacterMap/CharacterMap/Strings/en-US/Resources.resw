@@ -964,4 +964,7 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
   <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
     <value>Typography Variations</value>
   </data>
+  <data name="ToggleDevDefaultLabel" xml:space="preserve">
+    <value>Tools</value>
+  </data>
 </root>

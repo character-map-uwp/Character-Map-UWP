@@ -1145,6 +1145,10 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
           <source>Typography Variations</source>
           <target state="new">Typography Variations</target>
         </trans-unit>
+        <trans-unit id="ToggleDevDefaultLabel" translate="yes" xml:space="preserve">
+          <source>Tools</source>
+          <target state="new">Tools</target>
+        </trans-unit>
       </group>
     </body>
   </file>

@@ -19,9 +19,6 @@ namespace CharacterMap.Provider
     public partial class SQLiteGlyphProvider : IGlyphDataProvider
     {
         internal const string FONTAWESOME_SEARCH_TABLE = "fontawesomesearch";
-        internal const string ICOFONT_SEARCH_TABLE = "icfsearch";
-        internal const string MATERIAL_DESIGN_ICONS_LEGACY_SEARCH_TABLE = "mdilegacysearch";
-        internal const string MATERIAL_DESIGN_ICONS_SEARCH_TABLE = "mdisearch";
         internal const string MDL2_SEARCH_TABLE = "mdl2search";
         internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
         internal const string WEBDINGS_SEARCH_TABLE = "wbdsearch";

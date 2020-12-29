@@ -12,6 +12,9 @@ using Windows.UI.Xaml.Data;
 
 namespace CharacterMap.Core
 {
+    /// <summary>
+    /// XAML Attached Properties
+    /// </summary>
     [Bindable]
     public class Properties : DependencyObject
     {

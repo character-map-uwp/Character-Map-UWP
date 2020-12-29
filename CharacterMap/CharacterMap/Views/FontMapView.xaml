@@ -1393,8 +1393,7 @@
                             <AppBarButton
                                 x:Name="BtnToggleDev"
                                 x:Uid="BtnToggleDev"
-                                Click="{x:Bind ToggleDev}"
-                                Label="Tools">
+                                Click="{x:Bind ToggleDev}">
                                 <Grid Margin="0 -4 0 0">
                                     <PathIcon
                                         x:Name="ShowCodeIcon"
@@ -1436,7 +1435,7 @@
                         x:Load="False"
                         Grid.Row="0"
                         Grid.RowSpan="3"
-                        Margin="12 12 12 60"
+                        Margin="12 12 12 12"
                         Padding="12"
                         VerticalAlignment="Bottom"
                         Background="{ThemeResource SystemControlBackgroundAccentBrush}"
@@ -1767,7 +1766,7 @@
             <VisualStateGroup x:Name="DevStates">
                 <VisualState x:Name="DevHiddenState">
                     <VisualState.Setters>
-                        <Setter Target="BtnToggleDev.Label" Value="Tools" />
+                        <Setter Target="BtnToggleDev.Label" Value="{x:Bind helpers:Localization.Get('ToggleDevDefaultLabel')}" />
                         <Setter Target="ShowCodeIcon.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>

@@ -28,6 +28,7 @@ using Windows.UI.Core.AnimationMetrics;
 using CharacterMapCX;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace CharacterMap.Views
 {
@@ -82,7 +83,7 @@ namespace CharacterMap.Views
                 });
             };
 
-            FilterCommand = new BasicCommand(OnFilterClick);
+            FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
         }
 
 

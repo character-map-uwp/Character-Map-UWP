@@ -46,6 +46,7 @@ namespace CharacterMap.Helpers
             // Filters out fonts that support just a singular symbol (like currency symbol)
             return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last && ((r.Last - r.First) > 0));
         }
+
         public static bool ContainsEmoji(FontVariant v)
         {
             return ContainsRange(v, UnicodeRange.Emoticons)

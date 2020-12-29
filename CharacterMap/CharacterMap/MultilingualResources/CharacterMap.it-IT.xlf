@@ -1150,6 +1150,10 @@ La funzione di ottimizzazione creerà un nome intelligente basato sulla famiglia
           <source>Typography Variations</source>
           <target state="new">Typography Variations</target>
         </trans-unit>
+        <trans-unit id="ToggleDevDefaultLabel" translate="yes" xml:space="preserve">
+          <source>Tools</source>
+          <target state="new">Tools</target>
+        </trans-unit>
       </group>
     </body>
   </file>
