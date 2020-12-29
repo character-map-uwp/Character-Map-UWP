@@ -344,7 +344,7 @@ namespace CharacterMap.Core
             Character selectedChar,
             string ext)
         {
-            var chr = GlyphService.GetCharacterDescription(selectedChar.UnicodeIndex, selectedVariant) ?? selectedChar.UnicodeString;
+            var chr = selectedVariant.GetDescription(selectedChar) ?? selectedChar.UnicodeString;
             return $"{selectedFont.Name} {selectedVariant.PreferredName} - {chr}.{ext}";
         }
 

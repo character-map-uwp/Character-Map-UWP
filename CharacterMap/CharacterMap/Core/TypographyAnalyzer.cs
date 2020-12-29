@@ -79,7 +79,9 @@ namespace CharacterMap.Core
                 for (int i = 0; i < list.Count; i++)
                 {
                     var c = list[i];
-                    map.Add(c, names[rng[i]]);
+                    var mapping = names[rng[i]];
+                    mapping.Name = mapping.Name.Replace("-", " ").Replace("_", " ");
+                    map.Add(c, mapping);
                 }
 
                 variant.SearchMap = map;
