@@ -22,6 +22,7 @@ namespace CharacterMap.Core
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
+        private FontAnalysis _analysis = null;
 
         public IReadOnlyList<KeyValuePair<string, string>> FontInformation
             => _fontInformation ??= LoadFontInformation();
@@ -147,6 +148,16 @@ namespace CharacterMap.Core
         public uint[] GetIndexes()
         {
             return GetCharacters().Select(c => c.UnicodeIndex).ToArray();
+        }
+
+        public FontAnalysis GetAnalysis()
+        {
+            if (_analysis == null)
+            {
+                _analysis = TypographyAnalyzer.Analyze(this);
+            }
+
+            return _analysis;
         }
 
         private void LoadTypographyFeatures()

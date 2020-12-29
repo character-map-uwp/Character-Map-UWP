@@ -360,7 +360,7 @@ namespace CharacterMap.ViewModels
                 Chars = variant?.GetCharacters();
                 if (variant != null)
                 {
-                    SelectedVariantAnalysis = TypographyAnalyzer.Analyze(variant);
+                    SelectedVariantAnalysis = variant.GetAnalysis();
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
                 }
