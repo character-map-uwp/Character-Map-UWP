@@ -107,6 +107,11 @@ namespace CharacterMap.Provider
             return SearchUnicodeAsync(query, variant);
         }
 
+        private void LocalSearch(string query, FontVariant variant)
+        {
+            throw new NotImplementedException();
+        }
+
         private Task<IReadOnlyList<IGlyphData>> SearchUnicodeAsync(string query, FontVariant variant)
         {
             return InternalSearchAsync(UNICODE_SEARCH_TABLE, nameof(UnicodeGlyphData), query, variant);
@@ -206,10 +211,36 @@ namespace CharacterMap.Provider
                     return list;
                 }
 
-                List<IGlyphData> results = null;
-                // 3. Otherwise, perform a multi-step text search. First perform an FTS4 search
-                string sql = $"SELECT * FROM {ftsTable} {sb.ToString()} AND Description MATCH ? LIMIT {SEARCH_LIMIT}";
-                results = _connection.Query<GlyphDescription>(sql, $"{query}*")?.Cast<IGlyphData>()?.ToList();
+                List<IGlyphData> results = new List<IGlyphData>();
+
+                // 3. If the font has a local search map, we should do a text search inside that
+                if (variant.SearchMap != null)
+                {
+                    results = variant.SearchMap
+                        .Where(c => c.Value.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+                        .Take(SEARCH_LIMIT)
+                        .Select(g => new GlyphDescription { UnicodeIndex = (int)g.Key.UnicodeIndex, UnicodeHex = g.Key.UnicodeString, Description = g.Value.Name })
+                        .Cast<IGlyphData>()
+                        .ToList();
+                }
+
+                if (results.Count == SEARCH_LIMIT)
+                    return results;
+
+                // 3.1. Otherwise, perform a multi-step text search. First perform an FTS4 search
+                int limit = results == null ? SEARCH_LIMIT : SEARCH_LIMIT - results.Count;
+
+                // 3.2. We need to exclude anything already found above
+                string extra = string.Empty;
+                if (limit != SEARCH_LIMIT)
+                {
+                    
+                    extra = string.Format(" AND Ix NOT IN ({0})", string.Join(", ", results.Select(r => r.UnicodeIndex)));
+                }
+
+                // 3.3. Execute!
+                string sql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
+                results.AddRange(_connection.Query<GlyphDescription>(sql, $"{query}*")?.Cast<IGlyphData>());
 
                 // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
                 if (results != null && results.Count == SEARCH_LIMIT)
@@ -219,7 +250,7 @@ namespace CharacterMap.Provider
 
                 // 5. Perform a partial search on non-FTS table. Only search for what we need.
                 //    This means limit the amount of results, and exclude anything we've already matched.
-                int limit = results == null ? SEARCH_LIMIT : SEARCH_LIMIT - results.Count;
+                limit = results == null ? SEARCH_LIMIT : SEARCH_LIMIT - results.Count;
                 if (limit != SEARCH_LIMIT)
                 {
                     // 5.1. We need to exclude anything already found above
