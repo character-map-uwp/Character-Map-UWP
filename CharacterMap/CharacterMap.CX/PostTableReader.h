@@ -68,17 +68,12 @@ namespace CharacterMapCX
 			if (Version == 0x00020000)
 			{
 				NumGlyphs = GetUInt16();
-
-				auto vec = ref new Vector<uint16>();
-				for (int i = 0; i < NumGlyphs; i++)
-					vec->Append(GetUInt16());
-
-				GlyphNameIndex = vec->GetView();
+				GlyphNameIndex = GetUInt16Vector(NumGlyphs);
 
 				auto nvec = ref new Vector<GlyphNameMap^>();
 				for (int i = 0; i < NumGlyphs; i++) 
 				{
-					int idx = vec->GetAt(i);
+					int idx = GlyphNameIndex->GetAt(i);
 
 					auto item = ref new GlyphNameMap();
 					item->Index = idx;

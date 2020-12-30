@@ -97,6 +97,30 @@ namespace CharacterMapCX
 			return reader->ReadString(length);
 		}
 
+		IVectorView<uint16>^ GetUInt16Vector(uint16 count)
+		{
+			auto vec = ref new Vector<uint16>();
+			for (int i = 0; i < count; i++)
+				vec->Append(GetUInt16());
+			return vec->GetView();
+		}
+
+		Array<uint16>^ GetUInt16Array(uint16 count)
+		{
+			Array<uint16>^ array = ref new Array<uint16>(count);
+			for (int i = 0; i < count; i++)
+				array[i] = GetUInt16();
+			return array;
+		}
+
+		Array<uint16>^ GetUInt16Array(uint32 count)
+		{
+			Array<uint16>^ array = ref new Array<uint16>(count);
+			for (int i = 0; i < count; i++)
+				array[i] = GetUInt16();
+			return array;
+		}
+
 		void GoToPosition(int i)
 		{
 			while (position < i)
