@@ -334,8 +334,8 @@
                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity">
                         <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                         <LinearDoubleKeyFrame KeyTime="0:0:0.6" Value="1" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:1.6" Value="1" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:2.2" Value="0" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:2" Value="1" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:2.6" Value="0" />
                     </DoubleAnimationUsingKeyFrames>
                 </Storyboard>
             </Grid.Resources>
@@ -1085,16 +1085,16 @@
                             <TextBlock
                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                 FontSize="12"
-                                TextTrimming="CharacterEllipsis"
                                 FontStyle="Normal"
-                                FontWeight="Normal">
+                                FontWeight="Normal"
+                                TextTrimming="CharacterEllipsis">
                                 <Run Text="{x:Bind ViewModel.SelectedCharVariations.Count, Mode=OneWay}" />
                                 <Run x:Uid="TypographyVariationsSelectorRun" />
                             </TextBlock>
                         </ComboBox.Header>
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="core:TypographyFeatureInfo">
-                                <Grid Margin="-12 0" Height="40">
+                                <Grid Height="40" Margin="-12 0">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="60" />
                                         <ColumnDefinition Width="*" />
@@ -1112,10 +1112,10 @@
                                         VerticalAlignment="Center"
                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                         FontSize="12"
-                                        TextWrapping="Wrap"
                                         FontStyle="Normal"
                                         FontWeight="Normal"
-                                        Text="{x:Bind DisplayName}" />
+                                        Text="{x:Bind DisplayName}"
+                                        TextWrapping="Wrap" />
                                 </Grid>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
@@ -1283,8 +1283,7 @@
                                 <AppBarButton
                                     x:Name="BtnFit"
                                     x:Uid="BtnFit"
-                                    Click="BtnFit_Click"
-                                    Label="Fit">
+                                    Click="BtnFit_Click">
                                     <Grid>
                                         <PathIcon
                                             x:Name="ZoomGlyph"
@@ -1303,7 +1302,7 @@
                                     </Grid>
                                 </AppBarButton>
 
-                                <AppBarButton x:Uid="BtnSaveGlyph" Label="Save">
+                                <AppBarButton x:Uid="BtnSaveGlyph">
                                     <AppBarButton.Icon>
                                         <SymbolIcon Symbol="Save" />
                                     </AppBarButton.Icon>
@@ -1382,10 +1381,7 @@
                                     </Button.Flyout>
                                 </AppBarButton>
 
-                                <AppBarButton
-                                    x:Uid="BtnCopyGlyph"
-                                    Click="{x:Bind TryCopyInternal}"
-                                    Label="Copy">
+                                <AppBarButton x:Uid="BtnCopyGlyph" Click="{x:Bind TryCopyInternal}">
                                     <FontIcon FontSize="18" Glyph="&#xE16F;" />
                                 </AppBarButton>
                             </StackPanel>
@@ -1441,18 +1437,33 @@
                         Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                         IsHitTestVisible="False"
                         Opacity="0">
-                        <StackPanel Orientation="Horizontal">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <FontIcon
                                 FontSize="21"
                                 Foreground="White"
                                 Glyph="&#xEC61;" />
-                            <TextBlock
-                                x:Name="TxtCopiedMessage"
-                                x:Uid="TxtCopiedMessage"
+
+                            <StackPanel
+                                Grid.Column="1"
                                 Margin="8,0,0,0"
-                                Foreground="White"
-                                Text="#TxtCopiedMessage" />
-                        </StackPanel>
+                                VerticalAlignment="Center">
+                                <TextBlock
+                                    x:Name="TxtCopiedMessage"
+                                    x:Uid="TxtCopiedMessage"
+                                    Foreground="White"
+                                    Text="#TxtCopiedMessage" />
+                                <TextBlock
+                                    x:Name="TxtCopiedVariantMessage"
+                                    x:Uid="TxtCopiedVariantMessage"
+                                    FontSize="12"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+
+                        </Grid>
                     </Border>
                 </Grid>
 

@@ -1155,6 +1155,16 @@ La funzione di ottimizzazione creerà un nome intelligente basato sulla famiglia
           <source>Tools</source>
           <target state="new">Tools</target>
         </trans-unit>
+        <trans-unit id="BtnFit.Label" translate="yes" xml:space="preserve">
+          <source>Fit</source>
+          <target state="new">Fit</target>
+        </trans-unit>
+        <trans-unit id="TxtCopiedVariantMessage.Text" translate="yes" xml:space="preserve">
+          <source>Glyph variations cannot be copied.
+Default variant copied.</source>
+          <target state="new">Glyph variations cannot be copied.
+Default variant copied.</target>
+        </trans-unit>
       </group>
     </body>
   </file>

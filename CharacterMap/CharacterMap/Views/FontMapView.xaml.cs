@@ -478,6 +478,7 @@ namespace CharacterMap.Views
                 && await Utils.TryCopyToClipboardAsync(character, ViewModel))
             {
                 BorderFadeInStoryboard.Begin();
+                TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem != TypographyFeatureInfo.None);
             }
         }
 
