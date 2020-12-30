@@ -36,7 +36,10 @@ namespace CharacterMap.Helpers
                 composition.ImplicitAnimations = composition.Compositor.CreateImplicitAnimationCollection();
             }
 
-            composition.ImplicitAnimations[path] = animation;
+            if (animation == null)
+                composition.ImplicitAnimations.Remove(path);
+            else
+                composition.ImplicitAnimations[path] = animation;
             return element;
         }
 

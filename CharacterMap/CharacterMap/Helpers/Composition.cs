@@ -108,6 +108,24 @@ namespace CharacterMap.Helpers
             target.GetElementVisual().StartAnimationGroup(animation);
         }
 
+        public static void SetStandardEntrance(FrameworkElement sender, object args)
+        {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
+            if (sender is FrameworkElement e)
+                e.SetShowAnimation(CreateEntranceAnimation(e, new Vector3(100, 0, 0), 200));
+        }
+
+        public static void PlayStandardEntrance(object sender, RoutedEventArgs args)
+        {
+            if (!UISettings.AnimationsEnabled)
+                return;
+
+            if (sender is FrameworkElement e)
+                e.GetElementVisual().StartAnimationGroup(CreateEntranceAnimation(e, new Vector3(100, 0, 0), 200));
+        }
+
         public static ICompositionAnimationBase CreateEntranceAnimation(UIElement target, Vector3 from, int delayMs, int durationMs = 1000)
         {
             Compositor c = target.EnableTranslation(true).GetElementVisual().Compositor;
@@ -397,7 +415,6 @@ namespace CharacterMap.Helpers
 
             return o;
         }
-
 
         public static Vector3KeyFrameAnimation CreateSlideIn(UIElement e)
         {

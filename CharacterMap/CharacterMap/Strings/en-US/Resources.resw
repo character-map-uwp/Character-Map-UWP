@@ -974,4 +974,13 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
     <value>Glyph variations cannot be copied.
 Default variant copied.</value>
   </data>
+  <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
+    <value>There are no fonts in this collection yet.</value>
+  </data>
+  <data name="SearchFontHelpBlock.Text" xml:space="preserve">
+    <value>No results found for this search. Try something else.</value>
+  </data>
+  <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
+    <value>Search</value>
+  </data>
 </root>

@@ -198,6 +198,7 @@ namespace CharacterMap.Views
                         },
                         new List<UIElement>
                         {
+                            FontListSearchBox,
                             FontsSemanticZoom,
                             FontMap.CharGridHeader,
                             FontMap.SplitterContainer,

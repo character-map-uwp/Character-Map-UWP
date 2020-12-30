@@ -26,6 +26,7 @@ namespace CharacterMap.Core
         public static bool False(bool b) => !b;
         public static bool FalseFalse(bool b, bool c) => !b && !c;
         public static bool True(bool b) => b;
+        public static bool TrueTrue(bool b, bool c) => b && c;
 
         public static Visibility InvertVis(Visibility b) => b == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility FalseToVis(bool b) => !b ? Visibility.Visible : Visibility.Collapsed;
@@ -38,8 +39,10 @@ namespace CharacterMap.Core
 
         public static bool IsNull(object obj) => obj == null;
         public static bool IsNotNull(object obj) => obj != null;
+        public static bool IsNotNullAndFalse(object obj, bool b) => obj != null && !b;
         public static bool IsNullOrEmpty(string obj) => string.IsNullOrEmpty(obj);
         public static bool IsNotNullOrEmpty(string obj) => !string.IsNullOrEmpty(obj);
+        public static bool IsNotNullOrWhiteSpace(string obj) => !string.IsNullOrWhiteSpace(obj);
         public static Visibility IsNullOrEmptyToVis(string obj) => string.IsNullOrEmpty(obj) ? Visibility.Visible : Visibility.Collapsed;
 
 

@@ -1166,6 +1166,18 @@ Default variant copied.</source>
           <target state="new">Glyph variations cannot be copied.
 Default variant copied.</target>
         </trans-unit>
+        <trans-unit id="CollectionFontHelpBlock.Text" translate="yes" xml:space="preserve">
+          <source>There are no fonts in this collection yet.</source>
+          <target state="new">There are no fonts in this collection yet.</target>
+        </trans-unit>
+        <trans-unit id="SearchFontHelpBlock.Text" translate="yes" xml:space="preserve">
+          <source>No results found for this search. Try something else.</source>
+          <target state="new">No results found for this search. Try something else.</target>
+        </trans-unit>
+        <trans-unit id="FontListSearchBox.PlaceholderText" translate="yes" xml:space="preserve">
+          <source>Search</source>
+          <target state="new">Search</target>
+        </trans-unit>
       </group>
     </body>
   </file>

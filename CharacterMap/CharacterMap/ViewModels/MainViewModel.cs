@@ -21,6 +21,9 @@ namespace CharacterMap.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private Debouncer _searchDebouncer { get; } = new Debouncer();
+
+
         #region Properties
 
         public event EventHandler FontListCreated;
@@ -64,6 +67,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _titlePrefix, value);
         }
 
+        private string _fontSearch;
+        public string FontSearch
+        {
+            get => _fontSearch;
+            set => Set(ref _fontSearch, value);
+        }
+
         private string _filterTitle;
         public string FilterTitle
         {
@@ -76,6 +86,13 @@ namespace CharacterMap.ViewModels
         {
             get => _isLoadingFonts;
             set => Set(ref _isLoadingFonts, value);
+        }
+
+        private bool _isSearchResults;
+        public bool IsSearchResults
+        {
+            get => _isSearchResults;
+            set => Set(ref _isSearchResults, value);
         }
 
         private bool _isLoadingFontsFailed;
@@ -162,6 +179,14 @@ namespace CharacterMap.ViewModels
 
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             InitialLoad = LoadAsync();
+        }
+
+        protected override void OnPropertyChangeNotified(string propertyName)
+        {
+            if (propertyName == nameof(FontSearch))
+            {
+                _searchDebouncer.Debounce(FontSearch.Length == 0 ? 100 : 500, () => RefreshFontList(SelectedCollection));
+            }
         }
 
         private async Task LoadAsync()
@@ -255,6 +280,16 @@ namespace CharacterMap.ViewModels
                     else
                         fontList = FontListFilter.Query(fontList, FontCollections);
                 }
+
+                if (!string.IsNullOrWhiteSpace(FontSearch))
+                {
+                    fontList = fontList.Where(f => f.Name.Contains(FontSearch, StringComparison.OrdinalIgnoreCase));
+                    string prefix = FontListFilter == BasicFontFilter.All ? "" : FontListFilter.FilterTitle + " ";
+                    FilterTitle = $"{(collection != null ? collection.Name + " " : prefix)}\"{FontSearch}\"";
+                    IsSearchResults = true;
+                }
+                else
+                    IsSearchResults = false;
 
                 FontList = fontList.ToList();
             }
