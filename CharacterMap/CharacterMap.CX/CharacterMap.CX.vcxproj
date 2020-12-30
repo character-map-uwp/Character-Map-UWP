@@ -290,6 +290,7 @@
     <ClInclude Include="GridViewHelper.h" />
     <ClInclude Include="GsubTableReader.h" />
     <ClInclude Include="ITypographyInfo.h" />
+    <ClInclude Include="MetaTableReader.h" />
     <ClInclude Include="PathData.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NativeInterop.h" />

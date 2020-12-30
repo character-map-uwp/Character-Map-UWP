@@ -359,6 +359,7 @@ DWriteProperties^ DirectWrite::GetDWriteProperties(
 		if (SUCCEEDED(face->GetFaceNames(&names)))
 			fname = GetLocaleString(names, ls, locale);
 
+
 		return ref new DWriteProperties(fontSource, nullptr, family, fname, face->IsColorFont(), face->HasVariations());
 	};
 

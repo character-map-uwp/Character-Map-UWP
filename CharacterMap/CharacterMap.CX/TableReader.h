@@ -121,6 +121,19 @@ namespace CharacterMapCX
 			return array;
 		}
 
+		String^ GetTag()
+		{
+			wchar_t str[] = L"    ";
+			auto tag = GetUInt32();
+
+			str[0] = (wchar_t)((tag >> 24) & 0xFF);
+			str[1] = (wchar_t)((tag >> 16) & 0xFF);
+			str[2] = (wchar_t)((tag >> 8) & 0xFF);
+			str[3] = (wchar_t)((tag >> 0) & 0xFF);
+
+			return ref new String(str);
+		}
+
 		void GoToPosition(int i)
 		{
 			while (position < i)

@@ -5,6 +5,7 @@
 #include "ColrTableReader.h"
 #include "CblcTableReader.h"
 #include "PostTableReader.h"
+#include "MetaTableReader.h"
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -28,6 +29,10 @@ namespace CharacterMapCX
 		property bool ContainsVectorColorGlyphs { bool get() { return m_hasSVG || m_hasCOLR; } }
 		
 		property bool HasGlyphNames { bool get() { return m_hasGlyphNames; } }
+
+		property String^ DesignLanguages { String^ get() { return m_dlng; } }
+
+		property String^ ScriptLanguages { String^ get() { return m_slng; } }
 
 		/// <summary>
 		/// Size of the underlying font file in bytes
@@ -66,6 +71,8 @@ namespace CharacterMapCX
 		bool m_hasCOLR = false;
 		bool m_hasSVG = false;
 		bool m_hasGlyphNames = false;
+		String^ m_dlng = nullptr;
+		String^ m_slng = nullptr;
 
 		int m_fileSize = 0;
 		Platform::String^ m_filePath = nullptr;
@@ -79,6 +86,7 @@ namespace CharacterMapCX
 		{
 			m_axis = DirectWrite::GetAxis(faceRef);
 
+			// Check for variable font axis
 			Vector<DWriteFontAxis^>^ variable = ref new Vector<DWriteFontAxis^>();
 			for each (auto a in m_axis)
 			{
@@ -87,13 +95,11 @@ namespace CharacterMapCX
 			}
 			m_variableAxis = variable->GetView();
 
-
 			// Get File Size
 			m_fileSize = faceRef->GetFileSize();
 
 			// Attempt to get FilePath. 
-			// This involves acquiring the FileLoader and querying it
-			// for the file path;
+			// This involves acquiring the FileLoader and querying it for the file path;
 			ComPtr<IDWriteFontFile> file;
 			ComPtr<IDWriteFontFileLoader> loader;
 			ComPtr<IDWriteLocalFontFileLoader> localLoader;
@@ -134,6 +140,7 @@ namespace CharacterMapCX
 			void* context;
 
 			// SVG
+			// Determines if a font contains SVG glyphs
 			face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('S', 'V', 'G', ' '), &tableData, &tableSize, &context, &exists);
 			if (exists)
 			{
@@ -144,6 +151,7 @@ namespace CharacterMapCX
 			face->ReleaseFontTable(context);
 
 			// COLR
+			// Determines if a font contains COLR glyphs
 			face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'O', 'L', 'R'), &tableData, &tableSize, &context, &exists);
 			if (exists)
 			{
@@ -154,6 +162,7 @@ namespace CharacterMapCX
 			face->ReleaseFontTable(context);
 
 			// SBIX
+			// Determines if a font contains SBIX bitmap image glyphs
 			face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('s', 'b', 'i', 'x'), &tableData, &tableSize, &context, &exists);
 			if (exists)
 			{
@@ -166,6 +175,7 @@ namespace CharacterMapCX
 			if (!m_hasBitmap)
 			{
 				// CBLC
+				// Determines if a font contains CBLC bitmap image glyphs
 				face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('C', 'B', 'L', 'C'), &tableData, &tableSize, &context, &exists);
 				if (exists)
 				{
@@ -176,12 +186,27 @@ namespace CharacterMapCX
 				face->ReleaseFontTable(context);
 			}
 
+			// META
+			// These strings can also be read using face->GetInformationalStrings(...);
+			// Not currently used, so commented out for now.
+			/*face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('m', 'e', 't', 'a'), &tableData, &tableSize, &context, &exists);
+			if (exists)
+			{
+				auto reader = ref new MetaTableReader(tableData, tableSize);
+				m_dlng = reader->DesignLanguages;
+				m_slng = reader->ScriptLanguages;
+				delete reader;
+			}
+			face->ReleaseFontTable(context);*/
+
 			// POST
+			// Attempts to get custom glyph names for a font
 			face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('p', 'o', 's', 't'), &tableData, &tableSize, &context, &exists);
 			if (exists)
 			{
 				auto reader = ref new PostTableReader(tableData, tableSize);
 				GlyphNames = reader->Map;
+				m_hasGlyphNames = GlyphNames->Size > 0;
 				delete reader;
 			}
 			face->ReleaseFontTable(context);

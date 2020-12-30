@@ -63,6 +63,12 @@ namespace CharacterMap.Core
                 PrepareSearchMap(variant, analysis.GlyphNames.ToList());
             }
 
+            // TODO : Parse Design & Script Language Tags
+            // if (!string.IsNullOrWhiteSpace(analysis.DesignLanguages))
+            // {
+            //     var langs = analysis.DesignLanguages.Split(',');
+            // }
+
             return analysis;
         }
 
