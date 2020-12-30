@@ -189,10 +189,14 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 		auto range = ranges[i];
 		auto def = defaults[i];
 
-		ComPtr<IDWriteLocalizedStrings> strings;
-		resource->GetAxisNames(i, &strings);
+		String^ name = "";
 
-		auto str = GetLocaleString(strings, 0, nullptr);
+		if (attribute == DWRITE_FONT_AXIS_ATTRIBUTES_VARIABLE)
+		{
+			ComPtr<IDWriteLocalizedStrings> strings;
+			resource->GetAxisNames(i, &strings);
+			name = GetLocaleString(strings, 0, nullptr);
+		}
 
 		auto item = ref new DWriteFontAxis(
 			attribute, 
@@ -200,7 +204,7 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 			def, 
 			values[i], 
 			def.axisTag, 
-			str);
+			name);
 
 		items->Append(item);
 	}

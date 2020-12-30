@@ -206,7 +206,7 @@ namespace CharacterMapCX
 			{
 				auto reader = ref new PostTableReader(tableData, tableSize);
 				GlyphNames = reader->Map;
-				m_hasGlyphNames = GlyphNames->Size > 0;
+				m_hasGlyphNames = GlyphNames != nullptr && GlyphNames->Size > 0;
 				delete reader;
 			}
 			face->ReleaseFontTable(context);

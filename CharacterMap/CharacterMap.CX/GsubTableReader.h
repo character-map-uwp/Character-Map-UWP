@@ -134,35 +134,38 @@ namespace CharacterMapCX
 		void ParseFeatures()
 		{
 			Map<UINT32, UINT32>^ map = ref new Map<UINT32, UINT32>();
-
-			GoToPosition(FeatureOffset);
-			auto count = GetUInt16();
 			uint16 ccmpOffset = 0;
 
-			wchar_t str[] = L"    ";
-			for (int i = 0; i < count; i++)
+			if (FeatureOffset > 0)
 			{
-				auto tag = GetUInt32();
+				GoToPosition(FeatureOffset);
+				auto count = GetUInt16();
 
-				if (!map->HasKey(tag))
+				wchar_t str[] = L"    ";
+				for (int i = 0; i < count; i++)
 				{
-					str[0] = (wchar_t)((tag >> 24) & 0xFF);
-					str[1] = (wchar_t)((tag >> 16) & 0xFF);
-					str[2] = (wchar_t)((tag >> 8) & 0xFF);
-					str[3] = (wchar_t)((tag >> 0) & 0xFF);
+					auto tag = GetUInt32();
 
-					// Check not a design-time feature
-					if (str[0] != 'z' && str[1] != '0')
-						map->Insert(tag, DWRITE_MAKE_OPENTYPE_TAG(str[0], str[1], str[2], str[3]));
+					if (!map->HasKey(tag))
+					{
+						str[0] = (wchar_t)((tag >> 24) & 0xFF);
+						str[1] = (wchar_t)((tag >> 16) & 0xFF);
+						str[2] = (wchar_t)((tag >> 8) & 0xFF);
+						str[3] = (wchar_t)((tag >> 0) & 0xFF);
+
+						// Check not a design-time feature
+						if (str[0] != 'z' && str[1] != '0')
+							map->Insert(tag, DWRITE_MAKE_OPENTYPE_TAG(str[0], str[1], str[2], str[3]));
+					}
+
+					auto offset = GetUInt16();
+
+					/* WORK IN PROGRESS */
+					/*if (ccmpOffset == 0 && str[0] == 'c' && str[1] == 'c' && str[3] == 'p')
+					{
+						ccmpOffset = offset;
+					}*/
 				}
-
-				auto offset = GetUInt16();
-
-				/* WORK IN PROGRESS */
-				/*if (ccmpOffset == 0 && str[0] == 'c' && str[1] == 'c' && str[3] == 'p')
-				{
-					ccmpOffset = offset;
-				}*/
 			}
 
 			FeatureMap = map->GetView();
