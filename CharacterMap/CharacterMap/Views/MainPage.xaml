@@ -542,6 +542,7 @@
             Loading="LoadingRoot_Loading">
 
             <StackPanel
+                x:Name="LoadingStack"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Spacing="24">

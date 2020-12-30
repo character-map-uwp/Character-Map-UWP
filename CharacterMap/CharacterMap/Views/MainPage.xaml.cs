@@ -621,8 +621,10 @@ namespace CharacterMap.Views
             ani.Duration = TimeSpan.FromMilliseconds(duration);
 
             var op = Composition.CreateFade(v.Compositor, 0, null, duration);
-
             sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
+
+            // Animate in Loading items
+            Composition.PlayEntrance(LoadingStack.Children.ToList(), 140, 140, 0, 1000, 160);
         }
 
     }
