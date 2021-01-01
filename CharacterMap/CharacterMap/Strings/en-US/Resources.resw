@@ -795,7 +795,7 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>As Zip Archive</value>
   </data>
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
-    <value>Font listings are out of date. Click to reload.</value>
+    <value>Font listings are out of date. Click to relaunch the app.</value>
   </data>
   <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Toggle Dev Utils</value>
@@ -960,5 +960,27 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
   </data>
   <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Keep on top</value>
+  </data>
+  <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
+    <value>Typography Variations</value>
+  </data>
+  <data name="ToggleDevDefaultLabel" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="BtnFit.Label" xml:space="preserve">
+    <value>Fit</value>
+  </data>
+  <data name="TxtCopiedVariantMessage.Text" xml:space="preserve">
+    <value>Glyph variations cannot be copied.
+Default variant copied.</value>
+  </data>
+  <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
+    <value>There are no fonts in this collection yet.</value>
+  </data>
+  <data name="SearchFontHelpBlock.Text" xml:space="preserve">
+    <value>No results found for this search. Try something else.</value>
+  </data>
+  <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
+    <value>Search</value>
   </data>
 </root>

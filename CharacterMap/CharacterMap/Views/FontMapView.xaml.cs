@@ -1,41 +1,31 @@
-﻿using CharacterMap.Core;
+﻿using CharacterMap.Controls;
+using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Messaging;
-using GalaSoft.MvvmLight.Views;
+using CharacterMapCX;
+using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
 using Windows.System;
+using Windows.UI.Composition;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using CharacterMap.Models;
-using Microsoft.Toolkit.Uwp.UI.Controls;
-using System.ComponentModel;
-using Windows.UI.Core;
-using CharacterMap.Controls;
-using CharacterMapCX;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using GalaSoft.MvvmLight.Ioc;
-using Windows.UI.Xaml.Controls.Primitives;
-using System.Windows.Input;
-using Windows.ApplicationModel.VoiceCommands;
-using Windows.UI.Xaml.Printing;
-using SQLitePCL;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Composition;
-using System.Numerics;
-using Microsoft.Graphics.Canvas.Text;
-using System.Text;
 
 namespace CharacterMap.Views
 {
@@ -125,7 +115,7 @@ namespace CharacterMap.Views
             Unloaded += FontMapView_Unloaded;
 
             ViewModel = new FontMapViewModel(
-                ServiceLocator.Current.GetInstance<IDialogService>(), 
+                Ioc.Default.GetService<IDialogService>(), 
                 ResourceHelper.AppSettings);
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -155,14 +145,14 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
-            Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
-            Messenger.Default.Register<PrintRequestedMessage>(this, m =>
+            WeakReferenceMessenger.Default.Register<AppNotificationMessage>(this, (o,m) => OnNotificationMessage(m));
+            WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
+            WeakReferenceMessenger.Default.Register<PrintRequestedMessage>(this, (o,m) =>
             {
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
-            Messenger.Default.Register<CopyToClipboardMessage>(this, async m =>
+            WeakReferenceMessenger.Default.Register<CopyToClipboardMessage>(this, async (o, m) =>
             {
                 if (Dispatcher.HasThreadAccess)
                     await ViewModel.RequestCopyToClipboardAsync(m);
@@ -181,12 +171,9 @@ namespace CharacterMap.Views
                 ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
             });
 
-
-            ElementCompositionPreview.SetIsTranslationEnabled(PreviewGrid, true);
-            Visual v = ElementCompositionPreview.GetElementVisual(PreviewGrid);
-
-            ElementCompositionPreview.SetImplicitHideAnimation(PreviewGrid, Composition.CreateSlideOutX(PreviewGrid));
-            ElementCompositionPreview.SetImplicitShowAnimation(PreviewGrid, Composition.CreateSlideIn(PreviewGrid));
+            Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
+            PreviewGrid.SetHideAnimation(Composition.CreateSlideOutX(PreviewGrid));
+            PreviewGrid.SetShowAnimation(Composition.CreateSlideIn(PreviewGrid));
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -197,7 +184,7 @@ namespace CharacterMap.Views
 
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
-            Messenger.Default.Unregister(this);
+            WeakReferenceMessenger.Default.UnregisterAll(this);
         }
 
         private void Current_Closed(object sender, CoreWindowEventArgs e)
@@ -295,7 +282,7 @@ namespace CharacterMap.Views
                         TryCopy();
                         break;
                     case VirtualKey.P:
-                        Messenger.Default.Send(new PrintRequestedMessage());
+                        WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
                         break;
                     case VirtualKey.S:
                         if (ViewModel.SelectedVariant is FontVariant v)
@@ -491,6 +478,7 @@ namespace CharacterMap.Views
                 && await Utils.TryCopyToClipboardAsync(character, ViewModel))
             {
                 BorderFadeInStoryboard.Begin();
+                TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem != TypographyFeatureInfo.None);
             }
         }
 
@@ -717,7 +705,11 @@ namespace CharacterMap.Views
                 && item.DataContext is Character c
                 && item.CommandParameter is ExportStyle style)
             {
-                _ = ViewModel.SavePngAsync(style, c);
+                _ = ViewModel.SavePngAsync(new ExportParameters
+                {
+                    Style = style,
+                    Typography = ViewModel.SelectedTypography
+                }, c);
             }
         }
 
@@ -728,7 +720,11 @@ namespace CharacterMap.Views
                 && item.DataContext is Character c
                 && item.CommandParameter is ExportStyle style)
             {
-                _ = ViewModel.SaveSvgAsync(style, c);
+                _ = ViewModel.SaveSvgAsync(new ExportParameters
+                {
+                    Style = style,
+                    Typography = ViewModel.SelectedTypography
+                }, c);
             }
         }
 
@@ -807,6 +803,11 @@ namespace CharacterMap.Views
             }
 
             return r;
+        }
+
+        private void PreviewTypographySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateTypography(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo, true);
         }
 
 
@@ -891,7 +892,7 @@ namespace CharacterMap.Views
             });
         }
 
-        void UpdateTypography(TypographyFeatureInfo info)
+        void UpdateTypography(TypographyFeatureInfo info, bool previewOnly = false)
         {
             if (ViewModel.IsLoadingCharacters || ViewModel.Chars == null)
                 return;
@@ -901,14 +902,36 @@ namespace CharacterMap.Views
                 IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
                 CharacterGridView.UpdateTypography(_xamlDirect, p, info);
             }
+
+            if (CopySequenceText != null && !previewOnly)
+            {
+                IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(CopySequenceText);
+                CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            }
         }
 
-        void SavePng(object character, ICommand command, object parameter)
+        Visibility GetAlternatesVis(TypographyFeatureInfo global, List<TypographyFeatureInfo> info)
         {
-            if (character is Character c)
+            Visibility vis = info == null || info.Count <= 1 ? Visibility.Collapsed : Visibility.Visible;
+
+            void Update()
             {
-                command.Execute(parameter);
+                if (ViewModel.SelectedCharVariations != null)
+                {
+                    // The character might not support the current ViewModel typography, so make sure we fallback
+                    // too an appropriate selection
+                    if (ViewModel.SelectedCharVariations.Contains(global))
+                        PreviewTypographySelector.SelectedItem = global;
+                    else
+                        PreviewTypographySelector.SelectedItem = ViewModel.SelectedCharVariations.FirstOrDefault();
+                }
             }
+
+            Update();
+            // Hack to ensure properly set when switching between characters in a font
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, Update);
+            
+            return vis;
         }
 
 

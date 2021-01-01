@@ -49,9 +49,6 @@ namespace CharacterMap.Provider
 
                 await PopulateMDL2Async(connection).ConfigureAwait(false);
                 await PopulateFontAsync<FontAwesomeGlyph>(connection, "FontAwesome.txt").ConfigureAwait(false);
-                await PopulateFontAsync<MaterialDesignIconsLegacyGlyph>(connection, "materialdesignicons.txt").ConfigureAwait(false);
-                await PopulateFontAsync<MaterialDesignIconsGlyph>(connection, "materialdesignicons5.txt").ConfigureAwait(false);
-                await PopulateFontAsync<IcoFontGlyph>(connection, "icofont.txt").ConfigureAwait(false);
 
                 var unicode = await PopulateUnicodeAsync(connection).ConfigureAwait(false);
                 await PopulateDingsAsync<WebdingsGlyph>(connection, unicode, "Webdings");

@@ -206,8 +206,8 @@
             Canvas.ZIndex="101">
             <StackPanel Orientation="Horizontal">
                 <ToggleButton
-                    x:Uid="CompactOverlayButton"
                     x:Name="OverlayButton"
+                    x:Uid="CompactOverlayButton"
                     Width="45"
                     Click="{x:Bind ToggleCompactOverlay}"
                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
@@ -334,8 +334,8 @@
                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity">
                         <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
                         <LinearDoubleKeyFrame KeyTime="0:0:0.6" Value="1" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:1.6" Value="1" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:2.2" Value="0" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:2" Value="1" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:2.6" Value="0" />
                     </DoubleAnimationUsingKeyFrames>
                 </Storyboard>
             </Grid.Resources>
@@ -860,8 +860,6 @@
                 </Grid>
             </Grid>
 
-
-
             <!--  Type Ramp  -->
             <Grid
                 x:Name="TypeRampRoot"
@@ -1036,6 +1034,7 @@
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Viewbox
                         x:Name="TxtPreviewViewBox"
@@ -1061,10 +1060,71 @@
                             TextAlignment="Center" />
                     </Viewbox>
 
+                    <ComboBox
+                        x:Name="PreviewTypographySelector"
+                        Grid.Row="1"
+                        Height="Auto"
+                        Margin="0 0 0 8"
+                        Padding="12 -2 12 0"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        VerticalContentAlignment="Center"
+                        BorderThickness="1"
+                        FontFamily="{Binding FontFamily}"
+                        FontSize="12"
+                        FontStretch="{Binding SelectedVariant.FontFace.Stretch}"
+                        FontStyle="{Binding SelectedVariant.FontFace.Style}"
+                        FontWeight="{Binding SelectedVariant.FontFace.Weight}"
+                        ItemsSource="{x:Bind ViewModel.SelectedCharVariations, Mode=OneWay}"
+                        Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
+                        SelectedItem="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
+                        SelectionChanged="PreviewTypographySelector_SelectionChanged"
+                        Style="{StaticResource RevealComboBoxStyle}"
+                        Visibility="{x:Bind GetAlternatesVis(ViewModel.SelectedTypography, ViewModel.SelectedCharVariations), Mode=OneWay}">
+                        <ComboBox.Header>
+                            <TextBlock
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="12"
+                                FontStyle="Normal"
+                                FontWeight="Normal"
+                                TextTrimming="CharacterEllipsis">
+                                <Run Text="{x:Bind ViewModel.SelectedCharVariations.Count, Mode=OneWay}" />
+                                <Run x:Uid="TypographyVariationsSelectorRun" />
+                            </TextBlock>
+                        </ComboBox.Header>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="core:TypographyFeatureInfo">
+                                <Grid Height="40" Margin="-12 0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        core:Properties.Typography="{x:Bind}"
+                                        FontSize="24"
+                                        Text="{Binding ElementName=TxtPreview, Path=Text}" />
+
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                        FontSize="12"
+                                        FontStyle="Normal"
+                                        FontWeight="Normal"
+                                        Text="{x:Bind DisplayName}"
+                                        TextWrapping="Wrap" />
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
                     <!--  Character Description  -->
                     <StackPanel
                         x:Name="CharacterInfo"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         Margin="12 0 12 6"
                         VerticalAlignment="Bottom"
                         Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
@@ -1083,16 +1143,130 @@
 
                     <!--  Copy / Save / Fit Row  -->
                     <StackPanel
-                        Grid.Row="2"
+                        Grid.Row="3"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Bottom"
                         Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
 
-                        <Rectangle
-                            Height="1"
-                            HorizontalAlignment="Stretch"
-                            Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                            Opacity="0.15" />
+                        <StackPanel.Resources>
+                            <Style TargetType="AppBarButton">
+                                <Setter Property="Background" Value="{ThemeResource AppBarButtonRevealBackground}" />
+                                <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
+                                <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrush}" />
+                                <Setter Property="BorderThickness" Value="1" />
+                                <Setter Property="HorizontalAlignment" Value="Left" />
+                                <Setter Property="VerticalAlignment" Value="Top" />
+                                <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+                                <Setter Property="FontWeight" Value="Normal" />
+                                <Setter Property="Width" Value="50" />
+                                <Setter Property="Height" Value="50" />
+                                <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+                                <Setter Property="AllowFocusOnInteraction" Value="False" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="AppBarButton">
+                                            <Grid
+                                                x:Name="Root"
+                                                MinWidth="{TemplateBinding MinWidth}"
+                                                MaxWidth="{TemplateBinding MaxWidth}"
+                                                Background="{TemplateBinding Background}">
+
+                                                <VisualStateManager.VisualStateGroups>
+                                                    <VisualStateGroup x:Name="CommonStates">
+                                                        <VisualState x:Name="Normal">
+                                                            <Storyboard>
+                                                                <PointerUpThemeAnimation Storyboard.TargetName="Content" />
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <VisualState x:Name="PointerOver">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
+                                                                <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
+                                                                <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPointerOver}" />
+                                                            </VisualState.Setters>
+                                                            <Storyboard>
+                                                                <PointerUpThemeAnimation Storyboard.TargetName="Content" />
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <VisualState x:Name="Pressed">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
+                                                                <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
+                                                                <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPressed}" />
+                                                            </VisualState.Setters>
+                                                            <Storyboard>
+                                                                <PointerDownThemeAnimation Storyboard.TargetName="Content" />
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                        <VisualState x:Name="Disabled">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundDisabled}" />
+                                                                <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushDisabled}" />
+                                                                <Setter Target="Root.Opacity" Value="0.5" />
+                                                            </VisualState.Setters>
+                                                        </VisualState>
+                                                        <VisualState x:Name="OverflowNormal">
+                                                            <Storyboard>
+                                                                <PointerUpThemeAnimation Storyboard.TargetName="Content" />
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                        <VisualState x:Name="OverflowPointerOver">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
+                                                                <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPointerOver}" />
+                                                            </VisualState.Setters>
+                                                            <Storyboard>
+                                                                <PointerUpThemeAnimation Storyboard.TargetName="Content" />
+                                                            </Storyboard>
+                                                        </VisualState>
+                                                        <VisualState x:Name="OverflowPressed">
+                                                            <VisualState.Setters>
+                                                                <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
+                                                                <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPressed}" />
+                                                            </VisualState.Setters>
+
+                                                            <Storyboard>
+                                                                <PointerDownThemeAnimation Storyboard.TargetName="Content" />
+                                                            </Storyboard>
+                                                        </VisualState>
+
+                                                    </VisualStateGroup>
+                                                </VisualStateManager.VisualStateGroups>
+
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="32" />
+                                                    <RowDefinition Height="*" />
+                                                </Grid.RowDefinitions>
+
+                                                <Border
+                                                    x:Name="Border"
+                                                    Grid.RowSpan="2"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}" />
+
+                                                <ContentPresenter
+                                                    x:Name="Content"
+                                                    Content="{TemplateBinding Icon}"
+                                                    Foreground="{TemplateBinding Foreground}" />
+
+                                                <TextBlock
+                                                    Grid.RowSpan="2"
+                                                    Margin="0 0 0 4"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Bottom"
+                                                    FontSize="11.333"
+                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                    Text="{TemplateBinding Label}" />
+
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </StackPanel.Resources>
 
                         <Grid MinHeight="50">
 
@@ -1107,46 +1281,28 @@
                                 Orientation="Horizontal">
 
                                 <AppBarButton
-                                    x:Uid="BtnToggleDev"
-                                    Width="50"
-                                    Height="50"
-                                    Click="{x:Bind ToggleDev}">
-                                    <Grid Margin="0 -4 0 0">
+                                    x:Name="BtnFit"
+                                    x:Uid="BtnFit"
+                                    Click="BtnFit_Click">
+                                    <Grid>
                                         <PathIcon
-                                            x:Name="ShowCodeIcon"
+                                            x:Name="ZoomGlyph"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
-                                            Data="F1 M 2.138672 10 L 4.140625 12.001953 L 3.779297 13.417969 L 0.361328 10 L 4.560547 5.810547 L 5.439453 6.689453 Z M 19.638672 10 L 15.439453 14.189453 L 14.560547 13.310547 L 17.861328 10 L 16.40625 8.544922 C 16.57552 8.375651 16.728516 8.217773 16.865234 8.071289 C 17.001953 7.924805 17.12565 7.770183 17.236328 7.607422 Z M 14.296875 3.75 C 14.570312 3.75 14.825846 3.798828 15.063477 3.896484 C 15.301106 3.994141 15.507813 4.130859 15.683594 4.306641 C 15.859375 4.482422 15.997721 4.6875 16.098633 4.921875 C 16.199543 5.15625 16.25 5.410156 16.25 5.683594 C 16.25 5.9375 16.201172 6.184896 16.103516 6.425781 C 16.005859 6.666668 15.865885 6.878256 15.683594 7.060547 L 8.681641 14.082031 L 5 15 L 5.917969 11.318359 L 12.919922 4.306641 C 13.102213 4.12435 13.313802 3.986004 13.554688 3.891602 C 13.795572 3.797201 14.042968 3.75 14.296875 3.75 Z M 14.794922 6.181641 C 14.93164 6.044922 14.999999 5.878906 15 5.683594 C 14.999999 5.481771 14.933268 5.317384 14.799805 5.19043 C 14.666341 5.063478 14.498697 5.000001 14.296875 5 C 14.205729 5.000001 14.117838 5.014649 14.033203 5.043945 C 13.948567 5.073243 13.873697 5.120443 13.808594 5.185547 L 7.050781 11.962891 L 6.71875 13.28125 L 8.037109 12.949219 Z "
-                                            Visibility="Collapsed" />
-
+                                            Data="F1 M 16.25 8.75 L 16.25 6.25 L 13.75 6.25 L 13.75 5 L 17.5 5 L 17.5 8.75 Z M 3.75 6.25 L 3.75 8.75 L 2.5 8.75 L 2.5 5 L 6.25 5 L 6.25 6.25 Z M 17.5 11.25 L 17.5 15 L 13.75 15 L 13.75 13.75 L 16.25 13.75 L 16.25 11.25 Z M 6.25 13.75 L 6.25 15 L 2.5 15 L 2.5 11.25 L 3.75 11.25 L 3.75 13.75 Z M 0 2.5 L 20 2.5 L 20 17.5 L 0 17.5 Z M 18.75 16.25 L 18.75 3.75 L 1.25 3.75 L 1.25 16.25 Z "
+                                            Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
+                                            Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.Settings.FitCharacter), Mode=OneTime}" />
                                         <PathIcon
-                                            x:Name="DevXamlIcon"
+                                            x:Name="ZoomOutGlyph"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
-                                            Data="F1 M 15.78125 10.195313 L 12.890625 15.195313 L 7.109375 15.195313 L 4.21875 10.195313 L 7.109375 5.195313 L 12.890625 5.195313 Z M 19.804688 10.195313 L 16.445313 16.015625 L 15 15.195313 L 17.890625 10.195313 L 15 5.195313 L 16.445313 4.375 Z M 0.195313 10.195313 L 3.554688 4.375 L 5 5.195313 L 2.109375 10.195313 L 5 15.195313 L 3.554688 16.015625 Z "
-                                            Visibility="Collapsed" />
-
-                                        <PathIcon
-                                            x:Name="DevCSharpIcon"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Data="F1 M 0 10.224609 C 0 9.306641 0.144857 8.452148 0.43457 7.661133 C 0.724284 6.870117 1.136068 6.184896 1.669922 5.605469 C 2.203776 5.026043 2.851563 4.571941 3.613281 4.243164 C 4.375 3.914389 5.227864 3.75 6.171875 3.75 C 6.653646 3.75 7.137044 3.78418 7.62207 3.852539 C 8.107096 3.920898 8.574219 4.052734 9.023438 4.248047 L 9.023438 5.761719 C 8.580729 5.514323 8.120117 5.330404 7.641602 5.209961 C 7.163086 5.08952 6.669922 5.029298 6.162109 5.029297 C 5.406901 5.029298 4.737956 5.161134 4.155273 5.424805 C 3.572591 5.688478 3.08431 6.051434 2.69043 6.513672 C 2.296549 6.975912 1.99707 7.517904 1.791992 8.139648 C 1.586914 8.761394 1.484375 9.430339 1.484375 10.146484 C 1.484375 10.823568 1.578776 11.455078 1.767578 12.041016 C 1.95638 12.626953 2.236328 13.138021 2.607422 13.574219 C 2.978515 14.010417 3.435872 14.353842 3.979492 14.604492 C 4.523112 14.855144 5.152995 14.980469 5.869141 14.980469 C 6.429036 14.980469 6.974283 14.91862 7.504883 14.794922 C 8.035481 14.671225 8.541666 14.462891 9.023438 14.169922 L 9.023438 15.546875 C 8.509114 15.820313 7.967122 16.005859 7.397461 16.103516 C 6.827799 16.201172 6.25651 16.25 5.683594 16.25 C 4.785156 16.25 3.984375 16.098633 3.28125 15.795898 C 2.578125 15.493164 1.982422 15.073242 1.494141 14.536133 C 1.005859 13.999023 0.634766 13.362631 0.380859 12.626953 C 0.126953 11.891276 0 11.090495 0 10.224609 Z M 17.470703 8.105469 L 16.923828 10.683594 L 19.335938 10.683594 L 19.101563 11.591797 L 16.748047 11.591797 L 15.986328 15 L 14.912109 15 L 15.644531 11.591797 L 13.505859 11.591797 L 12.783203 15 L 11.708984 15 L 12.431641 11.591797 L 10.175781 11.591797 L 10.351563 10.683594 L 12.626953 10.683594 L 13.154297 8.105469 L 10.771484 8.105469 L 10.947266 7.197266 L 13.330078 7.197266 L 14.052734 3.75 L 15.136719 3.75 L 14.414063 7.197266 L 16.572266 7.197266 L 17.314453 3.75 L 18.369141 3.75 L 17.646484 7.197266 L 19.902344 7.197266 L 19.707031 8.105469 Z M 16.40625 8.105469 L 14.238281 8.105469 L 13.671875 10.683594 L 15.849609 10.683594 Z "
-                                            Visibility="Collapsed" />
-
-                                        <PathIcon
-                                            x:Name="DevUnicodeIcon"
-                                            HorizontalAlignment="Center"
-                                            VerticalAlignment="Center"
-                                            Data="F1 M 18.320313 5.195313 C 18.320313 5.533854 18.203125 5.820313 17.96875 6.054688 C 17.734375 6.289063 17.447916 6.40625 17.109375 6.40625 C 16.770832 6.40625 16.484375 6.289063 16.25 6.054688 C 16.015625 5.820313 15.898438 5.533854 15.898438 5.195313 C 15.898438 4.856771 16.015625 4.563803 16.25 4.316406 C 16.484375 4.069011 16.770832 3.945313 17.109375 3.945313 C 17.447916 3.945313 17.740885 4.069011 17.988281 4.316406 C 18.235676 4.563803 18.346354 4.856771 18.320313 5.195313 Z M 17.96875 7.578125 L 16.289063 7.578125 C 16.184895 7.578125 16.132813 7.617188 16.132813 7.695313 L 16.132813 11.757813 L 16.171875 13.398438 L 16.132813 13.398438 L 15.117188 11.367188 L 12.460938 6.445313 L 11.484375 4.726563 C 11.458333 4.700521 11.40625 4.687501 11.328125 4.6875 L 8.867188 4.6875 C 8.763021 4.687501 8.710938 4.726563 8.710938 4.804688 L 8.75 4.804688 L 8.710938 4.84375 L 8.710938 11.71875 C 8.710938 12.265625 8.652344 12.721354 8.535156 13.085938 C 8.417969 13.450521 8.255208 13.736979 8.046875 13.945313 C 7.838541 14.153646 7.578125 14.303386 7.265625 14.394531 C 6.953125 14.485678 6.627604 14.53125 6.289063 14.53125 C 5.455729 14.53125 4.830729 14.283854 4.414063 13.789063 C 3.997396 13.294271 3.789063 12.617188 3.789063 11.757813 L 3.789063 4.84375 C 3.789063 4.739584 3.75 4.687501 3.671875 4.6875 L 1.796875 4.6875 C 1.71875 4.687501 1.679688 4.739584 1.679688 4.84375 L 1.679688 11.914063 C 1.679688 12.669271 1.783854 13.333334 1.992188 13.90625 C 2.200521 14.479167 2.50651 14.947917 2.910156 15.3125 C 3.313802 15.677084 3.789062 15.950521 4.335938 16.132813 C 4.960938 16.341146 5.585938 16.445313 6.210938 16.445313 C 6.835937 16.445313 7.441406 16.360678 8.027344 16.191406 C 8.613281 16.022135 9.108072 15.748698 9.511719 15.371094 C 9.915364 14.99349 10.240885 14.511719 10.488281 13.925781 C 10.735677 13.339844 10.859375 12.643229 10.859375 11.835938 L 10.859375 7.382813 L 11.210938 8.085938 L 12.03125 9.6875 L 15.46875 16.132813 C 15.520833 16.210938 15.598958 16.25 15.703125 16.25 L 17.96875 16.25 C 18.072916 16.25 18.125 16.197916 18.125 16.09375 L 18.125 7.734375 C 18.125 7.630209 18.072916 7.578125 17.96875 7.578125 Z "
-                                            Visibility="Collapsed" />
-
+                                            Data="F1 M 0 2.5 L 20 2.5 L 20 17.5 L 0 17.5 Z M 18.75 16.25 L 18.75 3.75 L 1.25 3.75 L 1.25 16.25 Z M 5.419922 10.830078 L 4.580078 11.669922 L 2.275391 9.375 L 4.580078 7.080078 L 5.419922 7.919922 L 4.589844 8.75 L 8.75 8.75 L 8.75 10 L 4.589844 10 Z M 14.580078 10.830078 L 15.410156 10 L 11.25 10 L 11.25 8.75 L 15.410156 8.75 L 14.580078 7.919922 L 15.419922 7.080078 L 17.724609 9.375 L 15.419922 11.669922 Z "
+                                            Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
+                                            Visibility="{x:Bind ViewModel.Settings.FitCharacter, Mode=OneTime}" />
                                     </Grid>
                                 </AppBarButton>
 
-                                <AppBarButton
-                                    x:Uid="BtnSaveGlyph"
-                                    Width="50"
-                                    Height="50">
+                                <AppBarButton x:Uid="BtnSaveGlyph">
                                     <AppBarButton.Icon>
                                         <SymbolIcon Symbol="Save" />
                                     </AppBarButton.Icon>
@@ -1156,21 +1312,30 @@
                                             <MenuFlyoutItem
                                                 x:Uid="ColoredGlyphLabel"
                                                 Command="{Binding CommandSavePng}"
-                                                CommandParameter="{x:Bind ViewModel.GlyphColor}"
                                                 Style="{StaticResource Mfi}"
-                                                Visibility="{x:Bind ViewModel.SelectedCharAnalysis.HasColorGlyphs, Mode=OneWay}" />
+                                                Visibility="{x:Bind ViewModel.SelectedCharAnalysis.HasColorGlyphs, Mode=OneWay}">
+                                                <MenuFlyoutItem.CommandParameter>
+                                                    <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                </MenuFlyoutItem.CommandParameter>
+                                            </MenuFlyoutItem>
                                             <MenuFlyoutItem
                                                 x:Uid="BlackFill"
                                                 Command="{Binding CommandSavePng}"
-                                                CommandParameter="{x:Bind ViewModel.BlackColor}"
                                                 Style="{StaticResource Mfi}"
-                                                Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}" />
+                                                Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
+                                                <MenuFlyoutItem.CommandParameter>
+                                                    <models:ExportParameters Style="{x:Bind ViewModel.BlackColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                </MenuFlyoutItem.CommandParameter>
+                                            </MenuFlyoutItem>
                                             <MenuFlyoutItem
                                                 x:Uid="WhiteFill"
                                                 Command="{Binding CommandSavePng}"
-                                                CommandParameter="{x:Bind ViewModel.WhiteColor}"
                                                 Style="{StaticResource Mfi}"
-                                                Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}" />
+                                                Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
+                                                <MenuFlyoutItem.CommandParameter>
+                                                    <models:ExportParameters Style="{x:Bind ViewModel.WhiteColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                </MenuFlyoutItem.CommandParameter>
+                                            </MenuFlyoutItem>
 
                                             <MenuFlyoutItem
                                                 x:Uid="ExportSVGLabel"
@@ -1179,65 +1344,84 @@
                                             <MenuFlyoutItem
                                                 x:Uid="ExportSVGGlyphLabel"
                                                 Command="{Binding CommandSaveSvg}"
-                                                CommandParameter="{x:Bind ViewModel.GlyphColor}"
                                                 Style="{StaticResource Mfi}"
-                                                Visibility="{x:Bind ViewModel.IsSvgChar, Mode=OneWay}" />
+                                                Visibility="{x:Bind ViewModel.IsSvgChar, Mode=OneWay}">
+                                                <MenuFlyoutItem.CommandParameter>
+                                                    <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                </MenuFlyoutItem.CommandParameter>
+                                            </MenuFlyoutItem>
                                             <MenuFlyoutItem
                                                 x:Uid="ColoredGlyphLabel"
                                                 Command="{Binding CommandSaveSvg}"
-                                                CommandParameter="{x:Bind ViewModel.GlyphColor}"
                                                 Style="{StaticResource Mfi}"
-                                                Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedCharAnalysis.HasColorGlyphs, ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}" />
+                                                Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedCharAnalysis.HasColorGlyphs, ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                                                <MenuFlyoutItem.CommandParameter>
+                                                    <models:ExportParameters Style="{x:Bind ViewModel.GlyphColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                </MenuFlyoutItem.CommandParameter>
+                                            </MenuFlyoutItem>
                                             <MenuFlyoutItem
                                                 x:Uid="BlackFill"
                                                 Command="{Binding CommandSaveSvg}"
-                                                CommandParameter="{x:Bind ViewModel.BlackColor}"
                                                 Style="{StaticResource Mfi}"
-                                                Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}" />
+                                                Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                                                <MenuFlyoutItem.CommandParameter>
+                                                    <models:ExportParameters Style="{x:Bind ViewModel.BlackColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                </MenuFlyoutItem.CommandParameter>
+                                            </MenuFlyoutItem>
                                             <MenuFlyoutItem
                                                 x:Uid="WhiteFill"
                                                 Command="{Binding CommandSaveSvg}"
-                                                CommandParameter="{x:Bind ViewModel.WhiteColor}"
                                                 Style="{StaticResource Mfi}"
-                                                Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}" />
+                                                Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                                                <MenuFlyoutItem.CommandParameter>
+                                                    <models:ExportParameters Style="{x:Bind ViewModel.WhiteColor}" Typography="{x:Bind (core:TypographyFeatureInfo)PreviewTypographySelector.SelectedItem, Mode=OneWay}" />
+                                                </MenuFlyoutItem.CommandParameter>
+                                            </MenuFlyoutItem>
                                         </MenuFlyout>
                                     </Button.Flyout>
                                 </AppBarButton>
 
-                                <AppBarButton
-                                    x:Uid="BtnCopyGlyph"
-                                    Width="50"
-                                    Height="50"
-                                    Click="{x:Bind TryCopyInternal}">
+                                <AppBarButton x:Uid="BtnCopyGlyph" Click="{x:Bind TryCopyInternal}">
                                     <FontIcon FontSize="18" Glyph="&#xE16F;" />
                                 </AppBarButton>
                             </StackPanel>
 
                             <AppBarButton
-                                x:Name="BtnFit"
-                                x:Uid="BtnFit"
-                                Width="50"
-                                Height="50"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Bottom"
-                                Click="BtnFit_Click">
-                                <Grid>
+                                x:Name="BtnToggleDev"
+                                x:Uid="BtnToggleDev"
+                                Click="{x:Bind ToggleDev}">
+                                <Grid Margin="0 -4 0 0">
                                     <PathIcon
-                                        x:Name="ZoomGlyph"
+                                        x:Name="ShowCodeIcon"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Data="F1 M 16.25 8.75 L 16.25 6.25 L 13.75 6.25 L 13.75 5 L 17.5 5 L 17.5 8.75 Z M 3.75 6.25 L 3.75 8.75 L 2.5 8.75 L 2.5 5 L 6.25 5 L 6.25 6.25 Z M 17.5 11.25 L 17.5 15 L 13.75 15 L 13.75 13.75 L 16.25 13.75 L 16.25 11.25 Z M 6.25 13.75 L 6.25 15 L 2.5 15 L 2.5 11.25 L 3.75 11.25 L 3.75 13.75 Z M 0 2.5 L 20 2.5 L 20 17.5 L 0 17.5 Z M 18.75 16.25 L 18.75 3.75 L 1.25 3.75 L 1.25 16.25 Z "
-                                        Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
-                                        Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.Settings.FitCharacter), Mode=OneTime}" />
+                                        Data="F1 M 2.138672 10 L 4.140625 12.001953 L 3.779297 13.417969 L 0.361328 10 L 4.560547 5.810547 L 5.439453 6.689453 Z M 19.638672 10 L 15.439453 14.189453 L 14.560547 13.310547 L 17.861328 10 L 16.40625 8.544922 C 16.57552 8.375651 16.728516 8.217773 16.865234 8.071289 C 17.001953 7.924805 17.12565 7.770183 17.236328 7.607422 Z M 14.296875 3.75 C 14.570312 3.75 14.825846 3.798828 15.063477 3.896484 C 15.301106 3.994141 15.507813 4.130859 15.683594 4.306641 C 15.859375 4.482422 15.997721 4.6875 16.098633 4.921875 C 16.199543 5.15625 16.25 5.410156 16.25 5.683594 C 16.25 5.9375 16.201172 6.184896 16.103516 6.425781 C 16.005859 6.666668 15.865885 6.878256 15.683594 7.060547 L 8.681641 14.082031 L 5 15 L 5.917969 11.318359 L 12.919922 4.306641 C 13.102213 4.12435 13.313802 3.986004 13.554688 3.891602 C 13.795572 3.797201 14.042968 3.75 14.296875 3.75 Z M 14.794922 6.181641 C 14.93164 6.044922 14.999999 5.878906 15 5.683594 C 14.999999 5.481771 14.933268 5.317384 14.799805 5.19043 C 14.666341 5.063478 14.498697 5.000001 14.296875 5 C 14.205729 5.000001 14.117838 5.014649 14.033203 5.043945 C 13.948567 5.073243 13.873697 5.120443 13.808594 5.185547 L 7.050781 11.962891 L 6.71875 13.28125 L 8.037109 12.949219 Z "
+                                        Visibility="Collapsed" />
+
                                     <PathIcon
-                                        x:Name="ZoomOutGlyph"
+                                        x:Name="DevXamlIcon"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Data="F1 M 0 2.5 L 20 2.5 L 20 17.5 L 0 17.5 Z M 18.75 16.25 L 18.75 3.75 L 1.25 3.75 L 1.25 16.25 Z M 5.419922 10.830078 L 4.580078 11.669922 L 2.275391 9.375 L 4.580078 7.080078 L 5.419922 7.919922 L 4.589844 8.75 L 8.75 8.75 L 8.75 10 L 4.589844 10 Z M 14.580078 10.830078 L 15.410156 10 L 11.25 10 L 11.25 8.75 L 15.410156 8.75 L 14.580078 7.919922 L 15.419922 7.080078 L 17.724609 9.375 L 15.419922 11.669922 Z "
-                                        Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
-                                        Visibility="{x:Bind ViewModel.Settings.FitCharacter, Mode=OneTime}" />
+                                        Data="F1 M 15.78125 10.195313 L 12.890625 15.195313 L 7.109375 15.195313 L 4.21875 10.195313 L 7.109375 5.195313 L 12.890625 5.195313 Z M 19.804688 10.195313 L 16.445313 16.015625 L 15 15.195313 L 17.890625 10.195313 L 15 5.195313 L 16.445313 4.375 Z M 0.195313 10.195313 L 3.554688 4.375 L 5 5.195313 L 2.109375 10.195313 L 5 15.195313 L 3.554688 16.015625 Z "
+                                        Visibility="Collapsed" />
+
+                                    <PathIcon
+                                        x:Name="DevCSharpIcon"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="F1 M 0 10.224609 C 0 9.306641 0.144857 8.452148 0.43457 7.661133 C 0.724284 6.870117 1.136068 6.184896 1.669922 5.605469 C 2.203776 5.026043 2.851563 4.571941 3.613281 4.243164 C 4.375 3.914389 5.227864 3.75 6.171875 3.75 C 6.653646 3.75 7.137044 3.78418 7.62207 3.852539 C 8.107096 3.920898 8.574219 4.052734 9.023438 4.248047 L 9.023438 5.761719 C 8.580729 5.514323 8.120117 5.330404 7.641602 5.209961 C 7.163086 5.08952 6.669922 5.029298 6.162109 5.029297 C 5.406901 5.029298 4.737956 5.161134 4.155273 5.424805 C 3.572591 5.688478 3.08431 6.051434 2.69043 6.513672 C 2.296549 6.975912 1.99707 7.517904 1.791992 8.139648 C 1.586914 8.761394 1.484375 9.430339 1.484375 10.146484 C 1.484375 10.823568 1.578776 11.455078 1.767578 12.041016 C 1.95638 12.626953 2.236328 13.138021 2.607422 13.574219 C 2.978515 14.010417 3.435872 14.353842 3.979492 14.604492 C 4.523112 14.855144 5.152995 14.980469 5.869141 14.980469 C 6.429036 14.980469 6.974283 14.91862 7.504883 14.794922 C 8.035481 14.671225 8.541666 14.462891 9.023438 14.169922 L 9.023438 15.546875 C 8.509114 15.820313 7.967122 16.005859 7.397461 16.103516 C 6.827799 16.201172 6.25651 16.25 5.683594 16.25 C 4.785156 16.25 3.984375 16.098633 3.28125 15.795898 C 2.578125 15.493164 1.982422 15.073242 1.494141 14.536133 C 1.005859 13.999023 0.634766 13.362631 0.380859 12.626953 C 0.126953 11.891276 0 11.090495 0 10.224609 Z M 17.470703 8.105469 L 16.923828 10.683594 L 19.335938 10.683594 L 19.101563 11.591797 L 16.748047 11.591797 L 15.986328 15 L 14.912109 15 L 15.644531 11.591797 L 13.505859 11.591797 L 12.783203 15 L 11.708984 15 L 12.431641 11.591797 L 10.175781 11.591797 L 10.351563 10.683594 L 12.626953 10.683594 L 13.154297 8.105469 L 10.771484 8.105469 L 10.947266 7.197266 L 13.330078 7.197266 L 14.052734 3.75 L 15.136719 3.75 L 14.414063 7.197266 L 16.572266 7.197266 L 17.314453 3.75 L 18.369141 3.75 L 17.646484 7.197266 L 19.902344 7.197266 L 19.707031 8.105469 Z M 16.40625 8.105469 L 14.238281 8.105469 L 13.671875 10.683594 L 15.849609 10.683594 Z "
+                                        Visibility="Collapsed" />
+
+                                    <PathIcon
+                                        x:Name="DevUnicodeIcon"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="F1 M 18.320313 5.195313 C 18.320313 5.533854 18.203125 5.820313 17.96875 6.054688 C 17.734375 6.289063 17.447916 6.40625 17.109375 6.40625 C 16.770832 6.40625 16.484375 6.289063 16.25 6.054688 C 16.015625 5.820313 15.898438 5.533854 15.898438 5.195313 C 15.898438 4.856771 16.015625 4.563803 16.25 4.316406 C 16.484375 4.069011 16.770832 3.945313 17.109375 3.945313 C 17.447916 3.945313 17.740885 4.069011 17.988281 4.316406 C 18.235676 4.563803 18.346354 4.856771 18.320313 5.195313 Z M 17.96875 7.578125 L 16.289063 7.578125 C 16.184895 7.578125 16.132813 7.617188 16.132813 7.695313 L 16.132813 11.757813 L 16.171875 13.398438 L 16.132813 13.398438 L 15.117188 11.367188 L 12.460938 6.445313 L 11.484375 4.726563 C 11.458333 4.700521 11.40625 4.687501 11.328125 4.6875 L 8.867188 4.6875 C 8.763021 4.687501 8.710938 4.726563 8.710938 4.804688 L 8.75 4.804688 L 8.710938 4.84375 L 8.710938 11.71875 C 8.710938 12.265625 8.652344 12.721354 8.535156 13.085938 C 8.417969 13.450521 8.255208 13.736979 8.046875 13.945313 C 7.838541 14.153646 7.578125 14.303386 7.265625 14.394531 C 6.953125 14.485678 6.627604 14.53125 6.289063 14.53125 C 5.455729 14.53125 4.830729 14.283854 4.414063 13.789063 C 3.997396 13.294271 3.789063 12.617188 3.789063 11.757813 L 3.789063 4.84375 C 3.789063 4.739584 3.75 4.687501 3.671875 4.6875 L 1.796875 4.6875 C 1.71875 4.687501 1.679688 4.739584 1.679688 4.84375 L 1.679688 11.914063 C 1.679688 12.669271 1.783854 13.333334 1.992188 13.90625 C 2.200521 14.479167 2.50651 14.947917 2.910156 15.3125 C 3.313802 15.677084 3.789062 15.950521 4.335938 16.132813 C 4.960938 16.341146 5.585938 16.445313 6.210938 16.445313 C 6.835937 16.445313 7.441406 16.360678 8.027344 16.191406 C 8.613281 16.022135 9.108072 15.748698 9.511719 15.371094 C 9.915364 14.99349 10.240885 14.511719 10.488281 13.925781 C 10.735677 13.339844 10.859375 12.643229 10.859375 11.835938 L 10.859375 7.382813 L 11.210938 8.085938 L 12.03125 9.6875 L 15.46875 16.132813 C 15.520833 16.210938 15.598958 16.25 15.703125 16.25 L 17.96875 16.25 C 18.072916 16.25 18.125 16.197916 18.125 16.09375 L 18.125 7.734375 C 18.125 7.630209 18.072916 7.578125 17.96875 7.578125 Z "
+                                        Visibility="Collapsed" />
+
                                 </Grid>
                             </AppBarButton>
+
                         </Grid>
 
                     </StackPanel>
@@ -1247,24 +1431,39 @@
                         x:Load="False"
                         Grid.Row="0"
                         Grid.RowSpan="3"
-                        Margin="12 12 12 60"
+                        Margin="12 12 12 12"
                         Padding="12"
                         VerticalAlignment="Bottom"
                         Background="{ThemeResource SystemControlBackgroundAccentBrush}"
                         IsHitTestVisible="False"
                         Opacity="0">
-                        <StackPanel Orientation="Horizontal">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <FontIcon
                                 FontSize="21"
                                 Foreground="White"
                                 Glyph="&#xEC61;" />
-                            <TextBlock
-                                x:Name="TxtCopiedMessage"
-                                x:Uid="TxtCopiedMessage"
+
+                            <StackPanel
+                                Grid.Column="1"
                                 Margin="8,0,0,0"
-                                Foreground="White"
-                                Text="#TxtCopiedMessage" />
-                        </StackPanel>
+                                VerticalAlignment="Center">
+                                <TextBlock
+                                    x:Name="TxtCopiedMessage"
+                                    x:Uid="TxtCopiedMessage"
+                                    Foreground="White"
+                                    Text="#TxtCopiedMessage" />
+                                <TextBlock
+                                    x:Name="TxtCopiedVariantMessage"
+                                    x:Uid="TxtCopiedVariantMessage"
+                                    FontSize="12"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+
+                        </Grid>
                     </Border>
                 </Grid>
 
@@ -1277,6 +1476,7 @@
 
                     <Rectangle
                         Height="1"
+                        Margin="0 6 0 0"
                         HorizontalAlignment="Stretch"
                         Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                         Opacity="0.15" />
@@ -1577,23 +1777,27 @@
             <VisualStateGroup x:Name="DevStates">
                 <VisualState x:Name="DevHiddenState">
                     <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="{x:Bind helpers:Localization.Get('ToggleDevDefaultLabel')}" />
                         <Setter Target="ShowCodeIcon.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DevXamlState">
                     <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="XAML" />
                         <Setter Target="DevXamlIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DevCSharpState">
                     <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="C#" />
                         <Setter Target="DevCSharpIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DevUnicodeState">
                     <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="Unicode" />
                         <Setter Target="DevUnicodeIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>

@@ -1,8 +1,6 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Services;
 using CharacterMapCX;
-using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Views;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Svg;
@@ -23,8 +21,9 @@ using Windows.UI.Xaml.Media;
 using CharacterMap.Models;
 using System.IO;
 using System.IO.Compression;
-using GalaSoft.MvvmLight.Messaging;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
 
 namespace CharacterMap.Core
 {
@@ -242,8 +241,8 @@ namespace CharacterMap.Core
             }
             catch (Exception ex)
             {
-                await SimpleIoc.Default.GetInstance<IDialogService>()
-                    .ShowMessageBox(ex.Message, Localization.Get("SaveImageError"));
+                await Ioc.Default.GetService<IDialogService>()
+                    .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
             }
 
             return new ExportResult(false, null);
@@ -327,8 +326,8 @@ namespace CharacterMap.Core
             }
             catch (Exception ex)
             {
-                await SimpleIoc.Default.GetInstance<IDialogService>()
-                    .ShowMessageBox(ex.Message, Localization.Get("SaveImageError"));
+                await Ioc.Default.GetService<IDialogService>()
+                    .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
             }
 
             return new ExportResult(false, null);
@@ -345,7 +344,7 @@ namespace CharacterMap.Core
             Character selectedChar,
             string ext)
         {
-            var chr = GlyphService.GetCharacterDescription(selectedChar.UnicodeIndex, selectedVariant) ?? selectedChar.UnicodeString;
+            var chr = selectedVariant.GetDescription(selectedChar) ?? selectedChar.UnicodeString;
             return $"{selectedFont.Name} {selectedVariant.PreferredName} - {chr}.{ext}";
         }
 
@@ -439,7 +438,7 @@ namespace CharacterMap.Core
                     try
                     {
                         bool success = await TryWriteToFileAsync(variant, file);
-                        Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(success, file)));
+                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(success, file)));
                         return;
                     }
                     catch
@@ -447,8 +446,8 @@ namespace CharacterMap.Core
                     }
                 }
             }
-            
-            Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(null, false)));
+
+            WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(null, false)));
         }
 
         internal static Task ExportCollectionAsZipAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
@@ -481,7 +480,7 @@ namespace CharacterMap.Core
                     }
                 });
 
-                Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(true, file)));
+                WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(true, file)));
             }
         }
 
@@ -517,7 +516,7 @@ namespace CharacterMap.Core
                     }
                 });
 
-                Messenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(folder, true)));
+                WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(folder, true)));
             }
         }
 

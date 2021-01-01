@@ -2,9 +2,9 @@
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
+using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -72,7 +72,7 @@ namespace CharacterMap.Controls
         {
             var d = args.GetDeferral();
 
-            var collections = ServiceLocator.Current.GetInstance<UserCollectionsService>();
+            var collections = Ioc.Default.GetService<UserCollectionsService>();
 
             if (IsRenameMode)
             {
@@ -84,7 +84,7 @@ namespace CharacterMap.Controls
                 d.Complete();
 
                 await Task.Yield();
-                Messenger.Default.Send(new CollectionsUpdatedMessage());
+                WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
             }
             else
             {
@@ -94,7 +94,7 @@ namespace CharacterMap.Controls
 
                 await Task.Yield();
                 if (result.Success)
-                    Messenger.Default.Send(new AppNotificationMessage(true, result));
+                    WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
 
             }
         }

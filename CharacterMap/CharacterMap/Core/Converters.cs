@@ -1,8 +1,6 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Ioc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core
@@ -27,6 +26,7 @@ namespace CharacterMap.Core
         public static bool False(bool b) => !b;
         public static bool FalseFalse(bool b, bool c) => !b && !c;
         public static bool True(bool b) => b;
+        public static bool TrueTrue(bool b, bool c) => b && c;
 
         public static Visibility InvertVis(Visibility b) => b == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
         public static Visibility FalseToVis(bool b) => !b ? Visibility.Visible : Visibility.Collapsed;
@@ -39,8 +39,10 @@ namespace CharacterMap.Core
 
         public static bool IsNull(object obj) => obj == null;
         public static bool IsNotNull(object obj) => obj != null;
+        public static bool IsNotNullAndFalse(object obj, bool b) => obj != null && !b;
         public static bool IsNullOrEmpty(string obj) => string.IsNullOrEmpty(obj);
         public static bool IsNotNullOrEmpty(string obj) => !string.IsNullOrEmpty(obj);
+        public static bool IsNotNullOrWhiteSpace(string obj) => !string.IsNullOrWhiteSpace(obj);
         public static Visibility IsNullOrEmptyToVis(string obj) => string.IsNullOrEmpty(obj) ? Visibility.Visible : Visibility.Collapsed;
 
 
@@ -92,7 +94,7 @@ namespace CharacterMap.Core
             if (_settings == null)
             {
                 _settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
-                _userCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
+                _userCollections = Ioc.Default.GetService<UserCollectionsService>();
             }
 
             if (_settings.UseFontForPreview

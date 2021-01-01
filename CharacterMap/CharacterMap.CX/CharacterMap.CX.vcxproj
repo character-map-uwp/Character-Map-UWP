@@ -269,6 +269,7 @@
   <ItemGroup>
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
     <ClInclude Include="CblcTableReader.h" />
+    <ClInclude Include="CmapTableReader.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
     <ClInclude Include="ColrTableReader.h" />
     <ClInclude Include="DirectText.h" />
@@ -287,10 +288,13 @@
     <ClInclude Include="FontAnalysis.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GridViewHelper.h" />
+    <ClInclude Include="GsubTableReader.h" />
     <ClInclude Include="ITypographyInfo.h" />
+    <ClInclude Include="MetaTableReader.h" />
     <ClInclude Include="PathData.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NativeInterop.h" />
+    <ClInclude Include="PostTableReader.h" />
     <ClInclude Include="SbixTableReader.h" />
     <ClInclude Include="SVGGeometrySink.h" />
     <ClInclude Include="SvgTableReader.h" />

@@ -17,7 +17,6 @@ using CharacterMap.ViewModels;
 using CharacterMap.Helpers;
 using Windows.Storage.Pickers;
 using CharacterMap.Services;
-using GalaSoft.MvvmLight.Messaging;
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Xaml.Markup;
@@ -28,6 +27,8 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Core.AnimationMetrics;
 using CharacterMapCX;
 using System.Windows.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace CharacterMap.Views
 {
@@ -45,7 +46,9 @@ namespace CharacterMap.Views
 
         private UISettings _uiSettings { get; }
 
-        private ICommand FilterCommand { get; } 
+        private ICommand FilterCommand { get; }
+
+        private WeakReferenceMessenger Messenger => WeakReferenceMessenger.Default;
 
         public MainPage()
         {
@@ -61,9 +64,9 @@ namespace CharacterMap.Views
             Unloaded += MainPage_Unloaded;
 
             MainDispatcher = Dispatcher;
-            Messenger.Default.Register<CollectionsUpdatedMessage>(this, OnCollectionsUpdated);
-            Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
-            Messenger.Default.Register<PrintRequestedMessage>(this, m =>
+            Messenger.Register<CollectionsUpdatedMessage>(this, (o, m) => OnCollectionsUpdated(m));
+            Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
+            Messenger.Register<PrintRequestedMessage>(this, (o, m) =>
             {
                 if (Dispatcher.HasThreadAccess)
                     PrintView.Show(this);
@@ -76,11 +79,11 @@ namespace CharacterMap.Views
             {
                 _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    Messenger.Default.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
+                    Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
                 });
             };
 
-            FilterCommand = new BasicCommand(OnFilterClick);
+            FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
         }
 
 
@@ -141,8 +144,8 @@ namespace CharacterMap.Views
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Messenger.Default.Register<ImportMessage>(this, OnFontImportRequest);
-            Messenger.Default.Register<AppNotificationMessage>(this, OnNotificationMessage);
+            Messenger.Register<ImportMessage>(this, (o, m) => OnFontImportRequest(m));
+            Messenger.Register<AppNotificationMessage>(this, (o, m) => OnNotificationMessage(m));
 
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
             ViewModel.FontListCreated += ViewModel_FontListCreated;
@@ -152,8 +155,8 @@ namespace CharacterMap.Views
 
         private void MainPage_Unloaded(object sender, RoutedEventArgs e)
         {
-            Messenger.Default.Unregister<ImportMessage>(this);
-            Messenger.Default.Unregister<AppNotificationMessage>(this);
+            Messenger.Unregister<ImportMessage>(this);
+            Messenger.Unregister<AppNotificationMessage>(this);
 
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
         }
@@ -195,6 +198,7 @@ namespace CharacterMap.Views
                         },
                         new List<UIElement>
                         {
+                            FontListSearchBox,
                             FontsSemanticZoom,
                             FontMap.CharGridHeader,
                             FontMap.SplitterContainer,
@@ -257,7 +261,7 @@ namespace CharacterMap.Views
                             _ = FontMapView.CreateNewViewForFontAsync(fnt);
                         break;
                     case VirtualKey.P:
-                        Messenger.Default.Send(new PrintRequestedMessage());
+                        Messenger.Send(new PrintRequestedMessage());
                         break;
                     case VirtualKey.Delete:
                         if (ViewModel.SelectedFont is InstalledFont font && font.HasImportedFiles)
@@ -429,7 +433,7 @@ namespace CharacterMap.Views
             await ViewModel.FontCollections.DeleteCollectionAsync(ViewModel.SelectedCollection);
             ViewModel.RefreshFontList();
 
-            Messenger.Default.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
+            Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
         }
 
         private void OnFontPreviewUpdated()
@@ -618,8 +622,10 @@ namespace CharacterMap.Views
             ani.Duration = TimeSpan.FromMilliseconds(duration);
 
             var op = Composition.CreateFade(v.Compositor, 0, null, duration);
-
             sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
+
+            // Animate in Loading items
+            Composition.PlayEntrance(LoadingStack.Children.ToList(), 140, 140, 0, 1000, 160);
         }
 
     }

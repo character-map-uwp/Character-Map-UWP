@@ -1,11 +1,8 @@
 using System;
 using System.Threading.Tasks;
-
-using CharacterMap.Helpers;
 using CharacterMap.Services;
-
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Windows.ApplicationModel.Activation;
-using CommonServiceLocator;
 
 namespace CharacterMap.Activation
 {
@@ -13,7 +10,7 @@ namespace CharacterMap.Activation
     {
         private readonly string _navElement;
     
-        private NavigationServiceEx NavigationService => ServiceLocator.Current.GetInstance<NavigationServiceEx>();
+        private NavigationServiceEx NavigationService => Ioc.Default.GetService<NavigationServiceEx>();
 
         public DefaultLaunchActivationHandler(Type navElement)
         {

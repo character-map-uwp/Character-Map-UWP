@@ -5,7 +5,6 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Provider;
 using CharacterMapCX;
-using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Graphics.Canvas.Text;
 using SQLite;
 using System;
@@ -36,14 +35,11 @@ namespace CharacterMap.Services
     }
 
     public class MDL2Glyph : GlyphDescription { }
-    public class MaterialDesignIconsLegacyGlyph : GlyphDescription { }
-    public class MaterialDesignIconsGlyph : GlyphDescription { }
     public class WebdingsGlyph : GlyphDescription { }
     public class WingdingsGlyph : GlyphDescription { }
     public class Wingdings2Glyph : GlyphDescription { }
     public class Wingdings3Glyph : GlyphDescription { }
     public class FontAwesomeGlyph : GlyphDescription { }
-    public class IcoFontGlyph : GlyphDescription { }
 
     public interface IGlyphDataProvider
     {

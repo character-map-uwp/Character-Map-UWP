@@ -86,6 +86,18 @@
     <ClInclude Include="DWriteFallbackFont.h">
       <Filter>DWrite</Filter>
     </ClInclude>
+    <ClInclude Include="PostTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="GsubTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="CmapTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
+    <ClInclude Include="MetaTableReader.h">
+      <Filter>Tables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml" />

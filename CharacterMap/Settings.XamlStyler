@@ -37,6 +37,6 @@
     "NoNewLineMarkupExtensions": "x:Bind, Binding",
     "ThicknessSeparator": 0,
     "ThicknessAttributes": "Margin, Padding, BorderThickness, ThumbnailClipMargin",
-    "FormatOnSave": false,
+    "FormatOnSave": true,
     "CommentPadding": 2,
 }

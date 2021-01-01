@@ -5,6 +5,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:m="using:CharacterMap.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:CharacterMap.Views"
@@ -200,6 +201,7 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
@@ -230,7 +232,7 @@
                                 <AppBarButton
                                     x:Uid="CollectionExportButton"
                                     Height="48"
-                                    IsEnabled="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}">
+                                    IsEnabled="{x:Bind core:Converters.TrueTrue(ViewModel.HasFonts, ViewModel.IsCollectionExportEnabled), Mode=OneWay}">
                                     <AppBarButton.Flyout>
                                         <MenuFlyout Placement="Bottom">
                                             <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
@@ -292,22 +294,51 @@
                                     ToolTipService.Placement="Bottom" />
 
                             </Grid>
-
-
-
                         </Grid>
 
-                        <TextBlock
-                            x:Name="ImportFontHelpBlock"
-                            x:Uid="ImportFontHelpBlock"
-                            Grid.Row="1"
-                            Margin="12"
-                            FontSize="13"
-                            Opacity="0.7"
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Visibility="Collapsed" />
+                        <AutoSuggestBox
+                            x:Name="FontListSearchBox"
+                            x:Uid="FontListSearchBox"
+                            Grid.Row="2"
+                            Margin="0 6 0 0"
+                            Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
+                            Text="{Binding FontSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                            TextBoxStyle="{StaticResource FontAutoSuggestBoxTextBoxStyle}" />
 
-                        <SemanticZoom x:Name="FontsSemanticZoom" Grid.Row="2">
+                        <Grid
+                            x:Name="FontHelpBlock"
+                            x:Load="False"
+                            Grid.Row="3"
+                            core:Properties.ClipToBounds="True"
+                            Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
+                            Opacity="0.7"
+                            Visibility="Collapsed">
+                            <TextBlock
+                                x:Name="ImportFontHelpBlock"
+                                x:Uid="ImportFontHelpBlock"
+                                Margin="12"
+                                FontSize="13"
+                                Loading="{x:Bind helpers:Composition.SetStandardEntrance}"
+                                Style="{StaticResource CaptionTextBlockStyle}" />
+                            <TextBlock
+                                x:Name="SearchFontHelpBlock"
+                                x:Uid="SearchFontHelpBlock"
+                                Margin="12"
+                                FontSize="13"
+                                Loading="{x:Bind helpers:Composition.SetStandardEntrance}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Visibility="Collapsed" />
+                            <TextBlock
+                                x:Name="CollectionFontHelpBlock"
+                                x:Uid="CollectionFontHelpBlock"
+                                Margin="12"
+                                FontSize="13"
+                                Loading="{x:Bind helpers:Composition.SetStandardEntrance}"
+                                Style="{StaticResource CaptionTextBlockStyle}"
+                                Visibility="Collapsed" />
+                        </Grid>
+
+                        <SemanticZoom x:Name="FontsSemanticZoom" Grid.Row="3">
                             <SemanticZoom.ZoomedInView>
                                 <ListView
                                     x:Name="LstFontFamily"
@@ -466,7 +497,7 @@
                             Margin="-6 0 0 0"
                             Click="BtnSettings_OnClick">
                             <ToolTipService.ToolTip>
-                                <TextBlock x:Uid="SettingsHeader" Text="Settings"/>
+                                <TextBlock x:Uid="SettingsHeader" Text="Settings" />
                             </ToolTipService.ToolTip>
                             <FontIcon
                                 HorizontalAlignment="Center"
@@ -545,6 +576,7 @@
             Loading="LoadingRoot_Loading">
 
             <StackPanel
+                x:Name="LoadingStack"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Spacing="24">
@@ -621,10 +653,30 @@
                         <StateTrigger IsActive="{x:Bind core:Converters.False(ViewModel.HasFonts), Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="ImportFontHelpBlock.Visibility" Value="Visible" />
+                        <Setter Target="FontHelpBlock.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="HasFontsState" />
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="FallbackTextStates">
+                <VisualState x:Name="SearchFallbackState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind core:Converters.True(ViewModel.IsSearchResults), Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ImportFontHelpBlock.Visibility" Value="Collapsed" />
+                        <Setter Target="SearchFontHelpBlock.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="CollectionFallbackState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind core:Converters.IsNotNullAndFalse(ViewModel.SelectedCollection, ViewModel.IsSearchResults), Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="ImportFontHelpBlock.Visibility" Value="Collapsed" />
+                        <Setter Target="CollectionFontHelpBlock.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

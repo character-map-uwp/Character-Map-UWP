@@ -1,10 +1,10 @@
 ﻿using CharacterMap.Models;
 using CharacterMap.ViewModels;
 using CharacterMapCX;
-using GalaSoft.MvvmLight.Ioc;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,7 +29,7 @@ namespace CharacterMap.Core
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
 
-        public static NativeInterop GetInterop() => SimpleIoc.Default.GetInstance<NativeInterop>();
+        public static NativeInterop GetInterop() => Ioc.Default.GetService<NativeInterop>();
 
         public static void RunOnDispatcher(this DependencyObject d, Action a)
         {
@@ -182,48 +182,28 @@ namespace CharacterMap.Core
 
         public static string GetWeightName(FontWeight weight)
         {
-            switch (weight.Weight)
+            return weight.Weight switch
             {
-                case 100:
-                    return nameof(FontWeights.Thin);
-                case 150:
-                    return "SemiThin";
-                case 200:
-                    return nameof(FontWeights.ExtraLight);
-                case 250:
-                    return "SemiExtraLight";
-                case 300:
-                    return nameof(FontWeights.Light);
-                case 350:
-                    return nameof(FontWeights.SemiLight);
-                case 400:
-                    return nameof(FontWeights.Normal);
-                case 450:
-                    return "SemiMedium";
-                case 500:
-                    return nameof(FontWeights.Medium);
-                case 550:
-                    return "ExtraMedium";
-                case 600:
-                    return nameof(FontWeights.SemiBold);
-                case 650:
-                    return "ExtraSemiBold";
-                case 700:
-                    return nameof(FontWeights.Bold);
-                case 750:
-                    return "SemiExtraBold";
-                case 800:
-                    return nameof(FontWeights.ExtraBold);
-                case 850:
-                    return "SemiBlack";
-                case 900:
-                    return nameof(FontWeights.Black);
-                case 950:
-                    return nameof(FontWeights.ExtraBlack);
-                default:
-                    return weight.Weight.ToString();
-            }
-
+                100 => nameof(FontWeights.Thin),
+                150 => "SemiThin",
+                200 => nameof(FontWeights.ExtraLight),
+                250 => "SemiExtraLight",
+                300 => nameof(FontWeights.Light),
+                350 => nameof(FontWeights.SemiLight),
+                400 => nameof(FontWeights.Normal),
+                450 => "SemiMedium",
+                500 => nameof(FontWeights.Medium),
+                550 => "ExtraMedium",
+                600 => nameof(FontWeights.SemiBold),
+                650 => "ExtraSemiBold",
+                700 => nameof(FontWeights.Bold),
+                750 => "SemiExtraBold",
+                800 => nameof(FontWeights.ExtraBold),
+                850 => "SemiBlack",
+                900 => nameof(FontWeights.Black),
+                950 => nameof(FontWeights.ExtraBlack),
+                _ => weight.Weight.ToString(),
+            };
         }
 
         public static CanvasSvgDocument GenerateSvgDocument(

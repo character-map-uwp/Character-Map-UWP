@@ -9,6 +9,7 @@ using Microsoft.Graphics.Canvas.Text;
 using Windows.Storage;
 using CharacterMap.Models;
 using System.Text;
+using CharacterMap.Services;
 
 namespace CharacterMap.Core
 {
@@ -21,9 +22,10 @@ namespace CharacterMap.Core
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
+        private FontAnalysis _analysis = null;
 
         public IReadOnlyList<KeyValuePair<string, string>> FontInformation
-            => _fontInformation ?? (_fontInformation = LoadFontInformation());
+            => _fontInformation ??= LoadFontInformation();
 
         public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
         {
@@ -35,6 +37,10 @@ namespace CharacterMap.Core
             }
         }
 
+        /// <summary>
+        /// Supported XAML typographer features for A SINGLE GLYPH. 
+        /// Does not include features like Alternates which are used for strings of text.
+        /// </summary>
         public IReadOnlyList<TypographyFeatureInfo> XamlTypographyFeatures
         {
             get
@@ -139,11 +145,26 @@ namespace CharacterMap.Core
             return Characters;
         }
 
+        public uint[] GetIndexes()
+        {
+            return GetCharacters().Select(c => c.UnicodeIndex).ToArray();
+        }
+
+        public FontAnalysis GetAnalysis()
+        {
+            if (_analysis == null)
+            {
+                _analysis = TypographyAnalyzer.Analyze(this);
+            }
+
+            return _analysis;
+        }
+
         private void LoadTypographyFeatures()
         {
             var features = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
 
-            var xaml = features.Where(f => TypographyBehavior.IsXamlSupported(f.Feature)).ToList();
+            var xaml = features.Where(f => TypographyBehavior.IsXamlSingleGlyphSupported(f.Feature)).ToList();
             if (xaml.Count > 0)
                 xaml.Insert(0, TypographyFeatureInfo.None);
             _xamlTypographyFeatures = xaml;
@@ -190,6 +211,27 @@ namespace CharacterMap.Core
                 return KeyValuePair.Create(name, value);
             return KeyValuePair.Create(name, infos.First().Value);
         }
+
+
+
+
+        /* SEARCHING */
+
+        public Dictionary<Character, GlyphNameMap> SearchMap { get; set; }
+
+        public string GetDescription(Character c)
+        {
+            if (SearchMap == null 
+                || !SearchMap.TryGetValue(c, out GlyphNameMap mapping)
+                || string.IsNullOrWhiteSpace(mapping.Name))
+                return GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
+
+            return mapping.Name;
+        }
+
+
+
+        /* .NET */
 
         public void Dispose()
         {

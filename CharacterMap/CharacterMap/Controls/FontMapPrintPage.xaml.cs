@@ -146,7 +146,7 @@ namespace CharacterMap.Controls
             TextBlock description = ((TextBlock)((StackPanel)g.Children[1]).Children[1]);
             try
             {
-                description.Text = GlyphService.GetCharacterDescription(c.UnicodeIndex, PrintModel.Font);
+                description.Text = PrintModel.Font.GetDescription(c);
             }
             catch { }
 

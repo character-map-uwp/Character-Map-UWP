@@ -34,30 +34,6 @@ namespace CharacterMap.Models
                 SQLiteGlyphProvider.FONTAWESOME_SEARCH_TABLE,
                 v => v.FamilyName.StartsWith("Font Awesome"));
 
-        public static SearchTarget IcoFontTarget { get; }
-            = new SearchTarget(
-                typeof(IcoFontGlyph),
-                SQLiteGlyphProvider.ICOFONT_SEARCH_TABLE,
-                v => v.FamilyName == "IcoFont");
-
-        /* 
-         * Material Design Icons 5.0 release remapped all the glyph indexes,
-         * so we need different tables. We use glyph count to differentiate
-         * as the font metadata does not include version information
-         */
-
-        public static SearchTarget MaterialDesignIconsLegacyTarget { get; }
-            = new SearchTarget(
-                typeof(MaterialDesignIconsLegacyGlyph),
-                SQLiteGlyphProvider.MATERIAL_DESIGN_ICONS_LEGACY_SEARCH_TABLE,
-                v => v.FamilyName.StartsWith("Material Design Icons") && v.FontFace.GlyphCount < 5000);
-
-        public static SearchTarget MaterialDesignIconsTarget { get; }
-            = new SearchTarget(
-                typeof(MaterialDesignIconsGlyph),
-                SQLiteGlyphProvider.MATERIAL_DESIGN_ICONS_SEARCH_TABLE,
-                v => v.FamilyName.StartsWith("Material Design Icons") && v.FontFace.GlyphCount >= 5000);
-
         public static SearchTarget WebdingsTarget { get; }
             = new SearchTarget(
                 typeof(WebdingsGlyph),
@@ -85,9 +61,6 @@ namespace CharacterMap.Models
         public static List<SearchTarget> KnownTargets { get; } = new List<SearchTarget>()
         {
             FontAwesomeTarget,
-            IcoFontTarget,
-            MaterialDesignIconsLegacyTarget,
-            MaterialDesignIconsTarget,
             WebdingsTarget,
             WingdingsTarget,
             Wingdings2Target,

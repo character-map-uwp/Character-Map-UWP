@@ -727,11 +727,6 @@
                                 </StackPanel>
 
                                 <StackPanel>
-                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="MVVM Light" />
-                                    <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/lbugnion/mvvmlight/blob/master/LICENSE" />
-                                </StackPanel>
-
-                                <StackPanel>
                                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Humanizer" />
                                     <HyperlinkButton Content="MIT License" NavigateUri="https://github.com/Humanizr/Humanizer/blob/master/LICENSE" />
                                 </StackPanel>

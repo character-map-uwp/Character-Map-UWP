@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMapCX;
-using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using Windows.Storage;
 using Windows.UI.Text;
 
@@ -65,7 +65,7 @@ namespace CharacterMap.Core
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
 
-            var interop = SimpleIoc.Default.GetInstance<NativeInterop>();
+            var interop = Ioc.Default.GetService<NativeInterop>();
             var systemFonts = interop.GetSystemFonts();
 
             try
@@ -106,7 +106,7 @@ namespace CharacterMap.Core
 
                 await _loadSemaphore.WaitAsync().ConfigureAwait(false);
 
-                var interop = SimpleIoc.Default.GetInstance<NativeInterop>();
+                var interop = Ioc.Default.GetService<NativeInterop>();
                 var files = await _importFolder.GetFilesAsync().AsTask().ConfigureAwait(false);
 
                 var resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
@@ -144,7 +144,7 @@ namespace CharacterMap.Core
 
                 _loadSemaphore.Release();
 
-                Messenger.Default.Send(new FontListCreatedMessage());
+                WeakReferenceMessenger.Default.Send(new FontListCreatedMessage());
             });
         }
 

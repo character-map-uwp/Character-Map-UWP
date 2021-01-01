@@ -4,23 +4,26 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI.ViewManagement;
 using CharacterMap.Core;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
 using System.Collections.Generic;
 using CharacterMap.Helpers;
 using Windows.Storage;
 using CharacterMap.Services;
 using CharacterMap.Models;
-using GalaSoft.MvvmLight.Ioc;
 using CharacterMap.Controls;
 using CharacterMapCX;
 using CharacterMap.Views;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using Windows.ApplicationModel.Core;
 
 namespace CharacterMap.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private Debouncer _searchDebouncer { get; } = new Debouncer();
+
+
         #region Properties
 
         public event EventHandler FontListCreated;
@@ -64,6 +67,13 @@ namespace CharacterMap.ViewModels
             set => Set(ref _titlePrefix, value);
         }
 
+        private string _fontSearch;
+        public string FontSearch
+        {
+            get => _fontSearch;
+            set => Set(ref _fontSearch, value);
+        }
+
         private string _filterTitle;
         public string FilterTitle
         {
@@ -76,6 +86,13 @@ namespace CharacterMap.ViewModels
         {
             get => _isLoadingFonts;
             set => Set(ref _isLoadingFonts, value);
+        }
+
+        private bool _isSearchResults;
+        public bool IsSearchResults
+        {
+            get => _isSearchResults;
+            set => Set(ref _isSearchResults, value);
         }
 
         private bool _isLoadingFontsFailed;
@@ -116,7 +133,7 @@ namespace CharacterMap.ViewModels
                 {
                     _fontList = value;
                     CreateFontListGroup();
-                    RaisePropertyChanged();
+                    OnPropertyChanged();
                 }
             }
         }
@@ -143,7 +160,7 @@ namespace CharacterMap.ViewModels
                 else
                     TitlePrefix = string.Empty;
 
-                RaisePropertyChanged();
+                OnPropertyChanged();
             }
         }
 
@@ -160,8 +177,16 @@ namespace CharacterMap.ViewModels
 
             CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
 
-            FontCollections = SimpleIoc.Default.GetInstance<UserCollectionsService>();
+            FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             InitialLoad = LoadAsync();
+        }
+
+        protected override void OnPropertyChangeNotified(string propertyName)
+        {
+            if (propertyName == nameof(FontSearch))
+            {
+                _searchDebouncer.Debounce(FontSearch.Length == 0 ? 100 : 500, () => RefreshFontList(SelectedCollection));
+            }
         }
 
         private async Task LoadAsync()
@@ -209,7 +234,10 @@ namespace CharacterMap.ViewModels
 
         public void ReloadFontSet()
         {
-            _ = ReloadFontSetAsync();
+            // Bug #152: Sometimes XAML font cache doesn't update after a new font is installed on system.
+            // Currently only way to force this is to reload the app from scratch
+            //_ = ReloadFontSetAsync();
+            _ = CoreApplication.RequestRestartAsync(string.Empty);
         }
 
         public async Task ReloadFontSetAsync()
@@ -253,6 +281,16 @@ namespace CharacterMap.ViewModels
                         fontList = FontListFilter.Query(fontList, FontCollections);
                 }
 
+                if (!string.IsNullOrWhiteSpace(FontSearch))
+                {
+                    fontList = fontList.Where(f => f.Name.Contains(FontSearch, StringComparison.OrdinalIgnoreCase));
+                    string prefix = FontListFilter == BasicFontFilter.All ? "" : FontListFilter.FilterTitle + " ";
+                    FilterTitle = $"{(collection != null ? collection.Name + " " : prefix)}\"{FontSearch}\"";
+                    IsSearchResults = true;
+                }
+                else
+                    IsSearchResults = false;
+
                 FontList = fontList.ToList();
             }
             catch (Exception e)
@@ -288,7 +326,7 @@ namespace CharacterMap.ViewModels
                     }
                     else
                     {
-                        RaisePropertyChanged("FontSelectionDebounce");
+                        OnPropertyChanged("FontSelectionDebounce");
                     }
                 }
                 else
@@ -344,7 +382,7 @@ namespace CharacterMap.ViewModels
             {
                 /* looks like we couldn't delete some fonts :'(. 
                  * We'll get em next time the app launches! */
-                MessengerInstance.Send(
+                Messenger.Send(
                     new AppNotificationMessage(true, Localization.Get("FontsClearedOnNextLaunchNotice"), 6000));
             }
         }

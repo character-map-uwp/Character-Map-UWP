@@ -1,15 +1,13 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Models;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Messaging;
-using System;
+using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls
 {
@@ -123,7 +121,7 @@ namespace CharacterMap.Controls
             _settings = new UISettings();
             _settings.ColorValuesChanged += _settings_ColorValuesChanged;
 
-            Messenger.Default.Register<AppSettingsChangedMessage>(this, OnAppSettingsChanged);
+            TemplateSettings.Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
 
             UpdateColors();
             UpdateMetrics(_titleBar);
@@ -139,7 +137,7 @@ namespace CharacterMap.Controls
 
         private void UnhookListeners()
         {
-            Messenger.Default.Unregister(this);
+            TemplateSettings.Messenger.UnregisterAll(this);
 
             if (_settings != null)
             {

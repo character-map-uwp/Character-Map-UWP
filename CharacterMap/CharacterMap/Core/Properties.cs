@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Controls;
+using CharacterMap.Helpers;
 using CharacterMap.Models;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,9 @@ using Windows.UI.Xaml.Data;
 
 namespace CharacterMap.Core
 {
+    /// <summary>
+    /// XAML Attached Properties
+    /// </summary>
     [Bindable]
     public class Properties : DependencyObject
     {
@@ -64,6 +68,34 @@ namespace CharacterMap.Core
                     var x = XamlDirect.GetDefault();
                     IXamlDirectObject p = x.GetXamlDirectObject(t);
                     CharacterGridView.UpdateTypography(x, p, i);
+                }
+            }));
+
+        #endregion
+
+        #region CLIP TO BOUNDS
+
+        public static bool GetClipToBounds(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(ClipToBoundsProperty);
+        }
+
+        public static void SetClipToBounds(DependencyObject obj, bool value)
+        {
+            obj.SetValue(ClipToBoundsProperty, value);
+        }
+
+        public static readonly DependencyProperty ClipToBoundsProperty =
+            DependencyProperty.RegisterAttached("ClipToBounds", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, e) =>
+            {
+                if (d is FrameworkElement f)
+                {
+                    var v = f.GetElementVisual();
+                    if (e.NewValue is true)
+                        v.Clip = v.Compositor.CreateInsetClip();
+                    else
+                        v.Clip = null;
+                    
                 }
             }));
 

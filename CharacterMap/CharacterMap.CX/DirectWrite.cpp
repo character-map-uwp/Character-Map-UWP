@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "CanvasTextLayoutAnalysis.h"
-#include "TableReader.h"
+#include "GsubTableReader.h"
 
 
 #include "DWriteNamedFontAxisValue.h"
@@ -132,45 +132,22 @@ IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(ComPtr<IDWriteFont
 	void* context;
 	face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('G', 'S', 'U', 'B'), &tableData, &tableSize, &context, &exists);
 
-	Map<UINT32, UINT32>^ map = ref new Map<UINT32, UINT32>();
-
+	IMapView<UINT32, UINT32>^ map = nullptr;
 
 	if (exists)
 	{
-		auto reader = ref new TableReader(tableData, tableSize);
-		auto major = reader->GetUInt16();
-		auto minor = reader->GetUInt16();
-		auto scriptOffset = reader->GetUInt16();
-		auto featureOffset = reader->GetUInt16();
-		reader->GoToPosition(featureOffset);
-		auto count = reader->GetUInt16();
-
-		wchar_t str[] = L"    ";
-		for (int i = 0; i < count - 1; i++)
-		{
-			auto tag = reader->GetUInt32();
-
-			if (!map->HasKey(tag))
-			{
-				str[0] = (wchar_t)((tag >> 24) & 0xFF);
-				str[1] = (wchar_t)((tag >> 16) & 0xFF);
-				str[2] = (wchar_t)((tag >> 8) & 0xFF);
-				str[3] = (wchar_t)((tag >> 0) & 0xFF);
-
-				// Check not a design-time feature
-				if (str[0] != 'z' && str[1] != '0')
-					map->Insert(tag, DWRITE_MAKE_OPENTYPE_TAG(str[0], str[1], str[2], str[3]));
-			}
-
-			auto offset = reader->GetUInt16();
-		}
-
+		auto reader = ref new GsubTableReader(tableData, tableSize);
+		map = reader->FeatureMap;
 		delete reader;
+	}
+	else
+	{
+		map = (ref new Map<UINT32, UINT32>())->GetView();
 	}
 
 	face->ReleaseFontTable(context);
 
-	return map->GetView();
+	return map;
 }
 
 IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(CanvasFontFace^ canvasFontFace)
@@ -212,10 +189,14 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 		auto range = ranges[i];
 		auto def = defaults[i];
 
-		ComPtr<IDWriteLocalizedStrings> strings;
-		resource->GetAxisNames(i, &strings);
+		String^ name = "";
 
-		auto str = GetLocaleString(strings, 0, nullptr);
+		if (attribute == DWRITE_FONT_AXIS_ATTRIBUTES_VARIABLE)
+		{
+			ComPtr<IDWriteLocalizedStrings> strings;
+			resource->GetAxisNames(i, &strings);
+			name = GetLocaleString(strings, 0, nullptr);
+		}
 
 		auto item = ref new DWriteFontAxis(
 			attribute, 
@@ -223,7 +204,7 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 			def, 
 			values[i], 
 			def.axisTag, 
-			str);
+			name);
 
 		items->Append(item);
 	}
@@ -381,6 +362,7 @@ DWriteProperties^ DirectWrite::GetDWriteProperties(
 		names = nullptr;
 		if (SUCCEEDED(face->GetFaceNames(&names)))
 			fname = GetLocaleString(names, ls, locale);
+
 
 		return ref new DWriteProperties(fontSource, nullptr, family, fname, face->IsColorFont(), face->HasVariations());
 	};

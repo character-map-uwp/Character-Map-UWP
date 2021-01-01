@@ -138,8 +138,14 @@
     <PackageReference Include="Humanizer.Core">
       <Version>2.8.26</Version>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection">
+      <Version>5.0.1</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.10</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Mvvm">
+      <Version>7.0.0-preview4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Uwp.UI.Controls">
       <Version>6.1.0</Version>
@@ -148,9 +154,6 @@
       <Version>2.4.2</Version>
     </PackageReference>
     <!-- Nuget package references -->
-    <PackageReference Include="MvvmLight">
-      <Version>5.4.1.1</Version>
-    </PackageReference>
     <PackageReference Include="SQLitePCLRaw.provider.winsqlite3.uwp10">
       <Version>1.1.14</Version>
     </PackageReference>
@@ -171,8 +174,6 @@
     <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
-    <Content Include="Assets\Data\icofont.txt" />
-    <Content Include="Assets\Data\materialdesignicons.txt" />
     <Content Include="Assets\Data\Webdings.txt" />
     <Content Include="Assets\Data\Wingdings.txt" />
     <Content Include="Assets\Data\Wingdings2.txt" />
@@ -180,7 +181,6 @@
     <Content Include="Assets\Data\UnicodeData.txt" />
     <Content Include="Assets\Data\FontAwesome.txt" />
     <Content Include="Assets\Data\MDL2.xml" />
-    <Content Include="Assets\Data\materialdesignicons5.txt" />
     <Content Include="Assets\Data\FabricMDL2.txt" />
     <Content Include="Assets\Data\FullMDL2ManualList.txt" />
   </ItemGroup>
@@ -206,10 +206,9 @@
     <Compile Include="Converters\ZoomBackgroundConverter.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
-    <Compile Include="Core\BasicCommand.cs" />
-    <Compile Include="Core\Diagnostics.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Core\Properties.cs" />
+    <Compile Include="Core\TypographyFeatureInfo.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
@@ -217,6 +216,7 @@
     <Compile Include="Helpers\Unicode.cs" />
     <Compile Include="Models\BasicFontFilter.cs" />
     <Compile Include="Models\ExportNamingScheme.cs" />
+    <Compile Include="Models\ExportParameters.cs" />
     <Compile Include="Models\UnicodeRange.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\Messages.cs" />
@@ -248,6 +248,7 @@
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
     <Compile Include="Services\ActivationService.cs" />
+    <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />
     <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
@@ -265,6 +266,7 @@
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />
     <Compile Include="ViewModels\PrintViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\FontMapView.xaml.cs">
       <DependentUpon>FontMapView.xaml</DependentUpon>
     </Compile>

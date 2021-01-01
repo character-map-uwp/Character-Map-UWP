@@ -11,9 +11,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 using CharacterMap.Activation;
 using CharacterMap.Helpers;
-using CommonServiceLocator;
-using GalaSoft.MvvmLight.Threading;
 using CharacterMap.Views;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
 namespace CharacterMap.Services
 {
@@ -22,7 +21,7 @@ namespace CharacterMap.Services
         private readonly App _app;
         private readonly Type _defaultNavItem;
 
-        private NavigationServiceEx NavigationService => ServiceLocator.Current.GetInstance<NavigationServiceEx>();
+        private NavigationServiceEx NavigationService => Ioc.Default.GetService<NavigationServiceEx>();
 
 
         public ActivationService(App app, Type defaultNavItem, UIElement shell = null)
@@ -110,8 +109,6 @@ namespace CharacterMap.Services
                 {
                     await defaultHandler.HandleAsync(activationArgs);
                 }
-
-                DispatcherHelper.Initialize();
 
                 // Ensure the current window is active
                 Window.Current.Activate();
