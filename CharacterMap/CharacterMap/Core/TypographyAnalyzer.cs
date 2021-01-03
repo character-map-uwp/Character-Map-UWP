@@ -86,8 +86,24 @@ namespace CharacterMap.Core
                 {
                     var c = list[i];
                     var mapping = names[rng[i]];
-                    mapping.Name = mapping.Name.Replace("-", " ").Replace("_", " ");
-                    map.Add(c, mapping);
+                    var n = mapping.Name;
+                    if (!string.IsNullOrEmpty(n))
+                    {
+                        // Some fonts use Unicode values as glyph names.
+                        // We don't actually want to display these on our UI, because they're pretty useless and will take the
+                        // place of an useful actual Unicode specification label in our database.
+
+                        // TODO : This isn't perfect. For example, "Twemoji Mozilla" font returns names like "ua9" (U+00A9) instead of "Copyright".
+                        //        Try and find a more accurate way of doing this whilst remaining performant.
+                        if ((n.Length > 2 && n[0] == 'u' && (n[3] == 'F' || n[3] == 'E' || char.IsDigit(n[1])))
+                            || (n.Length > 3) && n[0] == 'u' && n[2] == 'i' && (n[3] == 'F' || n[3] == 'E' || char.IsDigit(n[3])))
+                            continue;
+
+                        mapping.Name = mapping.Name.Replace("-", " ").Replace("_", " ");
+                        map.Add(c, mapping);
+                    }
+
+                    
                 }
 
                 variant.SearchMap = map;
