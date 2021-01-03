@@ -10,6 +10,7 @@
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
+    xmlns:p="using:CharacterMap.Provider"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:views="using:CharacterMap.Views"
     d:DesignHeight="800"
@@ -1386,10 +1387,28 @@
                                 </AppBarButton>
                             </StackPanel>
 
-                            <AppBarButton
-                                x:Name="BtnToggleDev"
-                                x:Uid="BtnToggleDev"
-                                Click="{x:Bind ToggleDev}">
+                            <AppBarButton x:Name="BtnToggleDev" x:Uid="BtnToggleDev">
+                                <Button.Flyout>
+                                    <MenuFlyout x:Name="DevFlyout" Placement="Top">
+                                        <MenuFlyoutItem Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" Text="Show Developer Tools" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.ToggleDev}"
+                                            CommandParameter="{x:Bind p:DevProviderType.None}"
+                                            Text="None" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.ToggleDev}"
+                                            CommandParameter="{x:Bind p:DevProviderType.XAML}"
+                                            Text="XAML (UWP)" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.ToggleDev}"
+                                            CommandParameter="{x:Bind p:DevProviderType.CSharp}"
+                                            Text="C# (UWP)" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.ToggleDev}"
+                                            CommandParameter="{x:Bind p:DevProviderType.CppCX}"
+                                            Text="C++/CX" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
                                 <Grid Margin="0 -4 0 0">
                                     <PathIcon
                                         x:Name="ShowCodeIcon"
@@ -1472,7 +1491,7 @@
                     x:Name="DevUtilsRoot"
                     Grid.Row="1"
                     Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
-                    Visibility="Collapsed">
+                    Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedProvider), Mode=OneWay}">
 
                     <Rectangle
                         Height="1"
@@ -1481,194 +1500,104 @@
                         Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                         Opacity="0.15" />
 
-                    <Grid
-                        Grid.Row="6"
-                        ColumnSpacing="8"
-                        Height="50"
-                        Margin="0,15,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="50" />
-                        </Grid.ColumnDefinitions>
+                    <ItemsControl Margin="0,15,0,0" ItemsSource="{x:Bind ViewModel.SelectedProvider.GetOptions(), Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:DevOption">
+                                <Grid Height="50">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
 
-                        <TextBox
-                            x:Name="TxtXamlCode"
-                            x:Uid="TxtXamlCode"
-                            GotFocus="OnCopyGotFocus"
-                            Header="#TxtXamlCode"
-                            Style="{StaticResource CopyTextBox}"
-                            Text="{Binding XamlCode}" />
-                        <AppBarButton
-                            x:Name="BtnCopyXamlCode"
-                            x:Uid="BtnCopyDev"
-                            Grid.Column="1"
-                            Width="50"
-                            Height="50"
-                            VerticalAlignment="Bottom"
-                            Click="BtnCopyXamlCode_OnClick">
-                            <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                        </AppBarButton>
-                    </Grid>
+                                    <StackPanel Margin="0 0 0 0">
+                                        <TextBlock
+                                            Margin="14 0 0 0"
+                                            FontSize="12"
+                                            Foreground="{ThemeResource TextControlHeaderForeground}"
+                                            Opacity="0.5"
+                                            Text="{x:Bind Name}" />
 
-                    <Grid
-                        Grid.Row="7"
-                        ColumnSpacing="8"
-                        Height="50">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="50" />
-                        </Grid.ColumnDefinitions>
+                                        <!--
+                                            XAML Path Geometry can easily be too long to display in
+                                            a normal TextBlock and will cause it to fail to render.
+                                            So we switch to Flyout if needed.
+                                        -->
 
-                        <TextBox
-                            x:Name="TxtFontIcon"
-                            x:Uid="TxtFontIcon"
-                            Margin="0 0 0 -8"
-                            GotFocus="OnCopyGotFocus"
-                            Header="#TxtFontIcon"
-                            Style="{StaticResource CopyTextBox}"
-                            Text="{Binding FontIcon}" />
+                                        <TextBox
+                                            x:Name="TxtBx"
+                                            x:Load="{x:Bind core:Converters.IsNotLongString(Value), Mode=OneWay}"
+                                            Margin="0 -8 0 0"
+                                            GotFocus="OnCopyGotFocus"
+                                            Style="{StaticResource CopyTextBox}"
+                                            Text="{x:Bind Value}" />
 
-                        <AppBarButton
-                            x:Name="BtnCopyFontIcon"
-                            x:Uid="BtnCopyDev"
-                            Grid.Column="1"
-                            Width="50"
-                            Height="50"
-                            VerticalAlignment="Bottom"
-                            Click="BtnCopyFontIcon_OnClick">
-                            <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                        </AppBarButton>
-                    </Grid>
+                                        <Button
+                                            x:Name="BtnXAMLGeometry"
+                                            x:Uid="BtnXAMLGeometry"
+                                            x:Load="{x:Bind core:Converters.IsLongString(Value), Mode=OneWay}"
+                                            Margin="6 0 0 0"
+                                            FontSize="13.333"
+                                            Style="{StaticResource TextBlockButtonStyle}">
+                                            <Button.Flyout>
+                                                <Flyout x:Name="GeometryFlyout" ScrollViewer.VerticalScrollMode="Disabled">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="Auto" />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
 
-                    <Grid
-                        Grid.Row="8"
-                        ColumnSpacing="8"
-                        Height="50">
+                                                        <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
 
-                        <Grid x:Name="XAMLGeometryDefaultRoot" VerticalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="50" />
-                            </Grid.ColumnDefinitions>
+                                                        <AppBarButton
+                                                            x:Uid="BtnCopyDev"
+                                                            Grid.Column="1"
+                                                            Width="50"
+                                                            Height="50"
+                                                            VerticalAlignment="Bottom"
+                                                            Click="BtnCopyCode_OnClick"
+                                                            Tag="{x:Bind Value}">
+                                                            <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                                                        </AppBarButton>
 
-                            <StackPanel Margin="0 0 0 0">
-                                <TextBlock
-                                    x:Uid="TxtPathIcon"
-                                    Margin="14 0 0 0"
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextControlHeaderForeground}"
-                                    Opacity="0.5" />
+                                                        <TextBox
+                                                            Grid.Row="1"
+                                                            Grid.ColumnSpan="2"
+                                                            Width="400"
+                                                            MaxHeight="400"
+                                                            FontFamily="Consolas"
+                                                            IsReadOnly="True"
+                                                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                            Text="{x:Bind Value}"
+                                                            TextWrapping="Wrap" />
 
-                                <!--
-                                    XAML Path Geometry can easily be too long to display in
-                                    a normal TextBlock and will cause it to fail to render.
-                                    So we switch to Flyout if needed.
-                                -->
+                                                    </Grid>
+                                                </Flyout>
+                                            </Button.Flyout>
+                                        </Button>
 
-                                <TextBox
-                                    x:Name="GeometryTextbox"
-                                    x:Load="{x:Bind core:Converters.False(ViewModel.IsLongGeometry), Mode=OneWay}"
-                                    Margin="0 -8 0 0"
-                                    GotFocus="OnCopyGotFocus"
-                                    Style="{StaticResource CopyTextBox}"
-                                    Text="{Binding XamlPathGeom}" />
+                                    </StackPanel>
 
-                                <Button
-                                    x:Name="BtnXAMLGeometry"
-                                    x:Uid="BtnXAMLGeometry"
-                                    x:Load="{x:Bind ViewModel.IsLongGeometry, Mode=OneWay}"
-                                    Margin="6 0 0 0"
-                                    FontSize="13.333"
-                                    Style="{StaticResource TextBlockButtonStyle}">
-                                    <Button.Flyout>
-                                        <Flyout x:Name="GeometryFlyout" ScrollViewer.VerticalScrollMode="Disabled">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <TextBlock x:Uid="TxtPathIcon" VerticalAlignment="Center" />
-
-                                                <AppBarButton
-                                                    x:Uid="BtnCopyDev"
-                                                    Grid.Column="1"
-                                                    Width="50"
-                                                    Height="50"
-                                                    VerticalAlignment="Bottom"
-                                                    Click="BtnCopyXamlPath_OnClick">
-                                                    <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                                                </AppBarButton>
-
-                                                <TextBox
-                                                    Grid.Row="1"
-                                                    Grid.ColumnSpan="2"
-                                                    Width="400"
-                                                    MaxHeight="400"
-                                                    FontFamily="Consolas"
-                                                    IsReadOnly="True"
-                                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                                    Text="{x:Bind ViewModel.XamlPathGeom, Mode=OneWay}"
-                                                    TextWrapping="Wrap" />
-
-                                            </Grid>
-                                        </Flyout>
-                                    </Button.Flyout>
-                                </Button>
-
-                            </StackPanel>
-
-
-                            <AppBarButton
-                                x:Uid="BtnCopyDev"
-                                Grid.Column="1"
-                                Width="50"
-                                Height="50"
-                                VerticalAlignment="Bottom"
-                                Click="BtnCopyXamlPath_OnClick">
-                                <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                            </AppBarButton>
-
-                        </Grid>
-                    </Grid>
-
-                    <Border x:Name="SymbolIconContainer" Grid.Row="9">
-                        <Grid
-                            x:Name="SymbolIconGrid"
-                            x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SymbolIcon), Mode=OneWay, FallbackValue=False}"
-                            ColumnSpacing="8"
-                            Height="50">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="50" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox
-                                x:Name="TxtSymbolIcon"
-                                x:Uid="TxtSymbolIcon"
-                                GotFocus="OnCopyGotFocus"
-                                Header="#TxtSymbolIcon"
-                                Style="{StaticResource CopyTextBox}"
-                                Text="{Binding SymbolIcon}" />
-                            <AppBarButton
-                                x:Name="BtnCopySymbolIcon"
-                                x:Uid="BtnCopyDev"
-                                Grid.Column="1"
-                                Width="50"
-                                Height="50"
-                                VerticalAlignment="Bottom"
-                                Click="BtnCopySymbolIcon_OnClick">
-                                <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                            </AppBarButton>
-                        </Grid>
-
-                    </Border>
+                                    <AppBarButton
+                                        x:Name="BtnCopyXamlCode"
+                                        x:Uid="BtnCopyDev"
+                                        Grid.Column="1"
+                                        Width="50"
+                                        Height="50"
+                                        VerticalAlignment="Bottom"
+                                        Click="BtnCopyCode_OnClick"
+                                        Tag="{x:Bind Value}">
+                                        <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                                    </AppBarButton>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
                 </StackPanel>
-
             </Grid>
 
         </Grid>

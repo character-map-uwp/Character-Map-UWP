@@ -45,6 +45,8 @@ namespace CharacterMap.Core
         public static bool IsNotNullOrWhiteSpace(string obj) => !string.IsNullOrWhiteSpace(obj);
         public static Visibility IsNullOrEmptyToVis(string obj) => string.IsNullOrEmpty(obj) ? Visibility.Visible : Visibility.Collapsed;
 
+        public static bool IsLongString(string str) => str != null && str.Length > 2048;
+        public static bool IsNotLongString(string str) => !IsLongString(str);
 
         public static string ToHex(int i) => Unicode.GetHexValue((uint)i);
 

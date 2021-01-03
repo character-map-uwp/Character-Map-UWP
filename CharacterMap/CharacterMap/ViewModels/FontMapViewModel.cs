@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Media;
 using CharacterMap.Models;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.Messaging;
+using CharacterMap.Provider;
 
 namespace CharacterMap.ViewModels
 {
@@ -49,14 +50,15 @@ namespace CharacterMap.ViewModels
         public IDialogService DialogService { get; }
         public RelayCommand<ExportParameters> CommandSavePng { get; }
         public RelayCommand<ExportParameters> CommandSaveSvg { get; }
+        public RelayCommand<DevProviderType>  ToggleDev      { get; }
 
-        internal bool IsLoadingCharacters { get; private set; }
+        internal bool IsLoadingCharacters       { get; private set; }
 
-        public bool IsDarkAccent => Utils.IsAccentColorDark();
+        public bool IsDarkAccent                => Utils.IsAccentColorDark();
 
-        public DWriteFallbackFont FallbackFont => FontFinder.Fallback;
+        public DWriteFallbackFont FallbackFont  => FontFinder.Fallback;
 
-        public bool IsExternalFile { get; set; }
+        public bool IsExternalFile              { get; set; }
 
 
         private bool _isLoading;
@@ -273,6 +275,20 @@ namespace CharacterMap.ViewModels
             set => Set(ref _fontIcon, value);
         }
 
+        private IReadOnlyList<DevProviderBase> _providers;
+        public IReadOnlyList<DevProviderBase> Providers
+        {
+            get => _providers;
+            set => Set(ref _providers, value);
+        }
+
+        private DevProviderBase _selectedProvider;
+        public DevProviderBase SelectedProvider
+        {
+            get => _selectedProvider;
+            set => Set(ref _selectedProvider, value);
+        }
+
         private string _searchQuery;
         public string SearchQuery
         {
@@ -345,6 +361,7 @@ namespace CharacterMap.ViewModels
 
             CommandSavePng = new RelayCommand<ExportParameters>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<ExportParameters>(async (b) => await SaveSvgAsync(b));
+            ToggleDev = new RelayCommand<DevProviderType>(SetDev);
 
             _interop = Utils.GetInterop();
 
@@ -447,9 +464,15 @@ namespace CharacterMap.ViewModels
                 return;
             }
 
+
             SelectedCharAnalysis = GetCharAnalysis(SelectedChar);
             SelectedCharVariations = TypographyAnalyzer.GetCharacterVariants(SelectedVariant, SelectedChar);
             IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+
+            var t = SelectedProvider?.Type ?? DevProviderType.None;
+            var o = new CharacterRenderingOptions(SelectedVariant, new List<TypographyFeatureInfo> { SelectedTypography }, 64, SelectedCharAnalysis);
+            Providers = o.GetDevProviders(SelectedChar);
+            SetDev(t);
         }
 
         internal CanvasTextLayoutAnalysis GetCharAnalysis(Character c)
@@ -572,6 +595,13 @@ namespace CharacterMap.ViewModels
             {
                 SearchResults = results;
             }
+        }
+
+        private void SetDev(DevProviderType obj)
+        {
+            Settings.ShowDevUtils = obj != DevProviderType.None;
+            if (Settings.ShowDevUtils)
+                SelectedProvider = Providers.First(p => p.Type == obj);
         }
 
         internal async Task SavePngAsync(ExportParameters args, Character c = null)

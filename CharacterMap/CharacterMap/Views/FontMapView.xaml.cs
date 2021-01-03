@@ -463,10 +463,10 @@ namespace CharacterMap.Views
 
         public void TryCopy()
         {
-            if (CharGrid.SelectedItem is Character character &&
-                (TxtSymbolIcon == null || !TxtSymbolIcon.SelectedText.Any()) &&
-                !TxtFontIcon.SelectedText.Any() &&
-                !TxtXamlCode.SelectedText.Any())
+            //if (CharGrid.SelectedItem is Character character &&
+            //    (TxtSymbolIcon == null || !TxtSymbolIcon.SelectedText.Any()) &&
+            //    !TxtFontIcon.SelectedText.Any() &&
+            //    !TxtXamlCode.SelectedText.Any())
             {
                 TryCopyInternal();
             }
@@ -521,30 +521,15 @@ namespace CharacterMap.Views
             ((TextBox)sender).SelectAll();
         }
 
-        private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
+        private void BtnCopyCode_OnClick(object sender, RoutedEventArgs e)
         {
-            Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
-            BorderFadeInStoryboard.Begin();
+            if (sender is FrameworkElement f && f.Tag is string s)
+            {
+                Utils.CopyToClipBoard(s.Trim());
+                BorderFadeInStoryboard.Begin();
+            }
         }
 
-        private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
-        {
-            Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
-            BorderFadeInStoryboard.Begin();
-        }
-
-        private void BtnCopyXamlPath_OnClick(object sender, RoutedEventArgs e)
-        {
-            GeometryFlyout?.Hide();
-            Utils.CopyToClipBoard(ViewModel.XamlPathGeom);
-            BorderFadeInStoryboard.Begin();
-        }
-
-        private void BtnCopySymbolIcon_OnClick(object sender, RoutedEventArgs e)
-        {
-            Utils.CopyToClipBoard(TxtSymbolIcon.Text.Trim());
-            BorderFadeInStoryboard.Begin();
-        }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -992,6 +977,7 @@ namespace CharacterMap.Views
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
+
     }
 
 

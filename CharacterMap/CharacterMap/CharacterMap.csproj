@@ -14,7 +14,7 @@
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.19041.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WindowsXamlEnableOverview>true</WindowsXamlEnableOverview>
@@ -245,8 +245,14 @@
     <Compile Include="Helpers\TitleBarHelper.cs" />
     <Compile Include="Helpers\VisualTreeHelperExtensions.cs" />
     <Compile Include="Models\SearchTarget.cs" />
+    <Compile Include="Models\DevOption.cs" />
+    <Compile Include="Provider\CppCxDevProvider.cs" />
+    <Compile Include="Provider\CSharpDevProvider.cs" />
+    <Compile Include="Provider\DevProviderBase.cs" />
+    <Compile Include="Provider\IDevProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
+    <Compile Include="Provider\XamlDevProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />
