@@ -6,11 +6,11 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Provider
 {
-    public class CppCxDevProvider : DevProviderBase
+    public class CppWinrtDevProvider : DevProviderBase
     {
-        public CppCxDevProvider(CharacterRenderingOptions r, Character c) : base(r, c) { }
+        public CppWinrtDevProvider(CharacterRenderingOptions r, Character c) : base(r, c) { }
 
-        protected override DevProviderType GetDevProviderType() => DevProviderType.CppCX;
+        protected override DevProviderType GetDevProviderType() => DevProviderType.CppWinRT;
 
         protected override IReadOnlyList<DevOption> OnGetContextOptions() => Inflate();
         protected override IReadOnlyList<DevOption> OnGetOptions() => Inflate();
@@ -23,9 +23,12 @@ namespace CharacterMap.Provider
             bool hasSymbol = FontFinder.IsSegoeMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
             string hex = c.UnicodeIndex.ToString("x4").ToUpper();
             string pathIconData = GetOutlineGeometry(c, Options);
-            string fontIcon = $"auto f = ref new FontIcon();\n" +
-                $"f->FontFamily = ref new Media::FontFamily(L\"{v?.XamlFontSource}\");\n" +
-                $"f->Glyph = L\"\\u{hex}\";";
+        
+            string fontIcon = 
+                "// Add \"#include <winrt/Windows.UI.Xaml.Media.h>\" to pch.h\n" +
+                "auto f = FontIcon();\n" +
+                $"f.Glyph(L\"\\u{hex}\");\n" +
+                $"f.FontFamily(Media::FontFamily(L\"{v?.XamlFontSource}\"));";
 
             var ops = new List<DevOption>()
             {
@@ -35,11 +38,13 @@ namespace CharacterMap.Provider
 
             if (!string.IsNullOrWhiteSpace(pathIconData))
             {
-                var data = $"auto p = ref new PathIcon();\n" +
-                    "p->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Center;\n" +
-                    "p->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Center;\n" +
-                    $"p->Data = (Geometry^)Markup::XamlBindingHelper::ConvertValue(Geometry::typeid, L\"{pathIconData}\");";
-                
+                var data =
+                    $"// Add \"#include <winrt/Windows.UI.Xaml.Media.h>\" to pch.h\n" +
+                    $"auto p = PathIcon();\n" +
+                    $"p.VerticalAlignment(VerticalAlignment::Center);\n" +
+                    $"p.HorizontalAlignment(HorizontalAlignment::Center);\n" +
+                    $"p.Data(Markup::XamlBindingHelper::ConvertValue(winrt::xaml_typename<Geometry>(), box_value(L\"{pathIconData}\")).try_as<Geometry>());";
+
                 ops.Add(new DevOption("TxtPathIcon/Text", data, true));
             }
 

@@ -247,6 +247,7 @@
     <Compile Include="Models\SearchTarget.cs" />
     <Compile Include="Models\DevOption.cs" />
     <Compile Include="Provider\CppCxDevProvider.cs" />
+    <Compile Include="Provider\CppWinrtProvider.cs" />
     <Compile Include="Provider\CSharpDevProvider.cs" />
     <Compile Include="Provider\DevProviderBase.cs" />
     <Compile Include="Provider\IDevProvider.cs" />

@@ -10,7 +10,8 @@ namespace CharacterMap.Provider
         None,
         CSharp,
         XAML,
-        CppCX
+        CppCX,
+        CppWinRT,
     }
 
     public partial class DevProviderBase
@@ -28,7 +29,8 @@ namespace CharacterMap.Provider
             {
                 new XamlDevProvider(o, c),
                 new CSharpDevProvider(o, c),
-                new CppCxDevProvider(o, c)
+                new CppCxDevProvider(o, c),
+                new CppWinrtDevProvider(o, c)
             };
         }
     }

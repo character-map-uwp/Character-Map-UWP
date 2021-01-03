@@ -1407,6 +1407,10 @@
                                             Command="{x:Bind ViewModel.ToggleDev}"
                                             CommandParameter="{x:Bind p:DevProviderType.CppCX}"
                                             Text="C++/CX" />
+                                        <MenuFlyoutItem
+                                            Command="{x:Bind ViewModel.ToggleDev}"
+                                            CommandParameter="{x:Bind p:DevProviderType.CppWinRT}"
+                                            Text="C++/WinRT" />
                                     </MenuFlyout>
                                 </Button.Flyout>
                                 <Grid Margin="0 -4 0 0">
@@ -1525,7 +1529,7 @@
 
                                         <TextBox
                                             x:Name="TxtBx"
-                                            x:Load="{x:Bind core:Converters.IsNotLongString(Value), Mode=OneWay}"
+                                            x:Load="{x:Bind core:Converters.False(UseExtendedCopy)}"
                                             Margin="0 -8 0 0"
                                             GotFocus="OnCopyGotFocus"
                                             Style="{StaticResource CopyTextBox}"
@@ -1534,7 +1538,7 @@
                                         <Button
                                             x:Name="BtnXAMLGeometry"
                                             x:Uid="BtnXAMLGeometry"
-                                            x:Load="{x:Bind core:Converters.IsLongString(Value), Mode=OneWay}"
+                                            x:Load="{x:Bind core:Converters.True(UseExtendedCopy)}"
                                             Margin="6 0 0 0"
                                             FontSize="13.333"
                                             Style="{StaticResource TextBlockButtonStyle}">
@@ -1563,15 +1567,19 @@
                                                             <FontIcon FontSize="16" Glyph="&#xE16F;" />
                                                         </AppBarButton>
 
+                                                        <!--
+                                                            Do not x:Bind the value on this TextBox.
+                                                            Doing so will break multi-line rendering
+                                                        -->
                                                         <TextBox
                                                             Grid.Row="1"
                                                             Grid.ColumnSpan="2"
                                                             Width="400"
                                                             MaxHeight="400"
+                                                            AcceptsReturn="True"
                                                             FontFamily="Consolas"
-                                                            IsReadOnly="True"
                                                             ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                                            Text="{x:Bind Value}"
+                                                            Text="{Binding Value}"
                                                             TextWrapping="Wrap" />
 
                                                     </Grid>
