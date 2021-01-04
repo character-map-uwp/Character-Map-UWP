@@ -173,7 +173,7 @@ namespace CharacterMap.Views
 
         private void StartShowAnimation()
         {
-            if (!Composition.UISettings.AnimationsEnabled)
+            if (!Settings.UseSelectionAnimations)
                 return;
 
             List<UIElement> elements = new List<UIElement> { this, MenuColumn, ContentBorder };
@@ -292,7 +292,10 @@ namespace CharacterMap.Views
                 ContentScroller.ChangeView(null, 0, null, true);
 
                 VisualStateManager.GoToState(item, "SelectedState", true);
-                Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 140);
+
+                if (Settings.UseSelectionAnimations)
+                    Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 140);
+
                 panel.Visibility = Visibility.Visible;
             }
         }
