@@ -377,8 +377,8 @@ namespace CharacterMap.Helpers
                     {
                         if (d == DevValueType.UnicodeValue)
                             child.Tag = c.UnicodeString;
-                        else if (d == DevValueType.Glyph)
-                            child.Tag = GlyphService.GetDevValues(c, null, null, null, ResourceHelper.AppSettings.DevToolsLanguage == 0).Hex;
+                        //else if (d == DevValueType.Glyph)
+                        //    child.Tag = GlyphService.GetDevValues(c, null, null, null, ResourceHelper.AppSettings.DevToolsLanguage == 0).Hex;
                     }
                 }
 

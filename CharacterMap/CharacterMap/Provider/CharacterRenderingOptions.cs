@@ -1,18 +1,24 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Provider;
 using CharacterMapCX;
 using Microsoft.Graphics.Canvas.Text;
 using System.Collections.Generic;
 
-namespace CharacterMap.Provider
+namespace System.Runtime.CompilerServices
+{
+    public class IsExternalInit { }
+}
+
+namespace CharacterMap.Models
 {
     public record CharacterRenderingOptions
     {
         public FontVariant Variant { get; }
-        public IReadOnlyList<TypographyFeatureInfo> Typography { get; }
-        public double FontSize { get; }
-        public CanvasTextLayoutAnalysis Analysis { get; }
+        public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
+        public float FontSize { get; init; }
+        public CanvasTextLayoutAnalysis Analysis { get; init; }
 
-        public CharacterRenderingOptions(FontVariant variant, List<TypographyFeatureInfo> typography, double fontSize, CanvasTextLayoutAnalysis analysis)
+        public CharacterRenderingOptions(FontVariant variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis)
         {
             Variant = variant;
             Typography = typography;

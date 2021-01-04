@@ -247,10 +247,12 @@
     <Compile Include="Models\SearchTarget.cs" />
     <Compile Include="Models\DevOption.cs" />
     <Compile Include="Provider\CppCxDevProvider.cs" />
-    <Compile Include="Provider\CppWinrtProvider.cs" />
+    <Compile Include="Provider\CppWinrtDevProvider.cs" />
     <Compile Include="Provider\CSharpDevProvider.cs" />
     <Compile Include="Provider\DevProviderBase.cs" />
-    <Compile Include="Provider\IDevProvider.cs" />
+    <Compile Include="Provider\DevProviderType.cs" />
+    <Compile Include="Provider\GeometryCacheEntry.cs" />
+    <Compile Include="Provider\CharacterRenderingOptions.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
     <Compile Include="Provider\XamlDevProvider.cs" />

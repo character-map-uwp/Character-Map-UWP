@@ -2,6 +2,7 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Provider;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMapCX;
@@ -196,38 +197,37 @@ namespace CharacterMap.Views
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ViewModel.SelectedFont))
+            switch (e.PropertyName)
             {
-                UpdateStates();
-            }
-            else if (e.PropertyName == nameof(ViewModel.SelectedVariant))
-            {
-                _ = SetCharacterSelectionAsync();
-            }
-            else if (e.PropertyName == nameof(ViewModel.SelectedTypography))
-            {
-                UpdateTypography(ViewModel.SelectedTypography);
-            }
-            else if (e.PropertyName == nameof(ViewModel.SelectedChar))
-            {
-                if (ViewModel.Settings.UseSelectionAnimations)
-                {
-                    Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
-                    Composition.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
-                }
+                case nameof(ViewModel.SelectedFont):
+                    UpdateStates();
+                    break;
+                case nameof(ViewModel.SelectedVariant):
+                    _ = SetCharacterSelectionAsync();
+                    break;
+                case nameof(ViewModel.SelectedTypography):
+                    UpdateTypography(ViewModel.SelectedTypography);
+                    break;
+                case nameof(ViewModel.SelectedChar):
+                    if (ViewModel.Settings.UseSelectionAnimations)
+                    {
+                        Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
+                        Composition.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                    }
 
-                UpdateTypography(ViewModel.SelectedTypography);
-            }
-            else if (e.PropertyName == nameof(ViewModel.Chars))
-            {
-                CharGrid.ItemsSource = ViewModel.Chars;
-
-                if (ViewModel.Settings.UseSelectionAnimations)
-                    Composition.PlayEntrance(CharGrid, 166);
-            }
-            else if (e.PropertyName == nameof(ViewModel.DisplayMode))
-            {
-                UpdateDisplayMode(true);
+                    UpdateTypography(ViewModel.SelectedTypography);
+                    break;
+                case nameof(ViewModel.Chars):
+                    CharGrid.ItemsSource = ViewModel.Chars;
+                    if (ViewModel.Settings.UseSelectionAnimations)
+                        Composition.PlayEntrance(CharGrid, 166);
+                    break;
+                case nameof(ViewModel.DisplayMode):
+                    UpdateDisplayMode(true);
+                    break;
+                case nameof(ViewModel.SelectedProvider):
+                    UpdateDevUtils();
+                    break;
             }
         }
 
@@ -315,16 +315,17 @@ namespace CharacterMap.Views
             // across multiple dispatchers.
             RunOnUI(() =>
             {
-                if (ViewModel.Settings.ShowDevUtils)
+                if (ViewModel.Settings.ShowDevUtils && ViewModel.SelectedProvider != null)
                 {
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
                         Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
 
-                    string state = ViewModel.Settings.DevToolsLanguage switch
+                    string state = ViewModel.SelectedProvider.Type switch
                     {
-                        0 => nameof(DevXamlState),
-                        1 => nameof(DevCSharpState),
-                        2 => nameof(DevUnicodeState),
+                        DevProviderType.XAML => nameof(DevXamlState),
+                        DevProviderType.CSharp => nameof(DevCSharpState),
+                        DevProviderType.CppCX => nameof(DevCppCXState),
+                        DevProviderType.CppWinRT => nameof(DevCppWinRTState),
                         _ => nameof(DevHiddenState)
                     };
                     
@@ -884,6 +885,7 @@ namespace CharacterMap.Views
             
             if (CharGrid.ItemsSource != null && CharGrid.ItemsPanelRoot != null)
             {
+                ViewModel.SelectedCharTypography = info;
                 IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
                 CharacterGridView.UpdateTypography(_xamlDirect, p, info);
             }

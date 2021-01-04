@@ -186,7 +186,6 @@ namespace CharacterMap.ViewModels
 
 
 
-        public int[] RampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
 
         public FontMapViewModel(IDialogService dialogService, AppSettings settings)
         {
@@ -201,6 +200,14 @@ namespace CharacterMap.ViewModels
 
             _searchDebouncer = new Debouncer();
             _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
+        }
+
+        protected override void OnPropertyChangeNotified(string propertyName)
+        {
+            if (propertyName == nameof(SelectedTypography))
+                SelectedCharTypography = SelectedTypography;
+            else if (propertyName == nameof(SelectedCharTypography))
+                UpdateDevValues();
         }
 
         private void LoadVariant(FontVariant variant)
@@ -251,7 +258,7 @@ namespace CharacterMap.ViewModels
             if (variant == null)
                 return new List<string>();
 
-            var list = DefaultRampOptions.ToList();
+            var list = _defaultRampOptions.ToList();
             
             if (variant?.TryGetSampleText() is String s)
             {
@@ -265,7 +272,7 @@ namespace CharacterMap.ViewModels
                     list.Add(emoji);
             }
 
-            return list.Count == DefaultRampOptions.Count ? DefaultRampOptions : list;
+            return list.Count == _defaultRampOptions.Count ? _defaultRampOptions : list;
         }
 
         internal void UpdateVariations()
@@ -298,15 +305,9 @@ namespace CharacterMap.ViewModels
                 return;
             }
 
-
             SelectedCharAnalysis = GetCharAnalysis(SelectedChar);
             SelectedCharVariations = TypographyAnalyzer.GetCharacterVariants(SelectedVariant, SelectedChar);
             IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
-
-            var t = SelectedProvider?.Type ?? DevProviderType.None;
-            var o = new CharacterRenderingOptions(SelectedVariant, new List<TypographyFeatureInfo> { SelectedTypography }, 64, SelectedCharAnalysis);
-            Providers = o.GetDevProviders(SelectedChar);
-            SetDev(t);
         }
 
         internal CanvasTextLayoutAnalysis GetCharAnalysis(Character c)
@@ -321,7 +322,10 @@ namespace CharacterMap.ViewModels
                 HorizontalAlignment = CanvasHorizontalAlignment.Left,
             }, Settings.GridSize, Settings.GridSize);
 
+            // This doesn't work if it's set during the property constructor.
+            // Leave it as a separate line.
             layout.Options = CanvasDrawTextOptions.EnableColorFont;
+
             ApplyEffectiveTypography(layout);
             return _interop.AnalyzeCharacterLayout(layout);
         }
@@ -349,15 +353,14 @@ namespace CharacterMap.ViewModels
         {
             if (SelectedVariant == null || SelectedChar == null || !Settings.ShowDevUtils)
             {
-                XamlPath = XamlPathGeom = XamlCode = FontIcon = SymbolIcon = null;
+                SetDev(DevProviderType.None);
             }
             else
             {
-                var data = GlyphService.GetDevValues(SelectedChar, SelectedVariant, SelectedCharAnalysis, GetEffectiveTypography(), Settings.DevToolsLanguage == 0);
-                XamlCode = data.Hex;
-                FontIcon = data.FontIcon;
-                XamlPathGeom = data.Path;
-                SymbolIcon = data.Symbol;
+                var t = SelectedProvider?.Type ?? DevProviderType.None;
+                RenderingOptions = new CharacterRenderingOptions(SelectedVariant, new List<TypographyFeatureInfo> { SelectedCharTypography }, 64, SelectedCharAnalysis);
+                Providers = RenderingOptions.GetDevProviders(SelectedChar);
+                SetDev(t);
 
                 XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
             }
@@ -433,9 +436,8 @@ namespace CharacterMap.ViewModels
 
         private void SetDev(DevProviderType obj)
         {
-            Settings.ShowDevUtils = obj != DevProviderType.None;
-            if (Settings.ShowDevUtils)
-                SelectedProvider = Providers.First(p => p.Type == obj);
+            if (Providers?.FirstOrDefault(p => p.Type == obj) is DevProviderBase p)
+                SelectedProvider = p;
         }
 
         internal async Task SavePngAsync(ExportParameters args, Character c = null)
@@ -452,10 +454,8 @@ namespace CharacterMap.ViewModels
             ExportResult result = await ExportManager.ExportPngAsync(
                 args.Style,
                 SelectedFont,
-                SelectedVariant,
+                RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
                 character,
-                analysis,
-                GetEffectiveTypography(args.Typography),
                 Settings);
 
             if (result.Success)
@@ -476,10 +476,8 @@ namespace CharacterMap.ViewModels
             ExportResult result = await ExportManager.ExportSvgAsync(
                 args.Style,
                 SelectedFont,
-                SelectedVariant,
-                character,
-                analysis,
-                GetEffectiveTypography(args.Typography));
+                RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
+                character);
 
             if (result.Success)
                 Messenger.Send(new AppNotificationMessage(true, result));
@@ -555,24 +553,24 @@ namespace CharacterMap.ViewModels
                 await Utils.TryCopyToClipboardAsync(message.RequestedItem, this);
             else
             {
-                var data = GlyphService.GetDevValues(message.RequestedItem, SelectedVariant, message.Analysis, GetEffectiveTypography(), Settings.DevToolsLanguage == 0);
-                switch (message.CopyType)
-                {
-                    case DevValueType.Glyph:
-                        Utils.CopyToClipBoard(data.Hex);
-                        break;
-                    case DevValueType.FontIcon:
-                        Utils.CopyToClipBoard(data.FontIcon);
-                        break;
-                    case DevValueType.PathIcon:
-                        Utils.CopyToClipBoard(data.Path);
-                        break;
-                    case DevValueType.UnicodeValue:
-                        Utils.CopyToClipBoard(message.RequestedItem.UnicodeString);
-                        break;
-                    default:
-                        return;
-                }
+                //var data = GlyphService.GetDevValues(message.RequestedItem, SelectedVariant, message.Analysis, GetEffectiveTypography(), Settings.DevToolsLanguage == 0);
+                //switch (message.CopyType)
+                //{
+                //    case DevValueType.Glyph:
+                //        Utils.CopyToClipBoard(SelectedProvider.);
+                //        break;
+                //    case DevValueType.FontIcon:
+                //        Utils.CopyToClipBoard(data.FontIcon);
+                //        break;
+                //    case DevValueType.PathIcon:
+                //        Utils.CopyToClipBoard(data.Path);
+                //        break;
+                //    case DevValueType.UnicodeValue:
+                //        Utils.CopyToClipBoard(message.RequestedItem.UnicodeString);
+                //        break;
+                //    default:
+                //        return;
+                //}
             }
 
             Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));

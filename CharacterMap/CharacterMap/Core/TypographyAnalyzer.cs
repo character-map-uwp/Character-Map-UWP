@@ -84,7 +84,7 @@ namespace CharacterMap.Core
 
                         // TODO : This isn't perfect. For example, "Twemoji Mozilla" font returns names like "ua9" (U+00A9) instead of "Copyright".
                         //        Try and find a more accurate way of doing this whilst remaining performant.
-                        if ((n.Length > 2 && n[0] == 'u' && (n[3] == 'F' || n[3] == 'E' || char.IsDigit(n[1])))
+                        if ((n.Length > 2 && n[0] == 'u' && (n[1] == 'F' || n[1] == 'E' || char.IsDigit(n[1])))
                             || (n.Length > 3) && n[0] == 'u' && n[2] == 'i' && (n[3] == 'F' || n[3] == 'E' || char.IsDigit(n[3])))
                             continue;
 

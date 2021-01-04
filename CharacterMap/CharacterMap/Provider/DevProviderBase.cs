@@ -2,18 +2,10 @@
 using CharacterMap.Models;
 using CharacterMapCX;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CharacterMap.Provider
 {
-    public enum DevProviderType
-    {
-        None,
-        CSharp,
-        XAML,
-        CppCX,
-        CppWinRT,
-    }
-
     public partial class DevProviderBase
     {
         /// <summary>
@@ -32,6 +24,49 @@ namespace CharacterMap.Provider
                 new CppCxDevProvider(o, c),
                 new CppWinrtDevProvider(o, c)
             };
+        }
+
+        private static List<KeyValuePair<GeometryCacheEntry, string>> _geometryCache { get; } = new List<KeyValuePair<GeometryCacheEntry, string>>();
+
+        /// <summary>
+        /// Creates an SVG / XAML path syntax compatible string representing the filled geometry
+        /// of a glyph.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        public static string GetOutlineGeometry(
+           Character c,
+           CharacterRenderingOptions o)
+        {
+            /* 
+             * We use a cache because creating geometry is currently a little bit more expensive than it needs to be 
+             * (we're not actually reading the data from the font, but using D2D to "Draw" the geometry to a custom sink)
+             * and we might be creating it multiple times for a single glyph depending on how our dev providers are
+             * configured, so a small cache will help performance
+             */
+
+            if (_geometryCache.FirstOrDefault(p => p.Key is GeometryCacheEntry e && e.Options == o && e.Character == c) is KeyValuePair<GeometryCacheEntry, string> pair
+                && pair.Value != null)
+                return pair.Value;
+
+
+            string pathIconData = null;
+            if (o.Variant != null)
+            {
+                // We use a font size of 20 as this metrically maps to the size of SegoeMDL2 icons used
+                // in FontIcon / SymbolIcon controls.
+                using var geom = ExportManager.CreateGeometry(c, o with { FontSize = 20 });
+                using var typo = o.CreateCanvasTypography();
+                pathIconData = Utils.GetInterop().GetPathData(geom).Path;
+                _geometryCache.Add(KeyValuePair.Create(new GeometryCacheEntry(c, o), pathIconData));
+
+                // Keep the cache to a certain sizr
+                while (_geometryCache.Count > 10)
+                    _geometryCache.RemoveAt(0);
+            }
+
+            return pathIconData;
         }
     }
 
@@ -93,27 +128,5 @@ namespace CharacterMap.Provider
         /// </summary>
         /// <returns></returns>
         public IReadOnlyList<DevOption> GetOptions() => _previewPaneOptions ??= OnGetOptions();
-
-        /// <summary>
-        /// Creates an SVG / XAML path syntax compatible string representing the filled geometry
-        /// of a glyph.
-        /// </summary>
-        /// <param name="c"></param>
-        /// <param name="o"></param>
-        /// <returns></returns>
-        public string GetOutlineGeometry(
-            Character c,
-            CharacterRenderingOptions o)
-        {
-            string pathIconData = null;
-            if (o.Variant != null)
-            {
-                using var typo = o.CreateCanvasTypography();
-                using var geom = ExportManager.CreateGeometry(64, o.Variant, c, o.Analysis, typo);
-                pathIconData = Interop.GetPathData(geom).Path;
-            }
-
-            return pathIconData;
-        }
     }
 }

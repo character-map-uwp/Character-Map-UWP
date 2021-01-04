@@ -102,54 +102,54 @@ namespace CharacterMap.Services
             return _provider.SearchAsync(query, variant);
         }
 
-        public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
-            Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)
-        {
-            if (v == FontFinder.DefaultFont.DefaultVariant)
-                return (string.Empty, string.Empty, string.Empty, string.Empty);
+        //public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
+        //    Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)
+        //{
+        //    if (v == FontFinder.DefaultFont.DefaultVariant)
+        //        return (string.Empty, string.Empty, string.Empty, string.Empty);
 
-            NativeInterop interop = Utils.GetInterop();
+        //    NativeInterop interop = Utils.GetInterop();
 
-            string h, f, p, s = null;
-            bool hasSymbol = FontFinder.IsSegoeMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
+        //    string h, f, p, s = null;
+        //    bool hasSymbol = FontFinder.IsSegoeMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
 
-            // Add back in future build
-            //string pathData;
-            //using (var geom = ExportManager.CreateGeometry(ResourceHelper.AppSettings.GridSize, v, c, a, t))
-            //{
-            //    pathData = interop.GetPathData(geom).Path;
-            //}
+        //    // Add back in future build
+        //    //string pathData;
+        //    //using (var geom = ExportManager.CreateGeometry(ResourceHelper.AppSettings.GridSize, v, c, a, t))
+        //    //{
+        //    //    pathData = interop.GetPathData(geom).Path;
+        //    //}
 
-            // Creating geometry is expensive. It may be worth delaying this.
-            string pathIconData = null;
-            if (v != null)
-            {
-                using var geom = ExportManager.CreateGeometry(20, v, c, a, t);
-                pathIconData = interop.GetPathData(geom).Path;
-            }
+        //    // Creating geometry is expensive. It may be worth delaying this.
+        //    string pathIconData = null;
+        //    if (v != null)
+        //    {
+        //        using var geom = ExportManager.CreateGeometry(20, v, c, a, t);
+        //        pathIconData = interop.GetPathData(geom).Path;
+        //    }
 
-            var hex = c.UnicodeIndex.ToString("x4").ToUpper();
-            if (isXaml)
-            {
-                h = $"&#x{hex};";
-                f = $@"<FontIcon FontFamily=""{v?.XamlFontSource}"" Glyph=""&#x{hex};"" />";
-                p = $"<PathIcon Data=\"{pathIconData}\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />";
+        //    var hex = c.UnicodeIndex.ToString("x4").ToUpper();
+        //    if (isXaml)
+        //    {
+        //        h = $"&#x{hex};";
+        //        f = $@"<FontIcon FontFamily=""{v?.XamlFontSource}"" Glyph=""&#x{hex};"" />";
+        //        p = $"<PathIcon Data=\"{pathIconData}\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />";
 
-                if (hasSymbol)
-                    s = $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />";
-            }
-            else
-            {
-                h = c.UnicodeIndex > 0xFFFF ? $"\\U{c.UnicodeIndex:x8}".ToUpper() : $"\\u{hex}";
-                f = $"new FontIcon {{ FontFamily = new Windows.UI.Xaml.Media.FontFamily(\"{v?.XamlFontSource}\") , Glyph = \"\\u{hex}\" }};";
-                p = $"new PathIcon {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Geometry), \"{pathIconData}\"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }};";
+        //        if (hasSymbol)
+        //            s = $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />";
+        //    }
+        //    else
+        //    {
+        //        h = c.UnicodeIndex > 0xFFFF ? $"\\U{c.UnicodeIndex:x8}".ToUpper() : $"\\u{hex}";
+        //        f = $"new FontIcon {{ FontFamily = new Windows.UI.Xaml.Media.FontFamily(\"{v?.XamlFontSource}\") , Glyph = \"\\u{hex}\" }};";
+        //        p = $"new PathIcon {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Geometry), \"{pathIconData}\"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }};";
 
-                if (hasSymbol)
-                    s = $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};";
-            }
+        //        if (hasSymbol)
+        //            s = $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};";
+        //    }
 
-            return (h, f, p, s);
-        }
+        //    return (h, f, p, s);
+        //}
 
     }
 }
