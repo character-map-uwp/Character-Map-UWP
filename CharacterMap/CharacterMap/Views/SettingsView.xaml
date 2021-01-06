@@ -117,7 +117,7 @@
                 Click="{x:Bind Hide}">
                 <SymbolIcon Symbol="Cancel" />
                 <AppBarButton.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="None" Key="Escape"/>
+                    <KeyboardAccelerator Key="Escape" Modifiers="None" />
                 </AppBarButton.KeyboardAccelerators>
             </AppBarButton>
 

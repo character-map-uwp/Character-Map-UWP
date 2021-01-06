@@ -981,6 +981,12 @@ Default variant copied.</value>
     <value>No results found for this search. Try something else.</value>
   </data>
   <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
-    <value>Search</value>
+    <value>Find a font family</value>
+  </data>
+  <data name="BtnToggleDev.Label" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="DevPopupHeader.Text" xml:space="preserve">
+    <value>Show Developer Tools</value>
   </data>
 </root>

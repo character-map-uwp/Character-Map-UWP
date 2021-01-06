@@ -1390,7 +1390,7 @@
                             <AppBarButton x:Name="BtnToggleDev" x:Uid="BtnToggleDev">
                                 <Button.Flyout>
                                     <MenuFlyout x:Name="DevFlyout" Placement="Top">
-                                        <MenuFlyoutItem Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" Text="Show Developer Tools" />
+                                        <MenuFlyoutItem x:Uid="DevPopupHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
                                         <MenuFlyoutItem
                                             Command="{x:Bind ViewModel.ToggleDev}"
                                             CommandParameter="{x:Bind p:DevProviderType.None}"
@@ -1502,7 +1502,7 @@
                     x:Name="DevUtilsRoot"
                     Grid.Row="1"
                     Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
-                    Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedProvider), Mode=OneWay}">
+                    Visibility="Collapsed">
 
                     <Rectangle
                         Height="1"
@@ -1511,7 +1511,7 @@
                         Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                         Opacity="0.15" />
 
-                    <ItemsControl Margin="0,15,0,0" ItemsSource="{x:Bind ViewModel.SelectedProvider.GetOptions(), Mode=OneWay}">
+                    <ItemsControl Margin="0,6,0,0" ItemsSource="{x:Bind ViewModel.SelectedProvider.GetOptions(), Mode=OneWay}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate x:DataType="models:DevOption">
                                 <Grid Height="50">
@@ -1719,13 +1719,13 @@
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="DevStates">
-                <VisualState x:Name="DevHiddenState">
+                <VisualState x:Name="DevNoneState">
                     <VisualState.Setters>
-                        <Setter Target="BtnToggleDev.Label" Value="{x:Bind helpers:Localization.Get('ToggleDevDefaultLabel')}" />
+                        <!--<Setter Target="BtnToggleDev.Label" Value="{x:Bind helpers:Localization.Get('BtnToggleDev/Label')}" />-->
                         <Setter Target="ShowCodeIcon.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="DevXamlState">
+                <VisualState x:Name="DevXAMLState">
                     <VisualState.Setters>
                         <Setter Target="BtnToggleDev.Label" Value="XAML" />
                         <Setter Target="DevXamlIcon.Visibility" Value="Visible" />

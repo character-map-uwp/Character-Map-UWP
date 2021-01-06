@@ -1174,8 +1174,16 @@ Default variant copied.</target>
           <target state="new">No results found for this search. Try something else.</target>
         </trans-unit>
         <trans-unit id="FontListSearchBox.PlaceholderText" translate="yes" xml:space="preserve">
-          <source>Search</source>
-          <target state="new">Search</target>
+          <source>Find a font family</source>
+          <target state="new">Find a font family</target>
+        </trans-unit>
+        <trans-unit id="BtnToggleDev.Label" translate="yes" xml:space="preserve">
+          <source>Tools</source>
+          <target state="new">Tools</target>
+        </trans-unit>
+        <trans-unit id="DevPopupHeader.Text" translate="yes" xml:space="preserve">
+          <source>Show Developer Tools</source>
+          <target state="new">Show Developer Tools</target>
         </trans-unit>
       </group>
     </body>

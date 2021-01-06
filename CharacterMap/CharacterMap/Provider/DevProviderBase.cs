@@ -19,6 +19,7 @@ namespace CharacterMap.Provider
         {
             return new List<DevProviderBase>
             {
+                new DevProviderNone(o, c),
                 new XamlDevProvider(o, c),
                 new CSharpDevProvider(o, c),
                 new CppCxDevProvider(o, c),
@@ -128,5 +129,18 @@ namespace CharacterMap.Provider
         /// </summary>
         /// <returns></returns>
         public IReadOnlyList<DevOption> GetOptions() => _previewPaneOptions ??= OnGetOptions();
+    }
+
+    public class DevProviderNone : DevProviderBase
+    {
+        public DevProviderNone(CharacterRenderingOptions r, Character character) : base(r, character)
+        {
+        }
+
+        protected override DevProviderType GetDevProviderType() => DevProviderType.None;
+
+        protected override IReadOnlyList<DevOption> OnGetContextOptions() => null;
+
+        protected override IReadOnlyList<DevOption> OnGetOptions() => null;
     }
 }

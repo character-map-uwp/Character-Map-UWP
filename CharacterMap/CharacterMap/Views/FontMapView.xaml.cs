@@ -319,20 +319,14 @@ namespace CharacterMap.Views
                 {
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
                         Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
-
-                    string state = ViewModel.SelectedProvider.Type switch
-                    {
-                        DevProviderType.XAML => nameof(DevXamlState),
-                        DevProviderType.CSharp => nameof(DevCSharpState),
-                        DevProviderType.CppCX => nameof(DevCppCXState),
-                        DevProviderType.CppWinRT => nameof(DevCppWinRTState),
-                        _ => nameof(DevHiddenState)
-                    };
                     
-                    VisualStateManager.GoToState(this, state, animate);
+                    string state = $"Dev{ViewModel.SelectedProvider.Type}State";
+
+                    if (!VisualStateManager.GoToState(this, state, animate))
+                        VisualStateManager.GoToState(this, nameof(DevNoneState), animate);
                 }
                 else
-                    VisualStateManager.GoToState(this, nameof(DevHiddenState), animate);
+                    VisualStateManager.GoToState(this, nameof(DevNoneState), animate);
             });
         }
 
