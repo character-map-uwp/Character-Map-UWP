@@ -42,6 +42,7 @@
     <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
         <Grid
             ColumnSpacing="12"
+            Padding="12 0"
             Background="Transparent"
             PointerPressed="Grid_PointerPressed">
             <Grid.ContextFlyout>

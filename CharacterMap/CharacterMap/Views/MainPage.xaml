@@ -359,7 +359,9 @@
                                         <Style BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
                                             <Setter Property="HorizontalAlignment" Value="Stretch" />
                                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
                                             <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
+                                            <Setter Property="Padding" Value="0" />
                                             <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
                                         </Style>
                                     </ListView.Resources>
