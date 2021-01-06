@@ -21,7 +21,183 @@ namespace CharacterMapCX
 		CMAP Spec: https://docs.microsoft.com/en-gb/typography/opentype/spec/cmap
 	*/
 
-	public ref class CmapFormat14 sealed
+	ref class SequentialMapGroup
+	{
+	public:
+		/// <summary>
+		/// First character code in this group
+		/// </summary>
+		property uint32 StartCharCode;
+
+		/// <summary>
+		/// Last character code in this group
+		/// </summary>
+		property uint32 EndCharCode;
+
+		/// <summary>
+		/// Glyph index corresponding to the starting character code
+		/// </summary>
+		property uint32 StartGlyphID;
+	};
+
+	ref class EncodingRecord
+	{
+	internal:
+		property uint16	PlatformID;
+		property uint16	EncodingID;
+		property uint32	Offset;
+	};
+
+	ref class VariationRecord
+	{
+	internal:
+		property int	VariationSelector;
+		property uint16	DefaultUVSOffset;
+		property uint32	NonDefaultUVSOffset;
+	};
+
+	ref class VariationSelector sealed
+	{
+	public:
+		property IMapView<int, uint16>^ UVSMappings;
+		property IVectorView<int>^ DefaultStartCodes;
+		property IVectorView<int>^ DefaultEndCodes;
+
+	internal:
+		VariationSelector(
+			Vector<int>^ starts,
+			Vector<int>^ ends,
+			IMapView<int, uint16>^ mappings)
+		{
+			DefaultStartCodes = starts->GetView();
+			DefaultEndCodes = ends->GetView();
+			UVSMappings = mappings;
+		}
+	};
+
+	ref class CharMap
+	{
+	public:
+		virtual uint16 Format() { return 0; }
+
+		virtual uint32 GetGlyphIndex(uint32 unicode) { return 0; }
+		virtual uint32 GetUnicode(uint32 glyphIndex) { return 0; }
+	};
+
+	/// <summary>
+	/// Standard character-to-glyph-index mapping subtable for fonts that support only Unicode 
+	/// Basic Multilingual Plane characters (U+0000 to U+FFFF).
+	/// </summary>
+	ref class Format4CharMap sealed : CharMap
+	{
+	public:
+		uint16 Format() override { return 4; }
+
+	internal:
+		property uint16 Length;
+		property uint16 Language;
+		property uint16 SegCountX2;
+		property uint16 SearchRange;
+		property uint16 EntrySelector;
+		property uint16 RangeShift;
+		property IVectorView<uint16>^ EndCodes;
+		property IVectorView<uint16>^ StartCodes;
+	};
+
+	/// <summary>
+	/// Maps 16-bit characters to glyph indexes when the character codes for a font fall into 
+	/// a single contiguous range.
+	/// </summary>
+	ref class Format6CharMap sealed : CharMap
+	{
+	public:
+		uint16 Format() override { return 6; }
+
+		uint32 GetGlyphIndex(uint32 unicode) override
+		{
+			uint32 offset = unicode - m_startCode;
+			if (offset >= 0 && offset < sizeof(m_glyphs))
+				return m_glyphs[offset];
+
+			return 0;
+		}
+
+	internal:
+		Format6CharMap(uint16 startCode, const Array<uint16>^ glyphs)
+		{
+			m_startCode = startCode;
+			m_glyphs = glyphs;
+		}
+
+	private:
+		uint16 m_startCode;
+		const Array<uint16>^ m_glyphs;
+	};
+
+	/// <summary>
+	/// Maps 32-bit characters to glyph indexes when the character codes for a font fall into 
+	/// a single contiguous range.
+	/// </summary>
+	ref class Format10CharMap sealed : CharMap
+	{
+	public:
+		uint16 Format() override { return 10; }
+
+		uint32 GetGlyphIndex(uint32 unicode) override
+		{
+			uint32 offset = unicode - m_startCode;
+			if (offset >= 0 && offset < sizeof(m_glyphs))
+				return m_glyphs[offset];
+
+			return 0;
+		}
+
+	internal:
+		Format10CharMap(uint32 startCode, const Array<uint16>^ glyphs)
+		{
+			m_startCode = startCode;
+			m_glyphs = glyphs;
+		}
+
+	private:
+		uint32 m_startCode;
+		const Array<uint16>^ m_glyphs;
+	};
+
+	/// <summary>
+	/// Standard character-to-glyph-index mapping subtable for fonts supporting Unicode 
+	/// character repertoires that include supplementary-plane characters (U+10000 to U+10FFFF).
+	/// </summary>
+	ref class Format12CharMap sealed : CharMap
+	{
+	public:
+		uint16 Format() override { return 12; }
+
+		uint32 GetGlyphIndex(uint32 unicode) override
+		{
+			for (auto group : m_map)
+			{
+				if (unicode >= group->StartCharCode && unicode <= group->EndCharCode)
+				{
+					uint32 offset = unicode - group->StartCharCode;
+					return group->StartGlyphID + offset;
+				}
+			}
+
+			return 0;
+		}
+
+	internal:
+		Format12CharMap(Vector<SequentialMapGroup^>^ map)
+		{
+			m_map = map;
+		}
+
+	private:
+		Vector<SequentialMapGroup^>^ m_map;
+	};
+
+	ref class CmapFormat14 sealed
 	{
 	public:
 		property uint16 Length;
@@ -91,6 +267,31 @@ namespace CharacterMapCX
 		}
 	};
 
+	public ref class CharacterMapping sealed
+	{
+	public:
+		uint32 GetGlyphIndex(uint32 codepoint)
+		{
+			for (IKeyValuePair<uint16, CharMap^>^ m : m_maps)
+			{
+				auto index = m->Value->GetGlyphIndex(codepoint);
+				if (index > 0)
+					return index;
+			}
+
+			return 0;
+		}
+
+	internal:
+		CharacterMapping(IMapView<uint16, CharMap^>^ maps)
+		{
+			m_maps = maps;
+		}
+
+	private:
+		IMapView<uint16, CharMap^>^ m_maps = nullptr;
+	};
+
 	ref class CmapTableReader sealed : TableReader
 	{
 	public:
@@ -133,14 +334,25 @@ namespace CharacterMapCX
 			auto maps = ref new Map<uint16, CharMap^>();
 			for(auto record : Records)
 			{
-				GoToPosition(record->Offset);
-				CharMap^ map = TryReadCharMap();
+				if (record->Offset > GetPosition())
+				{
+					GoToPosition(record->Offset);
+					CharMap^ map = TryReadCharMap();
 
-				if (map != nullptr)
-					maps->Insert(map->Format(), map);
+					if (map != nullptr)
+						maps->Insert(map->Format(), map);
+				}
 			}
 			Maps = maps->GetView();
 		};
+
+		CharacterMapping^ GetMapping()
+		{
+			if (Maps->Size > 0)
+				return ref new CharacterMapping(Maps);
+
+			return nullptr;
+		}
 
 	private:
 
@@ -220,189 +432,6 @@ namespace CharacterMapCX
 			}
 
 			return ref new Format12CharMap(vec);
-		}
-	};
-
-
-
-	ref class CharMap
-	{
-	public:
-		virtual uint16 Format() { return 0; }
-
-		virtual uint32 GetGlyphIndex(uint32 unicode) { return 0; }
-		virtual uint32 GetUnicode(uint32 glyphIndex) { return 0; }
-	};
-
-	/// <summary>
-	/// Standard character-to-glyph-index mapping subtable for fonts that support only Unicode 
-	/// Basic Multilingual Plane characters (U+0000 to U+FFFF).
-	/// </summary>
-	ref class Format4CharMap : CharMap
-	{
-	public:
-		uint16 Format() override { return 4; }
-
-	internal:
-		property uint16 Length;
-		property uint16 Language;
-		property uint16 SegCountX2;
-		property uint16 SearchRange;
-		property uint16 EntrySelector;
-		property uint16 RangeShift;
-		property IVectorView<uint16>^ EndCodes;
-		property IVectorView<uint16>^ StartCodes;
-	};
-
-	/// <summary>
-	/// Maps 16-bit characters to glyph indexes when the character codes for a font fall into 
-	/// a single contiguous range.
-	/// </summary>
-	ref class Format6CharMap : CharMap
-	{
-	public:
-
-		Format6CharMap(uint16 startCode, const Array<uint16>^ glyphs)
-		{
-			m_startCode = startCode;
-			m_glyphs = glyphs;
-		}
-
-		uint16 Format() override { return 6; }
-
-		uint32 GetGlyphIndex(uint32 unicode) override
-		{
-			uint32 offset = unicode - m_startCode;
-			if (offset >= 0 && offset < sizeof(m_glyphs))
-				return m_glyphs[offset];
-
-			return 0;
-		}
-
-
-	private:
-		uint16 m_startCode;
-		const Array<uint16>^ m_glyphs;
-	};
-
-	/// <summary>
-	/// Maps 32-bit characters to glyph indexes when the character codes for a font fall into 
-	/// a single contiguous range.
-	/// </summary>
-	ref class Format10CharMap : CharMap
-	{
-	public:
-
-		Format10CharMap(uint32 startCode, const Array<uint16>^ glyphs)
-		{
-			m_startCode = startCode;
-			m_glyphs = glyphs;
-		}
-
-		uint16 Format() override { return 10; }
-
-		uint32 GetGlyphIndex(uint32 unicode) override
-		{
-			uint32 offset = unicode - m_startCode;
-			if (offset >= 0 && offset < sizeof(m_glyphs))
-				return m_glyphs[offset];
-
-			return 0;
-		}
-
-
-	private:
-		uint32 m_startCode;
-		const Array<uint16>^ m_glyphs;
-	};
-
-	/// <summary>
-	/// Standard character-to-glyph-index mapping subtable for fonts supporting Unicode 
-	/// character repertoires that include supplementary-plane characters (U+10000 to U+10FFFF).
-	/// </summary>
-	ref class Format12CharMap : CharMap
-	{
-	public:
-
-		Format12CharMap(Vector<SequentialMapGroup^>^ map)
-		{
-			m_map = map;
-		}
-
-		uint16 Format() override { return 12; }
-
-		uint32 GetGlyphIndex(uint32 unicode) override
-		{
-			for (auto group : m_map)
-			{
-				if (unicode >= group->StartCharCode && unicode <= group->EndCharCode)
-				{
-					uint32 offset = unicode - group->StartCharCode;
-					return group->StartGlyphID + offset;
-				}
-			}
-
-			return 0;
-		}
-
-	private:
-		Vector<SequentialMapGroup^>^ m_map;
-	};
-
-	ref class SequentialMapGroup
-	{
-	public:
-		/// <summary>
-		/// First character code in this group
-		/// </summary>
-		property uint32 StartCharCode;
-
-		/// <summary>
-		/// Last character code in this group
-		/// </summary>
-		property uint32 EndCharCode;
-
-		/// <summary>
-		/// Glyph index corresponding to the starting character code
-		/// </summary>
-		property uint32 StartGlyphID;
-	};
-
-
-
-
-	ref class EncodingRecord
-	{
-	internal:
-		property uint16	PlatformID;
-		property uint16	EncodingID;
-		property uint32	Offset;
-	};
-
-	ref class VariationRecord
-	{
-	internal:
-		property int	VariationSelector;
-		property uint16	DefaultUVSOffset;
-		property uint32	NonDefaultUVSOffset;
-	};
-
-	public ref class VariationSelector sealed
-	{
-	public:
-		property IMapView<int, uint16>^ UVSMappings;
-		property IVectorView<int>^ DefaultStartCodes;
-		property IVectorView<int>^ DefaultEndCodes;
-
-	internal:
-		VariationSelector(
-			Vector<int>^ starts,
-			Vector<int>^ ends,
-			IMapView<int, uint16>^ mappings)
-		{
-			DefaultStartCodes = starts->GetView();
-			DefaultEndCodes = ends->GetView();
-			UVSMappings = mappings;
 		}
 	};
 }

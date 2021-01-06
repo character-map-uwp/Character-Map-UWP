@@ -145,19 +145,25 @@ namespace CharacterMap.Core
             return Characters;
         }
 
-        public uint[] GetIndexes()
+        public int GetGlyphIndex(Character c)
+        {
+            int[] results = FontFace.GetGlyphIndices(new uint[] { c.UnicodeIndex });
+            return results[0];
+        }
+
+        public uint[] GetGlyphIndexes()
         {
             return GetCharacters().Select(c => c.UnicodeIndex).ToArray();
         }
 
         public FontAnalysis GetAnalysis()
         {
-            if (_analysis == null)
-            {
-                _analysis = TypographyAnalyzer.Analyze(this);
-            }
+            return _analysis ??= TypographyAnalyzer.Analyze(this);
+        }
 
-            return _analysis;
+        public string TryGetSampleText()
+        {
+            return GetInfoKey(FontFace, CanvasFontInformation.SampleText).Value;
         }
 
         private void LoadTypographyFeatures()
@@ -193,11 +199,6 @@ namespace CharacterMap.Core
             return INFORMATIONS.Select(i => GetInfoKey(FontFace, i)).Where(s => s.Key != null).ToList();
         }
 
-        public string TryGetSampleText()
-        {
-            return GetInfoKey(FontFace, CanvasFontInformation.SampleText).Value;
-        }
-
         private static KeyValuePair<string, string> GetInfoKey(CanvasFontFace fontFace, CanvasFontInformation info)
         {
             var infos = fontFace.GetInformationalStrings(info);
@@ -228,6 +229,7 @@ namespace CharacterMap.Core
 
             return mapping.Name;
         }
+
 
 
 

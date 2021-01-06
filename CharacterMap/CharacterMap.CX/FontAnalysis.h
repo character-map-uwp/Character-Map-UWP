@@ -5,7 +5,7 @@
 #include "ColrTableReader.h"
 #include "CblcTableReader.h"
 #include "PostTableReader.h"
-#include "MetaTableReader.h"
+//#include "CmapTableReader.h"
 
 using namespace Microsoft::Graphics::Canvas;
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -30,9 +30,9 @@ namespace CharacterMapCX
 		
 		property bool HasGlyphNames { bool get() { return m_hasGlyphNames; } }
 
-		property String^ DesignLanguages { String^ get() { return m_dlng; } }
+		/*property String^ DesignLanguages { String^ get() { return m_dlng; } }
 
-		property String^ ScriptLanguages { String^ get() { return m_slng; } }
+		property String^ ScriptLanguages { String^ get() { return m_slng; } }*/
 
 		/// <summary>
 		/// Size of the underlying font file in bytes
@@ -55,6 +55,9 @@ namespace CharacterMapCX
 		}
 
 		property IVectorView<GlyphNameMap^>^ GlyphNames;
+
+		//property CharacterMapping^ GlyphMap;
+
 
 		FontAnalysis() { }
 
@@ -210,6 +213,17 @@ namespace CharacterMapCX
 				delete reader;
 			}
 			face->ReleaseFontTable(context);
+
+			// CMAP
+			// Attempts to get the data for mapping a Unicode codepoint to the glyph index of a character inside the font
+			/*face->TryGetFontTable(DWRITE_MAKE_OPENTYPE_TAG('c', 'm', 'a', 'p'), &tableData, &tableSize, &context, &exists);
+			if (exists)
+			{
+				auto reader = ref new CmapTableReader(tableData, tableSize);
+				GlyphMap = reader->GetMapping();
+				delete reader;
+			}
+			face->ReleaseFontTable(context);*/
 		}
 	};
 }

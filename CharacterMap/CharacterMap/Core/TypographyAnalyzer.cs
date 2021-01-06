@@ -65,7 +65,7 @@ namespace CharacterMap.Core
         {
             if (variant.SearchMap == null)
             {
-                var idxs = variant.GetIndexes();
+                var idxs = variant.GetGlyphIndexes();
                 var rng = variant.FontFace.GetGlyphIndices(idxs);
 
                 Dictionary<Character, GlyphNameMap> map = new Dictionary<Character, GlyphNameMap>();
