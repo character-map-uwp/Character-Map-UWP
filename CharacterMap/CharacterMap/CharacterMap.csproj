@@ -250,6 +250,7 @@
     <Compile Include="Provider\CppWinrtDevProvider.cs" />
     <Compile Include="Provider\CSharpDevProvider.cs" />
     <Compile Include="Provider\DevProviderBase.cs" />
+    <Compile Include="Provider\DevProviderNone.cs" />
     <Compile Include="Provider\DevProviderType.cs" />
     <Compile Include="Provider\GeometryCacheEntry.cs" />
     <Compile Include="Provider\CharacterRenderingOptions.cs" />

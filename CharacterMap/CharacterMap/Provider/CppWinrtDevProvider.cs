@@ -8,7 +8,9 @@ namespace CharacterMap.Provider
 {
     public class CppWinrtDevProvider : DevProviderBase
     {
-        public CppWinrtDevProvider(CharacterRenderingOptions r, Character c) : base(r, c) { }
+        public CppWinrtDevProvider(CharacterRenderingOptions r, Character c) : base(r, c) { 
+            DisplayName = "C++/WinRT";
+        }
 
         protected override DevProviderType GetDevProviderType() => DevProviderType.CppWinRT;
 
@@ -49,7 +51,7 @@ namespace CharacterMap.Provider
             }
 
             if (hasSymbol)
-                ops.Add(new DevOption("TxtSymbolIcon/Text", $"ref new SymbolIcon(Symbol::{(Symbol)c.UnicodeIndex});"));
+                ops.Add(new DevOption("TxtSymbolIcon/Text", $"auto s = SymbolIcon(Symbol::{(Symbol)c.UnicodeIndex});"));
 
             return ops;
         }

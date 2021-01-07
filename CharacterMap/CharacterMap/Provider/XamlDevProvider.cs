@@ -8,7 +8,9 @@ namespace CharacterMap.Provider
 {
     public class XamlDevProvider : DevProviderBase
     {
-        public XamlDevProvider(CharacterRenderingOptions o, Character c) : base(o, c) { }
+        public XamlDevProvider(CharacterRenderingOptions o, Character c) : base(o, c) {
+            DisplayName = "XAML (UWP)";
+        }
 
         protected override DevProviderType GetDevProviderType() => DevProviderType.XAML;
         protected override IReadOnlyList<DevOption> OnGetContextOptions() => Inflate();

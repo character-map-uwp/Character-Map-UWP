@@ -151,7 +151,7 @@ namespace CharacterMap.Core
             return results[0];
         }
 
-        public uint[] GetGlyphIndexes()
+        public uint[] GetGlyphUnicodeIndexes()
         {
             return GetCharacters().Select(c => c.UnicodeIndex).ToArray();
         }

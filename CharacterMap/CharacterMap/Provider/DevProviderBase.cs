@@ -79,7 +79,7 @@ namespace CharacterMap.Provider
     public abstract partial class DevProviderBase
     {
         public string ResourceKey { get; }
-
+        public string DisplayName { get; protected init; }
 
         public DevProviderType Type { get; }
 
@@ -129,18 +129,5 @@ namespace CharacterMap.Provider
         /// </summary>
         /// <returns></returns>
         public IReadOnlyList<DevOption> GetOptions() => _previewPaneOptions ??= OnGetOptions();
-    }
-
-    public class DevProviderNone : DevProviderBase
-    {
-        public DevProviderNone(CharacterRenderingOptions r, Character character) : base(r, character)
-        {
-        }
-
-        protected override DevProviderType GetDevProviderType() => DevProviderType.None;
-
-        protected override IReadOnlyList<DevOption> OnGetContextOptions() => null;
-
-        protected override IReadOnlyList<DevOption> OnGetOptions() => null;
     }
 }

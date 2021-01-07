@@ -989,4 +989,11 @@ Default variant copied.</value>
   <data name="DevPopupHeader.Text" xml:space="preserve">
     <value>Show Developer Tools</value>
   </data>
+  <data name="ContextMenuDevCopyCommand" xml:space="preserve">
+    <value>Copy {0}</value>
+    <comment>Examples: "Copy Font Icon" or "Copy Glyph Code"</comment>
+  </data>
+  <data name="ProviderNone" xml:space="preserve">
+    <value>None</value>
+  </data>
 </root>

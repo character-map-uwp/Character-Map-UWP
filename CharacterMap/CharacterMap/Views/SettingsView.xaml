@@ -394,7 +394,7 @@
                                     <TextBlock x:Uid="SettingsEnablePaneDescription" Style="{StaticResource DescriptionStyle}" />
                                     <ToggleSwitch IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
                                 </StackPanel>
-                                
+
                                 <StackPanel>
                                     <TextBlock x:Uid="SettingsThemeHeader" Style="{StaticResource HeaderStyle}" />
                                     <RadioButton
@@ -658,7 +658,7 @@
                                     </Grid>
                                 </StackPanel>
 
-                                <StackPanel Spacing="6" x:Name="ImportedExportPanel">
+                                <StackPanel x:Name="ImportedExportPanel" Spacing="6">
                                     <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource HeaderStyle}" />
                                     <Button
                                         Width="340"

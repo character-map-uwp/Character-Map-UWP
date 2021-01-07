@@ -65,17 +65,22 @@ namespace CharacterMap.Core
         {
             if (variant.SearchMap == null)
             {
-                var idxs = variant.GetGlyphIndexes();
-                var rng = variant.FontFace.GetGlyphIndices(idxs);
+                uint[] uni = variant.GetGlyphUnicodeIndexes();
+                int[] gly = variant.FontFace.GetGlyphIndices(uni);
+                var chars = variant.GetCharacters();
 
                 Dictionary<Character, GlyphNameMap> map = new Dictionary<Character, GlyphNameMap>();
 
-                var list = variant.GetCharacters();
-                for (int i = 0; i < list.Count; i++)
+                for (int i = 0; i < chars.Count; i++)
                 {
-                    var c = list[i];
-                    var mapping = names[rng[i]];
+                    //var c = chars[i];
+                    //var mapping = names.FirstOrDefault(n => n.Index == gly[i]);
+                    //var n = mapping?.Name;
+
+                    var c = chars[i];
+                    var mapping = names[gly[i]];
                     var n = mapping.Name;
+
                     if (!string.IsNullOrEmpty(n))
                     {
                         // Some fonts use Unicode values as glyph names.

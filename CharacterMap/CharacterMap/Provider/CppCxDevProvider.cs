@@ -8,7 +8,9 @@ namespace CharacterMap.Provider
 {
     public class CppCxDevProvider : DevProviderBase
     {
-        public CppCxDevProvider(CharacterRenderingOptions r, Character c) : base(r, c) { }
+        public CppCxDevProvider(CharacterRenderingOptions r, Character c) : base(r, c) {
+            DisplayName = "C++/CX";
+        }
 
         protected override DevProviderType GetDevProviderType() => DevProviderType.CppCX;
 

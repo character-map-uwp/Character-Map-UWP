@@ -637,6 +637,23 @@ namespace CharacterMap.Views
             }
         }
 
+        private void DevFlyout_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout menu && menu.Items.Count < 2)
+            {
+                foreach (var provider in ViewModel.Providers)
+                {
+                    var item = new MenuFlyoutItem
+                    {
+                        Command = ViewModel.ToggleDev,
+                        CommandParameter = provider.Type,
+                        Text = provider.DisplayName
+                    };
+                    menu.Items.Add(item);
+                }
+            }
+        }
+
         private Visibility ShowFilePath(string filePath, bool isImported)
         {
             if (!isImported && !string.IsNullOrWhiteSpace(filePath))
@@ -973,7 +990,6 @@ namespace CharacterMap.Views
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
-
     }
 
 

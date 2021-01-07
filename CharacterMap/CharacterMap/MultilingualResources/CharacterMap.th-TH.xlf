@@ -1186,6 +1186,15 @@ Default variant copied.</target>
           <source>Show Developer Tools</source>
           <target state="new">Show Developer Tools</target>
         </trans-unit>
+        <trans-unit id="ContextMenuDevCopyCommand" translate="yes" xml:space="preserve">
+          <source>Copy {0}</source>
+          <target state="new">Copy {0}</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Examples: "Copy Font Icon" or "Copy Glyph Code"</note>
+        </trans-unit>
+        <trans-unit id="ProviderNone" translate="yes" xml:space="preserve">
+          <source>None</source>
+          <target state="new">None</target>
+        </trans-unit>
       </group>
     </body>
   </file>

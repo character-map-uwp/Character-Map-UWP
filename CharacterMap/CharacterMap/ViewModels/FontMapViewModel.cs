@@ -551,27 +551,6 @@ namespace CharacterMap.ViewModels
         {
             if (message.CopyType == DevValueType.Char)
                 await Utils.TryCopyToClipboardAsync(message.RequestedItem, this);
-            else
-            {
-                //var data = GlyphService.GetDevValues(message.RequestedItem, SelectedVariant, message.Analysis, GetEffectiveTypography(), Settings.DevToolsLanguage == 0);
-                //switch (message.CopyType)
-                //{
-                //    case DevValueType.Glyph:
-                //        Utils.CopyToClipBoard(SelectedProvider.);
-                //        break;
-                //    case DevValueType.FontIcon:
-                //        Utils.CopyToClipBoard(data.FontIcon);
-                //        break;
-                //    case DevValueType.PathIcon:
-                //        Utils.CopyToClipBoard(data.Path);
-                //        break;
-                //    case DevValueType.UnicodeValue:
-                //        Utils.CopyToClipBoard(message.RequestedItem.UnicodeString);
-                //        break;
-                //    default:
-                //        return;
-                //}
-            }
 
             Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }

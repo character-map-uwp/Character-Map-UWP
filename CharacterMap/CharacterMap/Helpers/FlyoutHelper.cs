@@ -2,6 +2,7 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Provider;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
@@ -51,7 +52,16 @@ namespace CharacterMap.Helpers
         }
 
         
-
+        /// <summary>
+        /// Creates the context menu for the Font List or the "..." button.
+        /// Both of these have a font as their main target.
+        /// </summary>
+        /// <param name="menu"></param>
+        /// <param name="font"></param>
+        /// <param name="variant"></param>
+        /// <param name="headerContent"></param>
+        /// <param name="standalone"></param>
+        /// <param name="showAdvanced"></param>
         public static void CreateMenu(
             MenuFlyout menu,
             InstalledFont font,
@@ -322,6 +332,12 @@ namespace CharacterMap.Helpers
             }
         }
 
+        /// <summary>
+        /// Creates the context menu for the Character Map grid
+        /// </summary>
+        /// <param name="menu"></param>
+        /// <param name="target"></param>
+        /// <param name="viewmodel"></param>
         public static void ShowCharacterGridContext(MenuFlyout menu, FrameworkElement target, FontMapViewModel viewmodel)
         {
             if (target.Tag is Character c)
@@ -358,7 +374,6 @@ namespace CharacterMap.Helpers
                     {
                         if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
                         {
-                           
                             child.Text = svgChar ? Localization.Get("ExportSVGGlyphLabel/Text") : Localization.Get("ColoredGlyphLabel/Text");
                             child.SetVisible(svgChar || (analysis.IsFullVectorBased && analysis.HasColorGlyphs));
                         }
@@ -370,19 +385,55 @@ namespace CharacterMap.Helpers
                 }
 
                 // 5. Handle Dev values
-                var devRoot = menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "DevRoot");
-                foreach (var child in devRoot.Items.OfType<MenuFlyoutItem>())
+                if (menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "DevRoot") is MenuFlyoutSubItem devRoot)
                 {
-                    if (child.CommandParameter is DevValueType d)
+                    // 5.0. Prepare click handler
+                    static void CopyItemClick(object sender, RoutedEventArgs e)
                     {
-                        if (d == DevValueType.UnicodeValue)
-                            child.Tag = c.UnicodeString;
-                        //else if (d == DevValueType.Glyph)
-                        //    child.Tag = GlyphService.GetDevValues(c, null, null, null, ResourceHelper.AppSettings.DevToolsLanguage == 0).Hex;
+                        if (sender is MenuFlyoutItem item
+                            && Properties.GetDevOption(item) is DevOption option)
+                        {
+                            Utils.CopyToClipBoard(option.Value);
+                            WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+                        }
                     }
-                }
 
-                // 6. Handle Add Selection Button
+                    // 5.1. Get providers for the grid character
+                    var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures };
+                    var providers = DevProviderBase.GetProviders(options, c);
+
+                    // 5.2. Create child items.
+                    //      As menus only update their visual tree once and ignore
+                    //      any future updates, we can only do this once.
+                    if (devRoot.Items.Count == 0)
+                    {
+                        foreach (var p in providers.Where(p => p.Type != DevProviderType.None))
+                        {
+                            var item = new MenuFlyoutSubItem { Text = p.DisplayName };
+                            foreach (var o in p.GetContextOptions())
+                            {
+                                var i = new MenuFlyoutItem { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name) };
+                                i.Click += CopyItemClick;
+                                Properties.SetDevOption(i, o);
+                                item.Items.Add(i);
+                            }
+                            devRoot.Items.Add(item);
+                        }
+                    }
+
+                    // 5.3. Update data in child items.
+                    foreach (var item in devRoot.Items.Cast<MenuFlyoutSubItem>())
+                    {
+                        var p = providers.FirstOrDefault(p => p.DisplayName == item.Text);
+                        var ops = p.GetContextOptions();
+                        foreach (var child in item.Items.Cast<MenuFlyoutItem>())
+                        {
+                            Properties.SetDevOption(child, ops.FirstOrDefault(o => o.Name == Properties.GetDevOption(child).Name));
+                        }
+                    }
+                };
+
+                // 6. Handle visibility of "Add to Selection" Button
                 if (menu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Name == "AddSelectionButton") is MenuFlyoutItem add)
                 {
                     add.SetVisible(ResourceHelper.AppSettings.EnableCopyPane);
