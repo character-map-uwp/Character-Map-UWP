@@ -36,7 +36,7 @@ namespace CharacterMap.Provider
                 ops.Add(new DevOption("TxtPathIcon/Text", $"<PathIcon Data=\"{pathIconData}\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />"));
 
             if (hasSymbol)
-                ops.Add(new DevOption("TxtSymbolIcon/Text", $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />"));
+                ops.Add(new DevOption("TxtSymbolIcon/Header", $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />"));
 
             return ops;
         }

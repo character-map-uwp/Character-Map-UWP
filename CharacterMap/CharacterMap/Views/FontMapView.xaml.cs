@@ -2,7 +2,6 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using CharacterMap.Provider;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMapCX;
@@ -24,7 +23,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 

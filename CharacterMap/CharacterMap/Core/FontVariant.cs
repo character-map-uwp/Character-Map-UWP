@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using CharacterMap.Helpers;
+﻿using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMapCX;
 using Humanizer;
 using Microsoft.Graphics.Canvas.Text;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Windows.Storage;
-using CharacterMap.Models;
-using System.Text;
-using CharacterMap.Services;
 
 namespace CharacterMap.Core
 {
@@ -114,7 +113,7 @@ namespace CharacterMap.Core
             if (IsImported)
                 return Localization.Get("InstallTypeImported");
 
-            return Localization.Get($"DWriteSource{DirectWriteProperties.Source.ToString()}");
+            return Localization.Get($"DWriteSource{DirectWriteProperties.Source}");
         }
 
         public IReadOnlyList<Character> GetCharacters()

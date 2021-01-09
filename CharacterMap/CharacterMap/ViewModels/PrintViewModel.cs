@@ -2,19 +2,15 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Data.Text;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels
 {
-
     public class UnicodeCategoryModel : ViewModelBase
     {
         public UnicodeGeneralCategory Category { get; }
@@ -175,7 +171,6 @@ namespace CharacterMap.ViewModels
             }
 
             // Filter characters
-
             var chars = Font.Characters.AsEnumerable();
             if (HideWhitespace)
                 chars = Font.Characters.Where(c => !Unicode.IsWhiteSpaceOrControl(c.UnicodeIndex));

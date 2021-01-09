@@ -37,7 +37,7 @@ namespace CharacterMap.Provider
                 ops.Add(new DevOption("TxtPathIcon/Text", $"new PathIcon {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Windows.UI.Xaml.Media.Geometry), \"{pathIconData}\"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }};"));
 
             if (hasSymbol)
-                ops.Add(new DevOption("TxtSymbolIcon/Text", $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};"));
+                ops.Add(new DevOption("TxtSymbolIcon/Header", $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};"));
 
             return ops;
         }

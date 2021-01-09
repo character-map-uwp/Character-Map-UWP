@@ -1,34 +1,30 @@
-﻿using System;
+﻿using CharacterMap.Annotations;
+using CharacterMap.Controls;
+using CharacterMap.Core;
+using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Uwp.UI.Controls;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using CharacterMap.Annotations;
-using CharacterMap.Core;
-using CharacterMap.ViewModels;
-using CharacterMap.Helpers;
-using Windows.Storage.Pickers;
-using CharacterMap.Services;
-using System.Collections.Generic;
-using System.Text;
-using Windows.UI.Xaml.Markup;
-using CharacterMap.Controls;
-using CharacterMap.Models;
-using Microsoft.Toolkit.Uwp.UI.Controls;
-using Windows.UI.ViewManagement;
-using Windows.UI.Core.AnimationMetrics;
-using CharacterMapCX;
-using System.Windows.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
-using Microsoft.Toolkit.Mvvm.Input;
 
 namespace CharacterMap.Views
 {
@@ -395,7 +391,7 @@ namespace CharacterMap.Views
                     AppxOption.SetVisible(FontFinder.HasAppxFonts);
                 }
 
-                void SetCommand(MenuFlyoutItemBase b, ICommand c)
+                static void SetCommand(MenuFlyoutItemBase b, ICommand c)
                 {
                     b.FontSize = 16;
                     if (b is MenuFlyoutSubItem i)

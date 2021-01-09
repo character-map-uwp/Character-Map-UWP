@@ -10,7 +10,6 @@
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
-    xmlns:p="using:CharacterMap.Provider"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:views="using:CharacterMap.Views"
     d:DesignHeight="800"
@@ -211,7 +210,7 @@
                 <ColumnDefinition Width="Auto" />
                 <!--  Font Name  -->
                 <ColumnDefinition Width="*" />
-                <!--  Font Import Button (Standalone Window)  -->
+                <!--  Font Import Button (Stand-alone Window)  -->
                 <ColumnDefinition Width="Auto" />
                 <!--  Search Box  -->
                 <ColumnDefinition Width="Auto" />
@@ -1373,10 +1372,11 @@
                                         Opening="DevFlyout_Opening"
                                         Placement="Top">
                                         <MenuFlyoutItem x:Uid="DevPopupHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
-
+                                        <!--  Options are populated in code  -->
                                     </MenuFlyout>
                                 </Button.Flyout>
                                 <Grid Margin="0 -4 0 0">
+
                                     <PathIcon
                                         x:Name="ShowCodeIcon"
                                         HorizontalAlignment="Center"
@@ -1460,7 +1460,7 @@
                     </Border>
                 </Grid>
 
-                <!--  Dev Utils  -->
+                <!--  Dev Utilities  -->
                 <StackPanel
                     x:Name="DevUtilsRoot"
                     Grid.Row="1"
@@ -1591,7 +1591,7 @@
             <toolkit:InAppNotification x:Name="DefaultNotification" />
         </Grid>
 
-        <!--  Standalone Loading Root  -->
+        <!--  Stand-alone Loading Root  -->
         <ProgressRing
             x:Name="LoadingRing"
             Grid.Row="2"
@@ -1684,7 +1684,6 @@
             <VisualStateGroup x:Name="DevStates">
                 <VisualState x:Name="DevNoneState">
                     <VisualState.Setters>
-                        <!--<Setter Target="BtnToggleDev.Label" Value="{x:Bind helpers:Localization.Get('BtnToggleDev/Label')}" />-->
                         <Setter Target="ShowCodeIcon.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>

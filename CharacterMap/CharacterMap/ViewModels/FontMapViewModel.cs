@@ -1,9 +1,13 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMap.Provider;
 using CharacterMap.Services;
 using CharacterMap.Views;
 using CharacterMapCX;
 using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,12 +16,7 @@ using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using CharacterMap.Models;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
-using CharacterMap.Provider;
 
 namespace CharacterMap.ViewModels
 {
@@ -372,8 +371,8 @@ namespace CharacterMap.ViewModels
                 return;
 
             if (Chars.FirstOrDefault(i => i.UnicodeIndex == Settings.LastSelectedCharIndex)
-                            is Character lastSelectedChar
-                            && SelectedVariant.FontFace.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
+                is Character lastSelectedChar
+                && SelectedVariant.FontFace.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
             {
                 SelectedChar = lastSelectedChar;
             }
@@ -398,8 +397,6 @@ namespace CharacterMap.ViewModels
                 return null;
 
             return SelectedVariant.GetDescription(c);
-
-           // return GlyphService.GetCharacterDescription(c.UnicodeIndex, SelectedVariant);
         }
 
         public string GetCharDescription(Character c)
