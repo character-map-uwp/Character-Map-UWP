@@ -108,7 +108,6 @@ namespace CharacterMap.Views
                         if (InlineLabelCount.Visibility == Visibility.Visible)
                             Composition.PlayEntrance(InlineLabelCount, 83, 0, 80);
                     }
-
                     break;
 
                 case nameof(ViewModel.SelectedFont):
@@ -117,13 +116,19 @@ namespace CharacterMap.Views
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
                         FontMap.PlayFontChanged();
                     }
+                    break;
 
+                case nameof(ViewModel.FontSearch):
+                case nameof(ViewModel.IsSearchResults):
+                    // Required to prevent crash with SemanticZoom when there
+                    // are no items in the results list
+                    if (!FontsSemanticZoom.IsZoomedInViewActive)
+                        FontsSemanticZoom.IsZoomedInViewActive = true;
                     break;
 
                 case nameof(ViewModel.IsLoadingFonts):
                 case nameof(ViewModel.IsLoadingFontsFailed):
                     UpdateLoadingStates();
-
                     break;
             }
         }
@@ -407,6 +412,22 @@ namespace CharacterMap.Views
             }
         }
 
+        private void OnFontPreviewUpdated()
+        {
+            if (ViewModel.InitialLoad.IsCompleted)
+            {
+                _fontListDebouncer.Debounce(16, () =>
+                {
+                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                });
+            }
+        }
+
+
+
+
+        /* Font Collection management */
+
         private void RenameFontCollection_Click(object sender, RoutedEventArgs e)
         {
             _ = (new CreateCollectionDialog(ViewModel.SelectedCollection)).ShowAsync();
@@ -436,16 +457,10 @@ namespace CharacterMap.Views
             Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
         }
 
-        private void OnFontPreviewUpdated()
-        {
-            if (ViewModel.InitialLoad.IsCompleted)
-            {
-                _fontListDebouncer.Debounce(16, () =>
-                {
-                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
-                });
-            }
-        }
+
+
+
+        /* Drag / Drop support */
 
         private void Grid_DragOver(object sender, DragEventArgs e)
         {

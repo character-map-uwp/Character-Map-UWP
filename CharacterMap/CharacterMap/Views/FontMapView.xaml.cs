@@ -243,11 +243,6 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.GlyphAnnotation):
                         CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
                         break;
-                    case nameof(AppSettings.DevToolsLanguage):
-                    case nameof(AppSettings.ShowDevUtils):
-                        ViewModel.UpdateDevValues();
-                        UpdateDevUtils();
-                        break;
                     case nameof(AppSettings.GridSize):
                         UpdateDisplay();
                         break;
@@ -315,7 +310,7 @@ namespace CharacterMap.Views
             // across multiple dispatchers.
             RunOnUI(() =>
             {
-                if (ViewModel.Settings.ShowDevUtils && ViewModel.SelectedProvider != null)
+                if (ViewModel.SelectedProvider != null)
                 {
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
                         Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
@@ -486,24 +481,6 @@ namespace CharacterMap.Views
         {
             _isCompactOverlay = !_isCompactOverlay;
             _ = UpdateCompactOverlayAsync();
-        }
-
-        private void ToggleDev()
-        {
-            if (!ViewModel.Settings.ShowDevUtils)
-            {
-                ViewModel.Settings.ShowDevUtils = true;
-            }
-            else
-            {
-                if (ViewModel.Settings.DevToolsLanguage < 1)
-                    ViewModel.Settings.DevToolsLanguage += 1;
-                else
-                {
-                    ViewModel.Settings.ShowDevUtils = false;
-                    ViewModel.Settings.DevToolsLanguage = 0;
-                }
-            }
         }
 
         private void BtnFit_Click(object sender, RoutedEventArgs e)

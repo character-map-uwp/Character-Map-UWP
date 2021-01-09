@@ -194,7 +194,7 @@ namespace CharacterMap.ViewModels
 
             CommandSavePng = new RelayCommand<ExportParameters>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<ExportParameters>(async (b) => await SaveSvgAsync(b));
-            ToggleDev = new RelayCommand<DevProviderType>(SetDev);
+            ToggleDev = new RelayCommand<DevProviderType>(t => SetDev(t));
 
             _interop = Utils.GetInterop();
 
@@ -351,13 +351,13 @@ namespace CharacterMap.ViewModels
 
         internal void UpdateDevValues()
         {
-            if (SelectedVariant == null || SelectedChar == null || !Settings.ShowDevUtils)
+            if (SelectedVariant == null || SelectedChar == null)
             {
-                SetDev(DevProviderType.None);
+                // Do nothing.
             }
             else
             {
-                var t = SelectedProvider?.Type ?? DevProviderType.None;
+                var t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
                 RenderingOptions = new CharacterRenderingOptions(SelectedVariant, new List<TypographyFeatureInfo> { SelectedCharTypography }, 64, SelectedCharAnalysis);
                 Providers = RenderingOptions.GetDevProviders(SelectedChar);
                 SetDev(t);
@@ -434,10 +434,14 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private void SetDev(DevProviderType obj)
+        private void SetDev(DevProviderType type, bool save = true)
         {
-            if (Providers?.FirstOrDefault(p => p.Type == obj) is DevProviderBase p)
+            if (Providers?.FirstOrDefault(p => p.Type == type) is DevProviderBase p)
+            {
                 SelectedProvider = p;
+                if (save)
+                    Settings.SelectedDevProvider = type;
+            }
         }
 
         internal async Task SavePngAsync(ExportParameters args, Character c = null)
