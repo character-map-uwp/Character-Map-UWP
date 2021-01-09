@@ -1194,6 +1194,10 @@ Default variant copied.</target>
           <source>None</source>
           <target state="new">None</target>
         </trans-unit>
+        <trans-unit id="SettingsChangelogLabel.Text" translate="yes" xml:space="preserve">
+          <source>Changelog</source>
+          <target state="new">Changelog</target>
+        </trans-unit>
       </group>
     </body>
   </file>

@@ -996,4 +996,7 @@ Default variant copied.</value>
   <data name="ProviderNone" xml:space="preserve">
     <value>None</value>
   </data>
+  <data name="SettingsChangelogLabel.Text" xml:space="preserve">
+    <value>Changelog</value>
+  </data>
 </root>
