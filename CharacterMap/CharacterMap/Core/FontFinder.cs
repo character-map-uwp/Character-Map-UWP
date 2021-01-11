@@ -243,7 +243,7 @@ namespace CharacterMap.Core
 
                 foreach (var item in items)
                 {
-                    if (!(item is StorageFile file))
+                    if (item is not StorageFile file)
                     {
                         invalid.Add((item, Localization.Get("ImportNotAFile")));
                         continue;
@@ -260,6 +260,9 @@ namespace CharacterMap.Core
                         invalid.Add((item, Localization.Get("ImportPendingDelete")));
                         continue;
                     }
+
+                    // For WOFF files we can attempt to convert the file to OTF before loading
+                    file = await FontConverter.TryConvertAsync(file);
 
                     if (SupportedFormats.Contains(file.FileType.ToLower()))
                     {
@@ -312,6 +315,8 @@ namespace CharacterMap.Core
                 return new FontImportResult(imported, existing, invalid);
             });
         }
+
+        
 
         /// <summary>
         /// Returns true if all fonts were deleted.
