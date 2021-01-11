@@ -9,16 +9,18 @@ namespace CharacterMap.Models
         /// </summary>
         /// <param name="nameKey">Resource key for localized string</param>
         /// <param name="value">Value</param>
-        public DevOption(string nameKey, string value, bool forceExtended = false)
+        public DevOption(string nameKey, string value, bool forceExtended = false, bool supportsTypography = false)
         {
             Name = Localization.Get(nameKey);
             Value = value;
+            SupportsTypography = supportsTypography;
 
             UseExtendedCopy = forceExtended || (value != null && value.Length > 2048);
         }
-        public bool UseExtendedCopy { get; }
         public string Name { get; }
         public string Value { get; }
+        public bool UseExtendedCopy { get; }
+        public bool SupportsTypography { get; }
     }
 
 

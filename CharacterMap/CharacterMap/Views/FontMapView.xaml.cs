@@ -493,10 +493,16 @@ namespace CharacterMap.Views
 
         private void BtnCopyCode_OnClick(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.Tag is string s)
+            if (sender is FrameworkElement f 
+                && f.DataContext is DevOption o
+                && f.Tag is string s)
             {
                 Utils.CopyToClipBoard(s.Trim());
                 BorderFadeInStoryboard.Begin();
+                if (!o.SupportsTypography)
+                    TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem != TypographyFeatureInfo.None);
+                else
+                    TxtCopiedVariantMessage.SetVisible(false);
             }
         }
 

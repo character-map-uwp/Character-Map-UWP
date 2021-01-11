@@ -28,7 +28,7 @@ namespace CharacterMap.Provider
             };
 
             if (!string.IsNullOrWhiteSpace(pathIconData))
-                ops.Add(new DevOption("TxtPathGeometry/Text", $"<Path Data=\"{pathIconData}\" Fill=\"Black\" />"));
+                ops.Add(new DevOption("TxtPathGeometry/Text", $"<Path Data=\"{pathIconData}\" Fill=\"Black\" />", supportsTypography: true));
 
             return ops;
         }

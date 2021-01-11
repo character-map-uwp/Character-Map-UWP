@@ -34,7 +34,8 @@ namespace CharacterMap.Provider
             };
 
             if (!string.IsNullOrWhiteSpace(pathIconData))
-                ops.Add(new DevOption("TxtPathIcon/Text", $"new PathIcon {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Windows.UI.Xaml.Media.Geometry), \"{pathIconData}\"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }};"));
+                ops.Add(new DevOption("TxtPathIcon/Text", $"new PathIcon {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Windows.UI.Xaml.Media.Geometry), \"{pathIconData}\"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }};",
+                    supportsTypography: true));
 
             if (hasSymbol)
                 ops.Add(new DevOption("TxtSymbolIcon/Header", $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};"));

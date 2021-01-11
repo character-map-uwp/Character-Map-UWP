@@ -42,7 +42,7 @@ namespace CharacterMap.Provider
                     "p->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Center;\n" +
                     $"p->Data = (Geometry^)Markup::XamlBindingHelper::ConvertValue(Geometry::typeid, L\"{pathIconData}\");";
                 
-                ops.Add(new DevOption("TxtPathIcon/Text", data, true));
+                ops.Add(new DevOption("TxtPathIcon/Text", data, true, true));
             }
 
             if (hasSymbol)

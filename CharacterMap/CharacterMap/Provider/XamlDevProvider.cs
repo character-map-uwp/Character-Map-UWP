@@ -29,11 +29,11 @@ namespace CharacterMap.Provider
             var ops = new List<DevOption>()
             {
                 new ("TxtXamlCode/Header", $"&#x{hex};"),
-                new ("TxtFontIcon/Header", $@"<FontIcon FontFamily=""{v?.XamlFontSource}"" Glyph=""&#x{hex};"" />"),
+                new ("TxtFontIcon/Header", $@"<FontIcon FontFamily=""{v?.XamlFontSource}"" Glyph=""&#x{hex};"" />", supportsTypography: true),
             };
 
             if (!string.IsNullOrWhiteSpace(pathIconData))
-                ops.Add(new DevOption("TxtPathIcon/Text", $"<PathIcon Data=\"{pathIconData}\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />"));
+                ops.Add(new DevOption("TxtPathIcon/Text", $"<PathIcon Data=\"{pathIconData}\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />", supportsTypography: true));
 
             if (hasSymbol)
                 ops.Add(new DevOption("TxtSymbolIcon/Header", $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />"));
