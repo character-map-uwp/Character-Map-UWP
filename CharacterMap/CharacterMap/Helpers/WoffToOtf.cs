@@ -27,6 +27,29 @@ using System.Text;
 
 namespace WoffToOtf
 {
+    public enum ConversionStatus
+    {
+        /// <summary>
+        /// Conversion completed without error or did not occur. 
+        /// This does not mean the output is a valid font file.
+        /// </summary>
+        OK,
+        Skipped,
+        UnspecifiedError,
+        /// <summary>
+        /// Input file is not a WOFF file (invalid header signature byte)
+        /// </summary>
+        UnrecognisedFile,
+        /// <summary>
+        /// Input file identifies as WOFF2 which is not supported
+        /// </summary>
+        UnsupportedWOFF2,
+        /// <summary>
+        /// Table length invalid after decompression
+        /// </summary>
+        TableLengthMismatch,
+    }
+
     public static class Converter
     {
         /// <summary>
@@ -116,12 +139,11 @@ namespace WoffToOtf
             return new string(buffer);
         }
 
-        public static void Convert(
+        public static ConversionStatus Convert(
             Stream input,
             Stream output)
         {
             using var reader = new BEBinaryReader(input);
-            using var writer = new BEBinaryWriter(output);
 
             var header = new WoffHeader
             {
@@ -139,6 +161,15 @@ namespace WoffToOtf
                 PrivOffset = reader.ReadUInt32(),
                 PrivLength = reader.ReadUInt32()
             };
+
+            if (header.Signature is not 0x774F4646)
+            {
+                if (header.Signature is 0x774F4632)
+                    return ConversionStatus.UnsupportedWOFF2;
+                else
+                    return ConversionStatus.UnrecognisedFile;
+            }
+
 
             UInt32 offset = 12;
 
@@ -162,9 +193,10 @@ namespace WoffToOtf
                 offset += (4 * 4);
             }
 
-           // entries = entries.OrderBy(e => e.Offset).ToList();
+            // Amend table count after removing DSIG
             header.TableCount = (ushort)entries.Count;
 
+            // Calculate header values
             UInt16 entrySelector = 0;
             while (Math.Pow(2, entrySelector) <= header.TableCount)
             {
@@ -174,6 +206,9 @@ namespace WoffToOtf
 
             UInt16 searchRange = (UInt16)(Math.Pow(2, entrySelector) * 16);
             UInt16 rangeShift = (UInt16)(header.TableCount * 16 - searchRange);
+
+            // Create writer
+            using var writer = new BEBinaryWriter(output);
 
             // Write Font Header
             writer.Write(header.Flavor);
@@ -204,6 +239,7 @@ namespace WoffToOtf
                 byte[] uncompressed;
                 if (entry.CompressedLength != entry.OriginalLength)
                 {
+                    // Decompress table
                     using var comp = new MemoryStream(compressed.AsSpan().Slice(2).ToArray()); // Ignore the ZLib header (2 bytes long)
                     using var outs = new MemoryStream();
                     using var def = new DeflateStream(comp, CompressionMode.Decompress);
@@ -214,7 +250,7 @@ namespace WoffToOtf
                     uncompressed = compressed;
 
                 if (uncompressed.Length != entry.OriginalLength)
-                    throw new InvalidDataException();
+                    return ConversionStatus.TableLengthMismatch;
 
                 if (entry.ToString() == "name")
                 {
@@ -234,11 +270,23 @@ namespace WoffToOtf
             
             writer.Flush();
             output.Flush();
+
+            return ConversionStatus.OK;
         }
 
 
         static byte[] TryFixNameTable(ref byte[] data)
         {
+            /* 
+             * For a font to render properly in the XAML engine it requires
+             * a FamilyName to be properly set in the font's 'name' table.
+             * It is valid to not have this value set and web fonts may 
+             * intentionally leave this blank as most web-font renderers will
+             * work fine without it. However as we need it to get XAML to render
+             * the font we need to manually pull the font name out from somewhere
+             * else and stick it in the expected place.
+             */
+
             using var ms = new MemoryStream(data);
             using var t = new BEBinaryReader(ms);
 
@@ -260,9 +308,30 @@ namespace WoffToOtf
                     };
                 }).ToList();
 
+               
+
+                // Debug code to view table data.
+                //var options = recs.Where(r => r.PlatformId == 3).ToList();
+                //var ns = recs.Where(r => r.NameId == 1).ToList();
+                //foreach (var rec in recs)
+                //{
+                //    ms.Seek(rec.Offset + offset, SeekOrigin.Begin);
+                //    byte[] buf = t.ReadBytes(rec.Length);
+                //    Encoding enc2;
+                //    if (rec.EncodingId == 3 || rec.EncodingId == 1)
+                //    {
+                //        enc2 = Encoding.BigEndianUnicode;
+                //    }
+                //    else
+                //    {
+                //        enc2 = Encoding.UTF8;
+                //    }
+                //    string strRet = enc2.GetString(buf, 0, buf.Length);
+                //    System.Diagnostics.Debug.WriteLine(strRet);
+                //}
+
                 var fam = recs.FirstOrDefault(r => r.PlatformId == 3 && r.NameId == 1);
                 var post = recs.FirstOrDefault(r => r.NameId == 6);
-
                 if (fam is not null && post is not null
                     && fam.Length == 0 && post.Length != 0)
                 {
@@ -271,26 +340,6 @@ namespace WoffToOtf
                 }
                 else
                     return null;
-
-                // Debug code to view table data.
-                /*
-                    var ns = recs.Where(r => r.NameId == 1).ToList();
-                    foreach (var rec in recs)
-                    {
-                        ms.Seek(rec.Offset + offset, SeekOrigin.Begin);
-                        byte[] buf = t.ReadBytes(rec.Length);
-                        Encoding enc2;
-                        if (rec.EncodingId == 3 || rec.EncodingId == 1)
-                        {
-                            enc2 = Encoding.BigEndianUnicode;
-                        }
-                        else
-                        {
-                            enc2 = Encoding.UTF8;
-                        }
-                        string strRet = enc2.GetString(buf, 0, buf.Length);
-                    } 
-                */
 
 
                 using var mso = new MemoryStream();

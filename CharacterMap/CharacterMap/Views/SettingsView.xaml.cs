@@ -299,6 +299,7 @@ namespace CharacterMap.Views
             return new List<ChangelogItem>
             {
                 new("Latest Release",
+                    "- Added ability to open and import WOFF fonts (WOFF fonts are converted to OTF during import)\n" +
                     "- Added C++/CX, C++/WinRT & Xamarin.Forms developer features\n" +
                     "- Copying Path Icon from developer code now copies the path with typography applied"),
                 new("2021.1.0.0 (Jan 1 2021)",

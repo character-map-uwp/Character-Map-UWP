@@ -13,6 +13,7 @@ using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Windows.Storage;
 using Windows.UI.Text;
+using WoffToOtf;
 
 namespace CharacterMap.Core
 {
@@ -268,13 +269,17 @@ namespace CharacterMap.Core
 
                     // For WOFF files we can attempt to convert the file to OTF before loading
                     var src = file;
-                    file = await FontConverter.TryConvertAsync(file);
-
-                    if (file == null)
+                    var convertResult = await FontConverter.TryConvertAsync(file);
+                    if (convertResult.Result is not ConversionStatus.OK)
                     {
-                        invalid.Add((src, Localization.Get("ImportFailedWoff")));
+                        if (convertResult.Result == ConversionStatus.UnsupportedWOFF2)
+                            invalid.Add((src, Localization.Get("ImportWOFF2NotSupported")));
+                        else
+                            invalid.Add((src, Localization.Get("ImportFailedWoff")));
                         continue;
                     }
+                    else
+                        file = convertResult.File;
 
                     if (SupportedFormats.Contains(file.FileType.ToLower()))
                     {
@@ -454,9 +459,11 @@ namespace CharacterMap.Core
             await InitialiseAsync().ConfigureAwait(false);
 
             var src = file;
-            file = await FontConverter.TryConvertAsync(file);
-            if (file == null)
+            var convert = await FontConverter.TryConvertAsync(file);
+            if (convert.Result != ConversionStatus.OK)
                 return null;
+
+            file = convert.File;
 
             var folder = await _importFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
             var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);

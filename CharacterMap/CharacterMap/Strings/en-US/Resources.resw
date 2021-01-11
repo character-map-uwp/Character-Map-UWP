@@ -1010,4 +1010,7 @@ Default variant copied.</value>
   <data name="ImportFailedWoff" xml:space="preserve">
     <value>WOFF font could not be converted to a valid OTF font.</value>
   </data>
+  <data name="ImportWOFF2NotSupported" xml:space="preserve">
+    <value>WOFF2 files are not supported</value>
+  </data>
 </root>

@@ -1215,6 +1215,10 @@ Default variant copied.</target>
           <source>WOFF font could not be converted to a valid OTF font.</source>
           <target state="new">WOFF font could not be converted to a valid OTF font.</target>
         </trans-unit>
+        <trans-unit id="ImportWOFF2NotSupported" translate="yes" xml:space="preserve">
+          <source>WOFF2 files are not supported</source>
+          <target state="new">WOFF2 files are not supported</target>
+        </trans-unit>
       </group>
     </body>
   </file>
