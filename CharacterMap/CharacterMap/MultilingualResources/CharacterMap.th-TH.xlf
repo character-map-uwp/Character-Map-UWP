@@ -1208,6 +1208,10 @@ Default variant copied.</target>
           <target state="new">Font Image Source</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Xamarin FontImageSource. Does not need translation.</note>
         </trans-unit>
+        <trans-unit id="ImportFailedWoff" translate="yes" xml:space="preserve">
+          <source>WOFF font could not be converted to a valid OTF font.</source>
+          <target state="new">WOFF font could not be converted to a valid OTF font.</target>
+        </trans-unit>
       </group>
     </body>
   </file>

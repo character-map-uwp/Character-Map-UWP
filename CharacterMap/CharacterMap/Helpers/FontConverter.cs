@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CharacterMap.Core;
+using CharacterMapCX;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -11,13 +13,25 @@ namespace CharacterMap.Helpers
         {
             if (file.FileType.ToLower().EndsWith("woff"))
             {
-                var folder = ApplicationData.Current.LocalCacheFolder;
-                var newFile = await folder.CreateFileAsync(file.DisplayName + ".otf", CreationCollisionOption.ReplaceExisting);
-                await TryConvertWoffToOtfAsync(file, newFile);
-                return newFile;
+                var folder = ApplicationData.Current.TemporaryFolder;
+                var newFile = await folder.CreateFileAsync(file.DisplayName + ".otf", CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
+                await TryConvertWoffToOtfAsync(file, newFile).ConfigureAwait(false);
+
+                if (DirectWrite.HasValidFonts(GetAppUri(newFile)))
+                    return newFile;
+                else
+                {
+                    await newFile.DeleteAsync(StorageDeleteOption.PermanentDelete).AsTask().ConfigureAwait(false);
+                    return null;
+                }
             }
 
             return file;
+        }
+
+        static Uri GetAppUri(StorageFile file)
+        {
+            return new Uri($"ms-appdata:///temp/{file.Name}");
         }
 
         private static Task<bool> TryConvertWoffToOtfAsync(StorageFile inputFile, StorageFile outputFile)

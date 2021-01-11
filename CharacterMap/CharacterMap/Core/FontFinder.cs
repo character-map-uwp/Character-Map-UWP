@@ -61,6 +61,11 @@ namespace CharacterMap.Core
             ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
         };
 
+        public static HashSet<string> ImportFormats { get; } = new HashSet<string>
+        {
+            ".ttf", ".otf", ".otc", ".ttc", ".woff"//, ".woff2"
+        };
+
         public static async Task<DWriteFontSet> InitialiseAsync()
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
@@ -262,7 +267,14 @@ namespace CharacterMap.Core
                     }
 
                     // For WOFF files we can attempt to convert the file to OTF before loading
+                    var src = file;
                     file = await FontConverter.TryConvertAsync(file);
+
+                    if (file == null)
+                    {
+                        invalid.Add((src, Localization.Get("ImportFailedWoff")));
+                        continue;
+                    }
 
                     if (SupportedFormats.Contains(file.FileType.ToLower()))
                     {
@@ -440,6 +452,11 @@ namespace CharacterMap.Core
         internal static async Task<InstalledFont> LoadFromFileAsync(StorageFile file)
         {
             await InitialiseAsync().ConfigureAwait(false);
+
+            var src = file;
+            file = await FontConverter.TryConvertAsync(file);
+            if (file == null)
+                return null;
 
             var folder = await _importFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
             var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);

@@ -1007,4 +1007,7 @@ Default variant copied.</value>
     <value>Font Image Source</value>
     <comment>Xamarin FontImageSource. Does not need translation.</comment>
   </data>
+  <data name="ImportFailedWoff" xml:space="preserve">
+    <value>WOFF font could not be converted to a valid OTF font.</value>
+  </data>
 </root>

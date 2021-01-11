@@ -492,7 +492,7 @@ namespace CharacterMap.Views
         private async void OpenFont()
         {
             var picker = new FileOpenPicker();
-            foreach (var format in FontFinder.SupportedFormats)
+            foreach (var format in FontFinder.ImportFormats)
                 picker.FileTypeFilter.Add(format);
 
             picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
