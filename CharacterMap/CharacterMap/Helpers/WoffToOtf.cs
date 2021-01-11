@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 
 namespace WoffToOtf
 {
@@ -215,9 +216,15 @@ namespace WoffToOtf
                 if (uncompressed.Length != entry.OriginalLength)
                     throw new InvalidDataException();
 
+                if (entry.ToString() == "name")
+                {
+                    if (TryFixNameTable(ref uncompressed) is byte[] ammended)
+                        uncompressed = ammended;
+                }
+
                 output.Seek(entry.OutputOffset, SeekOrigin.Begin);
                 writer.Write(uncompressed);
-                offset = entry.OutputOffset + entry.OriginalLength;
+                offset = (uint)output.Position;
                 if (offset % 4 != 0)
                 {
                     uint padding = 4 - (offset % 4);
@@ -227,6 +234,98 @@ namespace WoffToOtf
             
             writer.Flush();
             output.Flush();
+        }
+
+
+        static byte[] TryFixNameTable(ref byte[] data)
+        {
+            using var ms = new MemoryStream(data);
+            using var t = new BEBinaryReader(ms);
+
+            var version = t.ReadUInt16();
+            if (version == 0)
+            {
+                var count = t.ReadUInt16();
+                var offset = t.ReadUInt16();
+                var recs = Enumerable.Range(0, count).Select(_ =>
+                {
+                    return new NameRecord
+                    {
+                        PlatformId = t.ReadUInt16(),
+                        EncodingId = t.ReadUInt16(),
+                        LangId = t.ReadUInt16(),
+                        NameId = t.ReadUInt16(),
+                        Length = t.ReadUInt16(),
+                        Offset = t.ReadUInt16()
+                    };
+                }).ToList();
+
+                var fam = recs.FirstOrDefault(r => r.PlatformId == 3 && r.NameId == 1);
+                var post = recs.FirstOrDefault(r => r.NameId == 6);
+
+                if (fam is not null && post is not null
+                    && fam.Length == 0 && post.Length != 0)
+                {
+                    fam.Length = post.Length;
+                    fam.Offset = post.Offset;
+                }
+                else
+                    return null;
+
+                // Debug code to view table data.
+                /*
+                    var ns = recs.Where(r => r.NameId == 1).ToList();
+                    foreach (var rec in recs)
+                    {
+                        ms.Seek(rec.Offset + offset, SeekOrigin.Begin);
+                        byte[] buf = t.ReadBytes(rec.Length);
+                        Encoding enc2;
+                        if (rec.EncodingId == 3 || rec.EncodingId == 1)
+                        {
+                            enc2 = Encoding.BigEndianUnicode;
+                        }
+                        else
+                        {
+                            enc2 = Encoding.UTF8;
+                        }
+                        string strRet = enc2.GetString(buf, 0, buf.Length);
+                    } 
+                */
+
+
+                using var mso = new MemoryStream();
+                using var w = new BEBinaryWriter(mso);
+                w.Write(version);
+                w.Write(count);
+                w.Write(offset);
+                foreach (var r in recs)
+                {
+                    w.Write(r.PlatformId);
+                    w.Write(r.EncodingId);
+                    w.Write(r.LangId);
+                    w.Write(r.NameId);
+                    w.Write(r.Length);
+                    w.Write(r.Offset);
+                }
+                w.Flush();
+
+                ms.Seek(offset, SeekOrigin.Begin);
+                ms.CopyTo(mso);
+                mso.Flush();
+                return mso.ToArray();
+            }
+            
+            return null;
+        }
+
+        class NameRecord
+        {
+            public UInt16 PlatformId { get; set; }
+            public UInt16 EncodingId { get; set; }
+            public UInt16 LangId { get; set; }
+            public UInt16 NameId { get; set; }
+            public UInt16 Length { get; set; }
+            public UInt16 Offset { get; set; }
         }
     }
 }

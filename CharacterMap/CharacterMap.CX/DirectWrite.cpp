@@ -480,7 +480,7 @@ bool DirectWrite::HasValidFonts(Uri^ uri)
 		auto l = ref new String(localeName);
 
 		auto font = fontset->Fonts->GetAt(0);
-		auto results = font->GetInformationalStrings(CanvasFontInformation::PreferredFamilyNames);
+		auto results = font->GetInformationalStrings(CanvasFontInformation::Win32FamilyNames);
 
 		valid = results->HasKey(l) || results->HasKey("en-us");
 
@@ -490,9 +490,19 @@ bool DirectWrite::HasValidFonts(Uri^ uri)
 		*/
 		/*if (!valid)
 		{
+			for (auto p : results)
+			{
+				auto cod = p->Key;
+				auto val = p->Value;
+			}
+
 			auto itr = results->First();
 			if (itr->HasCurrent)
+			{
+				auto cur = itr->Current;
+				auto val = cur->Value;
 				valid = true;
+			}
 		}*/
 	}
 	delete fontset;
