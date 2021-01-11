@@ -23,7 +23,8 @@ namespace CharacterMap.Provider
                 new XamlDevProvider(o, c),
                 new CSharpDevProvider(o, c),
                 new CppCxDevProvider(o, c),
-                new CppWinrtDevProvider(o, c)
+                new CppWinrtDevProvider(o, c),
+                new XamarinFormsDevProvider(o,c)
             };
         }
 
@@ -62,7 +63,7 @@ namespace CharacterMap.Provider
                 pathIconData = Utils.GetInterop().GetPathData(geom).Path;
                 _geometryCache.Add(KeyValuePair.Create(new GeometryCacheEntry(c, o), pathIconData));
 
-                // Keep the cache to a certain sizr
+                // Keep the cache to a certain size
                 while (_geometryCache.Count > 10)
                     _geometryCache.RemoveAt(0);
             }

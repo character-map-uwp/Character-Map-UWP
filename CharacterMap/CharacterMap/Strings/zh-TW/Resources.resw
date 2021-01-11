@@ -104,9 +104,11 @@
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>字體圖標</value>
+    <comment>Xaml FontIcon. Does not need translation.</comment>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol圖標</value>
+    <comment>Xaml SymbolIcon. Does not need translation.</comment>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>字符映射表</value>

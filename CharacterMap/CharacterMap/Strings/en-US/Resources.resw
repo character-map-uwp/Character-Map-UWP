@@ -209,9 +209,11 @@
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>Font Icon</value>
+    <comment>Xaml FontIcon. Does not need translation.</comment>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol Icon</value>
+    <comment>Xaml SymbolIcon. Does not need translation.</comment>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>Character Map</value>
@@ -580,6 +582,7 @@ Turning this on has negligible performance impact.</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
+    <comment>Xaml PathGeometry. Does not need translation.</comment>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>Use system language setting</value>
@@ -802,6 +805,7 @@ Please consider posting details about this error to GitHub so we can help you fi
   </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>Path Icon</value>
+    <comment>Xaml PathIcon. Does not need translation.</comment>
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>All Categories</value>
@@ -998,5 +1002,9 @@ Default variant copied.</value>
   </data>
   <data name="SettingsChangelogLabel.Text" xml:space="preserve">
     <value>Changelog</value>
+  </data>
+  <data name="TxtFontImageSource.Text" xml:space="preserve">
+    <value>Font Image Source</value>
+    <comment>Xamarin FontImageSource. Does not need translation.</comment>
   </data>
 </root>

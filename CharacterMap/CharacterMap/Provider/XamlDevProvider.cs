@@ -41,6 +41,4 @@ namespace CharacterMap.Provider
             return ops;
         }
     }
-
-
 }

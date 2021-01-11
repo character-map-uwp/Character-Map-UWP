@@ -104,9 +104,11 @@
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>字体图标</value>
+    <comment>Xaml FontIcon. Does not need translation.</comment>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol图标</value>
+    <comment>Xaml SymbolIcon. Does not need translation.</comment>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>字符映射表</value>
@@ -438,6 +440,7 @@
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>路径几何坐标</value>
+    <comment>Xaml PathGeometry. Does not need translation.</comment>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>跟随系统语言设置</value>

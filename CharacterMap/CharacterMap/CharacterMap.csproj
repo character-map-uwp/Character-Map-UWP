@@ -256,6 +256,7 @@
     <Compile Include="Provider\CharacterRenderingOptions.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
+    <Compile Include="Provider\XamarinFormsDevProvider.cs" />
     <Compile Include="Provider\XamlDevProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\IDialogService.cs" />

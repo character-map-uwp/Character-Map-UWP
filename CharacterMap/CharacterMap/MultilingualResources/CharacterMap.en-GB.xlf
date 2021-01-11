@@ -130,10 +130,12 @@
         <trans-unit id="TxtFontIcon.Header" translate="yes" xml:space="preserve">
           <source>Font Icon</source>
           <target state="new">Font Icon</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xaml FontIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="TxtSymbolIcon.Header" translate="yes" xml:space="preserve">
           <source>Symbol Icon</source>
           <target state="new">Symbol Icon</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xaml SymbolIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="TxtTitle.Text" translate="yes" xml:space="preserve">
           <source>Character Map</source>
@@ -624,6 +626,7 @@ Turning this on has negligible performance impact.</target>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
           <target state="new">Path Geometry</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xaml PathGeometry. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="UseSystemLanguage" translate="yes" xml:space="preserve">
           <source>Use system language setting</source>
@@ -922,6 +925,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
           <source>Path Icon</source>
           <target state="new">Path Icon</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xaml PathIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Dev Utils</source>
@@ -1191,6 +1195,11 @@ Default variant copied.</target>
         <trans-unit id="SettingsChangelogLabel.Text" translate="yes" xml:space="preserve">
           <source>Changelog</source>
           <target state="new">Changelog</target>
+        </trans-unit>
+        <trans-unit id="TxtFontImageSource.Text" translate="yes" xml:space="preserve">
+          <source>Font Image Source</source>
+          <target state="new">Font Image Source</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xamarin FontImageSource. Does not need translation.</note>
         </trans-unit>
       </group>
     </body>

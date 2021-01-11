@@ -122,7 +122,9 @@ namespace CharacterMap.Core
             var data = GetGeometry(selectedChar, options);
             string GetMonochrome()
             {
-                using CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor);
+                using CanvasSvgDocument document = string.IsNullOrWhiteSpace(data.Path) 
+                    ? new CanvasSvgDocument(Utils.CanvasDevice)
+                    : Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor);
                 return document.GetXml();
             }
 
@@ -396,6 +398,9 @@ namespace CharacterMap.Core
             var bounds = geom.ComputeBounds();
             var interop = Utils.GetInterop();
             var s = interop.GetPathData(geom);
+
+            if (string.IsNullOrWhiteSpace(s.Path))
+                return (s.Path, bounds);
 
             var t = s.Transform.Translation;
             bounds = new Rect(t.X - bounds.Left, -bounds.Top + t.Y, bounds.Width, bounds.Height);
