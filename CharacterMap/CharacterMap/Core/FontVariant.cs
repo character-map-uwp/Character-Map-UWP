@@ -226,7 +226,7 @@ namespace CharacterMap.Core
                 || string.IsNullOrWhiteSpace(mapping.Name))
                 return GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
 
-            return mapping.Name;
+            return GlyphService.TryGetAGLFNName(mapping.Name);
         }
 
 

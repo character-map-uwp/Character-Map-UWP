@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CharacterMapCX;
 using CharacterMap.Models;
+using System.Globalization;
 
 namespace CharacterMap.Core
 {
@@ -83,25 +84,48 @@ namespace CharacterMap.Core
 
                     if (!string.IsNullOrEmpty(n))
                     {
-                        // Some fonts use Unicode values as glyph names.
-                        // We don't actually want to display these on our UI, because they're pretty useless and will take the
-                        // place of an useful actual Unicode specification label in our database.
-
-                        // TODO : This isn't perfect. For example, "Twemoji Mozilla" font returns names like "ua9" (U+00A9) instead of "Copyright".
-                        //        Try and find a more accurate way of doing this whilst remaining performant.
-                        if ((n.Length > 2 && n[0] == 'u' && (n[1] == 'F' || n[1] == 'E' || char.IsDigit(n[1])))
-                            || (n.Length > 3) && n[0] == 'u' && n[2] == 'i' && (n[3] == 'F' || n[3] == 'E' || char.IsDigit(n[3])))
+                        if (GetSantisedGlyphName(n) is string san && !string.IsNullOrWhiteSpace(san))
+                        {
+                            mapping.Name = san;
+                            map.Add(c, mapping);
+                        }
+                        else
                             continue;
-
-                        mapping.Name = mapping.Name.Replace("-", " ").Replace("_", " ");
-                        map.Add(c, mapping);
                     }
-
-                    
                 }
 
                 variant.SearchMap = map;
             }
+        }
+
+        private static string GetSantisedGlyphName(string name)
+        {
+            /*
+             * Handle AGLFN mappings.
+             * 'uXXXX' & 'uniXXXX' mappings should be ignored.
+             * 
+             * Older fonts may use AGLF names from older versions of the Adobe Glyph 
+             * name mapping values, like 'afii' or 'commaaccent' that have been removed 
+             * from the spec and are not in our listings.
+             */
+
+            if (name.StartsWith("uni") 
+                && name.Length == 7
+                && int.TryParse(name.Substring(3, 4), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out _))
+                return null;
+
+            if (name.StartsWith('u')
+                && (name.Length == 5 || name.Length == 6)
+                && int.TryParse(name.Substring(1, name.Length - 1), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out _))
+                return null;
+
+            if (name.StartsWith("afii"))
+                return null;
+
+            if (name.Contains("commaaccent"))
+                return null;
+
+            return name.Replace("-", " ").Replace("_", " "); ;
         }
     }
 }

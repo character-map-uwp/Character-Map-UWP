@@ -177,6 +177,7 @@
     <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+    <Content Include="Assets\Data\glyphlist.txt" />
     <Content Include="Assets\Data\Webdings.txt" />
     <Content Include="Assets\Data\Wingdings.txt" />
     <Content Include="Assets\Data\Wingdings2.txt" />
@@ -219,6 +220,7 @@
     <Compile Include="Helpers\PrintHelper.cs" />
     <Compile Include="Helpers\Unicode.cs" />
     <Compile Include="Helpers\FontConverter.cs" />
+    <Compile Include="Models\AdobeGlyphListMapping.cs" />
     <Compile Include="Models\BasicFontFilter.cs" />
     <Compile Include="Models\ExportNamingScheme.cs" />
     <Compile Include="Models\ExportParameters.cs" />
@@ -258,7 +260,7 @@
     <Compile Include="Provider\DevProviderNone.cs" />
     <Compile Include="Provider\DevProviderType.cs" />
     <Compile Include="Provider\GeometryCacheEntry.cs" />
-    <Compile Include="Provider\CharacterRenderingOptions.cs" />
+    <Compile Include="Models\CharacterRenderingOptions.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
     <Compile Include="Provider\XamarinFormsDevProvider.cs" />

@@ -9,8 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Data.Xml.Dom;
-using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using CharacterMap.Models;
 
@@ -49,6 +47,32 @@ namespace CharacterMap.Provider
             return InitialiseDebugAsync();
         }
 #endif
+
+        public string GetAdobeGlyphListMapping(string postscriptName)
+        {
+            // Adobe glyph list names don't have spaces in them so we can use this as a quick check to get out of here
+            if (!postscriptName.Contains(" "))
+            {
+                // We perform only very naive AGFLN mappings here. We only identify the basic cases.
+                var map = _connection.GetMapping(typeof(AdobeGlyphListMapping));
+                var items = _connection.Query(map, $"SELECT * FROM AdobeGlyphListMapping WHERE S = ? LIMIT 1", postscriptName);
+                if (items.FirstOrDefault() is AdobeGlyphListMapping m)
+                {
+                    var desc = _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == m.UnicodeIndex)?.Description;
+                    if (m.UnicodeIndex2 > 0)
+                        desc += " " + _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == m.UnicodeIndex2)?.Description;
+                    if (m.UnicodeIndex3 > 0)
+                        desc += " " + _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == m.UnicodeIndex3)?.Description;
+                    if (m.UnicodeIndex4 > 0)
+                        desc += " " + _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == m.UnicodeIndex4)?.Description;
+
+                    if (!string.IsNullOrWhiteSpace(desc))
+                        return desc;
+                }
+            }
+
+            return postscriptName;
+        }
 
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
@@ -102,11 +126,6 @@ namespace CharacterMap.Provider
 
             /* Generic Unicode Search */
             return SearchUnicodeAsync(query, variant);
-        }
-
-        private void LocalSearch(string query, FontVariant variant)
-        {
-            throw new NotImplementedException();
         }
 
         private Task<IReadOnlyList<IGlyphData>> SearchUnicodeAsync(string query, FontVariant variant)

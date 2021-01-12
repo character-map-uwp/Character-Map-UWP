@@ -744,12 +744,16 @@
                                     <TextBlock Style="{StaticResource HeaderStyle}" Text="SQLitePCLRaw" />
                                     <HyperlinkButton Content="Apache License 2.0" NavigateUri="https://github.com/ericsink/SQLitePCL.raw/blob/master/LICENSE.TXT" />
                                 </StackPanel>
-                                
+
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource HeaderStyle}" Text="woff2otf-CSharp" />
                                     <HyperlinkButton Content="Apache License 2.0" NavigateUri="https://github.com/JohnnyWestlake/woff2otf-CSharp/blob/master/LICENSE" />
                                 </StackPanel>
 
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Adobe Glyph List For New Fonts" />
+                                    <HyperlinkButton Content="BSD 3-Clause" NavigateUri="https://github.com/adobe-type-tools/agl-aglfn/blob/master/LICENSE.md" />
+                                </StackPanel>
                             </StackPanel>
 
                             <StackPanel x:Name="AboutPanel" Visibility="Collapsed">

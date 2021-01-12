@@ -2,15 +2,10 @@
 
 using CharacterMap.Core;
 using CharacterMap.Helpers;
-using CharacterMap.Models;
 using CharacterMap.Provider;
-using CharacterMapCX;
-using Microsoft.Graphics.Canvas.Text;
 using SQLite;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Services
 {
@@ -45,6 +40,7 @@ namespace CharacterMap.Services
     {
         void Initialise();
         string GetCharacterDescription(int unicodeIndex, FontVariant variant);
+        string GetAdobeGlyphListMapping(string postscriptName);
         Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant);
     }
 
@@ -64,7 +60,7 @@ namespace CharacterMap.Services
 
         public static Task InitializeAsync()
         {
-            return _init ?? (_init = InitializeInternalAsync());
+            return _init ??= InitializeInternalAsync();
         }
 
         private static Task InitializeInternalAsync()
@@ -84,6 +80,11 @@ namespace CharacterMap.Services
                 return null;
 
             return _provider.GetCharacterDescription((int)unicodeIndex, variant);
+        }
+
+        internal static string TryGetAGLFNName(string aglfn)
+        {
+            return _provider.GetAdobeGlyphListMapping(aglfn);
         }
 
         internal static string GetCharacterKeystroke(uint unicodeIndex)
