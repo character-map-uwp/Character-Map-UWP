@@ -920,13 +920,15 @@ namespace CharacterMap.Views
 
         public void PlayFontChanged(bool withHeader = true)
         {
+            /* Create the animation that is played upon changing font */
+
             if (ViewModel.Settings.UseSelectionAnimations)
             {
                 int offset = 0;
                 if (withHeader)
                 {
                     offset = 83;
-                    Composition.PlayEntrance(FontTitleBlock, 0);
+                    //Composition.PlayEntrance(FontTitleBlock, 0);
                     Composition.PlayEntrance(CharGridHeader, 83);
                 }
 
@@ -944,18 +946,13 @@ namespace CharacterMap.Views
                 }
                 else if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
                 {
-                    Composition.PlayEntrance(TypeRampInputRow, offset * 2, 80);
+                    Composition.PlayEntrance(TypeRampInputRow, offset * 2);
 
-                    if (TypeRampList != null && TypeRampList.ItemsPanelRoot != null)
+                    if (TypeRampList != null)
                     {
                         var items = new List<UIElement> { VariableAxis };
                         items.AddRange(TypeRampList.TryGetChildren());
-                        Composition.PlayEntrance(items, (offset * 2) + 34, 80, staggerMs: 42);
-                    }
-                    else if (TypeRampList != null) // occurs directly after first x:Load
-                    {
-                        Composition.PlayEntrance(VariableAxis, (offset * 2) + 34, 80);
-                        Composition.PlayEntrance(TypeRampList, (offset * 2) + 34, 80);
+                        Composition.PlayEntrance(items, (offset * 2) + 34);
                     }
                 }
             }

@@ -922,6 +922,7 @@
                 </ItemsControl>
 
                 <ScrollViewer
+                    x:Name="TypeRampScroller"
                     Grid.Row="2"
                     HorizontalScrollBarVisibility="Auto"
                     HorizontalScrollMode="Enabled"

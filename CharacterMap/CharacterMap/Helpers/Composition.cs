@@ -99,7 +99,7 @@ namespace CharacterMap.Helpers
             e.SetShowAnimation(Composition.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
         }
 
-        public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffsetY = 140, int fromOffsetX = 0, int durationMs = 880)
+        public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffsetY = 40, int fromOffsetX = 0, int durationMs = 1000)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
@@ -146,7 +146,7 @@ namespace CharacterMap.Helpers
             return c.CreateAnimationGroup(t, o);
         }
 
-        public static void PlayEntrance(List<UIElement> targets, int delayMs = 0, int fromOffsetY = 140, int fromOffsetX = 0, int durationMs = 880, int staggerMs = 83)
+        public static void PlayEntrance(List<UIElement> targets, int delayMs = 0, int fromOffsetY = 40, int fromOffsetX = 0, int durationMs = 1000, int staggerMs = 83)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
@@ -167,7 +167,7 @@ namespace CharacterMap.Helpers
             o.Target = nameof(Visual.Opacity);
             if (from != null && from.HasValue)
                 o.InsertKeyFrame(0, from.Value);
-            o.InsertKeyFrame(1, to);
+            o.InsertKeyFrame(1, to, c.CreateEntranceEasingFunction());
             o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
             o.DelayTime = TimeSpan.FromMilliseconds(delayMs);
             o.Duration = TimeSpan.FromMilliseconds(durationMs);

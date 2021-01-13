@@ -125,6 +125,9 @@ namespace CharacterMap.Core
             if (name.Contains("commaaccent"))
                 return null;
 
+            // .smcp -> Small Capitals
+
+
             return name.Replace("-", " ").Replace("_", " "); ;
         }
     }

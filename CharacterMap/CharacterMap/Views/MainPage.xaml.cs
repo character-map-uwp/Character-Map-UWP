@@ -97,7 +97,8 @@ namespace CharacterMap.Views
                     if (ViewModel.IsLoadingFonts)
                         return;
 
-                    if (ViewModel.Settings.UseSelectionAnimations)
+                    if (ViewModel.Settings.UseSelectionAnimations 
+                        && !ViewModel.IsSearchResults)
                     {
                         Composition.PlayEntrance(LstFontFamily, 66, 100);
                         Composition.PlayEntrance(GroupLabel, 0, 0, 80);
@@ -636,7 +637,7 @@ namespace CharacterMap.Views
             sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
 
             // Animate in Loading items
-            Composition.PlayEntrance(LoadingStack.Children.ToList(), 140, 140, 0, 1000, 160);
+            Composition.PlayEntrance(LoadingStack.Children.ToList(), 60);
         }
 
     }

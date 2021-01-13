@@ -268,7 +268,7 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(item, "SelectedState", true);
 
                 if (Settings.UseSelectionAnimations)
-                    Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 140);
+                    Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
 
                 panel.Visibility = Visibility.Visible;
             }
