@@ -54,7 +54,10 @@ namespace CharacterMapCX
 			IVectorView<DWriteFontAxis^>^ get() { return m_variableAxis; }
 		}
 
-		property IVectorView<GlyphNameMap^>^ GlyphNames;
+		/// <summary>
+		/// Mappings of a glyph index to a font-provided glyph name
+		/// </summary>
+		property IMapView<int, String^>^ GlyphNameMappings;
 
 		//property CharacterMapping^ GlyphMap;
 
@@ -208,8 +211,8 @@ namespace CharacterMapCX
 			if (exists)
 			{
 				auto reader = ref new PostTableReader(tableData, tableSize);
-				GlyphNames = reader->Map;
-				m_hasGlyphNames = GlyphNames != nullptr && GlyphNames->Size > 0;
+				GlyphNameMappings = reader->Mapping;
+				m_hasGlyphNames = GlyphNameMappings != nullptr && GlyphNameMappings->Size > 0;
 				delete reader;
 			}
 			face->ReleaseFontTable(context);

@@ -76,7 +76,7 @@ namespace CharacterMapCX
 			return reader->ReadInt16();
 		}
 
-		string GetString(int length)
+		string* GetString(int length)
 		{
 			wchar_t* buffer = new wchar_t(length);
 
@@ -86,9 +86,22 @@ namespace CharacterMapCX
 			}
 
 			wstring ws(buffer);
-			string str(ws.begin(), ws.end());
+			return new std::string(ws.begin(), ws.end());
+		}
 
-			return str;
+		StringReference GetCleanNativeString(int length)
+		{
+			wchar_t* buffer = new (std::nothrow) wchar_t[length + 1];
+
+			for (int i = 0; i < length; i++)
+			{
+				auto val = GetUInt8();
+				buffer[i] = val == '_' || val == '-' ? ' ' : val;
+			}
+
+			buffer[length] = L'\0';
+
+			return buffer;
 		}
 
 		Platform::String^ GetNativeString(UINT length)
@@ -145,9 +158,14 @@ namespace CharacterMapCX
 			return position;
 		}
 
+		bool IsAtEnd()
+		{
+			return reader->UnconsumedBufferLength == 0;
+		}
+
 	private:
-		DataReader^ reader;
 		UINT32 position = 0;
-	
+		DataReader^ reader;
+
 	};
 }

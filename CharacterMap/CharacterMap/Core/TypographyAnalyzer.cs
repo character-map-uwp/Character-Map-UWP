@@ -54,43 +54,29 @@ namespace CharacterMap.Core
         {
             var analysis = new FontAnalysis(variant.FontFace);
 
-            if (analysis.GlyphNames != null
-                && analysis.GlyphNames.Count > 0)
+            if (analysis.HasGlyphNames)
             {
-                PrepareSearchMap(variant, analysis.GlyphNames.ToList());
+                PrepareSearchMap(variant, analysis.GlyphNameMappings);
             }
             return analysis;
         }
 
-        private static void PrepareSearchMap(FontVariant variant, List<GlyphNameMap> names)
+        private static void PrepareSearchMap(FontVariant variant, IReadOnlyDictionary<int, string> names)
         {
             if (variant.SearchMap == null)
             {
                 uint[] uni = variant.GetGlyphUnicodeIndexes();
                 int[] gly = variant.FontFace.GetGlyphIndices(uni);
-                var chars = variant.GetCharacters();
+                IReadOnlyList<Character> chars = variant.GetCharacters();
 
-                Dictionary<Character, GlyphNameMap> map = new Dictionary<Character, GlyphNameMap>();
+                Dictionary<Character, string> map = new Dictionary<Character, string>();
 
                 for (int i = 0; i < chars.Count; i++)
                 {
-                    //var c = chars[i];
-                    //var mapping = names.FirstOrDefault(n => n.Index == gly[i]);
-                    //var n = mapping?.Name;
-
-                    var c = chars[i];
-                    var mapping = names[gly[i]];
-                    var n = mapping.Name;
-
-                    if (!string.IsNullOrEmpty(n))
+                    Character c = chars[i];
+                    if (names.TryGetValue(gly[i], out string mapping) && !string.IsNullOrEmpty(mapping))
                     {
-                        if (GetSantisedGlyphName(n) is string san && !string.IsNullOrWhiteSpace(san))
-                        {
-                            mapping.Name = san;
-                            map.Add(c, mapping);
-                        }
-                        else
-                            continue;
+                        map.Add(c, mapping);
                     }
                 }
 
@@ -109,26 +95,33 @@ namespace CharacterMap.Core
              * from the spec and are not in our listings.
              */
 
-            if (name.StartsWith("uni") 
-                && name.Length == 7
-                && int.TryParse(name.Substring(3, 4), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out _))
-                return null;
+            // Currently the commented out are handled in C++ in PostTableReader.h, though leaving
+            // here as we **may** move back to C# at some point.
 
-            if (name.StartsWith('u')
-                && (name.Length == 5 || name.Length == 6)
-                && int.TryParse(name.Substring(1, name.Length - 1), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out _))
-                return null;
+            //if (name.StartsWith("uni") 
+            //    && name.Length == 7
+            //    && int.TryParse(name.Substring(3, 4), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out _))
+            //    return null;
 
-            if (name.StartsWith("afii"))
-                return null;
+            //if (name.StartsWith('u')
+            //    && (name.Length == 5 || name.Length == 6)
+            //    && int.TryParse(name.Substring(1, name.Length - 1), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out _))
+            //    return null;
 
-            if (name.Contains("commaaccent"))
-                return null;
+            //if (name.StartsWith("afii"))
+            //    return null;
 
+            //if (name.Contains("commaaccent"))
+            //    return null;
+
+            // TODO : Replace these suffixes?
             // .smcp -> Small Capitals
+            // .alt -> Alternate?
+            // .sups -> Superscript
+            // .sinf -> Scientific Inferior
 
 
-            return name.Replace("-", " ").Replace("_", " "); ;
+            return name;
         }
     }
 }

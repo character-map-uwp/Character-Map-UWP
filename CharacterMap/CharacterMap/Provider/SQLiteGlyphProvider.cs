@@ -233,9 +233,9 @@ namespace CharacterMap.Provider
                 if (variant.SearchMap != null)
                 {
                     results = variant.SearchMap
-                        .Where(c => c.Value.Name.Contains(query, StringComparison.OrdinalIgnoreCase))
+                        .Where(c => c.Value.Contains(query, StringComparison.OrdinalIgnoreCase))
                         .Take(SEARCH_LIMIT)
-                        .Select(g => new GlyphDescription { UnicodeIndex = (int)g.Key.UnicodeIndex, UnicodeHex = g.Key.UnicodeString, Description = g.Value.Name })
+                        .Select(g => new GlyphDescription { UnicodeIndex = (int)g.Key.UnicodeIndex, UnicodeHex = g.Key.UnicodeString, Description = g.Value })
                         .Cast<IGlyphData>()
                         .ToList();
                 }

@@ -751,7 +751,7 @@
                                 </StackPanel>
 
                                 <StackPanel>
-                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Adobe Glyph List For New Fonts" />
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Adobe Glyph List" />
                                     <HyperlinkButton Content="BSD 3-Clause" NavigateUri="https://github.com/adobe-type-tools/agl-aglfn/blob/master/LICENSE.md" />
                                 </StackPanel>
                             </StackPanel>

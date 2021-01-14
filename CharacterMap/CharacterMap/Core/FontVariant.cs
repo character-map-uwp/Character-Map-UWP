@@ -217,16 +217,16 @@ namespace CharacterMap.Core
 
         /* SEARCHING */
 
-        public Dictionary<Character, GlyphNameMap> SearchMap { get; set; }
+        public Dictionary<Character, string> SearchMap { get; set; }
 
         public string GetDescription(Character c)
         {
             if (SearchMap == null 
-                || !SearchMap.TryGetValue(c, out GlyphNameMap mapping)
-                || string.IsNullOrWhiteSpace(mapping.Name))
+                || !SearchMap.TryGetValue(c, out string mapping)
+                || string.IsNullOrWhiteSpace(mapping))
                 return GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
 
-            return GlyphService.TryGetAGLFNName(mapping.Name);
+            return GlyphService.TryGetAGLFNName(mapping);
         }
 
 
