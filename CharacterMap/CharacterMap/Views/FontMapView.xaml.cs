@@ -737,6 +737,11 @@ namespace CharacterMap.Views
             ((AppBarToggleButton)sender).IsChecked = ResourceHelper.AppSettings.EnableCopyPane;
         }
 
+        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)
+        {
+            ViewModel.UpdateCategories(e);
+        }
+
         /// <summary>
         /// Returns a string attempting to show only characters a font supports
         /// </summary>

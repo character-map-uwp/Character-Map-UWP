@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:controls1="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
@@ -226,111 +227,7 @@
                                 </StackPanel>
                             </Button.Content>
                             <Button.Flyout>
-                                <Flyout
-                                    x:Name="FilterFlyout"
-                                    win1903:ShouldConstrainToRootBounds="False"
-                                    Opening="Flyout_Opening">
-                                    <Flyout.FlyoutPresenterStyle>
-                                        <win1903:Style TargetType="FlyoutPresenter">
-                                            <Setter Property="AllowFocusOnInteraction" Value="False" />
-                                            <Setter Property="Margin" Value="12 0 0 0" />
-                                            <Setter Property="Padding" Value="0 12" />
-                                            <Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}" />
-                                            <Setter Property="BorderBrush" Value="DarkGray" />
-                                            <Setter Property="BorderThickness" Value="1" />
-                                            <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
-                                            <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
-                                            <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
-                                            <Setter Property="IsDefaultShadowEnabled" Value="False" />
-                                            <Setter Property="Template">
-                                                <Setter.Value>
-                                                    <ControlTemplate TargetType="FlyoutPresenter">
-                                                        <ContentPresenter
-                                                            Padding="{TemplateBinding Padding}"
-                                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                                            Background="{TemplateBinding Background}"
-                                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                                            BorderThickness="{TemplateBinding BorderThickness}"
-                                                            Content="{TemplateBinding Content}"
-                                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                            ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                            CornerRadius="{TemplateBinding CornerRadius}" />
-                                                    </ControlTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </win1903:Style>
-                                    </Flyout.FlyoutPresenterStyle>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-
-                                        <StackPanel>
-                                            <TextBlock
-                                                x:Uid="UnicodeFiltersTitle"
-                                                Margin="12 12 0 6"
-                                                Style="{StaticResource HeaderStyle}" />
-
-                                            <Grid>
-                                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                                    <AppBarButton
-                                                        x:Uid="AppBtnSelectAll"
-                                                        Click="FilterSelectAll_Click"
-                                                        Icon="SelectAll"
-                                                        Style="{StaticResource LabelAppBarButtonStyle}" />
-                                                    <AppBarButton
-                                                        x:Uid="AppBtnClear"
-                                                        Click="FilterClear_Click"
-                                                        Icon="ClearSelection"
-                                                        Style="{StaticResource LabelAppBarButtonStyle}" />
-                                                </StackPanel>
-
-                                                <AppBarButton
-                                                    x:Uid="AppBtnReset"
-                                                    HorizontalAlignment="Right"
-                                                    Click="FilterRefresh_Click"
-                                                    Icon="Refresh"
-                                                    Style="{StaticResource LabelAppBarButtonStyle}" />
-                                            </Grid>
-                                        </StackPanel>
-
-
-
-                                        <GridView
-                                            x:Name="CategoryList"
-                                            Grid.Row="1"
-                                            Width="440"
-                                            MaxHeight="500"
-                                            Padding="12 12 0 48"
-                                            SelectionMode="None">
-                                            <GridView.ItemContainerTransitions>
-                                                <TransitionCollection />
-                                            </GridView.ItemContainerTransitions>
-                                            <GridView.ItemTemplate>
-                                                <DataTemplate x:DataType="viewmodels:UnicodeCategoryModel">
-                                                    <CheckBox
-                                                        Width="200"
-                                                        Content="{x:Bind DisplayName}"
-                                                        IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
-                                                </DataTemplate>
-                                            </GridView.ItemTemplate>
-                                        </GridView>
-
-                                        <Button
-                                            x:Uid="BtnApply"
-                                            Grid.Row="2"
-                                            Width="200"
-                                            Margin="12 12 12 0"
-                                            HorizontalAlignment="Right"
-                                            Click="FilterAccept_Click"
-                                            Style="{StaticResource DefaultButtonStyle}" />
-
-                                    </Grid>
-
-                                </Flyout>
+                                <controls1:CategoryFlyout SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" AcceptClicked="CategoryFlyout_AcceptClicked" />
                             </Button.Flyout>
                         </Button>
                         <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />

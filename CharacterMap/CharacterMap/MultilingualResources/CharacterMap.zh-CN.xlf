@@ -1219,6 +1219,10 @@ Default variant copied.</target>
           <source>WOFF2 files are not supported</source>
           <target state="new">WOFF2 files are not supported</target>
         </trans-unit>
+        <trans-unit id="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Filter Characters</source>
+          <target state="new">Filter Characters</target>
+        </trans-unit>
       </group>
     </body>
   </file>

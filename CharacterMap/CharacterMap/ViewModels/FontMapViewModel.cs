@@ -68,6 +68,7 @@ namespace CharacterMap.ViewModels
         public TypographyFeatureInfo                SelectedCharTypography  { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
         public CanvasTextLayoutAnalysis             SelectedCharAnalysis    { get => Get<CanvasTextLayoutAnalysis>(); set => Set(value); }
         public List<TypographyFeatureInfo>          SelectedCharVariations  { get => Get<List<TypographyFeatureInfo>>(); set => Set(value); }
+        public List<UnicodeCategoryModel>           SelectedGlyphCategories { get => Get<List<UnicodeCategoryModel>>(); private set => Set(value); }
         public IReadOnlyList<string>                RampOptions             { get => Get<IReadOnlyList<string>>(); set => Set(value); }
         public IReadOnlyList<DevProviderBase>       Providers               { get => Get<IReadOnlyList<DevProviderBase>>(); set => Set(value); }
 
@@ -194,6 +195,7 @@ namespace CharacterMap.ViewModels
             CommandSavePng = new RelayCommand<ExportParameters>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<ExportParameters>(async (b) => await SaveSvgAsync(b));
             ToggleDev = new RelayCommand<DevProviderType>(t => SetDev(t));
+            SelectedGlyphCategories = Unicode.CreateCategoriesList();
 
             _interop = Utils.GetInterop();
 
@@ -209,12 +211,50 @@ namespace CharacterMap.ViewModels
                 UpdateDevValues();
         }
 
+        public void UpdateCategories(IList<UnicodeCategoryModel> value)
+        {
+            SelectedGlyphCategories = value.ToList();
+            UpdateCharacters();
+        }
+
+        private void UpdateCharacters()
+        {
+            if (!SelectedGlyphCategories.Any(c => !c.IsSelected))
+            {
+                // Fast path : all characters;
+                Chars = SelectedVariant?.GetCharacters();
+            }
+            else
+            {
+                // Filter characters
+                var chars = SelectedVariant?.GetCharacters().AsEnumerable();
+                foreach (var cat in SelectedGlyphCategories.Where(c => !c.IsSelected))
+                    chars = chars.Where(c => !Unicode.IsInCategory(c.UnicodeIndex, cat.Category));
+
+                // Only change the character source if we actually need too
+                var items = chars.ToList();
+                if (items.Count != Chars.Count)
+                    Chars = items;
+                else
+                {
+                    for (int i = 0; i<items.Count; i++)
+                        if (items[i] != Chars[i])
+                        {
+                            Chars = items;
+                            break;
+                        }
+                }
+            }
+        }
+
+
         private void LoadVariant(FontVariant variant)
         {
             try
             {
                 IsLoadingCharacters = true;
-                Chars = variant?.GetCharacters();
+                SelectedGlyphCategories = Unicode.CreateCategoriesList();
+                UpdateCharacters();
                 if (variant != null)
                 {
                     SelectedVariantAnalysis = variant.GetAnalysis();

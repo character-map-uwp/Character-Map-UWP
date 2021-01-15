@@ -1013,4 +1013,7 @@ Default variant copied.</value>
   <data name="ImportWOFF2NotSupported" xml:space="preserve">
     <value>WOFF2 files are not supported</value>
   </data>
+  <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Filter Characters</value>
+  </data>
 </root>

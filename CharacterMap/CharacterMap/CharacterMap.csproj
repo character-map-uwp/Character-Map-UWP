@@ -195,6 +195,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CategoryFlyout.xaml.cs">
+      <DependentUpon>CategoryFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CharacterGridView.cs" />
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
@@ -237,7 +240,6 @@
     <Compile Include="Models\PanoseFamily.cs" />
     <Compile Include="Core\PanoseParser.cs" />
     <Compile Include="Models\SerifStyle.cs" />
-    <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
     <Compile Include="Models\SupportedLanguage.cs" />
@@ -381,6 +383,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Controls\CategoryFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Controls\CreateCollectionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
