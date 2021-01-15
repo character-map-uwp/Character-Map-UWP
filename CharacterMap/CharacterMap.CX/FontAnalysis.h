@@ -85,9 +85,6 @@ namespace CharacterMapCX
 		IVectorView<DWriteFontAxis^>^ m_variableAxis;
 		IVectorView<DWriteFontAxis^>^ m_axis;
 
-
-
-
 		void GetFileProperties(ComPtr<IDWriteFontFaceReference> faceRef)
 		{
 			m_axis = DirectWrite::GetAxis(faceRef);

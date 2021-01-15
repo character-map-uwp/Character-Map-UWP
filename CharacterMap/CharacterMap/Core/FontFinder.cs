@@ -78,8 +78,9 @@ namespace CharacterMap.Core
             {
                 if (DefaultFont == null)
                 {
-                    await CleanUpTempFolderAsync().ConfigureAwait(false);
-                    await CleanUpPendingDeletesAsync().ConfigureAwait(false);
+                    await Task.WhenAll(
+                        CleanUpTempFolderAsync(),
+                        CleanUpPendingDeletesAsync()).ConfigureAwait(false);
 
                     var segoe = systemFonts.Fonts.FirstOrDefault(
                            f => f.FontFace.FamilyNames.Values.Contains("Segoe UI")
