@@ -175,7 +175,7 @@ namespace CharacterMap.ViewModels
             DialogService = dialogService;
             Settings = settings;
 
-            CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
+            CommandToggleFullScreen = new RelayCommand(Utils.ToggleFullScreenMode);
 
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             InitialLoad = LoadAsync();
@@ -248,15 +248,6 @@ namespace CharacterMap.ViewModels
             await FontFinder.LoadFontsAsync();
             RefreshFontList(SelectedCollection);
             IsLoadingFonts = false;
-        }
-
-        private void ToggleFullScreenMode()
-        {
-            var view = ApplicationView.GetForCurrentView();
-            if (view.IsFullScreenMode)
-                view.ExitFullScreenMode();
-            else
-                view.TryEnterFullScreenMode();
         }
 
         public void RefreshFontList(UserFontCollection collection = null)

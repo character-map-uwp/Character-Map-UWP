@@ -266,6 +266,9 @@ namespace CharacterMap.Views
 
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
+            if (e.Key == VirtualKey.F11)
+                Utils.ToggleFullScreenMode();
+
             var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
             if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {

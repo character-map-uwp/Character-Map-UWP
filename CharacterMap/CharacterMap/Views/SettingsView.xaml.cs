@@ -303,7 +303,8 @@ namespace CharacterMap.Views
                     "- Added C++/CX, C++/WinRT & Xamarin.Forms developer features\n" +
                     "- Copying Path Icon from developer code now copies the path with typography applied\n" +
                     "- Added Adobe Glyph List mapping support for a font's post table names\n" +
-                    "- Added character filtering by Unicode category to main view"),
+                    "- Added character filtering by Unicode category to main view\n" +
+                    "- Added Fullscreen keyboard shortcut (F11)"),
                 new("2021.1.0.0 (Jan 1 2021)",
                     "- Added Font list search\n" +
                     "- Added ability to see all typographic variations for a single character from the character preview pane\n" +
