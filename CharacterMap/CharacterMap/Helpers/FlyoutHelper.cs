@@ -428,7 +428,9 @@ namespace CharacterMap.Helpers
                         var ops = p.GetContextOptions();
                         foreach (var child in item.Items.Cast<MenuFlyoutItem>())
                         {
-                            Properties.SetDevOption(child, ops.FirstOrDefault(o => o.Name == Properties.GetDevOption(child).Name));
+                            var o = ops.FirstOrDefault(o => o.Name == Properties.GetDevOption(child)?.Name);
+                            Properties.SetDevOption(child, o);
+                            child.SetVisible(o is not null);
                         }
                     }
                 };

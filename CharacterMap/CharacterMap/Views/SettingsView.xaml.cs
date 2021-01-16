@@ -201,7 +201,7 @@ namespace CharacterMap.Views
 
         private void BtnReview_Click(object sender, RoutedEventArgs e)
         {
-            _ = Microsoft.Toolkit.Uwp.Helpers.SystemInformation.LaunchStoreForReviewAsync();
+            _ = SystemInformation.LaunchStoreForReviewAsync();
         }
 
         private void BtnRestart_Click(object sender, RoutedEventArgs e)

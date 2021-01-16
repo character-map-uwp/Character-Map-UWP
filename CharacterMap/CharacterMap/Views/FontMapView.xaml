@@ -36,11 +36,14 @@
                     <Setter Property="Width" Value="Auto" />
                 </Style>
             </Grid.Resources>
-            <toolkit:UniformGrid
-                ColumnSpacing="0"
-                Background="Transparent"
-                Columns="5"
-                Rows="1">
+            <Grid ColumnSpacing="0" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
                 <AppBarButton
                     x:Uid="SwitchViewButton"
                     Click="{x:Bind ViewModel.ChangeDisplayMode}"
@@ -48,16 +51,19 @@
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
                     x:Uid="IncreaseSizeButton"
+                    Grid.Column="1"
                     Click="{x:Bind ViewModel.IncreaseCharacterSize}"
                     Icon="FontIncrease" />
                 <AppBarButton
                     x:Name="DecreaseSizeButton"
                     x:Uid="DecreaseSizeButton"
+                    Grid.Column="2"
                     Click="{x:Bind ViewModel.DecreaseCharacterSize}"
                     Icon="FontDecrease" />
                 <AppBarToggleButton
                     x:Name="ToggleCopyPaneButton"
                     x:Uid="ToggleCopyPaneButton"
+                    Grid.Column="3"
                     Checked="{x:Bind ViewModel.ShowCopyPane}"
                     Loaded="ToggleCopyPaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.HideCopyPane}">
@@ -71,11 +77,12 @@
                 <AppBarToggleButton
                     x:Name="TogglePaneButton"
                     x:Uid="TogglePaneButton"
+                    Grid.Column="4"
                     Checked="{x:Bind ViewModel.HidePane}"
                     Icon="OpenPane"
                     Loaded="PaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.ShowPane}" />
-            </toolkit:UniformGrid>
+            </Grid>
         </Grid>
     </Control.Tag>
 

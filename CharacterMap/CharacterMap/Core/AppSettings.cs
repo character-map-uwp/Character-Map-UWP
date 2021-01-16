@@ -141,7 +141,7 @@ namespace CharacterMap.Core
 
         public bool EnableCopyPane
         {
-            get => Get(true);
+            get => Get(false);
             set => BroadcastSet(value);
         }
 
