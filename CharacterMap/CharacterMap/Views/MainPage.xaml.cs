@@ -38,8 +38,6 @@ namespace CharacterMap.Views
 
         private Debouncer _fontListDebouncer { get; } = new Debouncer();
 
-        public object ThemeLock { get; } = new object();
-
         private UISettings _uiSettings { get; }
 
         private ICommand FilterCommand { get; }
@@ -48,8 +46,6 @@ namespace CharacterMap.Views
 
         public MainPage()
         {
-            RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
-
             InitializeComponent();
 
             ViewModel = DataContext as MainViewModel;
@@ -136,10 +132,6 @@ namespace CharacterMap.Views
             {
                 case nameof(AppSettings.UseFontForPreview):
                     OnFontPreviewUpdated();
-                    break;
-                case nameof(AppSettings.UserRequestedTheme):
-                    this.RequestedTheme = ViewModel.Settings.UserRequestedTheme;
-                    OnPropertyChanged(nameof(ThemeLock));
                     break;
             }
         }

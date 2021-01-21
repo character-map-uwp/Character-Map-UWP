@@ -1,6 +1,7 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Provider;
+using CharacterMap.Services;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.ComponentModel;
@@ -96,7 +97,7 @@ namespace CharacterMap.Core
         public ElementTheme UserRequestedTheme
         {
             get => (ElementTheme)Get((int)ElementTheme.Default);
-            set => BroadcastSet((int)value);
+            set { if (BroadcastSet((int)value)) UpdateTheme(); }
         }
 
         public GlyphAnnotation GlyphAnnotation
@@ -234,6 +235,15 @@ namespace CharacterMap.Core
             {
                 WeakReferenceMessenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
             }
+        }
+
+        private void UpdateTheme()
+        {
+            _ = WindowService.RunOnViewsAsync(() =>
+            {
+                if (Window.Current.Content is FrameworkElement e)
+                    e.RequestedTheme = UserRequestedTheme;
+            });
         }
 
         #endregion

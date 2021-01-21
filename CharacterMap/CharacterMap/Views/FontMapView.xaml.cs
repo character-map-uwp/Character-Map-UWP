@@ -94,8 +94,6 @@ namespace CharacterMap.Views
 
         public bool IsStandalone { get; set; }
 
-        public object ThemeLock { get; } = new object();
-
         private Debouncer _sizeDebouncer { get; } = new Debouncer();
 
         private XamlDirect _xamlDirect { get; }
@@ -106,8 +104,6 @@ namespace CharacterMap.Views
 
         public FontMapView()
         {
-            RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
-
             InitializeComponent();
             Loading += FontMapView_Loading;
             Loaded += FontMapView_Loaded;
@@ -243,10 +239,6 @@ namespace CharacterMap.Views
                         break;
                     case nameof(AppSettings.GridSize):
                         UpdateDisplay();
-                        break;
-                    case nameof(AppSettings.UserRequestedTheme):
-                        this.RequestedTheme = ViewModel.Settings.UserRequestedTheme;
-                        OnPropertyChanged(nameof(ThemeLock));
                         break;
                     case nameof(AppSettings.UseInstantSearch):
                         UpdateSearchStates();

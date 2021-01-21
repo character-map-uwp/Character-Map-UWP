@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -115,10 +113,17 @@ namespace CharacterMap.Services
                 settings.UpdateTransparency(settings.IsTransparencyEnabled);
             }
 
-            if (view.Dispatcher.HasThreadAccess)
+            void DoCreate()
+            {
                 Create();
+                if (Window.Current.Content is FrameworkElement f)
+                    f.RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
+            }
+
+            if (view.Dispatcher.HasThreadAccess)
+                DoCreate();
             else
-                await view.Dispatcher.RunAsync(CoreDispatcherPriority.High, Create);
+                await view.Dispatcher.RunAsync(CoreDispatcherPriority.High, DoCreate);
 
             return info;
         }
@@ -134,6 +139,7 @@ namespace CharacterMap.Services
             _ = info.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 Window.Current.Close();
+                Window.Current.Content = null;
             });
         }
 
@@ -199,12 +205,15 @@ namespace CharacterMap.Services
             });
         }
 
-        public static async Task RunOnViewsAsync(DispatchedHandler a)
+        public static Task RunOnViewsAsync(DispatchedHandler a)
         {
-            await MainWindow.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a);
+            List<Task> t = new List<Task>
+            {
+                MainWindow.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask()
+            };
+            t.AddRange(_childWindows.Select(w => w.Value.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask()));
 
-            if (_childWindows.Count > 0)
-                await Task.WhenAll(_childWindows.Select(w => w.Value.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask()));
+            return Task.WhenAll(t);
         }
     }
 }

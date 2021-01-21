@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.ApplicationModel;
 
 namespace CharacterMap.ViewModels
 {
@@ -51,6 +52,9 @@ namespace CharacterMap.ViewModels
 
         public QuickCompareViewModel()
         {
+            if (DesignMode.DesignModeEnabled)
+                return;
+
             RefreshFontList();
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
