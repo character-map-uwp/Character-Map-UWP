@@ -156,7 +156,8 @@ namespace Microsoft.Toolkit.Uwp.UI.Controls
             var childAvailableSize = new Size(
                 availableSize.Width - Padding.Left - Padding.Right,
                 availableSize.Height - Padding.Top - Padding.Bottom);
-            foreach (var child in Children)
+
+            foreach (var child in Children.Where(c => c.Visibility == Visibility.Visible))
             {
                 child.Measure(childAvailableSize);
             }
@@ -183,7 +184,7 @@ namespace Microsoft.Toolkit.Uwp.UI.Controls
                 {
                     foreach (var rect in row.ChildrenRects)
                     {
-                        var child = Children[childIndex++];
+                        var child = Children.Where(c => c.Visibility == Visibility.Visible).ElementAt(childIndex++);
                         var arrangeRect = new UvRect
                         {
                             Position = rect.Position,
@@ -221,7 +222,7 @@ namespace Microsoft.Toolkit.Uwp.UI.Controls
             void Arrange(UIElement child, bool isLast = false)
             {
                 var desiredMeasure = new UvMeasure(Orientation, child.DesiredSize);
-                if (desiredMeasure.U == 0)
+                if (desiredMeasure.U == 0 )
                 {
                     return; // if an item is collapsed, avoid adding the spacing
                 }

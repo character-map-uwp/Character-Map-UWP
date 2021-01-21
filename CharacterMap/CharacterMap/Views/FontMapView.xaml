@@ -374,6 +374,7 @@
                 <toolkit:WrapPanel
                     x:Name="OptionsPanel"
                     x:FieldModifier="public"
+                    HorizontalAlignment="Stretch"
                     ChildrenTransitions="{StaticResource RepositionTransitions}"
                     HorizontalSpacing="8"
                     Orientation="Horizontal">
@@ -567,10 +568,12 @@
                     </Button>
 
                     <Button
+                        x:Name="FontOptionsButton"
                         x:Uid="FontOptionsButton"
                         MinHeight="47"
                         VerticalAlignment="Stretch"
-                        Style="{ThemeResource TransparentHintButton}">
+                        Style="{ThemeResource TransparentHintButton}"
+                        Visibility="Collapsed">
                         <FontIcon
                             Margin="0,0,-2,0"
                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
@@ -583,7 +586,7 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
 
-                                    <Button
+                                    <!--<Button
                                         Height="48"
                                         Margin="0 8 0 0"
                                         Click="{x:Bind ViewModel.ChangeDisplayMode}"
@@ -603,7 +606,7 @@
                                                 TextLineBounds="Tight"
                                                 Visibility="Collapsed" />
                                         </StackPanel>
-                                    </Button>
+                                    </Button>-->
 
                                     <ListView
                                         Grid.Row="1"
@@ -653,6 +656,7 @@
                         x:Uid="CharacterFilterButton"
                         MinHeight="47"
                         VerticalAlignment="Stretch"
+                        Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
                         Style="{ThemeResource TransparentHintButton}">
                         <SymbolIcon
                             Margin="0,0,-2,0"
@@ -661,6 +665,19 @@
                         <Button.Flyout>
                             <controls:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
                         </Button.Flyout>
+                    </Button>
+
+                    <Button
+                        x:Name="ViewToggleButton"
+                        Width="44"
+                        Height="44"
+                        Click="{x:Bind ViewModel.ChangeDisplayMode}"
+                        Style="{ThemeResource TransparentButton}"
+                        ToolTipService.ToolTip="{core:Localizer Key='LblSwitchToTypeRamp/Text'}">
+                        <SymbolIcon
+                            Margin="0,0,-2,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Symbol="Switch" />
                     </Button>
                 </toolkit:WrapPanel>
 
@@ -953,7 +970,7 @@
                     ZoomMode="Enabled">
                     <ItemsControl
                         x:Name="TypeRampList"
-                        FontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
+                        FontFamily="{Binding FontFamily, Mode=OneWay, FallbackValue='Segoe UI'}"
                         FontStretch="{x:Bind ViewModel.SelectedVariant.FontFace.Stretch, Mode=OneWay}"
                         FontStyle="{x:Bind ViewModel.SelectedVariant.FontFace.Style, Mode=OneWay}"
                         FontWeight="{x:Bind ViewModel.SelectedVariant.FontFace.Weight, Mode=OneWay}"
@@ -1684,7 +1701,7 @@
             <VisualStateGroup x:Name="MapDisplayStates">
                 <VisualState x:Name="CharacterMapState">
                     <VisualState.Setters>
-                        <Setter Target="SwitchToTypeRampButton.Visibility" Value="Visible" />
+                        <!--<Setter Target="SwitchToTypeRampButton.Visibility" Value="Visible" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TypeRampState">
@@ -1695,8 +1712,9 @@
                         <Setter Target="PreviewGrid.Visibility" Value="Collapsed" />
                         <Setter Target="TypeRampRoot.Visibility" Value="Visible" />
                         <Setter Target="CharGridHeader.ColumnSpan" Value="3" />
-                        <Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
-                        <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />
+                        <!--<Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
+                        <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />-->
+                        <Setter Target="ViewToggleButton.(ToolTipService.ToolTip)" Value="{core:Localizer Key='LblSwitchToCharMap/Text'}" />
                         <Setter Target="VariableFeaturesMessage.Visibility" Value="Collapsed" />
                         <!--  Popup menu options  -->
                         <Setter Target="IncreaseSizeButton.IsEnabled" Value="False" />
@@ -1796,6 +1814,16 @@
                     <VisualState.Setters>
                         <Setter Target="SearchBox.Width" Value="150" />
                         <Setter Target="CharGridHeader.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="OptionsStates">
+                <VisualState x:Name="HasOptionsState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{Binding HasFontOptions}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="FontOptionsButton.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -247,7 +247,6 @@ namespace CharacterMap.ViewModels
             }
         }
 
-
         private void LoadVariant(FontVariant variant)
         {
             try
