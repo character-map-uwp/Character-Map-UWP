@@ -318,7 +318,7 @@ namespace CharacterMap.Helpers
                         var removeFont = new MenuFlyoutItem
                         {
                             Text = Localization.Get("RemoveFontFlyout/Text"),
-                            Icon = new SymbolIcon { Symbol = Symbol.Delete },
+                            Icon = new SymbolIcon(Symbol.Delete),
                             Tag = font
                         };
 
@@ -329,6 +329,21 @@ namespace CharacterMap.Helpers
                         menu.Items.Add(removeFont);
                     }
                 }
+
+
+                var qq = new MenuFlyoutItem
+                {
+                    Text = "Open Quick Compare",
+                    Icon = new SymbolIcon(Symbol.Library)
+                };
+
+                qq.Click += (s, e) =>
+                {
+                    _ = QuickCompareView.CreateNewWindowAsync();
+                };
+
+                menu.Items.Add(new MenuFlyoutSeparator());
+                menu.Items.Add(qq);
             }
         }
 

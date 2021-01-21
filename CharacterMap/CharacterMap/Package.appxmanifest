@@ -33,6 +33,7 @@
               <uap:FileType>.otf</uap:FileType>
               <uap:FileType>.ttc</uap:FileType>
               <uap:FileType>.otc</uap:FileType>
+              <uap:FileType>.woff</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Character Map</uap:DisplayName>
             <uap:InfoTip>Preview Font</uap:InfoTip>
@@ -43,7 +44,4 @@
       </Extensions>
     </Application>
   </Applications>
-  <Capabilities>
-    <Capability Name="internetClient" />
-  </Capabilities>
 </Package>

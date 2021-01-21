@@ -587,6 +587,11 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        public void OpenQuickCompare()
+        {
+            _ = QuickCompareView.CreateNewWindowAsync();
+        }
+
         public async Task RequestCopyToClipboardAsync(CopyToClipboardMessage message)
         {
             if (message.CopyType == DevValueType.Char)
