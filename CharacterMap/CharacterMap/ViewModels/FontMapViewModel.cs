@@ -50,7 +50,7 @@ namespace CharacterMap.ViewModels
         public RelayCommand<ExportParameters> CommandSavePng                { get; }
         public RelayCommand<ExportParameters> CommandSaveSvg                { get; }
         public RelayCommand<DevProviderType>  ToggleDev                     { get; }
-        public DWriteFallbackFont FallbackFont                              { get; } = FontFinder.Fallback;
+        public DWriteFallbackFont FallbackFont                              => FontFinder.Fallback; // Do *not* use { get;} here
         public int[] RampSizes                                              { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
 
         internal bool IsLoadingCharacters                                   { get; private set; }
