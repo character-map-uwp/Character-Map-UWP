@@ -80,6 +80,69 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <muxc:UniformGridLayout
+            x:Name="GridLayout"
+            ItemsStretch="Fill"
+            MinColumnSpacing="12"
+            MinItemHeight="250"
+            MinItemWidth="400"
+            MinRowSpacing="12" />
+
+        <muxc:StackLayout
+            x:Name="StackLayout"
+            Orientation="Vertical"
+            Spacing="48" />
+
+        <ItemsPanelTemplate x:Key="StackingPanelTemplate">
+            <ItemsStackPanel CacheLength="1" />
+        </ItemsPanelTemplate>
+
+        <DataTemplate x:Key="GridTemplate" x:DataType="core:InstalledFont">
+            <!--  Canvas is required for maximum performance when updating properties  -->
+            <Canvas Width="400" Height="250">
+                <TextBlock
+                    Canvas.Top="4"
+                    Width="400"
+                    Foreground="{ThemeResource TextControlPlaceholderForeground}">
+                    <Run Text="{x:Bind Name}" />
+                    <Run Text="{x:Bind DefaultVariant.PreferredName}" />
+                </TextBlock>
+                <TextBlock
+                    Canvas.Top="24"
+                    Width="400"
+                    MaxHeight="226"
+                    FontFamily="{x:Bind DefaultVariant.Source}"
+                    FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
+                    FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
+                    FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
+                    IsColorFontEnabled="True"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="Wrap" />
+            </Canvas>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StackTemplate" x:DataType="core:InstalledFont">
+            <Grid>
+                <TextBlock Margin="0 4 0 0" Foreground="{ThemeResource SystemColorControlAccentBrush}">
+                    <Run Text="{x:Bind Name}" />
+                    <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind Variants.Count}" />
+                    <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="face(s)" />
+                </TextBlock>
+                <TextBlock
+                    Margin="0 24 0 0"
+                    FontFamily="{x:Bind DefaultVariant.Source}"
+                    FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
+                    FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
+                    FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
+                    IsColorFontEnabled="True"
+                    MaxLines="5"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot">
@@ -93,15 +156,23 @@
 
         <controls:XamlTitleBar x:Name="TitleBar" Canvas.ZIndex="101">
             <StackPanel Orientation="Horizontal">
-                <!--<ToggleButton
-                    x:Name="OverlayButton"
-                    x:Uid="CompactOverlayButton"
+                <Button
+                    x:Name="BackButton"
                     Width="45"
-                    Click="{x:Bind ToggleCompactOverlay}"
+                    VerticalAlignment="Stretch"
+                    d:Visibility="Visible"
+                    Background="Transparent"
+                    Click="BackButton_Click"
+                    CornerRadius="0"
                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                    Style="{StaticResource IconToggleButtonStyle}">
-                    <FontIcon FontSize="14" Glyph="&#xE2B4;" />
-                </ToggleButton>-->
+                    Style="{StaticResource AccentButtonStyle}"
+                    Visibility="Collapsed">
+                    <FontIcon
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        FontSize="12"
+                        Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                        Glyph="&#xE0A6;" />
+                </Button>
             </StackPanel>
         </controls:XamlTitleBar>
 
@@ -116,11 +187,13 @@
             Grid.Row="1"
             Height="{StaticResource TitleRowHeight}">
             <TextBlock
-                Margin="20 0"
+                Margin="24 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
+                d:Text="Font Comparison"
                 FontSize="22"
                 FontWeight="Bold"
+                OpticalMarginAlignment="TrimSideBearings"
                 Text="Font Comparison" />
         </Grid>
 
@@ -128,6 +201,7 @@
             x:Name="ContentPanel"
             Grid.Row="2"
             ColumnSpacing="24"
+            RowSpacing="12"
             Padding="24 12 24 0"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
             CornerRadius="8 8 0 0">
@@ -136,11 +210,14 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
+
             <StackPanel Spacing="12">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
                     <Button
                         x:Name="FontListFilter"
@@ -152,7 +229,7 @@
                         HorizontalContentAlignment="Center"
                         VerticalContentAlignment="Center"
                         Style="{StaticResource TextBlockButtonStyle}"
-                        ToolTipService.Placement="Bottom" >
+                        ToolTipService.Placement="Bottom">
 
                         <TextBlock Margin="0 0 12 0">
                             <Run d:Text="All Fonts" Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" />
@@ -164,7 +241,7 @@
                         </TextBlock>
 
                         <Button.Flyout>
-                            <MenuFlyout Placement="BottomEdgeAlignedLeft" Opening="MenuFlyout_Opening">
+                            <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedLeft">
                                 <MenuFlyout.MenuFlyoutPresenterStyle>
                                     <Style TargetType="MenuFlyoutPresenter">
                                         <Setter Property="FontSize" Value="16" />
@@ -211,83 +288,352 @@
                         </Button.Flyout>
                     </Button>
 
-                    <TextBox
+                    <ComboBox
+                        x:Name="InputText"
+                        x:Uid="TypeRampInputBox"
+                        Grid.Column="1"
+                        MinHeight="0"
+                        HorizontalAlignment="Stretch"
+                        Background="Transparent"
+                        BorderThickness="0 0 0 1"
+                        CornerRadius="0"
+                        IsEditable="True"
+                        ItemsSource="{x:Bind ViewModel.TextOptions}"
+                        SelectedIndex="0"
+                        Style="{StaticResource RampComboBoxStyle}"
+                        Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <!--<TextBox
                         x:Name="InputText"
                         Grid.Column="1"
                         BorderThickness="0 0 0 1"
                         CornerRadius="0"
                         Text="The quick brown fox jumped over the lazy dog"
-                        TextChanged="InputText_TextChanged" />
+                        TextChanged="InputText_TextChanged" />-->
+                    <Button Grid.Column="2" Click="GridView_Click">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
+                    </Button>
+                    <Button Grid.Column="3" Click="ListView_Click">
+                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
+                    </Button>
                 </Grid>
-                <Slider
-                    x:Name="FontSizeSlider"
-                    Maximum="64"
-                    Minimum="20"
-                    ValueChanged="FontSizeSlider_ValueChanged"
-                    Value="40">
-                    <Slider.Header>
-                        <TextBlock
-                            Margin="0 0 0 -4"
-                            FontSize="12"
-                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                            Text="Font Size"
-                            TextLineBounds="Tight" />
-                    </Slider.Header>
-                </Slider>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Slider
+                        x:Name="FontSizeSlider"
+                        Grid.Column="1"
+                        Maximum="64"
+                        Minimum="20"
+                        ValueChanged="FontSizeSlider_ValueChanged"
+                        Value="40">
+                        <Slider.Header>
+                            <TextBlock
+                                Margin="0 0 0 -4"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                Text="Font Size"
+                                TextLineBounds="Tight" />
+                        </Slider.Header>
+                    </Slider>
+
+                </Grid>
+
             </StackPanel>
 
-
-            <ScrollViewer
+            <Border
+                x:Name="ListingViewRoot"
                 Grid.Row="1"
                 Margin="0 0 -24 0"
-                Padding="0 0 24 0">
-                <muxc:ItemsRepeater
+                RenderTransformOrigin="0.5,0.5">
+                <Border.RenderTransform>
+                    <CompositeTransform />
+                </Border.RenderTransform>
+                <GridView
                     x:Name="Repeater"
-                    ElementPrepared="Repeater_ElementPrepared"
-                    ItemsSource="{x:Bind ViewModel.FontList, Mode=OneWay}"
-                    VerticalCacheLength="0.5">
-                    <muxc:ItemsRepeater.Layout>
-                        <muxc:UniformGridLayout
-                            ItemsStretch="Fill"
-                            MinColumnSpacing="12"
-                            MinItemHeight="250"
-                            MinItemWidth="400"
-                            MinRowSpacing="12" />
-                    </muxc:ItemsRepeater.Layout>
-                    <muxc:ItemsRepeater.ItemTemplate>
-                        <DataTemplate x:DataType="core:InstalledFont">
-                            <Button Style="{StaticResource ChromelessButtonStyle}">
-                                <Grid BorderBrush="{ThemeResource SystemColorControlAccentBrush}" BorderThickness="0 1 0 0">
+                    Padding="0 0 24 0"
+                    ContainerContentChanging="Repeater_ContainerContentChanging"
+                    IsItemClickEnabled="True"
+                    ItemClick="Repeater_ItemClick"
+                    ItemTemplate="{StaticResource StackTemplate}"
+                    ItemsSource="{x:Bind ViewModel.FontList, Mode=OneWay}">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid
+                                CacheLength="1"
+                                ItemHeight="262"
+                                ItemWidth="412"
+                                Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.ItemContainerStyle>
+                        <Style TargetType="GridViewItem">
+                            <Setter Property="Margin" Value="0 0 12 12" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="GridViewItem">
+                                        <ContentPresenter
+                                            x:Name="ContentPresenter"
+                                            HorizontalContentAlignment="Stretch"
+                                            VerticalContentAlignment="Stretch"
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            Background="Transparent"
+                                            Content="{TemplateBinding Content}"
+                                            ContentTemplate="{TemplateBinding ContentTemplate}">
+                                            <VisualStateManager.VisualStateGroups>
+                                                <VisualStateGroup x:Name="CommonStates">
+                                                    <VisualState x:Name="Normal">
+                                                        <Storyboard>
+                                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                                        </Storyboard>
+                                                    </VisualState>
+
+                                                    <VisualState x:Name="PointerOver">
+                                                        <Storyboard>
+                                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                                        </Storyboard>
+                                                    </VisualState>
+
+                                                    <VisualState x:Name="Pressed">
+                                                        <Storyboard>
+                                                            <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                                        </Storyboard>
+                                                    </VisualState>
+
+                                                    <VisualState x:Name="Disabled">
+                                                        <VisualState.Setters>
+                                                            <Setter Target="ContentPresenter.Opacity" Value="0.5" />
+                                                        </VisualState.Setters>
+                                                    </VisualState>
+
+                                                </VisualStateGroup>
+
+                                            </VisualStateManager.VisualStateGroups>
+                                        </ContentPresenter>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GridView.ItemContainerStyle>
+                </GridView>
+            </Border>
+
+            <Grid
+                x:Name="DetailsViewRoot"
+                Grid.Row="1"
+                RowSpacing="12"
+                d:Visibility="Visible"
+                RenderTransformOrigin="0.5,0.5"
+                Visibility="Collapsed">
+                <Grid.RenderTransform>
+                    <CompositeTransform />
+                </Grid.RenderTransform>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <!--  Text is set in code rather than binding to better support connected animation  -->
+                    <TextBlock
+                        x:Name="DetailsFontTitle"
+                        Grid.Column="1"
+                        d:Text="Segoe UI"
+                        FontSize="24"
+                        FontWeight="Bold" />
+                </Grid>
+
+                <ScrollViewer
+                    x:Name="DetailsViewContent"
+                    Grid.Row="1"
+                    RenderTransformOrigin="0.5,0.5">
+                    <FrameworkElement.RenderTransform>
+                        <CompositeTransform />
+                    </FrameworkElement.RenderTransform>
+                    <muxc:ItemsRepeater
+                        x:Name="DetailsRepeater"
+                        ElementPrepared="Repeater_ElementPrepared"
+                        ItemsSource="{x:Bind ViewModel.SelectedFont.Variants, Mode=OneWay}"
+                        Layout="{StaticResource GridLayout}"
+                        VerticalCacheLength="0.5">
+                        <muxc:ItemsRepeater.ItemTemplate>
+                            <DataTemplate x:DataType="core:FontVariant">
+                                <Grid BorderBrush="{ThemeResource SystemColorControlAccentBrush}" BorderThickness="0 0 0 0">
                                     <TextBlock Margin="0 4 0 0" Foreground="{ThemeResource TextControlPlaceholderForeground}">
-                                        <Run Text="{x:Bind Name}" />
-                                        <Run Text="{x:Bind DefaultVariant.PreferredName}" />
+                                        <Run Text="{x:Bind PreferredName}" />
                                     </TextBlock>
                                     <TextBlock
-                                        Margin="0 22 0 0"
-                                        FontFamily="{x:Bind DefaultVariant.Source}"
-                                        FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
-                                        FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
-                                        FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
+                                        Margin="0 24 0 0"
+                                        FontFamily="{x:Bind Source}"
+                                        FontStretch="{x:Bind FontFace.Stretch}"
+                                        FontStyle="{x:Bind FontFace.Style}"
+                                        FontWeight="{x:Bind FontFace.Weight}"
                                         IsColorFontEnabled="True"
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="Wrap" />
                                 </Grid>
-                            </Button>
+                            </DataTemplate>
+                        </muxc:ItemsRepeater.ItemTemplate>
+                    </muxc:ItemsRepeater>
+                </ScrollViewer>
 
-                        </DataTemplate>
-                    </muxc:ItemsRepeater.ItemTemplate>
-                </muxc:ItemsRepeater>
-            </ScrollViewer>
 
-            <!--<GridView SelectionMode="None" ShowsScrollingPlaceholders="False">
-                <GridView.ItemContainerStyle>
-                    <Style BasedOn="{StaticResource GridViewItemRevealBackgroundShowsAboveContentStyle}" TargetType="GridViewItem">
-                        <Setter Property="Margin" Value="0 0 12 12" />
-                    </Style>
-                </GridView.ItemContainerStyle>
-                <GridView.ItemTemplate />
-            </GridView>-->
+
+            </Grid>
         </Grid>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ViewStates" CurrentStateChanging="ViewStates_CurrentStateChanging">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition From="*" To="DetailsState">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1.3">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.95,0.05" ControlPoint2="0.79,0.04" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="1.3">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.95,0.05" ControlPoint2="0.79,0.04" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="Opacity">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.95,0.05" ControlPoint2="0.79,0.04" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewRoot" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BackButton" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewRoot" Storyboard.TargetProperty="IsHitTestVisible">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="False" />
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00.25" Value="True" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewContent" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.0" Value="0.7" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.25" Value="0.7" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.85" Value="1">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.13 1" ControlPoint2="0.49 1" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewContent" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.0" Value="0.7" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.25" Value="0.7" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.85" Value="1">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.13 1" ControlPoint2="0.49 1" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewContent" Storyboard.TargetProperty="Opacity">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.0" Value="0" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.25" Value="0" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.85" Value="1">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.13 1" ControlPoint2="0.49 1" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                    <VisualTransition From="*" To="NormalState">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewRoot" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="Visible" />
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00.3" Value="Collapsed" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewContent" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.7">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.95,0.05" ControlPoint2="0.79,0.04" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewContent" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0.7">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.95,0.05" ControlPoint2="0.79,0.04" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="DetailsViewContent" Storyboard.TargetProperty="Opacity">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3000000" Value="0">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.95,0.05" ControlPoint2="0.79,0.04" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="Collapsed" />
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00.3" Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.0" Value="1.3" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3" Value="1.3" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.7" Value="1">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.19 1" ControlPoint2="0.22 1" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.0" Value="1.3" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3" Value="1.3" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.7" Value="1">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.19 1" ControlPoint2="0.22 1" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="Opacity">
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.0" Value="0" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.3" Value="0" />
+                                <SplineDoubleKeyFrame KeyTime="00:00:00.7" Value="1">
+                                    <SplineDoubleKeyFrame.KeySpline>
+                                        <KeySpline ControlPoint1="0.19 1" ControlPoint2="0.22 1" />
+                                    </SplineDoubleKeyFrame.KeySpline>
+                                </SplineDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="NormalState" />
+                <VisualState x:Name="DetailsState">
+                    <VisualState.Setters>
+                        <Setter Target="ListingViewRoot.Visibility" Value="Collapsed" />
+                        <Setter Target="DetailsViewRoot.Visibility" Value="Visible" />
+                        <Setter Target="BackButton.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="LayoutModeStates">
+                <VisualState x:Name="GridLayoutState" />
+                <VisualState x:Name="StackLayoutState">
+                    <VisualState.Setters>
+                        <!--<Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplate}" />-->
+                        <Setter Target="Repeater.ItemsPanel" Value="{StaticResource StackingPanelTemplate}" />
+                        <Setter Target="DetailsRepeater.Layout" Value="{StaticResource StackLayout}" />
+                        <Setter Target="FontSizeSlider.Maximum" Value="100" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
 
     </Grid>
 </views:ViewBase>

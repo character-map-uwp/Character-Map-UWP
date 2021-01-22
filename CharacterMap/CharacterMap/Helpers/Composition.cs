@@ -430,6 +430,177 @@ namespace CharacterMap.Helpers
         }
 
 
+        #region Default Composition Transitions 
+
+        /// <summary>
+        /// Creates the detault Forward composition animation
+        /// </summary>
+        /// <param name="outElement"></param>
+        /// <param name="inElement"></param>
+        /// <returns></returns>
+        public static void StartCompositionExpoZoomForwardTransition(FrameworkElement outElement, FrameworkElement inElement)
+        {
+            if (!UISettings.AnimationsEnabled)
+            {
+                return;
+            }
+
+            Compositor compositor = ElementCompositionPreview.GetElementVisual(outElement).Compositor;
+
+            Visual outVisual = ElementCompositionPreview.GetElementVisual(outElement);
+            Visual inVisual = ElementCompositionPreview.GetElementVisual(inElement);
+
+            CompositionAnimationGroup outgroup = compositor.CreateAnimationGroup();
+            CompositionAnimationGroup ingroup = compositor.CreateAnimationGroup();
+
+            TimeSpan outDuration = TimeSpan.FromSeconds(0.3);
+            TimeSpan inStart = TimeSpan.FromSeconds(0.25);
+            TimeSpan inDuration = TimeSpan.FromSeconds(0.6);
+
+            CubicBezierEasingFunction ease = compositor.CreateCubicBezierEasingFunction(
+                new Vector2(0.95f, 0.05f),
+                new Vector2(0.79f, 0.04f));
+
+            CubicBezierEasingFunction easeOut = compositor.CreateCubicBezierEasingFunction(
+                new Vector2(0.13f, 1.0f),
+                new Vector2(0.49f, 1.0f));
+
+            // OUT ELEMENT
+            {
+                outVisual.CenterPoint = outVisual.Size.X > 0
+                   ? new Vector3(outVisual.Size / 2f, 0f)
+                   : new Vector3((float)Window.Current.Bounds.Width / 2f, (float)Window.Current.Bounds.Height / 2f, 0f);
+
+                // SCALE OUT
+                var sout = compositor.CreateVector3KeyFrameAnimation();
+                sout.InsertKeyFrame(1, new Vector3(1.3f, 1.3f, 1f), ease);
+                sout.Duration = outDuration;
+                sout.Target = nameof(outVisual.Scale);
+
+                // FADE OUT
+                var oout = compositor.CreateScalarKeyFrameAnimation();
+                oout.InsertKeyFrame(1, 0f, ease);
+                oout.Duration = outDuration;
+                oout.Target = nameof(outVisual.Opacity);
+            }
+
+            // IN ELEMENT
+            {
+                inVisual.CenterPoint = inVisual.Size.X > 0
+                      ? new Vector3(inVisual.Size / 2f, 0f)
+                      : new Vector3(outVisual.Size / 2f, 0f);
+
+
+                // SCALE IN
+                var sO = inVisual.Compositor.CreateVector3KeyFrameAnimation();
+                sO.Duration = inDuration;
+                sO.Target = nameof(inVisual.Scale);
+                sO.InsertKeyFrame(0, new Vector3(0.7f, 0.7f, 1.0f), easeOut);
+                sO.InsertKeyFrame(1, new Vector3(1.0f, 1.0f, 1.0f), easeOut);
+                sO.DelayTime = inStart;
+                ingroup.Add(sO);
+
+                // FADE IN
+                inVisual.Opacity = 0f;
+                var op = inVisual.Compositor.CreateScalarKeyFrameAnimation();
+                op.DelayTime = inStart;
+                op.Duration = inDuration;
+                op.Target = nameof(outVisual.Opacity);
+                op.InsertKeyFrame(1, 0f, easeOut);
+                op.InsertKeyFrame(1, 1f, easeOut);
+                ingroup.Add(op);
+
+            }
+
+            outVisual.StartAnimationGroup(outgroup);
+            inVisual.StartAnimationGroup(ingroup);
+        }
+
+        /// <summary>
+        /// Creates the default backwards composition animation
+        /// </summary>
+        /// <param name="outElement"></param>
+        /// <param name="inElement"></param>
+        /// <returns></returns>
+        //CompositionStoryboard CreateCompositionExpoZoomBackward(FrameworkElement outElement, FrameworkElement inElement)
+        //{
+        //    Compositor compositor = ElementCompositionPreview.GetElementVisual(outElement).Compositor;
+
+        //    Visual outVisual = ElementCompositionPreview.GetElementVisual(outElement);
+        //    Visual inVisual = ElementCompositionPreview.GetElementVisual(inElement);
+
+        //    CompositionAnimationGroup outgroup = compositor.CreateAnimationGroup();
+        //    CompositionAnimationGroup ingroup = compositor.CreateAnimationGroup();
+
+        //    TimeSpan outDuration = TimeSpan.FromSeconds(0.3);
+        //    TimeSpan inDuration = TimeSpan.FromSeconds(0.4);
+
+        //    CubicBezierEasingFunction ease = compositor.CreateCubicBezierEasingFunction(
+        //        new Vector2(0.95f, 0.05f),
+        //        new Vector2(0.79f, 0.04f));
+
+        //    CubicBezierEasingFunction easeOut = compositor.CreateCubicBezierEasingFunction(
+        //        new Vector2(0.19f, 1.0f),
+        //        new Vector2(0.22f, 1.0f));
+
+
+        //    // OUT ELEMENT
+        //    {
+        //        outVisual.CenterPoint = outVisual.Size.X > 0
+        //            ? new Vector3(outVisual.Size / 2f, 0f)
+        //            : new Vector3((float)this.ActualWidth / 2f, (float)this.ActualHeight / 2f, 0f);
+
+        //        // SCALE OUT
+        //        var sO = compositor.CreateVector3KeyFrameAnimation();
+        //        sO.Duration = outDuration;
+        //        sO.Target = nameof(outVisual.Scale);
+        //        sO.InsertKeyFrame(1, new Vector3(0.7f, 0.7f, 1.0f), ease);
+        //        outgroup.Add(sO);
+
+        //        // FADE OUT
+        //        var op = compositor.CreateScalarKeyFrameAnimation();
+        //        op.Duration = outDuration;
+        //        op.Target = nameof(outVisual.Opacity);
+        //        op.InsertKeyFrame(1, 0f, ease);
+        //        outgroup.Add(op);
+        //    }
+
+        //    // IN ELEMENT
+        //    {
+        //        inVisual.CenterPoint = inVisual.Size.X > 0
+        //             ? new Vector3(inVisual.Size / 2f, 0f)
+        //             : new Vector3((float)this.ActualWidth / 2f, (float)this.ActualHeight / 2f, 0f);
+
+
+        //        // SCALE IN
+        //        ingroup.Add(
+        //            inVisual.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+        //                .AddScaleKeyFrame(0, 1.3f)
+        //                .AddScaleKeyFrame(1, 1f, easeOut)
+        //                .SetDuration(inDuration)
+        //                .SetDelayTime(outDuration)
+        //                .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay));
+
+        //        // FADE IN
+        //        inVisual.Opacity = 0f;
+        //        var op = inVisual.Compositor.CreateScalarKeyFrameAnimation();
+        //        op.DelayTime = outDuration;
+        //        op.Duration = inDuration;
+        //        op.Target = nameof(outVisual.Opacity);
+        //        op.InsertKeyFrame(1, 0f, easeOut);
+        //        op.InsertKeyFrame(1, 1f, easeOut);
+        //        ingroup.Add(op);
+
+        //    }
+
+        //    CompositionStoryboard group = new CompositionStoryboard();
+        //    group.Add(new CompositionTimeline(outVisual, outgroup, ease));
+        //    group.Add(new CompositionTimeline(inVisual, ingroup, easeOut));
+        //    return group;
+        //}
+
+        #endregion
+
         /* Adding or removing Receivers is glitchy AF */
 
         //public static void TryAddRecievers(UIElement target, params UIElement[] recievers)
