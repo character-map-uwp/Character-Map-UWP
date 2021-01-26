@@ -176,8 +176,6 @@ namespace CharacterMap.Controls
 
         private CharacterGridViewTemplateSettings _templateSettings = null;
 
-        private ImplicitAnimationCollection _repositionCollection = null;
-
         public CharacterGridView()
         {
             _xamlDirect = XamlDirect.GetDefault();
@@ -209,7 +207,7 @@ namespace CharacterMap.Controls
                 else
                 {
                     var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-                    v.ImplicitAnimations = EnsureRepositionCollection(v.Compositor);
+                    v.ImplicitAnimations = Composition.GetRepositionCollection(v.Compositor);
                 }
             }
         }
@@ -227,7 +225,7 @@ namespace CharacterMap.Controls
             // 2 - Use XAML direct to set new properties, rather than through DP's
             // 3 - Access any required data properties from parents through normal properties, 
             //     not DP's - DP access can be order of magnitudes slower.
-            // Note : This will be faster via C++ as it avoids all marshaling costs.
+            // Note : This will be faster via C++ as it avoids all marshalling costs.
             // Note: For more improved performance, do **not** use XAML ItemTemplate.
             //       Create entire template via XamlDirect, and never directly reference the 
             //       WinRT XAML object.
@@ -383,8 +381,8 @@ namespace CharacterMap.Controls
                     _xamlDirect.SetDoubleProperty(root, XamlPropertyIndex.FrameworkElement_Width, value);
                     _xamlDirect.SetDoubleProperty(root, XamlPropertyIndex.FrameworkElement_Height, value);
                     var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
-                    IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 1);
-                    _xamlDirect.SetDoubleProperty(tb, XamlPropertyIndex.FrameworkElement_Height, value / 2d);
+                    IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 0);
+                    _xamlDirect.SetDoubleProperty(tb, XamlPropertyIndex.Control_FontSize, value / 2d);
                 }
 
                 //if (item.ContentTemplateRoot is Grid g)
@@ -422,36 +420,13 @@ namespace CharacterMap.Controls
             foreach (var item in this.ItemsPanelRoot.Children)
             {
                 var v = ElementCompositionPreview.GetElementVisual(item);
-                v.ImplicitAnimations = newValue ? EnsureRepositionCollection(v.Compositor) : null;
+                v.ImplicitAnimations = newValue ? Composition.GetRepositionCollection(v.Compositor) : null;
             }
         }
 
         private void PokeUIElementZIndex(UIElement e)
         {
-            var o = _xamlDirect.GetXamlDirectObject(e);
-            var i = _xamlDirect.GetInt32Property(o, XamlPropertyIndex.Canvas_ZIndex);
-            _xamlDirect.SetInt32Property(o, XamlPropertyIndex.Canvas_ZIndex, i + 1);
-            _xamlDirect.SetInt32Property(o, XamlPropertyIndex.Canvas_ZIndex, i);
-        }
-
-        private ImplicitAnimationCollection EnsureRepositionCollection(Compositor c)
-        {
-            if (_repositionCollection == null)
-            {
-                var offsetAnimation = c.CreateVector3KeyFrameAnimation();
-                offsetAnimation.InsertExpressionKeyFrame(1f, "this.FinalValue");
-                offsetAnimation.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
-                offsetAnimation.Target = nameof(Visual.Offset);
-
-                var g = c.CreateAnimationGroup();
-                g.Add(offsetAnimation);
-
-                var s = c.CreateImplicitAnimationCollection();
-                s.Add(nameof(Visual.Offset), g);
-                _repositionCollection = s;
-            }
-
-            return _repositionCollection;
+            Composition.PokeUIElementZIndex(e, _xamlDirect);
         }
 
         #endregion

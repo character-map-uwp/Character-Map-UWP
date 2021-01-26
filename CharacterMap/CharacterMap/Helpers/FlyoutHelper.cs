@@ -333,7 +333,7 @@ namespace CharacterMap.Helpers
 
                 var qq = new MenuFlyoutItem
                 {
-                    Text = "Open Quick Compare",
+                    Text = "Compare Fonts",
                     Icon = new SymbolIcon(Symbol.Library)
                 };
 

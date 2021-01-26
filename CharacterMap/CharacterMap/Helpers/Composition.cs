@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
@@ -23,6 +25,9 @@ namespace CharacterMap.Helpers
 
         private static Dictionary<Compositor, Vector3KeyFrameAnimation> _defaultOffsetAnimations { get; }
             = new Dictionary<Compositor, Vector3KeyFrameAnimation>();
+
+        private static Dictionary<Compositor, ImplicitAnimationCollection> _defaultRepositionAnimations { get; }
+            = new Dictionary<Compositor, ImplicitAnimationCollection>();
 
         private static string CENTRE_EXPRESSION =>
             $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * 0.5f, " +
@@ -59,6 +64,44 @@ namespace CharacterMap.Helpers
         static Composition()
         {
             UISettings = new UISettings();
+        }
+
+        public static ImplicitAnimationCollection GetRepositionCollection(Compositor c)
+        {
+            if (!_defaultRepositionAnimations.TryGetValue(c, out ImplicitAnimationCollection collection))
+            {
+                var offsetAnimation = c.CreateVector3KeyFrameAnimation();
+                offsetAnimation.InsertExpressionKeyFrame(1f, "this.FinalValue");
+                offsetAnimation.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
+                offsetAnimation.Target = nameof(Visual.Offset);
+
+                var g = c.CreateAnimationGroup();
+                g.Add(offsetAnimation);
+
+                var s = c.CreateImplicitAnimationCollection();
+                s.Add(nameof(Visual.Offset), g);
+                _defaultRepositionAnimations[c] = s;
+                return s;
+            }
+
+            return collection;
+        }
+
+        public static void PokeUIElementZIndex(UIElement e, XamlDirect xamlDirect = null)
+        {
+            if (xamlDirect != null)
+            {
+                var o = xamlDirect.GetXamlDirectObject(e);
+                var i = xamlDirect.GetInt32Property(o, XamlPropertyIndex.Canvas_ZIndex);
+                xamlDirect.SetInt32Property(o, XamlPropertyIndex.Canvas_ZIndex, i + 1);
+                xamlDirect.SetInt32Property(o, XamlPropertyIndex.Canvas_ZIndex, i);
+            }
+            else
+            {
+                var index = Canvas.GetZIndex(e);
+                Canvas.SetZIndex(e, index + 1);
+                Canvas.SetZIndex(e, index);
+            }
         }
 
         private static void SetOpacityTransition(FrameworkElement e, TimeSpan t)

@@ -142,6 +142,100 @@
             </Grid>
         </DataTemplate>
 
+        <Style TargetType="RadioButton">
+            <Setter Property="Background" Value="{ThemeResource RadioButtonBackground}" />
+            <Setter Property="Foreground" Value="{ThemeResource RadioButtonForeground}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource RadioButtonBorderBrush}" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+            <Setter Property="FocusVisualMargin" Value="-7,-3,-7,-3" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Grid
+                            x:Name="RootGrid"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBorderBrushPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBorderBrushPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBackgroundDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="BorderBrush">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource RadioButtonBorderBrushDisabled}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="CheckStates">
+                                    <VisualState x:Name="Checked">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForeground}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Unchecked" />
+                                    <VisualState x:Name="Indeterminate" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Grid.Column="1"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                Foreground="{TemplateBinding Foreground}"
+                                TextWrapping="Wrap" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
 
     </UserControl.Resources>
 
@@ -190,11 +284,11 @@
                 Margin="24 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                d:Text="Font Comparison"
+                d:Text="Compare Fonts"
                 FontSize="22"
                 FontWeight="Bold"
                 OpticalMarginAlignment="TrimSideBearings"
-                Text="Font Comparison" />
+                Text="Compare Fonts" />
         </Grid>
 
         <Grid
@@ -303,30 +397,36 @@
                         Style="{StaticResource RampComboBoxStyle}"
                         Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <!--<TextBox
-                        x:Name="InputText"
-                        Grid.Column="1"
-                        BorderThickness="0 0 0 1"
-                        CornerRadius="0"
-                        Text="The quick brown fox jumped over the lazy dog"
-                        TextChanged="InputText_TextChanged" />-->
-                    <Button Grid.Column="2" Click="GridView_Click">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
-                    </Button>
-                    <Button Grid.Column="3" Click="ListView_Click">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
-                    </Button>
                 </Grid>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="6" />
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
+                    <StackPanel Margin="-8 0 0 0" Orientation="Horizontal">
+                        <RadioButton
+                            x:Uid="LayoutGridToggle"
+                            Click="GridView_Click"
+                            IsChecked="True"
+                            ToolTipService.ToolTip="Grid Layout">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
+                        </RadioButton>
+                        <RadioButton
+                            x:Uid="LayoutListToggle"
+                            Click="ListView_Click"
+                            ToolTipService.ToolTip="List Layout">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
+                        </RadioButton>
+                    </StackPanel>
+
                     <Slider
                         x:Name="FontSizeSlider"
-                        Grid.Column="1"
+                        Grid.Column="2"
+                        Margin="0 0 4 0"
+                        CornerRadius="0"
                         Maximum="64"
                         Minimum="20"
                         ValueChanged="FontSizeSlider_ValueChanged"
@@ -334,9 +434,9 @@
                         <Slider.Header>
                             <TextBlock
                                 Margin="0 0 0 -4"
+                                d:Text="Font Size"
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Text="Font Size"
                                 TextLineBounds="Tight" />
                         </Slider.Header>
                     </Slider>
@@ -391,27 +491,22 @@
                                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                         </Storyboard>
                                                     </VisualState>
-
                                                     <VisualState x:Name="PointerOver">
                                                         <Storyboard>
                                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                         </Storyboard>
                                                     </VisualState>
-
                                                     <VisualState x:Name="Pressed">
                                                         <Storyboard>
                                                             <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
                                                         </Storyboard>
                                                     </VisualState>
-
                                                     <VisualState x:Name="Disabled">
                                                         <VisualState.Setters>
                                                             <Setter Target="ContentPresenter.Opacity" Value="0.5" />
                                                         </VisualState.Setters>
                                                     </VisualState>
-
                                                 </VisualStateGroup>
-
                                             </VisualStateManager.VisualStateGroups>
                                         </ContentPresenter>
                                     </ControlTemplate>
@@ -451,6 +546,8 @@
                 <ScrollViewer
                     x:Name="DetailsViewContent"
                     Grid.Row="1"
+                    Margin="0 0 -24 0"
+                    Padding="0 0 24 0"
                     RenderTransformOrigin="0.5,0.5">
                     <FrameworkElement.RenderTransform>
                         <CompositeTransform />
@@ -629,7 +726,7 @@
                         <!--<Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplate}" />-->
                         <Setter Target="Repeater.ItemsPanel" Value="{StaticResource StackingPanelTemplate}" />
                         <Setter Target="DetailsRepeater.Layout" Value="{StaticResource StackLayout}" />
-                        <Setter Target="FontSizeSlider.Maximum" Value="100" />
+                        <Setter Target="FontSizeSlider.Maximum" Value="128" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

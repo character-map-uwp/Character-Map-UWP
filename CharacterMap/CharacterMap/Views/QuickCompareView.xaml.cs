@@ -20,6 +20,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
@@ -94,8 +95,8 @@ namespace CharacterMap.Views
         private void GoToNormalState()
         {
             // Repeater metrics may be out of date. Update.
-            UpdateText(ViewModel.Text);
-            UpdateFontSize(FontSizeSlider.Value);
+            UpdateText(ViewModel.Text, Repeater.Realize().ItemsPanelRoot);
+            UpdateFontSize(FontSizeSlider.Value, Repeater.Realize().ItemsPanelRoot);
             VisualStateManager.GoToState(this, NormalState.Name, true);
         }
 
@@ -321,6 +322,19 @@ namespace CharacterMap.Views
                 var g = args.ItemContainer.GetFirstDescendantOfType<Panel>();
                 SetText(g, ViewModel.Text);
                 SetFontSize(g, FontSizeSlider.Value);
+            }
+
+            if (ResourceHelper.AppSettings.AllowExpensiveAnimations)
+            {
+                if (args.InRecycleQueue)
+                {
+                    Composition.PokeUIElementZIndex(args.ItemContainer);
+                }
+                else
+                {
+                    var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
+                    v.ImplicitAnimations = Composition.GetRepositionCollection(v.Compositor);
+                }
             }
         }
     }

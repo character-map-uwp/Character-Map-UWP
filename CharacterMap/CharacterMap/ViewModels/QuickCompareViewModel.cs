@@ -47,19 +47,8 @@ namespace CharacterMap.ViewModels
                     RefreshFontList(value);
             }
         }
-        
-        public IReadOnlyList<string> TextOptions { get; } = new List<string>
-        {
-            "The quick brown dog jumps over a lazy fox. 1234567890",
-            Localization.Get("CultureSpecificPangram/Text"),
-            "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ", // Cyrillic Alphabet
-            "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
-            "Do bạch kim rất quý nên sẽ dùng để lắp vô xương.", // Vietnamese
-            "Ταχίστη αλώπηξ βαφής ψημένη γη, δρασκελίζει υπέρ νωθρού κυνός", // Greek
-            "עטלף אבק נס דרך מזגן שהתפוצץ כי חם", // Hebrew
-            "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق" // Arabic
-        };
+
+        public IReadOnlyList<string> TextOptions { get; } = GlyphService.DefaultTextOptions;
 
         public UserCollectionsService FontCollections { get; }
 
@@ -74,7 +63,6 @@ namespace CharacterMap.ViewModels
             RefreshFontList();
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
-
         }
 
         private void OnFilterClick(object e)
