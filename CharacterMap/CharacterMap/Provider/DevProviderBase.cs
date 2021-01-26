@@ -79,6 +79,14 @@ namespace CharacterMap.Provider
     /// </summary>
     public abstract partial class DevProviderBase
     {
+        protected static List<DevOption> DefaultUWPOptions { get; } = new List<DevOption>
+        {
+            new ("TxtXamlCode/Header", null),
+            new ("TxtFontIcon/Header", null),
+            new ("TxtPathIcon/Text", null),
+            new ("TxtSymbolIcon/Header", null),
+        };
+
         public string ResourceKey { get; }
         public string DisplayName { get; protected init; }
 
@@ -117,6 +125,12 @@ namespace CharacterMap.Provider
         /// </summary>
         /// <returns></returns>
         protected abstract IReadOnlyList<DevOption> OnGetOptions();
+
+        /// <summary>
+        /// Returns all the possible (shell) values this provider can return.
+        /// </summary>
+        /// <returns></returns>
+        public virtual IReadOnlyList<DevOption> GetAllOptions() => DefaultUWPOptions;
 
         /// <summary>
         /// Gets options for display in the context menu when right clicking a glyph.

@@ -29,7 +29,7 @@ namespace CharacterMap.Provider
             var ops = new List<DevOption>()
             {
                 new ("TxtXamlCode/Header", $"&#x{hex};"),
-                new ("TxtFontIcon/Header", $@"<FontIcon FontFamily=""{v?.XamlFontSource}"" Glyph=""&#x{hex};"" />", supportsTypography: true),
+                new ("TxtFontIcon/Header", $@"<FontIcon FontFamily=""{GetFontSource(v?.XamlFontSource)}"" Glyph=""&#x{hex};"" />", supportsTypography: true),
             };
 
             if (!string.IsNullOrWhiteSpace(pathIconData))
@@ -39,6 +39,13 @@ namespace CharacterMap.Provider
                 ops.Add(new DevOption("TxtSymbolIcon/Header", $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />"));
 
             return ops;
+        }
+
+        private string GetFontSource(string fontSource)
+        {
+            if (fontSource == "Segoe MDL2 Assets")
+                return "{ThemeResource SymbolThemeFontFamily}";
+            return fontSource;
         }
     }
 }

@@ -13,9 +13,9 @@ namespace CharacterMap.Provider
         }
 
         protected override DevProviderType GetDevProviderType() => DevProviderType.CppCX;
-
         protected override IReadOnlyList<DevOption> OnGetContextOptions() => Inflate();
         protected override IReadOnlyList<DevOption> OnGetOptions() => Inflate();
+
 
         IReadOnlyList<DevOption> Inflate()
         {

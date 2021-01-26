@@ -10,6 +10,14 @@ namespace CharacterMap.Provider
             DisplayName = "Xamarin Forms";
         }
 
+        private static List<DevOption> _allOptions { get; } = new List<DevOption>
+        {
+            new ("TxtXamlCode/Header", null),
+            new ("TxtFontImageSource/Text", null),
+            new ("TxtPathGeometry/Text", null)
+        };
+
+        public override IReadOnlyList<DevOption> GetAllOptions() => _allOptions;
         protected override DevProviderType GetDevProviderType() => DevProviderType.XamarinForms;
         protected override IReadOnlyList<DevOption> OnGetContextOptions() => Inflate();
         protected override IReadOnlyList<DevOption> OnGetOptions() => Inflate();

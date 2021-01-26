@@ -425,7 +425,7 @@ namespace CharacterMap.Helpers
                         foreach (var p in providers.Where(p => p.Type != DevProviderType.None))
                         {
                             var item = new MenuFlyoutSubItem { Text = p.DisplayName };
-                            foreach (var o in p.GetContextOptions())
+                            foreach (var o in p.GetAllOptions())
                             {
                                 var i = new MenuFlyoutItem { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name) };
                                 i.Click += CopyItemClick;
@@ -444,7 +444,8 @@ namespace CharacterMap.Helpers
                         foreach (var child in item.Items.Cast<MenuFlyoutItem>())
                         {
                             var o = ops.FirstOrDefault(o => o.Name == Properties.GetDevOption(child)?.Name);
-                            Properties.SetDevOption(child, o);
+                            if (o != null)
+                                Properties.SetDevOption(child, o);
                             child.SetVisible(o is not null);
                         }
                     }

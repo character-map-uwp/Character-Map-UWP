@@ -11,6 +11,8 @@ namespace CharacterMap.Provider
             DisplayName = Localization.Get(ResourceKey);
         }
 
+        public override IReadOnlyList<DevOption> GetAllOptions() => new List<DevOption>();
+
         protected override DevProviderType GetDevProviderType() => DevProviderType.None;
 
         protected override IReadOnlyList<DevOption> OnGetContextOptions() => null;
