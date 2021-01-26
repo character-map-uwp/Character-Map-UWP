@@ -228,6 +228,9 @@ namespace CharacterMap.Controls
             // 3 - Access any required data properties from parents through normal properties, 
             //     not DP's - DP access can be order of magnitudes slower.
             // Note : This will be faster via C++ as it avoids all marshaling costs.
+            // Note: For more improved performance, do **not** use XAML ItemTemplate.
+            //       Create entire template via XamlDirect, and never directly reference the 
+            //       WinRT XAML object.
 
             // Assumed Structure:
             // -- Grid
@@ -306,9 +309,12 @@ namespace CharacterMap.Controls
 
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
-                Grid g = (Grid)item.ContentTemplateRoot;
-                TextBlock tb = (TextBlock)g.Children[0];
-                UpdateColorFont(_xamlDirect, tb, null, value);
+                if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
+                {
+                    var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
+                    IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 0);
+                    UpdateColorFont(_xamlDirect, null, tb, value);
+                }
             }
         }
 
@@ -319,12 +325,18 @@ namespace CharacterMap.Controls
 
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
-                if (item.ContentTemplateRoot is Grid g)
+                if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
                 {
-                    TextBlock tb = (TextBlock)g.Children[0];
-                    IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
-                    UpdateTypography(_xamlDirect, o, info);
+                    var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
+                    IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 0);
+                    UpdateTypography(_xamlDirect, tb, info);
                 }
+                //if (item.ContentTemplateRoot is Grid g)
+                //{
+                //    TextBlock tb = (TextBlock)g.Children[0];
+                //    IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
+                //    UpdateTypography(_xamlDirect, o, info);
+                //}
             }
         }
 
@@ -335,15 +347,26 @@ namespace CharacterMap.Controls
 
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
-                if (item.ContentTemplateRoot is Grid g)
+                if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
                 {
-                    if (g.Tag is Character c)
+                    if (_xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.FrameworkElement_Tag) is Character c)
                     {
-                        TextBlock tb = (TextBlock)g.Children[1];
-                        tb.Text = c.GetAnnotation(value);
-                        tb.SetVisible(value != GlyphAnnotation.None);
+                        var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
+                        IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 1);
+                        _xamlDirect.SetStringProperty(tb, XamlPropertyIndex.TextBlock_Text, c.GetAnnotation(value));
+                        _xamlDirect.SetEnumProperty(tb, XamlPropertyIndex.UIElement_Visibility, value != GlyphAnnotation.None ? 0 : 1);
                     }
                 }
+
+                //if (item.ContentTemplateRoot is Grid g)
+                //{
+                //    if (g.Tag is Character c)
+                //    {
+                //        TextBlock tb = (TextBlock)g.Children[1];
+                //        tb.Text = c.GetAnnotation(value);
+                //        tb.SetVisible(value != GlyphAnnotation.None);
+                //    }
+                //}
             }
         }
 
@@ -355,12 +378,21 @@ namespace CharacterMap.Controls
 
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
-                if (item.ContentTemplateRoot is Grid g)
+                if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
                 {
-                    g.Width = value;
-                    g.Height = value;
-                    ((TextBlock)g.Children[0]).FontSize = value / 2d;
+                    _xamlDirect.SetDoubleProperty(root, XamlPropertyIndex.FrameworkElement_Width, value);
+                    _xamlDirect.SetDoubleProperty(root, XamlPropertyIndex.FrameworkElement_Height, value);
+                    var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
+                    IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 1);
+                    _xamlDirect.SetDoubleProperty(tb, XamlPropertyIndex.FrameworkElement_Height, value / 2d);
                 }
+
+                //if (item.ContentTemplateRoot is Grid g)
+                //{
+                //    g.Width = value;
+                //    g.Height = value;
+                //    ((TextBlock)g.Children[0]).FontSize = value / 2d;
+                //}
             }
         }
 
