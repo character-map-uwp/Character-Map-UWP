@@ -1223,6 +1223,18 @@ Default variant copied.</target>
           <source>Filter Characters</source>
           <target state="new">Filter Characters</target>
         </trans-unit>
+        <trans-unit id="CompareFontsTitle.Text" translate="yes" xml:space="preserve">
+          <source>Compare Fonts</source>
+          <target state="new">Compare Fonts</target>
+        </trans-unit>
+        <trans-unit id="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Grid Layout</source>
+          <target state="new">Grid Layout</target>
+        </trans-unit>
+        <trans-unit id="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>List Layout</source>
+          <target state="new">List Layout</target>
+        </trans-unit>
       </group>
     </body>
   </file>

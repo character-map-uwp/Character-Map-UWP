@@ -333,7 +333,7 @@ namespace CharacterMap.Helpers
 
                 var qq = new MenuFlyoutItem
                 {
-                    Text = "Compare Fonts",
+                    Text = Localization.Get("CompareFontsTitle/Text"),
                     Icon = new SymbolIcon(Symbol.Library)
                 };
 

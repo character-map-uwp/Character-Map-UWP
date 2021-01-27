@@ -130,8 +130,8 @@
                     <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="face(s)" />
                 </TextBlock>
                 <TextBlock
-                    x:Phase="1"
                     Margin="0 24 0 0"
+                    x:Phase="1"
                     FontFamily="{x:Bind DefaultVariant.Source}"
                     FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
                     FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
@@ -282,14 +282,14 @@
             Grid.Row="1"
             Height="{StaticResource TitleRowHeight}">
             <TextBlock
+                x:Uid="CompareFontsTitle"
                 Margin="24 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 d:Text="Compare Fonts"
                 FontSize="22"
                 FontWeight="Bold"
-                OpticalMarginAlignment="TrimSideBearings"
-                Text="Compare Fonts" />
+                OpticalMarginAlignment="TrimSideBearings" />
         </Grid>
 
         <Grid
@@ -402,45 +402,57 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="6" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="20" />
                         <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="30" />
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Margin="-8 0 0 0" Orientation="Horizontal">
+                    <StackPanel Margin="-8 -2 0 0" Orientation="Horizontal">
                         <RadioButton
                             x:Uid="LayoutGridToggle"
                             Click="GridView_Click"
-                            IsChecked="True"
-                            ToolTipService.ToolTip="Grid Layout">
+                            IsChecked="True">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
                         </RadioButton>
-                        <RadioButton
-                            x:Uid="LayoutListToggle"
-                            Click="ListView_Click"
-                            ToolTipService.ToolTip="List Layout">
+                        <RadioButton x:Uid="LayoutListToggle" Click="ListView_Click">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
                         </RadioButton>
                     </StackPanel>
 
+                    <TextBlock
+                        Grid.Column="2"
+                        VerticalAlignment="Center"
+                        IsTextScaleFactorEnabled="False"
+                        Text="A">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform Y="-1" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+
                     <Slider
                         x:Name="FontSizeSlider"
-                        Grid.Column="2"
+                        Grid.Column="3"
                         Margin="0 0 4 0"
                         CornerRadius="0"
                         Maximum="64"
                         Minimum="20"
                         ValueChanged="FontSizeSlider_ValueChanged"
-                        Value="40">
-                        <Slider.Header>
-                            <TextBlock
-                                Margin="0 0 0 -4"
-                                d:Text="Font Size"
-                                FontSize="12"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                TextLineBounds="Tight" />
-                        </Slider.Header>
-                    </Slider>
+                        Value="40" />
+
+                    <TextBlock
+                        Grid.Column="4"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="24"
+                        FontWeight="Normal"
+                        IsTextScaleFactorEnabled="False"
+                        Text="A">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform Y="-2" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+
 
                 </Grid>
 
@@ -678,8 +690,12 @@
                                 </SplineDoubleKeyFrame>
                             </DoubleAnimationUsingKeyFrames>
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="(UIElement.Visibility)">
-                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="Collapsed" />
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="Visible" />
                                 <DiscreteObjectKeyFrame KeyTime="00:00:00.3" Value="Visible" />
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="IsHitTestVisible">
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="False" />
+                                <DiscreteObjectKeyFrame KeyTime="00:00:00.3" Value="True" />
                             </ObjectAnimationUsingKeyFrames>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ListingViewRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
                                 <SplineDoubleKeyFrame KeyTime="00:00:00.0" Value="1.3" />

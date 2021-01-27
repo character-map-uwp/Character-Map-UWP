@@ -1016,4 +1016,13 @@ Default variant copied.</value>
   <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Filter Characters</value>
   </data>
+  <data name="CompareFontsTitle.Text" xml:space="preserve">
+    <value>Compare Fonts</value>
+  </data>
+  <data name="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Grid Layout</value>
+  </data>
+  <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>List Layout</value>
+  </data>
 </root>
