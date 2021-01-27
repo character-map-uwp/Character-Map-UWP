@@ -304,7 +304,8 @@ namespace CharacterMap.Views
                     "- Copying Path Icon from developer code now copies the path with typography applied\n" +
                     "- Added Adobe Glyph List mapping support for a font's post table names\n" +
                     "- Added character filtering by Unicode category to main view\n" +
-                    "- Added Fullscreen keyboard shortcut (F11)"),
+                    "- Added Fullscreen keyboard shortcut (F11)\n" +
+                    "- Added Compare Fonts view (Ctrl + Q)"),
                 new("2021.1.0.0 (Jan 1 2021)",
                     "- Added Font list search\n" +
                     "- Added ability to see all typographic variations for a single character from the character preview pane\n" +
@@ -313,8 +314,9 @@ namespace CharacterMap.Views
                     "- Added copy pane (Ctrl + B)\n" +
                     "- Added 'Toggle Preview Pane' keyboard shortcut (Ctrl + R)\n" +
                     "- Added 'Toggle Font List' keyboard shortcut (Ctrl + L)\n" +
-                    "- Added 'Increase Font' size keyboard shortcut (Ctrl + +)\n" +
-                    "- Added 'Decrease Font' size keyboard shortcut (Ctrl + -)\n" +
+                    "- Added 'Increase Font size' keyboard shortcut (Ctrl + +)\n" +
+                    "- Added 'Decrease Font size' keyboard shortcut (Ctrl + -)\n" +
+                    "- Added 'Focus Search' keyboard shortcut (Ctrl + F)\n" +
                     "- Added a context menu to the character grid allowing you to save or copy any glyph without selecting\n" +
                     "- Added compact overlay support"),
                 new("2020.15.0.0 (May 2020)",

@@ -2,6 +2,7 @@
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
+using CharacterMap.Views;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
@@ -104,6 +105,12 @@ namespace CharacterMap.ViewModels
             {
 
             }
+        }
+
+        public void OpenCurrentFont()
+        {
+            if (SelectedFont is not null)
+                _ = FontMapView.CreateNewViewForFontAsync(SelectedFont);
         }
     }
 }

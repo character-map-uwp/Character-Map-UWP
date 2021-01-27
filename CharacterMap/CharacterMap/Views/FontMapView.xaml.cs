@@ -293,6 +293,9 @@ namespace CharacterMap.Views
                     case VirtualKey.T:
                         ViewModel.ChangeDisplayMode();
                         break;
+                    case VirtualKey.Q:
+                        _ = QuickCompareView.CreateNewWindowAsync();
+                        break;
                 }
             }
         }

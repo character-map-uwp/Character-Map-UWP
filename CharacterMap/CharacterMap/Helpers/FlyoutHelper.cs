@@ -335,7 +335,7 @@ namespace CharacterMap.Helpers
                 {
                     Text = Localization.Get("CompareFontsTitle/Text"),
                     Icon = new SymbolIcon(Symbol.Library)
-                };
+                }.AddKeyboardAccelerator(VirtualKey.Q, VirtualKeyModifiers.Control);
 
                 qq.Click += (s, e) =>
                 {

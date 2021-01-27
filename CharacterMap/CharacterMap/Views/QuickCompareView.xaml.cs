@@ -311,7 +311,7 @@ namespace CharacterMap.Views
                 //ani.SetAnimationComponent(ConnectedAnimationComponent.CrossFade, offset);
 
                 DetailsFontTitle.Text = ViewModel.SelectedFont.Name;
-                ani.TryStart(DetailsFontTitle);//, new List<UIElement> { DetailsViewContent });
+                ani.TryStart(DetailsTitleContainer);//, new List<UIElement> { DetailsViewContent });
             }
         }
 

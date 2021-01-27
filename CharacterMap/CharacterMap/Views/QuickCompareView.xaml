@@ -546,14 +546,34 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Grid>
+                <Grid
+                    x:Name="DetailsTitleContainer"
+                    ColumnSpacing="4"
+                    HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
                     <!--  Text is set in code rather than binding to better support connected animation  -->
                     <TextBlock
                         x:Name="DetailsFontTitle"
-                        Grid.Column="1"
+                        Grid.Column="0"
                         d:Text="Segoe UI"
                         FontSize="24"
                         FontWeight="Bold" />
+                    <Button
+                        Grid.Column="1"
+                        Padding="8 0"
+                        Click="{x:Bind ViewModel.OpenCurrentFont}"
+                        Foreground="{StaticResource SystemColorControlAccentBrush}"
+                        Style="{StaticResource ChromelessButtonStyle}"
+                        ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}">
+                        <FontIcon
+                            Margin="0 2 0 0"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="16"
+                            Glyph="&#xE17C;" />
+                    </Button>
                 </Grid>
 
                 <ScrollViewer
