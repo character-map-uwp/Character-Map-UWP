@@ -81,10 +81,18 @@ namespace CharacterMap.Services
             }
             else
             {
-                if (CoreApplication.MainView.Properties.ContainsKey(nameof(MainWindow)))
-                    view = CoreApplication.CreateNewView();
-                else
-                    view = CoreApplication.MainView;
+                TaskCompletionSource<CoreApplicationView> tcs = new TaskCompletionSource<CoreApplicationView>();
+
+                await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    if (CoreApplication.MainView.Dispatcher.HasThreadAccess &&
+                   CoreApplication.MainView.Properties.ContainsKey(nameof(MainWindow)))
+                        tcs.SetResult(CoreApplication.CreateNewView());
+                    else
+                        tcs.SetResult(CoreApplication.MainView);
+                });
+
+                view = await tcs.Task;
             }
 
             void Create()
