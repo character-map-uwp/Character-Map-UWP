@@ -30,7 +30,7 @@
           <uap:FileTypeAssociation Name="fontfile">
             <uap:SupportedFileTypes>
               <!--<uap:FileType ContentType="application/x-font-ttf">.ttf</uap:FileType>-->
-              <uap:FileType>.otf</uap:FileType>
+              <!--<uap:FileType>.otf</uap:FileType>-->
               <uap:FileType>.ttc</uap:FileType>
               <uap:FileType>.otc</uap:FileType>
               <uap:FileType>.woff</uap:FileType>
