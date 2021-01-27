@@ -1820,7 +1820,7 @@
             <VisualStateGroup x:Name="OptionsStates">
                 <VisualState x:Name="HasOptionsState">
                     <VisualState.StateTriggers>
-                        <StateTrigger IsActive="{x:Bind ViewModel.HasFontOptions, FallbackValue=False}" />
+                        <StateTrigger IsActive="{x:Bind ViewModel.HasFontOptions, FallbackValue=False, Mode=OneWay}" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="FontOptionsButton.Visibility" Value="Visible" />

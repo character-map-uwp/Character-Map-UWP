@@ -130,6 +130,7 @@
                     <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="face(s)" />
                 </TextBlock>
                 <TextBlock
+                    x:Phase="1"
                     Margin="0 24 0 0"
                     FontFamily="{x:Bind DefaultVariant.Source}"
                     FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"

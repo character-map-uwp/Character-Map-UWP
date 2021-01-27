@@ -168,7 +168,6 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        // todo : refactor into classes with description + writing direction
         private IReadOnlyList<string> _defaultRampOptions { get; } = GlyphService.DefaultTextOptions;
 
         #endregion
