@@ -53,6 +53,7 @@ namespace CharacterMap.Views
         private void QuickCompareView_Loaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
+            TitleBarHelper.SetTitle(Localization.Get("CompareFontsTitle/Text"));
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
