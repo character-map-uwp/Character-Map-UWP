@@ -56,6 +56,7 @@ namespace CharacterMapCX
 
         virtual void STDMETHODCALLTYPE AddLines(const D2D1_POINT_2F* points, UINT pointsCount)
         {
+            m_hasData = true;
             for (int i = 0; i < pointsCount; i = i + 1)
             {
                 b = b + "L " + ts(points[i]) + " ";
@@ -64,6 +65,7 @@ namespace CharacterMapCX
 
         virtual void STDMETHODCALLTYPE AddBeziers(const D2D1_BEZIER_SEGMENT* beziers, UINT beziersCount)
         {
+            m_hasData = true;
             for (int i = 0; i < beziersCount; i = i + 1)
             {
                 auto z = beziers[i];
@@ -130,15 +132,22 @@ namespace CharacterMapCX
 
         String^ GetPathData()
         {
-            std::wstring wsTmp(b.begin(), b.end());
-            auto ws = wsTmp;
+            if (m_hasData)
+            {
+                std::wstring wsTmp(b.begin(), b.end());
+                auto ws = wsTmp;
 
-            String^ s = ref new String(ws.c_str());
-            return s;
+                String^ s = ref new String(ws.c_str());
+                return s;
+            }
+            else
+                return ref new String();
         }
 
 	private:
+
         string b = "";
+        bool m_hasData = false;
         unsigned long m_refCount;
 
         float m_offsetX = 0;

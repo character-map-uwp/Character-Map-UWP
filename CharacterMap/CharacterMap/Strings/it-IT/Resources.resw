@@ -104,9 +104,11 @@
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>Icona carattere</value>
+    <comment>Xaml FontIcon. Does not need translation.</comment>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Icona simbolo</value>
+    <comment>Xaml SymbolIcon. Does not need translation.</comment>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>Mappa caratteri</value>
@@ -475,6 +477,7 @@ L'abilitazione dell'animazione ha un impatto trascurabile sulle prestazioni.</va
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Geometria/Grafica</value>
+    <comment>Xaml PathGeometry. Does not need translation.</comment>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>Usa la lingua di sistema</value>
@@ -688,6 +691,7 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
   </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>Percorso icona</value>
+    <comment>Xaml PathIcon. Does not need translation.</comment>
   </data>
   <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Attiva/disattiva gli strumenti di sviluppo</value>

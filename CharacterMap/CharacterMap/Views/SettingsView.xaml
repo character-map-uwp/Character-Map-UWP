@@ -23,6 +23,11 @@
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
+        <Style x:Key="SubheaderTextBlockStyle2" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Normal" />
+            <Setter Property="Margin" Value="0 12 0 4" />
+        </Style>
         <Style x:Key="SectionHeaderTextBlockStyle" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
             <Setter Property="FontSize" Value="26" />
             <Setter Property="FontWeight" Value="SemiLight" />
@@ -117,7 +122,7 @@
                 Click="{x:Bind Hide}">
                 <SymbolIcon Symbol="Cancel" />
                 <AppBarButton.KeyboardAccelerators>
-                    <KeyboardAccelerator Modifiers="None" Key="Escape"/>
+                    <KeyboardAccelerator Key="Escape" Modifiers="None" />
                 </AppBarButton.KeyboardAccelerators>
             </AppBarButton>
 
@@ -180,18 +185,18 @@
                         </core:Properties.Icon>
                     </Button>
                     <Button
-                        Click="MenuItem_Clicked"
-                        Content="{x:Bind h:Localization.Get('SettingsDevToolsGroupHeader/Text')}"
-                        Tag="{x:Bind DeveloperPanel}">
-                        <core:Properties.Icon>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
-                        </core:Properties.Icon>
-                    </Button>
-                    <Button
                         core:Properties.Icon="Font"
                         Click="MenuItem_Clicked"
                         Content="{x:Bind h:Localization.Get('SettingsFontManagementLabel/Text')}"
                         Tag="{x:Bind FontPanel}" />
+                    <Button
+                        Click="MenuItem_Clicked"
+                        Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
+                        Tag="{x:Bind ChangePanel}">
+                        <core:Properties.Icon>
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
+                        </core:Properties.Icon>
+                    </Button>
                     <Button
                         Click="MenuItem_Clicked"
                         Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
@@ -382,6 +387,7 @@
                                                 <Setter Property="IsTabStop" Value="False" />
                                                 <Setter Property="HorizontalAlignment" Value="Stretch" />
                                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="Padding" Value="0" />
                                             </Style>
                                         </ListView.Resources>
                                     </ListView>
@@ -394,7 +400,7 @@
                                     <TextBlock x:Uid="SettingsEnablePaneDescription" Style="{StaticResource DescriptionStyle}" />
                                     <ToggleSwitch IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
                                 </StackPanel>
-                                
+
                                 <StackPanel>
                                     <TextBlock x:Uid="SettingsThemeHeader" Style="{StaticResource HeaderStyle}" />
                                     <RadioButton
@@ -570,20 +576,23 @@
 
                             </StackPanel>
 
-                            <StackPanel x:Name="DeveloperPanel" Visibility="Collapsed">
-                                <TextBlock x:Uid="SettingsDevToolsGroupHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                            <StackPanel x:Name="ChangePanel" Visibility="Collapsed">
+                                <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
-                                <StackPanel>
-                                    <TextBlock x:Uid="SettingsDevToolsHeader" Style="{StaticResource HeaderStyle}" />
-                                    <TextBlock x:Uid="SettingsDevToolsDescription" Style="{StaticResource DescriptionStyle}" />
-                                    <ToggleSwitch x:Name="ToggleDevUtils" Toggled="ToggleDevUtils_Toggled" />
-                                </StackPanel>
-
-                                <StackPanel Visibility="{x:Bind ToggleDevUtils.IsOn, Mode=OneWay}">
-                                    <TextBlock x:Uid="SettingsDevToolsLangHeader" Style="{StaticResource HeaderStyle}" />
-                                    <TextBlock x:Uid="SettingsDevToolsLangDescription" Style="{StaticResource DescriptionStyle}" />
-                                    <muxc:RadioButtons x:Name="RbLanguage" SelectionChanged="RadioButtons_SelectionChanged" />
-                                </StackPanel>
+                                <ItemsControl ItemsSource="{x:Bind Changelog}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate x:DataType="views:ChangelogItem">
+                                            <StackPanel Margin="0 0 0 8">
+                                                <TextBlock Style="{StaticResource SubheaderTextBlockStyle2}" Text="{x:Bind Header}" />
+                                                <TextBlock
+                                                    Margin="0 0 0 0"
+                                                    LineHeight="21.333"
+                                                    Style="{StaticResource DescriptionStyle}"
+                                                    Text="{x:Bind Content}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
 
                             </StackPanel>
 
@@ -658,7 +667,7 @@
                                     </Grid>
                                 </StackPanel>
 
-                                <StackPanel Spacing="6" x:Name="ImportedExportPanel">
+                                <StackPanel x:Name="ImportedExportPanel" Spacing="6">
                                     <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource HeaderStyle}" />
                                     <Button
                                         Width="340"
@@ -736,6 +745,15 @@
                                     <HyperlinkButton Content="Apache License 2.0" NavigateUri="https://github.com/ericsink/SQLitePCL.raw/blob/master/LICENSE.TXT" />
                                 </StackPanel>
 
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="woff2otf-CSharp" />
+                                    <HyperlinkButton Content="Apache License 2.0" NavigateUri="https://github.com/JohnnyWestlake/woff2otf-CSharp/blob/master/LICENSE" />
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Adobe Glyph List" />
+                                    <HyperlinkButton Content="BSD 3-Clause" NavigateUri="https://github.com/adobe-type-tools/agl-aglfn/blob/master/LICENSE.md" />
+                                </StackPanel>
                             </StackPanel>
 
                             <StackPanel x:Name="AboutPanel" Visibility="Collapsed">

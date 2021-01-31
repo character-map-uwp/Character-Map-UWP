@@ -1,10 +1,10 @@
-﻿using Microsoft.Toolkit.Uwp.Helpers;
-using System;
+﻿using System;
 using System.Text;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using CharacterMap.Core;
+using CharacterMap.Helpers;
 
 namespace CharacterMap.Controls
 {
@@ -38,10 +38,10 @@ namespace CharacterMap.Controls
             sb.AppendLine("<!-- Please do not edit below this line -->");
             sb.AppendLine($"```\n{ExceptionBlock.Text}\n```");
             sb.AppendLine();
-            sb.AppendLine($"**OS Version**: {SystemInformation.OperatingSystemVersion}");
-            sb.AppendLine($"**OS Architecture**: {SystemInformation.OperatingSystemArchitecture}");
-            sb.AppendLine($"**App Version**: {SystemInformation.ApplicationVersion.ToFormattedString()}");
-            sb.AppendLine($"**App Culture**: {SystemInformation.Culture.Name}");
+            sb.AppendLine($"**OS Version**: {SystemInformation.Instance.OperatingSystemVersion}");
+            sb.AppendLine($"**OS Architecture**: {SystemInformation.Instance.OperatingSystemArchitecture}");
+            sb.AppendLine($"**App Version**: {SystemInformation.Instance.ApplicationVersion.ToFormattedString()}");
+            sb.AppendLine($"**App Culture**: {SystemInformation.Instance.Culture.Name}");
 
             Utils.CopyToClipBoard(sb.ToString());
             var uri = new Uri("https://github.com/character-map-uwp/Character-Map-UWP/issues/new");

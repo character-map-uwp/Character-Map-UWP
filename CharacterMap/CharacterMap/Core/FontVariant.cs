@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using CharacterMap.Helpers;
+﻿using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMapCX;
 using Humanizer;
 using Microsoft.Graphics.Canvas.Text;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Windows.Storage;
-using CharacterMap.Models;
-using System.Text;
-using CharacterMap.Services;
 
 namespace CharacterMap.Core
 {
@@ -114,7 +113,7 @@ namespace CharacterMap.Core
             if (IsImported)
                 return Localization.Get("InstallTypeImported");
 
-            return Localization.Get($"DWriteSource{DirectWriteProperties.Source.ToString()}");
+            return Localization.Get($"DWriteSource{DirectWriteProperties.Source}");
         }
 
         public IReadOnlyList<Character> GetCharacters()
@@ -145,19 +144,25 @@ namespace CharacterMap.Core
             return Characters;
         }
 
-        public uint[] GetIndexes()
+        public int GetGlyphIndex(Character c)
+        {
+            int[] results = FontFace.GetGlyphIndices(new uint[] { c.UnicodeIndex });
+            return results[0];
+        }
+
+        public uint[] GetGlyphUnicodeIndexes()
         {
             return GetCharacters().Select(c => c.UnicodeIndex).ToArray();
         }
 
         public FontAnalysis GetAnalysis()
         {
-            if (_analysis == null)
-            {
-                _analysis = TypographyAnalyzer.Analyze(this);
-            }
+            return _analysis ??= TypographyAnalyzer.Analyze(this);
+        }
 
-            return _analysis;
+        public string TryGetSampleText()
+        {
+            return GetInfoKey(FontFace, CanvasFontInformation.SampleText).Value;
         }
 
         private void LoadTypographyFeatures()
@@ -193,11 +198,6 @@ namespace CharacterMap.Core
             return INFORMATIONS.Select(i => GetInfoKey(FontFace, i)).Where(s => s.Key != null).ToList();
         }
 
-        public string TryGetSampleText()
-        {
-            return GetInfoKey(FontFace, CanvasFontInformation.SampleText).Value;
-        }
-
         private static KeyValuePair<string, string> GetInfoKey(CanvasFontFace fontFace, CanvasFontInformation info)
         {
             var infos = fontFace.GetInformationalStrings(info);
@@ -217,17 +217,18 @@ namespace CharacterMap.Core
 
         /* SEARCHING */
 
-        public Dictionary<Character, GlyphNameMap> SearchMap { get; set; }
+        public Dictionary<Character, string> SearchMap { get; set; }
 
         public string GetDescription(Character c)
         {
             if (SearchMap == null 
-                || !SearchMap.TryGetValue(c, out GlyphNameMap mapping)
-                || string.IsNullOrWhiteSpace(mapping.Name))
+                || !SearchMap.TryGetValue(c, out string mapping)
+                || string.IsNullOrWhiteSpace(mapping))
                 return GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
 
-            return mapping.Name;
+            return GlyphService.TryGetAGLFNName(mapping);
         }
+
 
 
 

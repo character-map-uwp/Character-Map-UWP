@@ -2,19 +2,15 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Data.Text;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels
 {
-
     public class UnicodeCategoryModel : ViewModelBase
     {
         public UnicodeGeneralCategory Category { get; }
@@ -122,8 +118,8 @@ namespace CharacterMap.ViewModels
         }
         public IReadOnlyList<Character> Characters { get; set; }
 
-        private List<UnicodeCategoryModel> _categories;
-        public List<UnicodeCategoryModel> Categories
+        private IList<UnicodeCategoryModel> _categories;
+        public IList<UnicodeCategoryModel> Categories
         {
             get => _categories;
             private set => Set(ref _categories, value);
@@ -158,7 +154,7 @@ namespace CharacterMap.ViewModels
             };
         }
 
-        public void UpdateCategories(List<UnicodeCategoryModel> value)
+        public void UpdateCategories(IList<UnicodeCategoryModel> value)
         {
             _categories = value;
             UpdateCharacters();
@@ -175,7 +171,6 @@ namespace CharacterMap.ViewModels
             }
 
             // Filter characters
-
             var chars = Font.Characters.AsEnumerable();
             if (HideWhitespace)
                 chars = Font.Characters.Where(c => !Unicode.IsWhiteSpaceOrControl(c.UnicodeIndex));
@@ -188,18 +183,7 @@ namespace CharacterMap.ViewModels
 
         private PrintViewModel()
         {
-            Categories = CreateCategoriesList(null);
-        }
-
-        public static List<UnicodeCategoryModel> CreateCategoriesList(PrintViewModel viewModel)
-        {
-            var list = Enum.GetValues(typeof(UnicodeGeneralCategory)).OfType<UnicodeGeneralCategory>().Select(e => new UnicodeCategoryModel(e)).ToList();
-            
-            if (viewModel != null)
-                for (int i = 0; i < list.Count; i++)
-                    list[i].IsSelected = viewModel.Categories[i].IsSelected;
-
-            return list;
+            Categories = Unicode.CreateCategoriesList();
         }
 
         public static PrintViewModel Create(FontMapViewModel viewModel)

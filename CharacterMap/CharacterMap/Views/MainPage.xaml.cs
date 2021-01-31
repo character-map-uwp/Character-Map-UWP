@@ -1,34 +1,30 @@
-﻿using System;
+﻿using CharacterMap.Annotations;
+using CharacterMap.Controls;
+using CharacterMap.Core;
+using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.Input;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Uwp.UI.Controls;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
-using CharacterMap.Annotations;
-using CharacterMap.Core;
-using CharacterMap.ViewModels;
-using CharacterMap.Helpers;
-using Windows.Storage.Pickers;
-using CharacterMap.Services;
-using System.Collections.Generic;
-using System.Text;
-using Windows.UI.Xaml.Markup;
-using CharacterMap.Controls;
-using CharacterMap.Models;
-using Microsoft.Toolkit.Uwp.UI.Controls;
-using Windows.UI.ViewManagement;
-using Windows.UI.Core.AnimationMetrics;
-using CharacterMapCX;
-using System.Windows.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
-using Microsoft.Toolkit.Mvvm.Input;
 
 namespace CharacterMap.Views
 {
@@ -42,8 +38,6 @@ namespace CharacterMap.Views
 
         private Debouncer _fontListDebouncer { get; } = new Debouncer();
 
-        public object ThemeLock { get; } = new object();
-
         private UISettings _uiSettings { get; }
 
         private ICommand FilterCommand { get; }
@@ -52,8 +46,6 @@ namespace CharacterMap.Views
 
         public MainPage()
         {
-            RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
-
             InitializeComponent();
 
             ViewModel = DataContext as MainViewModel;
@@ -101,14 +93,14 @@ namespace CharacterMap.Views
                     if (ViewModel.IsLoadingFonts)
                         return;
 
-                    if (ViewModel.Settings.UseSelectionAnimations)
+                    if (ViewModel.Settings.UseSelectionAnimations 
+                        && !ViewModel.IsSearchResults)
                     {
                         Composition.PlayEntrance(LstFontFamily, 66, 100);
                         Composition.PlayEntrance(GroupLabel, 0, 0, 80);
                         if (InlineLabelCount.Visibility == Visibility.Visible)
                             Composition.PlayEntrance(InlineLabelCount, 83, 0, 80);
                     }
-
                     break;
 
                 case nameof(ViewModel.SelectedFont):
@@ -117,13 +109,19 @@ namespace CharacterMap.Views
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
                         FontMap.PlayFontChanged();
                     }
+                    break;
 
+                case nameof(ViewModel.FontSearch):
+                case nameof(ViewModel.IsSearchResults):
+                    // Required to prevent crash with SemanticZoom when there
+                    // are no items in the results list
+                    if (!FontsSemanticZoom.IsZoomedInViewActive)
+                        FontsSemanticZoom.IsZoomedInViewActive = true;
                     break;
 
                 case nameof(ViewModel.IsLoadingFonts):
                 case nameof(ViewModel.IsLoadingFontsFailed):
                     UpdateLoadingStates();
-
                     break;
             }
         }
@@ -134,10 +132,6 @@ namespace CharacterMap.Views
             {
                 case nameof(AppSettings.UseFontForPreview):
                     OnFontPreviewUpdated();
-                    break;
-                case nameof(AppSettings.UserRequestedTheme):
-                    this.RequestedTheme = ViewModel.Settings.UserRequestedTheme;
-                    OnPropertyChanged(nameof(ThemeLock));
                     break;
             }
         }
@@ -239,6 +233,9 @@ namespace CharacterMap.Views
 
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
+            if (e.Key == VirtualKey.F11)
+                Utils.ToggleFullScreenMode();
+
             var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
             if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
@@ -286,6 +283,9 @@ namespace CharacterMap.Views
                         break;
                     case VirtualKey.T:
                         FontMap.ViewModel.ChangeDisplayMode();
+                        break;
+                    case VirtualKey.Q:
+                        _ = QuickCompareView.CreateNewWindowAsync();
                         break;
                 }
             }
@@ -390,7 +390,7 @@ namespace CharacterMap.Views
                     AppxOption.SetVisible(FontFinder.HasAppxFonts);
                 }
 
-                void SetCommand(MenuFlyoutItemBase b, ICommand c)
+                static void SetCommand(MenuFlyoutItemBase b, ICommand c)
                 {
                     b.FontSize = 16;
                     if (b is MenuFlyoutSubItem i)
@@ -406,6 +406,22 @@ namespace CharacterMap.Views
                     SetCommand(item, FilterCommand);
             }
         }
+
+        private void OnFontPreviewUpdated()
+        {
+            if (ViewModel.InitialLoad.IsCompleted)
+            {
+                _fontListDebouncer.Debounce(16, () =>
+                {
+                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                });
+            }
+        }
+
+
+
+
+        /* Font Collection management */
 
         private void RenameFontCollection_Click(object sender, RoutedEventArgs e)
         {
@@ -436,16 +452,10 @@ namespace CharacterMap.Views
             Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
         }
 
-        private void OnFontPreviewUpdated()
-        {
-            if (ViewModel.InitialLoad.IsCompleted)
-            {
-                _fontListDebouncer.Debounce(16, () =>
-                {
-                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
-                });
-            }
-        }
+
+
+
+        /* Drag / Drop support */
 
         private void Grid_DragOver(object sender, DragEventArgs e)
         {
@@ -481,7 +491,7 @@ namespace CharacterMap.Views
         private async void OpenFont()
         {
             var picker = new FileOpenPicker();
-            foreach (var format in FontFinder.SupportedFormats)
+            foreach (var format in FontFinder.ImportFormats)
                 picker.FileTypeFilter.Add(format);
 
             picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
@@ -625,7 +635,7 @@ namespace CharacterMap.Views
             sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
 
             // Animate in Loading items
-            Composition.PlayEntrance(LoadingStack.Children.ToList(), 140, 140, 0, 1000, 160);
+            Composition.PlayEntrance(LoadingStack.Children.ToList(), 60);
         }
 
     }

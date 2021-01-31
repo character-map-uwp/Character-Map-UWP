@@ -155,6 +155,10 @@ namespace CharacterMap.Controls
             {
                 _window.Activated -= _window_Activated;
             }
+
+            TemplateSettings.Messenger.UnregisterAll(this);
+
+
             _window = null;
         }
 

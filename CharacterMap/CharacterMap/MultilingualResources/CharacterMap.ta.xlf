@@ -129,10 +129,12 @@
         <trans-unit id="TxtFontIcon.Header" translate="yes" xml:space="preserve">
           <source>Font Icon</source>
           <target state="translated">எழுத்துரு படவுரு</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xaml FontIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="TxtSymbolIcon.Header" translate="yes" xml:space="preserve">
           <source>Symbol Icon</source>
           <target state="translated">சின்ன படவுரு</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xaml SymbolIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="TxtTitle.Text" translate="yes" xml:space="preserve">
           <source>Character Map</source>
@@ -630,6 +632,7 @@ Turning this on has negligible performance impact.</source>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
           <target state="translated">பாதை வடிவியல்</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xaml PathGeometry. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="UseSystemLanguage" translate="yes" xml:space="preserve">
           <source>Use system language setting</source>
@@ -931,6 +934,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
           <source>Path Icon</source>
           <target state="translated">பாதை படவுரு</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xaml PathIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="OptionAllEmoji.Text" translate="yes" xml:space="preserve">
           <source>All Categories</source>
@@ -1174,8 +1178,58 @@ Default variant copied.</target>
           <target state="new">No results found for this search. Try something else.</target>
         </trans-unit>
         <trans-unit id="FontListSearchBox.PlaceholderText" translate="yes" xml:space="preserve">
-          <source>Search</source>
-          <target state="new">Search</target>
+          <source>Find a font family</source>
+          <target state="new">Find a font family</target>
+        </trans-unit>
+        <trans-unit id="BtnToggleDev.Label" translate="yes" xml:space="preserve">
+          <source>Tools</source>
+          <target state="new">Tools</target>
+        </trans-unit>
+        <trans-unit id="DevPopupHeader.Text" translate="yes" xml:space="preserve">
+          <source>Show Developer Tools</source>
+          <target state="new">Show Developer Tools</target>
+        </trans-unit>
+        <trans-unit id="ContextMenuDevCopyCommand" translate="yes" xml:space="preserve">
+          <source>Copy {0}</source>
+          <target state="new">Copy {0}</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Examples: "Copy Font Icon" or "Copy Glyph Code"</note>
+        </trans-unit>
+        <trans-unit id="ProviderNone" translate="yes" xml:space="preserve">
+          <source>None</source>
+          <target state="new">None</target>
+        </trans-unit>
+        <trans-unit id="SettingsChangelogLabel.Text" translate="yes" xml:space="preserve">
+          <source>Changelog</source>
+          <target state="new">Changelog</target>
+        </trans-unit>
+        <trans-unit id="TxtFontImageSource.Text" translate="yes" xml:space="preserve">
+          <source>Font Image Source</source>
+          <target state="new">Font Image Source</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Xamarin FontImageSource. Does not need translation.</note>
+        </trans-unit>
+        <trans-unit id="ImportFailedWoff" translate="yes" xml:space="preserve">
+          <source>WOFF font could not be converted to a valid OTF font.</source>
+          <target state="new">WOFF font could not be converted to a valid OTF font.</target>
+        </trans-unit>
+        <trans-unit id="ImportWOFF2NotSupported" translate="yes" xml:space="preserve">
+          <source>WOFF2 files are not supported</source>
+          <target state="new">WOFF2 files are not supported</target>
+        </trans-unit>
+        <trans-unit id="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Filter Characters</source>
+          <target state="new">Filter Characters</target>
+        </trans-unit>
+        <trans-unit id="CompareFontsTitle.Text" translate="yes" xml:space="preserve">
+          <source>Compare Fonts</source>
+          <target state="new">Compare Fonts</target>
+        </trans-unit>
+        <trans-unit id="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Grid Layout</source>
+          <target state="new">Grid Layout</target>
+        </trans-unit>
+        <trans-unit id="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>List Layout</source>
+          <target state="new">List Layout</target>
         </trans-unit>
       </group>
     </body>

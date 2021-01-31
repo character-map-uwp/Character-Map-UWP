@@ -196,7 +196,35 @@
                         </Setter>
                     </Style>
 
-
+                    <win1903:Style x:Name="ThemeFlyoutStyle" TargetType="FlyoutPresenter">
+                        <Setter Property="AllowFocusOnInteraction" Value="False" />
+                        <Setter Property="Margin" Value="12 0 0 0" />
+                        <Setter Property="Padding" Value="0 0" />
+                        <!--<Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}" />-->
+                        <Setter Property="BorderBrush" Value="DarkGray" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
+                        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
+                        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
+                        <Setter Property="IsDefaultShadowEnabled" Value="False" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="FlyoutPresenter">
+                                    <ContentPresenter
+                                        Padding="{TemplateBinding Padding}"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        Content="{TemplateBinding Content}"
+                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                                        CornerRadius="{TemplateBinding CornerRadius}" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </win1903:Style>
 
                     <SolidColorBrush x:Key="WhiteBrush" Color="White" />
                     <SolidColorBrush x:Key="BlackBrush" Color="Black" />
@@ -241,7 +269,6 @@
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
                 <ResourceDictionary Source="/Styles/CommandBar.xaml" />
-                <ResourceDictionary Source="/Styles/InAppNotification.xaml" />
                 <ResourceDictionary Source="/Styles/Button.xaml" />
                 <ResourceDictionary Source="/Styles/ListView.xaml" />
                 <ResourceDictionary Source="/Styles/ComboBox.xaml" />

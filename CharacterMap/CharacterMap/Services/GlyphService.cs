@@ -2,15 +2,10 @@
 
 using CharacterMap.Core;
 using CharacterMap.Helpers;
-using CharacterMap.Models;
 using CharacterMap.Provider;
-using CharacterMapCX;
-using Microsoft.Graphics.Canvas.Text;
 using SQLite;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Services
 {
@@ -45,6 +40,7 @@ namespace CharacterMap.Services
     {
         void Initialise();
         string GetCharacterDescription(int unicodeIndex, FontVariant variant);
+        string GetAdobeGlyphListMapping(string postscriptName);
         Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant);
     }
 
@@ -64,7 +60,7 @@ namespace CharacterMap.Services
 
         public static Task InitializeAsync()
         {
-            return _init ?? (_init = InitializeInternalAsync());
+            return _init ??= InitializeInternalAsync();
         }
 
         private static Task InitializeInternalAsync()
@@ -86,6 +82,11 @@ namespace CharacterMap.Services
             return _provider.GetCharacterDescription((int)unicodeIndex, variant);
         }
 
+        internal static string TryGetAGLFNName(string aglfn)
+        {
+            return _provider.GetAdobeGlyphListMapping(aglfn);
+        }
+
         internal static string GetCharacterKeystroke(uint unicodeIndex)
         {
             if (unicodeIndex >= 128 && unicodeIndex <= 255)
@@ -102,54 +103,68 @@ namespace CharacterMap.Services
             return _provider.SearchAsync(query, variant);
         }
 
-        public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
-            Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)
+        // todo : refactor into classes with description + writing direction
+        public static IReadOnlyList<string> DefaultTextOptions { get; } = new List<string>
         {
-            if (v == FontFinder.DefaultFont.DefaultVariant)
-                return (string.Empty, string.Empty, string.Empty, string.Empty);
+            "The quick brown dog jumps over a lazy fox. 1234567890",
+            Localization.Get("CultureSpecificPangram/Text"),
+            "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ", // Cyrillic Alphabet
+            "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
+            "Do bạch kim rất quý nên sẽ dùng để lắp vô xương.", // Vietnamese
+            "Ταχίστη αλώπηξ βαφής ψημένη γη, δρασκελίζει υπέρ νωθρού κυνός", // Greek
+            "עטלף אבק נס דרך מזגן שהתפוצץ כי חם", // Hebrew
+            "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق" // Arabic
+        };
 
-            NativeInterop interop = Utils.GetInterop();
+        //public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
+        //    Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)
+        //{
+        //    if (v == FontFinder.DefaultFont.DefaultVariant)
+        //        return (string.Empty, string.Empty, string.Empty, string.Empty);
 
-            string h, f, p, s = null;
-            bool hasSymbol = FontFinder.IsSegoeMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
+        //    NativeInterop interop = Utils.GetInterop();
 
-            // Add back in future build
-            //string pathData;
-            //using (var geom = ExportManager.CreateGeometry(ResourceHelper.AppSettings.GridSize, v, c, a, t))
-            //{
-            //    pathData = interop.GetPathData(geom).Path;
-            //}
+        //    string h, f, p, s = null;
+        //    bool hasSymbol = FontFinder.IsSegoeMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
 
-            // Creating geometry is expensive. It may be worth delaying this.
-            string pathIconData = null;
-            if (v != null)
-            {
-                using var geom = ExportManager.CreateGeometry(20, v, c, a, t);
-                pathIconData = interop.GetPathData(geom).Path;
-            }
+        //    // Add back in future build
+        //    //string pathData;
+        //    //using (var geom = ExportManager.CreateGeometry(ResourceHelper.AppSettings.GridSize, v, c, a, t))
+        //    //{
+        //    //    pathData = interop.GetPathData(geom).Path;
+        //    //}
 
-            var hex = c.UnicodeIndex.ToString("x4").ToUpper();
-            if (isXaml)
-            {
-                h = $"&#x{hex};";
-                f = $@"<FontIcon FontFamily=""{v?.XamlFontSource}"" Glyph=""&#x{hex};"" />";
-                p = $"<PathIcon Data=\"{pathIconData}\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />";
+        //    // Creating geometry is expensive. It may be worth delaying this.
+        //    string pathIconData = null;
+        //    if (v != null)
+        //    {
+        //        using var geom = ExportManager.CreateGeometry(20, v, c, a, t);
+        //        pathIconData = interop.GetPathData(geom).Path;
+        //    }
 
-                if (hasSymbol)
-                    s = $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />";
-            }
-            else
-            {
-                h = c.UnicodeIndex > 0xFFFF ? $"\\U{c.UnicodeIndex:x8}".ToUpper() : $"\\u{hex}";
-                f = $"new FontIcon {{ FontFamily = new Windows.UI.Xaml.Media.FontFamily(\"{v?.XamlFontSource}\") , Glyph = \"\\u{hex}\" }};";
-                p = $"new PathIcon {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Geometry), \"{pathIconData}\"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }};";
+        //    var hex = c.UnicodeIndex.ToString("x4").ToUpper();
+        //    if (isXaml)
+        //    {
+        //        h = $"&#x{hex};";
+        //        f = $@"<FontIcon FontFamily=""{v?.XamlFontSource}"" Glyph=""&#x{hex};"" />";
+        //        p = $"<PathIcon Data=\"{pathIconData}\" VerticalAlignment=\"Center\" HorizontalAlignment=\"Center\" />";
 
-                if (hasSymbol)
-                    s = $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};";
-            }
+        //        if (hasSymbol)
+        //            s = $@"<SymbolIcon Symbol=""{(Symbol)c.UnicodeIndex}"" />";
+        //    }
+        //    else
+        //    {
+        //        h = c.UnicodeIndex > 0xFFFF ? $"\\U{c.UnicodeIndex:x8}".ToUpper() : $"\\u{hex}";
+        //        f = $"new FontIcon {{ FontFamily = new Windows.UI.Xaml.Media.FontFamily(\"{v?.XamlFontSource}\") , Glyph = \"\\u{hex}\" }};";
+        //        p = $"new PathIcon {{ Data = (Windows.UI.Xaml.Media.Geometry)Windows.UI.Xaml.Markup.XamlBindingHelper.ConvertValue(typeof(Geometry), \"{pathIconData}\"), HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center }};";
 
-            return (h, f, p, s);
-        }
+        //        if (hasSymbol)
+        //            s = $"new SymbolIcon {{ Symbol = Symbol.{(Symbol)c.UnicodeIndex} }};";
+        //    }
+
+        //    return (h, f, p, s);
+        //}
 
     }
 }

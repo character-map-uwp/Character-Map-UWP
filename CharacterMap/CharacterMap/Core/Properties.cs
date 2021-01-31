@@ -1,6 +1,7 @@
 ﻿using CharacterMap.Controls;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Provider;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -115,6 +116,41 @@ namespace CharacterMap.Core
 
         public static readonly DependencyProperty IconProperty =
             DependencyProperty.RegisterAttached("Icon", typeof(IconElement), typeof(Properties), new PropertyMetadata(null));
+
+        #endregion
+
+        #region PopupRoot
+
+        public static FrameworkElement GetPopupRoot(DependencyObject obj)
+        {
+            return (FrameworkElement)obj.GetValue(PopupRootProperty);
+        }
+
+        public static void SetPopupRoot(DependencyObject obj, FrameworkElement value)
+        {
+            obj.SetValue(PopupRootProperty, value);
+        }
+
+        public static readonly DependencyProperty PopupRootProperty =
+            DependencyProperty.RegisterAttached("PopupRoot", typeof(FrameworkElement), typeof(Properties), new PropertyMetadata(0));
+
+        #endregion
+
+        #region DEVOPTION
+
+        public static DevOption GetDevOption(DependencyObject obj)
+        {
+            return (DevOption)obj.GetValue(DevOptionProperty);
+        }
+
+        public static void SetDevOption(DependencyObject obj, DevOption value)
+        {
+            obj.SetValue(DevOptionProperty, value);
+        }
+
+        public static readonly DependencyProperty DevOptionProperty =
+            DependencyProperty.RegisterAttached("DevOption", typeof(DevOption), typeof(Properties), new PropertyMetadata(null));
+
 
         #endregion
     }

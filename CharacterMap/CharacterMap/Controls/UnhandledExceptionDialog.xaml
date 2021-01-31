@@ -27,8 +27,8 @@
             </HyperlinkButton>
         </StackPanel>
 
-        <controls:Expander x:Uid="DlgExceptionExpander" Grid.Row="1">
-            <ScrollViewer
+        <!--<controls:Expander x:Uid="DlgExceptionExpander">-->
+            <ScrollViewer Grid.Row="1"
                 MaxHeight="500"
                 HorizontalScrollBarVisibility="Auto"
                 HorizontalScrollMode="Auto">
@@ -37,6 +37,6 @@
                     Margin="8 8 8 24"
                     IsTextSelectionEnabled="True" />
             </ScrollViewer>
-        </controls:Expander>
+        <!--</controls:Expander>-->
     </Grid>
 </ContentDialog>

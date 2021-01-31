@@ -23,7 +23,6 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
-using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -95,8 +94,6 @@ namespace CharacterMap.Views
 
         public bool IsStandalone { get; set; }
 
-        public object ThemeLock { get; } = new object();
-
         private Debouncer _sizeDebouncer { get; } = new Debouncer();
 
         private XamlDirect _xamlDirect { get; }
@@ -107,8 +104,6 @@ namespace CharacterMap.Views
 
         public FontMapView()
         {
-            RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
-
             InitializeComponent();
             Loading += FontMapView_Loading;
             Loaded += FontMapView_Loaded;
@@ -196,38 +191,37 @@ namespace CharacterMap.Views
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(ViewModel.SelectedFont))
+            switch (e.PropertyName)
             {
-                UpdateStates();
-            }
-            else if (e.PropertyName == nameof(ViewModel.SelectedVariant))
-            {
-                _ = SetCharacterSelectionAsync();
-            }
-            else if (e.PropertyName == nameof(ViewModel.SelectedTypography))
-            {
-                UpdateTypography(ViewModel.SelectedTypography);
-            }
-            else if (e.PropertyName == nameof(ViewModel.SelectedChar))
-            {
-                if (ViewModel.Settings.UseSelectionAnimations)
-                {
-                    Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
-                    Composition.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
-                }
+                case nameof(ViewModel.SelectedFont):
+                    UpdateStates();
+                    break;
+                case nameof(ViewModel.SelectedVariant):
+                    _ = SetCharacterSelectionAsync();
+                    break;
+                case nameof(ViewModel.SelectedTypography):
+                    UpdateTypography(ViewModel.SelectedTypography);
+                    break;
+                case nameof(ViewModel.SelectedChar):
+                    if (ViewModel.Settings.UseSelectionAnimations)
+                    {
+                        Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
+                        Composition.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                    }
 
-                UpdateTypography(ViewModel.SelectedTypography);
-            }
-            else if (e.PropertyName == nameof(ViewModel.Chars))
-            {
-                CharGrid.ItemsSource = ViewModel.Chars;
-
-                if (ViewModel.Settings.UseSelectionAnimations)
-                    Composition.PlayEntrance(CharGrid, 166);
-            }
-            else if (e.PropertyName == nameof(ViewModel.DisplayMode))
-            {
-                UpdateDisplayMode(true);
+                    UpdateTypography(ViewModel.SelectedTypography);
+                    break;
+                case nameof(ViewModel.Chars):
+                    CharGrid.ItemsSource = ViewModel.Chars;
+                    if (ViewModel.Settings.UseSelectionAnimations)
+                        Composition.PlayEntrance(CharGrid, 166);
+                    break;
+                case nameof(ViewModel.DisplayMode):
+                    UpdateDisplayMode(true);
+                    break;
+                case nameof(ViewModel.SelectedProvider):
+                    UpdateDevUtils();
+                    break;
             }
         }
 
@@ -243,17 +237,8 @@ namespace CharacterMap.Views
                     case nameof(AppSettings.GlyphAnnotation):
                         CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
                         break;
-                    case nameof(AppSettings.DevToolsLanguage):
-                    case nameof(AppSettings.ShowDevUtils):
-                        ViewModel.UpdateDevValues();
-                        UpdateDevUtils();
-                        break;
                     case nameof(AppSettings.GridSize):
                         UpdateDisplay();
-                        break;
-                    case nameof(AppSettings.UserRequestedTheme):
-                        this.RequestedTheme = ViewModel.Settings.UserRequestedTheme;
-                        OnPropertyChanged(nameof(ThemeLock));
                         break;
                     case nameof(AppSettings.UseInstantSearch):
                         UpdateSearchStates();
@@ -273,6 +258,9 @@ namespace CharacterMap.Views
 
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
+            if (e.Key == VirtualKey.F11)
+                Utils.ToggleFullScreenMode();
+
             var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
             if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
@@ -305,6 +293,9 @@ namespace CharacterMap.Views
                     case VirtualKey.T:
                         ViewModel.ChangeDisplayMode();
                         break;
+                    case VirtualKey.Q:
+                        _ = QuickCompareView.CreateNewWindowAsync();
+                        break;
                 }
             }
         }
@@ -315,23 +306,18 @@ namespace CharacterMap.Views
             // across multiple dispatchers.
             RunOnUI(() =>
             {
-                if (ViewModel.Settings.ShowDevUtils)
+                if (ViewModel.SelectedProvider != null)
                 {
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
                         Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
-
-                    string state = ViewModel.Settings.DevToolsLanguage switch
-                    {
-                        0 => nameof(DevXamlState),
-                        1 => nameof(DevCSharpState),
-                        2 => nameof(DevUnicodeState),
-                        _ => nameof(DevHiddenState)
-                    };
                     
-                    VisualStateManager.GoToState(this, state, animate);
+                    string state = $"Dev{ViewModel.SelectedProvider.Type}State";
+
+                    if (!VisualStateManager.GoToState(this, state, animate))
+                        VisualStateManager.GoToState(this, nameof(DevNoneState), animate);
                 }
                 else
-                    VisualStateManager.GoToState(this, nameof(DevHiddenState), animate);
+                    VisualStateManager.GoToState(this, nameof(DevNoneState), animate);
             });
         }
 
@@ -463,10 +449,10 @@ namespace CharacterMap.Views
 
         public void TryCopy()
         {
-            if (CharGrid.SelectedItem is Character character &&
-                (TxtSymbolIcon == null || !TxtSymbolIcon.SelectedText.Any()) &&
-                !TxtFontIcon.SelectedText.Any() &&
-                !TxtXamlCode.SelectedText.Any())
+            //if (CharGrid.SelectedItem is Character character &&
+            //    (TxtSymbolIcon == null || !TxtSymbolIcon.SelectedText.Any()) &&
+            //    !TxtFontIcon.SelectedText.Any() &&
+            //    !TxtXamlCode.SelectedText.Any())
             {
                 TryCopyInternal();
             }
@@ -493,24 +479,6 @@ namespace CharacterMap.Views
             _ = UpdateCompactOverlayAsync();
         }
 
-        private void ToggleDev()
-        {
-            if (!ViewModel.Settings.ShowDevUtils)
-            {
-                ViewModel.Settings.ShowDevUtils = true;
-            }
-            else
-            {
-                if (ViewModel.Settings.DevToolsLanguage < 1)
-                    ViewModel.Settings.DevToolsLanguage += 1;
-                else
-                {
-                    ViewModel.Settings.ShowDevUtils = false;
-                    ViewModel.Settings.DevToolsLanguage = 0;
-                }
-            }
-        }
-
         private void BtnFit_Click(object sender, RoutedEventArgs e)
         {
             ViewModel.Settings.FitCharacter = !ViewModel.Settings.FitCharacter;
@@ -521,30 +489,21 @@ namespace CharacterMap.Views
             ((TextBox)sender).SelectAll();
         }
 
-        private void BtnCopyXamlCode_OnClick(object sender, RoutedEventArgs e)
+        private void BtnCopyCode_OnClick(object sender, RoutedEventArgs e)
         {
-            Utils.CopyToClipBoard(TxtXamlCode.Text.Trim());
-            BorderFadeInStoryboard.Begin();
+            if (sender is FrameworkElement f 
+                && f.DataContext is DevOption o
+                && f.Tag is string s)
+            {
+                Utils.CopyToClipBoard(s.Trim());
+                BorderFadeInStoryboard.Begin();
+                if (!o.SupportsTypography)
+                    TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem != TypographyFeatureInfo.None);
+                else
+                    TxtCopiedVariantMessage.SetVisible(false);
+            }
         }
 
-        private void BtnCopyFontIcon_OnClick(object sender, RoutedEventArgs e)
-        {
-            Utils.CopyToClipBoard(TxtFontIcon.Text.Trim());
-            BorderFadeInStoryboard.Begin();
-        }
-
-        private void BtnCopyXamlPath_OnClick(object sender, RoutedEventArgs e)
-        {
-            GeometryFlyout?.Hide();
-            Utils.CopyToClipBoard(ViewModel.XamlPathGeom);
-            BorderFadeInStoryboard.Begin();
-        }
-
-        private void BtnCopySymbolIcon_OnClick(object sender, RoutedEventArgs e)
-        {
-            Utils.CopyToClipBoard(TxtSymbolIcon.Text.Trim());
-            BorderFadeInStoryboard.Begin();
-        }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -657,6 +616,23 @@ namespace CharacterMap.Views
             }
         }
 
+        private void DevFlyout_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout menu && menu.Items.Count < 2)
+            {
+                foreach (var provider in ViewModel.Providers)
+                {
+                    var item = new MenuFlyoutItem
+                    {
+                        Command = ViewModel.ToggleDev,
+                        CommandParameter = provider.Type,
+                        Text = provider.DisplayName
+                    };
+                    menu.Items.Add(item);
+                }
+            }
+        }
+
         private Visibility ShowFilePath(string filePath, bool isImported)
         {
             if (!isImported && !string.IsNullOrWhiteSpace(filePath))
@@ -757,6 +733,11 @@ namespace CharacterMap.Views
         private void ToggleCopyPaneButton_Loaded(object sender, RoutedEventArgs e)
         {
             ((AppBarToggleButton)sender).IsChecked = ResourceHelper.AppSettings.EnableCopyPane;
+        }
+
+        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)
+        {
+            ViewModel.UpdateCategories(e);
         }
 
         /// <summary>
@@ -899,6 +880,7 @@ namespace CharacterMap.Views
             
             if (CharGrid.ItemsSource != null && CharGrid.ItemsPanelRoot != null)
             {
+                ViewModel.SelectedCharTypography = info;
                 IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
                 CharacterGridView.UpdateTypography(_xamlDirect, p, info);
             }
@@ -941,13 +923,15 @@ namespace CharacterMap.Views
 
         public void PlayFontChanged(bool withHeader = true)
         {
+            /* Create the animation that is played upon changing font */
+
             if (ViewModel.Settings.UseSelectionAnimations)
             {
                 int offset = 0;
                 if (withHeader)
                 {
                     offset = 83;
-                    Composition.PlayEntrance(FontTitleBlock, 0);
+                    //Composition.PlayEntrance(FontTitleBlock, 0);
                     Composition.PlayEntrance(CharGridHeader, 83);
                 }
 
@@ -965,18 +949,13 @@ namespace CharacterMap.Views
                 }
                 else if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
                 {
-                    Composition.PlayEntrance(TypeRampInputRow, offset * 2, 80);
+                    Composition.PlayEntrance(TypeRampInputRow, offset * 2);
 
-                    if (TypeRampList != null && TypeRampList.ItemsPanelRoot != null)
+                    if (TypeRampList != null)
                     {
                         var items = new List<UIElement> { VariableAxis };
                         items.AddRange(TypeRampList.TryGetChildren());
-                        Composition.PlayEntrance(items, (offset * 2) + 34, 80, staggerMs: 42);
-                    }
-                    else if (TypeRampList != null) // occurs directly after first x:Load
-                    {
-                        Composition.PlayEntrance(VariableAxis, (offset * 2) + 34, 80);
-                        Composition.PlayEntrance(TypeRampList, (offset * 2) + 34, 80);
+                        Composition.PlayEntrance(items, (offset * 2) + 34);
                     }
                 }
             }

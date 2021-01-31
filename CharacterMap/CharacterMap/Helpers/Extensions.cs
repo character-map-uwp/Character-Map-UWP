@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,10 +22,18 @@ namespace CharacterMap.Helpers
 
         public static List<UIElement> TryGetChildren(this ItemsControl control)
         {
-            if (control.ItemsPanelRoot != null)
-                return new List<UIElement>(control.ItemsPanelRoot.Children.ToList());
+            //if (control.ItemsPanelRoot is null) // Calling measure forces ItemsPanelRoot to become inflated
+            //    control.Measure(new Windows.Foundation.Size(100, 100));
 
-            return new List<UIElement>();
+            return new List<UIElement> { control };
+        }
+
+        public static T Realize<T>(this T list) where T : ListViewBase
+        {
+            if (list.ItemsPanelRoot == null)
+                list.Measure(new Windows.Foundation.Size(100, 100));
+
+            return list;
         }
     }
 }

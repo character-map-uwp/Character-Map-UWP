@@ -209,9 +209,11 @@
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>Font Icon</value>
+    <comment>Xaml FontIcon. Does not need translation.</comment>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol Icon</value>
+    <comment>Xaml SymbolIcon. Does not need translation.</comment>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>Character Map</value>
@@ -580,6 +582,7 @@ Turning this on has negligible performance impact.</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
+    <comment>Xaml PathGeometry. Does not need translation.</comment>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>Use system language setting</value>
@@ -802,6 +805,7 @@ Please consider posting details about this error to GitHub so we can help you fi
   </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>Path Icon</value>
+    <comment>Xaml PathIcon. Does not need translation.</comment>
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>All Categories</value>
@@ -981,6 +985,44 @@ Default variant copied.</value>
     <value>No results found for this search. Try something else.</value>
   </data>
   <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
-    <value>Search</value>
+    <value>Find a font family</value>
+  </data>
+  <data name="BtnToggleDev.Label" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="DevPopupHeader.Text" xml:space="preserve">
+    <value>Show Developer Tools</value>
+  </data>
+  <data name="ContextMenuDevCopyCommand" xml:space="preserve">
+    <value>Copy {0}</value>
+    <comment>Examples: "Copy Font Icon" or "Copy Glyph Code"</comment>
+  </data>
+  <data name="ProviderNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="SettingsChangelogLabel.Text" xml:space="preserve">
+    <value>Changelog</value>
+  </data>
+  <data name="TxtFontImageSource.Text" xml:space="preserve">
+    <value>Font Image Source</value>
+    <comment>Xamarin FontImageSource. Does not need translation.</comment>
+  </data>
+  <data name="ImportFailedWoff" xml:space="preserve">
+    <value>WOFF font could not be converted to a valid OTF font.</value>
+  </data>
+  <data name="ImportWOFF2NotSupported" xml:space="preserve">
+    <value>WOFF2 files are not supported</value>
+  </data>
+  <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Filter Characters</value>
+  </data>
+  <data name="CompareFontsTitle.Text" xml:space="preserve">
+    <value>Compare Fonts</value>
+  </data>
+  <data name="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Grid Layout</value>
+  </data>
+  <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>List Layout</value>
   </data>
 </root>

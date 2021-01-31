@@ -24,6 +24,7 @@ using System.IO.Compression;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
+using System.Threading;
 
 namespace CharacterMap.Core
 {
@@ -75,168 +76,182 @@ namespace CharacterMap.Core
 
     public static class ExportManager
     {
+        public static string GetSVG(
+            ExportStyle style,
+            CharacterRenderingOptions options,
+            Character selectedChar)
+        {
+            // We want to prepare geometry at 1024px, so force this
+            options = options with { FontSize = 1024 };
+            using var typography = options.CreateCanvasTypography();
+
+            CanvasDevice device = Utils.CanvasDevice;
+            Color textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
+
+            // If COLR format (e.g. Segoe UI Emoji), we have special export path.
+            if (style == ExportStyle.ColorGlyph && options.Analysis.HasColorGlyphs && !options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
+            {
+                NativeInterop interop = Utils.GetInterop();
+                List<string> paths = new List<string>();
+                Rect bounds = Rect.Empty;
+
+                // Try to find the bounding box of all glyph layers combined
+                foreach (var thing in options.Analysis.Indicies)
+                {
+                    var path = interop.GetPathDatas(options.Variant.FontFace, thing.ToArray()).First();
+                    paths.Add(path.Path);
+
+                    if (!path.Bounds.IsEmpty)
+                    {
+                        var left = Math.Min(bounds.Left, path.Bounds.Left);
+                        var top = Math.Min(bounds.Top, path.Bounds.Top);
+                        var right = Math.Max(bounds.Right, path.Bounds.Right);
+                        var bottom = Math.Max(bounds.Bottom, path.Bounds.Bottom);
+                        bounds = new Rect(
+                            left,
+                            top,
+                            right - left,
+                            bottom - top);
+                    }
+                }
+
+                using CanvasSvgDocument document = Utils.GenerateSvgDocument(device, bounds, paths, options.Analysis.Colors, invertBounds: false);
+                return document.GetXml();
+            }
+
+            var data = GetGeometry(selectedChar, options);
+            string GetMonochrome()
+            {
+                using CanvasSvgDocument document = string.IsNullOrWhiteSpace(data.Path) 
+                    ? new CanvasSvgDocument(Utils.CanvasDevice)
+                    : Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor);
+                return document.GetXml();
+            }
+
+            // If the font uses SVG glyphs, we can extract the raw SVG from the font file
+            if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
+            {
+                string str = null;
+                IBuffer b = GetGlyphBuffer(options.Variant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Svg);
+                if (b.Length > 2 && b.GetByte(0) == 31 && b.GetByte(1) == 139)
+                {
+                    using var stream = b.AsStream();
+                    using var gzip = new GZipStream(stream, CompressionMode.Decompress);
+                    using var reader = new StreamReader(gzip);
+                    str = reader.ReadToEnd();
+                }
+                else
+                {
+                    using var dataReader = DataReader.FromBuffer(b);
+                    dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
+                    str = dataReader.ReadString(b.Length);
+                }
+
+                if (str.StartsWith("<?xml"))
+                    str = str.Remove(0, str.IndexOf(">") + 1);
+
+                str = str.TrimStart();
+
+                try
+                {
+                    using (CanvasSvgDocument document = CanvasSvgDocument.LoadFromXml(Utils.CanvasDevice, str))
+                    {
+                        // We need to transform the SVG to fit within the default document bounds, as characters
+                        // are based *above* the base origin of (0,0) as (0,0) is the Baseline (bottom left) position for a character, 
+                        // so by default a will appear out of bounds of the default SVG viewport (towards top left).
+
+                        //if (!document.Root.IsAttributeSpecified("viewBox")) // Specified viewbox requires baseline transform?
+                        {
+                            // We'll regroup all the elements inside a "g" / group tag,
+                            // and apply a transform to the "g" tag to try and put in 
+                            // in the correct place. There's probably a more accurate way
+                            // to do this by directly setting the root viewBox, if anyone
+                            // can find the correct calculation...
+
+                            List<ICanvasSvgElement> elements = new List<ICanvasSvgElement>();
+
+                            double minTop = 0;
+                            double minLeft = double.MaxValue;
+                            double maxWidth = double.MinValue;
+                            double maxHeight = double.MinValue;
+
+                            void ProcessChildren(CanvasSvgNamedElement root)
+                            {
+                                CanvasSvgNamedElement ele = root.FirstChild as CanvasSvgNamedElement;
+                                while (true)
+                                {
+                                    CanvasSvgNamedElement next = root.GetNextSibling(ele) as CanvasSvgNamedElement;
+                                    if (ele.Tag == "g")
+                                    {
+                                        ProcessChildren(ele);
+                                    }
+                                    else if (ele.Tag == "path")
+                                    {
+                                        // Create a XAML geometry to try and find the bounds of each character
+                                        // Probably more efficient to do in Win2D, but far less code to do with XAML.
+                                        Geometry gm = XamlBindingHelper.ConvertValue(typeof(Geometry), ele.GetStringAttribute("d")) as Geometry;
+                                        minTop = Math.Min(minTop, gm.Bounds.Top);
+                                        minLeft = Math.Min(minLeft, gm.Bounds.Left);
+                                        maxWidth = Math.Max(maxWidth, gm.Bounds.Width);
+                                        maxHeight = Math.Max(maxHeight, gm.Bounds.Height);
+                                    }
+                                    ele = next;
+                                    if (ele == null)
+                                        break;
+                                }
+                            }
+
+                            ProcessChildren(document.Root);
+
+                            double top = minTop < 0 ? minTop : 0;
+                            double left = minLeft;
+                            document.Root.SetRectangleAttribute("viewBox", new Rect(left, top, data.Bounds.Width, data.Bounds.Height));
+                        }
+
+                        return document.GetXml();
+                    }
+                }
+                catch
+                {
+                    // Certain fonts seem to have their SVG glyphs encoded with... I don't even know what encoding.
+                    // for example: https://github.com/adobe-fonts/emojione-color
+                    // In these cases, fallback to monochrome black
+                    return GetMonochrome();
+                }
+            }
+            else
+            {
+                return GetMonochrome();
+            }
+        }
+
         public static async Task<ExportResult> ExportSvgAsync(
             ExportStyle style,
             InstalledFont selectedFont,
-            FontVariant selectedVariant,
-            Character selectedChar,
-            CanvasTextLayoutAnalysis analysis,
-            CanvasTypography typography)
+            CharacterRenderingOptions options,
+            Character selectedChar)
         {
             try
             {
-                string name = GetFileName(selectedFont, selectedVariant, selectedChar, "svg");
+                // We want to prepare geometry at 1024px, so force this
+                options = options with { FontSize = 1024 };
+                using var typography = options.CreateCanvasTypography();
+
+                // Get save file
+                string name = GetFileName(selectedFont, options.Variant, selectedChar, "svg");
                 if (await PickFileAsync(name, "SVG", new[] { ".svg" }) is StorageFile file)
                 {
-                    CachedFileManager.DeferUpdates(file);
-                   
-                    CanvasDevice device = Utils.CanvasDevice;
-                    Color textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
-
-
-                    // If COLR format (e.g. Segoe UI Emoji), we have special export path.
-                    if (style == ExportStyle.ColorGlyph && analysis.HasColorGlyphs && !analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
+                    try
                     {
-                        NativeInterop interop = Utils.GetInterop();
-                        List<string> paths = new List<string>();
-                        Rect bounds = Rect.Empty;
-
-                        foreach (var thing in analysis.Indicies)
-                        {
-                            var path = interop.GetPathDatas(selectedVariant.FontFace, thing.ToArray()).First();
-                            paths.Add(path.Path);
-
-                            if (!path.Bounds.IsEmpty)
-                            {
-                                var left = Math.Min(bounds.Left, path.Bounds.Left);
-                                var top = Math.Min(bounds.Top, path.Bounds.Top);
-                                var right = Math.Max(bounds.Right, path.Bounds.Right);
-                                var bottom = Math.Max(bounds.Bottom, path.Bounds.Bottom);
-                                bounds = new Rect(
-                                    left,
-                                    top,
-                                    right - left,
-                                    bottom - top);
-                            }
-                        }
-
-                        using (CanvasSvgDocument document = Utils.GenerateSvgDocument(device, bounds, paths, analysis.Colors, invertBounds: false))
-                        {
-                            await Utils.WriteSvgAsync(document, file);
-                        }
-
+                        CachedFileManager.DeferUpdates(file);
+                        // Generate SVG doc and write to file
+                        await Utils.WriteSvgAsync(GetSVG(style, options, selectedChar), file);
                         return new ExportResult(true, file);
                     }
-
-
-
-
-
-                    var data = GetGeometry(1024, selectedVariant, selectedChar, analysis, typography);
-                    async Task SaveMonochromeAsync()
+                    finally
                     {
-                        using CanvasSvgDocument document = Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor);
-                        await Utils.WriteSvgAsync(document, file);
+                        await CachedFileManager.CompleteUpdatesAsync(file);
                     }
-
-                    // If the font uses SVG glyphs, we can extract the raw SVG from the font file
-                    if (analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
-                    {
-                        string str = null;
-                        IBuffer b = GetGlyphBuffer(selectedVariant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Svg);
-                        if (b.Length > 2 && b.GetByte(0) == 31 && b.GetByte(1) == 139)
-                        {
-                            using var stream = b.AsStream();
-                            using var gzip = new GZipStream(stream, CompressionMode.Decompress);
-                            using var reader = new StreamReader(gzip);
-                            str = reader.ReadToEnd();
-                        }
-                        else
-                        {
-                            using var dataReader = DataReader.FromBuffer(b);
-                            dataReader.UnicodeEncoding = Windows.Storage.Streams.UnicodeEncoding.Utf8;
-                            str = dataReader.ReadString(b.Length);
-                        }
-
-                        if (str.StartsWith("<?xml"))
-                            str = str.Remove(0, str.IndexOf(">") + 1);
-
-                        str = str.TrimStart();
-
-                        try
-                        {
-                            using (CanvasSvgDocument document = CanvasSvgDocument.LoadFromXml(Utils.CanvasDevice, str))
-                            {
-                                // We need to transform the SVG to fit within the default document bounds, as characters
-                                // are based *above* the base origin of (0,0) as (0,0) is the Baseline (bottom left) position for a character, 
-                                // so by default a will appear out of bounds of the default SVG viewport (towards top left).
-
-                                //if (!document.Root.IsAttributeSpecified("viewBox")) // Specified viewbox requires baseline transform?
-                                {
-                                    // We'll regroup all the elements inside a "g" / group tag,
-                                    // and apply a transform to the "g" tag to try and put in 
-                                    // in the correct place. There's probably a more accurate way
-                                    // to do this by directly setting the root viewBox, if anyone
-                                    // can find the correct calculation...
-
-                                    List<ICanvasSvgElement> elements = new List<ICanvasSvgElement>();
-
-                                    double minTop = 0;
-                                    double minLeft = double.MaxValue;
-                                    double maxWidth = double.MinValue;
-                                    double maxHeight = double.MinValue;
-
-                                    void ProcessChildren(CanvasSvgNamedElement root)
-                                    {
-                                        CanvasSvgNamedElement ele = root.FirstChild as CanvasSvgNamedElement;
-                                        while (true)
-                                        {
-                                            CanvasSvgNamedElement next = root.GetNextSibling(ele) as CanvasSvgNamedElement;
-                                            if (ele.Tag == "g")
-                                            {
-                                                ProcessChildren(ele);
-                                            }
-                                            else if (ele.Tag == "path")
-                                            {
-                                                // Create a XAML geometry to try and find the bounds of each character
-                                                // Probably more efficient to do in Win2D, but far less code to do with XAML.
-                                                Geometry gm = XamlBindingHelper.ConvertValue(typeof(Geometry), ele.GetStringAttribute("d")) as Geometry;
-                                                minTop = Math.Min(minTop, gm.Bounds.Top);
-                                                minLeft = Math.Min(minLeft, gm.Bounds.Left);
-                                                maxWidth = Math.Max(maxWidth, gm.Bounds.Width);
-                                                maxHeight = Math.Max(maxHeight, gm.Bounds.Height);
-                                            }
-                                            ele = next;
-                                            if (ele == null)
-                                                break;
-                                        }
-                                    }
-
-                                    ProcessChildren(document.Root);
-
-                                    double top = minTop < 0 ? minTop : 0;
-                                    double left = minLeft;
-                                    document.Root.SetRectangleAttribute("viewBox", new Rect(left, top, data.Bounds.Width, data.Bounds.Height));
-                                }
-
-                                await Utils.WriteSvgAsync(document, file);
-                            }
-                        }
-                        catch
-                        {
-                            // Certain fonts seem to have their SVG glyphs encoded with... I don't even know what encoding.
-                            // for example: https://github.com/adobe-fonts/emojione-color
-                            // In these cases, fallback to monochrome black
-                            await SaveMonochromeAsync();
-                        }
-                    }
-                    else
-                    {
-                        await SaveMonochromeAsync();
-                    }
-
-                    await CachedFileManager.CompleteUpdatesAsync(file);
-                    return new ExportResult(true, file);
                 }
             }
             catch (Exception ex)
@@ -251,22 +266,22 @@ namespace CharacterMap.Core
         public static async Task<ExportResult> ExportPngAsync(
             ExportStyle style,
             InstalledFont selectedFont,
-            FontVariant selectedVariant,
+            CharacterRenderingOptions options,
             Character selectedChar,
-            CanvasTextLayoutAnalysis analysis,
-            CanvasTypography typography,
             AppSettings settings)
         {
             try
             {
-                string name = GetFileName(selectedFont, selectedVariant, selectedChar, "png");
+                using var typography = options.CreateCanvasTypography();
+
+                string name = GetFileName(selectedFont, options.Variant, selectedChar, "png");
                 if (await PickFileAsync(name, "PNG Image", new[] { ".png" }) is StorageFile file)
                 {
                     CachedFileManager.DeferUpdates(file);
 
-                    if (analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
+                    if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
                     {
-                        IBuffer buffer = GetGlyphBuffer(selectedVariant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
+                        IBuffer buffer = GetGlyphBuffer(options.Variant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
                         await FileIO.WriteBufferAsync(file, buffer);
                     }
                     else
@@ -290,10 +305,10 @@ namespace CharacterMap.Core
                             using CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
                             {
                                 FontSize = fontSize,
-                                FontFamily = selectedVariant.Source,
-                                FontStretch = selectedVariant.FontFace.Stretch,
-                                FontWeight = selectedVariant.FontFace.Weight,
-                                FontStyle = selectedVariant.FontFace.Style,
+                                FontFamily = options.Variant.Source,
+                                FontStretch = options.Variant.FontFace.Stretch,
+                                FontWeight = options.Variant.FontFace.Weight,
+                                FontStyle = options.Variant.FontFace.Style,
                                 HorizontalAlignment = CanvasHorizontalAlignment.Center,
                                 Options = style == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
                             }, canvasW, canvasH);
@@ -369,11 +384,8 @@ namespace CharacterMap.Core
         }
 
         public static (string Path, Rect Bounds) GetGeometry(
-            float size,
-            FontVariant selectedVariant,
             Character selectedChar,
-            CanvasTextLayoutAnalysis analysis,
-            CanvasTypography typography)
+            CharacterRenderingOptions options)
         {
             /* 
              * Note: this only constructs the monochrome version
@@ -382,10 +394,13 @@ namespace CharacterMap.Core
              * Drop into C++/CX for color / multi-variant glyphs.
              */
 
-            using CanvasGeometry geom = CreateGeometry(size, selectedVariant, selectedChar, analysis, typography);
+            using CanvasGeometry geom = CreateGeometry(selectedChar, options);
             var bounds = geom.ComputeBounds();
             var interop = Utils.GetInterop();
             var s = interop.GetPathData(geom);
+
+            if (string.IsNullOrWhiteSpace(s.Path))
+                return (s.Path, bounds);
 
             var t = s.Transform.Translation;
             bounds = new Rect(t.X - bounds.Left, -bounds.Top + t.Y, bounds.Width, bounds.Height);
@@ -393,30 +408,28 @@ namespace CharacterMap.Core
         }
 
         public static CanvasGeometry CreateGeometry(
-           float size,
-           FontVariant selectedVariant,
            Character selectedChar,
-           CanvasTextLayoutAnalysis analysis,
-           CanvasTypography typography)
+           CharacterRenderingOptions options)
         {
             CanvasDevice device = Utils.CanvasDevice;
 
             /* SVG Exports render at fixed size - but a) they're vectors, and b) they're
              * inside an auto-scaling viewport. So render-size is *largely* pointless */
-            float canvasH = size, canvasW = size, fontSize = size;
+            float canvasH = options.FontSize, canvasW = options.FontSize, fontSize = options.FontSize;
 
+            using var typography = options.CreateCanvasTypography();
             using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
             {
                 FontSize = fontSize,
-                FontFamily = selectedVariant.Source,
-                FontStretch = selectedVariant.FontFace.Stretch,
-                FontWeight = selectedVariant.FontFace.Weight,
-                FontStyle = selectedVariant.FontFace.Style,
+                FontFamily = options.Variant.Source,
+                FontStretch = options.Variant.FontFace.Stretch,
+                FontWeight = options.Variant.FontFace.Weight,
+                FontStyle = options.Variant.FontFace.Style,
                 HorizontalAlignment = CanvasHorizontalAlignment.Center
             }, canvasW, canvasH))
             {
                 layout.SetTypography(0, 1, typography);
-                layout.Options = analysis.GlyphFormats.Contains(GlyphImageFormat.Svg) ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
+                layout.Options = options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg) ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default;
 
                 return CanvasGeometry.CreateText(layout);
             }
@@ -425,7 +438,6 @@ namespace CharacterMap.Core
         public static async void RequestExportFontFile(FontVariant variant)
         {
             var scheme = ResourceHelper.AppSettings.ExportNamingScheme;
-            var interop = Utils.GetInterop();
 
             if (DirectWrite.IsFontLocal(variant.FontFace))
             {
@@ -510,8 +522,8 @@ namespace CharacterMap.Core
                         if (DirectWrite.IsFontLocal(font.FontFace))
                         {
                             string fileName = GetFileName(font, scheme);
-                            StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
-                            await TryWriteToFileAsync(font, file);
+                            StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
+                            await TryWriteToFileAsync(font, file).ConfigureAwait(false);
                         }
                     }
                 });
@@ -524,11 +536,11 @@ namespace CharacterMap.Core
         {
             try
             {
-                using IRandomAccessStream s = await file.OpenAsync(FileAccessMode.ReadWrite);
+                using IRandomAccessStream s = await file.OpenAsync(FileAccessMode.ReadWrite).AsTask().ConfigureAwait(false);
                 s.Size = 0;
 
                 using IOutputStream o = s.GetOutputStreamAt(0);
-                await DirectWrite.WriteToStreamAsync(font.FontFace, o);
+                await DirectWrite.WriteToStreamAsync(font.FontFace, o).AsTask().ConfigureAwait(false);
                 return true;
             }
             catch { }

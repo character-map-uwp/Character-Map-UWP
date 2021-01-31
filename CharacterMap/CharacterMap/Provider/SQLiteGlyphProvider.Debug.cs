@@ -47,6 +47,7 @@ namespace CharacterMap.Provider
                     PrepareDatabase(con);
                 }
 
+                await PopulateAglfnAsync(connection).ConfigureAwait(false);
                 await PopulateMDL2Async(connection).ConfigureAwait(false);
                 await PopulateFontAsync<FontAwesomeGlyph>(connection, "FontAwesome.txt").ConfigureAwait(false);
 
@@ -125,6 +126,48 @@ namespace CharacterMap.Provider
                 .Replace("Qand A", "Q and A ")
                 .Replace("  ", " ")
                 .Trim();
+        }
+
+        private Task PopulateAglfnAsync(SQLiteConnectionString connection)
+        {
+            return Task.Run(async () =>
+            {
+                var fabric = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/glyphlist.txt")).AsTask().ConfigureAwait(false);
+                using var stream = await fabric.OpenStreamForReadAsync().ConfigureAwait(false);
+                using var reader = new StreamReader(stream);
+
+                string[] parts;
+                int line = 1;
+                while (line < 44)
+                {
+                    reader.ReadLine();
+                    line++;
+                }
+
+                List<AdobeGlyphListMapping> mappings = new List<AdobeGlyphListMapping>();
+
+                while (!reader.EndOfStream)
+                {
+                    parts = reader.ReadLine().Split(";", StringSplitOptions.None);
+                    if (parts.Length == 2)
+                    {
+                        var indexes = parts[1].Split(" ");
+                        var mapping = new AdobeGlyphListMapping
+                        {
+                            Value = parts[0],
+                            UnicodeIndex = int.Parse(indexes[0], System.Globalization.NumberStyles.HexNumber),
+                            UnicodeIndex2 = indexes.Length > 1 ? int.Parse(indexes[1], System.Globalization.NumberStyles.HexNumber) : 0,
+                            UnicodeIndex3 = indexes.Length > 2 ? int.Parse(indexes[2], System.Globalization.NumberStyles.HexNumber) : 0,
+                            UnicodeIndex4 = indexes.Length > 3 ? int.Parse(indexes[3], System.Globalization.NumberStyles.HexNumber) : 0
+                        };
+
+                        mappings.Add(mapping);
+                    }
+                }
+
+                using var c = new SQLiteConnection(connection);
+                c.RunInTransaction(() => { c.InsertAll(mappings); });
+            });
         }
 
         private Task PopulateMDL2Async(SQLiteConnectionString connection)
@@ -334,6 +377,7 @@ namespace CharacterMap.Provider
         {
             con.CreateTable<MDL2Glyph>();
             con.CreateTable<UnicodeGlyphData>();
+            con.CreateTable<AdobeGlyphListMapping>();
 
             foreach (SearchTarget target in SearchTarget.KnownTargets)
                 con.CreateTable(target.TargetType);

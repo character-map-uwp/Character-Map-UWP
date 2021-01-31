@@ -104,9 +104,11 @@
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>எழுத்துரு படவுரு</value>
+    <comment>Xaml FontIcon. Does not need translation.</comment>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>சின்ன படவுரு</value>
+    <comment>Xaml SymbolIcon. Does not need translation.</comment>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>எழுத்துக்குறி வரைபடம்</value>
@@ -473,6 +475,7 @@
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>பாதை வடிவியல்</value>
+    <comment>Xaml PathGeometry. Does not need translation.</comment>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>முறைமை மொழி அமைப்பைப் பயன்படுத்து</value>
@@ -688,6 +691,7 @@
   </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>பாதை படவுரு</value>
+    <comment>Xaml PathIcon. Does not need translation.</comment>
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
     <value>எல்லா வகைகளும்</value>

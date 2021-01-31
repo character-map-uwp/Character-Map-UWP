@@ -56,6 +56,11 @@ namespace CharacterMapCX
 			m_hasVariations = hasVariations;
 		}
 
+		void SetFamilyName(String^ name)
+		{
+			m_familyName = name;
+		}
+
 	private:
 		inline DWriteProperties() { }
 

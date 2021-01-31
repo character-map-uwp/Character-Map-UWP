@@ -39,6 +39,15 @@ namespace CharacterMap.Core
                 _ = d.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => a());
         }
 
+        public static void ToggleFullScreenMode()
+        {
+            var view = ApplicationView.GetForCurrentView();
+            if (view.IsFullScreenMode)
+                view.ExitFullScreenMode();
+            else
+                view.TryEnterFullScreenMode();
+        }
+
         public static Color GetAccentColor()
         {
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
@@ -140,6 +149,11 @@ namespace CharacterMap.Core
             return false;
         }
 
+        private static string AsHex(Color c)
+        {
+            return $"#{c.R:x2}{c.G:x2}{c.B:x2}";
+        }
+
         public static MenuFlyoutPresenter GetPresenter(this MenuFlyout flyout)
         {
             if (flyout.Items.Count == 0)
@@ -215,6 +229,16 @@ namespace CharacterMap.Core
             return GenerateSvgDocument(device, rect, new List<string> { path }, new List<Color> { color });
         }
 
+        /// <summary>
+        /// Generates an SVG document for multi-layered glyphs, where each layer has separate colours.
+        /// COLR glyphs are an example of this.
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="rect">Bounding rectangle of all glyphs</param>
+        /// <param name="paths">Geometry of each layer</param>
+        /// <param name="colors">Colour of each layer</param>
+        /// <param name="invertBounds"></param>
+        /// <returns></returns>
         public static CanvasSvgDocument GenerateSvgDocument(
             ICanvasResourceCreator device,
             Rect rect, 
@@ -250,15 +274,7 @@ namespace CharacterMap.Core
             sb.Append("</svg>");
 
             CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
-
-            // TODO : When we export colour SVGs we'll need to set all the correct path fills here
-
             return doc;
-        }
-
-        private static string AsHex(Color c)
-        {
-            return $"#{c.R:x2}{c.G:x2}{c.B:x2}";
         }
 
         public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)
@@ -277,15 +293,5 @@ namespace CharacterMap.Core
         public static bool Supports1809 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7);
 
         public static bool Supports1903 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8);
-
-        public static CanvasTypography GetEffectiveTypography(this TypographyFeatureInfo canvas)
-        {
-            CanvasTypography typo = new CanvasTypography();
-            if (canvas != null && canvas.Feature != CanvasTypographyFeatureName.None)
-            {
-                typo.AddFeature(canvas.Feature, 1u);
-            }
-            return typo;
-        }
     }
 }

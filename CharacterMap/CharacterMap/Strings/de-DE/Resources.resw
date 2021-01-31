@@ -35,9 +35,11 @@
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
     <value>FontIcon</value>
+    <comment>Xaml FontIcon. Does not need translation.</comment>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
     <value>Symbol Icon</value>
+    <comment>Xaml SymbolIcon. Does not need translation.</comment>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
     <value>Zeichentabelle</value>

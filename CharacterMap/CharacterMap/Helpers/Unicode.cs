@@ -1,5 +1,6 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Models;
+using CharacterMap.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,6 @@ using Windows.Data.Text;
 
 namespace CharacterMap.Helpers
 {
-
-
-
     public static class Unicode
     {
         public static bool IsWhiteSpace(int c)
@@ -60,6 +58,17 @@ namespace CharacterMap.Helpers
                 || ContainsRange(v, UnicodeRange.MiscSymbols)
                 || ContainsRange(v, UnicodeRange.SupplementalSymbols)
                 || ContainsRange(v, UnicodeRange.TransportSymbols);
+        }
+
+        public static List<UnicodeCategoryModel> CreateCategoriesList(IList<UnicodeCategoryModel> source = null)
+        {
+            var list = Enum.GetValues(typeof(UnicodeGeneralCategory)).OfType<UnicodeGeneralCategory>().Select(e => new UnicodeCategoryModel(e)).ToList();
+
+            if (source != null)
+                for (int i = 0; i < list.Count; i++)
+                    list[i].IsSelected = source[i].IsSelected;
+
+            return list;
         }
     }
 }

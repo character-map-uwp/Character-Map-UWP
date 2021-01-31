@@ -6,21 +6,12 @@ using CharacterMap.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
 {
@@ -280,37 +271,14 @@ namespace CharacterMap.Views
             _sizeDebouncer.Debounce(350, UpdateDisplay);
         }
 
-        private void Flyout_Opening(object sender, object e)
-        {
-            CategoryList.ItemsSource = PrintViewModel.CreateCategoriesList(ViewModel);
-        }
-
-        private void FilterAccept_Click(object sender, RoutedEventArgs e)
-        {
-            ViewModel.UpdateCategories((List<UnicodeCategoryModel>)CategoryList.ItemsSource);
-            FilterFlyout.Hide();
-        }
-
-        private void FilterRefresh_Click(object sender, RoutedEventArgs e)
-        {
-            CategoryList.ItemsSource = PrintViewModel.CreateCategoriesList(ViewModel);
-        }
-
-        private void FilterSelectAll_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var item in ((List<UnicodeCategoryModel>)CategoryList.ItemsSource))
-                item.IsSelected = true;
-        }
-
-        private void FilterClear_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (var item in ((List<UnicodeCategoryModel>)CategoryList.ItemsSource))
-                item.IsSelected = false;
-        }
-
         private void ContentPanel_Loading(FrameworkElement sender, object args)
         {
             Composition.SetThemeShadow(ContentPanel, 40, TitleBackground);
+        }
+
+        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)
+        {
+            ViewModel.UpdateCategories(e);
         }
 
 

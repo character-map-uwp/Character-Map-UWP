@@ -13,6 +13,7 @@ using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Windows.Storage;
 using Windows.UI.Text;
+using WoffToOtf;
 
 namespace CharacterMap.Core
 {
@@ -61,6 +62,11 @@ namespace CharacterMap.Core
             ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
         };
 
+        public static HashSet<string> ImportFormats { get; } = new HashSet<string>
+        {
+            ".ttf", ".otf", ".otc", ".ttc", ".woff"//, ".woff2"
+        };
+
         public static async Task<DWriteFontSet> InitialiseAsync()
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
@@ -72,8 +78,9 @@ namespace CharacterMap.Core
             {
                 if (DefaultFont == null)
                 {
-                    await CleanUpTempFolderAsync().ConfigureAwait(false);
-                    await CleanUpPendingDeletesAsync().ConfigureAwait(false);
+                    await Task.WhenAll(
+                        CleanUpTempFolderAsync(),
+                        CleanUpPendingDeletesAsync()).ConfigureAwait(false);
 
                     var segoe = systemFonts.Fonts.FirstOrDefault(
                            f => f.FontFace.FamilyNames.Values.Contains("Segoe UI")
@@ -243,7 +250,7 @@ namespace CharacterMap.Core
 
                 foreach (var item in items)
                 {
-                    if (!(item is StorageFile file))
+                    if (item is not StorageFile file)
                     {
                         invalid.Add((item, Localization.Get("ImportNotAFile")));
                         continue;
@@ -260,6 +267,20 @@ namespace CharacterMap.Core
                         invalid.Add((item, Localization.Get("ImportPendingDelete")));
                         continue;
                     }
+
+                    // For WOFF files we can attempt to convert the file to OTF before loading
+                    var src = file;
+                    var convertResult = await FontConverter.TryConvertAsync(file);
+                    if (convertResult.Result is not ConversionStatus.OK)
+                    {
+                        if (convertResult.Result == ConversionStatus.UnsupportedWOFF2)
+                            invalid.Add((src, Localization.Get("ImportWOFF2NotSupported")));
+                        else
+                            invalid.Add((src, Localization.Get("ImportFailedWoff")));
+                        continue;
+                    }
+                    else
+                        file = convertResult.File;
 
                     if (SupportedFormats.Contains(file.FileType.ToLower()))
                     {
@@ -312,6 +333,8 @@ namespace CharacterMap.Core
                 return new FontImportResult(imported, existing, invalid);
             });
         }
+
+        
 
         /// <summary>
         /// Returns true if all fonts were deleted.
@@ -435,6 +458,13 @@ namespace CharacterMap.Core
         internal static async Task<InstalledFont> LoadFromFileAsync(StorageFile file)
         {
             await InitialiseAsync().ConfigureAwait(false);
+
+            var src = file;
+            var convert = await FontConverter.TryConvertAsync(file);
+            if (convert.Result != ConversionStatus.OK)
+                return null;
+
+            file = convert.File;
 
             var folder = await _importFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
             var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);

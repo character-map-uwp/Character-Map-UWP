@@ -3,6 +3,7 @@ using SQLite;
 
 namespace CharacterMap.Models
 {
+
     public class UnicodeGlyphData : IGlyphData
     {
         [PrimaryKey]

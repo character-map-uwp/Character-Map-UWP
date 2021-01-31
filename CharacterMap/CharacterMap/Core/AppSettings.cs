@@ -1,5 +1,7 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Provider;
+using CharacterMap.Services;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.ComponentModel;
@@ -35,12 +37,6 @@ namespace CharacterMap.Core
         public bool FitCharacter
         {
             get => Get(false);
-            set => BroadcastSet(value);
-        }
-
-        public bool ShowDevUtils
-        {
-            get => Get(true);
             set => BroadcastSet(value);
         }
 
@@ -101,19 +97,13 @@ namespace CharacterMap.Core
         public ElementTheme UserRequestedTheme
         {
             get => (ElementTheme)Get((int)ElementTheme.Default);
-            set => BroadcastSet((int)value);
+            set { if (BroadcastSet((int)value)) UpdateTheme(); }
         }
 
         public GlyphAnnotation GlyphAnnotation
         {
             get => (GlyphAnnotation)Get((int)GlyphAnnotation.UnicodeHex);
             set => BroadcastSet((int)value);
-        }
-
-        public int DevToolsLanguage
-        {
-            get => Get(0);
-            set => BroadcastSet(value);
         }
 
         public int GridSize
@@ -138,6 +128,12 @@ namespace CharacterMap.Core
             set => Set((int)value);
         }
 
+        public DevProviderType SelectedDevProvider
+        {
+            get => (DevProviderType)Get((int)DevProviderType.None);
+            set => Set((int)value);
+        }
+
         public bool EnablePreviewPane
         {
             get => Get(true);
@@ -146,12 +142,30 @@ namespace CharacterMap.Core
 
         public bool EnableCopyPane
         {
-            get => Get(true);
+            get => Get(false);
             set => BroadcastSet(value);
         }
 
+        // This setting has been deprecated.
+        // Do not reuse this setting name.
+        //public bool ShowDevUtils
+        //{
+        //    get => Get(true);
+        //    set => BroadcastSet(value);
+        //}
+
+        // This setting has been deprecated.
+        // Do not reuse this setting name.
+        //public int DevToolsLanguage
+        //{
+        //    get => Get(0);
+        //    set => BroadcastSet(value);
+        //}
+
 
         /* INFRASTRUCTURE */
+
+        #region Infrastructure
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -163,7 +177,6 @@ namespace CharacterMap.Core
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
         }
-
 
         private bool Set(object value, [CallerMemberName]string key = null)
         {
@@ -212,7 +225,6 @@ namespace CharacterMap.Core
             _ = ResourceHelper.SetTransparencyAsync(value);
         }
 
-
         /// <summary>
         /// Apply an offset to the GridSize without a delay.
         /// </summary>
@@ -224,5 +236,16 @@ namespace CharacterMap.Core
                 WeakReferenceMessenger.Default.Send(new AppSettingsChangedMessage(nameof(GridSize)));
             }
         }
+
+        private void UpdateTheme()
+        {
+            _ = WindowService.RunOnViewsAsync(() =>
+            {
+                if (Window.Current.Content is FrameworkElement e)
+                    e.RequestedTheme = UserRequestedTheme;
+            });
+        }
+
+        #endregion
     }
 }

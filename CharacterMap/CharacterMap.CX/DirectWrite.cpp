@@ -363,7 +363,6 @@ DWriteProperties^ DirectWrite::GetDWriteProperties(
 		if (SUCCEEDED(face->GetFaceNames(&names)))
 			fname = GetLocaleString(names, ls, locale);
 
-
 		return ref new DWriteProperties(fontSource, nullptr, family, fname, face->IsColorFont(), face->HasVariations());
 	};
 
@@ -464,7 +463,48 @@ bool DirectWrite::HasValidFonts(Uri^ uri)
 	   immediately deleting the StorageFile, we shall do this here in C++
 	   */
 	CanvasFontSet^ fontset = ref new CanvasFontSet(uri);
-	bool valid = fontset->Fonts->Size > 0;
+	bool valid = false;
+	if (fontset->Fonts->Size > 0)
+	{
+		/*
+			We need to validate the font has a family name.
+			Although other platforms and font renders can read and
+			understand fonts without a FamilyName set in the 'name'
+			table (for example, WOFF fonts), XAML font rendering engine does not support
+			these types of fonts. Our basic WOFF conversion may give us fonts that are
+			perfectly fine except for this missing field.
+		*/
+
+		wchar_t localeName[LOCALE_NAME_MAX_LENGTH];
+		int ls = GetUserDefaultLocaleName(localeName, LOCALE_NAME_MAX_LENGTH);
+		auto l = ref new String(localeName);
+
+		auto font = fontset->Fonts->GetAt(0);
+		auto results = font->GetInformationalStrings(CanvasFontInformation::Win32FamilyNames);
+
+		valid = results->HasKey(l) || results->HasKey("en-us");
+
+		/*
+			In the future we can technically support *any* locale even if en-us is not included.
+			We have to update DirectWrite::GetLocaleString(...)
+		*/
+		/*if (!valid)
+		{
+			for (auto p : results)
+			{
+				auto cod = p->Key;
+				auto val = p->Value;
+			}
+
+			auto itr = results->First();
+			if (itr->HasCurrent)
+			{
+				auto cur = itr->Current;
+				auto val = cur->Value;
+				valid = true;
+			}
+		}*/
+	}
 	delete fontset;
 	return valid;
 }

@@ -21,12 +21,13 @@ namespace CharacterMap.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        public event EventHandler FontListCreated;
+
         private Debouncer _searchDebouncer { get; } = new Debouncer();
 
+        private Exception _startUpException = null;
 
         #region Properties
-
-        public event EventHandler FontListCreated;
 
         public Task InitialLoad { get; }
 
@@ -35,6 +36,9 @@ namespace CharacterMap.ViewModels
         public IDialogService DialogService { get; }
 
         public RelayCommand CommandToggleFullScreen { get; }
+
+        public UserCollectionsService FontCollections { get; }
+
 
         private BasicFontFilter _fontListFilter = BasicFontFilter.All;
         public BasicFontFilter FontListFilter
@@ -164,10 +168,6 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public UserCollectionsService FontCollections { get; }
-
-        private Exception _startUpException = null;
-
         #endregion
 
         public MainViewModel(IDialogService dialogService, AppSettings settings)
@@ -175,7 +175,7 @@ namespace CharacterMap.ViewModels
             DialogService = dialogService;
             Settings = settings;
 
-            CommandToggleFullScreen = new RelayCommand(ToggleFullScreenMode);
+            CommandToggleFullScreen = new RelayCommand(Utils.ToggleFullScreenMode);
 
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             InitialLoad = LoadAsync();
@@ -250,15 +250,6 @@ namespace CharacterMap.ViewModels
             IsLoadingFonts = false;
         }
 
-        private void ToggleFullScreenMode()
-        {
-            var view = ApplicationView.GetForCurrentView();
-            if (view.IsFullScreenMode)
-                view.ExitFullScreenMode();
-            else
-                view.TryEnterFullScreenMode();
-        }
-
         public void RefreshFontList(UserFontCollection collection = null)
         {
             try
@@ -304,7 +295,7 @@ namespace CharacterMap.ViewModels
         {
             try
             {
-                // cache last selected now as setting GroupedFontList can change it.
+                // Cache last selected now as setting GroupedFontList can change it.
                 string lastSelected = Settings.LastSelectedFontName;
 
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));

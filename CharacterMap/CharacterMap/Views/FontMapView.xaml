@@ -11,7 +11,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
+    xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     d:DesignHeight="800"
     d:DesignWidth="1280"
     BorderThickness="0"
@@ -34,11 +36,14 @@
                     <Setter Property="Width" Value="Auto" />
                 </Style>
             </Grid.Resources>
-            <toolkit:UniformGrid
-                ColumnSpacing="0"
-                Background="Transparent"
-                Columns="5"
-                Rows="1">
+            <Grid ColumnSpacing="0" Background="Transparent">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
                 <AppBarButton
                     x:Uid="SwitchViewButton"
                     Click="{x:Bind ViewModel.ChangeDisplayMode}"
@@ -46,16 +51,19 @@
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
                     x:Uid="IncreaseSizeButton"
+                    Grid.Column="1"
                     Click="{x:Bind ViewModel.IncreaseCharacterSize}"
                     Icon="FontIncrease" />
                 <AppBarButton
                     x:Name="DecreaseSizeButton"
                     x:Uid="DecreaseSizeButton"
+                    Grid.Column="2"
                     Click="{x:Bind ViewModel.DecreaseCharacterSize}"
                     Icon="FontDecrease" />
                 <AppBarToggleButton
                     x:Name="ToggleCopyPaneButton"
                     x:Uid="ToggleCopyPaneButton"
+                    Grid.Column="3"
                     Checked="{x:Bind ViewModel.ShowCopyPane}"
                     Loaded="ToggleCopyPaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.HideCopyPane}">
@@ -69,11 +77,12 @@
                 <AppBarToggleButton
                     x:Name="TogglePaneButton"
                     x:Uid="TogglePaneButton"
+                    Grid.Column="4"
                     Checked="{x:Bind ViewModel.HidePane}"
                     Icon="OpenPane"
                     Loaded="PaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.ShowPane}" />
-            </toolkit:UniformGrid>
+            </Grid>
         </Grid>
     </Control.Tag>
 
@@ -162,28 +171,7 @@
                         VerticalAlignment="Center"
                         Data="F1 M 2.138672 10 L 4.140625 12.001953 L 3.779297 13.417969 L 0.361328 10 L 4.560547 5.810547 L 5.439453 6.689453 Z M 19.638672 10 L 15.439453 14.189453 L 14.560547 13.310547 L 17.861328 10 L 16.40625 8.544922 C 16.57552 8.375651 16.728516 8.217773 16.865234 8.071289 C 17.001953 7.924805 17.12565 7.770183 17.236328 7.607422 Z M 14.296875 3.75 C 14.570312 3.75 14.825846 3.798828 15.063477 3.896484 C 15.301106 3.994141 15.507813 4.130859 15.683594 4.306641 C 15.859375 4.482422 15.997721 4.6875 16.098633 4.921875 C 16.199543 5.15625 16.25 5.410156 16.25 5.683594 C 16.25 5.9375 16.201172 6.184896 16.103516 6.425781 C 16.005859 6.666668 15.865885 6.878256 15.683594 7.060547 L 8.681641 14.082031 L 5 15 L 5.917969 11.318359 L 12.919922 4.306641 C 13.102213 4.12435 13.313802 3.986004 13.554688 3.891602 C 13.795572 3.797201 14.042968 3.75 14.296875 3.75 Z M 14.794922 6.181641 C 14.93164 6.044922 14.999999 5.878906 15 5.683594 C 14.999999 5.481771 14.933268 5.317384 14.799805 5.19043 C 14.666341 5.063478 14.498697 5.000001 14.296875 5 C 14.205729 5.000001 14.117838 5.014649 14.033203 5.043945 C 13.948567 5.073243 13.873697 5.120443 13.808594 5.185547 L 7.050781 11.962891 L 6.71875 13.28125 L 8.037109 12.949219 Z " />
                 </MenuFlyoutSubItem.Icon>
-                <MenuFlyoutItem
-                    x:Uid="CopyUnicodeValue"
-                    Click="CopyClick"
-                    CommandParameter="{x:Bind models:DevValueType.UnicodeValue}"
-                    Icon="Copy"
-                    Style="{StaticResource HintMenuFlyoutItem}" />
-                <MenuFlyoutItem
-                    x:Uid="CopyGlyphCode"
-                    Click="CopyClick"
-                    CommandParameter="{x:Bind models:DevValueType.Glyph}"
-                    Icon="Copy"
-                    Style="{StaticResource HintMenuFlyoutItem}" />
-                <MenuFlyoutItem
-                    x:Uid="CopyFontIconCode"
-                    Click="CopyClick"
-                    CommandParameter="{x:Bind models:DevValueType.FontIcon}"
-                    Icon="Copy" />
-                <MenuFlyoutItem
-                    x:Uid="CopyPathIconCode"
-                    Click="CopyClick"
-                    CommandParameter="{x:Bind models:DevValueType.PathIcon}"
-                    Icon="Copy" />
+                <!--  Menu Items are inflated in code based on DevProviderBase.GetProviders(...)  -->
             </MenuFlyoutSubItem>
         </MenuFlyout>
 
@@ -231,7 +219,7 @@
                 <ColumnDefinition Width="Auto" />
                 <!--  Font Name  -->
                 <ColumnDefinition Width="*" />
-                <!--  Font Import Button (Standalone Window)  -->
+                <!--  Font Import Button (Stand-alone Window)  -->
                 <ColumnDefinition Width="Auto" />
                 <!--  Search Box  -->
                 <ColumnDefinition Width="Auto" />
@@ -371,7 +359,7 @@
                 x:Name="CharGridHeader"
                 x:FieldModifier="public"
                 ColumnSpacing="12"
-                Margin="12 0 12 12"
+                Margin="12 0 8 12"
                 VerticalAlignment="Top"
                 Canvas.ZIndex="12">
                 <Grid.ColumnDefinitions>
@@ -386,8 +374,9 @@
                 <toolkit:WrapPanel
                     x:Name="OptionsPanel"
                     x:FieldModifier="public"
+                    HorizontalAlignment="Stretch"
                     ChildrenTransitions="{StaticResource RepositionTransitions}"
-                    HorizontalSpacing="12"
+                    HorizontalSpacing="8"
                     Orientation="Horizontal">
 
                     <ComboBox
@@ -410,196 +399,196 @@
                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
                             Glyph="&#xE946;" />
                         <Button.Flyout>
-                            <Flyout Opened="InfoFlyout_Opened">
-                                <StackPanel
-                                    MinWidth="300"
-                                    MaxWidth="400"
-                                    Padding="12"
-                                    Spacing="12">
-                                    <Panel.Resources>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Opacity" Value="0.5" />
-                                            <Setter Property="TextWrapping" Value="Wrap" />
-                                            <Setter Property="VerticalAlignment" Value="Top" />
-                                        </Style>
-                                        <Style x:Key="Value" TargetType="TextBlock">
-                                            <Setter Property="Opacity" Value="1" />
-                                            <Setter Property="Grid.Column" Value="1" />
-                                            <Setter Property="TextWrapping" Value="Wrap" />
-                                            <Setter Property="VerticalAlignment" Value="Top" />
-                                        </Style>
-                                    </Panel.Resources>
-                                    <TextBlock x:Uid="FontPropTitle" FontWeight="Bold" />
-                                    <Grid RowSpacing="8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
+                            <Flyout win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}" Opened="InfoFlyout_Opened">
+                                <ScrollViewer MinWidth="300" MaxWidth="400">
+                                    <StackPanel Padding="12 24" Spacing="12">
+                                        <Panel.Resources>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Opacity" Value="0.5" />
+                                                <Setter Property="TextWrapping" Value="Wrap" />
+                                                <Setter Property="VerticalAlignment" Value="Top" />
+                                            </Style>
+                                            <Style x:Key="Value" TargetType="TextBlock">
+                                                <Setter Property="Opacity" Value="1" />
+                                                <Setter Property="Grid.Column" Value="1" />
+                                                <Setter Property="TextWrapping" Value="Wrap" />
+                                                <Setter Property="VerticalAlignment" Value="Top" />
+                                            </Style>
+                                        </Panel.Resources>
+                                        <TextBlock x:Uid="FontPropTitle" FontWeight="Bold" />
+                                        <Grid RowSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
 
 
-                                        <TextBlock x:Uid="FontPropFamily" Grid.Row="0" />
-                                        <TextBlock
-                                            Grid.Row="0"
-                                            Style="{StaticResource Value}"
-                                            Text="{Binding SelectedFont.Name}" />
+                                            <TextBlock x:Uid="FontPropFamily" Grid.Row="0" />
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Style="{StaticResource Value}"
+                                                Text="{Binding SelectedFont.Name}" />
 
-                                        <TextBlock x:Uid="FontPropFace" Grid.Row="1" />
-                                        <TextBlock
-                                            Grid.Row="1"
-                                            Style="{StaticResource Value}"
-                                            Text="{Binding SelectedVariant.PreferredName}" />
+                                            <TextBlock x:Uid="FontPropFace" Grid.Row="1" />
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Style="{StaticResource Value}"
+                                                Text="{Binding SelectedVariant.PreferredName}" />
 
-                                        <TextBlock x:Uid="FontPropCharCount" Grid.Row="2" />
-                                        <TextBlock
-                                            Grid.Row="2"
-                                            Style="{StaticResource Value}"
-                                            Text="{x:Bind ViewModel.SelectedVariant.Characters.Count, Mode=OneWay}" />
+                                            <TextBlock x:Uid="FontPropCharCount" Grid.Row="2" />
+                                            <TextBlock
+                                                Grid.Row="2"
+                                                Style="{StaticResource Value}"
+                                                Text="{x:Bind ViewModel.SelectedVariant.Characters.Count, Mode=OneWay}" />
 
-                                        <TextBlock x:Uid="FontPropCount" Grid.Row="3" />
-                                        <TextBlock
-                                            Grid.Row="3"
-                                            Style="{StaticResource Value}"
-                                            Text="{x:Bind ViewModel.SelectedVariant.FontFace.GlyphCount, Mode=OneWay}" />
+                                            <TextBlock x:Uid="FontPropCount" Grid.Row="3" />
+                                            <TextBlock
+                                                Grid.Row="3"
+                                                Style="{StaticResource Value}"
+                                                Text="{x:Bind ViewModel.SelectedVariant.FontFace.GlyphCount, Mode=OneWay}" />
 
-                                        <TextBlock x:Uid="FontPropType" Grid.Row="4" />
-                                        <TextBlock
-                                            Grid.Row="4"
-                                            Style="{StaticResource Value}"
-                                            Text="{Binding SelectedVariant.FontFace.FileFormatType}" />
+                                            <TextBlock x:Uid="FontPropType" Grid.Row="4" />
+                                            <TextBlock
+                                                Grid.Row="4"
+                                                Style="{StaticResource Value}"
+                                                Text="{Binding SelectedVariant.FontFace.FileFormatType}" />
 
-                                        <TextBlock x:Uid="FontPropSymbol" Grid.Row="5" />
-                                        <TextBlock
-                                            Grid.Row="5"
-                                            Style="{StaticResource Value}"
-                                            Text="{Binding SelectedVariant.FontFace.IsSymbolFont}" />
+                                            <TextBlock x:Uid="FontPropSymbol" Grid.Row="5" />
+                                            <TextBlock
+                                                Grid.Row="5"
+                                                Style="{StaticResource Value}"
+                                                Text="{Binding SelectedVariant.FontFace.IsSymbolFont}" />
 
-                                        <TextBlock x:Uid="FontPropMonospaced" Grid.Row="6" />
-                                        <TextBlock
-                                            Grid.Row="6"
-                                            Style="{StaticResource Value}"
-                                            Text="{Binding SelectedVariant.FontFace.IsMonospaced}" />
+                                            <TextBlock x:Uid="FontPropMonospaced" Grid.Row="6" />
+                                            <TextBlock
+                                                Grid.Row="6"
+                                                Style="{StaticResource Value}"
+                                                Text="{Binding SelectedVariant.FontFace.IsMonospaced}" />
 
-                                        <TextBlock x:Uid="FontPropStyle" Grid.Row="7" />
-                                        <TextBlock
-                                            Grid.Row="7"
-                                            Style="{StaticResource Value}"
-                                            Text="{Binding SelectedVariant.FontFace.Style}" />
+                                            <TextBlock x:Uid="FontPropStyle" Grid.Row="7" />
+                                            <TextBlock
+                                                Grid.Row="7"
+                                                Style="{StaticResource Value}"
+                                                Text="{Binding SelectedVariant.FontFace.Style}" />
 
-                                        <TextBlock x:Uid="FontPropStretch" Grid.Row="8" />
-                                        <TextBlock
-                                            Grid.Row="8"
-                                            Style="{StaticResource Value}"
-                                            Text="{Binding SelectedVariant.FontFace.Stretch}" />
+                                            <TextBlock x:Uid="FontPropStretch" Grid.Row="8" />
+                                            <TextBlock
+                                                Grid.Row="8"
+                                                Style="{StaticResource Value}"
+                                                Text="{Binding SelectedVariant.FontFace.Stretch}" />
 
-                                        <TextBlock x:Uid="FontPropWeight" Grid.Row="9" />
-                                        <TextBlock
-                                            Grid.Row="9"
-                                            Style="{StaticResource Value}"
-                                            Text="{x:Bind core:Converters.GetWeightName(ViewModel.SelectedVariant.FontFace.Weight), Mode=OneWay}" />
+                                            <TextBlock x:Uid="FontPropWeight" Grid.Row="9" />
+                                            <TextBlock
+                                                Grid.Row="9"
+                                                Style="{StaticResource Value}"
+                                                Text="{x:Bind core:Converters.GetWeightName(ViewModel.SelectedVariant.FontFace.Weight), Mode=OneWay}" />
 
-                                        <TextBlock x:Uid="FontPropInstallType" Grid.Row="10" />
-                                        <TextBlock
-                                            Grid.Row="10"
-                                            Style="{StaticResource Value}"
-                                            Text="{x:Bind ViewModel.SelectedVariant.GetProviderName(), Mode=OneWay}" />
+                                            <TextBlock x:Uid="FontPropInstallType" Grid.Row="10" />
+                                            <TextBlock
+                                                Grid.Row="10"
+                                                Style="{StaticResource Value}"
+                                                Text="{x:Bind ViewModel.SelectedVariant.GetProviderName(), Mode=OneWay}" />
 
-                                        <TextBlock x:Uid="FontPropFileSize" Grid.Row="11" />
-                                        <TextBlock
-                                            Grid.Row="11"
-                                            Style="{StaticResource Value}"
-                                            Text="{x:Bind core:Converters.GetFileSize(ViewModel.SelectedVariantAnalysis.FileSize), Mode=OneWay}" />
+                                            <TextBlock x:Uid="FontPropFileSize" Grid.Row="11" />
+                                            <TextBlock
+                                                Grid.Row="11"
+                                                Style="{StaticResource Value}"
+                                                Text="{x:Bind core:Converters.GetFileSize(ViewModel.SelectedVariantAnalysis.FileSize), Mode=OneWay}" />
 
-                                        <TextBlock
-                                            x:Name="FontPropXaml"
-                                            x:Uid="FontPropXaml"
-                                            Grid.Row="12"
-                                            Padding="0,4,0,0"
-                                            Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
-                                        <TextBlock
-                                            Grid.Row="13"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="2"
-                                            Margin="0,-4,0,0"
-                                            IsTextSelectionEnabled="True"
-                                            Style="{StaticResource Value}"
-                                            Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
-                                            Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
+                                            <TextBlock
+                                                x:Name="FontPropXaml"
+                                                x:Uid="FontPropXaml"
+                                                Grid.Row="12"
+                                                Padding="0,4,0,0"
+                                                Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
+                                            <TextBlock
+                                                Grid.Row="13"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="2"
+                                                Margin="0,-4,0,0"
+                                                IsTextSelectionEnabled="True"
+                                                Style="{StaticResource Value}"
+                                                Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
+                                                Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
 
-                                        <TextBlock
-                                            x:Uid="FontPropFilePath"
-                                            Grid.Row="12"
-                                            Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}" />
-                                        <TextBlock
-                                            Grid.Row="13"
-                                            Grid.Column="0"
-                                            Grid.ColumnSpan="2"
-                                            Margin="0,-4,0,0"
-                                            IsTextSelectionEnabled="True"
-                                            Style="{StaticResource Value}"
-                                            Text="{x:Bind ViewModel.SelectedVariantAnalysis.FilePath, Mode=OneWay}"
-                                            Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}" />
+                                            <TextBlock
+                                                x:Uid="FontPropFilePath"
+                                                Grid.Row="12"
+                                                Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}" />
+                                            <TextBlock
+                                                Grid.Row="13"
+                                                Grid.Column="0"
+                                                Grid.ColumnSpan="2"
+                                                Margin="0,-4,0,0"
+                                                IsTextSelectionEnabled="True"
+                                                Style="{StaticResource Value}"
+                                                Text="{x:Bind ViewModel.SelectedVariantAnalysis.FilePath, Mode=OneWay}"
+                                                Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}" />
 
-                                    </Grid>
+                                        </Grid>
 
-                                    <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Spacing="12" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Spacing="4">
-                                                    <TextBlock Opacity="0.5" Text="{Binding Key}" />
-                                                    <TextBlock
-                                                        IsTextSelectionEnabled="True"
-                                                        Style="{StaticResource Value}"
-                                                        Text="{Binding Value}" />
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-
-                                </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding SelectedVariant.FontInformation}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Spacing="12" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Spacing="4">
+                                                        <TextBlock Opacity="0.5" Text="{Binding Key}" />
+                                                        <TextBlock
+                                                            IsTextSelectionEnabled="True"
+                                                            Style="{StaticResource Value}"
+                                                            Text="{Binding Value}" />
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </ScrollViewer>
                             </Flyout>
                         </Button.Flyout>
                     </Button>
 
                     <Button
+                        x:Name="FontOptionsButton"
                         x:Uid="FontOptionsButton"
                         MinHeight="47"
                         VerticalAlignment="Stretch"
-                        Style="{ThemeResource TransparentHintButton}">
+                        Style="{ThemeResource TransparentHintButton}"
+                        Visibility="Collapsed">
                         <FontIcon
                             Margin="0,0,-2,0"
                             Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
-                            Glyph="&#xE890;" />
+                            Glyph="&#xE8D2;" />
                         <Button.Flyout>
-                            <Flyout Placement="Bottom">
+                            <Flyout win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}" Placement="Bottom">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
 
-                                    <Button
+                                    <!--<Button
                                         Height="48"
+                                        Margin="0 8 0 0"
                                         Click="{x:Bind ViewModel.ChangeDisplayMode}"
                                         Style="{StaticResource TransparentButton}">
                                         <StackPanel Orientation="Horizontal">
@@ -617,8 +606,7 @@
                                                 TextLineBounds="Tight"
                                                 Visibility="Collapsed" />
                                         </StackPanel>
-                                    </Button>
-
+                                    </Button>-->
 
                                     <ListView
                                         Grid.Row="1"
@@ -661,6 +649,35 @@
                                 </Grid>
                             </Flyout>
                         </Button.Flyout>
+                    </Button>
+
+                    <Button
+                        x:Name="CharacterFilterButton"
+                        x:Uid="CharacterFilterButton"
+                        MinHeight="47"
+                        VerticalAlignment="Stretch"
+                        Loaded="{x:Bind helpers:Composition.SetStandardFadeInOut}"
+                        Style="{ThemeResource TransparentHintButton}">
+                        <SymbolIcon
+                            Margin="0,0,-2,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Symbol="Filter" />
+                        <Button.Flyout>
+                            <controls:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
+                        </Button.Flyout>
+                    </Button>
+
+                    <Button
+                        x:Name="ViewToggleButton"
+                        Width="44"
+                        Height="44"
+                        Click="{x:Bind ViewModel.ChangeDisplayMode}"
+                        Style="{ThemeResource TransparentButton}"
+                        ToolTipService.ToolTip="{core:Localizer Key='LblSwitchToTypeRamp/Text'}">
+                        <SymbolIcon
+                            Margin="0,0,-2,0"
+                            Foreground="{ThemeResource SystemControlForegroundAccentBrush}"
+                            Symbol="Switch" />
                     </Button>
                 </toolkit:WrapPanel>
 
@@ -943,6 +960,7 @@
                 </ItemsControl>
 
                 <ScrollViewer
+                    x:Name="TypeRampScroller"
                     Grid.Row="2"
                     HorizontalScrollBarVisibility="Auto"
                     HorizontalScrollMode="Enabled"
@@ -952,7 +970,7 @@
                     ZoomMode="Enabled">
                     <ItemsControl
                         x:Name="TypeRampList"
-                        FontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
+                        FontFamily="{Binding FontFamily, Mode=OneWay, FallbackValue='Segoe UI'}"
                         FontStretch="{x:Bind ViewModel.SelectedVariant.FontFace.Stretch, Mode=OneWay}"
                         FontStyle="{x:Bind ViewModel.SelectedVariant.FontFace.Style, Mode=OneWay}"
                         FontWeight="{x:Bind ViewModel.SelectedVariant.FontFace.Weight, Mode=OneWay}"
@@ -1386,11 +1404,18 @@
                                 </AppBarButton>
                             </StackPanel>
 
-                            <AppBarButton
-                                x:Name="BtnToggleDev"
-                                x:Uid="BtnToggleDev"
-                                Click="{x:Bind ToggleDev}">
+                            <AppBarButton x:Name="BtnToggleDev" x:Uid="BtnToggleDev">
+                                <Button.Flyout>
+                                    <MenuFlyout
+                                        x:Name="DevFlyout"
+                                        Opening="DevFlyout_Opening"
+                                        Placement="Top">
+                                        <MenuFlyoutItem x:Uid="DevPopupHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
+                                        <!--  Options are populated in code  -->
+                                    </MenuFlyout>
+                                </Button.Flyout>
                                 <Grid Margin="0 -4 0 0">
+
                                     <PathIcon
                                         x:Name="ShowCodeIcon"
                                         HorizontalAlignment="Center"
@@ -1413,10 +1438,24 @@
                                         Visibility="Collapsed" />
 
                                     <PathIcon
+                                        x:Name="DevCppIcon"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="F1 M 18.75 13.75 L 13.75 13.75 L 13.75 18.75 L 12.5 18.75 L 12.5 13.75 L 7.5 13.75 L 7.5 12.5 L 12.5 12.5 L 12.5 7.5 L 13.75 7.5 L 13.75 12.5 L 18.75 12.5 Z M 6.25 6.25 L 6.25 11.25 L 5 11.25 L 5 6.25 L 0 6.25 L 0 5 L 5 5 L 5 0 L 6.25 0 L 6.25 5 L 11.25 5 L 11.25 6.25 Z "
+                                        Visibility="Collapsed" />
+
+                                    <PathIcon
                                         x:Name="DevUnicodeIcon"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Data="F1 M 18.320313 5.195313 C 18.320313 5.533854 18.203125 5.820313 17.96875 6.054688 C 17.734375 6.289063 17.447916 6.40625 17.109375 6.40625 C 16.770832 6.40625 16.484375 6.289063 16.25 6.054688 C 16.015625 5.820313 15.898438 5.533854 15.898438 5.195313 C 15.898438 4.856771 16.015625 4.563803 16.25 4.316406 C 16.484375 4.069011 16.770832 3.945313 17.109375 3.945313 C 17.447916 3.945313 17.740885 4.069011 17.988281 4.316406 C 18.235676 4.563803 18.346354 4.856771 18.320313 5.195313 Z M 17.96875 7.578125 L 16.289063 7.578125 C 16.184895 7.578125 16.132813 7.617188 16.132813 7.695313 L 16.132813 11.757813 L 16.171875 13.398438 L 16.132813 13.398438 L 15.117188 11.367188 L 12.460938 6.445313 L 11.484375 4.726563 C 11.458333 4.700521 11.40625 4.687501 11.328125 4.6875 L 8.867188 4.6875 C 8.763021 4.687501 8.710938 4.726563 8.710938 4.804688 L 8.75 4.804688 L 8.710938 4.84375 L 8.710938 11.71875 C 8.710938 12.265625 8.652344 12.721354 8.535156 13.085938 C 8.417969 13.450521 8.255208 13.736979 8.046875 13.945313 C 7.838541 14.153646 7.578125 14.303386 7.265625 14.394531 C 6.953125 14.485678 6.627604 14.53125 6.289063 14.53125 C 5.455729 14.53125 4.830729 14.283854 4.414063 13.789063 C 3.997396 13.294271 3.789063 12.617188 3.789063 11.757813 L 3.789063 4.84375 C 3.789063 4.739584 3.75 4.687501 3.671875 4.6875 L 1.796875 4.6875 C 1.71875 4.687501 1.679688 4.739584 1.679688 4.84375 L 1.679688 11.914063 C 1.679688 12.669271 1.783854 13.333334 1.992188 13.90625 C 2.200521 14.479167 2.50651 14.947917 2.910156 15.3125 C 3.313802 15.677084 3.789062 15.950521 4.335938 16.132813 C 4.960938 16.341146 5.585938 16.445313 6.210938 16.445313 C 6.835937 16.445313 7.441406 16.360678 8.027344 16.191406 C 8.613281 16.022135 9.108072 15.748698 9.511719 15.371094 C 9.915364 14.99349 10.240885 14.511719 10.488281 13.925781 C 10.735677 13.339844 10.859375 12.643229 10.859375 11.835938 L 10.859375 7.382813 L 11.210938 8.085938 L 12.03125 9.6875 L 15.46875 16.132813 C 15.520833 16.210938 15.598958 16.25 15.703125 16.25 L 17.96875 16.25 C 18.072916 16.25 18.125 16.197916 18.125 16.09375 L 18.125 7.734375 C 18.125 7.630209 18.072916 7.578125 17.96875 7.578125 Z "
+                                        Visibility="Collapsed" />
+
+                                    <PathIcon
+                                        x:Name="DevXamarinIcon"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Data="F1 M 18.945312 9.414062 C 19.101562 9.648438 19.179688 9.908854 19.179688 10.195312 C 19.179688 10.481771 19.101562 10.742188 18.945312 10.976562 L 15.078125 17.695312 C 14.921875 17.955729 14.713541 18.157553 14.453125 18.300781 C 14.192707 18.44401 13.91927 18.515625 13.632812 18.515625 L 6.367188 18.515625 C 6.080729 18.515625 5.807292 18.44401 5.546875 18.300781 C 5.286458 18.157553 5.078125 17.955729 4.921875 17.695312 L 1.054688 10.976562 C 0.898437 10.742188 0.820312 10.481771 0.820312 10.195312 C 0.820312 9.908854 0.898437 9.648438 1.054688 9.414062 L 4.921875 2.695312 C 5.078125 2.434896 5.286458 2.233073 5.546875 2.089844 C 5.807292 1.946615 6.080729 1.875001 6.367188 1.875 L 13.632812 1.875 C 13.91927 1.875001 14.192707 1.946615 14.453125 2.089844 C 14.713541 2.233073 14.921875 2.434896 15.078125 2.695312 Z M 10 10.195312 L 10 10.117188 L 7.851562 6.09375 L 7.695312 6.015625 L 6.367188 6.015625 L 6.25 6.09375 L 6.25 6.289062 L 8.320312 10.195312 L 6.25 14.101562 L 6.25 14.296875 L 6.367188 14.375 L 7.695312 14.375 L 7.851562 14.296875 L 10 10.273438 L 10 10.195312 L 10.039062 10.273438 L 12.148438 14.296875 L 12.304688 14.375 L 13.632812 14.375 L 13.75 14.296875 L 13.75 14.101562 L 11.679688 10.195312 L 13.75 6.289062 L 13.75 6.09375 L 13.632812 6.015625 L 12.304688 6.015625 L 12.148438 6.09375 L 10.039062 10.117188 Z "
                                         Visibility="Collapsed" />
 
                                 </Grid>
@@ -1467,7 +1506,7 @@
                     </Border>
                 </Grid>
 
-                <!--  Dev Utils  -->
+                <!--  Dev Utilities  -->
                 <StackPanel
                     x:Name="DevUtilsRoot"
                     Grid.Row="1"
@@ -1481,194 +1520,108 @@
                         Fill="{ThemeResource ApplicationForegroundThemeBrush}"
                         Opacity="0.15" />
 
-                    <Grid
-                        Grid.Row="6"
-                        ColumnSpacing="8"
-                        Height="50"
-                        Margin="0,15,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="50" />
-                        </Grid.ColumnDefinitions>
+                    <ItemsControl Margin="0,6,0,0" ItemsSource="{x:Bind ViewModel.SelectedProvider.GetOptions(), Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="models:DevOption">
+                                <Grid Height="50">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="50" />
+                                    </Grid.ColumnDefinitions>
 
-                        <TextBox
-                            x:Name="TxtXamlCode"
-                            x:Uid="TxtXamlCode"
-                            GotFocus="OnCopyGotFocus"
-                            Header="#TxtXamlCode"
-                            Style="{StaticResource CopyTextBox}"
-                            Text="{Binding XamlCode}" />
-                        <AppBarButton
-                            x:Name="BtnCopyXamlCode"
-                            x:Uid="BtnCopyDev"
-                            Grid.Column="1"
-                            Width="50"
-                            Height="50"
-                            VerticalAlignment="Bottom"
-                            Click="BtnCopyXamlCode_OnClick">
-                            <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                        </AppBarButton>
-                    </Grid>
+                                    <StackPanel Margin="0 0 0 0">
+                                        <TextBlock
+                                            Margin="14 0 0 0"
+                                            FontSize="12"
+                                            Foreground="{ThemeResource TextControlHeaderForeground}"
+                                            Opacity="0.5"
+                                            Text="{x:Bind Name}" />
 
-                    <Grid
-                        Grid.Row="7"
-                        ColumnSpacing="8"
-                        Height="50">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="50" />
-                        </Grid.ColumnDefinitions>
+                                        <!--
+                                            XAML Path Geometry can easily be too long to display in
+                                            a normal TextBlock and will cause it to fail to render.
+                                            So we switch to Flyout if needed.
+                                        -->
 
-                        <TextBox
-                            x:Name="TxtFontIcon"
-                            x:Uid="TxtFontIcon"
-                            Margin="0 0 0 -8"
-                            GotFocus="OnCopyGotFocus"
-                            Header="#TxtFontIcon"
-                            Style="{StaticResource CopyTextBox}"
-                            Text="{Binding FontIcon}" />
+                                        <TextBox
+                                            x:Name="TxtBx"
+                                            x:Load="{x:Bind core:Converters.False(UseExtendedCopy)}"
+                                            Margin="0 -8 0 0"
+                                            GotFocus="OnCopyGotFocus"
+                                            Style="{StaticResource CopyTextBox}"
+                                            Text="{x:Bind Value}" />
 
-                        <AppBarButton
-                            x:Name="BtnCopyFontIcon"
-                            x:Uid="BtnCopyDev"
-                            Grid.Column="1"
-                            Width="50"
-                            Height="50"
-                            VerticalAlignment="Bottom"
-                            Click="BtnCopyFontIcon_OnClick">
-                            <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                        </AppBarButton>
-                    </Grid>
+                                        <Button
+                                            x:Name="BtnXAMLGeometry"
+                                            x:Uid="BtnXAMLGeometry"
+                                            x:Load="{x:Bind core:Converters.True(UseExtendedCopy)}"
+                                            Margin="6 0 0 0"
+                                            FontSize="13.333"
+                                            Style="{StaticResource TextBlockButtonStyle}">
+                                            <Button.Flyout>
+                                                <Flyout x:Name="GeometryFlyout" ScrollViewer.VerticalScrollMode="Disabled">
+                                                    <Grid>
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="Auto" />
+                                                            <RowDefinition Height="Auto" />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
 
-                    <Grid
-                        Grid.Row="8"
-                        ColumnSpacing="8"
-                        Height="50">
+                                                        <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
 
-                        <Grid x:Name="XAMLGeometryDefaultRoot" VerticalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="50" />
-                            </Grid.ColumnDefinitions>
+                                                        <AppBarButton
+                                                            x:Uid="BtnCopyDev"
+                                                            Grid.Column="1"
+                                                            Width="50"
+                                                            Height="50"
+                                                            VerticalAlignment="Bottom"
+                                                            Click="BtnCopyCode_OnClick"
+                                                            Tag="{x:Bind Value}">
+                                                            <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                                                        </AppBarButton>
 
-                            <StackPanel Margin="0 0 0 0">
-                                <TextBlock
-                                    x:Uid="TxtPathIcon"
-                                    Margin="14 0 0 0"
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextControlHeaderForeground}"
-                                    Opacity="0.5" />
+                                                        <!--
+                                                            Do not x:Bind the value on this TextBox.
+                                                            Doing so will break multi-line rendering
+                                                        -->
+                                                        <TextBox
+                                                            Grid.Row="1"
+                                                            Grid.ColumnSpan="2"
+                                                            Width="400"
+                                                            MaxHeight="400"
+                                                            AcceptsReturn="True"
+                                                            FontFamily="Consolas"
+                                                            ScrollViewer.VerticalScrollBarVisibility="Auto"
+                                                            Text="{Binding Value}"
+                                                            TextWrapping="Wrap" />
 
-                                <!--
-                                    XAML Path Geometry can easily be too long to display in
-                                    a normal TextBlock and will cause it to fail to render.
-                                    So we switch to Flyout if needed.
-                                -->
+                                                    </Grid>
+                                                </Flyout>
+                                            </Button.Flyout>
+                                        </Button>
 
-                                <TextBox
-                                    x:Name="GeometryTextbox"
-                                    x:Load="{x:Bind core:Converters.False(ViewModel.IsLongGeometry), Mode=OneWay}"
-                                    Margin="0 -8 0 0"
-                                    GotFocus="OnCopyGotFocus"
-                                    Style="{StaticResource CopyTextBox}"
-                                    Text="{Binding XamlPathGeom}" />
+                                    </StackPanel>
 
-                                <Button
-                                    x:Name="BtnXAMLGeometry"
-                                    x:Uid="BtnXAMLGeometry"
-                                    x:Load="{x:Bind ViewModel.IsLongGeometry, Mode=OneWay}"
-                                    Margin="6 0 0 0"
-                                    FontSize="13.333"
-                                    Style="{StaticResource TextBlockButtonStyle}">
-                                    <Button.Flyout>
-                                        <Flyout x:Name="GeometryFlyout" ScrollViewer.VerticalScrollMode="Disabled">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto" />
-                                                    <RowDefinition Height="Auto" />
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-
-                                                <TextBlock x:Uid="TxtPathIcon" VerticalAlignment="Center" />
-
-                                                <AppBarButton
-                                                    x:Uid="BtnCopyDev"
-                                                    Grid.Column="1"
-                                                    Width="50"
-                                                    Height="50"
-                                                    VerticalAlignment="Bottom"
-                                                    Click="BtnCopyXamlPath_OnClick">
-                                                    <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                                                </AppBarButton>
-
-                                                <TextBox
-                                                    Grid.Row="1"
-                                                    Grid.ColumnSpan="2"
-                                                    Width="400"
-                                                    MaxHeight="400"
-                                                    FontFamily="Consolas"
-                                                    IsReadOnly="True"
-                                                    ScrollViewer.VerticalScrollBarVisibility="Auto"
-                                                    Text="{x:Bind ViewModel.XamlPathGeom, Mode=OneWay}"
-                                                    TextWrapping="Wrap" />
-
-                                            </Grid>
-                                        </Flyout>
-                                    </Button.Flyout>
-                                </Button>
-
-                            </StackPanel>
-
-
-                            <AppBarButton
-                                x:Uid="BtnCopyDev"
-                                Grid.Column="1"
-                                Width="50"
-                                Height="50"
-                                VerticalAlignment="Bottom"
-                                Click="BtnCopyXamlPath_OnClick">
-                                <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                            </AppBarButton>
-
-                        </Grid>
-                    </Grid>
-
-                    <Border x:Name="SymbolIconContainer" Grid.Row="9">
-                        <Grid
-                            x:Name="SymbolIconGrid"
-                            x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.SymbolIcon), Mode=OneWay, FallbackValue=False}"
-                            ColumnSpacing="8"
-                            Height="50">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="50" />
-                            </Grid.ColumnDefinitions>
-                            <TextBox
-                                x:Name="TxtSymbolIcon"
-                                x:Uid="TxtSymbolIcon"
-                                GotFocus="OnCopyGotFocus"
-                                Header="#TxtSymbolIcon"
-                                Style="{StaticResource CopyTextBox}"
-                                Text="{Binding SymbolIcon}" />
-                            <AppBarButton
-                                x:Name="BtnCopySymbolIcon"
-                                x:Uid="BtnCopyDev"
-                                Grid.Column="1"
-                                Width="50"
-                                Height="50"
-                                VerticalAlignment="Bottom"
-                                Click="BtnCopySymbolIcon_OnClick">
-                                <FontIcon FontSize="16" Glyph="&#xE16F;" />
-                            </AppBarButton>
-                        </Grid>
-
-                    </Border>
+                                    <AppBarButton
+                                        x:Name="BtnCopyXamlCode"
+                                        x:Uid="BtnCopyDev"
+                                        Grid.Column="1"
+                                        Width="50"
+                                        Height="50"
+                                        VerticalAlignment="Bottom"
+                                        Click="BtnCopyCode_OnClick"
+                                        Tag="{x:Bind Value}">
+                                        <FontIcon FontSize="16" Glyph="&#xE16F;" />
+                                    </AppBarButton>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
 
                 </StackPanel>
-
             </Grid>
 
         </Grid>
@@ -1684,7 +1637,7 @@
             <toolkit:InAppNotification x:Name="DefaultNotification" />
         </Grid>
 
-        <!--  Standalone Loading Root  -->
+        <!--  Stand-alone Loading Root  -->
         <ProgressRing
             x:Name="LoadingRing"
             Grid.Row="2"
@@ -1748,18 +1701,20 @@
             <VisualStateGroup x:Name="MapDisplayStates">
                 <VisualState x:Name="CharacterMapState">
                     <VisualState.Setters>
-                        <Setter Target="SwitchToTypeRampButton.Visibility" Value="Visible" />
+                        <!--<Setter Target="SwitchToTypeRampButton.Visibility" Value="Visible" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TypeRampState">
                     <VisualState.Setters>
+                        <Setter Target="CharacterFilterButton.Visibility" Value="Collapsed" />
                         <Setter Target="CharGridRoot.Visibility" Value="Collapsed" />
                         <Setter Target="SplitterContainer.Visibility" Value="Collapsed" />
                         <Setter Target="PreviewGrid.Visibility" Value="Collapsed" />
                         <Setter Target="TypeRampRoot.Visibility" Value="Visible" />
                         <Setter Target="CharGridHeader.ColumnSpan" Value="3" />
-                        <Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
-                        <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />
+                        <!--<Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
+                        <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />-->
+                        <Setter Target="ViewToggleButton.(ToolTipService.ToolTip)" Value="{core:Localizer Key='LblSwitchToCharMap/Text'}" />
                         <Setter Target="VariableFeaturesMessage.Visibility" Value="Collapsed" />
                         <!--  Popup menu options  -->
                         <Setter Target="IncreaseSizeButton.IsEnabled" Value="False" />
@@ -1775,13 +1730,12 @@
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="DevStates">
-                <VisualState x:Name="DevHiddenState">
+                <VisualState x:Name="DevNoneState">
                     <VisualState.Setters>
-                        <Setter Target="BtnToggleDev.Label" Value="{x:Bind helpers:Localization.Get('ToggleDevDefaultLabel')}" />
                         <Setter Target="ShowCodeIcon.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="DevXamlState">
+                <VisualState x:Name="DevXAMLState">
                     <VisualState.Setters>
                         <Setter Target="BtnToggleDev.Label" Value="XAML" />
                         <Setter Target="DevXamlIcon.Visibility" Value="Visible" />
@@ -1795,10 +1749,31 @@
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="DevCppCXState">
+                    <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="CX" />
+                        <Setter Target="DevCppIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DevCppWinRTState">
+                    <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="WinRT" />
+                        <Setter Target="DevCppIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="DevUnicodeState">
                     <VisualState.Setters>
                         <Setter Target="BtnToggleDev.Label" Value="Unicode" />
                         <Setter Target="DevUnicodeIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DevXamarinFormsState">
+                    <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="Forms" />
+                        <Setter Target="DevXamarinIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
@@ -1839,6 +1814,16 @@
                     <VisualState.Setters>
                         <Setter Target="SearchBox.Width" Value="150" />
                         <Setter Target="CharGridHeader.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="OptionsStates">
+                <VisualState x:Name="HasOptionsState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind ViewModel.HasFontOptions, FallbackValue=False, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="FontOptionsButton.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

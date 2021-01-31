@@ -1,12 +1,9 @@
 ﻿using Microsoft.Graphics.Canvas.Text;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Text;
 using CharacterMapCX;
-using System.Diagnostics;
-using Microsoft.Graphics.Canvas;
 using CharacterMap.Models;
+using System.Globalization;
 
 namespace CharacterMap.Core
 {
@@ -57,41 +54,74 @@ namespace CharacterMap.Core
         {
             var analysis = new FontAnalysis(variant.FontFace);
 
-            if (analysis.GlyphNames != null
-                && analysis.GlyphNames.Count > 0)
+            if (analysis.HasGlyphNames)
             {
-                PrepareSearchMap(variant, analysis.GlyphNames.ToList());
+                PrepareSearchMap(variant, analysis.GlyphNameMappings);
             }
-
-            // TODO : Parse Design & Script Language Tags
-            // if (!string.IsNullOrWhiteSpace(analysis.DesignLanguages))
-            // {
-            //     var langs = analysis.DesignLanguages.Split(',');
-            // }
-
             return analysis;
         }
 
-        private static void PrepareSearchMap(FontVariant variant, List<GlyphNameMap> names)
+        private static void PrepareSearchMap(FontVariant variant, IReadOnlyDictionary<int, string> names)
         {
             if (variant.SearchMap == null)
             {
-                var idxs = variant.GetIndexes();
-                var rng = variant.FontFace.GetGlyphIndices(idxs);
+                uint[] uni = variant.GetGlyphUnicodeIndexes();
+                int[] gly = variant.FontFace.GetGlyphIndices(uni);
+                IReadOnlyList<Character> chars = variant.GetCharacters();
 
-                Dictionary<Character, GlyphNameMap> map = new Dictionary<Character, GlyphNameMap>();
+                Dictionary<Character, string> map = new Dictionary<Character, string>();
 
-                var list = variant.GetCharacters();
-                for (int i = 0; i < list.Count; i++)
+                for (int i = 0; i < chars.Count; i++)
                 {
-                    var c = list[i];
-                    var mapping = names[rng[i]];
-                    mapping.Name = mapping.Name.Replace("-", " ").Replace("_", " ");
-                    map.Add(c, mapping);
+                    Character c = chars[i];
+                    if (names.TryGetValue(gly[i], out string mapping) && !string.IsNullOrEmpty(mapping))
+                    {
+                        map.Add(c, mapping);
+                    }
                 }
 
                 variant.SearchMap = map;
             }
+        }
+
+        private static string GetSantisedGlyphName(string name)
+        {
+            /*
+             * Handle AGLFN mappings.
+             * 'uXXXX' & 'uniXXXX' mappings should be ignored.
+             * 
+             * Older fonts may use AGLF names from older versions of the Adobe Glyph 
+             * name mapping values, like 'afii' or 'commaaccent' that have been removed 
+             * from the spec and are not in our listings.
+             */
+
+            // Currently the commented out are handled in C++ in PostTableReader.h, though leaving
+            // here as we **may** move back to C# at some point.
+
+            //if (name.StartsWith("uni") 
+            //    && name.Length == 7
+            //    && int.TryParse(name.Substring(3, 4), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out _))
+            //    return null;
+
+            //if (name.StartsWith('u')
+            //    && (name.Length == 5 || name.Length == 6)
+            //    && int.TryParse(name.Substring(1, name.Length - 1), NumberStyles.HexNumber, NumberFormatInfo.InvariantInfo, out _))
+            //    return null;
+
+            //if (name.StartsWith("afii"))
+            //    return null;
+
+            //if (name.Contains("commaaccent"))
+            //    return null;
+
+            // TODO : Replace these suffixes?
+            // .smcp -> Small Capitals
+            // .alt -> Alternate?
+            // .sups -> Superscript
+            // .sinf -> Scientific Inferior
+
+
+            return name;
         }
     }
 }
