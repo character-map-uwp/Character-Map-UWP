@@ -215,10 +215,11 @@ namespace CharacterMap.Services
 
         public static Task RunOnViewsAsync(DispatchedHandler a)
         {
-            List<Task> t = new List<Task>
-            {
-                MainWindow.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask()
-            };
+            List<Task> t = new List<Task>();
+
+            if (MainWindow != null)
+                t.Add(MainWindow.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask());
+
             t.AddRange(_childWindows.Select(w => w.Value.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask()));
 
             return Task.WhenAll(t);
