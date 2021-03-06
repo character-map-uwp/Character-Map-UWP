@@ -1,6 +1,5 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Services;
-using Humanizer;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -35,7 +34,7 @@ namespace CharacterMap.Provider
             _connection = new SQLiteConnection(new SQLiteConnectionString(path, SQLiteOpenFlags.ReadOnly, true));
         }
 
-#if DEBUG
+#if DEBUG && GENERATE_DATABASE
         public Task InitialiseDatabaseAsync()
         {
             SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_winsqlite3());
@@ -83,7 +82,7 @@ namespace CharacterMap.Provider
             {
                 desc = _connection.Get<MDL2Glyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
                 if (string.IsNullOrWhiteSpace(desc) && Enum.IsDefined(typeof(Symbol), unicodeIndex))
-                    return ((Symbol)unicodeIndex).ToString().Humanize(LetterCasing.Title);
+                    return ((Symbol)unicodeIndex).Humanise();
                 return desc;
             }
 
@@ -106,6 +105,9 @@ namespace CharacterMap.Provider
 
             return desc;
         }
+
+
+
 
         #region SEARCH
 

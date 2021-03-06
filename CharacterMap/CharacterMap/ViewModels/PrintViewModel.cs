@@ -27,7 +27,7 @@ namespace CharacterMap.ViewModels
         public UnicodeCategoryModel(UnicodeGeneralCategory category)
         {
             Category = category;
-            DisplayName = Humanizer.EnumHumanizeExtensions.Humanize(category);
+            DisplayName = category.Humanise();
         }
     }
 

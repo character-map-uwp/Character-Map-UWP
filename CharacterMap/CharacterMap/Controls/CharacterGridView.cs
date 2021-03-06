@@ -1,18 +1,9 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using CharacterMap.Services;
-using CharacterMap.ViewModels;
-using CharacterMap.Views;
 using Microsoft.Graphics.Canvas.Text;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
@@ -352,7 +343,7 @@ namespace CharacterMap.Controls
                         var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
                         IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 1);
                         _xamlDirect.SetStringProperty(tb, XamlPropertyIndex.TextBlock_Text, c.GetAnnotation(value));
-                        _xamlDirect.SetEnumProperty(tb, XamlPropertyIndex.UIElement_Visibility, value != GlyphAnnotation.None ? 0 : 1);
+                        _xamlDirect.SetEnumProperty(tb, XamlPropertyIndex.UIElement_Visibility, (uint)(value != GlyphAnnotation.None ? 0 : 1));
                     }
                 }
 

@@ -134,15 +134,18 @@
     <TranslationReport Condition="'$(Configuration)' == 'Release'">true</TranslationReport>
     <SuppressPseudoWarning Condition="'$(Configuration)' == 'Debug'">true</SuppressPseudoWarning>
   </PropertyGroup>
-  <ItemGroup>
+  <!-- ONLY INCLUDE WHEN GENERATING NEW SQLITE DATABASE -->
+  <!-- <ItemGroup  Condition="'$(Configuration)' == 'Debug'">
     <PackageReference Include="Humanizer.Core">
       <Version>2.8.26</Version>
     </PackageReference>
+  </ItemGroup> -->
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection">
       <Version>5.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.11</Version>
+      <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Mvvm">
       <Version>7.0.0-preview4</Version>

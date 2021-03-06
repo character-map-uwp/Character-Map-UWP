@@ -25,6 +25,24 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core
 {
+    public class Pool<T> where T : new()
+    {
+        Queue<T> _pool { get; } = new Queue<T>();
+
+        public T Request()
+        {
+            if (_pool.TryDequeue(out T item))
+                return item;
+
+            return new();
+        }
+
+        public void Return(T value)
+        {
+            _pool.Enqueue(value);
+        }
+    }
+
     public static class Utils
     {
         public static CanvasDevice CanvasDevice { get; } = CanvasDevice.GetSharedDevice();
@@ -192,6 +210,79 @@ namespace CharacterMap.Core
                 s.AppendFormat(", {0}", fontFace.Stretch);
 
             return s.ToString();
+        }
+
+        public static string Humanise(this Enum e)
+        {
+            return Humanise(e.ToString(), true);
+        }
+
+        static Pool<StringBuilder> _builderPool { get; } = new Pool<StringBuilder>();
+
+        /// <summary>
+        /// Not thread safe.
+        /// </summary>
+        public static string Humanise(string input, bool title)
+        {
+            var sb = _builderPool.Request();
+
+            try
+            {
+                //int Append(StringBuilder sb, int str, int index)
+                //{
+                //    if (sb.Length > 0)
+                //        sb.Append(' ');
+
+                //    if (!title)
+                //    {
+                //        sb.Append(char.ToLowerInvariant(input[str]));
+                //        sb.Append(input.Substring(str + 1, index - str));
+                //    }
+                //    else
+                //    {
+                //        sb.Append(input.Substring(str, index - str));
+                //    }
+                //    return index;
+                //}
+
+                //int start = 0;
+                //for (int i = 1; i < input.Length; i++)
+                //{
+                //    if (char.IsUpper(input[i]))
+                //    {
+                //        start = Append(sb, start, i);
+                //    }
+                //}
+
+                //Append(sb, start, input.Length);
+
+                char prev = char.MinValue;
+                for (int i = 0; i < input.Length; i++)
+                {
+                    char c = input[i];
+
+                    if ((char.IsLower(prev) && char.IsUpper(c))
+                        || ((char.IsPunctuation(c) || char.IsSeparator(c)) && c != ')')
+                        || (sb.Length > 0 && char.IsDigit(c) && !char.IsDigit(prev))
+                        || (char.IsDigit(prev) && char.IsLetter(c)))
+                    {
+                        sb.Append(' ');
+                        if (!title)
+                            c = char.ToLowerInvariant(c);
+                    }
+
+                    sb.Append(c);
+                    prev = c;
+                }
+
+                return sb.ToString();
+            }
+            finally
+            {
+                sb.Clear();
+                _builderPool.Return(sb);
+            }
+            
         }
 
         public static string GetWeightName(FontWeight weight)

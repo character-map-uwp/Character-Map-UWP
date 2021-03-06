@@ -1,7 +1,4 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Services;
-using Humanizer;
+﻿using CharacterMap.Services;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -14,6 +11,10 @@ using Windows.Storage;
 using Windows.UI.Xaml.Controls;
 using CharacterMap.Models;
 
+#if DEBUG && GENERATE_DATABASE
+using Humanizer;
+#endif
+
 namespace CharacterMap.Provider
 {
 
@@ -22,7 +23,7 @@ namespace CharacterMap.Provider
      * After creating a new database copy it to the Assets/Data/ folder to ship it with
      * the app
      */
-#if DEBUG
+#if DEBUG && GENERATE_DATABASE
 
     internal class FabricGlyph
     {
