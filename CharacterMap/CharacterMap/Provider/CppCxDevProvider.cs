@@ -22,7 +22,7 @@ namespace CharacterMap.Provider
             var v = Options.Variant;
             var c = Character;
 
-            bool hasSymbol = FontFinder.IsSegoeMDL2(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
+            bool hasSymbol = FontFinder.IsSystemSymbolFamily(v) && Enum.IsDefined(typeof(Symbol), (int)c.UnicodeIndex);
             string hex = c.UnicodeIndex.ToString("x4").ToUpper();
             string pathIconData = GetOutlineGeometry(c, Options);
             string fontIcon = $"auto f = ref new FontIcon();\n" +

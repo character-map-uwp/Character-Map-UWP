@@ -459,7 +459,6 @@ namespace CharacterMap.Core
         {
             await InitialiseAsync().ConfigureAwait(false);
 
-            var src = file;
             var convert = await FontConverter.TryConvertAsync(file);
             if (convert.Result != ConversionStatus.OK)
                 return null;
@@ -481,8 +480,9 @@ namespace CharacterMap.Core
             return resultList.Count > 0 ? resultList.First().Value : null;
         }
 
-        public static bool IsMDL2(FontVariant variant) => variant != null && variant.FamilyName.Contains("MDL2");
-        public static bool IsSegoeMDL2(FontVariant variant) => variant != null && variant.FamilyName.Equals("Segoe MDL2 Assets");
+        public static bool IsMDL2(FontVariant variant) => variant != null && (variant.FamilyName.Contains("MDL2") || variant.FamilyName.Equals("Segoe Fluent Icons"));
+        public static bool IsSystemSymbolFamily(FontVariant variant) => variant != null && (
+            variant.FamilyName.Equals("Segoe MDL2 Assets") || variant.FamilyName.Equals("Segoe Fluent Icons"));
 
     }
 }
