@@ -669,8 +669,8 @@
 
                     <Button
                         x:Name="ViewToggleButton"
-                        Width="44"
-                        Height="44"
+                        Width="47"
+                        Height="47"
                         Click="{x:Bind ViewModel.ChangeDisplayMode}"
                         Style="{ThemeResource TransparentButton}"
                         ToolTipService.ToolTip="{core:Localizer Key='LblSwitchToTypeRamp/Text'}">
@@ -1177,7 +1177,7 @@
                                 <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
                                 <Setter Property="FontWeight" Value="Normal" />
                                 <Setter Property="Width" Value="50" />
-                                <Setter Property="Height" Value="50" />
+                                <Setter Property="Height" Value="52" />
                                 <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
                                 <Setter Property="AllowFocusOnInteraction" Value="False" />
                                 <Setter Property="Template">
@@ -1272,7 +1272,7 @@
 
                                                 <TextBlock
                                                     Grid.RowSpan="2"
-                                                    Margin="0 0 0 4"
+                                                    Margin="0 0 0 6"
                                                     HorizontalAlignment="Center"
                                                     VerticalAlignment="Bottom"
                                                     FontSize="11.333"
@@ -1289,13 +1289,19 @@
                         <Grid MinHeight="50">
 
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+
+                            <AppBarButton x:Uid="BtnCopyGlyph" Click="{x:Bind TryCopyInternal}">
+                                <FontIcon FontSize="18" Glyph="&#xE16F;" />
+                            </AppBarButton>
 
                             <StackPanel
                                 Grid.Column="1"
-                                HorizontalAlignment="Right"
+                                FlowDirection="RightToLeft"
+                                HorizontalAlignment="Left"
                                 Orientation="Horizontal">
 
                                 <AppBarButton
@@ -1399,12 +1405,10 @@
                                     </Button.Flyout>
                                 </AppBarButton>
 
-                                <AppBarButton x:Uid="BtnCopyGlyph" Click="{x:Bind TryCopyInternal}">
-                                    <FontIcon FontSize="18" Glyph="&#xE16F;" />
-                                </AppBarButton>
+                               
                             </StackPanel>
 
-                            <AppBarButton x:Name="BtnToggleDev" x:Uid="BtnToggleDev">
+                            <AppBarButton x:Name="BtnToggleDev" Grid.Column="2" x:Uid="BtnToggleDev">
                                 <Button.Flyout>
                                     <MenuFlyout
                                         x:Name="DevFlyout"
