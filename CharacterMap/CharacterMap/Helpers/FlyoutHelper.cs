@@ -330,20 +330,37 @@ namespace CharacterMap.Helpers
                     }
                 }
 
-
+                // Add "Compare Fonts button"
                 var qq = new MenuFlyoutItem
                 {
                     Text = Localization.Get("CompareFontsTitle/Text"),
                     Icon = new SymbolIcon(Symbol.Library)
-                }.AddKeyboardAccelerator(VirtualKey.Q, VirtualKeyModifiers.Control);
+                }.AddKeyboardAccelerator(VirtualKey.K, VirtualKeyModifiers.Control);
 
                 qq.Click += (s, e) =>
                 {
-                    _ = QuickCompareView.CreateNewWindowAsync();
+                    _ = QuickCompareView.CreateNewWindowAsync(false);
                 };
 
                 menu.Items.Add(new MenuFlyoutSeparator());
                 menu.Items.Add(qq);
+
+                // Add "Add to quick compare" button if we're viewing a variant
+                if (showAdvanced)
+                {
+                    MenuFlyoutItem item = new MenuFlyoutItem
+                    {
+                        Text = Localization.Get("AddToQuickCompare/Text"),
+                        Icon = new SymbolIcon { Symbol = Symbol.Add }
+                    }.AddKeyboardAccelerator(VirtualKey.Q, VirtualKeyModifiers.Control);
+
+                    item.Click += (s, e) =>
+                    {
+                        _ = QuickCompareView.AddAsync(variant);
+                    };
+
+                    menu.Items.Add(item);
+                }
             }
         }
 

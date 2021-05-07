@@ -3,29 +3,20 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
 {
@@ -41,19 +32,33 @@ namespace CharacterMap.Views
     {
         public QuickCompareViewModel ViewModel { get; }
 
-        public QuickCompareView()
+        public QuickCompareView() : this(false) { }
+
+        public QuickCompareView(bool isQuickCompare)
         {
             this.InitializeComponent();
-            ViewModel = new QuickCompareViewModel();
+            ViewModel = new QuickCompareViewModel(isQuickCompare);
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
             this.Loaded += QuickCompareView_Loaded;
+            this.Unloaded += QuickCompareView_Unloaded;
+
+            if (isQuickCompare)
+            {
+                ViewModel.Dispatch = a => this.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => a());
+                VisualStateManager.GoToState(this, QuickCompareState.Name, false);
+            }
         }
 
         private void QuickCompareView_Loaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
-            TitleBarHelper.SetTitle(Localization.Get("CompareFontsTitle/Text"));
+            TitleBarHelper.SetTitle(CompareFontsTitle.Text);
+        }
+
+        private void QuickCompareView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.Deactivated();
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -236,7 +241,6 @@ namespace CharacterMap.Views
             }
         }
 
-
         private void Repeater_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (e.ClickedItem is InstalledFont font && sender is ListViewBase list)
@@ -342,17 +346,36 @@ namespace CharacterMap.Views
 
     public partial class QuickCompareView
     {
-        public static async Task CreateNewWindowAsync()
+        public static async Task<WindowInformation> CreateNewWindowAsync(bool isQuickCompare)
         {
-            static void CreateView()
+            static void CreateView(bool isQuickCompare)
             {
-                QuickCompareView view = new QuickCompareView();
+                QuickCompareView view = new(isQuickCompare);
                 Window.Current.Content = view;
                 Window.Current.Activate();
+
             }
 
-            var view = await WindowService.CreateViewAsync(CreateView, false);
+            var view = await WindowService.CreateViewAsync(() => CreateView(isQuickCompare), false);
             await WindowService.TrySwitchToWindowAsync(view, false);
+
+            if(isQuickCompare)
+                QuickCompareViewModel.QuickCompareWindow = view;
+            
+            return view;
+        }
+
+        public static async Task AddAsync(FontVariant variant)
+        {
+            CharacterRenderingOptions opts = new(variant, new(), 12, null);
+            if (QuickCompareViewModel.QuickCompareWindow is null)
+            {
+                await QuickCompareView.CreateNewWindowAsync(true);
+                await Task.Delay(64);
+            }
+
+            WeakReferenceMessenger.Default.Send(opts, nameof(QuickCompareViewModel));
+            await WindowService.TrySwitchToWindowAsync(QuickCompareViewModel.QuickCompareWindow, false);
         }
     }
 }

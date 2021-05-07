@@ -143,6 +143,26 @@
             </Grid>
         </DataTemplate>
 
+        <DataTemplate x:Key="StackTemplateQuick" x:DataType="m:CharacterRenderingOptions">
+            <Grid>
+                <TextBlock Margin="0 4 0 0" Foreground="{ThemeResource TextControlPlaceholderForeground}">
+                    <Run Text="{x:Bind Variant.FamilyName}" />
+                    <Run Text="{x:Bind Variant.PreferredName}" />
+                </TextBlock>
+                <TextBlock
+                    Margin="0 24 0 0"
+                    x:Phase="1"
+                    FontFamily="{x:Bind Variant.Source}"
+                    FontStretch="{x:Bind Variant.FontFace.Stretch}"
+                    FontStyle="{x:Bind Variant.FontFace.Style}"
+                    FontWeight="{x:Bind Variant.FontFace.Weight}"
+                    IsColorFontEnabled="True"
+                    MaxLines="5"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
         <Style TargetType="RadioButton">
             <Setter Property="Background" Value="{ThemeResource RadioButtonBackground}" />
             <Setter Property="Foreground" Value="{ThemeResource RadioButtonForeground}" />
@@ -282,6 +302,7 @@
             Grid.Row="1"
             Height="{StaticResource TitleRowHeight}">
             <TextBlock
+                x:Name="CompareFontsTitle"
                 x:Uid="CompareFontsTitle"
                 Margin="24 0"
                 HorizontalAlignment="Left"
@@ -436,7 +457,7 @@
                         Margin="0 0 4 0"
                         CornerRadius="0"
                         Maximum="64"
-                        Minimum="20"
+                        Minimum="10"
                         ValueChanged="FontSizeSlider_ValueChanged"
                         Value="40" />
 
@@ -473,7 +494,7 @@
                     IsItemClickEnabled="True"
                     ItemClick="Repeater_ItemClick"
                     ItemTemplate="{StaticResource StackTemplate}"
-                    ItemsSource="{x:Bind ViewModel.FontList, Mode=OneWay}">
+                    ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid
@@ -764,6 +785,16 @@
                         <Setter Target="Repeater.ItemsPanel" Value="{StaticResource StackingPanelTemplate}" />
                         <Setter Target="DetailsRepeater.Layout" Value="{StaticResource StackLayout}" />
                         <Setter Target="FontSizeSlider.Maximum" Value="128" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="CompareStates">
+                <VisualState x:Name="QuickCompareState">
+                    <VisualState.Setters>
+                        <Setter Target="FontListFilter.Visibility" Value="Collapsed" />
+                        <Setter Target="CompareFontsTitle.Text" Value="{core:Localizer Key='QuickCompareTitle/Text'}" />
+                        <Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplateQuick}" />
+                        <Setter Target="Repeater.IsItemClickEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

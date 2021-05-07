@@ -256,11 +256,8 @@ namespace CharacterMap.Views
             });
         }
 
-        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        public bool HandleInput(KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.F11)
-                Utils.ToggleFullScreenMode();
-
             var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
             if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
@@ -293,11 +290,27 @@ namespace CharacterMap.Views
                     case VirtualKey.T:
                         ViewModel.ChangeDisplayMode();
                         break;
-                    case VirtualKey.Q:
-                        _ = QuickCompareView.CreateNewWindowAsync();
+                    case VirtualKey.K:
+                        _ = QuickCompareView.CreateNewWindowAsync(false);
                         break;
+                    case VirtualKey.Q:
+                        if (ViewModel.SelectedVariant is FontVariant va)
+                            _ = QuickCompareView.AddAsync(va);
+                        break;
+                    default:
+                        return false;
                 }
             }
+
+            return true;
+        }
+
+        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.F11)
+                Utils.ToggleFullScreenMode();
+            else
+                HandleInput(e);
         }
 
         private void UpdateDevUtils(bool animate = true)

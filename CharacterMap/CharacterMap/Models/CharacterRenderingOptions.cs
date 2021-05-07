@@ -14,9 +14,9 @@ namespace CharacterMap.Models
     public record CharacterRenderingOptions
     {
         public FontVariant Variant { get; }
-        public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
         public float FontSize { get; init; }
         public CanvasTextLayoutAnalysis Analysis { get; init; }
+        public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
 
         public CharacterRenderingOptions(FontVariant variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis)
         {
@@ -30,7 +30,7 @@ namespace CharacterMap.Models
 
         public CanvasTypography CreateCanvasTypography()
         {
-            CanvasTypography t = new CanvasTypography();
+            CanvasTypography t = new ();
             foreach (var f in Typography)
             {
                 if (f.Feature != CanvasTypographyFeatureName.None)

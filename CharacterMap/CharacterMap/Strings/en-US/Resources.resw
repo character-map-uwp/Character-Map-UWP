@@ -1025,4 +1025,10 @@ Default variant copied.</value>
   <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>List Layout</value>
   </data>
+  <data name="QuickCompareTitle.Text" xml:space="preserve">
+    <value>Quick Compare</value>
+  </data>
+  <data name="AddToQuickCompare.Text" xml:space="preserve">
+    <value>Add to quick compare</value>
+  </data>
 </root>

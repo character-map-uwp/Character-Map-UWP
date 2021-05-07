@@ -1225,6 +1225,14 @@ Default variant copied.</target>
           <source>List Layout</source>
           <target state="new">List Layout</target>
         </trans-unit>
+        <trans-unit id="QuickCompareTitle.Text" translate="yes" xml:space="preserve">
+          <source>Quick Compare</source>
+          <target state="new">Quick Compare</target>
+        </trans-unit>
+        <trans-unit id="AddToQuickCompare.Text" translate="yes" xml:space="preserve">
+          <source>Add to quick compare</source>
+          <target state="new">Add to quick compare</target>
+        </trans-unit>
       </group>
     </body>
   </file>
