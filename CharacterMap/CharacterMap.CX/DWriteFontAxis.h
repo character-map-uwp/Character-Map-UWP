@@ -41,8 +41,29 @@ namespace CharacterMapCX
 
 		property float Maximum		{ float get() { return m_maximumValue; } }
 
+		
+		DWriteFontAxis^ WithValue(float value)
+		{
+			auto a = ref new DWriteFontAxis(this);
+			a->Value = value;
+			return a;
+		}
 
 	internal:
+		DWriteFontAxis(DWriteFontAxis^ axis)
+		{
+			m_attribute = axis->Attribute;
+
+			m_minimumValue = axis->Minimum;
+			m_maximumValue = axis->Maximum;
+			m_defaultValue = axis->DefaultValue;
+
+			Value = axis->Value;
+			m_originalValue = Value;
+			m_label = axis->Label;
+			m_tag_raw = axis->Tag;
+		};
+
 		DWriteFontAxis(
 			DWRITE_FONT_AXIS_ATTRIBUTES attribute,
 			DWRITE_FONT_AXIS_RANGE range,

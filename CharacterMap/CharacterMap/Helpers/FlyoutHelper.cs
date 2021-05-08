@@ -65,7 +65,7 @@ namespace CharacterMap.Helpers
         public static void CreateMenu(
             MenuFlyout menu,
             InstalledFont font,
-            FontVariant variant,
+            CharacterRenderingOptions options,
             FrameworkElement headerContent,
             bool standalone,
             bool showAdvanced = false)
@@ -180,13 +180,13 @@ namespace CharacterMap.Helpers
                         }
                     }
 
-                    if (variant != null && DirectWrite.IsFontLocal(variant.FontFace))
+                    if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.FontFace))
                     {
                         var saveButton = new MenuFlyoutItem
                         {
                             Text = Localization.Get("ExportFontFileLabel/Text"),
                             Icon = new FontIcon { Glyph = "\uE792" },
-                            Tag = variant
+                            Tag = options.Variant
                         }.AddKeyboardAccelerator(VirtualKey.S, VirtualKeyModifiers.Control);
 
                         saveButton.Click += SaveFont_Click;
@@ -339,7 +339,7 @@ namespace CharacterMap.Helpers
 
                 qq.Click += (s, e) =>
                 {
-                    _ = QuickCompareView.CreateNewWindowAsync(false);
+                    _ = QuickCompareView.CreateWindowAsync(false);
                 };
 
                 menu.Items.Add(new MenuFlyoutSeparator());
@@ -356,7 +356,7 @@ namespace CharacterMap.Helpers
 
                     item.Click += (s, e) =>
                     {
-                        _ = QuickCompareView.AddAsync(variant);
+                        _ = QuickCompareView.AddAsync(options);
                     };
 
                     menu.Items.Add(item);

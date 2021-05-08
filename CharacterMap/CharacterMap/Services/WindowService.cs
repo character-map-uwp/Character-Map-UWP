@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -81,12 +82,12 @@ namespace CharacterMap.Services
             }
             else
             {
-                TaskCompletionSource<CoreApplicationView> tcs = new TaskCompletionSource<CoreApplicationView>();
+                TaskCompletionSource<CoreApplicationView> tcs = new ();
 
                 await CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     if (CoreApplication.MainView.Dispatcher.HasThreadAccess &&
-                   CoreApplication.MainView.Properties.ContainsKey(nameof(MainWindow)))
+                        CoreApplication.MainView.Properties.ContainsKey(nameof(MainWindow)))
                         tcs.SetResult(CoreApplication.CreateNewView());
                     else
                         tcs.SetResult(CoreApplication.MainView);
@@ -131,7 +132,7 @@ namespace CharacterMap.Services
             if (view.Dispatcher.HasThreadAccess)
                 DoCreate();
             else
-                await view.Dispatcher.RunAsync(CoreDispatcherPriority.High, DoCreate);
+                await view.Dispatcher.ExecuteAsync(DoCreate, CoreDispatcherPriority.High);
 
             return info;
         }
@@ -143,6 +144,8 @@ namespace CharacterMap.Services
 
             WindowInformation info = _childWindows[manager.Id];
             _childWindows.Remove(manager.Id);
+
+            info.CoreView.Activated -= CoreView_Activated;
 
             _ = info.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -156,11 +159,8 @@ namespace CharacterMap.Services
             if (main && !CoreApplication.MainView.Dispatcher.HasThreadAccess)
             {
                 // Awaiter here is screwed without a *PROPER* dispatcher awaiter
-                await CoreApplication.MainView.Dispatcher.RunAsync(
-                    CoreDispatcherPriority.Normal, () =>
-                {
-                    _ = TrySwitchToWindowAsync(info, main);
-                }).AsTask();
+                await CoreApplication.MainView.Dispatcher.ExecuteAsync(
+                    () => TrySwitchToWindowAsync(info, main));
 
                 return;
             }
@@ -178,11 +178,26 @@ namespace CharacterMap.Services
             if (info == MainWindow)
                 await ActivateMainWindowAsync();
 
+            //await info.CoreView.Dispatcher.ExecuteAsync(() =>
+            //{
+            //    info.CoreView.Activated -= CoreView_Activated;
+            //    info.CoreView.Activated += CoreView_Activated;
+            //});
+
             var view = CoreApplication.Views.FirstOrDefault(v => v != CoreApplication.MainView) ?? CoreApplication.MainView;
-            await view.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            await view.Dispatcher.ExecuteAsync(async () =>
             {
-                _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id, ViewSizePreference.Default);
-            }).AsTask();
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(info.View.Id, ViewSizePreference.Default);
+            });
+        }
+
+        private static void CoreView_Activated(CoreApplicationView sender, IActivatedEventArgs args)
+        {
+            sender.Activated -= CoreView_Activated;
+            sender.CoreWindow.Dispatcher.ExecuteAsync(async () =>
+            {
+                await ApplicationViewSwitcher.SwitchAsync(ApplicationView.GetForCurrentView().Id);
+            });
         }
 
         public static Task ActivateMainWindowAsync()
@@ -215,7 +230,7 @@ namespace CharacterMap.Services
 
         public static Task RunOnViewsAsync(DispatchedHandler a)
         {
-            List<Task> t = new List<Task>();
+            List<Task> t = new();
 
             if (MainWindow != null)
                 t.Add(MainWindow.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask());

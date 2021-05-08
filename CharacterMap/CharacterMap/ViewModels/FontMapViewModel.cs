@@ -577,7 +577,7 @@ namespace CharacterMap.ViewModels
 
         public void OpenQuickCompare()
         {
-            _ = QuickCompareView.CreateNewWindowAsync(false);
+            _ = QuickCompareView.CreateWindowAsync(false);
         }
 
         public async Task RequestCopyToClipboardAsync(CopyToClipboardMessage message)

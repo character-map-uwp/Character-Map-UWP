@@ -291,11 +291,11 @@ namespace CharacterMap.Views
                         ViewModel.ChangeDisplayMode();
                         break;
                     case VirtualKey.K:
-                        _ = QuickCompareView.CreateNewWindowAsync(false);
+                        _ = QuickCompareView.CreateWindowAsync(false);
                         break;
                     case VirtualKey.Q:
                         if (ViewModel.SelectedVariant is FontVariant va)
-                            _ = QuickCompareView.AddAsync(va);
+                            _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions);
                         break;
                     default:
                         return false;
@@ -622,7 +622,7 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     MoreMenu,
                     font,
-                    ViewModel.SelectedVariant,
+                    ViewModel.RenderingOptions,
                     this.Tag as FrameworkElement,
                     IsStandalone,
                     true);

@@ -21,13 +21,13 @@ namespace CharacterMap.ViewModels
     {
         public static WindowInformation QuickCompareWindow { get; set; }
 
-        public string Text { get => Get<string>(); set => Set(value); }
+        public string Text                  { get => Get<string>(); set => Set(value); }
 
-        public string FilterTitle { get => Get<string>(); set => Set(value); }
+        public string FilterTitle           { get => Get<string>(); set => Set(value); }
+        
+        public InstalledFont SelectedFont   { get => Get<InstalledFont>(); set => Set(value); }
 
         public List<InstalledFont> FontList { get => Get<List<InstalledFont>>(); set => Set(value); }
-
-        public InstalledFont SelectedFont { get => Get<InstalledFont>(); set => Set(value); }
 
         private BasicFontFilter _fontListFilter = BasicFontFilter.All;
         public BasicFontFilter FontListFilter
@@ -65,8 +65,6 @@ namespace CharacterMap.ViewModels
 
         public bool IsQuickCompare { get;  }
 
-        public Action<Action> Dispatch { get; set; }
-
         public QuickCompareViewModel(bool isQuickCompare)
         {
             IsQuickCompare = isQuickCompare;
@@ -82,7 +80,11 @@ namespace CharacterMap.ViewModels
                 QuickFonts = new ObservableCollection<CharacterRenderingOptions>();
                 Register<CharacterRenderingOptions>(m =>
                 {
-                    Dispatch(() => QuickFonts.Add(m));
+                    // Only add the font variant if it's not already in the list.
+                    // Once we start accepting custom typography this comparison
+                    // will have to change.
+                    if (!QuickFonts.Any(q => m.IsCompareMatch(q)))
+                        QuickFonts.Add(m);
                 }, nameof(QuickCompareViewModel));
             }
         }
