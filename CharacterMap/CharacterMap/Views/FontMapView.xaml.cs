@@ -989,13 +989,23 @@ namespace CharacterMap.Views
 
     public partial class FontMapView
     {
-        public static async Task CreateNewViewForFontAsync(InstalledFont font, StorageFile sourceFile = null)
+        public static async Task CreateNewViewForFontAsync(InstalledFont font, StorageFile sourceFile = null, CharacterRenderingOptions options = null)
         {
             void CreateView()
             {
-                FontMapView map = new FontMapView { 
+                FontMapView map = new() { 
                     IsStandalone = true, 
-                    ViewModel = { SelectedFont = font, IsExternalFile = sourceFile != null, SourceFile = sourceFile } }; 
+                    ViewModel = { SelectedFont = font, IsExternalFile = sourceFile != null, SourceFile = sourceFile } };
+
+                // Attempt to apply any custom rendering options from the source view
+                if (options != null && options.Variant != null && font.Variants.Contains(options.Variant))
+                {
+                    map.ViewModel.SelectedVariant = options.Variant;
+                    
+                    if (options.DefaultTypography != null)
+                        map.ViewModel.SelectedTypography = options.DefaultTypography;
+                }
+
                 Window.Current.Content = map;
                 Window.Current.Activate();
             }

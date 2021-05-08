@@ -24,6 +24,7 @@
                 Click="Remove_Clicked"
                 Icon="Clear"
                 Text="Remove" />
+            <MenuFlyoutItem x:Uid="OpenInNewWindow" Icon="NewWindow" Click="OpenWindow_Click" />
         </MenuFlyout>
 
         <Style x:Key="ChromelessButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">

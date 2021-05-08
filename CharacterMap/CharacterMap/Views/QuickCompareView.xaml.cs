@@ -267,6 +267,16 @@ namespace CharacterMap.Views
             }
         }
 
+        private void OpenWindow_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item 
+                && item.DataContext is CharacterRenderingOptions o
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is InstalledFont font)
+            {
+                _ = FontMapView.CreateNewViewForFontAsync(font, null, o);
+            }
+        }
+
         private void Remove_Clicked(object sender, RoutedEventArgs e)
         {
             if (sender is MenuFlyoutItem item && item.DataContext is CharacterRenderingOptions o)

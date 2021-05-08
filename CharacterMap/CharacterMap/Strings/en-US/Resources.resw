@@ -1031,4 +1031,7 @@ Default variant copied.</value>
   <data name="AddToQuickCompare.Text" xml:space="preserve">
     <value>Add to quick compare</value>
   </data>
+  <data name="CompareFontsButton.Text" xml:space="preserve">
+    <value>Compare all Fonts</value>
+  </data>
 </root>

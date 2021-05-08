@@ -1235,6 +1235,10 @@ Default variant copied.</target>
           <source>Add to quick compare</source>
           <target state="new">Add to quick compare</target>
         </trans-unit>
+        <trans-unit id="CompareFontsButton.Text" translate="yes" xml:space="preserve">
+          <source>Compare all Fonts</source>
+          <target state="new">Compare all Fonts</target>
+        </trans-unit>
       </group>
     </body>
   </file>

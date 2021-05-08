@@ -77,7 +77,7 @@ namespace CharacterMap.Helpers
             static void OpenInNewWindow(object s, RoutedEventArgs args)
             {
                 if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
-                    _ = FontMapView.CreateNewViewForFontAsync(fnt);
+                    _ = FontMapView.CreateNewViewForFontAsync(fnt, null, f.DataContext as CharacterRenderingOptions);
             }
 
             static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
@@ -169,7 +169,8 @@ namespace CharacterMap.Helpers
                         {
                             Text = Localization.Get("OpenInNewWindow/Text"),
                             Icon = new SymbolIcon {Symbol = Symbol.NewWindow},
-                            Tag = font
+                            Tag = font,
+                            DataContext = options
                         };
                         newWindow.Click += OpenInNewWindow;
                         menu.Items.Add(newWindow);
@@ -333,7 +334,7 @@ namespace CharacterMap.Helpers
                 // Add "Compare Fonts button"
                 var qq = new MenuFlyoutItem
                 {
-                    Text = Localization.Get("CompareFontsTitle/Text"),
+                    Text = Localization.Get("CompareFontsButton/Text"),
                     Icon = new SymbolIcon(Symbol.Library)
                 }.AddKeyboardAccelerator(VirtualKey.K, VirtualKeyModifiers.Control);
 
