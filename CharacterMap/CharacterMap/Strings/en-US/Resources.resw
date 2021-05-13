@@ -1034,4 +1034,7 @@ Default variant copied.</value>
   <data name="CompareFontsButton.Text" xml:space="preserve">
     <value>Compare all Fonts</value>
   </data>
+  <data name="BtnGithubCommits.Content" xml:space="preserve">
+    <value>View the latest commits on Github</value>
+  </data>
 </root>

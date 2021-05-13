@@ -1247,6 +1247,10 @@ Default variant copied.</target>
           <source>Compare all Fonts</source>
           <target state="new">Compare all Fonts</target>
         </trans-unit>
+        <trans-unit id="BtnGithubCommits.Content" translate="yes" xml:space="preserve">
+          <source>View the latest commits on Github</source>
+          <target state="new">View the latest commits on Github</target>
+        </trans-unit>
       </group>
     </body>
   </file>

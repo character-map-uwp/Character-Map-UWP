@@ -576,8 +576,12 @@
 
                             </StackPanel>
 
-                            <StackPanel x:Name="ChangePanel" Visibility="Collapsed">
+                            <StackPanel
+                                x:Name="ChangePanel"
+                                Visibility="Collapsed">
                                 <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+
+                                <HyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />
 
                                 <ItemsControl ItemsSource="{x:Bind Changelog}">
                                     <ItemsControl.ItemTemplate>
