@@ -1076,9 +1076,10 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <target state="translated">ฟอนต์ตัวแปร</target>
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
-          <source>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</source>
-          <target state="translated">ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่าง.
+          <source>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</source>
+          <target state="needs-review-translation">ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่าง.
 </target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="BtnReset.Content" translate="yes" xml:space="preserve">
           <source>Reset</source>

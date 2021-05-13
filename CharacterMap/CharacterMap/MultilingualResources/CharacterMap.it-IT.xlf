@@ -1076,8 +1076,9 @@ La funzione di ottimizzazione creerà un nome intelligente basato sulla famiglia
           <target state="translated">Caratteri variabili</target>
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
-          <source>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</source>
-          <target state="translated">Questo carattere ha caratteristiche variabili. Per visualizzarle, passa alla modalità di visualizzazione Dettagli.</target>
+          <source>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</source>
+          <target state="needs-review-translation">Questo carattere ha caratteristiche variabili. Per visualizzarle, passa alla modalità di visualizzazione Dettagli.</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="BtnReset.Content" translate="yes" xml:space="preserve">
           <source>Reset</source>
