@@ -272,6 +272,7 @@
     <ClInclude Include="CmapTableReader.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
     <ClInclude Include="ColrTableReader.h" />
+    <ClInclude Include="CustomFontManager.h" />
     <ClInclude Include="DirectText.h" />
     <ClInclude Include="DirectWrite.h" />
     <ClInclude Include="DWHelpers.h" />
@@ -285,24 +286,31 @@
     <ClInclude Include="DWriteKnownFontAxisValues.h" />
     <ClInclude Include="DWriteNamedFontAxisValue.h" />
     <ClInclude Include="DWriteProperties.h" />
+    <ClInclude Include="ErrorHandling.h" />
     <ClInclude Include="FontAnalysis.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GridViewHelper.h" />
     <ClInclude Include="GsubTableReader.h" />
     <ClInclude Include="ITypographyInfo.h" />
+    <ClInclude Include="LifeSpanTracker.h" />
+    <ClInclude Include="LockUtils.h" />
     <ClInclude Include="MetaTableReader.h" />
     <ClInclude Include="PathData.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="NativeInterop.h" />
     <ClInclude Include="PostTableReader.h" />
     <ClInclude Include="SbixTableReader.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="SVGGeometrySink.h" />
     <ClInclude Include="SvgTableReader.h" />
     <ClInclude Include="TableReader.h" />
+    <ClInclude Include="WinStringBuilder.h" />
+    <ClInclude Include="WinStringWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
+    <ClCompile Include="CustomFontManager.cpp" />
     <ClCompile Include="DirectText.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="NativeInterop.cpp" />

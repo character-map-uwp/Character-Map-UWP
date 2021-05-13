@@ -23,6 +23,7 @@ using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::Storage::Streams;
+using namespace Windows::Storage;
 using namespace CharacterMapCX;
 
 namespace CharacterMapCX
@@ -52,6 +53,10 @@ namespace CharacterMapCX
 
 		DWriteFallbackFont^ CreateEmptyFallback();
 
+		__inline DWriteFontSet^ GetFonts(StorageFile^ files);
+
+		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<StorageFile^>^ files);
+
 	private:
 
 		IAsyncAction^ ListenForFontSetExpirationAsync();
@@ -63,5 +68,7 @@ namespace CharacterMapCX
 		ComPtr<IDWriteFactory7> m_dwriteFactory;
 		ComPtr<ID2D1Factory5> m_d2dFactory;
 		ComPtr<ID2D1DeviceContext1> m_d2dContext;
+
+		CustomFontManager* m_fontManager;
     };
 }

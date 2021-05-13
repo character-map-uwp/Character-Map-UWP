@@ -37,6 +37,8 @@ NativeInterop::NativeInterop(CanvasDevice^ device)
 	d2ddevice->CreateDeviceContext(
 		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
 		&m_d2dContext);
+
+	m_fontManager = new CustomFontManager(m_dwriteFactory);
 }
 
 IAsyncAction^ NativeInterop::ListenForFontSetExpirationAsync()
@@ -81,6 +83,34 @@ DWriteFontSet^ NativeInterop::GetSystemFonts()
 	return m_appFontSet;
 }
 
+IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<StorageFile^>^ files)
+{
+	Vector<DWriteFontSet^>^ fontSets = ref new Vector<DWriteFontSet^>();
+
+	for (StorageFile^ file : files)
+	{
+		fontSets->Append(GetFonts(file));
+	}
+
+	return fontSets->GetView();
+}
+
+DWriteFontSet^ NativeInterop::GetFonts(StorageFile^ file)
+{
+	auto collection = m_fontManager->GetFontCollectionFromFile(file);
+
+	ComPtr<IDWriteFontSet1> fontSet1;
+	collection->GetFontSet(&fontSet1);
+
+	ComPtr<IDWriteFontSet3> fontSet3;
+	fontSet1.As<IDWriteFontSet3>(&fontSet3);
+
+	return DirectWrite::GetFonts(fontSet3);
+	/*CanvasFontSet^ set = ref new CanvasFontSet(uri);
+	ComPtr<IDWriteFontSet3> fontSet = GetWrappedResource<IDWriteFontSet3>(set);
+	return GetFonts(fontSet);*/
+}
+
 DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()
 {
 	ComPtr<IDWriteFontFallbackBuilder> builder;
@@ -91,7 +121,6 @@ DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()
 
 	return ref new DWriteFallbackFont(fallback);
 }
-
 
 Platform::String^ NativeInterop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie)
 {

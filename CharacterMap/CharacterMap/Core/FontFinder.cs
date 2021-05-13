@@ -119,7 +119,8 @@ namespace CharacterMap.Core
                 var resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
 
                 /* Add imported fonts */
-                IReadOnlyList<DWriteFontSet> sets = DirectWrite.GetFonts(files.Select(f => new Uri(GetAppPath(f))).ToList());
+                IReadOnlyList<DWriteFontSet> sets = interop.GetFonts(files).ToList();
+
                 for (int i = 0; i < files.Count; i++)
                 {
                     var file = files[i];
@@ -218,7 +219,7 @@ namespace CharacterMap.Core
                     /* Check if we already have a listing for this fontFamily */
                     if (fontList.TryGetValue(familyName, out var fontFamily))
                     {
-                        fontFamily.AddVariant(font);
+                        fontFamily.AddVariant(font, file);
                     }
                     else
                     {
@@ -470,7 +471,10 @@ namespace CharacterMap.Core
 
             var resultList = new Dictionary<string, InstalledFont>();
 
-            var fontSet = DirectWrite.GetFonts(new Uri(GetAppPath(localFile)));
+            var interop = Ioc.Default.GetService<NativeInterop>();
+            var fontSet = interop.GetFonts(localFile);
+
+            //var fontSet = DirectWrite.GetFonts(new Uri(GetAppPath(localFile)));
             foreach (var font in fontSet.Fonts)
             {
                 AddFont(resultList, font, localFile);
