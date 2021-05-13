@@ -7,6 +7,7 @@
         XAML,
         CppCX,
         CppWinRT,
-        XamarinForms
+        XamarinForms,
+        VisualBasic
     }
 }

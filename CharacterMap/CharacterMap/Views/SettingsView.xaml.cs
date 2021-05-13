@@ -299,8 +299,9 @@ namespace CharacterMap.Views
             return new List<ChangelogItem>
             {
                 new("Latest Release", // May
-                    "- Added glyph name support for Segoe Fluent Icons\n" +
-                    "- Added ability to compare individual variants with Quick Compare view (Ctrl + Q)"),
+                    "- Added glyph name and search support for Segoe Fluent Icons\n" +
+                    "- Added Visual Basic developer features\n" +
+                    "- Added ability to compare individual Font Face's with Quick Compare view (Ctrl + Q)"),
                 new("2021.2.0.0 (Feb 2021)",
                     "- Added ability to open and import WOFF fonts (WOFF fonts are converted to OTF during import)\n" +
                     "- Added C++/CX, C++/WinRT & Xamarin.Forms developer features\n" +
