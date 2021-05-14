@@ -3,29 +3,20 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
 {
@@ -41,19 +32,32 @@ namespace CharacterMap.Views
     {
         public QuickCompareViewModel ViewModel { get; }
 
-        public QuickCompareView()
+        public QuickCompareView() : this(false) { }
+
+        public QuickCompareView(bool isQuickCompare)
         {
             this.InitializeComponent();
-            ViewModel = new QuickCompareViewModel();
+            ViewModel = new QuickCompareViewModel(isQuickCompare);
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
             this.Loaded += QuickCompareView_Loaded;
+            this.Unloaded += QuickCompareView_Unloaded;
+
+            if (isQuickCompare)
+            {
+                VisualStateManager.GoToState(this, QuickCompareState.Name, false);
+            }
         }
 
         private void QuickCompareView_Loaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
-            TitleBarHelper.SetTitle(Localization.Get("CompareFontsTitle/Text"));
+            TitleBarHelper.SetTitle(CompareFontsTitle.Text);
+        }
+
+        private void QuickCompareView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            ViewModel?.Deactivated();
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -222,7 +226,7 @@ namespace CharacterMap.Views
             ((TextBlock)root.Children[root.Children.Count - 1]).FontSize = size;
         }
 
-        private void Repeater_ElementPrepared(Microsoft.UI.Xaml.Controls.ItemsRepeater sender, Microsoft.UI.Xaml.Controls.ItemsRepeaterElementPreparedEventArgs args)
+        private void Repeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
             if (args.Element is Button b && b.Content is Panel g)
             {
@@ -236,36 +240,47 @@ namespace CharacterMap.Views
             }
         }
 
-
-        private void Repeater_ItemClick(object sender, ItemClickEventArgs e)
+        private void ItemClick(object sender, RoutedEventArgs e)
         {
-            if (e.ClickedItem is InstalledFont font && sender is ListViewBase list)
+            if (sender is Button b && b.Content is InstalledFont font && Repeater is ListViewBase list)
             {
-                var item = list.ContainerFromItem(e.ClickedItem);
+                var item = list.ContainerFromItem(font);
                 var title = item.GetFirstDescendantOfType<TextBlock>();
                 ConnectedAnimationService.GetForCurrentView().DefaultDuration = TimeSpan.FromSeconds(0.7);
                 ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Title", title);
 
                 ViewModel.SelectedFont = font;
             }
+            else if (sender is Button bn && bn.Content is CharacterRenderingOptions o && ViewModel.IsQuickCompare)
+            {
+                ContextFlyout.SetItemsDataContext(o);
+                ContextFlyout.ShowAt(bn);
+            }
         }
 
-        private void FontItem_Click(object sender, RoutedEventArgs e)
+        private void ItemContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
         {
-            if (sender is Button b && b.Tag is InstalledFont font)
+            if (ViewModel.IsQuickCompare && sender is Button b)
             {
-                var title = b.GetFirstDescendantOfType<TextBlock>();
-                ConnectedAnimationService.GetForCurrentView().DefaultDuration = TimeSpan.FromSeconds(0.7);
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Title", title);
-
-                ViewModel.SelectedFont = font;
-                //DetailsViewRoot.Visibility = Visibility.Visible;
-
-                //var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("Title");
-                ////ani.Configuration = new BasicConnectedAnimationConfiguration();
-                //DetailsFontTitle.Text = ViewModel.SelectedFont.Name;
-                //ani.TryStart(DetailsFontTitle, new List<UIElement> { DetailsViewContent });
+                ContextFlyout.SetItemsDataContext(b.Content);
+                ContextFlyout.ShowAt(b);
             }
+        }
+
+        private void OpenWindow_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item 
+                && item.DataContext is CharacterRenderingOptions o
+                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is InstalledFont font)
+            {
+                _ = FontMapView.CreateNewViewForFontAsync(font, null, o);
+            }
+        }
+
+        private void Remove_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item && item.DataContext is CharacterRenderingOptions o)
+                ViewModel.QuickFonts.Remove(o);
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -342,17 +357,50 @@ namespace CharacterMap.Views
 
     public partial class QuickCompareView
     {
-        public static async Task CreateNewWindowAsync()
+        public static async Task<WindowInformation> CreateWindowAsync(bool isQuickCompare)
         {
-            static void CreateView()
+            // 1. If QuickCompare (rather than FontCompare), return the existing window
+            //    if we have one. (QuickCompare is ALWAYS single window)
+            if (isQuickCompare && QuickCompareViewModel.QuickCompareWindow is not null)
+                return QuickCompareViewModel.QuickCompareWindow;
+
+            static void CreateView(bool isQuickCompare)
             {
-                QuickCompareView view = new QuickCompareView();
+                QuickCompareView view = new(isQuickCompare);
                 Window.Current.Content = view;
                 Window.Current.Activate();
             }
 
-            var view = await WindowService.CreateViewAsync(CreateView, false);
+            var view = await WindowService.CreateViewAsync(() => CreateView(isQuickCompare), false);
             await WindowService.TrySwitchToWindowAsync(view, false);
+
+            if(isQuickCompare)
+                QuickCompareViewModel.QuickCompareWindow = view;
+            
+            return view;
+        }
+
+        public static Task AddAsync(FontVariant variant)
+        {
+            CharacterRenderingOptions opts = new(variant, new(), 12, null);
+            return AddAsync(opts);
+        }
+
+        public static async Task AddAsync(CharacterRenderingOptions options)
+        {
+            // 1. Ensure QuickCompare Window exists
+            var window = await CreateWindowAsync(true);
+
+            // 2. Add selected font to QuickCompare
+            await QuickCompareViewModel.QuickCompareWindow.CoreView.Dispatcher.ExecuteAsync(() =>
+            {
+                WeakReferenceMessenger.Default.Send(options, nameof(QuickCompareViewModel));
+            });
+
+            // 3. Try switch to view.
+            //    Task.Delay is required as TrySwitchToWindow may fail.
+            await Task.Delay(64);
+            await WindowService.TrySwitchToWindowAsync(QuickCompareViewModel.QuickCompareWindow, false);
         }
     }
 }

@@ -5,6 +5,7 @@
 #include <d2d1_3.h>
 #include <dwrite_3.h>
 #include "GlyphImageFormat.h"
+#include "ErrorHandling.h"
 
 namespace CharacterMapCX
 {
@@ -97,12 +98,5 @@ namespace CharacterMapCX
 		Microsoft::WRL::ComPtr<ID2D1DeviceContext1>  m_d2dDeviceContext;
 	};
 
-	inline void ThrowIfFailed(HRESULT hr)
-	{
-		if (FAILED(hr))
-		{
-			// Set a breakpoint on this line to catch Win32 API errors.
-			throw Platform::Exception::CreateException(hr);
-		}
-	}
+
 };

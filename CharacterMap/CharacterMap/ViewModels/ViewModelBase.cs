@@ -83,5 +83,13 @@ namespace CharacterMap.ViewModels
         protected virtual void OnPropertyChangeNotified(string propertyName) { }
 
         public WeakReferenceMessenger Messenger => WeakReferenceMessenger.Default;
+
+        public void Register<T>(Action<T> action, string token = null) where T : class
+        {
+            if (!string.IsNullOrWhiteSpace(token))
+                Messenger.Register<T, string>(this, token, (r, m) => { action(m); });
+            else
+                Messenger.Register<T>(this, (r, m) => { action(m); });
+        }
     }
 }

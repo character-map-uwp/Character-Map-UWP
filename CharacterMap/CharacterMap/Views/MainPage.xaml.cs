@@ -244,49 +244,22 @@ namespace CharacterMap.Views
                     || (PrintPresenter != null && PrintPresenter.Child != null))
                     return;
 
-                switch (e.Key)
+                if (!FontMap.HandleInput(e))
                 {
-                    case VirtualKey.C:
-                        FontMap.TryCopy();
-                        break;
-                    case VirtualKey.S:
-                        if (FontMap.ViewModel.SelectedVariant is FontVariant v)
-                            ExportManager.RequestExportFontFile(v);
+                    switch (e.Key)
+                    {
+                        case VirtualKey.N:
+                            if (ViewModel.SelectedFont is InstalledFont fnt)
+                                _ = FontMapView.CreateNewViewForFontAsync(fnt);
                             break;
-                    case VirtualKey.N:
-                        if (ViewModel.SelectedFont is InstalledFont fnt)
-                            _ = FontMapView.CreateNewViewForFontAsync(fnt);
-                        break;
-                    case VirtualKey.P:
-                        Messenger.Send(new PrintRequestedMessage());
-                        break;
-                    case VirtualKey.Delete:
-                        if (ViewModel.SelectedFont is InstalledFont font && font.HasImportedFiles)
-                            FlyoutHelper.RequestDelete(font);
-                        break;
-                    case VirtualKey.Add:
-                    case (VirtualKey)187:
-                        FontMap.ViewModel.IncreaseCharacterSize();
-                        break;
-                    case VirtualKey.Subtract:
-                    case (VirtualKey)189:
-                        FontMap.ViewModel.DecreaseCharacterSize();
-                        break;
-                    case VirtualKey.L:
-                        TogglePane_Click(null, null);
-                        break;
-                    case VirtualKey.R:
-                        ViewModel.Settings.EnablePreviewPane = !ViewModel.Settings.EnablePreviewPane;
-                        break;
-                    case VirtualKey.B:
-                        ViewModel.Settings.EnableCopyPane = !ViewModel.Settings.EnableCopyPane;
-                        break;
-                    case VirtualKey.T:
-                        FontMap.ViewModel.ChangeDisplayMode();
-                        break;
-                    case VirtualKey.Q:
-                        _ = QuickCompareView.CreateNewWindowAsync();
-                        break;
+                        case VirtualKey.Delete:
+                            if (ViewModel.SelectedFont is InstalledFont font && font.HasImportedFiles)
+                                FlyoutHelper.RequestDelete(font);
+                            break;
+                        case VirtualKey.L:
+                            TogglePane_Click(null, null);
+                            break;
+                    }
                 }
             }
         }

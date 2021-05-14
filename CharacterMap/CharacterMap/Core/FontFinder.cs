@@ -119,7 +119,8 @@ namespace CharacterMap.Core
                 var resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
 
                 /* Add imported fonts */
-                IReadOnlyList<DWriteFontSet> sets = DirectWrite.GetFonts(files.Select(f => new Uri(GetAppPath(f))).ToList());
+                IReadOnlyList<DWriteFontSet> sets = interop.GetFonts(files).ToList();
+
                 for (int i = 0; i < files.Count; i++)
                 {
                     var file = files[i];
@@ -218,7 +219,7 @@ namespace CharacterMap.Core
                     /* Check if we already have a listing for this fontFamily */
                     if (fontList.TryGetValue(familyName, out var fontFamily))
                     {
-                        fontFamily.AddVariant(font);
+                        fontFamily.AddVariant(font, file);
                     }
                     else
                     {
@@ -459,7 +460,6 @@ namespace CharacterMap.Core
         {
             await InitialiseAsync().ConfigureAwait(false);
 
-            var src = file;
             var convert = await FontConverter.TryConvertAsync(file);
             if (convert.Result != ConversionStatus.OK)
                 return null;
@@ -471,7 +471,10 @@ namespace CharacterMap.Core
 
             var resultList = new Dictionary<string, InstalledFont>();
 
-            var fontSet = DirectWrite.GetFonts(new Uri(GetAppPath(localFile)));
+            var interop = Ioc.Default.GetService<NativeInterop>();
+            var fontSet = interop.GetFonts(localFile);
+
+            //var fontSet = DirectWrite.GetFonts(new Uri(GetAppPath(localFile)));
             foreach (var font in fontSet.Fonts)
             {
                 AddFont(resultList, font, localFile);
@@ -481,8 +484,9 @@ namespace CharacterMap.Core
             return resultList.Count > 0 ? resultList.First().Value : null;
         }
 
-        public static bool IsMDL2(FontVariant variant) => variant != null && variant.FamilyName.Contains("MDL2");
-        public static bool IsSegoeMDL2(FontVariant variant) => variant != null && variant.FamilyName.Equals("Segoe MDL2 Assets");
+        public static bool IsMDL2(FontVariant variant) => variant != null && (variant.FamilyName.Contains("MDL2") || variant.FamilyName.Equals("Segoe Fluent Icons"));
+        public static bool IsSystemSymbolFamily(FontVariant variant) => variant != null && (
+            variant.FamilyName.Equals("Segoe MDL2 Assets") || variant.FamilyName.Equals("Segoe Fluent Icons"));
 
     }
 }

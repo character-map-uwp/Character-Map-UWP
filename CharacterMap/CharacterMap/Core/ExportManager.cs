@@ -563,7 +563,7 @@ namespace CharacterMap.Core
             if (string.IsNullOrWhiteSpace(fileName))
                 fileName = $"{font.FamilyName} {font.PreferredName}{ext}";
 
-            return $"{Humanizer.To.SentenceCase.Transform(Path.GetFileNameWithoutExtension(fileName))}{Path.GetExtension(fileName).ToLower()}";
+            return $"{Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false)}{Path.GetExtension(fileName).ToLower()}";
         }
 
     }

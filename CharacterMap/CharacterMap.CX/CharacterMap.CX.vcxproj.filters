@@ -24,6 +24,7 @@
       <Filter>Controls</Filter>
     </ClCompile>
     <ClCompile Include="NativeInterop.cpp" />
+    <ClCompile Include="CustomFontManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -98,6 +99,13 @@
     <ClInclude Include="MetaTableReader.h">
       <Filter>Tables</Filter>
     </ClInclude>
+    <ClInclude Include="CustomFontManager.h" />
+    <ClInclude Include="Singleton.h" />
+    <ClInclude Include="WinStringWrapper.h" />
+    <ClInclude Include="WinStringBuilder.h" />
+    <ClInclude Include="LifeSpanTracker.h" />
+    <ClInclude Include="ErrorHandling.h" />
+    <ClInclude Include="LockUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml" />

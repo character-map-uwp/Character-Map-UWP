@@ -912,7 +912,7 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
     <value>Variable Fonts</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
-    <value>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</value>
+    <value>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>Shows or hides the preview pane on the right of the screen. If turned off, many functions can still be accessed by right clicking or touch holding on a character inside the character grid.</value>
@@ -1024,5 +1024,17 @@ Default variant copied.</value>
   </data>
   <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>List Layout</value>
+  </data>
+  <data name="QuickCompareTitle.Text" xml:space="preserve">
+    <value>Quick Compare</value>
+  </data>
+  <data name="AddToQuickCompare.Text" xml:space="preserve">
+    <value>Add to quick compare</value>
+  </data>
+  <data name="CompareFontsButton.Text" xml:space="preserve">
+    <value>Compare all Fonts</value>
+  </data>
+  <data name="BtnGithubCommits.Content" xml:space="preserve">
+    <value>View the latest commits on Github</value>
   </data>
 </root>

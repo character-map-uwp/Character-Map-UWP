@@ -256,11 +256,8 @@ namespace CharacterMap.Views
             });
         }
 
-        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        public bool HandleInput(KeyRoutedEventArgs e)
         {
-            if (e.Key == VirtualKey.F11)
-                Utils.ToggleFullScreenMode();
-
             var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
             if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
@@ -293,11 +290,27 @@ namespace CharacterMap.Views
                     case VirtualKey.T:
                         ViewModel.ChangeDisplayMode();
                         break;
-                    case VirtualKey.Q:
-                        _ = QuickCompareView.CreateNewWindowAsync();
+                    case VirtualKey.K:
+                        _ = QuickCompareView.CreateWindowAsync(false);
                         break;
+                    case VirtualKey.Q:
+                        if (ViewModel.SelectedVariant is FontVariant va)
+                            _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions);
+                        break;
+                    default:
+                        return false;
                 }
             }
+
+            return true;
+        }
+
+        private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == VirtualKey.F11)
+                Utils.ToggleFullScreenMode();
+            else
+                HandleInput(e);
         }
 
         private void UpdateDevUtils(bool animate = true)
@@ -609,7 +622,7 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     MoreMenu,
                     font,
-                    ViewModel.SelectedVariant,
+                    ViewModel.RenderingOptions,
                     this.Tag as FrameworkElement,
                     IsStandalone,
                     true);
@@ -976,13 +989,23 @@ namespace CharacterMap.Views
 
     public partial class FontMapView
     {
-        public static async Task CreateNewViewForFontAsync(InstalledFont font, StorageFile sourceFile = null)
+        public static async Task CreateNewViewForFontAsync(InstalledFont font, StorageFile sourceFile = null, CharacterRenderingOptions options = null)
         {
             void CreateView()
             {
-                FontMapView map = new FontMapView { 
+                FontMapView map = new() { 
                     IsStandalone = true, 
-                    ViewModel = { SelectedFont = font, IsExternalFile = sourceFile != null, SourceFile = sourceFile } }; 
+                    ViewModel = { SelectedFont = font, IsExternalFile = sourceFile != null, SourceFile = sourceFile } };
+
+                // Attempt to apply any custom rendering options from the source view
+                if (options != null && options.Variant != null && font.Variants.Contains(options.Variant))
+                {
+                    map.ViewModel.SelectedVariant = options.Variant;
+                    
+                    if (options.DefaultTypography != null)
+                        map.ViewModel.SelectedTypography = options.DefaultTypography;
+                }
+
                 Window.Current.Content = map;
                 Window.Current.Activate();
             }

@@ -1080,8 +1080,9 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
           <target state="translated">மாறி எழுத்துருக்கள்</target>
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
-          <source>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</source>
-          <target state="translated">இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</target>
+          <source>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</source>
+          <target state="needs-review-translation">இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
           <source>Shows or hides the preview pane on the right of the screen. If turned off, many functions can still be accessed by right clicking or touch holding on a character inside the character grid.</source>
@@ -1230,6 +1231,22 @@ Default variant copied.</target>
         <trans-unit id="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>List Layout</source>
           <target state="new">List Layout</target>
+        </trans-unit>
+        <trans-unit id="QuickCompareTitle.Text" translate="yes" xml:space="preserve">
+          <source>Quick Compare</source>
+          <target state="new">Quick Compare</target>
+        </trans-unit>
+        <trans-unit id="AddToQuickCompare.Text" translate="yes" xml:space="preserve">
+          <source>Add to quick compare</source>
+          <target state="new">Add to quick compare</target>
+        </trans-unit>
+        <trans-unit id="CompareFontsButton.Text" translate="yes" xml:space="preserve">
+          <source>Compare all Fonts</source>
+          <target state="new">Compare all Fonts</target>
+        </trans-unit>
+        <trans-unit id="BtnGithubCommits.Content" translate="yes" xml:space="preserve">
+          <source>View the latest commits on Github</source>
+          <target state="new">View the latest commits on Github</target>
         </trans-unit>
       </group>
     </body>

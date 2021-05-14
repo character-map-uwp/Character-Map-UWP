@@ -298,15 +298,19 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                new("Latest Release",
+                new("Latest Release", // May
+                    "- Added glyph name and search support for Segoe Fluent Icons\n" +
+                    "- Added Visual Basic developer features\n" +
+                    "- Added ability to compare individual Font Face's with Quick Compare view (Ctrl + Q)"),
+                new("2021.2.0.0 (Feb 2021)",
                     "- Added ability to open and import WOFF fonts (WOFF fonts are converted to OTF during import)\n" +
                     "- Added C++/CX, C++/WinRT & Xamarin.Forms developer features\n" +
                     "- Copying Path Icon from developer code now copies the path with typography applied\n" +
                     "- Added Adobe Glyph List mapping support for a font's post table names\n" +
                     "- Added character filtering by Unicode category to main view\n" +
                     "- Added Fullscreen keyboard shortcut (F11)\n" +
-                    "- Added Compare Fonts view (Ctrl + Q)"),
-                new("2021.1.0.0 (Jan 1 2021)",
+                    "- Added Compare Fonts view (Ctrl + K)"),
+                new("2021.1.0.0 (Jan 2021)",
                     "- Added Font list search\n" +
                     "- Added ability to see all typographic variations for a single character from the character preview pane\n" +
                     "- Added support for a Font's own custom glyph names in search and character preview"),

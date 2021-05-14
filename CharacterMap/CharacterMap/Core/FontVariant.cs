@@ -2,7 +2,6 @@
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMapCX;
-using Humanizer;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
@@ -181,19 +180,19 @@ namespace CharacterMap.Core
 
         private List<KeyValuePair<string, string>> LoadFontInformation()
         {
-            KeyValuePair<string, string> Get(CanvasFontInformation info)
-            {
-                var infos = FontFace.GetInformationalStrings(info);
-                if (infos.Count == 0)
-                    return new KeyValuePair<string, string>();
+            //KeyValuePair<string, string> Get(CanvasFontInformation info)
+            //{
+            //    var infos = FontFace.GetInformationalStrings(info);
+            //    if (infos.Count == 0)
+            //        return new KeyValuePair<string, string>();
 
-                var name = info.Humanize().Transform(To.TitleCase);
-                var dic = infos.ToDictionary(k => k.Key, k => k.Value);
-                if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
-                    || infos.TryGetValue("en-us", out value))
-                    return KeyValuePair.Create(name, value);
-                return KeyValuePair.Create(name, infos.First().Value);
-            }
+            //    var name = info.Humanise();
+            //    var dic = infos.ToDictionary(k => k.Key, k => k.Value);
+            //    if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
+            //        || infos.TryGetValue("en-us", out value))
+            //        return KeyValuePair.Create(name, value);
+            //    return KeyValuePair.Create(name, infos.First().Value);
+            //}
 
             return INFORMATIONS.Select(i => GetInfoKey(FontFace, i)).Where(s => s.Key != null).ToList();
         }
@@ -204,7 +203,7 @@ namespace CharacterMap.Core
             if (infos.Count == 0)
                 return new KeyValuePair<string, string>();
 
-            var name = info.Humanize().Transform(To.TitleCase);
+            var name = info.Humanise();
             var dic = infos.ToDictionary(k => k.Key, k => k.Value);
             if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
                 || infos.TryGetValue("en-us", out value))

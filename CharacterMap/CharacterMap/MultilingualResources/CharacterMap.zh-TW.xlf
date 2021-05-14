@@ -1072,8 +1072,8 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
           <target state="new">Variable Fonts</target>
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
-          <source>This font has variable features. To explore them, switch to Type Ramp view using the view button above.</source>
-          <target state="new">This font has variable features. To explore them, switch to Type Ramp view using the view button above.</target>
+          <source>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</source>
+          <target state="new">This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</target>
         </trans-unit>
         <trans-unit id="BtnReset.Content" translate="yes" xml:space="preserve">
           <source>Reset</source>
@@ -1226,6 +1226,22 @@ Default variant copied.</target>
         <trans-unit id="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>List Layout</source>
           <target state="new">List Layout</target>
+        </trans-unit>
+        <trans-unit id="QuickCompareTitle.Text" translate="yes" xml:space="preserve">
+          <source>Quick Compare</source>
+          <target state="new">Quick Compare</target>
+        </trans-unit>
+        <trans-unit id="AddToQuickCompare.Text" translate="yes" xml:space="preserve">
+          <source>Add to quick compare</source>
+          <target state="new">Add to quick compare</target>
+        </trans-unit>
+        <trans-unit id="CompareFontsButton.Text" translate="yes" xml:space="preserve">
+          <source>Compare all Fonts</source>
+          <target state="new">Compare all Fonts</target>
+        </trans-unit>
+        <trans-unit id="BtnGithubCommits.Content" translate="yes" xml:space="preserve">
+          <source>View the latest commits on Github</source>
+          <target state="new">View the latest commits on Github</target>
         </trans-unit>
       </group>
     </body>

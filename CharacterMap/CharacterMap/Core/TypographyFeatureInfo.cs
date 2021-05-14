@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Humanizer;
 using CharacterMapCX;
 
 namespace CharacterMap.Core
@@ -28,7 +27,7 @@ namespace CharacterMap.Core
             }
             else if (IsNamedFeature(Feature))
             {
-                DisplayName = Feature.Humanize().Transform(To.TitleCase);
+                DisplayName = Feature.Humanise();
             }
             else
             {

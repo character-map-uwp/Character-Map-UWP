@@ -19,6 +19,14 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
+        <MenuFlyout x:Name="ContextFlyout" Placement="Bottom">
+            <MenuFlyoutItem
+                Click="Remove_Clicked"
+                Icon="Clear"
+                Text="Remove" />
+            <MenuFlyoutItem x:Uid="OpenInNewWindow" Icon="NewWindow" Click="OpenWindow_Click" />
+        </MenuFlyout>
+
         <Style x:Key="ChromelessButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
@@ -130,13 +138,34 @@
                     <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="face(s)" />
                 </TextBlock>
                 <TextBlock
-                    Margin="0 24 0 0"
                     x:Phase="1"
+                    Margin="0 24 0 0"
                     FontFamily="{x:Bind DefaultVariant.Source}"
                     FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
                     FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
                     FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
                     IsColorFontEnabled="True"
+                    MaxLines="5"
+                    TextTrimming="CharacterEllipsis"
+                    TextWrapping="Wrap" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="StackTemplateQuick" x:DataType="m:CharacterRenderingOptions">
+            <Grid>
+                <TextBlock
+                    Margin="0 4 0 0"
+                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                    Text="{x:Bind GetName()}" />
+                <TextBlock
+                    x:Phase="1"
+                    Margin="0 24 0 0"
+                    core:Properties.Typography="{x:Bind DefaultTypography}"
+                    FontFamily="{x:Bind Variant.Source}"
+                    FontStretch="{x:Bind Variant.FontFace.Stretch}"
+                    FontStyle="{x:Bind Variant.FontFace.Style}"
+                    FontWeight="{x:Bind Variant.FontFace.Weight}"
+                    IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
                     MaxLines="5"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="Wrap" />
@@ -237,7 +266,6 @@
             </Setter>
         </Style>
 
-
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot">
@@ -282,6 +310,7 @@
             Grid.Row="1"
             Height="{StaticResource TitleRowHeight}">
             <TextBlock
+                x:Name="CompareFontsTitle"
                 x:Uid="CompareFontsTitle"
                 Margin="24 0"
                 HorizontalAlignment="Left"
@@ -436,7 +465,7 @@
                         Margin="0 0 4 0"
                         CornerRadius="0"
                         Maximum="64"
-                        Minimum="20"
+                        Minimum="10"
                         ValueChanged="FontSizeSlider_ValueChanged"
                         Value="40" />
 
@@ -470,10 +499,8 @@
                     x:Name="Repeater"
                     Padding="0 0 24 0"
                     ContainerContentChanging="Repeater_ContainerContentChanging"
-                    IsItemClickEnabled="True"
-                    ItemClick="Repeater_ItemClick"
                     ItemTemplate="{StaticResource StackTemplate}"
-                    ItemsSource="{x:Bind ViewModel.FontList, Mode=OneWay}">
+                    ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid
@@ -489,39 +516,15 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="GridViewItem">
-                                        <ContentPresenter
-                                            x:Name="ContentPresenter"
+                                        <Button
                                             HorizontalContentAlignment="Stretch"
                                             VerticalContentAlignment="Stretch"
                                             AutomationProperties.AccessibilityView="Raw"
-                                            Background="Transparent"
+                                            Click="ItemClick"
                                             Content="{TemplateBinding Content}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}">
-                                            <VisualStateManager.VisualStateGroups>
-                                                <VisualStateGroup x:Name="CommonStates">
-                                                    <VisualState x:Name="Normal">
-                                                        <Storyboard>
-                                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                                        </Storyboard>
-                                                    </VisualState>
-                                                    <VisualState x:Name="PointerOver">
-                                                        <Storyboard>
-                                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                                        </Storyboard>
-                                                    </VisualState>
-                                                    <VisualState x:Name="Pressed">
-                                                        <Storyboard>
-                                                            <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                                        </Storyboard>
-                                                    </VisualState>
-                                                    <VisualState x:Name="Disabled">
-                                                        <VisualState.Setters>
-                                                            <Setter Target="ContentPresenter.Opacity" Value="0.5" />
-                                                        </VisualState.Setters>
-                                                    </VisualState>
-                                                </VisualStateGroup>
-                                            </VisualStateManager.VisualStateGroups>
-                                        </ContentPresenter>
+                                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                                            ContextRequested="ItemContextRequested"
+                                            Style="{StaticResource ChromelessButtonStyle}" />
                                     </ControlTemplate>
                                 </Setter.Value>
                             </Setter>
@@ -764,6 +767,16 @@
                         <Setter Target="Repeater.ItemsPanel" Value="{StaticResource StackingPanelTemplate}" />
                         <Setter Target="DetailsRepeater.Layout" Value="{StaticResource StackLayout}" />
                         <Setter Target="FontSizeSlider.Maximum" Value="128" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="CompareStates">
+                <VisualState x:Name="QuickCompareState">
+                    <VisualState.Setters>
+                        <Setter Target="FontListFilter.Visibility" Value="Collapsed" />
+                        <Setter Target="CompareFontsTitle.Text" Value="{core:Localizer Key='QuickCompareTitle/Text'}" />
+                        <Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplateQuick}" />
+                        <Setter Target="Repeater.IsItemClickEnabled" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
