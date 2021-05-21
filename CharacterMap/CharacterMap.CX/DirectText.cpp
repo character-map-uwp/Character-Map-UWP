@@ -35,11 +35,21 @@ DependencyProperty^ DirectText::_UnicodeIndexProperty = nullptr;
 DependencyProperty^ DirectText::_TextProperty = nullptr;
 DependencyProperty^ DirectText::_FontFaceProperty = nullptr;
 DependencyProperty^ DirectText::_TypographyProperty = nullptr;
+DependencyProperty^ DirectText::_IsTextWrappingEnabledProperty = nullptr;
 
 DirectText::DirectText()
 {
 	DefaultStyleKey = "CharacterMapCX.Controls.DirectText";
     m_isStale = true;
+
+    auto c = ref new DependencyPropertyChangedCallback(this, &DirectText::OnFontSizeChanged);
+    this->RegisterPropertyChangedCallback(DirectText::FontSizeProperty, c);
+}
+
+void DirectText::OnFontSizeChanged(DependencyObject^ d, DependencyProperty^ p)
+{
+    DirectText^ c = (DirectText^)d;
+    c->Update();
 }
 
 void DirectText::OnApplyTemplate()
@@ -68,7 +78,6 @@ void DirectText::OnApplyTemplate()
         {
             m_drawToken = m_canvas->Draw +=
                 ref new TypedEventHandler<CanvasControl^, CanvasDrawEventArgs^>(this, &DirectText::OnDraw);
-
             m_canvas->CreateResources +=
                 ref new TypedEventHandler<CanvasControl^, CanvasCreateResourcesEventArgs^>(this, &DirectText::OnCreateResources);
         }
@@ -83,6 +92,11 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     if (!hasText || Typography == nullptr || m_canvas == nullptr || !m_canvas->ReadyToDraw)
         return Size(this->MinWidth, this->MinHeight);
+
+    auto dpi = m_canvas->Dpi / 96.0f;
+    auto m = m_canvas->Device->MaximumBitmapSizeInPixels / dpi;
+
+    m_canvas->Measure(size);
 
     if (m_layout == nullptr || m_isStale)
     {
@@ -108,51 +122,57 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         else
             format->Options = CanvasDrawTextOptions::Clip;
 
-        /* SET FALLBACK */
+        if (IsTextWrappingEnabled)
+        {
+            format->TrimmingGranularity = CanvasTextTrimmingGranularity::Word;
+            format->TrimmingSign = CanvasTrimmingSign::Ellipsis;
+        }
+
+        /* Set blank fallback font */
         ComPtr<IDWriteTextFormat3> dformat = GetWrappedResource<IDWriteTextFormat3>(format);
         if (FallbackFont != nullptr)
             dformat->SetFontFallback(FallbackFont->Fallback.Get());
 
-        /* SET AXIS */
-        if (Axis->Size > 0)
+        /* Set Variable Font Axis */
+        if (Axis != nullptr && Axis->Size > 0)
         {
             DWRITE_FONT_AXIS_VALUE* values = new DWRITE_FONT_AXIS_VALUE[Axis->Size];
             for (int i = 0; i < Axis->Size; i++)
             {
                 values[i] = Axis->GetAt(i)->GetDWriteValue();
             }
-
             dformat->SetFontAxisValues(values, Axis->Size);
         }
 
         dformat = nullptr;
+        ComPtr<IDWriteTextLayout4> dlayout;
 
         /* CREATE LAYOUT */
         auto typography = ref new CanvasTypography();
         if (Typography->Feature != CanvasTypographyFeatureName::None)
             typography->AddFeature(Typography->Feature, 1);
 
+
         auto device = m_canvas->Device;
-        auto layout = ref new CanvasTextLayout(device, text, format, device->MaximumBitmapSizeInPixels, device->MaximumBitmapSizeInPixels);
-        layout->SetTypography(0, layout->LineMetrics[0].CharacterCount, typography);
+
+        float width = IsTextWrappingEnabled ? size.Width : m;
+        float height = IsTextWrappingEnabled ? size.Height : m;
+        width = min(width, m);
+        height = min(height, m);
+
+        auto layout = ref new CanvasTextLayout(device, text, format, width, height);
+        layout->SetTypography(0, text->Length(), typography);
         if(IsColorFontEnabled)
             layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
         else
             layout->Options = CanvasDrawTextOptions::Clip;
 
-
         m_layout = layout;
         m_render = true;
-
+        
         m_canvas->Invalidate();
-
         delete format;
     }
-
-    auto dpis = m_canvas->DpiScale;
-    auto dpi = m_canvas->Dpi / 96.0f;
-
-    auto m = m_layout->Device->MaximumBitmapSizeInPixels / dpi;
 
     auto minh = min(m_layout->DrawBounds.Top, m_layout->LayoutBounds.Top);
     auto maxh = max(m_layout->DrawBounds.Bottom, m_layout->LayoutBounds.Bottom);
@@ -161,35 +181,25 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
     auto maxw = max(m_layout->DrawBounds.Right, m_layout->LayoutBounds.Right);
 
     auto targetsize = Size(min(m, ceil(maxw - minw)), min(m, ceil(maxh - minh)));
-    return targetsize;
-}
 
-void CharacterMapCX::Controls::DirectText::Render(CanvasDrawingSession^ ds)
-{
-    if (m_layout == nullptr)
-        return;
-  
-    auto left = -min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);
-    ds->DrawTextLayout(m_layout, float2(left, 0), Windows::UI::Colors::Green);
+
+    return targetsize;
 }
 
 void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
 {
-    //Render(args->DrawingSession);
-
     if (m_layout == nullptr)
         return;
 
+    args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
+
     auto left = -min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);
     args->DrawingSession->DrawTextLayout(m_layout, float2(left, 0), ((SolidColorBrush^)this->Foreground)->Color);
+
+    m_render = false;
 }
 
 void DirectText::OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args)
 {
     Update();
 };
-
-void CharacterMapCX::Controls::DirectText::OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-    Update();
-}

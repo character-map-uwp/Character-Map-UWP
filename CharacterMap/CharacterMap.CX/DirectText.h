@@ -76,6 +76,11 @@ namespace CharacterMapCX
 				DependencyProperty^ get() { return _TypographyProperty; }
 			}
 
+			static property DependencyProperty^ IsTextWrappingEnabledProperty
+			{
+				DependencyProperty^ get() { return _IsTextWrappingEnabledProperty; }
+			}
+
 			property DWriteFallbackFont^ FallbackFont
 			{
 				DWriteFallbackFont^ get() { return (DWriteFallbackFont^)GetValue(FallbackFontProperty); }
@@ -117,6 +122,13 @@ namespace CharacterMapCX
 				ITypographyInfo^ get() { return (ITypographyInfo^)GetValue(TypographyProperty); }
 				void set(ITypographyInfo^ value) { SetValue(TypographyProperty, value); }
 			}
+
+			property bool IsTextWrappingEnabled
+			{
+				bool get() { return (bool)GetValue(IsTextWrappingEnabledProperty); }
+				void set(bool value) { SetValue(IsTextWrappingEnabledProperty, value); }
+			}
+
 #pragma endregion
 
 		private:
@@ -127,12 +139,15 @@ namespace CharacterMapCX
 			static DependencyProperty^ _AxisProperty;
 			static DependencyProperty^ _FontFaceProperty;
 			static DependencyProperty^ _TypographyProperty;
+			static DependencyProperty^ _IsTextWrappingEnabledProperty;
 
 			Windows::Foundation::EventRegistrationToken m_drawToken;
 			CanvasControl^ m_canvas;
 			CanvasTextLayout^ m_layout;
 			bool m_isStale;
 			bool m_render;
+
+			void OnFontSizeChanged(DependencyObject^ d, DependencyProperty^ p);
 
 			static void OnRenderPropertyChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 			{
@@ -146,10 +161,8 @@ namespace CharacterMapCX
 				this->InvalidateMeasure();
 			}
 
-			void Render(CanvasDrawingSession^ ds);
 			void OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args);
 			void OnCreateResources(CanvasControl^ sender, CanvasCreateResourcesEventArgs^ args);
-			void OnLoaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		};
 
 
@@ -200,6 +213,12 @@ namespace CharacterMapCX
 			{
 				_TypographyProperty = DependencyProperty::Register(
 					"Typography", ITypographyInfo::typeid, DirectText::typeid, meta);
+			}
+
+			if (_IsTextWrappingEnabledProperty == nullptr)
+			{
+				_IsTextWrappingEnabledProperty = DependencyProperty::Register(
+					"IsTextWrappingEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(false, callback));
 			}
 		}
 	}
