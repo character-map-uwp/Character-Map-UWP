@@ -3,6 +3,7 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
+using CharacterMapCX.Controls;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -17,6 +18,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CharacterMap.Views
 {
@@ -218,16 +220,43 @@ namespace CharacterMap.Views
 
         void SetText(Panel root, string text)
         {
-            ((TextBlock)root.Children[root.Children.Count - 1]).Text = text;
+            var t = root.Children.Skip(1).FirstOrDefault();
+            if (t is TextBlock tb)
+                tb.Text = text;
+            else if (t is DirectText d)
+                d.Text = text;
         }
 
         void SetFontSize(Panel root, double size)
         {
-            ((TextBlock)root.Children[root.Children.Count - 1]).FontSize = size;
+            var t = root.Children.Skip(1).FirstOrDefault();
+            if (t is TextBlock tb)
+                tb.FontSize = size;
+            else if (t is DirectText d)
+                d.FontSize = size;
+        }
+
+        private void DetailsRepeater_ElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
+        {
+            // Unload x:Bind content
+            if (args.Element is FrameworkElement f && f.Tag is FrameworkElement t)
+            {
+                UnloadObject(t);
+                f.Tag = null;
+            }
         }
 
         private void Repeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
+            // Handle x:Loading correct Template. x:Bind doesn't work here for reasons
+            if (args.Element is FrameworkElement f && f.DataContext is CharacterRenderingOptions o)
+            {
+                if (o.RequiresNativeRender)
+                    f.Tag = f.FindName("NativeRender");
+                else
+                    f.Tag = f.FindName("XAMLRender");
+            }
+
             if (args.Element is Button b && b.Content is Panel g)
             {
                 SetText(g, InputText.Text);
@@ -333,11 +362,28 @@ namespace CharacterMap.Views
 
         private void Repeater_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
+            var g = args.ItemContainer.GetFirstDescendantOfType<Panel>();
             if (!args.InRecycleQueue)
             {
-                var g = args.ItemContainer.GetFirstDescendantOfType<Panel>();
+                g.DataContext = args.Item;
+                if (args.Item is CharacterRenderingOptions o)
+                {
+                    if (o.RequiresNativeRender)
+                        g.Tag = g.FindName("NativeRender");
+                    else
+                        g.Tag = g.FindName("XAMLRender");
+                }
+
                 SetText(g, ViewModel.Text);
                 SetFontSize(g, FontSizeSlider.Value);
+            }
+            else
+            {
+                if (g.Tag is FrameworkElement t)
+                {
+                    UnloadObject(t);
+                    g.Tag = null;
+                }
             }
 
             if (ResourceHelper.AppSettings.AllowExpensiveAnimations)
@@ -378,12 +424,6 @@ namespace CharacterMap.Views
                 QuickCompareViewModel.QuickCompareWindow = view;
             
             return view;
-        }
-
-        public static Task AddAsync(FontVariant variant)
-        {
-            CharacterRenderingOptions opts = new(variant, new(), 12, null);
-            return AddAsync(opts);
         }
 
         public static async Task AddAsync(CharacterRenderingOptions options)

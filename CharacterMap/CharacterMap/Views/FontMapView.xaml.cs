@@ -295,7 +295,7 @@ namespace CharacterMap.Views
                         break;
                     case VirtualKey.Q:
                         if (ViewModel.SelectedVariant is FontVariant va)
-                            _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions);
+                            _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
                         break;
                     default:
                         return false;
@@ -622,7 +622,7 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     MoreMenu,
                     font,
-                    ViewModel.RenderingOptions,
+                    ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
                     this.Tag as FrameworkElement,
                     IsStandalone,
                     true);

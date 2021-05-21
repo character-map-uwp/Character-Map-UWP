@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CharacterMapCX;
+using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.System;
@@ -11,6 +13,11 @@ namespace CharacterMap.Helpers
 {
     public static class Extensions
     {
+        public static IReadOnlyList<DWriteFontAxis> Copy(this IEnumerable<DWriteFontAxis> axis)
+        {
+            return axis.Select(a => a.WithValue(a.Value)).ToList();
+        }
+
         public static Task ExecuteAsync(this CoreDispatcher d, Func<Task> action, CoreDispatcherPriority p = CoreDispatcherPriority.Normal)
         {
             TaskCompletionSource<bool> tcs = new ();

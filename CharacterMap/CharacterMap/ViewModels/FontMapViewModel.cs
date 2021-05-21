@@ -384,7 +384,14 @@ namespace CharacterMap.ViewModels
             else
             {
                 var t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
-                RenderingOptions = new CharacterRenderingOptions(SelectedVariant, new List<TypographyFeatureInfo> { SelectedCharTypography }, 64, SelectedCharAnalysis);
+
+                RenderingOptions = new CharacterRenderingOptions(
+                    SelectedVariant, 
+                    new() { SelectedCharTypography }, 
+                    64, 
+                    SelectedCharAnalysis, 
+                    VariationAxis);
+
                 Providers = RenderingOptions.GetDevProviders(SelectedChar);
                 SetDev(t);
 

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:m="using:CharacterMap.Models"
@@ -24,7 +25,10 @@
                 Click="Remove_Clicked"
                 Icon="Clear"
                 Text="Remove" />
-            <MenuFlyoutItem x:Uid="OpenInNewWindow" Icon="NewWindow" Click="OpenWindow_Click" />
+            <MenuFlyoutItem
+                x:Uid="OpenInNewWindow"
+                Click="OpenWindow_Click"
+                Icon="NewWindow" />
         </MenuFlyout>
 
         <Style x:Key="ChromelessButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
@@ -156,8 +160,26 @@
                 <TextBlock
                     Margin="0 4 0 0"
                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                    Text="{x:Bind GetName()}" />
+                    Text="{x:Bind GetName()}"
+                    TextTrimming="CharacterEllipsis"
+                    ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" />
+                <cx:DirectText
+                    x:Name="NativeRender"
+                    x:Load="False"
+                    x:Phase="1"
+                    Margin="0 24 0 0"
+                    Axis="{x:Bind Axis}"
+                    FontFace="{x:Bind Variant.FontFace}"
+                    FontFamily="{x:Bind Variant.Source}"
+                    FontStretch="{x:Bind Variant.FontFace.Stretch}"
+                    FontStyle="{x:Bind Variant.FontFace.Style}"
+                    FontWeight="{x:Bind Variant.FontFace.Weight}"
+                    IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
+                    IsTextWrappingEnabled="True"
+                    Typography="{x:Bind DXTypography}" />
                 <TextBlock
+                    x:Name="XAMLRender"
+                    x:Load="False"
                     x:Phase="1"
                     Margin="0 24 0 0"
                     core:Properties.Typography="{x:Bind DefaultTypography}"
@@ -590,6 +612,7 @@
                     </FrameworkElement.RenderTransform>
                     <muxc:ItemsRepeater
                         x:Name="DetailsRepeater"
+                        ElementClearing="DetailsRepeater_ElementClearing"
                         ElementPrepared="Repeater_ElementPrepared"
                         ItemsSource="{x:Bind ViewModel.SelectedFont.Variants, Mode=OneWay}"
                         Layout="{StaticResource GridLayout}"

@@ -432,7 +432,7 @@ namespace CharacterMap.Helpers
                     }
 
                     // 5.1. Get providers for the grid character
-                    var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures };
+                    var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures, Axis = viewmodel.VariationAxis.Copy() };
                     var providers = DevProviderBase.GetProviders(options, c);
 
                     // 5.2. Create child items.
