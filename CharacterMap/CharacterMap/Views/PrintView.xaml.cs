@@ -2,6 +2,7 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -106,6 +107,8 @@ namespace CharacterMap.Views
 
             this.InitializeComponent();
             Composition.SetupOverlayPanelAnimation(this);
+
+            LeakTrackingService.Register(this);
         }
 
         public void Show()

@@ -124,7 +124,7 @@
                     Canvas.Top="24"
                     Width="400"
                     MaxHeight="226"
-                    FontFamily="{x:Bind DefaultVariant.Source}"
+                    FontFamily="{x:Bind DefaultVariant.DisplaySource}"
                     FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
                     FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
                     FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
@@ -144,7 +144,7 @@
                 <TextBlock
                     x:Phase="1"
                     Margin="0 24 0 0"
-                    FontFamily="{x:Bind DefaultVariant.Source}"
+                    FontFamily="{x:Bind DefaultVariant.DisplaySource}"
                     FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
                     FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
                     FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
@@ -159,18 +159,20 @@
             <Grid>
                 <TextBlock
                     Margin="0 4 0 0"
+                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
                     Text="{x:Bind GetName()}"
                     TextTrimming="CharacterEllipsis"
                     ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" />
                 <cx:DirectText
                     x:Name="NativeRender"
-                    x:Load="False"
+                    x:Load="{x:Bind RequiresNativeRender, FallbackValue=False, TargetNullValue=False}"
                     x:Phase="1"
                     Margin="0 24 0 0"
                     Axis="{x:Bind Axis}"
+                    FallbackFont="{x:Bind core:Converters.GetFontFallback()}"
                     FontFace="{x:Bind Variant.FontFace}"
-                    FontFamily="{x:Bind Variant.Source}"
+                    FontFamily="{x:Bind Variant.DisplaySource, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
                     FontStretch="{x:Bind Variant.FontFace.Stretch}"
                     FontStyle="{x:Bind Variant.FontFace.Style}"
                     FontWeight="{x:Bind Variant.FontFace.Weight}"
@@ -179,11 +181,11 @@
                     Typography="{x:Bind DXTypography}" />
                 <TextBlock
                     x:Name="XAMLRender"
-                    x:Load="False"
+                    x:Load="{x:Bind core:Converters.False(RequiresNativeRender), FallbackValue=False, TargetNullValue=False}"
                     x:Phase="1"
                     Margin="0 24 0 0"
                     core:Properties.Typography="{x:Bind DefaultTypography}"
-                    FontFamily="{x:Bind Variant.Source}"
+                    FontFamily="{x:Bind Variant.DisplaySource, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
                     FontStretch="{x:Bind Variant.FontFace.Stretch}"
                     FontStyle="{x:Bind Variant.FontFace.Style}"
                     FontWeight="{x:Bind Variant.FontFace.Weight}"
@@ -625,7 +627,7 @@
                                     </TextBlock>
                                     <TextBlock
                                         Margin="0 24 0 0"
-                                        FontFamily="{x:Bind Source}"
+                                        FontFamily="{x:Bind DisplaySource}"
                                         FontStretch="{x:Bind FontFace.Stretch}"
                                         FontStyle="{x:Bind FontFace.Style}"
                                         FontWeight="{x:Bind FontFace.Weight}"

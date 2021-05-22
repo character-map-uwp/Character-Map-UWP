@@ -39,6 +39,7 @@ namespace CharacterMap.Views
         public QuickCompareView(bool isQuickCompare)
         {
             this.InitializeComponent();
+
             ViewModel = new QuickCompareViewModel(isQuickCompare);
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
@@ -49,6 +50,8 @@ namespace CharacterMap.Views
             {
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
             }
+
+            LeakTrackingService.Register(this);
         }
 
         private void QuickCompareView_Loaded(object sender, RoutedEventArgs e)
@@ -248,15 +251,6 @@ namespace CharacterMap.Views
 
         private void Repeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
-            // Handle x:Loading correct Template. x:Bind doesn't work here for reasons
-            if (args.Element is FrameworkElement f && f.DataContext is CharacterRenderingOptions o)
-            {
-                if (o.RequiresNativeRender)
-                    f.Tag = f.FindName("NativeRender");
-                else
-                    f.Tag = f.FindName("XAMLRender");
-            }
-
             if (args.Element is Button b && b.Content is Panel g)
             {
                 SetText(g, InputText.Text);
@@ -366,24 +360,8 @@ namespace CharacterMap.Views
             if (!args.InRecycleQueue)
             {
                 g.DataContext = args.Item;
-                if (args.Item is CharacterRenderingOptions o)
-                {
-                    if (o.RequiresNativeRender)
-                        g.Tag = g.FindName("NativeRender");
-                    else
-                        g.Tag = g.FindName("XAMLRender");
-                }
-
                 SetText(g, ViewModel.Text);
                 SetFontSize(g, FontSizeSlider.Value);
-            }
-            else
-            {
-                if (g.Tag is FrameworkElement t)
-                {
-                    UnloadObject(t);
-                    g.Tag = null;
-                }
             }
 
             if (ResourceHelper.AppSettings.AllowExpensiveAnimations)

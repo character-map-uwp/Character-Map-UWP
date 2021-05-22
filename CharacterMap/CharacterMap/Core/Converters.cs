@@ -10,6 +10,7 @@ using Windows.UI;
 using Windows.UI.Xaml;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Windows.UI.Xaml.Media;
+using CharacterMapCX;
 
 namespace CharacterMap.Core
 {
@@ -49,6 +50,8 @@ namespace CharacterMap.Core
         public static bool IsNotLongString(string str) => !IsLongString(str);
 
         public static string ToHex(int i) => Unicode.GetHexValue((uint)i);
+
+        public static DWriteFallbackFont GetFontFallback() => FontFinder.Fallback;
 
         public static string GetWeightName(Windows.UI.Text.FontWeight weight)
         {

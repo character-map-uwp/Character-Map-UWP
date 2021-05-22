@@ -576,9 +576,7 @@
 
                             </StackPanel>
 
-                            <StackPanel
-                                x:Name="ChangePanel"
-                                Visibility="Collapsed">
+                            <StackPanel x:Name="ChangePanel" Visibility="Collapsed">
                                 <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <HyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />
@@ -757,6 +755,11 @@
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Adobe Glyph List" />
                                     <HyperlinkButton Content="BSD 3-Clause" NavigateUri="https://github.com/adobe-type-tools/agl-aglfn/blob/master/LICENSE.md" />
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Adobe Blank" />
+                                    <HyperlinkButton Content="SIL Open Font License 1.1" NavigateUri="https://github.com/adobe-fonts/adobe-blank/blob/master/LICENSE.txt" />
                                 </StackPanel>
                             </StackPanel>
 

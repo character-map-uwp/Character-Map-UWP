@@ -117,6 +117,8 @@ namespace CharacterMap.Views
             CharGrid.ItemSize = ViewModel.Settings.GridSize;
             CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
             _xamlDirect = XamlDirect.GetDefault();
+
+            LeakTrackingService.Register(this);
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)

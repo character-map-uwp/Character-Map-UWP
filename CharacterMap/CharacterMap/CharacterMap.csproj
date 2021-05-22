@@ -272,6 +272,7 @@
     <Compile Include="Provider\XamlDevProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\LeakTrackingService.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />
     <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
@@ -319,6 +320,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\AdobeBlank.otf" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\BadgeLogo.scale-100.png" />
