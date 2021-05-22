@@ -244,7 +244,9 @@ namespace CharacterMap.ViewModels
                 UpdateCharacters();
                 if (variant != null)
                 {
-                    SelectedVariantAnalysis = variant.GetAnalysis();
+                    var analysis = variant.GetAnalysis();
+                    analysis.ResetVariableAxis();
+                    SelectedVariantAnalysis = analysis;
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
                 }

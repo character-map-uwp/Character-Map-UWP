@@ -13,9 +13,19 @@ namespace CharacterMap.Helpers
 {
     public static class Extensions
     {
+        /// <summary>
+        /// Creates a copy if the axis list with "new" instances of each axis with matching values.
+        /// </summary>
+        /// <param name="axis"></param>
+        /// <returns></returns>
         public static IReadOnlyList<DWriteFontAxis> Copy(this IEnumerable<DWriteFontAxis> axis)
         {
             return axis.Select(a => a.WithValue(a.Value)).ToList();
+        }
+
+        public static IReadOnlyList<DWriteFontAxis> CopyDefaults(this IEnumerable<DWriteFontAxis> axis)
+        {
+            return axis.Select(a => a.WithValue(a.AxisDefault)).ToList();
         }
 
         public static Task ExecuteAsync(this CoreDispatcher d, Func<Task> action, CoreDispatcherPriority p = CoreDispatcherPriority.Normal)
