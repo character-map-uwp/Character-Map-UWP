@@ -335,7 +335,7 @@ namespace CharacterMap.Views
                     menu.Items.Add(new MenuFlyoutSeparator());
                     foreach (var item in ViewModel.FontCollections.Items)
                     {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, FontSize = 16 };
+                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, FontSize = 14 };
                         m.Click += (s, a) =>
                         {
                             if (m.DataContext is UserFontCollection u)
@@ -365,14 +365,18 @@ namespace CharacterMap.Views
 
                 static void SetCommand(MenuFlyoutItemBase b, ICommand c)
                 {
-                    b.FontSize = 16;
+                    b.FontSize = 14;
                     if (b is MenuFlyoutSubItem i)
                     {
+                        i.Height = 40;
                         foreach (var child in i.Items)
                             SetCommand(child, c);
                     }
                     else if (b is MenuFlyoutItem m)
+                    {
                         m.Command = c;
+                        m.Height = 40;
+                    }
                 }
 
                 foreach (var item in menu.Items)

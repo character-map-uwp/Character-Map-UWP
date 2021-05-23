@@ -58,6 +58,7 @@ namespace CharacterMap.Views
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
             TitleBarHelper.SetTitle(CompareFontsTitle.Text);
+            Window.Current.SetTitleBar(TitleBackground);
         }
 
         private void QuickCompareView_Unloaded(object sender, RoutedEventArgs e)

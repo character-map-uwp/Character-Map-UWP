@@ -27,7 +27,7 @@ namespace CharacterMap.Controls
 
         static IReadOnlyList<string> _previewStates { get; } = new List<String> { "PointerOver", "Pressed" };
 
-        FrameworkElement _previewIconSizeShim = null;
+        FrameworkElement _iconPresenter = null;
 
         public LabelButton()
         {
@@ -38,20 +38,20 @@ namespace CharacterMap.Controls
         {
             base.OnApplyTemplate();
 
-            _previewIconSizeShim = this.GetTemplateChild("SizeShim") as FrameworkElement;
+            _iconPresenter = this.GetTemplateChild("Border") as FrameworkElement;
 
-            if (_previewIconSizeShim != null)
+            if (_iconPresenter != null)
             {
                 var vis = this.GetElementVisual();
 
                 var clip = vis.Compositor.CreateInsetClip();
                 vis.Clip = clip;
 
-                string exp = $"Parent.Size.X - Child.Size.X";
+                string exp = "Parent.Size.X - Child.Size.X";
                 var ani = vis.CreateExpressionAnimation(nameof(InsetClip.RightInset))
                                .SetExpression(exp)
                                .SetParameter("Parent", vis)
-                               .SetParameter("Child", _previewIconSizeShim.GetElementVisual());
+                               .SetParameter("Child", _iconPresenter.GetElementVisual());
 
                 clip.StartAnimation(ani);
             }
@@ -79,8 +79,9 @@ namespace CharacterMap.Controls
                 vis.Clip.StartAnimation(
                     vis.CreateScalarKeyFrameAnimation(nameof(InsetClip.RightInset))
                         .AddKeyFrame(1, 0)
-                        .SetDuration(0.4));
-
+                        .SetDuration(0.4)
+                        .SetParameter("Parent", vis)
+                        .SetParameter("Child", _iconPresenter.GetElementVisual()));
             }
             else if (!_previewStates.Contains(e.NewState.Name) &&
                 (_previewStates.Contains(e.OldState.Name)))
@@ -90,7 +91,7 @@ namespace CharacterMap.Controls
                     vis.CreateScalarKeyFrameAnimation(nameof(InsetClip.RightInset))
                         .AddKeyFrame(1, "Parent.Size.X - Child.Size.X")
                         .SetParameter("Parent", this.GetElementVisual())
-                        .SetParameter("Child", _previewIconSizeShim.GetElementVisual()));
+                        .SetParameter("Child", _iconPresenter.GetElementVisual()));
             }
         }
     }

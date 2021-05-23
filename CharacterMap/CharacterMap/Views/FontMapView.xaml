@@ -284,6 +284,7 @@
                 GotFocus="SearchBox_GotFocus"
                 ItemTemplate="{StaticResource SearchResultTemplate}"
                 ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                Loaded="{x:Bind helpers:CompositionFactory.SetStandardFadeInOut}"
                 PlaceholderText="#SearchBox"
                 PreviewKeyDown="SearchBox_PreviewKeyDown"
                 QuerySubmitted="SearchBox_QuerySubmitted"
@@ -692,8 +693,8 @@
                         x:Name="MoreOptionsButton"
                         x:Uid="BtnMoreIcon"
                         x:Load="{x:Bind core:Converters.False(ViewModel.IsExternalFile)}"
-                        Width="44"
-                        Height="44"
+                        Width="45"
+                        Height="45"
                         DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
                         Style="{ThemeResource TransparentButton}">
                         <Button.Flyout>
@@ -1011,14 +1012,14 @@
             <Grid
                 x:Name="SplitterContainer"
                 x:FieldModifier="public"
-                Canvas.ZIndex="1"
                 Grid.RowSpan="3"
-                Grid.Column="1">
-                
+                Grid.Column="1"
+                Canvas.ZIndex="1">
+
                 <toolkit:GridSplitter
                     x:Name="Splitter"
-                    MinWidth="10"
                     Width="10"
+                    MinWidth="10"
                     Background="Transparent"
                     CursorBehavior="ChangeOnSplitterHover"
                     GripperCursor="SizeWestEast"
@@ -1723,6 +1724,8 @@
                 </VisualState>
                 <VisualState x:Name="TypeRampState">
                     <VisualState.Setters>
+                        <Setter Target="MoreOptionsButton.Margin" Value="0 0 -8 0" />
+                        <Setter Target="SearchBox.Visibility" Value="Collapsed" />
                         <Setter Target="CharacterFilterButton.Visibility" Value="Collapsed" />
                         <Setter Target="CharGridRoot.Visibility" Value="Collapsed" />
                         <Setter Target="SplitterContainer.Visibility" Value="Collapsed" />

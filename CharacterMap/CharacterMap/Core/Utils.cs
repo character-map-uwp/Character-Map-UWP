@@ -339,33 +339,42 @@ namespace CharacterMap.Core
         {
             var right = Math.Ceiling(rect.Width);
             var bottom = Math.Ceiling(rect.Height);
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture, 
-                "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">", 
-                right,
-                bottom, 
-                invertBounds ? -Math.Floor(rect.Left) : Math.Floor(rect.Left),
-                invertBounds ? -Math.Floor(rect.Top) : Math.Floor(rect.Top));
+            StringBuilder sb = _builderPool.Request();
 
-            foreach (var path in paths)
+            try
             {
-                string p = path;
-                if (path.StartsWith("F1 "))
-                    p = path.Remove(0, 3);
+                sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">",
+                    right,
+                    bottom,
+                    invertBounds ? -Math.Floor(rect.Left) : Math.Floor(rect.Left),
+                    invertBounds ? -Math.Floor(rect.Top) : Math.Floor(rect.Top));
 
-                if (string.IsNullOrWhiteSpace(p))
-                    continue;
+                foreach (var path in paths)
+                {
+                    string p = path;
+                    if (path.StartsWith("F1 "))
+                        p = path.Remove(0, 3);
 
-                sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
-                    p,
-                    AsHex(colors[paths.IndexOf(path)]),
-                    (double)colors[paths.IndexOf(path)].A / 255d);
+                    if (string.IsNullOrWhiteSpace(p))
+                        continue;
+
+                    sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
+                        p,
+                        AsHex(colors[paths.IndexOf(path)]),
+                        (double)colors[paths.IndexOf(path)].A / 255d);
+                }
+                sb.Append("</svg>");
+
+                CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
+                return doc;
             }
-            sb.Append("</svg>");
-
-            CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
-            return doc;
+            finally
+            {
+                sb.Clear();
+                _builderPool.Return(sb);
+            }
         }
 
         public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)

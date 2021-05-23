@@ -147,11 +147,13 @@ namespace CharacterMap.Views
             // 3. Set correct Developer features language
             UpdateExport();
 
+            TitleBarHelper.SetTranisentTitleBar(TitleBackground);
             IsOpen = true;
         }
 
         public void Hide()
         {
+            TitleBarHelper.RestoreDefaultTitleBar();
             IsOpen = false;
             this.Visibility = Visibility.Collapsed;
         }

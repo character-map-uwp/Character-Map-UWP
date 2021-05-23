@@ -262,7 +262,7 @@
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="SizeShim.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="Border.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
                                     </VisualState.Setters>
@@ -273,7 +273,7 @@
 
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
-                                        <Setter Target="SizeShim.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="Border.(Grid.ColumnSpan)" Value="2" />
                                         <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
                                         <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
                                     </VisualState.Setters>
@@ -291,7 +291,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Border
-                                x:Name="SizeShim"
+                                x:Name="Border"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}" />
 

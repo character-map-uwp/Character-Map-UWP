@@ -332,7 +332,8 @@
         <Grid
             x:Name="HeaderGrid"
             Grid.Row="1"
-            Height="{StaticResource TitleRowHeight}">
+            Height="{StaticResource TitleRowHeight}"
+            IsHitTestVisible="False">
             <TextBlock
                 x:Name="CompareFontsTitle"
                 x:Uid="CompareFontsTitle"

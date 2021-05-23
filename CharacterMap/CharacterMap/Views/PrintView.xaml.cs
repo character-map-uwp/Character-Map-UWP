@@ -127,6 +127,8 @@ namespace CharacterMap.Views
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            TitleBarHelper.SetTranisentTitleBar(TitleBackground);
         }
 
         public void Hide()
@@ -145,6 +147,7 @@ namespace CharacterMap.Views
             _printHelper.UnregisterForPrinting();
             _printHelper.Clear();
 
+            TitleBarHelper.RestoreDefaultTitleBar();
         }
 
         private void StartShowAnimation()

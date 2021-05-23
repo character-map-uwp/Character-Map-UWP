@@ -111,6 +111,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="22"
+                IsHitTestVisible="False"
                 FontWeight="Bold" />
 
             <AppBarButton

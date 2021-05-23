@@ -49,6 +49,15 @@ namespace CharacterMap.Controls
         private CoreWindow _window;
         private FrameworkElement _backgroundElement;
 
+        public bool IsDragTarget
+        {
+            get { return (bool)GetValue(IsDragTargetProperty); }
+            set { SetValue(IsDragTargetProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDragTargetProperty =
+            DependencyProperty.Register("IsDragTarget", typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true));
+
         public XamlTitleBarTemplateSettings TemplateSettings { get; } = new XamlTitleBarTemplateSettings();
 
         public XamlTitleBar()
@@ -275,9 +284,9 @@ namespace CharacterMap.Controls
 
         private void UpdateDragElement()
         {
-            if (_backgroundElement != null)
+            if (IsDragTarget && _backgroundElement != null)
             {
-                Window.Current.SetTitleBar(_backgroundElement);
+                TitleBarHelper.SetTitleBar(_backgroundElement);
             }
         }
 
