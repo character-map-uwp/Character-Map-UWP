@@ -72,7 +72,7 @@ namespace CharacterMap.Views
                 if (ViewStates.CurrentState != NormalState)
                     GoToNormalState();
 
-                Composition.PlayEntrance(Repeater, 0, 80, 0);
+                CompositionFactory.PlayEntrance(Repeater, 0, 80, 0);
 
                 // ItemsRepeater is a bit rubbish, needs to be nudged back into life.
                 // If we scroll straight to zero, we can often end up with a blank screen
@@ -368,12 +368,12 @@ namespace CharacterMap.Views
             {
                 if (args.InRecycleQueue)
                 {
-                    Composition.PokeUIElementZIndex(args.ItemContainer);
+                    CompositionFactory.PokeUIElementZIndex(args.ItemContainer);
                 }
                 else
                 {
                     var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-                    v.ImplicitAnimations = Composition.GetRepositionCollection(v.Compositor);
+                    v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
                 }
             }
         }

@@ -106,7 +106,7 @@ namespace CharacterMap.Views
                 this.Visibility = Visibility.Collapsed;
 
             this.InitializeComponent();
-            Composition.SetupOverlayPanelAnimation(this);
+            CompositionFactory.SetupOverlayPanelAnimation(this);
 
             LeakTrackingService.Register(this);
         }
@@ -149,26 +149,26 @@ namespace CharacterMap.Views
 
         private void StartShowAnimation()
         {
-            if (!Composition.UISettings.AnimationsEnabled)
+            if (!CompositionFactory.UISettings.AnimationsEnabled)
             {
                 this.GetElementVisual().Opacity = 1;
-                this.GetElementVisual().Properties.InsertVector3(Composition.TRANSLATION, Vector3.Zero);
+                this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);
                 return;
             }
 
             List<UIElement> elements = new List<UIElement> { this };
             elements.AddRange(OptionsPanel.Children);
-            Composition.PlayEntrance(elements, 0, 200);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
             elements.Clear();
             elements.AddRange(PreviewOptions.Children);
             elements.Add(PreviewViewBox);
-            Composition.PlayEntrance(elements, 0, 200);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
             elements.Clear();
             elements.Add(BottomLabel);
             elements.AddRange(BottomButtonOptions.Children);
-            Composition.PlayEntrance(elements, 0, 200);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -247,7 +247,7 @@ namespace CharacterMap.Views
 
             CanContinue = ViewModel.Characters.Count > 0;
 
-            Composition.SetThemeShadow(view, 30, ContentBackground);
+            CompositionFactory.SetThemeShadow(view, 30, ContentBackground);
             PreviewViewBox.Child = view;
         }
 
@@ -276,7 +276,7 @@ namespace CharacterMap.Views
 
         private void ContentPanel_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(ContentPanel, 40, TitleBackground);
+            CompositionFactory.SetThemeShadow(ContentPanel, 40, TitleBackground);
         }
 
         private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)

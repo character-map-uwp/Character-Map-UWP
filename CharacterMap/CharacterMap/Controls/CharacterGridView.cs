@@ -154,7 +154,7 @@ namespace CharacterMap.Controls
             {
                 if (d is CharacterGridView g && e.NewValue is bool b)
                 {
-                    g._templateSettings.EnableReposition = b && Composition.UISettings.AnimationsEnabled;
+                    g._templateSettings.EnableReposition = b && CompositionFactory.UISettings.AnimationsEnabled;
                     g.UpdateAnimation(b);
                 }
             }));
@@ -198,7 +198,7 @@ namespace CharacterMap.Controls
                 else
                 {
                     var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-                    v.ImplicitAnimations = Composition.GetRepositionCollection(v.Compositor);
+                    v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
                 }
             }
         }
@@ -405,19 +405,19 @@ namespace CharacterMap.Controls
             if (this.ItemsPanelRoot == null)
                 return;
 
-            if (!Composition.UISettings.AnimationsEnabled)
+            if (!CompositionFactory.UISettings.AnimationsEnabled)
                 return;
 
             foreach (var item in this.ItemsPanelRoot.Children)
             {
                 var v = ElementCompositionPreview.GetElementVisual(item);
-                v.ImplicitAnimations = newValue ? Composition.GetRepositionCollection(v.Compositor) : null;
+                v.ImplicitAnimations = newValue ? CompositionFactory.GetRepositionCollection(v.Compositor) : null;
             }
         }
 
         private void PokeUIElementZIndex(UIElement e)
         {
-            Composition.PokeUIElementZIndex(e, _xamlDirect);
+            CompositionFactory.PokeUIElementZIndex(e, _xamlDirect);
         }
 
         #endregion

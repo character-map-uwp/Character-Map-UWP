@@ -227,7 +227,7 @@
                                 </StackPanel>
                             </Button.Content>
                             <Button.Flyout>
-                                <controls1:CategoryFlyout SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" AcceptClicked="CategoryFlyout_AcceptClicked" />
+                                <controls1:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
                             </Button.Flyout>
                         </Button>
                         <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
@@ -362,7 +362,7 @@
                 Margin="12"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
-                Loaded="{x:Bind helpers:Composition.SetStandardReposition}">
+                Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />

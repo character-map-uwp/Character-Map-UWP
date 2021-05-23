@@ -96,10 +96,10 @@ namespace CharacterMap.Views
                     if (ViewModel.Settings.UseSelectionAnimations 
                         && !ViewModel.IsSearchResults)
                     {
-                        Composition.PlayEntrance(LstFontFamily, 66, 100);
-                        Composition.PlayEntrance(GroupLabel, 0, 0, 80);
+                        CompositionFactory.PlayEntrance(LstFontFamily, 66, 100);
+                        CompositionFactory.PlayEntrance(GroupLabel, 0, 0, 80);
                         if (InlineLabelCount.Visibility == Visibility.Visible)
-                            Composition.PlayEntrance(InlineLabelCount, 83, 0, 80);
+                            CompositionFactory.PlayEntrance(InlineLabelCount, 83, 0, 80);
                     }
                     break;
 
@@ -180,7 +180,7 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(this, nameof(FontsLoadedState), false);
                 if (ViewModel.Settings.UseSelectionAnimations)
                 {
-                    Composition.StartStartUpAnimation(
+                    CompositionFactory.StartStartUpAnimation(
                         new List<FrameworkElement>
                         {
                             OpenFontPaneButton,
@@ -391,7 +391,10 @@ namespace CharacterMap.Views
             }
         }
 
-
+        private void FontCompareButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = QuickCompareView.CreateWindowAsync(false);
+        }
 
 
         /* Font Collection management */
@@ -577,12 +580,12 @@ namespace CharacterMap.Views
 
         private void Grid_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(sender, 40, PaneRoot);
+            CompositionFactory.SetThemeShadow(sender, 40, PaneRoot);
         }
 
         private void FontListGrid_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetDropInOut(
+            CompositionFactory.SetDropInOut(
                 CollectionControlBackground,
                 CollectionControlItems.Children.Cast<FrameworkElement>().ToList(),
                 CollectionControlRow);
@@ -591,12 +594,12 @@ namespace CharacterMap.Views
         private void LoadingRoot_Loading(FrameworkElement sender, object args)
         {
             if (!ViewModel.Settings.UseSelectionAnimations 
-                || !Composition.UISettings.AnimationsEnabled)
+                || !CompositionFactory.UISettings.AnimationsEnabled)
                 return;
 
             var v = sender.GetElementVisual();
 
-            Composition.StartCentering(v);
+            CompositionFactory.StartCentering(v);
 
             int duration = 350;
             var ani = v.Compositor.CreateVector3KeyFrameAnimation();
@@ -604,12 +607,11 @@ namespace CharacterMap.Views
             ani.InsertKeyFrame(1, new System.Numerics.Vector3(1.15f, 1.15f, 0));
             ani.Duration = TimeSpan.FromMilliseconds(duration);
 
-            var op = Composition.CreateFade(v.Compositor, 0, null, duration);
+            var op = CompositionFactory.CreateFade(v.Compositor, 0, null, duration);
             sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
 
             // Animate in Loading items
-            Composition.PlayEntrance(LoadingStack.Children.ToList(), 60);
+            CompositionFactory.PlayEntrance(LoadingStack.Children.ToList(), 60);
         }
-
     }
 }

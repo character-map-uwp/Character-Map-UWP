@@ -203,6 +203,7 @@
     <Compile Include="Controls\FontMapPrintPage.xaml.cs">
       <DependentUpon>FontMapPrintPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LabelButton.cs" />
     <Compile Include="Controls\Toolkit\GridSplitter.cs" />
     <Compile Include="Controls\MenuFlyoutContentHost.cs" />
     <Compile Include="Controls\Toolkit\InAppNotification.cs" />
@@ -217,6 +218,7 @@
     <Compile Include="Core\Localizer.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
+    <Compile Include="Helpers\Composition.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
     <Compile Include="Helpers\WoffToOtf.cs" />
@@ -234,7 +236,7 @@
     <Compile Include="Models\Messages.cs" />
     <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\ExportManager.cs" />
-    <Compile Include="Helpers\Composition.cs" />
+    <Compile Include="Helpers\CompositionFactory.cs" />
     <Compile Include="Helpers\FlyoutHelper.cs" />
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\FontVariant.cs" />

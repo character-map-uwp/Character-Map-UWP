@@ -222,7 +222,7 @@
                     x:Name="ContentBorder"
                     Grid.Column="1"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Loaded="{x:Bind h:Composition.SetStandardReposition}">
+                    Loaded="{x:Bind h:CompositionFactory.SetStandardReposition}">
                     <!--  RepositionAnimation on the ScrollViewer itself breaks hit testing  -->
                     <ScrollViewer x:Name="ContentScroller">
                         <Grid
@@ -567,7 +567,7 @@
                                     AcceptsExpression="False"
                                     Header="#Search Results"
                                     LargeChange="10"
-                                    Loaded="{x:Bind h:Composition.SetStandardReposition}"
+                                    Loaded="{x:Bind h:CompositionFactory.SetStandardReposition}"
                                     Maximum="100"
                                     Minimum="5"
                                     SmallChange="5"

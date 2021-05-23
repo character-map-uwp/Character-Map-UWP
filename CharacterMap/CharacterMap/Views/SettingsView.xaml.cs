@@ -72,7 +72,7 @@ namespace CharacterMap.Views
             WeakReferenceMessenger.Default.Register<FontListCreatedMessage>(this, (o, m) => UpdateExport());
 
             this.InitializeComponent();
-            Composition.SetupOverlayPanelAnimation(this);
+            CompositionFactory.SetupOverlayPanelAnimation(this);
 
             FontNamingSelection.SelectedIndex = (int)Settings.ExportNamingScheme;
 
@@ -111,10 +111,10 @@ namespace CharacterMap.Views
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
-            if (!Composition.UISettings.AnimationsEnabled)
+            if (!CompositionFactory.UISettings.AnimationsEnabled)
             {
                 this.GetElementVisual().Opacity = 1;
-                this.GetElementVisual().Properties.InsertVector3(Composition.TRANSLATION, Vector3.Zero);
+                this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);
             }
 
             // 1. Focus the close button to ensure keyboard focus is retained inside the settings panel
@@ -163,7 +163,7 @@ namespace CharacterMap.Views
 
             List<UIElement> elements = new List<UIElement> { this, MenuColumn, ContentBorder };
             //elements.AddRange(LeftPanel.Children);
-            Composition.PlayEntrance(elements, 0, 200);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
             //elements.Clear();
             //elements.AddRange(RightPanel.Children);
@@ -172,7 +172,7 @@ namespace CharacterMap.Views
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(ContentRoot, 40, TitleBackground);
+            CompositionFactory.SetThemeShadow(ContentRoot, 40, TitleBackground);
 
             // Set the settings that can't be set with bindings
             switch (Settings.UserRequestedTheme)
@@ -268,7 +268,7 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(item, "SelectedState", true);
 
                 if (Settings.UseSelectionAnimations)
-                    Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
+                    CompositionFactory.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
 
                 panel.Visibility = Visibility.Visible;
             }

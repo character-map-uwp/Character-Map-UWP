@@ -169,8 +169,8 @@ namespace CharacterMap.Views
             });
 
             Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
-            PreviewGrid.SetHideAnimation(Composition.CreateSlideOutX(PreviewGrid));
-            PreviewGrid.SetShowAnimation(Composition.CreateSlideIn(PreviewGrid));
+            PreviewGrid.SetHideAnimation(CompositionFactory.CreateSlideOutX(PreviewGrid));
+            PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -207,8 +207,8 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.SelectedChar):
                     if (ViewModel.Settings.UseSelectionAnimations)
                     {
-                        Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
-                        Composition.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                        CompositionFactory.PlayScaleEntrance(TxtPreview, .85f, 1f);
+                        CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
                     }
 
                     UpdateTypography(ViewModel.SelectedTypography);
@@ -216,7 +216,7 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.Chars):
                     CharGrid.ItemsSource = ViewModel.Chars;
                     if (ViewModel.Settings.UseSelectionAnimations)
-                        Composition.PlayEntrance(CharGrid, 166);
+                        CompositionFactory.PlayEntrance(CharGrid, 166);
                     break;
                 case nameof(ViewModel.DisplayMode):
                     UpdateDisplayMode(true);
@@ -324,7 +324,7 @@ namespace CharacterMap.Views
                 if (ViewModel.SelectedProvider != null)
                 {
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
-                        Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
+                        CompositionFactory.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
                     
                     string state = $"Dev{ViewModel.SelectedProvider.Type}State";
 
@@ -947,30 +947,30 @@ namespace CharacterMap.Views
                 {
                     offset = 83;
                     //Composition.PlayEntrance(FontTitleBlock, 0);
-                    Composition.PlayEntrance(CharGridHeader, 83);
+                    CompositionFactory.PlayEntrance(CharGridHeader, 83);
                 }
 
                 if (ViewModel.DisplayMode == FontDisplayMode.CharacterMap)
                 {
                     if (!withHeader)
                     {
-                        Composition.PlayEntrance(CharGrid, offset);
+                        CompositionFactory.PlayEntrance(CharGrid, offset);
                         offset += 83;
                     }
-                    Composition.PlayEntrance(TxtPreviewViewBox, offset);
+                    CompositionFactory.PlayEntrance(TxtPreviewViewBox, offset);
 
                     if (CopySequenceRoot != null && CopySequenceRoot.Visibility == Visibility.Visible)
-                        Composition.PlayEntrance(CopySequenceRoot, offset);
+                        CompositionFactory.PlayEntrance(CopySequenceRoot, offset);
                 }
                 else if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
                 {
-                    Composition.PlayEntrance(TypeRampInputRow, offset * 2);
+                    CompositionFactory.PlayEntrance(TypeRampInputRow, offset * 2);
 
                     if (TypeRampList != null)
                     {
                         var items = new List<UIElement> { VariableAxis };
                         items.AddRange(TypeRampList.TryGetChildren());
-                        Composition.PlayEntrance(items, (offset * 2) + 34);
+                        CompositionFactory.PlayEntrance(items, (offset * 2) + 34);
                     }
                 }
             }
@@ -978,11 +978,11 @@ namespace CharacterMap.Views
 
         private void CopySequenceRoot_Loading(FrameworkElement sender, object args)
         {
-            CopySequenceRoot.SetHideAnimation(Composition.CreateSlideOutY(sender));
-            CopySequenceRoot.SetShowAnimation(Composition.CreateSlideIn(sender));
+            CopySequenceRoot.SetHideAnimation(CompositionFactory.CreateSlideOutY(sender));
+            CopySequenceRoot.SetShowAnimation(CompositionFactory.CreateSlideIn(sender));
 
             CopySequenceRoot.SetTranslation(new Vector3(0, (float)CopySequenceRoot.Height, 0));
-            CopySequenceRoot.GetElementVisual().StartAnimation(Composition.TRANSLATION, Composition.CreateSlideIn(sender));
+            CopySequenceRoot.GetElementVisual().StartAnimation(CompositionFactory.TRANSLATION, CompositionFactory.CreateSlideIn(sender));
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
