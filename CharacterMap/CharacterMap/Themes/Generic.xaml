@@ -17,16 +17,13 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <Style TargetType="controls:XamlTitleBar">
+        <Setter Property="Background" Value="Transparent" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:XamlTitleBar">
                     <Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                        <Rectangle x:Name="BackgroundElement">
-                            <Rectangle.Fill>
-                                <SolidColorBrush Color="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=TemplateSettings.BackgroundColor}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
+                        <Rectangle x:Name="BackgroundElement" Fill="{TemplateBinding Background}" />
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=TemplateSettings.LeftColumnWidth}" />

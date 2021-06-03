@@ -477,29 +477,17 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        internal async Task SavePngAsync(ExportParameters args, Character c = null)
+        internal Task SavePngAsync(ExportParameters args, Character c = null)
         {
-            Character character = SelectedChar;
-            CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
-
-            if (c != null)
-            {
-                character = c;
-                analysis = GetCharAnalysis(c);
-            }
-
-            ExportResult result = await ExportManager.ExportPngAsync(
-                args.Style,
-                SelectedFont,
-                RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
-                character,
-                Settings);
-
-            if (result.Success)
-                Messenger.Send(new AppNotificationMessage(true, result));
+            return SaveGlyphAsync(ExportFormat.Png, args, c);
         }
 
-        internal async Task SaveSvgAsync(ExportParameters args, Character c = null)
+        internal Task SaveSvgAsync(ExportParameters args, Character c = null)
+        {
+            return SaveGlyphAsync(ExportFormat.Svg, args, c);
+        }
+
+        internal async Task SaveGlyphAsync(ExportFormat format, ExportParameters args, Character c = null)
         {
             Character character = SelectedChar;
             CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
@@ -510,8 +498,8 @@ namespace CharacterMap.ViewModels
                 analysis = GetCharAnalysis(c);
             }
 
-            ExportResult result = await ExportManager.ExportSvgAsync(
-                args.Style,
+            ExportResult result = await ExportManager.ExportGlyphAsync(
+                new(format, args.Style),
                 SelectedFont,
                 RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
                 character);
@@ -576,7 +564,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public void OpenSelectedFontInWindow(object sender, RoutedEventArgs e)
+        public void OpenSelectedFontInWindow()
         {
             if (SelectedFont is InstalledFont font)
             {

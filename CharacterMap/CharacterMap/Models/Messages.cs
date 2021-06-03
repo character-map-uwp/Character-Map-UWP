@@ -51,6 +51,10 @@ namespace CharacterMap.Models
     {
     }
 
+    public class ExportRequestedMessage
+    {
+    }
+
     public class AppSettingsChangedMessage
     {
         public AppSettingsChangedMessage(string propertyName)

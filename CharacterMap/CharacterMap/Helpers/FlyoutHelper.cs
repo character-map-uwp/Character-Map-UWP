@@ -116,6 +116,16 @@ namespace CharacterMap.Helpers
                 WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
             }
 
+            static void Export_Click(object sender, RoutedEventArgs e)
+            {
+                if (sender is FrameworkElement f && 
+                    f.DataContext is InstalledFont fnt
+                    && f.Tag is CharacterRenderingOptions o)
+                {
+                    WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
+                }
+            }
+
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
@@ -192,6 +202,17 @@ namespace CharacterMap.Helpers
 
                         saveButton.Click += SaveFont_Click;
                         menu.Items.Add(saveButton);
+
+                        var exportButton = new MenuFlyoutItem
+                        {
+                            Text = "Export Glyphs as PNG",
+                            Icon = new SymbolIcon(Symbol.Save),
+                            Tag = options,
+                            DataContext = font
+                        };
+
+                        exportButton.Click += Export_Click;
+                        menu.Items.Add(exportButton);
                     }
 
                     // Add "Add to Collection" button

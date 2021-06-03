@@ -111,8 +111,8 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="22"
-                IsHitTestVisible="False"
-                FontWeight="Bold" />
+                FontWeight="Bold"
+                IsHitTestVisible="False" />
 
             <AppBarButton
                 x:Name="BtnClose"

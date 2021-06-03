@@ -301,7 +301,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:XamlTitleBar x:Name="TitleBar" Canvas.ZIndex="101">
+        <controls:XamlTitleBar x:Name="TitleBar" Canvas.ZIndex="101" Background="{x:Null}">
             <StackPanel Orientation="Horizontal">
                 <Button
                     x:Name="BackButton"

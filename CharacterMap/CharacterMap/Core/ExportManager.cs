@@ -28,11 +28,41 @@ using System.Threading;
 
 namespace CharacterMap.Core
 {
+    public enum ExportFormat : int
+    { 
+        Png = 0,
+        Svg = 1
+    }
+
     public enum ExportStyle
     {
         Black,
         White,
         ColorGlyph
+    }
+
+    public record ExportOptions
+    {
+        public double PreferredSize { get; init; }
+        public ExportFormat PreferredFormat { get; init; }
+        public ExportStyle PreferredStyle { get; init; }
+        public Color PreferredColor { get; init; }
+        public StorageFolder TargetFolder { get; init; }
+
+        public ExportOptions() { }
+
+        public ExportOptions(ExportFormat format, ExportStyle style)
+        {
+            PreferredSize = ResourceHelper.AppSettings.PngSize;
+            PreferredFormat = format;
+            PreferredColor = style switch
+            {
+                ExportStyle.White => Colors.White,
+                _ => Colors.Black
+            };
+            PreferredStyle = style;
+        }
+
     }
 
     public class ExportResult
@@ -74,10 +104,11 @@ namespace CharacterMap.Core
         }
     }
 
-    public static class ExportManager
+    public static partial class ExportManager
     {
         public static string GetSVG(
             ExportStyle style,
+            Color textColor,
             CharacterRenderingOptions options,
             Character selectedChar)
         {
@@ -86,7 +117,6 @@ namespace CharacterMap.Core
             using var typography = options.CreateCanvasTypography();
 
             CanvasDevice device = Utils.CanvasDevice;
-            Color textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
 
             // If COLR format (e.g. Segoe UI Emoji), we have special export path.
             if (style == ExportStyle.ColorGlyph && options.Analysis.HasColorGlyphs && !options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
@@ -133,6 +163,8 @@ namespace CharacterMap.Core
             {
                 string str = null;
                 IBuffer b = GetGlyphBuffer(options.Variant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Svg);
+
+                // If the SVG glyph is compressed we need to decompress it
                 if (b.Length > 2 && b.GetByte(0) == 31 && b.GetByte(1) == 139)
                 {
                     using var stream = b.AsStream();
@@ -147,6 +179,7 @@ namespace CharacterMap.Core
                     str = dataReader.ReadString(b.Length);
                 }
 
+                // CanvasSvgDocument doesn't like the <?xml ... /> tag, so remove it
                 if (str.StartsWith("<?xml"))
                     str = str.Remove(0, str.IndexOf(">") + 1);
 
@@ -225,27 +258,48 @@ namespace CharacterMap.Core
             }
         }
 
-        public static async Task<ExportResult> ExportSvgAsync(
-            ExportStyle style,
+        public static Task<ExportResult> ExportGlyphAsync(
+            ExportOptions export,
             InstalledFont selectedFont,
             CharacterRenderingOptions options,
-            Character selectedChar)
+            Character selectedChar,
+            StorageFolder targetFolder = null)
+        {
+            if (export.PreferredFormat == ExportFormat.Png)
+                return ExportPngAsync(export, selectedFont, options, selectedChar, ResourceHelper.AppSettings, targetFolder);
+            else
+                return ExportSvgAsync(export, selectedFont, options, selectedChar, targetFolder);
+        }
+
+        public static async Task<ExportResult> ExportSvgAsync(
+            ExportOptions style,
+            InstalledFont selectedFont,
+            CharacterRenderingOptions options,
+            Character selectedChar,
+            StorageFolder targetFolder = null)
         {
             try
             {
-                // We want to prepare geometry at 1024px, so force this
-                options = options with { FontSize = 1024 };
-                using var typography = options.CreateCanvasTypography();
-
-                // Get save file
+                // 1. Get the file we will save the image to.
                 string name = GetFileName(selectedFont, options.Variant, selectedChar, "svg");
-                if (await PickFileAsync(name, "SVG", new[] { ".svg" }) is StorageFile file)
+                StorageFile file = null;
+                if (targetFolder != null)
+                    file = await targetFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
+                else
+                    file = await PickFileAsync(name, "SVG", new[] { ".svg" });
+
+                if (file is not null)
                 {
                     try
                     {
+                        // We want to prepare geometry at 1024px, so force this
+                        options = options with { FontSize = 1024 };
+                        using var typography = options.CreateCanvasTypography();
+
                         CachedFileManager.DeferUpdates(file);
+
                         // Generate SVG doc and write to file
-                        await Utils.WriteSvgAsync(GetSVG(style, options, selectedChar), file);
+                        await Utils.WriteSvgAsync(GetSVG(style.PreferredStyle, style.PreferredColor, options, selectedChar), file);
                         return new ExportResult(true, file);
                     }
                     finally
@@ -256,29 +310,42 @@ namespace CharacterMap.Core
             }
             catch (Exception ex)
             {
-                await Ioc.Default.GetService<IDialogService>()
-                    .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
+                if (targetFolder is null)
+                    await Ioc.Default.GetService<IDialogService>()
+                        .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
             }
 
             return new ExportResult(false, null);
         }
 
         public static async Task<ExportResult> ExportPngAsync(
-            ExportStyle style,
+            ExportOptions style,
             InstalledFont selectedFont,
             CharacterRenderingOptions options,
             Character selectedChar,
-            AppSettings settings)
+            AppSettings settings,
+            StorageFolder targetFolder = null)
         {
             try
             {
-                using var typography = options.CreateCanvasTypography();
 
+                // 1. Get the file we will save the image to.
                 string name = GetFileName(selectedFont, options.Variant, selectedChar, "png");
-                if (await PickFileAsync(name, "PNG Image", new[] { ".png" }) is StorageFile file)
+                StorageFile file = null;
+                if (targetFolder != null)
+                    file = await targetFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting);
+                else
+                    file = await PickFileAsync(name, "PNG Image", new[] { ".png" });
+
+
+                if (file is not null)
                 {
                     CachedFileManager.DeferUpdates(file);
+                    using var typography = options.CreateCanvasTypography();
 
+                    // If the glyph is actually a PNG file inside the font we should export it directly.
+                    // TODO : We're not actually exporting with typography options here.
+                    //        Find a test PNG font with typography
                     if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
                     {
                         IBuffer buffer = GetGlyphBuffer(options.Variant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
@@ -299,10 +366,10 @@ namespace CharacterMap.Core
                             var d = settings.PngSize;
                             var r = settings.PngSize / 2;
 
-                            var textColor = style == ExportStyle.Black ? Colors.Black : Colors.White;
+                            var textColor = style.PreferredColor;
                             var fontSize = (float)d;
 
-                            using CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
+                            using CanvasTextLayout layout = new (device, $"{selectedChar.Char}", new ()
                             {
                                 FontSize = fontSize,
                                 FontFamily = options.Variant.Source,
@@ -310,10 +377,10 @@ namespace CharacterMap.Core
                                 FontWeight = options.Variant.FontFace.Weight,
                                 FontStyle = options.Variant.FontFace.Style,
                                 HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                                Options = style == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
+                                Options = style.PreferredStyle == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
                             }, canvasW, canvasH);
 
-                            if (style == ExportStyle.ColorGlyph)
+                            if (style.PreferredStyle == ExportStyle.ColorGlyph)
                                 layout.Options = CanvasDrawTextOptions.EnableColorFont;
 
                             layout.SetTypography(0, 1, typography);
@@ -341,8 +408,9 @@ namespace CharacterMap.Core
             }
             catch (Exception ex)
             {
-                await Ioc.Default.GetService<IDialogService>()
-                    .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
+                if (targetFolder is null)
+                    await Ioc.Default.GetService<IDialogService>()
+                        .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
             }
 
             return new ExportResult(false, null);
@@ -418,7 +486,7 @@ namespace CharacterMap.Core
             float canvasH = options.FontSize, canvasW = options.FontSize, fontSize = options.FontSize;
 
             using var typography = options.CreateCanvasTypography();
-            using (CanvasTextLayout layout = new CanvasTextLayout(device, $"{selectedChar.Char}", new CanvasTextFormat
+            using (CanvasTextLayout layout = new (device, $"{selectedChar.Char}", new ()
             {
                 FontSize = fontSize,
                 FontFamily = options.Variant.Source,
@@ -435,136 +503,37 @@ namespace CharacterMap.Core
             }
         }
 
-        public static async void RequestExportFontFile(FontVariant variant)
+        private static IAsyncOperation<StorageFolder> PickFolderAsync()
         {
-            var scheme = ResourceHelper.AppSettings.ExportNamingScheme;
-
-            if (DirectWrite.IsFontLocal(variant.FontFace))
-            {
-                string filePath = GetFileName(variant, scheme);
-                string name = Path.GetFileNameWithoutExtension(filePath);
-                string ext = Path.GetExtension(filePath);
-
-                if (await PickFileAsync(name, Localization.Get("ExportFontFile/Text"), new[] { ext }, PickerLocationId.DocumentsLibrary) is StorageFile file)
-                {
-                    try
-                    {
-                        bool success = await TryWriteToFileAsync(variant, file);
-                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(success, file)));
-                        return;
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-
-            WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(null, false)));
-        }
-
-        internal static Task ExportCollectionAsZipAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
-        {
-            var fonts = fontList.SelectMany(f => f.Variants).ToList();
-            return ExportFontsAsZipAsync(fonts, selectedCollection.Name);
-        }
-
-        internal static async Task ExportFontsAsZipAsync(List<FontVariant> fonts, string name)
-        {
-            if (await PickFileAsync(name, "ZIP", new[] { ".zip" }) is StorageFile file)
-            {
-                await Task.Run(async () =>
-                {
-                    ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
-
-                    using var i = await file.OpenStreamForWriteAsync();
-                    i.SetLength(0);
-
-                    using ZipArchive z = new ZipArchive(i, ZipArchiveMode.Create);
-                    foreach (var font in fonts)
-                    {
-                        if (DirectWrite.IsFontLocal(font.FontFace))
-                        {
-                            string fileName = GetFileName(font, scheme);
-                            ZipArchiveEntry entry = z.CreateEntry(fileName);
-                            using IOutputStream s = entry.Open().AsOutputStream();
-                            await DirectWrite.WriteToStreamAsync(font.FontFace, s);
-                        }
-                    }
-                });
-
-                WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(true, file)));
-            }
-        }
-
-        internal static Task ExportCollectionToFolderAsync(List<InstalledFont> fontList)
-        {
-            var fonts = fontList.SelectMany(f => f.Variants).ToList();
-            return ExportFontsToFolderAsync(fonts);
-        }
-
-        internal static async Task ExportFontsToFolderAsync(List<FontVariant> fonts)
-        {
-            FolderPicker picker = new FolderPicker
+            FolderPicker picker = new ()
             {
                 SuggestedStartLocation = PickerLocationId.DocumentsLibrary
             };
             picker.FileTypeFilter.Add("*");
 
+            return picker.PickSingleFolderAsync();
+        }
 
-            if (await picker.PickSingleFolderAsync() is StorageFolder folder)
+        internal static async Task ExportFontToFolderAsync(
+            InstalledFont family, 
+            CharacterRenderingOptions options, 
+            IReadOnlyList<Character> characters,
+            ExportOptions opts)
+        {
+            if (await PickFolderAsync() is StorageFolder folder)
             {
-                await Task.Run(async () =>
+                List<ExportResult> fails = new();
+
+                foreach (var c in characters)
                 {
-                    ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
+                    ExportResult result = await ExportGlyphAsync(opts, family, options, c, folder).ConfigureAwait(false);
+                    if (result is not null && result.Success is false)
+                        fails.Add(result);
+                }
 
-                    foreach (var font in fonts)
-                    {
-                        if (DirectWrite.IsFontLocal(font.FontFace))
-                        {
-                            string fileName = GetFileName(font, scheme);
-                            StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
-                            await TryWriteToFileAsync(font, file).ConfigureAwait(false);
-                        }
-                    }
-                });
-
-                WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(folder, true)));
+                WeakReferenceMessenger.Default.Send(
+                    new AppNotificationMessage(true, new ExportFontFileResult(folder, true)));
             }
         }
-
-        private static async Task<bool> TryWriteToFileAsync(FontVariant font, StorageFile file)
-        {
-            try
-            {
-                using IRandomAccessStream s = await file.OpenAsync(FileAccessMode.ReadWrite).AsTask().ConfigureAwait(false);
-                s.Size = 0;
-
-                using IOutputStream o = s.GetOutputStreamAt(0);
-                await DirectWrite.WriteToStreamAsync(font.FontFace, o).AsTask().ConfigureAwait(false);
-                return true;
-            }
-            catch { }
-
-            return false;
-        }
-
-        private static string GetFileName(FontVariant font, ExportNamingScheme scheme)
-        {
-            string fileName = null;
-            string ext = ".ttf";
-            
-            var src = DirectWrite.GetFileName(font.FontFace);
-            if (!string.IsNullOrWhiteSpace(src))
-                ext = Path.GetExtension(src);
-
-            if (scheme == ExportNamingScheme.System)
-                fileName = src;
-
-            if (string.IsNullOrWhiteSpace(fileName))
-                fileName = $"{font.FamilyName} {font.PreferredName}{ext}";
-
-            return $"{Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false)}{Path.GetExtension(fileName).ToLower()}";
-        }
-
     }
 }

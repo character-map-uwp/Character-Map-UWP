@@ -215,6 +215,7 @@
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
+    <Compile Include="Core\ExportManager.Font.cs" />
     <Compile Include="Core\Localizer.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
@@ -288,12 +289,16 @@
     <Compile Include="Styles\Controls.xaml.cs">
       <DependentUpon>Controls.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ExportViewModel.cs" />
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="ViewModels\QuickCompareViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\ExportView.xaml.cs">
+      <DependentUpon>ExportView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FontMapView.xaml.cs">
       <DependentUpon>FontMapView.xaml</DependentUpon>
     </Compile>
@@ -441,6 +446,10 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ExportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FontMapView.xaml">
       <SubType>Designer</SubType>

@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPrintPresenter
+    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
     {
         #region Dependency Properties 
 
@@ -148,6 +148,11 @@ namespace CharacterMap.Views
             {
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
+            });
+            WeakReferenceMessenger.Default.Register<ExportRequestedMessage>(this, (o, m) =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    TryExport();
             });
             WeakReferenceMessenger.Default.Register<CopyToClipboardMessage>(this, async (o, m) =>
             {
@@ -811,9 +816,9 @@ namespace CharacterMap.Views
 
         /* Print Helpers */
 
-        FontMapView IPrintPresenter.GetFontMap() => this;
+        FontMapView IPopoverPresenter.GetFontMap() => this;
 
-        Border IPrintPresenter.GetPresenter()
+        Border IPopoverPresenter.GetPresenter()
         {
             this.FindName(nameof(PrintPresenter));
             return PrintPresenter;
@@ -826,6 +831,14 @@ namespace CharacterMap.Views
             if (this.GetFirstAncestorOfType<MainPage>() is null)
             {
                 PrintView.Show(this);
+            }
+        }
+
+        private void TryExport()
+        {
+            if (this.GetFirstAncestorOfType<MainPage>() is null)
+            {
+                ExportView.Show(this);
             }
         }
 

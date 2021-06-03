@@ -16,14 +16,45 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
-    public interface IPrintPresenter
+    public interface IPopoverPresenter
     {
         Border GetPresenter();
         FontMapView GetFontMap();
         GridLength GetTitleBarHeight();
     }
 
-    public sealed partial class PrintView : ViewBase
+    public class PopoverViewBase : ViewBase
+    {
+        protected GridLength _titleBarHeight = new (32);
+        public GridLength TitleBarHeight
+        {
+            get => _titleBarHeight;
+            set => Set(ref _titleBarHeight, value);
+        }
+
+        protected IPopoverPresenter _presenter = null;
+
+        protected FontMapView _fontMap = null;
+
+
+        public virtual void Hide()
+        {
+            if (_presenter == null)
+                return;
+
+
+            _presenter.GetPresenter().Child = null;
+            _presenter = null;
+            _fontMap = null;
+          
+            TitleBarHelper.RestoreDefaultTitleBar();
+        }
+
+    }
+
+
+
+    public sealed partial class PrintView : PopoverViewBase
     {
         /* 
          * UWP printing requires us to create ALL pages ahead of time
@@ -56,12 +87,6 @@ namespace CharacterMap.Views
             private set => Set(ref _canContinue, value);
         }
 
-        private GridLength _titleBarHeight = new GridLength(32);
-        public GridLength TitleBarHeight
-        {
-            get => _titleBarHeight;
-            set => Set(ref _titleBarHeight, value);
-        }
 
         public List<PrintLayout> Layouts { get; } = new List<PrintLayout>
         {
@@ -81,13 +106,10 @@ namespace CharacterMap.Views
 
         public AppSettings Settings { get; }
 
-        private IPrintPresenter _presenter = null;
-
         private PrintHelper _printHelper = null;
 
-        private FontMapView _fontMap = null;
 
-        public static void Show(IPrintPresenter presenter)
+        public static void Show(IPopoverPresenter presenter)
         {
             var view = new PrintView(presenter);
             view.TitleBarHeight = presenter.GetTitleBarHeight();
@@ -95,7 +117,7 @@ namespace CharacterMap.Views
             view.Show();
         }
 
-        public PrintView(IPrintPresenter presenter)
+        public PrintView(IPopoverPresenter presenter)
         {
             _fontMap = presenter.GetFontMap();
             _presenter = presenter;
@@ -110,6 +132,7 @@ namespace CharacterMap.Views
 
             LeakTrackingService.Register(this);
         }
+
 
         public void Show()
         {
@@ -131,23 +154,14 @@ namespace CharacterMap.Views
             TitleBarHelper.SetTranisentTitleBar(TitleBackground);
         }
 
-        public void Hide()
+        public override void Hide()
         {
-            if (_presenter == null)
-                return;
-
             this.Bindings.StopTracking();
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
-            _presenter.GetPresenter().Child = null;
-            _presenter = null;
-            _fontMap = null;
-
             _printHelper.UnregisterForPrinting();
             _printHelper.Clear();
-
-            TitleBarHelper.RestoreDefaultTitleBar();
         }
 
         private void StartShowAnimation()

@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class MainPage : Page, INotifyPropertyChanged, IInAppNotificationPresenter, IPrintPresenter
+    public sealed partial class MainPage : Page, INotifyPropertyChanged, IInAppNotificationPresenter, IPopoverPresenter
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -62,6 +62,11 @@ namespace CharacterMap.Views
             {
                 if (Dispatcher.HasThreadAccess)
                     PrintView.Show(this);
+            });
+            Messenger.Register<ExportRequestedMessage>(this, (o, m) =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    ExportView.Show(this);
             });
 
             this.SizeChanged += MainPage_SizeChanged;
@@ -399,6 +404,8 @@ namespace CharacterMap.Views
         {
             _ = QuickCompareView.CreateWindowAsync(false);
         }
+
+
 
 
         /* Font Collection management */
