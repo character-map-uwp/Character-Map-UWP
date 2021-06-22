@@ -20,38 +20,11 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style x:Key="SubheaderTextBlockStyle" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Margin" Value="0 12 0 4" />
-        </Style>
-        <Style x:Key="DescriptionStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="Opacity" Value="0.7" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Margin" Value="0 0 0 8" />
-            <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
-        </Style>
-        <Style x:Key="HeaderStyle" TargetType="TextBlock">
-            <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Margin" Value="0 20 0 4" />
-        </Style>
-        <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
-            <Setter Property="Margin" Value="0 4 0 2" />
-            <Setter Property="FontStyle" Value="Italic" />
-            <Setter Property="OpticalMarginAlignment" Value="None" />
-        </Style>
+      
         <Style TargetType="RadioButton">
             <Setter Property="MinWidth" Value="200" />
         </Style>
-
-        <Style x:Key="SpacerStyle" TargetType="Border">
-            <Setter Property="Height" Value="1" />
-            <Setter Property="Background" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
-            <Setter Property="Opacity" Value="0.3" />
-            <Setter Property="Margin" Value="0 24 0 12" />
-        </Style>
-
+        
         <DataTemplate x:Key="HeaderTemplate">
             <TextBlock Style="{StaticResource HeaderStyle}" Text="{Binding}" />
         </DataTemplate>
@@ -145,7 +118,6 @@
                     Style="{StaticResource NumberBoxSpinButtonStyle}" />
             </Grid>
         </ControlTemplate>
-
 
     </UserControl.Resources>
 

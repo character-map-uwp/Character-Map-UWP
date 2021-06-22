@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Xaml;
 
@@ -28,11 +29,17 @@ namespace CharacterMap.ViewModels
         public Color GlyphColor             { get => GetV(Colors.White); set => Set(value); }
         public bool IsWhiteChecked          { get => GetV(false); set => Set(value); }
         public bool IsBlackChecked          { get => GetV(false); set => Set(value); }
+        public bool IsExporting             { get => GetV(false); set => Set(value); }
         public int SelectedFormat           { get => GetV((int)ExportFormat.Png); set => Set(value); }
+        public string ExportMessage         { get => Get<string>(); set => Set(value); }
+
+        public ElementTheme PreviewTheme { get => GetV(ResourceHelper.GetEffectiveTheme()); set => Set(value); }
 
         public bool IsPngFormat => SelectedFormat == (int)ExportFormat.Png;
 
         #endregion
+
+        DispatcherQueue _dispatcherQueue { get; }
 
         public ExportViewModel(FontMapViewModel viewModel)
         {
@@ -44,6 +51,8 @@ namespace CharacterMap.ViewModels
 
             IsWhiteChecked = ResourceHelper.GetEffectiveTheme() == ElementTheme.Dark;
             IsBlackChecked = ResourceHelper.GetEffectiveTheme() == ElementTheme.Light;
+
+            _dispatcherQueue = DispatcherQueue.GetForCurrentThread();
 
             UpdateCharacters();
         }
@@ -103,10 +112,31 @@ namespace CharacterMap.ViewModels
             OnPropertyChanged(nameof(Categories));
         }
 
-        public void StartExport()
+        public async void StartExport()
         {
-            ExportOptions export = new(ExportFormat.Png, ExportStyle.Black) { PreferredColor = GlyphColor };
-            _ = ExportManager.ExportFontToFolderAsync(_font, Options, Characters, export);
+            ExportOptions export = new((ExportFormat)SelectedFormat, ExportStyle.Black) 
+            { 
+                PreferredColor = GlyphColor, 
+                PreferredSize = GlyphSize 
+            };
+
+            IsExporting = true;
+
+            await ExportManager.ExportFontToFolderAsync(_font, Options, Characters, export, (index, count) =>
+            {
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    ExportMessage = $"Exporting glyph {index} of {count}";
+                });
+            });
+
+            ExportMessage = "";
+            IsExporting = false;
+        }
+
+        public void ToggleTheme()
+        {
+            PreviewTheme = PreviewTheme == ElementTheme.Dark ? ElementTheme.Light : ElementTheme.Dark;
         }
     }
 }

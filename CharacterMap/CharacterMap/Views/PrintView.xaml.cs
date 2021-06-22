@@ -156,6 +156,8 @@ namespace CharacterMap.Views
 
         public override void Hide()
         {
+            base.Hide();
+
             this.Bindings.StopTracking();
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
@@ -173,7 +175,7 @@ namespace CharacterMap.Views
                 return;
             }
 
-            List<UIElement> elements = new List<UIElement> { this };
+            List<UIElement> elements = new () { this };
             elements.AddRange(OptionsPanel.Children);
             CompositionFactory.PlayEntrance(elements, 0, 200);
 

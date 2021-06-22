@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Windows.System;
 
 namespace CharacterMap.ViewModels
 {
@@ -13,7 +14,7 @@ namespace CharacterMap.ViewModels
         /// Private data store that contains all of the properties access through GetProperty 
         /// method.
         /// </summary>
-        readonly Dictionary<String, Object> _data = new Dictionary<String, Object>();
+        readonly Dictionary<String, Object> _data = new();
 
         /// <summary>
         /// Optimised for value types. Gets the value of a property. If the property does not exist, returns the defined default value (and sets that value in the model)

@@ -59,6 +59,28 @@ namespace CharacterMap.Helpers
                 }
             }));
 
+
+
+        public static double GetCornerRadius(DependencyObject obj)
+        {
+            return (double)obj.GetValue(CornerRadiusProperty);
+        }
+
+        public static void SetCornerRadius(DependencyObject obj, double value)
+        {
+            obj.SetValue(CornerRadiusProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for CornerRadius.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty CornerRadiusProperty =
+            DependencyProperty.RegisterAttached("CornerRadius", typeof(double), typeof(CompositionFactory), new PropertyMetadata(0d, (d, e) =>
+            {
+                if (d is FrameworkElement element && e.NewValue is double v)
+                {
+                    SetCornerRadius(element, (float)v);
+                }
+            }));
+
         #endregion
 
         static CompositionFactory()
@@ -186,6 +208,16 @@ namespace CharacterMap.Helpers
             var o = CreateFade(c, 1, 0, (int)(durationMs * 0.33), delayMs);
 
             return c.CreateAnimationGroup(t, o);
+        }
+
+        public static void SetCornerRadius(UIElement target, float size)
+        {
+            var vis = target.GetElementVisual();
+            var rec = vis.Compositor.CreateRoundedRectangleGeometry();
+            rec.CornerRadius = new(size);
+            rec.LinkShapeSize(vis);
+            var clip = vis.Compositor.CreateGeometricClip(rec);
+            vis.Clip = clip;
         }
 
         public static void PlayEntrance(List<UIElement> targets, int delayMs = 0, int fromOffsetY = 40, int fromOffsetX = 0, int durationMs = 1000, int staggerMs = 83)

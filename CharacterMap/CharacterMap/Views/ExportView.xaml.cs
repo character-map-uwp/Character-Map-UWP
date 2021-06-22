@@ -67,11 +67,16 @@ namespace CharacterMap.Views
             if (args.ItemContainer is SelectorItem item && item.Tag == null)
             {
                 item.Tag = sender;
+
+                // Set up manual binding to users selected font colour
                 item.SetBinding(SelectorItem.ForegroundProperty, new Binding
                 {
                     Source = sender,
                     Path = new PropertyPath(nameof(sender.Foreground))
                 });
+
+                item.BorderBrush = ResourceHelper.Get<Brush>("ExportBorderBrush");
+                item.BorderThickness = new Thickness(1);
             }
         }
 

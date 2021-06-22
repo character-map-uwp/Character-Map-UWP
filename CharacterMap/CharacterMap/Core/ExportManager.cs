@@ -328,7 +328,6 @@ namespace CharacterMap.Core
         {
             try
             {
-
                 // 1. Get the file we will save the image to.
                 string name = GetFileName(selectedFont, options.Variant, selectedChar, "png");
                 StorageFile file = null;
@@ -356,8 +355,9 @@ namespace CharacterMap.Core
                         var device = Utils.CanvasDevice;
                         var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
-                        var canvasH = (float)settings.PngSize;
-                        var canvasW = (float)settings.PngSize;
+                        float size = style.PreferredSize > 0 ? (float)style.PreferredSize : (float)settings.PngSize;
+                        var canvasH = size;
+                        var canvasW = size;
 
                         using var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
                         using (var ds = renderTarget.CreateDrawingSession())
@@ -518,14 +518,20 @@ namespace CharacterMap.Core
             InstalledFont family, 
             CharacterRenderingOptions options, 
             IReadOnlyList<Character> characters,
-            ExportOptions opts)
+            ExportOptions opts,
+            Action<int, int> callback)
         {
             if (await PickFolderAsync() is StorageFolder folder)
             {
                 List<ExportResult> fails = new();
 
+                int i = 0;
                 foreach (var c in characters)
                 {
+                    i++;
+
+                    callback?.Invoke(i, characters.Count);
+
                     ExportResult result = await ExportGlyphAsync(opts, family, options, c, folder).ConfigureAwait(false);
                     if (result is not null && result.Success is false)
                         fails.Add(result);
