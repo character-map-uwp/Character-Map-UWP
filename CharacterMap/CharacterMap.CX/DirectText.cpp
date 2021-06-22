@@ -191,7 +191,7 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     if (m_layout == nullptr)
         return;
 
-    args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
+    //args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
 
     auto left = -min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);
     args->DrawingSession->DrawTextLayout(m_layout, float2(left, 0), ((SolidColorBrush^)this->Foreground)->Color);

@@ -23,6 +23,16 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:XamlTitleBar">
                     <Grid BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="ActiveState" />
+                                <VisualState x:Name="InactiveState">
+                                    <VisualState.Setters>
+                                        <Setter Target="BackgroundElement.IsHitTestVisible" Value="False" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <Rectangle x:Name="BackgroundElement" Fill="{TemplateBinding Background}" />
                         <Grid>
                             <Grid.ColumnDefinitions>

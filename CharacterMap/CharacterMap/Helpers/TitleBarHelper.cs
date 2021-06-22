@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CharacterMap.Controls;
+using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.ViewManagement;
@@ -36,16 +37,26 @@ namespace CharacterMap.Helpers
         internal static void SetTitleBar(FrameworkElement e)
         {
             SetDefaultTitleBar(Window.Current.Content, e);
-            Window.Current.SetTitleBar(e);
+
+            if (e is XamlTitleBar bar)
+                Window.Current.SetTitleBar(bar.GetDragElement());
+            else
+                Window.Current.SetTitleBar(e);
         }
 
         internal static void SetTranisentTitleBar(FrameworkElement e)
         {
+            if (GetDefaultTitleBar(Window.Current.Content) is XamlTitleBar bar)
+                bar.IsDragTarget = e == bar;
+
             Window.Current.SetTitleBar(e);
         }
 
         internal static void RestoreDefaultTitleBar()
         {
+            if (GetDefaultTitleBar(Window.Current.Content) is XamlTitleBar bar)
+                bar.IsDragTarget = true;
+
             Window.Current.SetTitleBar(GetDefaultTitleBar(Window.Current.Content));
         }
     }
