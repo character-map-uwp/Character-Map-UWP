@@ -760,6 +760,11 @@ namespace CharacterMap.Views
             ViewModel.UpdateCategories(e);
         }
 
+        private void CharGrid_ItemDoubleTapped(object sender, Character e)
+        {
+            ViewModel.AddToSequence(e);
+        }
+
         /// <summary>
         /// Returns a string attempting to show only characters a font supports
         /// </summary>

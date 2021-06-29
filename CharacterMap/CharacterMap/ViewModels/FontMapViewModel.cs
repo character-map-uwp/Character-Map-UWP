@@ -592,6 +592,7 @@ namespace CharacterMap.ViewModels
         }
         public void ClearSequence() => Sequence = string.Empty;
         public void AddCharToSequence() => Sequence += SelectedChar.Char;
+        public void AddToSequence(Character c) => Sequence += c.Char;
         public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);
         public void DecreaseCharacterSize() => Settings.ChangeGridSize(-4);
         public void ShowPane() => Settings.EnablePreviewPane = true;

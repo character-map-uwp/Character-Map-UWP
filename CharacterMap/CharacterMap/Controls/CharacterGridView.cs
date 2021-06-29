@@ -2,6 +2,7 @@
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using Microsoft.Graphics.Canvas.Text;
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
@@ -27,6 +28,8 @@ namespace CharacterMap.Controls
 
     public class CharacterGridView : GridView
     {
+        public event EventHandler<Character> ItemDoubleTapped;
+
         #region Dependency Properties
 
         #region ItemSize
@@ -187,6 +190,10 @@ namespace CharacterMap.Controls
                 Character c = ((Character)args.Item);
                 UpdateContainer(item, c);
                 args.Handled = true;
+
+                item.Tag = c;
+                item.DoubleTapped -= Item_DoubleTapped;
+                item.DoubleTapped += Item_DoubleTapped;
             }
 
             if (_templateSettings.EnableReposition)
@@ -200,6 +207,14 @@ namespace CharacterMap.Controls
                     var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
                     v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
                 }
+            }
+        }
+
+        private void Item_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        {
+            if (sender is GridViewItem item)
+            {
+                ItemDoubleTapped?.Invoke(sender, item.Tag as Character);
             }
         }
 

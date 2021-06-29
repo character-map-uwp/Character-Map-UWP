@@ -749,6 +749,7 @@
                     x:Name="CharGrid"
                     x:FieldModifier="public"
                     Padding="10 10 6 10"
+                    ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
                     IsItemClickEnabled="False"
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
