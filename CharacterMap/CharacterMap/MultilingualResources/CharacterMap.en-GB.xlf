@@ -1261,6 +1261,14 @@ Default variant copied.</target>
           <source>Exporting character {0} of {1}</source>
           <target state="new">Exporting character {0} of {1}</target>
         </trans-unit>
+        <trans-unit id="ExportAllowColor.Content" translate="yes" xml:space="preserve">
+          <source>Allow font to use it's own colours</source>
+          <target state="new">Allow font to use it's own colours</target>
+        </trans-unit>
+        <trans-unit id="ExportColorHeader.Text" translate="yes" xml:space="preserve">
+          <source>Default Color</source>
+          <target state="translated">Default Colour</target>
+        </trans-unit>
       </group>
     </body>
   </file>

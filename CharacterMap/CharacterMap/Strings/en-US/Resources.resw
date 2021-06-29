@@ -1052,4 +1052,10 @@ Default variant copied.</value>
   <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
     <value>Exporting character {0} of {1}</value>
   </data>
+  <data name="ExportAllowColor.Content" xml:space="preserve">
+    <value>Allow font to use it's own colours</value>
+  </data>
+  <data name="ExportColorHeader.Text" xml:space="preserve">
+    <value>Default Color</value>
+  </data>
 </root>

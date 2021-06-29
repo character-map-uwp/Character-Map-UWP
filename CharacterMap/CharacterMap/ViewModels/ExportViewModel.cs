@@ -52,6 +52,7 @@ namespace CharacterMap.ViewModels
             Font        = viewModel.RenderingOptions.Variant;
             Options     = viewModel.RenderingOptions;
             GlyphSize   = viewModel.Settings.PngSize;
+            ExportColor = viewModel.ShowColorGlyphs;
 
             IsWhiteChecked = ResourceHelper.GetEffectiveTheme() == ElementTheme.Dark;
             IsBlackChecked = ResourceHelper.GetEffectiveTheme() == ElementTheme.Light;
@@ -150,9 +151,12 @@ namespace CharacterMap.ViewModels
                   });
             });
                 
-            WeakReferenceMessenger.Default.Send(
-                    new AppNotificationMessage(true, 
-                        new ExportGlyphsResult(true, Characters.Count, folder)));
+            if (folder is not null)
+            {
+                WeakReferenceMessenger.Default.Send(
+                   new AppNotificationMessage(true,
+                       new ExportGlyphsResult(true, Characters.Count, folder)));
+            }
 
             ExportMessage = "";
             IsExporting = false;

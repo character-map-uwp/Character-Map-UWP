@@ -758,10 +758,15 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Colour" />
+                        <TextBlock
+                            x:Uid="ExportColorHeader"
+                            d:Text="{core:Localizer Key=ExportColorHeader/Text}"
+                            Style="{StaticResource SubheaderTextBlockStyle}" />
 
-                        <CheckBox Content="Export native font colours" IsChecked="{x:Bind ViewModel.ExportColor, Mode=TwoWay}" />
-
+                        <CheckBox
+                            x:Uid="ExportAllowColor"
+                            d:Content="{core:Localizer Key=ExportAllowColor/Content}"
+                            IsChecked="{x:Bind ViewModel.ExportColor, Mode=TwoWay}" />
 
                         <muxc:ColorPicker
                             HorizontalAlignment="Left"
@@ -840,7 +845,7 @@
                         ItemTypography="{x:Bind _fontMap.ViewModel.SelectedTypography}"
                         ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"
                         SelectionMode="None"
-                        ShowColorGlyphs="{x:Bind _fontMap.ViewModel.ShowColorGlyphs}">
+                        ShowColorGlyphs="{x:Bind ViewModel.ExportColor, Mode=OneWay}">
                         <GridView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
