@@ -287,7 +287,9 @@ namespace CharacterMap.Core
             Character selectedChar,
             StorageFolder targetFolder = null)
         {
-            if (export.PreferredFormat == ExportFormat.Png)
+            // To export a glyph as an SVG, it must be fully vector based.
+            // If it is not, we force export as PNG regardless of choice.
+            if (export.PreferredFormat == ExportFormat.Png || options.Analysis.IsFullVectorBased is false)
                 return ExportPngAsync(export, selectedFont, options, selectedChar, ResourceHelper.AppSettings, targetFolder);
             else
                 return ExportSvgAsync(export, selectedFont, options, selectedChar, targetFolder);

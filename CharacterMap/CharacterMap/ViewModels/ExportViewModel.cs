@@ -26,7 +26,7 @@ namespace CharacterMap.ViewModels
         public IReadOnlyList<Character> Characters      { get => GetV<IReadOnlyList<Character>>(); private set => Set(value); }
         public IList<UnicodeCategoryModel> Categories   { get => GetV<IList<UnicodeCategoryModel>>(); private set => Set(value); }
 
-        public bool HideWhitespace          { get => GetV(false); set => Set(value); }
+        public bool HideWhitespace          { get => GetV(true); set => Set(value); }
         public double GlyphSize             { get => GetV(0d); set => Set(value); }
         public Color GlyphColor             { get => GetV(Colors.White); set => Set(value); }
         public bool ExportColor             { get => GetV(true); set => Set(value); }
