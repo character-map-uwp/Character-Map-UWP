@@ -77,6 +77,25 @@ namespace CharacterMap.Core
         }
     }
 
+    public class ExportGlyphsResult
+    {
+        public StorageFolder Folder { get; }
+        public bool Success { get; }
+        public int Count { get; }
+
+        public ExportGlyphsResult(bool success, int count, StorageFolder folder)
+        {
+            Success = success;
+            Folder = folder;
+            Count = count;
+        }
+
+        public string GetMessage()
+        {
+            return Localization.Get("ExportGlyphsResultMessage/Text", Count);
+        }
+    }
+
     public class ExportFontFileResult
     {
         public StorageFolder Folder { get; }
@@ -514,7 +533,7 @@ namespace CharacterMap.Core
             return picker.PickSingleFolderAsync();
         }
 
-        internal static async Task ExportFontToFolderAsync(
+        internal static async Task<StorageFolder> ExportGlyphsToFolderAsync(
             InstalledFont family, 
             CharacterRenderingOptions options, 
             IReadOnlyList<Character> characters,
@@ -537,9 +556,10 @@ namespace CharacterMap.Core
                         fails.Add(result);
                 }
 
-                WeakReferenceMessenger.Default.Send(
-                    new AppNotificationMessage(true, new ExportFontFileResult(folder, true)));
+                return folder;
             }
+
+            return null;
         }
     }
 }

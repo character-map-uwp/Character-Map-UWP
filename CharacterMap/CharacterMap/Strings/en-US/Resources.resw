@@ -1037,4 +1037,19 @@ Default variant copied.</value>
   <data name="BtnGithubCommits.Content" xml:space="preserve">
     <value>View the latest commits on Github</value>
   </data>
+  <data name="ExportGlyphsHeader.Text" xml:space="preserve">
+    <value>Export Characters</value>
+  </data>
+  <data name="ExportGlyphsSummary.Text" xml:space="preserve">
+    <value>Ready to export {0} characters as {1}</value>
+  </data>
+  <data name="ExportCharactersLabel.Text" xml:space="preserve">
+    <value>Export Characters</value>
+  </data>
+  <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
+    <value>{0} characters exported</value>
+  </data>
+  <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
+    <value>Exporting character {0} of {1}</value>
+  </data>
 </root>

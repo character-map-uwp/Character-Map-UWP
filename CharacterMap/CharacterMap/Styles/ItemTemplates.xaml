@@ -102,6 +102,29 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="ExportGlyphsTemplate" x:DataType="core:ExportGlyphsResult">
+        <Grid ColumnSpacing="12" HorizontalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                VerticalAlignment="Center"
+                FontSize="16"
+                IsColorFontEnabled="True"
+                Text="{x:Bind GetMessage()}"
+                TextWrapping="Wrap" />
+
+            <Button
+                x:Uid="BtnOpenFolder"
+                Grid.Column="1"
+                Click="OpenFolderButton_Click"
+                Style="{StaticResource ButtonRevealStyle}" />
+
+        </Grid>
+    </DataTemplate>
+
     <DataTemplate x:Key="ExportFontNotificationTemplate" x:DataType="core:ExportFontFileResult">
         <Grid ColumnSpacing="12" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>

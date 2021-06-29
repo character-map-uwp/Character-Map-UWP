@@ -45,7 +45,11 @@ namespace CharacterMap.Styles
                             ItemsToSelect = { result.File }
                         });
             }
-            else if (sender is Button bb && bb.DataContext is ExportFontFileResult fresult)
+            else if (sender is Button bb && bb.DataContext is ExportGlyphsResult gresult)
+            {
+                _ = Launcher.LaunchFolderAsync(gresult.Folder);
+            }
+            else if (sender is Button bbb && bbb.DataContext is ExportFontFileResult fresult)
             {
                 if (fresult.File != null)
                 {

@@ -1,10 +1,12 @@
 ﻿using CharacterMap.Helpers;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -38,10 +40,14 @@ namespace CharacterMap.Views
             ViewModel = new ExportViewModel(_fontMap.ViewModel);
 
             this.InitializeComponent();
+
+            CompositionFactory.SetupOverlayPanelAnimation(this);
+            LeakTrackingService.Register(this);
         }
 
         public void Show()
         {
+            StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
             // Focus the close button to ensure keyboard focus is retained inside the panel
@@ -51,6 +57,30 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             TitleBarHelper.SetTranisentTitleBar(TitleBackground);
+        }
+
+        private void StartShowAnimation()
+        {
+            if (!CompositionFactory.UISettings.AnimationsEnabled)
+            {
+                this.GetElementVisual().Opacity = 1;
+                this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);
+                return;
+            }
+
+            List<UIElement> elements = new() { this };
+            elements.AddRange(OptionsPanel.Children);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
+
+            elements.Clear();
+            elements.AddRange(PreviewOptions.Children);
+            elements.Add(PreviewContainer);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
+
+            elements.Clear();
+            elements.Add(BottomLabel);
+            elements.AddRange(BottomButtonOptions.Children);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)

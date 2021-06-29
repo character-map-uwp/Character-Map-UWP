@@ -14,6 +14,7 @@
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
+    d:DataContext="{d:DesignInstance Type=views:ExportView}"
     d:DesignHeight="720"
     d:DesignWidth="1280"
     Background="Transparent"
@@ -643,10 +644,11 @@
             Grid.Row="1"
             Height="{StaticResource TitleRowHeight}">
             <TextBlock
+                x:Uid="ExportGlyphsHeader"
                 Margin="20 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                d:Text="Export Glyphs"
+                d:Text="{core:Localizer Key=ExportGlyphsHeader/Text}"
                 FontSize="22"
                 FontWeight="Bold"
                 IsHitTestVisible="False" />
@@ -713,7 +715,8 @@
                         <Border Style="{StaticResource SpacerStyle}" />
                     </StackPanel>
 
-                    <StackPanel d:Visibility="Collapsed">
+                    <StackPanel d:Visibility="Collapsed" ChildrenTransitions="{StaticResource RepositionTransitions}">
+
                         <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Preferred Format" />
 
                         <TextBlock TextWrapping="Wrap">
@@ -755,7 +758,10 @@
                     </StackPanel>
 
                     <StackPanel>
-                        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Glyph Colour" />
+                        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Colour" />
+
+                        <CheckBox Content="Export native font colours" IsChecked="{x:Bind ViewModel.ExportColor, Mode=TwoWay}" />
+
 
                         <muxc:ColorPicker
                             HorizontalAlignment="Left"
@@ -774,6 +780,7 @@
 
             <!--  Page Preview Container  -->
             <Grid
+                x:Name="PreviewContainer"
                 Grid.Column="1"
                 RowSpacing="8"
                 Margin="12 24 12 12"
@@ -878,6 +885,14 @@
             Grid.Row="3"
             Background="{StaticResource AltHostBrush}">
 
+            <TextBlock
+                x:Name="BottomLabel"
+                Margin="12 0"
+                VerticalAlignment="Center"
+                FontSize="12"
+                Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
+                TextLineBounds="Tight" />
+
             <StackPanel
                 x:Name="BottomButtonOptions"
                 Margin="8"
@@ -889,6 +904,7 @@
                     Width="150"
                     d:Content="Export"
                     Click="{x:Bind ViewModel.StartExport}"
+                    IsEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
                     Style="{StaticResource AccentButtonStyle}" />
                 <Button
                     x:Uid="BtnCancel"

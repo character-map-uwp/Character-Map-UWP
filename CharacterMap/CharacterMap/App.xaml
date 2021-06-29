@@ -267,7 +267,10 @@
                     <Thickness x:Key="ListViewItemRevealBorderThemeThickness">0</Thickness>
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
-                    <SolidColorBrush x:Key="ExportBorderBrush" Color="{StaticResource ScrollBarPanningThumbBackgroundColor}" Opacity="0.5" />
+                    <SolidColorBrush
+                        x:Key="ExportBorderBrush"
+                        Opacity="0.5"
+                        Color="{StaticResource ScrollBarPanningThumbBackgroundColor}" />
 
                     <AcrylicBrush
                         x:Key="DefaultHostBrush"

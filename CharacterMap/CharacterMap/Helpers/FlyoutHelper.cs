@@ -205,7 +205,7 @@ namespace CharacterMap.Helpers
 
                         var exportButton = new MenuFlyoutItem
                         {
-                            Text = "Export Glyphs as PNG",
+                            Text = Localization.Get("ExportCharactersLabel/Text"),
                             Icon = new SymbolIcon(Symbol.Save),
                             Tag = options,
                             DataContext = font

@@ -586,6 +586,13 @@
             </StackPanel>
         </Grid>
 
+        <!--  Print Presenter  -->
+        <Border
+            x:Name="PrintPresenter"
+            x:DeferLoadStrategy="Lazy"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="10" />
+
         <!--  Notification Presenter  -->
         <Grid
             x:Name="NotificationRoot"
@@ -594,13 +601,6 @@
             Grid.ColumnSpan="10">
             <wct:InAppNotification x:Name="DefaultNotification" />
         </Grid>
-
-        <!--  Print Presenter  -->
-        <Border
-            x:Name="PrintPresenter"
-            x:DeferLoadStrategy="Lazy"
-            Grid.RowSpan="3"
-            Grid.ColumnSpan="10" />
 
         <!--  Loading Root  -->
         <Grid

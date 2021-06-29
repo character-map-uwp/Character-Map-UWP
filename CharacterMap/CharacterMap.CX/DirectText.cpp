@@ -191,6 +191,7 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     if (m_layout == nullptr)
         return;
 
+    // Useful for debugging to see which textboxes are DX
     //args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
 
     auto left = -min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);

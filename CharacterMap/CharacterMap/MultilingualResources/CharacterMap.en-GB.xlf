@@ -1241,6 +1241,26 @@ Default variant copied.</target>
           <source>View the latest commits on Github</source>
           <target state="new">View the latest commits on Github</target>
         </trans-unit>
+        <trans-unit id="ExportGlyphsHeader.Text" translate="yes" xml:space="preserve">
+          <source>Export Characters</source>
+          <target state="new">Export Characters</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphsSummary.Text" translate="yes" xml:space="preserve">
+          <source>Ready to export {0} characters as {1}</source>
+          <target state="new">Ready to export {0} characters as {1}</target>
+        </trans-unit>
+        <trans-unit id="ExportCharactersLabel.Text" translate="yes" xml:space="preserve">
+          <source>Export Characters</source>
+          <target state="new">Export Characters</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphsResultMessage.Text" translate="yes" xml:space="preserve">
+          <source>{0} characters exported</source>
+          <target state="new">{0} characters exported</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphsProgressMessage.Text" translate="yes" xml:space="preserve">
+          <source>Exporting character {0} of {1}</source>
+          <target state="new">Exporting character {0} of {1}</target>
+        </trans-unit>
       </group>
     </body>
   </file>
