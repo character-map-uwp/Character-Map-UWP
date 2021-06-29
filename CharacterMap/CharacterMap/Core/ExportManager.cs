@@ -25,6 +25,9 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using System.Threading;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Documents;
+using Windows.UI.Xaml;
 
 namespace CharacterMap.Core
 {
@@ -337,6 +340,32 @@ namespace CharacterMap.Core
             return new ExportResult(false, null);
         }
 
+        private static CanvasTextLayout CreateLayout(
+            CanvasDevice device,
+            CharacterRenderingOptions options,
+            Character character, 
+            ExportStyle style, 
+            float canvasSize)
+        {
+            var layout = new CanvasTextLayout(device, $"{character}", new()
+            {
+                FontSize = options.FontSize,
+                FontFamily = options.Variant.Source,
+                FontStretch = options.Variant.FontFace.Stretch,
+                FontWeight = options.Variant.FontFace.Weight,
+                FontStyle = options.Variant.FontFace.Style,
+                HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                Options = style == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
+            }, canvasSize, canvasSize);
+
+            if (style == ExportStyle.ColorGlyph)
+                layout.Options = CanvasDrawTextOptions.EnableColorFont;
+
+            layout.SetTypography(0, 1, options.CreateCanvasTypography());
+
+            return layout;
+        }
+
         public static async Task<ExportResult> ExportPngAsync(
             ExportOptions style,
             InstalledFont selectedFont,
@@ -388,21 +417,13 @@ namespace CharacterMap.Core
                             var textColor = style.PreferredColor;
                             var fontSize = (float)d;
 
-                            using CanvasTextLayout layout = new (device, $"{selectedChar.Char}", new ()
-                            {
-                                FontSize = fontSize,
-                                FontFamily = options.Variant.Source,
-                                FontStretch = options.Variant.FontFace.Stretch,
-                                FontWeight = options.Variant.FontFace.Weight,
-                                FontStyle = options.Variant.FontFace.Style,
-                                HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                                Options = style.PreferredStyle == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
-                            }, canvasW, canvasH);
-
-                            if (style.PreferredStyle == ExportStyle.ColorGlyph)
-                                layout.Options = CanvasDrawTextOptions.EnableColorFont;
-
-                            layout.SetTypography(0, 1, typography);
+                            using CanvasTextLayout layout = 
+                                CreateLayout(
+                                    device,
+                                    options with { FontSize = fontSize }, 
+                                    selectedChar, 
+                                    style.PreferredStyle, 
+                                    canvasW);
 
                             var db = layout.DrawBounds;
                             double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
@@ -544,12 +565,21 @@ namespace CharacterMap.Core
             {
                 List<ExportResult> fails = new();
 
+                CanvasDevice device = CanvasDevice.GetSharedDevice();
+                NativeInterop interop = Utils.GetInterop();
+
                 int i = 0;
                 foreach (var c in characters)
                 {
                     i++;
 
                     callback?.Invoke(i, characters.Count);
+
+                    // We need to create a new analysis for each individual glyph to properly
+                    // support export non-outline glyphs
+                    using var layout = CreateLayout(device, options, c, opts.PreferredStyle, 1024f);
+                    var analysis = interop.AnalyzeCharacterLayout(layout);
+                    options = options with { Analysis = analysis };
 
                     ExportResult result = await ExportGlyphAsync(opts, family, options, c, folder).ConfigureAwait(false);
                     if (result is not null && result.Success is false)
