@@ -301,7 +301,12 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                new("Latest Release", // May
+                new("Latest Release", // July
+                    "- Added Export Characters view (Ctrl + E)\n" +
+                    "- Quick Compare (Ctrl + Q) now supports comparing typography variations and variable axis on the same font face\n" +
+                    "- Copy pane (Ctrl + B) now supports editing and cursor positioning\n" +
+                    "- Double clicking a character will now add it to the copy pane"),
+                new("2021.3.0.0 (May 2021)",
                     "- Added glyph name and search support for Segoe Fluent Icons\n" +
                     "- Added Visual Basic developer features\n" +
                     "- Added ability to compare individual Font Face's with Quick Compare view (Ctrl + Q)"),

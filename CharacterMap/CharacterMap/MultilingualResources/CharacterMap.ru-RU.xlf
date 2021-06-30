@@ -1134,8 +1134,8 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
           <target state="new">Add</target>
         </trans-unit>
         <trans-unit id="CopySequencePlaceholder.Text" translate="yes" xml:space="preserve">
-          <source>add by double clicking a character or using the Add button</source>
-          <target state="new">add by double clicking a character or using the Add button</target>
+          <source>double click a character or use the Add button</source>
+          <target state="new">double click a character or use the Add button</target>
         </trans-unit>
         <trans-unit id="AddSelectionItem.Text" translate="yes" xml:space="preserve">
           <source>Add to selection</source>
