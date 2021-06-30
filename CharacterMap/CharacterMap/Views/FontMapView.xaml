@@ -749,10 +749,10 @@
                     x:Name="CharGrid"
                     x:FieldModifier="public"
                     Padding="10 10 6 10"
-                    ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
                     IsItemClickEnabled="False"
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
+                    ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
@@ -814,11 +814,11 @@
                         TextLineBounds="Tight"
                         Visibility="{x:Bind core:Converters.IsNullOrEmptyToVis(ViewModel.Sequence), Mode=OneWay}" />
 
-                    <TextBlock
+                    <TextBox
                         x:Name="CopySequenceText"
                         Margin="24"
                         VerticalAlignment="Center"
-                        FontFamily="{Binding FontFamily}"
+                        FontFamily="{Binding SelectedVariant.DisplaySource}"
                         FontSize="48"
                         FontStretch="{Binding SelectedVariant.FontFace.Stretch}"
                         FontStyle="{Binding SelectedVariant.FontFace.Style}"
@@ -826,8 +826,8 @@
                         Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                         IsColorFontEnabled="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                         IsTextScaleFactorEnabled="False"
-                        Text="{x:Bind GetSafeString(ViewModel.SelectedVariant.FontFace, ViewModel.Sequence), Mode=OneWay}"
-                        TextLineBounds="Tight" />
+                        Style="{StaticResource ChromelessTextBoxStyle}"
+                        Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <!--<TextBlock
                         x:Name="CopySequenceText"

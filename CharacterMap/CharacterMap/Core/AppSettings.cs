@@ -142,7 +142,7 @@ namespace CharacterMap.Core
 
         public bool EnableCopyPane
         {
-            get => Get(false);
+            get => Get(true);
             set => BroadcastSet(value);
         }
 

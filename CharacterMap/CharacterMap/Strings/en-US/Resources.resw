@@ -957,7 +957,7 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
     <value>Add to selection</value>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
-    <value>add a character using the Add button</value>
+    <value>add by double clicking a character or using the Add button</value>
   </data>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Toggle Copy Pane (Ctrl+B)</value>

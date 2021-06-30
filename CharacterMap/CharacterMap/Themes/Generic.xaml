@@ -208,6 +208,7 @@
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="8"
                             RenderTransformOrigin="{TemplateBinding RenderTransformOrigin}"
                             Visibility="{TemplateBinding Visibility}">
 
@@ -233,7 +234,8 @@
                                 Grid.Column="1"
                                 Width="40"
                                 Height="40"
-                                AutomationProperties.Name="Dismiss">
+                                AutomationProperties.Name="Dismiss"
+                                CornerRadius="4">
                                 <Button.RenderTransform>
                                     <TranslateTransform x:Name="DismissButtonTransform" X="18" />
                                 </Button.RenderTransform>

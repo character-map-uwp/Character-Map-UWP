@@ -765,52 +765,6 @@ namespace CharacterMap.Views
             ViewModel.AddToSequence(e);
         }
 
-        /// <summary>
-        /// Returns a string attempting to show only characters a font supports
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        string GetSafeString(CanvasFontFace fontFace, string s)
-        {
-            /* 
-             * Ideally we actually want to use DirectTextBlock
-             * instead of TextBlock to get correct display of 
-             * Fallback characters, but there is some bug preventing
-             * rendering I can't figure out, so this is our hack for
-             * now.
-             */
-
-            string r = string.Empty;
-            if (s != null && fontFace != null)
-            {
-                for (int i = 0; i < s.Length; i++)
-                {
-                    var c = s[i];
-
-                    /* Surrogate pair handling is pain */
-                    if (char.IsSurrogate(c)
-                        && char.IsSurrogatePair(c, s[i + 1]))
-                    {
-                        var c1 = s[i + 1];
-                        int val = char.ConvertToUtf32(c, c1);
-                        if (fontFace.HasCharacter((uint)val))
-                            r += new string(new char[] { c, c1 });
-                        else
-                            r += '\uFFFD';
-
-                        i += 1;
-                    }
-                    else if (fontFace.HasCharacter(c))
-                        r += c;
-                    else
-                        r += '\uFFFD';
-                }
-               
-            }
-
-            return r;
-        }
-
         private void PreviewTypographySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateTypography(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo, true);
