@@ -280,6 +280,10 @@ namespace CharacterMap.Views
                         if (ViewModel.SelectedVariant is FontVariant v)
                             ExportManager.RequestExportFontFile(v);
                         break;
+                    case VirtualKey.E:
+                        if (ViewModel.SelectedVariant is FontVariant v1)
+                            WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
+                        break;
                     case VirtualKey.Add:
                     case (VirtualKey)187:
                         ViewModel.IncreaseCharacterSize();

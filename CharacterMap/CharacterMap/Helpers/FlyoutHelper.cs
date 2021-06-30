@@ -209,7 +209,7 @@ namespace CharacterMap.Helpers
                             Icon = new SymbolIcon(Symbol.Save),
                             Tag = options,
                             DataContext = font
-                        };
+                        }.AddKeyboardAccelerator(VirtualKey.E, VirtualKeyModifiers.Control);
 
                         exportButton.Click += Export_Click;
                         menu.Items.Add(exportButton);

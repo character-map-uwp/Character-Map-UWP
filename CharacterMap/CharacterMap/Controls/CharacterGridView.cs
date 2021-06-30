@@ -191,7 +191,7 @@ namespace CharacterMap.Controls
                 UpdateContainer(item, c);
                 args.Handled = true;
 
-                item.Tag = c;
+                item.DataContext = c;
                 item.DoubleTapped -= Item_DoubleTapped;
                 item.DoubleTapped += Item_DoubleTapped;
             }
@@ -214,7 +214,7 @@ namespace CharacterMap.Controls
         {
             if (sender is GridViewItem item)
             {
-                ItemDoubleTapped?.Invoke(sender, item.Tag as Character);
+                ItemDoubleTapped?.Invoke(sender, item.DataContext as Character);
             }
         }
 
