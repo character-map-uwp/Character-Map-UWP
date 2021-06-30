@@ -35,7 +35,8 @@ namespace CharacterMap.ViewModels
         public bool IsExporting             { get => GetV(false); set => Set(value); }
         public int SelectedFormat           { get => GetV((int)ExportFormat.Png); set => Set(value); }
         public string ExportMessage         { get => Get<string>(); set => Set(value); }
-        public string Summary               { get => Get<string>(); set => Set(value); }
+        public string Summary               { get => Get<string>(); private set => Set(value); }
+        public string SelectedText          { get => Get<string>(); private set => Set(value); }
         public ElementTheme PreviewTheme    { get => GetV(ResourceHelper.GetEffectiveTheme()); set => Set(value); }
 
         public bool CanContinue => Characters.Count > 0;
@@ -125,6 +126,11 @@ namespace CharacterMap.ViewModels
 
         public void UpdateSummary()
         {
+            SelectedText = Localization.Get(
+                "ExportGlyphSelectedCharacters/Text",
+                Characters.Count,
+                Font.Characters.Count);
+
             Summary = Localization.Get(
                 "ExportGlyphsSummary/Text", 
                 Characters.Count, 

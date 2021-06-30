@@ -78,7 +78,7 @@ namespace CharacterMap.ViewModels
         public bool IsSvgChar                                               { get => GetV(false); set => Set(value); }
         public bool IsSequenceRootVisible                                   { get => GetV(false); set => Set(value); }
         public string XamlPath                                              { get => Get<string>(); set => Set(value); }
-        public string Sequence                                              { get => Get<string>(); set => Set(value); }
+        public string Sequence                                              { get => GetV(string.Empty); set => Set(value); }
         public DevProviderBase SelectedProvider                             { get => Get<DevProviderBase>(); set => Set(value); }
         public FontDisplayMode DisplayMode                                  { get => Get<FontDisplayMode>(); set { if (Set(value)) { UpdateTypography(); } } }
         public FontAnalysis SelectedVariantAnalysis                         { get => Get<FontAnalysis>(); set { if (Set(value)) { UpdateVariations(); } } }
@@ -591,14 +591,18 @@ namespace CharacterMap.ViewModels
                 Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
         public void ClearSequence() => Sequence = string.Empty;
-        public void AddCharToSequence() => Sequence += SelectedChar.Char;
-        public void AddToSequence(Character c) => Sequence += c.Char;
         public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);
         public void DecreaseCharacterSize() => Settings.ChangeGridSize(-4);
         public void ShowPane() => Settings.EnablePreviewPane = true;
         public void HidePane() => Settings.EnablePreviewPane = false;
         public void ShowCopyPane() => Settings.EnableCopyPane = true;
         public void HideCopyPane() => Settings.EnableCopyPane = false;
+
+        public void AddCharToSequence(int start, int length, Character c)
+        {
+            Sequence = Sequence.Remove(start, length).Insert(start, c.Char);
+        }
+
     }
 
     public enum SearchSource

@@ -24,6 +24,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
@@ -58,15 +59,26 @@ namespace CharacterMap.Views
             MainDispatcher = Dispatcher;
             Messenger.Register<CollectionsUpdatedMessage>(this, (o, m) => OnCollectionsUpdated(m));
             Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
+            Messenger.Register<ModalClosedMessage>(this, (o, m) =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    OnModalClosed();
+            });
             Messenger.Register<PrintRequestedMessage>(this, (o, m) =>
             {
                 if (Dispatcher.HasThreadAccess)
+                {
                     PrintView.Show(this);
+                    OnModalOpened();
+                }
             });
             Messenger.Register<ExportRequestedMessage>(this, (o, m) =>
             {
                 if (Dispatcher.HasThreadAccess)
+                {
                     ExportView.Show(this);
+                    OnModalOpened();
+                }
             });
 
             this.SizeChanged += MainPage_SizeChanged;
@@ -234,6 +246,35 @@ namespace CharacterMap.Views
         {
             this.FindName(nameof(SettingsView));
             SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont);
+            OnModalOpened();
+        }
+
+        async void OnModalOpened()
+        {
+            // Hide FontMap when a modal is showing to improve the performance
+            // of resizing the window (by skipping having to rearrange the character
+            // map when it is not actually "visible" on screen.
+            
+            // We delay disabling rendering as animations for showing the modal
+            // may still be playing
+            await Task.Delay(200);
+            if (AreModalsOpen())
+                FontMap.Visibility = Visibility.Collapsed;
+        }
+
+        void OnModalClosed()
+        {
+            if (AreModalsOpen())
+                FontMap.Visibility = Visibility.Collapsed;
+            else
+                FontMap.Visibility = Visibility.Visible;
+        }
+
+
+        private bool AreModalsOpen()
+        {
+            return (SettingsView != null && SettingsView.IsOpen)
+                     || (PrintPresenter != null && PrintPresenter.Child != null);
         }
 
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -245,8 +286,7 @@ namespace CharacterMap.Views
             if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
                 // Check to see if any basic modals are open first
-                if ((SettingsView != null && SettingsView.IsOpen)
-                    || (PrintPresenter != null && PrintPresenter.Child != null))
+                if (AreModalsOpen())
                     return;
 
                 if (!FontMap.HandleInput(e))

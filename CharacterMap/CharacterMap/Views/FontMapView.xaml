@@ -824,7 +824,11 @@
                         FontStyle="{Binding SelectedVariant.FontFace.Style}"
                         FontWeight="{Binding SelectedVariant.FontFace.Weight}"
                         Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                        InputScope="Text"
+                        SelectionHighlightColorWhenNotFocused="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionHighlightColor}"
                         IsColorFontEnabled="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
+                        IsSpellCheckEnabled="False"
+                        IsTextPredictionEnabled="False"
                         IsTextScaleFactorEnabled="False"
                         Style="{StaticResource ChromelessTextBoxStyle}"
                         Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -853,7 +857,7 @@
 
                         <AppBarButton
                             x:Uid="AddButton"
-                            Click="{x:Bind ViewModel.AddCharToSequence}"
+                            Click="AppBarButton_Click"
                             Icon="Add"
                             IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar), Mode=OneWay}" />
                         <AppBarButton

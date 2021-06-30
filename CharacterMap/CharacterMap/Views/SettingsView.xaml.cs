@@ -156,6 +156,7 @@ namespace CharacterMap.Views
             TitleBarHelper.RestoreDefaultTitleBar();
             IsOpen = false;
             this.Visibility = Visibility.Collapsed;
+            WeakReferenceMessenger.Default.Send(new ModalClosedMessage());
         }
 
         private void StartShowAnimation()

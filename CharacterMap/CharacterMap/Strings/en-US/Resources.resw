@@ -1053,9 +1053,15 @@ Default variant copied.</value>
     <value>Exporting character {0} of {1}</value>
   </data>
   <data name="ExportAllowColor.Content" xml:space="preserve">
-    <value>Allow font to use it's own colours</value>
+    <value>Allow font to use its own colors if defined</value>
   </data>
   <data name="ExportColorHeader.Text" xml:space="preserve">
     <value>Default Color</value>
+  </data>
+  <data name="ExportGlyphFormatDescription.Text" xml:space="preserve">
+    <value>Glyphs stored in binary formats will be exported as their native format regardless of this choice.</value>
+  </data>
+  <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
+    <value>{0} of {1} characters selected</value>
   </data>
 </root>

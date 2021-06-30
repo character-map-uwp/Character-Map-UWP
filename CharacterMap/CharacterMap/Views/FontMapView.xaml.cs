@@ -766,7 +766,25 @@ namespace CharacterMap.Views
 
         private void CharGrid_ItemDoubleTapped(object sender, Character e)
         {
-            ViewModel.AddToSequence(e);
+            AddCharToSequence(e);
+        }
+
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddCharToSequence(ViewModel.SelectedChar);
+        }
+
+        async void AddCharToSequence(Character c)
+        {
+            int selection = CopySequenceText.SelectionStart;
+            ViewModel.AddCharToSequence(
+                CopySequenceText.SelectionStart,
+                CopySequenceText.SelectionLength,
+                ViewModel.SelectedChar);
+            CopySequenceText.SelectionStart = selection + 1;
+
+            await Task.Delay(64);
+            CopySequenceText.Focus(FocusState.Programmatic);
         }
 
         private void PreviewTypographySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -4,6 +4,7 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -42,14 +43,13 @@ namespace CharacterMap.Views
             if (_presenter == null)
                 return;
 
-
             _presenter.GetPresenter().Child = null;
             _presenter = null;
             _fontMap = null;
           
             TitleBarHelper.RestoreDefaultTitleBar();
+            WeakReferenceMessenger.Default.Send(new ModalClosedMessage());
         }
-
     }
 
 

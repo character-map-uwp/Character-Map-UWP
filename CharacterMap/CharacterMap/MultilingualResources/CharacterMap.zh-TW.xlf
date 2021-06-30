@@ -1264,12 +1264,20 @@ Default variant copied.</target>
           <target state="new">Exporting character {0} of {1}</target>
         </trans-unit>
         <trans-unit id="ExportAllowColor.Content" translate="yes" xml:space="preserve">
-          <source>Allow font to use it's own colours</source>
-          <target state="new">Allow font to use it's own colours</target>
+          <source>Allow font to use its own colors if defined</source>
+          <target state="new">Allow font to use its own colors if defined</target>
         </trans-unit>
         <trans-unit id="ExportColorHeader.Text" translate="yes" xml:space="preserve">
           <source>Default Color</source>
           <target state="new">Default Color</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphFormatDescription.Text" translate="yes" xml:space="preserve">
+          <source>Glyphs stored in binary formats will be exported as their native format regardless of this choice.</source>
+          <target state="new">Glyphs stored in binary formats will be exported as their native format regardless of this choice.</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphSelectedCharacters.Text" translate="yes" xml:space="preserve">
+          <source>{0} of {1} characters selected</source>
+          <target state="new">{0} of {1} characters selected</target>
         </trans-unit>
       </group>
     </body>

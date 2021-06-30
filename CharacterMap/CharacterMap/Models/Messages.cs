@@ -9,6 +9,8 @@ using Windows.UI.Xaml;
 
 namespace CharacterMap.Models
 {
+    public class ModalClosedMessage { }
+
     public class CollectionUpdatedArgs
     {
         public InstalledFont Font { get; }
