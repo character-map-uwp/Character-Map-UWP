@@ -585,6 +585,7 @@
             Grid.Row="2"
             ColumnSpacing="24"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            BackgroundTransition="{StaticResource RootBackgroundTransition}"
             CornerRadius="8 8 0 0"
             Loading="ContentPanel_Loading">
             <Grid.ColumnDefinitions>

@@ -301,7 +301,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:XamlTitleBar x:Name="TitleBar" Canvas.ZIndex="101" Background="{x:Null}">
+        <controls:XamlTitleBar
+            x:Name="TitleBar"
+            Background="{x:Null}"
+            Canvas.ZIndex="101">
             <StackPanel Orientation="Horizontal">
                 <Button
                     x:Name="BackButton"
@@ -353,6 +356,7 @@
             RowSpacing="12"
             Padding="24 12 24 0"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            BackgroundTransition="{StaticResource RootBackgroundTransition}"
             CornerRadius="8 8 0 0">
 
             <Grid.RowDefinitions>

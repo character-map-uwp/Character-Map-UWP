@@ -180,6 +180,7 @@
     <Grid
         x:Name="LayoutRoot"
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+        BackgroundTransition="{StaticResource RootBackgroundTransition}"
         DataContext="{x:Bind ViewModel}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -786,6 +787,7 @@
                     Grid.Row="3"
                     Height="120"
                     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                    BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     Loading="CopySequenceRoot_Loading"
                     Visibility="Collapsed">
                     <Grid.ColumnDefinitions>
@@ -825,11 +827,11 @@
                         FontWeight="{Binding SelectedVariant.FontFace.Weight}"
                         Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                         InputScope="Text"
-                        SelectionHighlightColorWhenNotFocused="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionHighlightColor}"
                         IsColorFontEnabled="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                         IsSpellCheckEnabled="False"
                         IsTextPredictionEnabled="False"
                         IsTextScaleFactorEnabled="False"
+                        SelectionHighlightColorWhenNotFocused="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionHighlightColor}"
                         Style="{StaticResource ChromelessTextBoxStyle}"
                         Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 

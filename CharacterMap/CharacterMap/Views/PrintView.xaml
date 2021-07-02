@@ -20,11 +20,11 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-      
+
         <Style TargetType="RadioButton">
             <Setter Property="MinWidth" Value="200" />
         </Style>
-        
+
         <DataTemplate x:Key="HeaderTemplate">
             <TextBlock Style="{StaticResource HeaderStyle}" Text="{Binding}" />
         </DataTemplate>
@@ -167,6 +167,7 @@
             Grid.Row="2"
             ColumnSpacing="24"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            BackgroundTransition="{StaticResource RootBackgroundTransition}"
             CornerRadius="8 8 0 0"
             Loading="ContentPanel_Loading">
             <Grid.ColumnDefinitions>
