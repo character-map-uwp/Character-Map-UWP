@@ -26,7 +26,7 @@ namespace CharacterMap.Helpers
 
             if (msg.Data is ExportResult result)
             {
-                if (!result.Success)
+                if (result.State is not ExportState.Succeeded)
                     return;
 
                 var content = ResourceHelper.InflateDataTemplate("ExportNotificationTemplate", result);

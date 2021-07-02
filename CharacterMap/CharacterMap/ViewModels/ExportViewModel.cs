@@ -28,7 +28,8 @@ namespace CharacterMap.ViewModels
         public IList<UnicodeCategoryModel> Categories   { get => GetV<IList<UnicodeCategoryModel>>(); private set => Set(value); }
 
         public bool HideWhitespace          { get => GetV(true); set => Set(value); }
-        public double GlyphSize             { get => GetV(0d); set => Set(value); }
+        public bool SkipBlankGlyphs         { get => GetV(true); set => Set(value); }
+        public double GlyphSize { get => GetV(0d); set => Set(value); }
         public Color GlyphColor             { get => GetV(Colors.White); set => Set(value); }
         public bool ExportColor             { get => GetV(true); set => Set(value); }
         public bool IsWhiteChecked          { get => GetV(false); set => Set(value); }
@@ -148,7 +149,8 @@ namespace CharacterMap.ViewModels
                 ExportColor ? ExportStyle.ColorGlyph : ExportStyle.Black) 
             { 
                 PreferredColor = GlyphColor, 
-                PreferredSize = GlyphSize 
+                PreferredSize = GlyphSize,
+                SkipEmptyGlyphs = SkipBlankGlyphs
             };
 
             IsExporting = true;
@@ -156,7 +158,7 @@ namespace CharacterMap.ViewModels
             _currentToken = new CancellationTokenSource();
 
             int exported = 0;
-            StorageFolder folder = await ExportManager.ExportGlyphsToFolderAsync(
+            ExportGlyphsResult result = await ExportManager.ExportGlyphsToFolderAsync(
                 _font, Options, Characters, export, (index, count) =>
             {
                 exported = index;
@@ -167,12 +169,11 @@ namespace CharacterMap.ViewModels
                 });
             }, _currentToken.Token);
                 
-            if (folder is not null)
+            if (result is not null)
             {
                 int count = _currentToken.IsCancellationRequested ? exported - 1 : exported;
                 WeakReferenceMessenger.Default.Send(
-                   new AppNotificationMessage(true,
-                       new ExportGlyphsResult(true, count, folder)));
+                   new AppNotificationMessage(true, result));
             }
 
             ExportMessage = "";

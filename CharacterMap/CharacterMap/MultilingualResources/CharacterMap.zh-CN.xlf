@@ -1287,6 +1287,14 @@ Default variant copied.</target>
           <source>{0} of {1} characters selected</source>
           <target state="new">{0} of {1} characters selected</target>
         </trans-unit>
+        <trans-unit id="ExportFileOptionsHeader.Text" translate="yes" xml:space="preserve">
+          <source>File Options</source>
+          <target state="new">File Options</target>
+        </trans-unit>
+        <trans-unit id="ExportSkipBlank.Content" translate="yes" xml:space="preserve">
+          <source>Skip exporting glyphs with no visible content</source>
+          <target state="new">Skip exporting glyphs with no visible content</target>
+        </trans-unit>
       </group>
     </body>
   </file>

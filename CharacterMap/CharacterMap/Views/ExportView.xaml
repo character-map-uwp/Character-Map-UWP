@@ -693,6 +693,20 @@
                         <Border Style="{StaticResource SpacerStyle}" />
                     </StackPanel>
 
+                    <StackPanel>
+                        <TextBlock
+                            x:Uid="ExportFileOptionsHeader"
+                            d:Text="{core:Localizer Key=ExportFileOptionsHeader/Text}"
+                            Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                        <CheckBox
+                            x:Uid="ExportSkipBlank"
+                            d:Content="{core:Localizer Key=ExportSkipBlank/Content}"
+                            IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}" />
+
+                        <Border Style="{StaticResource SpacerStyle}" />
+                    </StackPanel>
+
                 </StackPanel>
             </ScrollViewer>
 

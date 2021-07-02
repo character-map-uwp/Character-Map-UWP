@@ -46,6 +46,7 @@ namespace CharacterMap.Core
         public ExportStyle PreferredStyle { get; init; }
         public Color PreferredColor { get; init; }
         public StorageFolder TargetFolder { get; init; }
+        public bool SkipEmptyGlyphs { get; init; }
 
         public ExportOptions() { }
 
@@ -63,28 +64,44 @@ namespace CharacterMap.Core
 
     }
 
+    public enum ExportState
+    {
+        Skipped,
+        Succeeded,
+        Failed
+    }
+
     public class ExportResult
     {
         public StorageFile File { get; }
-        public bool Success { get; }
+        public ExportState State { get; }
 
-        public ExportResult(bool success, StorageFile file)
+        public ExportResult(ExportState state, StorageFile file)
         {
-            Success = success;
+            State = state;
             File = file;
+        }
+
+        public static ExportResult CreatedFailed()
+        {
+            return new ExportResult(ExportState.Failed, null);
         }
     }
 
     public class ExportGlyphsResult
     {
         public StorageFolder Folder { get; }
+        public int Failed { get; }
+        public int Skipped { get; }
         public bool Success { get; }
         public int Count { get; }
 
-        public ExportGlyphsResult(bool success, int count, StorageFolder folder)
+        public ExportGlyphsResult(bool success, int count, StorageFolder folder, int failed, int skipped)
         {
             Success = success;
             Folder = folder;
+            Failed = failed;
+            Skipped = skipped;
             Count = count;
         }
 
@@ -127,7 +144,8 @@ namespace CharacterMap.Core
             ExportStyle style,
             Color textColor,
             CharacterRenderingOptions options,
-            Character selectedChar)
+            Character selectedChar,
+            bool skipEmpty = false)
         {
             // We want to prepare geometry at 1024px, so force this
             options = options with { FontSize = 1024 };
@@ -170,6 +188,10 @@ namespace CharacterMap.Core
             }
 
             var data = GetGeometry(selectedChar, options);
+
+            if (string.IsNullOrWhiteSpace(data.Path) && skipEmpty)
+                return null;
+
             string GetMonochrome()
             {
                 using CanvasSvgDocument document = string.IsNullOrWhiteSpace(data.Path) 
@@ -315,21 +337,26 @@ namespace CharacterMap.Core
         {
             try
             {
-                // 1. Get the file we will save the image to.
+                // 0. We want to prepare geometry at 1024px, so force this
+                options = options with { FontSize = 1024 };
+                using var typography = options.CreateCanvasTypography();
+
+                // 1. Check if we should actually save the file.
+                //    Certain export modes will skip blank geometries
+                string svg = GetSVG(style.PreferredStyle, style.PreferredColor, options, selectedChar, style.SkipEmptyGlyphs);
+                if (string.IsNullOrWhiteSpace(svg) && style.SkipEmptyGlyphs)
+                    return new ExportResult(ExportState.Skipped, null);
+
+                // 2. Get the file we will save the image to.
                 if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "svg", targetFolder)
                     is StorageFile file)
                 {
                     try
                     {
-                        // We want to prepare geometry at 1024px, so force this
-                        options = options with { FontSize = 1024 };
-                        using var typography = options.CreateCanvasTypography();
-
+                        // 3. Write the SVG to the file
                         CachedFileManager.DeferUpdates(file);
-
-                        // Generate SVG doc and write to file
-                        await Utils.WriteSvgAsync(GetSVG(style.PreferredStyle, style.PreferredColor, options, selectedChar), file);
-                        return new ExportResult(true, file);
+                        await Utils.WriteSvgAsync(svg, file);
+                        return new ExportResult(ExportState.Succeeded, file);
                     }
                     finally
                     {
@@ -344,7 +371,7 @@ namespace CharacterMap.Core
                         .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
             }
 
-            return new ExportResult(false, null);
+            return new ExportResult(ExportState.Failed, null);
         }
 
         public static async Task<ExportResult> ExportPngAsync(
@@ -357,6 +384,24 @@ namespace CharacterMap.Core
         {
             try
             {
+                // 0. First we should check if we should actually render this
+                float size = style.PreferredSize > 0 ? (float)style.PreferredSize : (float)settings.PngSize;
+                var r = settings.PngSize / 2;
+
+                var textColor = style.PreferredColor;
+
+                using CanvasTextLayout layout =
+                    CreateLayout(
+                        options with { FontSize = size },
+                        selectedChar,
+                        style.PreferredStyle,
+                        size);
+
+                var db = layout.DrawBounds;
+
+                if (style.SkipEmptyGlyphs && db.Height == 0 && db.Width == 0)
+                    return new ExportResult(ExportState.Skipped, null);
+
                 // 1. Get the file we will save the image to.
                 if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder)
                     is StorageFile file)
@@ -377,31 +422,14 @@ namespace CharacterMap.Core
                         var device = Utils.CanvasDevice;
                         var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
 
-                        float size = style.PreferredSize > 0 ? (float)style.PreferredSize : (float)settings.PngSize;
-                        var canvasH = size;
-                        var canvasW = size;
-
-                        using var renderTarget = new CanvasRenderTarget(device, canvasW, canvasH, localDpi);
+                        using var renderTarget = new CanvasRenderTarget(device, size, size, localDpi);
                         using (var ds = renderTarget.CreateDrawingSession())
                         {
                             ds.Clear(Colors.Transparent);
-                            var d = settings.PngSize;
-                            var r = settings.PngSize / 2;
-
-                            var textColor = style.PreferredColor;
-                            var fontSize = (float)d;
-
-                            using CanvasTextLayout layout = 
-                                CreateLayout(
-                                    options with { FontSize = fontSize }, 
-                                    selectedChar, 
-                                    style.PreferredStyle, 
-                                    canvasW);
-
-                            var db = layout.DrawBounds;
-                            double scale = Math.Min(1, Math.Min(canvasW / db.Width, canvasH / db.Height));
-                            var x = -db.Left + ((canvasW - (db.Width * scale)) / 2d);
-                            var y = -db.Top + ((canvasH - (db.Height * scale)) / 2d);
+                            
+                            double scale = Math.Min(1, Math.Min(size / db.Width, size / db.Height));
+                            var x = -db.Left + ((size - (db.Width * scale)) / 2d);
+                            var y = -db.Top + ((size - (db.Height * scale)) / 2d);
 
                             ds.Transform =
                                 Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
@@ -416,7 +444,7 @@ namespace CharacterMap.Core
                     }
 
                     await CachedFileManager.CompleteUpdatesAsync(file);
-                    return new ExportResult(true, file);
+                    return new ExportResult(ExportState.Succeeded, file);
                 }
             }
             catch (Exception ex)
@@ -426,7 +454,7 @@ namespace CharacterMap.Core
                         .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
             }
 
-            return new ExportResult(false, null);
+            return ExportResult.CreatedFailed();
         }
 
         private static CanvasTextLayout CreateLayout(
@@ -538,7 +566,7 @@ namespace CharacterMap.Core
             return picker.PickSingleFolderAsync();
         }
 
-        internal static async Task<StorageFolder> ExportGlyphsToFolderAsync(
+        internal static async Task<ExportGlyphsResult> ExportGlyphsToFolderAsync(
             InstalledFont family, 
             CharacterRenderingOptions options, 
             IReadOnlyList<Character> characters,
@@ -549,6 +577,7 @@ namespace CharacterMap.Core
             if (await PickFolderAsync() is StorageFolder folder)
             {
                 List<ExportResult> fails = new();
+                List<ExportResult> skips = new();
                 NativeInterop interop = Utils.GetInterop();
 
                 // TODO: Parallelise this to improve export speed
@@ -571,11 +600,17 @@ namespace CharacterMap.Core
 
                     // Export the glyph
                     ExportResult result = await ExportGlyphAsync(opts, family, options, c, folder);
-                    if (result is not null && result.Success is false)
-                        fails.Add(result);
+                    if (result is not null)
+                    {
+                        if (result.State == ExportState.Failed)
+                            fails.Add(result);
+                        else if (result.State == ExportState.Skipped)
+                            skips.Add(result);
+                    }
                 }
 
-                return folder;
+                return new ExportGlyphsResult(
+                    true, i - fails.Count - skips.Count, folder, fails.Count, skips.Count); ;
             }
 
             return null;

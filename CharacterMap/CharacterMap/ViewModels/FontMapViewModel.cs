@@ -504,7 +504,7 @@ namespace CharacterMap.ViewModels
                 RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
                 character);
 
-            if (result.Success)
+            if (result.State == ExportState.Succeeded)
                 Messenger.Send(new AppNotificationMessage(true, result));
         }
 

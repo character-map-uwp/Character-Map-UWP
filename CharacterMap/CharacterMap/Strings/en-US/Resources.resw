@@ -1064,4 +1064,10 @@ Default variant copied.</value>
   <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
     <value>{0} of {1} characters selected</value>
   </data>
+  <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
+    <value>File Options</value>
+  </data>
+  <data name="ExportSkipBlank.Content" xml:space="preserve">
+    <value>Skip exporting glyphs with no visible content</value>
+  </data>
 </root>
