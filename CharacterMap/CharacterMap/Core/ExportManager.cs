@@ -22,6 +22,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using System.Threading;
 
 namespace CharacterMap.Core
 {
@@ -542,7 +543,8 @@ namespace CharacterMap.Core
             CharacterRenderingOptions options, 
             IReadOnlyList<Character> characters,
             ExportOptions opts,
-            Action<int, int> callback)
+            Action<int, int> callback,
+            CancellationToken token)
         {
             if (await PickFolderAsync() is StorageFolder folder)
             {
@@ -555,6 +557,9 @@ namespace CharacterMap.Core
                 int i = 0;
                 foreach (var c in characters)
                 {
+                    if (token.IsCancellationRequested)
+                        break;
+
                     i++;
 
                     callback?.Invoke(i, characters.Count);

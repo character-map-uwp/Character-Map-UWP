@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
@@ -33,6 +34,7 @@ namespace CharacterMap.ViewModels
         public bool IsWhiteChecked          { get => GetV(false); set => Set(value); }
         public bool IsBlackChecked          { get => GetV(false); set => Set(value); }
         public bool IsExporting             { get => GetV(false); set => Set(value); }
+        public bool ShowCancelExport        { get => GetV(false); set => Set(value); }
         public int SelectedFormat           { get => GetV((int)ExportFormat.Png); set => Set(value); }
         public string ExportMessage         { get => Get<string>(); set => Set(value); }
         public string Summary               { get => Get<string>(); private set => Set(value); }
@@ -43,6 +45,8 @@ namespace CharacterMap.ViewModels
         public bool IsPngFormat => SelectedFormat == (int)ExportFormat.Png;
 
         #endregion
+
+        private CancellationTokenSource _currentToken = null;
 
         DispatcherQueue _dispatcherQueue { get; }
 
@@ -149,23 +153,36 @@ namespace CharacterMap.ViewModels
 
             IsExporting = true;
 
-            StorageFolder folder = await ExportManager.ExportGlyphsToFolderAsync(_font, Options, Characters, export, (index, count) =>
+            _currentToken = new CancellationTokenSource();
+
+            int exported = 0;
+            StorageFolder folder = await ExportManager.ExportGlyphsToFolderAsync(
+                _font, Options, Characters, export, (index, count) =>
             {
-                _ = _dispatcherQueue.TryEnqueue(() =>
-                  {
-                      ExportMessage = Localization.Get("ExportGlyphsProgressMessage/Text", index, count);
-                  });
-            });
+                exported = index;
+                _dispatcherQueue.TryEnqueue(() =>
+                {
+                    ShowCancelExport = true;
+                    ExportMessage = Localization.Get("ExportGlyphsProgressMessage/Text", index, count);
+                });
+            }, _currentToken.Token);
                 
             if (folder is not null)
             {
+                int count = _currentToken.IsCancellationRequested ? exported - 1 : exported;
                 WeakReferenceMessenger.Default.Send(
                    new AppNotificationMessage(true,
-                       new ExportGlyphsResult(true, Characters.Count, folder)));
+                       new ExportGlyphsResult(true, count, folder)));
             }
 
             ExportMessage = "";
+            ShowCancelExport = false;
             IsExporting = false;
+        }
+
+        public void CancelExport()
+        {
+            _currentToken?.Cancel();
         }
 
         public void ToggleTheme()

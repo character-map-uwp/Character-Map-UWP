@@ -791,6 +791,15 @@
                     FontSize="24"
                     FontWeight="Bold"
                     Text="{x:Bind ViewModel.ExportMessage, Mode=OneWay}" />
+
+                <Button
+                    x:Uid="BtnCancel"
+                    Width="150"
+                    HorizontalAlignment="Center"
+                    d:Content="Cancel"
+                    Click="{x:Bind ViewModel.CancelExport}"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Visibility="{x:Bind ViewModel.ShowCancelExport, Mode=OneWay, FallbackValue=Collapsed}" />
             </StackPanel>
         </Grid>
 
