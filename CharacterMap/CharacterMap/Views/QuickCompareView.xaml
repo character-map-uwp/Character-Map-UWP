@@ -172,7 +172,7 @@
                     Axis="{x:Bind Axis}"
                     FallbackFont="{x:Bind core:Converters.GetFontFallback()}"
                     FontFace="{x:Bind Variant.FontFace}"
-                    FontFamily="{x:Bind Variant.DisplaySource, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
+                    FontFamily="{x:Bind Variant.Source, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
                     FontStretch="{x:Bind Variant.FontFace.Stretch}"
                     FontStyle="{x:Bind Variant.FontFace.Style}"
                     FontWeight="{x:Bind Variant.FontFace.Weight}"
