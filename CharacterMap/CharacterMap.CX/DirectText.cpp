@@ -124,7 +124,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
         if (IsTextWrappingEnabled)
         {
-            format->TrimmingGranularity = CanvasTextTrimmingGranularity::Word;
+            format->WordWrapping = CanvasWordWrapping::Character;
+            format->TrimmingGranularity = CanvasTextTrimmingGranularity::Character;
             format->TrimmingSign = CanvasTrimmingSign::Ellipsis;
         }
 
