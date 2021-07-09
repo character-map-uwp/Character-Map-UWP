@@ -11,6 +11,7 @@ using System.Linq;
 using System.Numerics;
 using Windows.ApplicationModel.Core;
 using Windows.Globalization;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -57,6 +58,15 @@ namespace CharacterMap.Views
             set => Set(ref _titleBarHeight, value);
         }
 
+        public int GridSize
+        {
+            get { return (int)GetValue(GridSizeProperty); }
+            set { SetValue(GridSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty GridSizeProperty =
+            DependencyProperty.Register(nameof(GridSize), typeof(int), typeof(SettingsView), new PropertyMetadata(0d));
+
         public List<GlyphAnnotation> Annotations { get; } = new List<GlyphAnnotation>
         {
             GlyphAnnotation.None,
@@ -70,6 +80,8 @@ namespace CharacterMap.Views
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsUpdated(m));
             WeakReferenceMessenger.Default.Register<FontListCreatedMessage>(this, (o, m) => UpdateExport());
+
+            GridSize = Settings.GridSize;
 
             this.InitializeComponent();
             CompositionFactory.SetupOverlayPanelAnimation(this);
@@ -86,13 +98,26 @@ namespace CharacterMap.Views
 
         void OnAppSettingsUpdated(AppSettingsChangedMessage msg)
         {
+            if (!Dispatcher.HasThreadAccess)
+            {
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    OnAppSettingsUpdated(msg);
+                });
+                return;
+            }
             switch (msg.PropertyName)
             {
                 case nameof(Settings.UserRequestedTheme):
                     OnPropertyChanged(nameof(Settings));
                     break;
+                case nameof(Settings.GridSize):
+                    // We can't direct bind here as it may be updated from a different UI Thread.
+                    GridSize = Settings.GridSize;
+                    break;
             }
         }
+
 
         private void UpdateExport()
         {
@@ -200,6 +225,15 @@ namespace CharacterMap.Views
         private void View_Loaded(object sender, RoutedEventArgs e)
         {
             MenuItem_Clicked(MenuColumn.Children.First(), null);
+        }
+
+
+        /* Work around to avoid binding threading issues */
+        private int GetGridSize(int s) => s;
+
+        private void UpdateGridSize(double d)
+        {
+            GridSize = Settings.GridSize = (int)d;
         }
 
         private void BtnReview_Click(object sender, RoutedEventArgs e)

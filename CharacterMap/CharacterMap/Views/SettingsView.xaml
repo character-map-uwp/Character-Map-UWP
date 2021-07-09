@@ -238,9 +238,9 @@
                                         StepFrequency="8"
                                         TickFrequency="8"
                                         TickPlacement="Outside"
-                                        Value="{x:Bind Settings.GridSize, Mode=TwoWay}" />
+                                        Value="{x:Bind GetGridSize(GridSize), Mode=TwoWay, BindBack=UpdateGridSize}" />
                                     <TextBlock>
-                                        <Run Text="{x:Bind Settings.GridSize, Mode=OneWay}" />
+                                        <Run Text="{x:Bind GridSize, Mode=OneWay}" />
                                         <Run Text="px" />
                                     </TextBlock>
                                 </StackPanel>
@@ -272,14 +272,14 @@
                                             </StackPanel.BackgroundTransition>
                                             <GridViewItem>
                                                 <Grid
-                                                    Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                    Height="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                                    Width="{x:Bind GridSize, Mode=OneWay}"
+                                                    Height="{x:Bind GridSize, Mode=OneWay}"
                                                     Padding="4">
                                                     <TextBlock
                                                         x:Name="Preview1"
                                                         Margin="0 -2 0 0"
                                                         Padding="0,0,0,8"
-                                                        FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
+                                                        FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
                                                         IsTextScaleFactorEnabled="False"
                                                         Text="A"
                                                         TextAlignment="Center" />
@@ -292,14 +292,14 @@
 
                                             <GridViewItem>
                                                 <Grid
-                                                    Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                    Height="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                                    Width="{x:Bind GridSize, Mode=OneWay}"
+                                                    Height="{x:Bind GridSize, Mode=OneWay}"
                                                     Padding="4">
                                                     <TextBlock
                                                         x:Name="Preview2"
                                                         Margin="0 -2 0 0"
                                                         Padding="0,0,0,8"
-                                                        FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
+                                                        FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
                                                         IsTextScaleFactorEnabled="False"
                                                         Text="b"
                                                         TextAlignment="Center" />
@@ -312,14 +312,14 @@
 
                                             <GridViewItem>
                                                 <Grid
-                                                    Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                    Height="{x:Bind Settings.GridSize, Mode=OneWay}"
+                                                    Width="{x:Bind GridSize, Mode=OneWay}"
+                                                    Height="{x:Bind GridSize, Mode=OneWay}"
                                                     Padding="4">
                                                     <TextBlock
                                                         x:Name="Preview3"
                                                         Margin="0 -2 0 0"
                                                         Padding="0,0,0,8"
-                                                        FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
+                                                        FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
                                                         IsTextScaleFactorEnabled="False"
                                                         Text="y"
                                                         TextAlignment="Center" />
