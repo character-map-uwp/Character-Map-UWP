@@ -561,6 +561,8 @@ IAsyncOperation<bool>^ DirectWrite::WriteToStreamAsync(CanvasFontFace^ fontFace,
 				fileStream->GetFileSize(&fileSize);
 
 				// 2. Read the source file into memory
+				// TODO: We don't really want to load the entire file into memory.
+				//       Perhaps we can use a rolling buffer?
 				void* context;
 				const void* fragment;
 				fileStream->ReadFileFragment(&fragment, 0, fileSize, &context);

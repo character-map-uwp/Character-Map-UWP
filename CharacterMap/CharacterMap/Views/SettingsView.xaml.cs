@@ -11,6 +11,7 @@ using System.Linq;
 using System.Numerics;
 using Windows.ApplicationModel.Core;
 using Windows.Globalization;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -57,6 +58,15 @@ namespace CharacterMap.Views
             set => Set(ref _titleBarHeight, value);
         }
 
+        public int GridSize
+        {
+            get { return (int)GetValue(GridSizeProperty); }
+            set { SetValue(GridSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty GridSizeProperty =
+            DependencyProperty.Register(nameof(GridSize), typeof(int), typeof(SettingsView), new PropertyMetadata(0d));
+
         public List<GlyphAnnotation> Annotations { get; } = new List<GlyphAnnotation>
         {
             GlyphAnnotation.None,
@@ -71,8 +81,10 @@ namespace CharacterMap.Views
             WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsUpdated(m));
             WeakReferenceMessenger.Default.Register<FontListCreatedMessage>(this, (o, m) => UpdateExport());
 
+            GridSize = Settings.GridSize;
+
             this.InitializeComponent();
-            Composition.SetupOverlayPanelAnimation(this);
+            CompositionFactory.SetupOverlayPanelAnimation(this);
 
             FontNamingSelection.SelectedIndex = (int)Settings.ExportNamingScheme;
 
@@ -86,13 +98,26 @@ namespace CharacterMap.Views
 
         void OnAppSettingsUpdated(AppSettingsChangedMessage msg)
         {
+            if (!Dispatcher.HasThreadAccess)
+            {
+                _ = Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+                {
+                    OnAppSettingsUpdated(msg);
+                });
+                return;
+            }
             switch (msg.PropertyName)
             {
                 case nameof(Settings.UserRequestedTheme):
                     OnPropertyChanged(nameof(Settings));
                     break;
+                case nameof(Settings.GridSize):
+                    // We can't direct bind here as it may be updated from a different UI Thread.
+                    GridSize = Settings.GridSize;
+                    break;
             }
         }
+
 
         private void UpdateExport()
         {
@@ -111,10 +136,10 @@ namespace CharacterMap.Views
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
-            if (!Composition.UISettings.AnimationsEnabled)
+            if (!CompositionFactory.UISettings.AnimationsEnabled)
             {
                 this.GetElementVisual().Opacity = 1;
-                this.GetElementVisual().Properties.InsertVector3(Composition.TRANSLATION, Vector3.Zero);
+                this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);
             }
 
             // 1. Focus the close button to ensure keyboard focus is retained inside the settings panel
@@ -147,13 +172,16 @@ namespace CharacterMap.Views
             // 3. Set correct Developer features language
             UpdateExport();
 
+            TitleBarHelper.SetTranisentTitleBar(TitleBackground);
             IsOpen = true;
         }
 
         public void Hide()
         {
+            TitleBarHelper.RestoreDefaultTitleBar();
             IsOpen = false;
             this.Visibility = Visibility.Collapsed;
+            WeakReferenceMessenger.Default.Send(new ModalClosedMessage());
         }
 
         private void StartShowAnimation()
@@ -163,7 +191,7 @@ namespace CharacterMap.Views
 
             List<UIElement> elements = new List<UIElement> { this, MenuColumn, ContentBorder };
             //elements.AddRange(LeftPanel.Children);
-            Composition.PlayEntrance(elements, 0, 200);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
             //elements.Clear();
             //elements.AddRange(RightPanel.Children);
@@ -172,7 +200,7 @@ namespace CharacterMap.Views
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(ContentRoot, 40, TitleBackground);
+            CompositionFactory.SetThemeShadow(ContentRoot, 40, TitleBackground);
 
             // Set the settings that can't be set with bindings
             switch (Settings.UserRequestedTheme)
@@ -197,6 +225,15 @@ namespace CharacterMap.Views
         private void View_Loaded(object sender, RoutedEventArgs e)
         {
             MenuItem_Clicked(MenuColumn.Children.First(), null);
+        }
+
+
+        /* Work around to avoid binding threading issues */
+        private int GetGridSize(int s) => s;
+
+        private void UpdateGridSize(double d)
+        {
+            GridSize = Settings.GridSize = (int)d;
         }
 
         private void BtnReview_Click(object sender, RoutedEventArgs e)
@@ -268,7 +305,7 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(item, "SelectedState", true);
 
                 if (Settings.UseSelectionAnimations)
-                    Composition.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
+                    CompositionFactory.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
 
                 panel.Visibility = Visibility.Visible;
             }
@@ -298,7 +335,12 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                new("Latest Release", // May
+                new("Latest Release", // July
+                    "- Added Export Characters view (Ctrl + E)\n" +
+                    "- Quick Compare (Ctrl + Q) now supports comparing typography variations and variable axis on the same font face\n" +
+                    "- Copy pane (Ctrl + B) now supports editing and cursor positioning\n" +
+                    "- Double clicking a character will now add it to the copy pane"),
+                new("2021.3.0.0 (May 2021)",
                     "- Added glyph name and search support for Segoe Fluent Icons\n" +
                     "- Added Visual Basic developer features\n" +
                     "- Added ability to compare individual Font Face's with Quick Compare view (Ctrl + Q)"),

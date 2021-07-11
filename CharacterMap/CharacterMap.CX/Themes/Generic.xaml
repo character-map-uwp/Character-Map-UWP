@@ -13,7 +13,8 @@
                     <win2d:CanvasControl
                         x:Name="TextCanvas"
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" />
+                        VerticalAlignment="Stretch"
+                        UseSharedDevice="True" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

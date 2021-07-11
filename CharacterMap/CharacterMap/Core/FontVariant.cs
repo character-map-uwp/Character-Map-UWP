@@ -76,6 +76,14 @@ namespace CharacterMap.Core
         /// </summary>
         public string Source { get; }
 
+        /// <summary>
+        /// A FontFamily source for XAML that includes a custom fallback font.
+        /// This results in XAML *only* rendering the characters included in the font.
+        /// Use when you may have a scenario where characters not inside a font's glyph
+        /// range might be displayed, otherwise use <see cref="Source"/> for better performance.
+        /// </summary>
+        public string DisplaySource => $"{Source}, /Assets/AdobeBlank.otf#Adobe Blank";
+
         public string XamlFontSource =>
             (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 

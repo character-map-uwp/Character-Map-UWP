@@ -203,6 +203,7 @@
     <Compile Include="Controls\FontMapPrintPage.xaml.cs">
       <DependentUpon>FontMapPrintPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\LabelButton.cs" />
     <Compile Include="Controls\Toolkit\GridSplitter.cs" />
     <Compile Include="Controls\MenuFlyoutContentHost.cs" />
     <Compile Include="Controls\Toolkit\InAppNotification.cs" />
@@ -214,9 +215,11 @@
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
+    <Compile Include="Core\ExportManager.Font.cs" />
     <Compile Include="Core\Localizer.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
+    <Compile Include="Helpers\Composition.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
     <Compile Include="Helpers\WoffToOtf.cs" />
@@ -234,7 +237,7 @@
     <Compile Include="Models\Messages.cs" />
     <Compile Include="Core\Converters.cs" />
     <Compile Include="Core\ExportManager.cs" />
-    <Compile Include="Helpers\Composition.cs" />
+    <Compile Include="Helpers\CompositionFactory.cs" />
     <Compile Include="Helpers\FlyoutHelper.cs" />
     <Compile Include="Core\FontFinder.cs" />
     <Compile Include="Core\FontVariant.cs" />
@@ -272,6 +275,7 @@
     <Compile Include="Provider\XamlDevProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Services\IDialogService.cs" />
+    <Compile Include="Services\LeakTrackingService.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />
     <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />
@@ -285,12 +289,16 @@
     <Compile Include="Styles\Controls.xaml.cs">
       <DependentUpon>Controls.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ExportViewModel.cs" />
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="ViewModels\QuickCompareViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\ExportView.xaml.cs">
+      <DependentUpon>ExportView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FontMapView.xaml.cs">
       <DependentUpon>FontMapView.xaml</DependentUpon>
     </Compile>
@@ -319,6 +327,10 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Assets\AdobeBlank.otf" />
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="CharacterMap_TemporaryKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\BadgeLogo.scale-100.png" />
@@ -437,6 +449,10 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ExportView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FontMapView.xaml">
       <SubType>Designer</SubType>

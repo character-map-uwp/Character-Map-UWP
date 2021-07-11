@@ -116,6 +116,16 @@ namespace CharacterMap.Helpers
                 WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
             }
 
+            static void Export_Click(object sender, RoutedEventArgs e)
+            {
+                if (sender is FrameworkElement f && 
+                    f.DataContext is InstalledFont fnt
+                    && f.Tag is CharacterRenderingOptions o)
+                {
+                    WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
+                }
+            }
+
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
@@ -192,6 +202,17 @@ namespace CharacterMap.Helpers
 
                         saveButton.Click += SaveFont_Click;
                         menu.Items.Add(saveButton);
+
+                        var exportButton = new MenuFlyoutItem
+                        {
+                            Text = Localization.Get("ExportCharactersLabel/Text"),
+                            Icon = new SymbolIcon(Symbol.Save),
+                            Tag = options,
+                            DataContext = font
+                        }.AddKeyboardAccelerator(VirtualKey.E, VirtualKeyModifiers.Control);
+
+                        exportButton.Click += Export_Click;
+                        menu.Items.Add(exportButton);
                     }
 
                     // Add "Add to Collection" button
@@ -432,7 +453,7 @@ namespace CharacterMap.Helpers
                     }
 
                     // 5.1. Get providers for the grid character
-                    var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures };
+                    var options = viewmodel.RenderingOptions with { Typography = viewmodel.TypographyFeatures, Axis = viewmodel.VariationAxis.Copy() };
                     var providers = DevProviderBase.GetProviders(options, c);
 
                     // 5.2. Create child items.

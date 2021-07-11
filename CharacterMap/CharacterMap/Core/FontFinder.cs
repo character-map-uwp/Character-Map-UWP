@@ -108,19 +108,26 @@ namespace CharacterMap.Core
                 // Reset meta to false;
                 UpdateMeta(null);
 
-                var systemFonts = await InitialiseAsync().ConfigureAwait(false);
+                await _loadSemaphore.WaitAsync().ConfigureAwait(false);
+                var interop = Ioc.Default.GetService<NativeInterop>();
+
+                // Load SystemFonts and imported fonts in parallel
+                IReadOnlyList<StorageFile> files = null;
+                Task<List<DWriteFontSet>> setsTask = Task.Run(async () =>
+                {
+                    files = await _importFolder.GetFilesAsync();
+                    return interop.GetFonts(files).ToList();
+                });
+                Task<DWriteFontSet> init = InitialiseAsync();
+                await Task.WhenAll(init, setsTask);
+
+                // Load in System Fonts
+                var systemFonts = init.Result;
+                Dictionary<string, InstalledFont> resultList = new (systemFonts.Fonts.Count);
                 UpdateMeta(systemFonts);
 
-                await _loadSemaphore.WaitAsync().ConfigureAwait(false);
-
-                var interop = Ioc.Default.GetService<NativeInterop>();
-                var files = await _importFolder.GetFilesAsync().AsTask().ConfigureAwait(false);
-
-                var resultList = new Dictionary<string, InstalledFont>(systemFonts.Fonts.Count);
-
                 /* Add imported fonts */
-                IReadOnlyList<DWriteFontSet> sets = interop.GetFonts(files).ToList();
-
+                IReadOnlyList<DWriteFontSet> sets = setsTask.Result;
                 for (int i = 0; i < files.Count; i++)
                 {
                     var file = files[i];

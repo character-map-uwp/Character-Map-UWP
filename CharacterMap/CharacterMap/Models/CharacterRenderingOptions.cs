@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Provider;
 using CharacterMapCX;
 using Microsoft.Graphics.Canvas.Text;
@@ -19,9 +20,18 @@ namespace CharacterMap.Models
         public CanvasTextLayoutAnalysis Analysis { get; init; }
         public IReadOnlyList<TypographyFeatureInfo> Typography { get; init; }
         public bool IsColourFontEnabled { get; init; } = true;
-        //public IReadOnlyList<DWriteFontAxis> Axis { get; init; }
+        public IReadOnlyList<DWriteFontAxis> Axis { get; init; }
+        public bool IsVariation { get; }
 
-        public CharacterRenderingOptions(FontVariant variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis)//, IReadOnlyList<DWriteFontAxis> axis)
+        public TypographyFeatureInfo DefaultTypography { get; }
+        public TypographyFeatureInfo DXTypography { get; }
+
+        /// <summary>
+        /// If set to true, XAML rendering cannot properly display all variations of this rendering
+        /// </summary>
+        public bool RequiresNativeRender { get; }
+
+        public CharacterRenderingOptions(FontVariant variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis, IReadOnlyList<DWriteFontAxis> axis)
         {
             Variant = variant;
             Typography = typography;
@@ -29,21 +39,33 @@ namespace CharacterMap.Models
             Analysis = analysis;
 
             DefaultTypography = typography?.Where(t => t.Feature != CanvasTypographyFeatureName.None).FirstOrDefault();
-            //Axis = axis.Select(a => a.WithValue(a.Value)).ToList();
+            DXTypography = typography.FirstOrDefault();
+
+            Axis = axis?.Copy();
+
+            //IsVariation = Axis != null && Axis.Where(a => a.Value != a.DefaultValue).ToList() is List<DWriteFontAxis> a && a.Count > 0;
+            RequiresNativeRender = Variant.DirectWriteProperties.HasVariations;
         }
 
-        public TypographyFeatureInfo DefaultTypography { get; }
+        
 
         public string GetName()
         {
-            //if (Axis != null && Axis.Where(a => a.Value != a.DefaultValue).ToList() is List<DWriteFontAxis> axis && axis.Count > 0)
-            //{
-            //}
+            // Basic Name
+            string name = $"{Variant.FamilyName} {Variant.PreferredName}";
+            
+            // Add OpenType features
+            if (DefaultTypography is not null)
+                name += $" - {DefaultTypography.DisplayName}";
 
-            if (DefaultTypography == null)
-                return $"{Variant.FamilyName} {Variant.PreferredName}";
-            else
-                return $"{Variant.FamilyName} {Variant.PreferredName} - {DefaultTypography.DisplayName}";
+            // Add variable axis
+            if (Axis != null && Axis.Where(a => a.Value != a.DefaultValue).ToList() is List<DWriteFontAxis> axis && axis.Count > 0)
+            {
+                foreach (var a in axis)
+                    name += $", {a.Label} {a.Value}";
+            }
+
+            return name;
         }
 
         public IReadOnlyList<DevProviderBase> GetDevProviders(Models.Character c) => DevProviderBase.GetProviders(this, c);
@@ -62,7 +84,11 @@ namespace CharacterMap.Models
         public bool IsCompareMatch(CharacterRenderingOptions o)
         {
             return object.ReferenceEquals(this, o) ||
-                (o.Variant == this.Variant && o.DefaultTypography == this.DefaultTypography);// && o.IsColourFontEnabled == this.IsColourFontEnabled);
+                (o.Variant == this.Variant 
+                    && o.DefaultTypography == this.DefaultTypography
+                    && o.Axis == this.Axis);
+            
+            // && o.IsColourFontEnabled == this.IsColourFontEnabled);
         }
     }
 }

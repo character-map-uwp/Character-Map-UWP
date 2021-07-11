@@ -219,7 +219,7 @@
                 <ControlTemplate TargetType="Button">
                     <Grid
                         x:Name="RootGrid"
-                        helpers:Composition.OpacityDuration="0:0:0.1"
+                        helpers:CompositionFactory.OpacityDuration="0:0:0.1"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
@@ -287,7 +287,7 @@
                             Margin="0,10,10,10"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
-                            helpers:Composition.OpacityDuration="0:0:0.1"
+                            helpers:CompositionFactory.OpacityDuration="0:0:0.1"
                             AutomationProperties.AccessibilityView="Raw"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
@@ -313,6 +313,7 @@
         <Setter Property="Width" Value="50" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="AllowFocusOnInteraction" Value="False" />
+        <Setter Property="CornerRadius" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="AppBarButton">
@@ -320,7 +321,8 @@
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
                         MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="{TemplateBinding Background}">
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -390,7 +392,8 @@
                         <Border
                             x:Name="Border"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" />
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}" />
 
                         <ContentPresenter
                             x:Name="Content"

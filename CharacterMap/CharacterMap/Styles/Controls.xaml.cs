@@ -27,7 +27,7 @@ namespace CharacterMap.Styles
 
         private void ContentRoot_Loaded(object sender, RoutedEventArgs e)
         {
-            Composition.SetStandardReposition(sender, e);
+            CompositionFactory.SetStandardReposition(sender, e);
         }
 
         private void PaneRoot_Loaded(object sender, RoutedEventArgs e)
@@ -36,13 +36,13 @@ namespace CharacterMap.Styles
             ElementCompositionPreview.SetIsTranslationEnabled(f, true);
             Visual v = ElementCompositionPreview.GetElementVisual(f);
 
-            ElementCompositionPreview.SetImplicitHideAnimation(f, Composition.CreateSlideOut(f, -256, 0));
+            ElementCompositionPreview.SetImplicitHideAnimation(f, CompositionFactory.CreateSlideOut(f, -256, 0));
 
             var o2 = v.Compositor.CreateVector3KeyFrameAnimation();
             o2.Target = "Translation";
             o2.InsertExpressionKeyFrame(0, "this.StartingValue");
             o2.InsertKeyFrame(1, new System.Numerics.Vector3(0, 0, 0));
-            o2.Duration = TimeSpan.FromSeconds(Composition.DefaultOffsetDuration);
+            o2.Duration = TimeSpan.FromSeconds(CompositionFactory.DefaultOffsetDuration);
 
             ElementCompositionPreview.SetImplicitShowAnimation(f, o2);
         }

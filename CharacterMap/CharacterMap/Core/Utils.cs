@@ -172,6 +172,53 @@ namespace CharacterMap.Core
             return $"#{c.R:x2}{c.G:x2}{c.B:x2}";
         }
 
+        /// <summary>
+        /// Returns a string attempting to show only characters a font supports.
+        /// Unsupported characters are replaced with the Unicode replacement character.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string GetSafeString(CanvasFontFace fontFace, string s)
+        {
+            /* 
+             * Ideally we actually want to use DirectTextBlock
+             * instead of TextBlock to get correct display of 
+             * Fallback characters, but there is some bug preventing
+             * rendering I can't figure out, so this is our hack for
+             * now.
+             */
+
+            string r = string.Empty;
+            if (s != null && fontFace != null)
+            {
+                for (int i = 0; i < s.Length; i++)
+                {
+                    var c = s[i];
+
+                    /* Surrogate pair handling is pain */
+                    if (char.IsSurrogate(c)
+                        && char.IsSurrogatePair(c, s[i + 1]))
+                    {
+                        var c1 = s[i + 1];
+                        int val = char.ConvertToUtf32(c, c1);
+                        if (fontFace.HasCharacter((uint)val))
+                            r += new string(new char[] { c, c1 });
+                        else
+                            r += '\uFFFD';
+
+                        i += 1;
+                    }
+                    else if (fontFace.HasCharacter(c))
+                        r += c;
+                    else
+                        r += '\uFFFD';
+                }
+
+            }
+
+            return r;
+        }
+
         public static MenuFlyoutPresenter GetPresenter(this MenuFlyout flyout)
         {
             if (flyout.Items.Count == 0)
@@ -228,34 +275,6 @@ namespace CharacterMap.Core
 
             try
             {
-                //int Append(StringBuilder sb, int str, int index)
-                //{
-                //    if (sb.Length > 0)
-                //        sb.Append(' ');
-
-                //    if (!title)
-                //    {
-                //        sb.Append(char.ToLowerInvariant(input[str]));
-                //        sb.Append(input.Substring(str + 1, index - str));
-                //    }
-                //    else
-                //    {
-                //        sb.Append(input.Substring(str, index - str));
-                //    }
-                //    return index;
-                //}
-
-                //int start = 0;
-                //for (int i = 1; i < input.Length; i++)
-                //{
-                //    if (char.IsUpper(input[i]))
-                //    {
-                //        start = Append(sb, start, i);
-                //    }
-                //}
-
-                //Append(sb, start, input.Length);
-
                 char prev = char.MinValue;
                 for (int i = 0; i < input.Length; i++)
                 {
@@ -339,33 +358,42 @@ namespace CharacterMap.Core
         {
             var right = Math.Ceiling(rect.Width);
             var bottom = Math.Ceiling(rect.Height);
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture, 
-                "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">", 
-                right,
-                bottom, 
-                invertBounds ? -Math.Floor(rect.Left) : Math.Floor(rect.Left),
-                invertBounds ? -Math.Floor(rect.Top) : Math.Floor(rect.Top));
+            StringBuilder sb = _builderPool.Request();
 
-            foreach (var path in paths)
+            try
             {
-                string p = path;
-                if (path.StartsWith("F1 "))
-                    p = path.Remove(0, 3);
+                sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
+                    "<svg width=\"100%\" height=\"100%\" viewBox=\"{2} {3} {0} {1}\" xmlns=\"http://www.w3.org/2000/svg\">",
+                    right,
+                    bottom,
+                    invertBounds ? -Math.Floor(rect.Left) : Math.Floor(rect.Left),
+                    invertBounds ? -Math.Floor(rect.Top) : Math.Floor(rect.Top));
 
-                if (string.IsNullOrWhiteSpace(p))
-                    continue;
+                foreach (var path in paths)
+                {
+                    string p = path;
+                    if (path.StartsWith("F1 "))
+                        p = path.Remove(0, 3);
 
-                sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
-                    p,
-                    AsHex(colors[paths.IndexOf(path)]),
-                    (double)colors[paths.IndexOf(path)].A / 255d);
+                    if (string.IsNullOrWhiteSpace(p))
+                        continue;
+
+                    sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
+                        p,
+                        AsHex(colors[paths.IndexOf(path)]),
+                        (double)colors[paths.IndexOf(path)].A / 255d);
+                }
+                sb.Append("</svg>");
+
+                CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
+                return doc;
             }
-            sb.Append("</svg>");
-
-            CanvasSvgDocument doc = CanvasSvgDocument.LoadFromXml(device, sb.ToString());
-            return doc;
+            finally
+            {
+                sb.Clear();
+                _builderPool.Return(sb);
+            }
         }
 
         public static Task WriteSvgAsync(CanvasSvgDocument document, IStorageFile file)

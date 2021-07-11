@@ -21,4 +21,10 @@
   <data name="OptionColorFonts.Text" xml:space="preserve">
     <value>Colour Fonts</value>
   </data>
+  <data name="ExportAllowColor.Content" xml:space="preserve">
+    <value>Allow font to use its own colours if defined</value>
+  </data>
+  <data name="ExportColorHeader.Text" xml:space="preserve">
+    <value>Default Colour</value>
+  </data>
 </root>

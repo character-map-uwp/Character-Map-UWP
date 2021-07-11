@@ -957,7 +957,7 @@ Optimized will create a smart name based on Font Family and Font Name.</value>
     <value>Add to selection</value>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
-    <value>add a character using the Add button</value>
+    <value>double click a character or use the Add button</value>
   </data>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Toggle Copy Pane (Ctrl+B)</value>
@@ -1036,5 +1036,38 @@ Default variant copied.</value>
   </data>
   <data name="BtnGithubCommits.Content" xml:space="preserve">
     <value>View the latest commits on Github</value>
+  </data>
+  <data name="ExportGlyphsHeader.Text" xml:space="preserve">
+    <value>Export Characters</value>
+  </data>
+  <data name="ExportGlyphsSummary.Text" xml:space="preserve">
+    <value>Ready to export {0} characters as {1}</value>
+  </data>
+  <data name="ExportCharactersLabel.Text" xml:space="preserve">
+    <value>Export Characters</value>
+  </data>
+  <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
+    <value>{0} characters exported</value>
+  </data>
+  <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
+    <value>Exporting character {0} of {1}</value>
+  </data>
+  <data name="ExportAllowColor.Content" xml:space="preserve">
+    <value>Allow font to use its own colors if defined</value>
+  </data>
+  <data name="ExportColorHeader.Text" xml:space="preserve">
+    <value>Default Color</value>
+  </data>
+  <data name="ExportGlyphFormatDescription.Text" xml:space="preserve">
+    <value>Glyphs stored in binary formats will be exported as their native format regardless of this choice.</value>
+  </data>
+  <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
+    <value>{0} of {1} characters selected</value>
+  </data>
+  <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
+    <value>File Options</value>
+  </data>
+  <data name="ExportSkipBlank.Content" xml:space="preserve">
+    <value>Skip exporting glyphs with no visible content</value>
   </data>
 </root>

@@ -2,7 +2,9 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -15,14 +17,44 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
-    public interface IPrintPresenter
+    public interface IPopoverPresenter
     {
         Border GetPresenter();
         FontMapView GetFontMap();
         GridLength GetTitleBarHeight();
     }
 
-    public sealed partial class PrintView : ViewBase
+    public class PopoverViewBase : ViewBase
+    {
+        protected GridLength _titleBarHeight = new (32);
+        public GridLength TitleBarHeight
+        {
+            get => _titleBarHeight;
+            set => Set(ref _titleBarHeight, value);
+        }
+
+        protected IPopoverPresenter _presenter = null;
+
+        protected FontMapView _fontMap = null;
+
+
+        public virtual void Hide()
+        {
+            if (_presenter == null)
+                return;
+
+            _presenter.GetPresenter().Child = null;
+            _presenter = null;
+            _fontMap = null;
+          
+            TitleBarHelper.RestoreDefaultTitleBar();
+            WeakReferenceMessenger.Default.Send(new ModalClosedMessage());
+        }
+    }
+
+
+
+    public sealed partial class PrintView : PopoverViewBase
     {
         /* 
          * UWP printing requires us to create ALL pages ahead of time
@@ -55,12 +87,6 @@ namespace CharacterMap.Views
             private set => Set(ref _canContinue, value);
         }
 
-        private GridLength _titleBarHeight = new GridLength(32);
-        public GridLength TitleBarHeight
-        {
-            get => _titleBarHeight;
-            set => Set(ref _titleBarHeight, value);
-        }
 
         public List<PrintLayout> Layouts { get; } = new List<PrintLayout>
         {
@@ -80,13 +106,10 @@ namespace CharacterMap.Views
 
         public AppSettings Settings { get; }
 
-        private IPrintPresenter _presenter = null;
-
         private PrintHelper _printHelper = null;
 
-        private FontMapView _fontMap = null;
 
-        public static void Show(IPrintPresenter presenter)
+        public static void Show(IPopoverPresenter presenter)
         {
             var view = new PrintView(presenter);
             view.TitleBarHeight = presenter.GetTitleBarHeight();
@@ -94,7 +117,7 @@ namespace CharacterMap.Views
             view.Show();
         }
 
-        public PrintView(IPrintPresenter presenter)
+        public PrintView(IPopoverPresenter presenter)
         {
             _fontMap = presenter.GetFontMap();
             _presenter = presenter;
@@ -105,8 +128,11 @@ namespace CharacterMap.Views
                 this.Visibility = Visibility.Collapsed;
 
             this.InitializeComponent();
-            Composition.SetupOverlayPanelAnimation(this);
+            CompositionFactory.SetupOverlayPanelAnimation(this);
+
+            LeakTrackingService.Register(this);
         }
+
 
         public void Show()
         {
@@ -124,48 +150,44 @@ namespace CharacterMap.Views
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+            TitleBarHelper.SetTranisentTitleBar(TitleBackground);
         }
 
-        public void Hide()
+        public override void Hide()
         {
-            if (_presenter == null)
-                return;
+            base.Hide();
 
             this.Bindings.StopTracking();
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
 
-            _presenter.GetPresenter().Child = null;
-            _presenter = null;
-            _fontMap = null;
-
             _printHelper.UnregisterForPrinting();
             _printHelper.Clear();
-
         }
 
         private void StartShowAnimation()
         {
-            if (!Composition.UISettings.AnimationsEnabled)
+            if (!CompositionFactory.UISettings.AnimationsEnabled)
             {
                 this.GetElementVisual().Opacity = 1;
-                this.GetElementVisual().Properties.InsertVector3(Composition.TRANSLATION, Vector3.Zero);
+                this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);
                 return;
             }
 
-            List<UIElement> elements = new List<UIElement> { this };
+            List<UIElement> elements = new () { this };
             elements.AddRange(OptionsPanel.Children);
-            Composition.PlayEntrance(elements, 0, 200);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
             elements.Clear();
             elements.AddRange(PreviewOptions.Children);
             elements.Add(PreviewViewBox);
-            Composition.PlayEntrance(elements, 0, 200);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
             elements.Clear();
             elements.Add(BottomLabel);
             elements.AddRange(BottomButtonOptions.Children);
-            Composition.PlayEntrance(elements, 0, 200);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -244,7 +266,7 @@ namespace CharacterMap.Views
 
             CanContinue = ViewModel.Characters.Count > 0;
 
-            Composition.SetThemeShadow(view, 30, ContentBackground);
+            CompositionFactory.SetThemeShadow(view, 30, ContentBackground);
             PreviewViewBox.Child = view;
         }
 
@@ -273,7 +295,7 @@ namespace CharacterMap.Views
 
         private void ContentPanel_Loading(FrameworkElement sender, object args)
         {
-            Composition.SetThemeShadow(ContentPanel, 40, TitleBackground);
+            CompositionFactory.SetThemeShadow(ContentPanel, 40, TitleBackground);
         }
 
         private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)

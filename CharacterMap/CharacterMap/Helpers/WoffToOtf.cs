@@ -1,7 +1,7 @@
 ﻿/*
   Copyright 2012, Steffen Hanikel (https://github.com/hanikesn)
   Modified by Artemy Tregubenko, 2014 (https://github.com/arty-name/woff2otf)
-  Modified by Johnny Westlake, 2012 (https://github.com/JohnnyWestlake/woff2otf)
+  Modified by Johnny Westlake, 2021 (https://github.com/JohnnyWestlake/woff2otf)
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.

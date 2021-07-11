@@ -92,16 +92,17 @@
                             VerticalAlignment="Bottom"
                             Click="{x:Bind OpenFont}">
                             <AppBarButton.Icon>
-                                <PathIcon
-                                    Margin="0 -4 0 0"
+                                <FontIcon
+                                    Margin="0 -1 0 0"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Data="F1 M 18.75 7.5 C 18.91927 7.5 19.080402 7.532553 19.233398 7.597656 C 19.386393 7.662762 19.519855 7.752279 19.633789 7.866211 C 19.747721 7.980144 19.837238 8.111979 19.902344 8.261719 C 19.967447 8.411459 20 8.570964 20 8.740234 C 20 8.935547 19.954426 9.12435 19.863281 9.306641 L 15.771484 17.5 L 0 17.5 L 0 3.75 C 0 3.574219 0.032552 3.411459 0.097656 3.261719 C 0.16276 3.11198 0.252279 2.980145 0.366211 2.866211 C 0.480143 2.752279 0.611979 2.662762 0.761719 2.597656 C 0.911458 2.532553 1.074219 2.5 1.25 2.5 L 4.6875 2.5 C 4.980469 2.5 5.232747 2.530926 5.444336 2.592773 C 5.655924 2.654623 5.844727 2.731121 6.010742 2.822266 C 6.176758 2.913412 6.32487 3.014324 6.455078 3.125 C 6.585286 3.235678 6.717122 3.33659 6.850586 3.427734 C 6.984049 3.518881 7.127278 3.595379 7.280273 3.657227 C 7.433268 3.719076 7.610677 3.75 7.8125 3.75 L 15 3.75 C 15.17578 3.75 15.338541 3.782553 15.488281 3.847656 C 15.638021 3.912762 15.769856 4.002279 15.883789 4.116211 C 15.997721 4.230144 16.087238 4.361979 16.152344 4.511719 C 16.217447 4.661459 16.25 4.82422 16.25 5 L 16.25 7.5 Z M 1.25 14.228516 L 4.267578 8.193359 C 4.378255 7.978517 4.532877 7.809246 4.731445 7.685547 C 4.930013 7.56185 5.149739 7.5 5.390625 7.5 L 15 7.5 L 15 5 L 7.8125 5 C 7.519531 5.000001 7.267252 4.969076 7.055664 4.907227 C 6.844075 4.845378 6.655273 4.768881 6.489258 4.677734 C 6.323242 4.586589 6.17513 4.485678 6.044922 4.375 C 5.914713 4.264324 5.782877 4.163412 5.649414 4.072266 C 5.51595 3.981121 5.372721 3.904623 5.219727 3.842773 C 5.066731 3.780926 4.889323 3.75 4.6875 3.75 L 1.25 3.75 Z M 18.75 8.75 L 5.390625 8.75 L 1.640625 16.25 L 15 16.25 Z "
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    Glyph="&#xED25;"
                                     RenderTransformOrigin="0.5 0.5">
-                                    <PathIcon.RenderTransform>
+                                    <FontIcon.RenderTransform>
                                         <ScaleTransform ScaleX="-1" ScaleY="1" />
-                                    </PathIcon.RenderTransform>
-                                </PathIcon>
+                                    </FontIcon.RenderTransform>
+                                </FontIcon>
                             </AppBarButton.Icon>
                         </AppBarButton>
 
@@ -146,7 +147,7 @@
                                 <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
                                     <MenuFlyout.MenuFlyoutPresenterStyle>
                                         <Style TargetType="MenuFlyoutPresenter">
-                                            <Setter Property="FontSize" Value="16" />
+                                            <Setter Property="FontSize" Value="14" />
                                             <Setter Property="CornerRadius" Value="0" />
                                             <Setter Property="Margin" Value="0 -4 0 0" />
                                             <Setter Property="Padding" Value="0" />
@@ -301,7 +302,7 @@
                             x:Uid="FontListSearchBox"
                             Grid.Row="2"
                             Margin="0 6 0 0"
-                            Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
+                            Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                             Text="{Binding FontSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                             TextBoxStyle="{StaticResource FontAutoSuggestBoxTextBoxStyle}" />
 
@@ -310,7 +311,7 @@
                             x:Load="False"
                             Grid.Row="3"
                             core:Properties.ClipToBounds="True"
-                            Loaded="{x:Bind helpers:Composition.SetStandardReposition}"
+                            Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                             Opacity="0.7"
                             Visibility="Collapsed">
                             <TextBlock
@@ -318,14 +319,14 @@
                                 x:Uid="ImportFontHelpBlock"
                                 Margin="12"
                                 FontSize="13"
-                                Loading="{x:Bind helpers:Composition.SetStandardEntrance}"
+                                Loading="{x:Bind helpers:CompositionFactory.SetStandardEntrance}"
                                 Style="{StaticResource CaptionTextBlockStyle}" />
                             <TextBlock
                                 x:Name="SearchFontHelpBlock"
                                 x:Uid="SearchFontHelpBlock"
                                 Margin="12"
                                 FontSize="13"
-                                Loading="{x:Bind helpers:Composition.SetStandardEntrance}"
+                                Loading="{x:Bind helpers:CompositionFactory.SetStandardEntrance}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
                                 Visibility="Collapsed" />
                             <TextBlock
@@ -333,7 +334,7 @@
                                 x:Uid="CollectionFontHelpBlock"
                                 Margin="12"
                                 FontSize="13"
-                                Loading="{x:Bind helpers:Composition.SetStandardEntrance}"
+                                Loading="{x:Bind helpers:CompositionFactory.SetStandardEntrance}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
                                 Visibility="Collapsed" />
                         </Grid>
@@ -430,16 +431,50 @@
                     <Grid
                         Grid.Row="3"
                         Height="32"
-                        HorizontalAlignment="Right"
                         Background="{x:Bind PaneRoot.Background, Mode=OneWay}">
+
+
+                        <controls:LabelButton
+                            x:Name="FontCompareButton"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Stretch"
+                            Click="FontCompareButton_Click">
+                            <controls:LabelButton.IconContent>
+                                <Path
+                                    Width="45"
+                                    Height="12"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="F1 M 1.25 17.5 C 0.904948 17.5 0.610352 17.37793 0.366211 17.133789 C 0.12207 16.889648 0 16.595053 0 16.25 L 0 3.75 C 0 3.404949 0.12207 3.110352 0.366211 2.866211 C 0.610352 2.62207 0.904948 2.5 1.25 2.5 L 3.75 2.5 C 4.095052 2.5 4.389648 2.62207 4.633789 2.866211 C 4.87793 3.110352 5 3.404949 5 3.75 L 5 16.25 C 5 16.595053 4.87793 16.889648 4.633789 17.133789 C 4.389648 17.37793 4.095052 17.5 3.75 17.5 Z M 7.5 17.5 C 7.154948 17.5 6.860352 17.37793 6.616211 17.133789 C 6.37207 16.889648 6.25 16.595053 6.25 16.25 L 6.25 3.75 C 6.25 3.404949 6.37207 3.110352 6.616211 2.866211 C 6.860352 2.62207 7.154948 2.5 7.5 2.5 L 10 2.5 C 10.345052 2.5 10.639648 2.62207 10.883789 2.866211 C 11.12793 3.110352 11.25 3.404949 11.25 3.75 L 11.25 16.25 C 11.25 16.595053 11.12793 16.889648 10.883789 17.133789 C 10.639648 17.37793 10.345052 17.5 10 17.5 Z M 1.25 3.75 L 1.25 16.25 L 3.75 16.25 L 3.75 3.75 Z M 7.5 3.75 L 7.5 16.25 L 10 16.25 L 10 3.75 Z M 16.5625 17.490234 C 16.282551 17.490234 16.030273 17.4056 15.805664 17.236328 C 15.581054 17.067059 15.429687 16.845703 15.351562 16.572266 L 12.558594 6.494141 C 12.526041 6.376954 12.509765 6.266277 12.509766 6.162109 C 12.509765 5.888672 12.5944 5.639648 12.763672 5.415039 C 12.932942 5.19043 13.154297 5.035808 13.427734 4.951172 L 15.605469 4.345703 C 15.722656 4.313152 15.833333 4.296876 15.9375 4.296875 C 16.217447 4.296876 16.469727 4.381512 16.694336 4.550781 C 16.918945 4.720053 17.070312 4.941406 17.148438 5.214844 L 19.941406 15.302734 C 19.973957 15.419922 19.990234 15.5306 19.990234 15.634766 C 19.990234 15.908203 19.907227 16.157227 19.741211 16.381836 C 19.575195 16.606445 19.355469 16.757812 19.082031 16.835938 L 17.451172 17.294922 C 17.197266 17.366537 17.008463 17.416992 16.884766 17.446289 C 16.761066 17.475586 16.653645 17.490234 16.5625 17.490234 Z M 13.759766 6.162109 L 16.5625 16.240234 L 18.740234 15.634766 L 15.9375 5.556641 Z "
+                                    Fill="{ThemeResource ApplicationForegroundThemeBrush}"
+                                    Stretch="Uniform" />
+                            </controls:LabelButton.IconContent>
+                            <TextBlock
+                                Margin="0 0 12 0"
+                                VerticalAlignment="Center"
+                                FontSize="13.333"
+                                Text="Compare Fonts" />
+                        </controls:LabelButton>
+
+                        <!--<AppBarButton
+                            Grid.Column="1"
+                            Width="45"
+                            BorderThickness="0">
+                        -->
+                        <!--<FontIcon
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="16"
+                                Glyph="&#xE1D3;" />-->
+                        <!--
+                        </AppBarButton>-->
 
                         <AppBarButton
                             x:Name="TitleHidePaneButton"
                             x:Uid="BtnHidePane"
                             Grid.Column="1"
                             Width="45"
+                            HorizontalAlignment="Right"
                             VerticalAlignment="Stretch"
-                            BorderThickness="0"
                             Click="TogglePane_Click">
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -452,9 +487,8 @@
                             x:Uid="BtnShowPane"
                             Grid.Column="1"
                             Width="45"
+                            HorizontalAlignment="Right"
                             VerticalAlignment="Stretch"
-                            BorderBrush="Transparent"
-                            BorderThickness="0"
                             Click="TogglePane_Click"
                             Visibility="Collapsed">
                             <FontIcon
@@ -552,6 +586,13 @@
             </StackPanel>
         </Grid>
 
+        <!--  Print Presenter  -->
+        <Border
+            x:Name="PrintPresenter"
+            x:DeferLoadStrategy="Lazy"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="10" />
+
         <!--  Notification Presenter  -->
         <Grid
             x:Name="NotificationRoot"
@@ -560,13 +601,6 @@
             Grid.ColumnSpan="10">
             <wct:InAppNotification x:Name="DefaultNotification" />
         </Grid>
-
-        <!--  Print Presenter  -->
-        <Border
-            x:Name="PrintPresenter"
-            x:DeferLoadStrategy="Lazy"
-            Grid.RowSpan="3"
-            Grid.ColumnSpan="10" />
 
         <!--  Loading Root  -->
         <Grid

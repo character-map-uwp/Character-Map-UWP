@@ -18,47 +18,20 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <Style x:Key="SubheaderTextBlockStyle" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Margin" Value="0 12 0 4" />
-        </Style>
         <Style x:Key="SubheaderTextBlockStyle2" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
             <Setter Property="FontSize" Value="20" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
+
         <Style x:Key="SectionHeaderTextBlockStyle" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
             <Setter Property="FontSize" Value="26" />
             <Setter Property="FontWeight" Value="SemiLight" />
             <Setter Property="Margin" Value="0 10 0 4" />
         </Style>
-        <Style x:Key="DescriptionStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{ThemeResource TextControlPlaceholderForeground}" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="Margin" Value="0 4 0 8" />
-            <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
-        </Style>
-        <Style x:Key="HeaderStyle" TargetType="TextBlock">
-            <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
-            <Setter Property="FontWeight" Value="Bold" />
-            <Setter Property="Margin" Value="0 20 0 0" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-        </Style>
-        <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
-            <Setter Property="Margin" Value="4 4 0 12" />
-            <Setter Property="FontStyle" Value="Italic" />
-            <Setter Property="OpticalMarginAlignment" Value="None" />
-        </Style>
+
         <Style TargetType="RadioButton">
             <Setter Property="MinWidth" Value="200" />
-        </Style>
-
-        <Style x:Key="SpacerStyle" TargetType="Border">
-            <Setter Property="Height" Value="1" />
-            <Setter Property="Background" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
-            <Setter Property="Opacity" Value="0.3" />
-            <Setter Property="Margin" Value="0 24 0 12" />
         </Style>
 
         <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
@@ -111,7 +84,8 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="22"
-                FontWeight="Bold" />
+                FontWeight="Bold"
+                IsHitTestVisible="False" />
 
             <AppBarButton
                 x:Name="BtnClose"
@@ -128,11 +102,16 @@
 
         </Grid>
 
-        <Grid
-            x:Name="ContentRoot"
-            Grid.Row="2"
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            CornerRadius="8 8 0 0">
+        <Grid x:Name="ContentRoot" Grid.Row="2">
+
+            <Border
+                Margin="0 0 0 -8"
+                h:CompositionFactory.CornerRadius="8.0"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                <Border.BackgroundTransition>
+                    <BrushTransition Duration="0:0:0.25" />
+                </Border.BackgroundTransition>
+            </Border>
 
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -221,8 +200,7 @@
                 <Border
                     x:Name="ContentBorder"
                     Grid.Column="1"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    Loaded="{x:Bind h:Composition.SetStandardReposition}">
+                    Loaded="{x:Bind h:CompositionFactory.SetStandardReposition}">
                     <!--  RepositionAnimation on the ScrollViewer itself breaks hit testing  -->
                     <ScrollViewer x:Name="ContentScroller">
                         <Grid
@@ -260,9 +238,9 @@
                                         StepFrequency="8"
                                         TickFrequency="8"
                                         TickPlacement="Outside"
-                                        Value="{x:Bind Settings.GridSize, Mode=TwoWay}" />
+                                        Value="{x:Bind GetGridSize(GridSize), Mode=TwoWay, BindBack=UpdateGridSize}" />
                                     <TextBlock>
-                                        <Run Text="{x:Bind Settings.GridSize, Mode=OneWay}" />
+                                        <Run Text="{x:Bind GridSize, Mode=OneWay}" />
                                         <Run Text="px" />
                                     </TextBlock>
                                 </StackPanel>
@@ -278,76 +256,83 @@
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
 
-                                    <StackPanel
+                                    <Border
                                         Margin="0 12 0 0"
-                                        Padding="4 4 0 0"
                                         HorizontalAlignment="Left"
-                                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                         BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
                                         BorderThickness="1"
-                                        CornerRadius="4"
-                                        Orientation="Horizontal">
-                                        <GridViewItem>
-                                            <Grid
-                                                Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                Height="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                Padding="4">
-                                                <TextBlock
-                                                    x:Name="Preview1"
-                                                    Margin="0 -2 0 0"
-                                                    Padding="0,0,0,8"
-                                                    FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
-                                                    IsTextScaleFactorEnabled="False"
-                                                    Text="A"
-                                                    TextAlignment="Center" />
-                                                <TextBlock
-                                                    Style="{StaticResource CharItemUnicodeStyle}"
-                                                    Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 65), Mode=OneWay}"
-                                                    Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
-                                            </Grid>
-                                        </GridViewItem>
+                                        CornerRadius="4">
+                                        <StackPanel
+                                            Padding="4 4 0 0"
+                                            h:CompositionFactory.CornerRadius="4"
+                                            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                                            Orientation="Horizontal">
+                                            <StackPanel.BackgroundTransition>
+                                                <BrushTransition Duration="0:0:0.25" />
+                                            </StackPanel.BackgroundTransition>
+                                            <GridViewItem>
+                                                <Grid
+                                                    Width="{x:Bind GridSize, Mode=OneWay}"
+                                                    Height="{x:Bind GridSize, Mode=OneWay}"
+                                                    Padding="4">
+                                                    <TextBlock
+                                                        x:Name="Preview1"
+                                                        Margin="0 -2 0 0"
+                                                        Padding="0,0,0,8"
+                                                        FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
+                                                        IsTextScaleFactorEnabled="False"
+                                                        Text="A"
+                                                        TextAlignment="Center" />
+                                                    <TextBlock
+                                                        Style="{StaticResource CharItemUnicodeStyle}"
+                                                        Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 65), Mode=OneWay}"
+                                                        Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
+                                                </Grid>
+                                            </GridViewItem>
 
-                                        <GridViewItem>
-                                            <Grid
-                                                Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                Height="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                Padding="4">
-                                                <TextBlock
-                                                    x:Name="Preview2"
-                                                    Margin="0 -2 0 0"
-                                                    Padding="0,0,0,8"
-                                                    FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
-                                                    IsTextScaleFactorEnabled="False"
-                                                    Text="b"
-                                                    TextAlignment="Center" />
-                                                <TextBlock
-                                                    Style="{StaticResource CharItemUnicodeStyle}"
-                                                    Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 98), Mode=OneWay}"
-                                                    Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
-                                            </Grid>
-                                        </GridViewItem>
+                                            <GridViewItem>
+                                                <Grid
+                                                    Width="{x:Bind GridSize, Mode=OneWay}"
+                                                    Height="{x:Bind GridSize, Mode=OneWay}"
+                                                    Padding="4">
+                                                    <TextBlock
+                                                        x:Name="Preview2"
+                                                        Margin="0 -2 0 0"
+                                                        Padding="0,0,0,8"
+                                                        FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
+                                                        IsTextScaleFactorEnabled="False"
+                                                        Text="b"
+                                                        TextAlignment="Center" />
+                                                    <TextBlock
+                                                        Style="{StaticResource CharItemUnicodeStyle}"
+                                                        Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 98), Mode=OneWay}"
+                                                        Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
+                                                </Grid>
+                                            </GridViewItem>
 
-                                        <GridViewItem>
-                                            <Grid
-                                                Width="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                Height="{x:Bind Settings.GridSize, Mode=OneWay}"
-                                                Padding="4">
-                                                <TextBlock
-                                                    x:Name="Preview3"
-                                                    Margin="0 -2 0 0"
-                                                    Padding="0,0,0,8"
-                                                    FontSize="{x:Bind core:Converters.GetFontSize(Settings.GridSize), Mode=OneWay}"
-                                                    IsTextScaleFactorEnabled="False"
-                                                    Text="y"
-                                                    TextAlignment="Center" />
-                                                <TextBlock
-                                                    Style="{StaticResource CharItemUnicodeStyle}"
-                                                    Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 121), Mode=OneWay}"
-                                                    Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
-                                            </Grid>
-                                        </GridViewItem>
+                                            <GridViewItem>
+                                                <Grid
+                                                    Width="{x:Bind GridSize, Mode=OneWay}"
+                                                    Height="{x:Bind GridSize, Mode=OneWay}"
+                                                    Padding="4">
+                                                    <TextBlock
+                                                        x:Name="Preview3"
+                                                        Margin="0 -2 0 0"
+                                                        Padding="0,0,0,8"
+                                                        FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
+                                                        IsTextScaleFactorEnabled="False"
+                                                        Text="y"
+                                                        TextAlignment="Center" />
+                                                    <TextBlock
+                                                        Style="{StaticResource CharItemUnicodeStyle}"
+                                                        Text="{x:Bind core:Converters.GetAnnotation(Settings.GlyphAnnotation, 121), Mode=OneWay}"
+                                                        Visibility="{x:Bind ShowUnicode(Settings.GlyphAnnotation), Mode=OneWay}" />
+                                                </Grid>
+                                            </GridViewItem>
 
-                                    </StackPanel>
+                                        </StackPanel>
+
+                                    </Border>
 
                                     <TextBlock x:Uid="SettingsCharPreviewHint" Style="{StaticResource HintStyle}" />
                                 </StackPanel>
@@ -567,7 +552,7 @@
                                     AcceptsExpression="False"
                                     Header="#Search Results"
                                     LargeChange="10"
-                                    Loaded="{x:Bind h:Composition.SetStandardReposition}"
+                                    Loaded="{x:Bind h:CompositionFactory.SetStandardReposition}"
                                     Maximum="100"
                                     Minimum="5"
                                     SmallChange="5"
@@ -576,9 +561,7 @@
 
                             </StackPanel>
 
-                            <StackPanel
-                                x:Name="ChangePanel"
-                                Visibility="Collapsed">
+                            <StackPanel x:Name="ChangePanel" Visibility="Collapsed">
                                 <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <HyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />
@@ -757,6 +740,11 @@
                                 <StackPanel>
                                     <TextBlock Style="{StaticResource HeaderStyle}" Text="Adobe Glyph List" />
                                     <HyperlinkButton Content="BSD 3-Clause" NavigateUri="https://github.com/adobe-type-tools/agl-aglfn/blob/master/LICENSE.md" />
+                                </StackPanel>
+
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Adobe Blank" />
+                                    <HyperlinkButton Content="SIL Open Font License 1.1" NavigateUri="https://github.com/adobe-fonts/adobe-blank/blob/master/LICENSE.txt" />
                                 </StackPanel>
                             </StackPanel>
 

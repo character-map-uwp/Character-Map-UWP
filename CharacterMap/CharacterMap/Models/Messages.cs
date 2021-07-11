@@ -9,6 +9,8 @@ using Windows.UI.Xaml;
 
 namespace CharacterMap.Models
 {
+    public class ModalClosedMessage { }
+
     public class CollectionUpdatedArgs
     {
         public InstalledFont Font { get; }
@@ -48,6 +50,10 @@ namespace CharacterMap.Models
     }
 
     public class PrintRequestedMessage
+    {
+    }
+
+    public class ExportRequestedMessage
     {
     }
 

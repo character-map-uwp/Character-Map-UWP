@@ -7,7 +7,6 @@
 #include "PathData.h"
 #include "Windows.h"
 #include <concurrent_vector.h>
-#include "DWriteFontAxis.h"
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;

@@ -26,13 +26,21 @@ namespace CharacterMap.Helpers
 
             if (msg.Data is ExportResult result)
             {
-                if (!result.Success)
+                if (result.State is not ExportState.Succeeded)
                     return;
 
                 var content = ResourceHelper.InflateDataTemplate("ExportNotificationTemplate", result);
                 ShowNotification(presenter, content, 5000);
             }
-            if (msg.Data is ExportFontFileResult fontExportResult)
+            else if (msg.Data is ExportGlyphsResult glyphsResult)
+            {
+                if (!glyphsResult.Success)
+                    return;
+
+                var content = ResourceHelper.InflateDataTemplate("ExportGlyphsTemplate", glyphsResult);
+                ShowNotification(presenter, content, 5000);
+            }
+            else if (msg.Data is ExportFontFileResult fontExportResult)
             {
                 if (!fontExportResult.Success)
                     return;

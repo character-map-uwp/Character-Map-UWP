@@ -1136,8 +1136,8 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
           <target state="new">Add</target>
         </trans-unit>
         <trans-unit id="CopySequencePlaceholder.Text" translate="yes" xml:space="preserve">
-          <source>add a character using the Add button</source>
-          <target state="new">add a character using the Add button</target>
+          <source>double click a character or use the Add button</source>
+          <target state="new">double click a character or use the Add button</target>
         </trans-unit>
         <trans-unit id="AddSelectionItem.Text" translate="yes" xml:space="preserve">
           <source>Add to selection</source>
@@ -1242,6 +1242,50 @@ Default variant copied.</target>
         <trans-unit id="BtnGithubCommits.Content" translate="yes" xml:space="preserve">
           <source>View the latest commits on Github</source>
           <target state="new">View the latest commits on Github</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphsHeader.Text" translate="yes" xml:space="preserve">
+          <source>Export Characters</source>
+          <target state="new">Export Characters</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphsSummary.Text" translate="yes" xml:space="preserve">
+          <source>Ready to export {0} characters as {1}</source>
+          <target state="new">Ready to export {0} characters as {1}</target>
+        </trans-unit>
+        <trans-unit id="ExportCharactersLabel.Text" translate="yes" xml:space="preserve">
+          <source>Export Characters</source>
+          <target state="new">Export Characters</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphsResultMessage.Text" translate="yes" xml:space="preserve">
+          <source>{0} characters exported</source>
+          <target state="new">{0} characters exported</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphsProgressMessage.Text" translate="yes" xml:space="preserve">
+          <source>Exporting character {0} of {1}</source>
+          <target state="new">Exporting character {0} of {1}</target>
+        </trans-unit>
+        <trans-unit id="ExportAllowColor.Content" translate="yes" xml:space="preserve">
+          <source>Allow font to use its own colors if defined</source>
+          <target state="new">Allow font to use its own colors if defined</target>
+        </trans-unit>
+        <trans-unit id="ExportColorHeader.Text" translate="yes" xml:space="preserve">
+          <source>Default Color</source>
+          <target state="new">Default Color</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphFormatDescription.Text" translate="yes" xml:space="preserve">
+          <source>Glyphs stored in binary formats will be exported as their native format regardless of this choice.</source>
+          <target state="new">Glyphs stored in binary formats will be exported as their native format regardless of this choice.</target>
+        </trans-unit>
+        <trans-unit id="ExportGlyphSelectedCharacters.Text" translate="yes" xml:space="preserve">
+          <source>{0} of {1} characters selected</source>
+          <target state="new">{0} of {1} characters selected</target>
+        </trans-unit>
+        <trans-unit id="ExportFileOptionsHeader.Text" translate="yes" xml:space="preserve">
+          <source>File Options</source>
+          <target state="new">File Options</target>
+        </trans-unit>
+        <trans-unit id="ExportSkipBlank.Content" translate="yes" xml:space="preserve">
+          <source>Skip exporting glyphs with no visible content</source>
+          <target state="new">Skip exporting glyphs with no visible content</target>
         </trans-unit>
       </group>
     </body>

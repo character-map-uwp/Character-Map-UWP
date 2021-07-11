@@ -2,6 +2,7 @@
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using Microsoft.Graphics.Canvas.Text;
+using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
@@ -27,6 +28,8 @@ namespace CharacterMap.Controls
 
     public class CharacterGridView : GridView
     {
+        public event EventHandler<Character> ItemDoubleTapped;
+
         #region Dependency Properties
 
         #region ItemSize
@@ -154,7 +157,7 @@ namespace CharacterMap.Controls
             {
                 if (d is CharacterGridView g && e.NewValue is bool b)
                 {
-                    g._templateSettings.EnableReposition = b && Composition.UISettings.AnimationsEnabled;
+                    g._templateSettings.EnableReposition = b && CompositionFactory.UISettings.AnimationsEnabled;
                     g.UpdateAnimation(b);
                 }
             }));
@@ -187,6 +190,10 @@ namespace CharacterMap.Controls
                 Character c = ((Character)args.Item);
                 UpdateContainer(item, c);
                 args.Handled = true;
+
+                item.DataContext = c;
+                item.DoubleTapped -= Item_DoubleTapped;
+                item.DoubleTapped += Item_DoubleTapped;
             }
 
             if (_templateSettings.EnableReposition)
@@ -198,8 +205,16 @@ namespace CharacterMap.Controls
                 else
                 {
                     var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-                    v.ImplicitAnimations = Composition.GetRepositionCollection(v.Compositor);
+                    v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
                 }
+            }
+        }
+
+        private void Item_DoubleTapped(object sender, Windows.UI.Xaml.Input.DoubleTappedRoutedEventArgs e)
+        {
+            if (sender is GridViewItem item)
+            {
+                ItemDoubleTapped?.Invoke(sender, item.DataContext as Character);
             }
         }
 
@@ -405,19 +420,19 @@ namespace CharacterMap.Controls
             if (this.ItemsPanelRoot == null)
                 return;
 
-            if (!Composition.UISettings.AnimationsEnabled)
+            if (!CompositionFactory.UISettings.AnimationsEnabled)
                 return;
 
             foreach (var item in this.ItemsPanelRoot.Children)
             {
                 var v = ElementCompositionPreview.GetElementVisual(item);
-                v.ImplicitAnimations = newValue ? Composition.GetRepositionCollection(v.Compositor) : null;
+                v.ImplicitAnimations = newValue ? CompositionFactory.GetRepositionCollection(v.Compositor) : null;
             }
         }
 
         private void PokeUIElementZIndex(UIElement e)
         {
-            Composition.PokeUIElementZIndex(e, _xamlDirect);
+            CompositionFactory.PokeUIElementZIndex(e, _xamlDirect);
         }
 
         #endregion

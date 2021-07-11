@@ -78,7 +78,7 @@ namespace CharacterMap.ViewModels
         public bool IsSvgChar                                               { get => GetV(false); set => Set(value); }
         public bool IsSequenceRootVisible                                   { get => GetV(false); set => Set(value); }
         public string XamlPath                                              { get => Get<string>(); set => Set(value); }
-        public string Sequence                                              { get => Get<string>(); set => Set(value); }
+        public string Sequence                                              { get => GetV(string.Empty); set => Set(value); }
         public DevProviderBase SelectedProvider                             { get => Get<DevProviderBase>(); set => Set(value); }
         public FontDisplayMode DisplayMode                                  { get => Get<FontDisplayMode>(); set { if (Set(value)) { UpdateTypography(); } } }
         public FontAnalysis SelectedVariantAnalysis                         { get => Get<FontAnalysis>(); set { if (Set(value)) { UpdateVariations(); } } }
@@ -244,7 +244,9 @@ namespace CharacterMap.ViewModels
                 UpdateCharacters();
                 if (variant != null)
                 {
-                    SelectedVariantAnalysis = variant.GetAnalysis();
+                    var analysis = variant.GetAnalysis();
+                    analysis.ResetVariableAxis();
+                    SelectedVariantAnalysis = analysis;
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
                 }
@@ -384,7 +386,14 @@ namespace CharacterMap.ViewModels
             else
             {
                 var t = SelectedProvider?.Type ?? Settings.SelectedDevProvider;
-                RenderingOptions = new CharacterRenderingOptions(SelectedVariant, new List<TypographyFeatureInfo> { SelectedCharTypography }, 64, SelectedCharAnalysis);
+
+                RenderingOptions = new CharacterRenderingOptions(
+                    SelectedVariant, 
+                    new() { SelectedCharTypography }, 
+                    64, 
+                    SelectedCharAnalysis, 
+                    VariationAxis);
+
                 Providers = RenderingOptions.GetDevProviders(SelectedChar);
                 SetDev(t);
 
@@ -468,29 +477,17 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        internal async Task SavePngAsync(ExportParameters args, Character c = null)
+        internal Task SavePngAsync(ExportParameters args, Character c = null)
         {
-            Character character = SelectedChar;
-            CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
-
-            if (c != null)
-            {
-                character = c;
-                analysis = GetCharAnalysis(c);
-            }
-
-            ExportResult result = await ExportManager.ExportPngAsync(
-                args.Style,
-                SelectedFont,
-                RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
-                character,
-                Settings);
-
-            if (result.Success)
-                Messenger.Send(new AppNotificationMessage(true, result));
+            return SaveGlyphAsync(ExportFormat.Png, args, c);
         }
 
-        internal async Task SaveSvgAsync(ExportParameters args, Character c = null)
+        internal Task SaveSvgAsync(ExportParameters args, Character c = null)
+        {
+            return SaveGlyphAsync(ExportFormat.Svg, args, c);
+        }
+
+        internal async Task SaveGlyphAsync(ExportFormat format, ExportParameters args, Character c = null)
         {
             Character character = SelectedChar;
             CanvasTextLayoutAnalysis analysis = SelectedCharAnalysis;
@@ -501,13 +498,13 @@ namespace CharacterMap.ViewModels
                 analysis = GetCharAnalysis(c);
             }
 
-            ExportResult result = await ExportManager.ExportSvgAsync(
-                args.Style,
+            ExportResult result = await ExportManager.ExportGlyphAsync(
+                new(format, args.Style),
                 SelectedFont,
                 RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
                 character);
 
-            if (result.Success)
+            if (result.State == ExportState.Succeeded)
                 Messenger.Send(new AppNotificationMessage(true, result));
         }
 
@@ -567,7 +564,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public void OpenSelectedFontInWindow(object sender, RoutedEventArgs e)
+        public void OpenSelectedFontInWindow()
         {
             if (SelectedFont is InstalledFont font)
             {
@@ -594,13 +591,18 @@ namespace CharacterMap.ViewModels
                 Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
         }
         public void ClearSequence() => Sequence = string.Empty;
-        public void AddCharToSequence() => Sequence += SelectedChar.Char;
         public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);
         public void DecreaseCharacterSize() => Settings.ChangeGridSize(-4);
         public void ShowPane() => Settings.EnablePreviewPane = true;
         public void HidePane() => Settings.EnablePreviewPane = false;
         public void ShowCopyPane() => Settings.EnableCopyPane = true;
         public void HideCopyPane() => Settings.EnableCopyPane = false;
+
+        public void AddCharToSequence(int start, int length, Character c)
+        {
+            Sequence = Sequence.Remove(start, length).Insert(start, c.Char);
+        }
+
     }
 
     public enum SearchSource

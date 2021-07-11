@@ -3,6 +3,7 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
+using CharacterMapCX.Controls;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
@@ -17,6 +18,7 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CharacterMap.Views
 {
@@ -37,6 +39,7 @@ namespace CharacterMap.Views
         public QuickCompareView(bool isQuickCompare)
         {
             this.InitializeComponent();
+
             ViewModel = new QuickCompareViewModel(isQuickCompare);
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
@@ -47,12 +50,15 @@ namespace CharacterMap.Views
             {
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
             }
+
+            LeakTrackingService.Register(this);
         }
 
         private void QuickCompareView_Loaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
             TitleBarHelper.SetTitle(CompareFontsTitle.Text);
+            Window.Current.SetTitleBar(TitleBackground);
         }
 
         private void QuickCompareView_Unloaded(object sender, RoutedEventArgs e)
@@ -67,7 +73,7 @@ namespace CharacterMap.Views
                 if (ViewStates.CurrentState != NormalState)
                     GoToNormalState();
 
-                Composition.PlayEntrance(Repeater, 0, 80, 0);
+                CompositionFactory.PlayEntrance(Repeater, 0, 80, 0);
 
                 // ItemsRepeater is a bit rubbish, needs to be nudged back into life.
                 // If we scroll straight to zero, we can often end up with a blank screen
@@ -218,12 +224,30 @@ namespace CharacterMap.Views
 
         void SetText(Panel root, string text)
         {
-            ((TextBlock)root.Children[root.Children.Count - 1]).Text = text;
+            var t = root.Children.Skip(1).FirstOrDefault();
+            if (t is TextBlock tb)
+                tb.Text = text;
+            else if (t is DirectText d)
+                d.Text = text;
         }
 
         void SetFontSize(Panel root, double size)
         {
-            ((TextBlock)root.Children[root.Children.Count - 1]).FontSize = size;
+            var t = root.Children.Skip(1).FirstOrDefault();
+            if (t is TextBlock tb)
+                tb.FontSize = size;
+            else if (t is DirectText d)
+                d.FontSize = size;
+        }
+
+        private void DetailsRepeater_ElementClearing(ItemsRepeater sender, ItemsRepeaterElementClearingEventArgs args)
+        {
+            // Unload x:Bind content
+            if (args.Element is FrameworkElement f && f.Tag is FrameworkElement t)
+            {
+                UnloadObject(t);
+                f.Tag = null;
+            }
         }
 
         private void Repeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
@@ -333,9 +357,10 @@ namespace CharacterMap.Views
 
         private void Repeater_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
+            var g = args.ItemContainer.GetFirstDescendantOfType<Panel>();
             if (!args.InRecycleQueue)
             {
-                var g = args.ItemContainer.GetFirstDescendantOfType<Panel>();
+                g.DataContext = args.Item;
                 SetText(g, ViewModel.Text);
                 SetFontSize(g, FontSizeSlider.Value);
             }
@@ -344,12 +369,12 @@ namespace CharacterMap.Views
             {
                 if (args.InRecycleQueue)
                 {
-                    Composition.PokeUIElementZIndex(args.ItemContainer);
+                    CompositionFactory.PokeUIElementZIndex(args.ItemContainer);
                 }
                 else
                 {
                     var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-                    v.ImplicitAnimations = Composition.GetRepositionCollection(v.Compositor);
+                    v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
                 }
             }
         }
@@ -378,12 +403,6 @@ namespace CharacterMap.Views
                 QuickCompareViewModel.QuickCompareWindow = view;
             
             return view;
-        }
-
-        public static Task AddAsync(FontVariant variant)
-        {
-            CharacterRenderingOptions opts = new(variant, new(), 12, null);
-            return AddAsync(opts);
         }
 
         public static async Task AddAsync(CharacterRenderingOptions options)

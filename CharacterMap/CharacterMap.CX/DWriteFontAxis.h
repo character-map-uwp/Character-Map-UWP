@@ -59,7 +59,7 @@ namespace CharacterMapCX
 			m_defaultValue = axis->DefaultValue;
 
 			Value = axis->Value;
-			m_originalValue = Value;
+			m_originalValue = axis->m_originalValue;
 			m_label = axis->Label;
 			m_tag_raw = axis->Tag;
 		};

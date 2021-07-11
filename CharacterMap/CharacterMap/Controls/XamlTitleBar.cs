@@ -49,6 +49,20 @@ namespace CharacterMap.Controls
         private CoreWindow _window;
         private FrameworkElement _backgroundElement;
 
+        public bool IsDragTarget
+        {
+            get { return (bool)GetValue(IsDragTargetProperty); }
+            set { SetValue(IsDragTargetProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDragTargetProperty =
+            DependencyProperty.Register("IsDragTarget", typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true, (d,e) =>
+            {
+                if (d is XamlTitleBar bar)
+                    bar.UpdateStates();
+            }));
+
+
         public XamlTitleBarTemplateSettings TemplateSettings { get; } = new XamlTitleBarTemplateSettings();
 
         public XamlTitleBar()
@@ -162,6 +176,8 @@ namespace CharacterMap.Controls
             _window = null;
         }
 
+        public FrameworkElement GetDragElement() => _backgroundElement;
+
         private void _settings_ColorValuesChanged(UISettings sender, object args)
         {
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateColors);
@@ -273,11 +289,22 @@ namespace CharacterMap.Controls
                 = new GridLength(ltr ? bar.SystemOverlayRightInset : bar.SystemOverlayLeftInset);
         }
 
+
+        private void UpdateStates()
+        {
+            if (IsDragTarget)
+                VisualStateManager.GoToState(this, "ActiveState", true);
+            else
+                VisualStateManager.GoToState(this, "InactiveState", true);
+        }
+
         private void UpdateDragElement()
         {
-            if (_backgroundElement != null)
+            UpdateStates();   
+
+            if (IsDragTarget && _backgroundElement != null)
             {
-                Window.Current.SetTitleBar(_backgroundElement);
+                TitleBarHelper.SetTitleBar(this);
             }
         }
 

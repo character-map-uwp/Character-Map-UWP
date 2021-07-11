@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:m="using:CharacterMap.Models"
@@ -24,7 +25,10 @@
                 Click="Remove_Clicked"
                 Icon="Clear"
                 Text="Remove" />
-            <MenuFlyoutItem x:Uid="OpenInNewWindow" Icon="NewWindow" Click="OpenWindow_Click" />
+            <MenuFlyoutItem
+                x:Uid="OpenInNewWindow"
+                Click="OpenWindow_Click"
+                Icon="NewWindow" />
         </MenuFlyout>
 
         <Style x:Key="ChromelessButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
@@ -120,7 +124,7 @@
                     Canvas.Top="24"
                     Width="400"
                     MaxHeight="226"
-                    FontFamily="{x:Bind DefaultVariant.Source}"
+                    FontFamily="{x:Bind DefaultVariant.DisplaySource}"
                     FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
                     FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
                     FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
@@ -140,7 +144,7 @@
                 <TextBlock
                     x:Phase="1"
                     Margin="0 24 0 0"
-                    FontFamily="{x:Bind DefaultVariant.Source}"
+                    FontFamily="{x:Bind DefaultVariant.DisplaySource}"
                     FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
                     FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
                     FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
@@ -155,13 +159,33 @@
             <Grid>
                 <TextBlock
                     Margin="0 4 0 0"
+                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                    Text="{x:Bind GetName()}" />
+                    Text="{x:Bind GetName()}"
+                    TextTrimming="CharacterEllipsis"
+                    ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" />
+                <cx:DirectText
+                    x:Name="NativeRender"
+                    x:Load="{x:Bind RequiresNativeRender, FallbackValue=False, TargetNullValue=False}"
+                    x:Phase="1"
+                    Margin="0 24 0 0"
+                    Axis="{x:Bind Axis}"
+                    FallbackFont="{x:Bind core:Converters.GetFontFallback()}"
+                    FontFace="{x:Bind Variant.FontFace}"
+                    FontFamily="{x:Bind Variant.Source, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
+                    FontStretch="{x:Bind Variant.FontFace.Stretch}"
+                    FontStyle="{x:Bind Variant.FontFace.Style}"
+                    FontWeight="{x:Bind Variant.FontFace.Weight}"
+                    IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
+                    IsTextWrappingEnabled="True"
+                    Typography="{x:Bind DXTypography}" />
                 <TextBlock
+                    x:Name="XAMLRender"
+                    x:Load="{x:Bind core:Converters.False(RequiresNativeRender), FallbackValue=False, TargetNullValue=False}"
                     x:Phase="1"
                     Margin="0 24 0 0"
                     core:Properties.Typography="{x:Bind DefaultTypography}"
-                    FontFamily="{x:Bind Variant.Source}"
+                    FontFamily="{x:Bind Variant.DisplaySource, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
                     FontStretch="{x:Bind Variant.FontFace.Stretch}"
                     FontStyle="{x:Bind Variant.FontFace.Style}"
                     FontWeight="{x:Bind Variant.FontFace.Weight}"
@@ -277,7 +301,10 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <controls:XamlTitleBar x:Name="TitleBar" Canvas.ZIndex="101">
+        <controls:XamlTitleBar
+            x:Name="TitleBar"
+            Background="{x:Null}"
+            Canvas.ZIndex="101">
             <StackPanel Orientation="Horizontal">
                 <Button
                     x:Name="BackButton"
@@ -308,7 +335,8 @@
         <Grid
             x:Name="HeaderGrid"
             Grid.Row="1"
-            Height="{StaticResource TitleRowHeight}">
+            Height="{StaticResource TitleRowHeight}"
+            IsHitTestVisible="False">
             <TextBlock
                 x:Name="CompareFontsTitle"
                 x:Uid="CompareFontsTitle"
@@ -328,6 +356,7 @@
             RowSpacing="12"
             Padding="24 12 24 0"
             Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            BackgroundTransition="{StaticResource RootBackgroundTransition}"
             CornerRadius="8 8 0 0">
 
             <Grid.RowDefinitions>
@@ -590,6 +619,7 @@
                     </FrameworkElement.RenderTransform>
                     <muxc:ItemsRepeater
                         x:Name="DetailsRepeater"
+                        ElementClearing="DetailsRepeater_ElementClearing"
                         ElementPrepared="Repeater_ElementPrepared"
                         ItemsSource="{x:Bind ViewModel.SelectedFont.Variants, Mode=OneWay}"
                         Layout="{StaticResource GridLayout}"
@@ -602,7 +632,7 @@
                                     </TextBlock>
                                     <TextBlock
                                         Margin="0 24 0 0"
-                                        FontFamily="{x:Bind Source}"
+                                        FontFamily="{x:Bind DisplaySource}"
                                         FontStretch="{x:Bind FontFace.Stretch}"
                                         FontStyle="{x:Bind FontFace.Style}"
                                         FontWeight="{x:Bind FontFace.Weight}"

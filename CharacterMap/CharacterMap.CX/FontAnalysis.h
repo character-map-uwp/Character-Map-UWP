@@ -54,6 +54,14 @@ namespace CharacterMapCX
 			IVectorView<DWriteFontAxis^>^ get() { return m_variableAxis; }
 		}
 
+		void ResetVariableAxis()
+		{
+			for each (auto a in m_variableAxis)
+			{
+				a->Value = a->DefaultValue; 
+			}
+		}
+
 		/// <summary>
 		/// Mappings of a glyph index to a font-provided glyph name
 		/// </summary>

@@ -28,7 +28,7 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPrintPresenter
+    public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
     {
         #region Dependency Properties 
 
@@ -117,6 +117,8 @@ namespace CharacterMap.Views
             CharGrid.ItemSize = ViewModel.Settings.GridSize;
             CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
             _xamlDirect = XamlDirect.GetDefault();
+
+            LeakTrackingService.Register(this);
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -147,6 +149,11 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
+            WeakReferenceMessenger.Default.Register<ExportRequestedMessage>(this, (o, m) =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    TryExport();
+            });
             WeakReferenceMessenger.Default.Register<CopyToClipboardMessage>(this, async (o, m) =>
             {
                 if (Dispatcher.HasThreadAccess)
@@ -167,8 +174,8 @@ namespace CharacterMap.Views
             });
 
             Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
-            PreviewGrid.SetHideAnimation(Composition.CreateSlideOutX(PreviewGrid));
-            PreviewGrid.SetShowAnimation(Composition.CreateSlideIn(PreviewGrid));
+            PreviewGrid.SetHideAnimation(CompositionFactory.CreateSlideOutX(PreviewGrid));
+            PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -205,8 +212,8 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.SelectedChar):
                     if (ViewModel.Settings.UseSelectionAnimations)
                     {
-                        Composition.PlayScaleEntrance(TxtPreview, .85f, 1f);
-                        Composition.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                        CompositionFactory.PlayScaleEntrance(TxtPreview, .85f, 1f);
+                        CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
                     }
 
                     UpdateTypography(ViewModel.SelectedTypography);
@@ -214,7 +221,7 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.Chars):
                     CharGrid.ItemsSource = ViewModel.Chars;
                     if (ViewModel.Settings.UseSelectionAnimations)
-                        Composition.PlayEntrance(CharGrid, 166);
+                        CompositionFactory.PlayEntrance(CharGrid, 166);
                     break;
                 case nameof(ViewModel.DisplayMode):
                     UpdateDisplayMode(true);
@@ -273,6 +280,10 @@ namespace CharacterMap.Views
                         if (ViewModel.SelectedVariant is FontVariant v)
                             ExportManager.RequestExportFontFile(v);
                         break;
+                    case VirtualKey.E:
+                        if (ViewModel.SelectedVariant is FontVariant v1)
+                            WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
+                        break;
                     case VirtualKey.Add:
                     case (VirtualKey)187:
                         ViewModel.IncreaseCharacterSize();
@@ -295,7 +306,7 @@ namespace CharacterMap.Views
                         break;
                     case VirtualKey.Q:
                         if (ViewModel.SelectedVariant is FontVariant va)
-                            _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions);
+                            _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
                         break;
                     default:
                         return false;
@@ -322,7 +333,7 @@ namespace CharacterMap.Views
                 if (ViewModel.SelectedProvider != null)
                 {
                     if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
-                        Composition.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
+                        CompositionFactory.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
                     
                     string state = $"Dev{ViewModel.SelectedProvider.Type}State";
 
@@ -622,7 +633,7 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                     MoreMenu,
                     font,
-                    ViewModel.RenderingOptions,
+                    ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
                     this.Tag as FrameworkElement,
                     IsStandalone,
                     true);
@@ -753,50 +764,27 @@ namespace CharacterMap.Views
             ViewModel.UpdateCategories(e);
         }
 
-        /// <summary>
-        /// Returns a string attempting to show only characters a font supports
-        /// </summary>
-        /// <param name="s"></param>
-        /// <returns></returns>
-        string GetSafeString(CanvasFontFace fontFace, string s)
+        private void CharGrid_ItemDoubleTapped(object sender, Character e)
         {
-            /* 
-             * Ideally we actually want to use DirectTextBlock
-             * instead of TextBlock to get correct display of 
-             * Fallback characters, but there is some bug preventing
-             * rendering I can't figure out, so this is our hack for
-             * now.
-             */
+            AddCharToSequence(e);
+        }
 
-            string r = string.Empty;
-            if (s != null && fontFace != null)
-            {
-                for (int i = 0; i < s.Length; i++)
-                {
-                    var c = s[i];
+        private void AppBarButton_Click(object sender, RoutedEventArgs e)
+        {
+            AddCharToSequence(ViewModel.SelectedChar);
+        }
 
-                    /* Surrogate pair handling is pain */
-                    if (char.IsSurrogate(c)
-                        && char.IsSurrogatePair(c, s[i + 1]))
-                    {
-                        var c1 = s[i + 1];
-                        int val = char.ConvertToUtf32(c, c1);
-                        if (fontFace.HasCharacter((uint)val))
-                            r += new string(new char[] { c, c1 });
-                        else
-                            r += '\uFFFD';
+        async void AddCharToSequence(Character c)
+        {
+            int selection = CopySequenceText.SelectionStart;
+            ViewModel.AddCharToSequence(
+                CopySequenceText.SelectionStart,
+                CopySequenceText.SelectionLength,
+                ViewModel.SelectedChar);
+            CopySequenceText.SelectionStart = selection + 1;
 
-                        i += 1;
-                    }
-                    else if (fontFace.HasCharacter(c))
-                        r += c;
-                    else
-                        r += '\uFFFD';
-                }
-               
-            }
-
-            return r;
+            await Task.Delay(64);
+            CopySequenceText.Focus(FocusState.Programmatic);
         }
 
         private void PreviewTypographySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -809,9 +797,9 @@ namespace CharacterMap.Views
 
         /* Print Helpers */
 
-        FontMapView IPrintPresenter.GetFontMap() => this;
+        FontMapView IPopoverPresenter.GetFontMap() => this;
 
-        Border IPrintPresenter.GetPresenter()
+        Border IPopoverPresenter.GetPresenter()
         {
             this.FindName(nameof(PrintPresenter));
             return PrintPresenter;
@@ -824,6 +812,14 @@ namespace CharacterMap.Views
             if (this.GetFirstAncestorOfType<MainPage>() is null)
             {
                 PrintView.Show(this);
+            }
+        }
+
+        private void TryExport()
+        {
+            if (this.GetFirstAncestorOfType<MainPage>() is null)
+            {
+                ExportView.Show(this);
             }
         }
 
@@ -945,30 +941,30 @@ namespace CharacterMap.Views
                 {
                     offset = 83;
                     //Composition.PlayEntrance(FontTitleBlock, 0);
-                    Composition.PlayEntrance(CharGridHeader, 83);
+                    CompositionFactory.PlayEntrance(CharGridHeader, 83);
                 }
 
                 if (ViewModel.DisplayMode == FontDisplayMode.CharacterMap)
                 {
                     if (!withHeader)
                     {
-                        Composition.PlayEntrance(CharGrid, offset);
+                        CompositionFactory.PlayEntrance(CharGrid, offset);
                         offset += 83;
                     }
-                    Composition.PlayEntrance(TxtPreviewViewBox, offset);
+                    CompositionFactory.PlayEntrance(TxtPreviewViewBox, offset);
 
                     if (CopySequenceRoot != null && CopySequenceRoot.Visibility == Visibility.Visible)
-                        Composition.PlayEntrance(CopySequenceRoot, offset);
+                        CompositionFactory.PlayEntrance(CopySequenceRoot, offset);
                 }
                 else if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
                 {
-                    Composition.PlayEntrance(TypeRampInputRow, offset * 2);
+                    CompositionFactory.PlayEntrance(TypeRampInputRow, offset * 2);
 
                     if (TypeRampList != null)
                     {
                         var items = new List<UIElement> { VariableAxis };
                         items.AddRange(TypeRampList.TryGetChildren());
-                        Composition.PlayEntrance(items, (offset * 2) + 34);
+                        CompositionFactory.PlayEntrance(items, (offset * 2) + 34);
                     }
                 }
             }
@@ -976,11 +972,11 @@ namespace CharacterMap.Views
 
         private void CopySequenceRoot_Loading(FrameworkElement sender, object args)
         {
-            CopySequenceRoot.SetHideAnimation(Composition.CreateSlideOutY(sender));
-            CopySequenceRoot.SetShowAnimation(Composition.CreateSlideIn(sender));
+            CopySequenceRoot.SetHideAnimation(CompositionFactory.CreateSlideOutY(sender));
+            CopySequenceRoot.SetShowAnimation(CompositionFactory.CreateSlideIn(sender));
 
             CopySequenceRoot.SetTranslation(new Vector3(0, (float)CopySequenceRoot.Height, 0));
-            CopySequenceRoot.GetElementVisual().StartAnimation(Composition.TRANSLATION, Composition.CreateSlideIn(sender));
+            CopySequenceRoot.GetElementVisual().StartAnimation(CompositionFactory.TRANSLATION, CompositionFactory.CreateSlideIn(sender));
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
