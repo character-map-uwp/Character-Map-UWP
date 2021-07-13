@@ -12,9 +12,11 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using System.Transactions;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Composition;
@@ -25,6 +27,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CharacterMap.Views
 {
@@ -123,6 +127,9 @@ namespace CharacterMap.Views
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
         {
+            PaneHideTransition.Storyboard = CreateHidePreview();
+            PaneShowTransition.Storyboard = CreateShowPreview();
+
             if (IsStandalone)
             {
                 ApplicationView.GetForCurrentView()
@@ -173,9 +180,9 @@ namespace CharacterMap.Views
                 ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
             });
 
-            Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
-            PreviewGrid.SetHideAnimation(CompositionFactory.CreateSlideOutX(PreviewGrid));
-            PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
+            //Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
+            //PreviewGrid.SetHideAnimation(CompositionFactory.CreateSlideOutX(PreviewGrid));
+            //PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -212,8 +219,22 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.SelectedChar):
                     if (ViewModel.Settings.UseSelectionAnimations)
                     {
-                        CompositionFactory.PlayScaleEntrance(TxtPreview, .85f, 1f);
-                        CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                        if (ViewModel.SelectedChar is not null)
+                        {
+                            try
+                            {
+                                var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar, "Text");
+                                ani.TryStart(TxtPreview);
+                                CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                            }
+                            catch
+                            {
+                                // Nu Hair Dont care
+                            }
+                        }
+
+                        //CompositionFactory.PlayScaleEntrance(TxtPreview, .85f, 1f);
+                        //CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
                     }
 
                     UpdateTypography(ViewModel.SelectedTypography);
@@ -348,9 +369,15 @@ namespace CharacterMap.Views
         private void UpdateDisplayMode(bool animate = false)
         {
             if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
+            {
+                UpdateStateTransition();
                 VisualStateManager.GoToState(this, TypeRampState.Name, true);
+            }
             else
+            {
+                UpdateStateTransitionBack();
                 VisualStateManager.GoToState(this, CharacterMapState.Name, true);
+            }
 
             if (animate)
             {
@@ -400,6 +427,12 @@ namespace CharacterMap.Views
 
         private void UpdatePaneAndGridSizing()
         {
+            // Update VisualState transition
+            if (!ViewModel.Settings.EnablePreviewPane)
+                PaneHideTransition.Storyboard = CreateHidePreview();
+            else
+                PaneShowTransition.Storyboard = CreateShowPreview();
+
             VisualStateManager.GoToState(
                   this,
                   ViewModel.Settings.EnablePreviewPane && !_isCompactOverlay ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState),
@@ -411,10 +444,13 @@ namespace CharacterMap.Views
 
         private void UpdateCopyPane()
         {
-            VisualStateManager.GoToState(
-                 this,
-                 ViewModel.Settings.EnableCopyPane && !_isCompactOverlay ? nameof(CopySequenceEnabledState) : nameof(CopySequenceDisabledState),
-                 true);
+            string state = ViewModel.Settings.EnableCopyPane && !_isCompactOverlay ? nameof(CopySequenceEnabledState) : nameof(CopySequenceDisabledState);
+            if (state == nameof(CopySequenceDisabledState))
+                CopyPaneHidingTransition.Storyboard = CreateHideCopyPane();
+            else
+                CopyPaneShowingTransition.Storyboard = CreateShowCopyPane();
+
+            VisualStateManager.GoToState(this, state, true);
         }
 
         private async Task UpdateCompactOverlayAsync()
@@ -925,7 +961,7 @@ namespace CharacterMap.Views
             return vis;
         }
 
-
+        
 
 
         /* Composition */
@@ -972,13 +1008,17 @@ namespace CharacterMap.Views
 
         private void CopySequenceRoot_Loading(FrameworkElement sender, object args)
         {
-            CopySequenceRoot.SetHideAnimation(CompositionFactory.CreateSlideOutY(sender));
-            CopySequenceRoot.SetShowAnimation(CompositionFactory.CreateSlideIn(sender));
+            //CopySequenceRoot.SetHideAnimation(CompositionFactory.CreateSlideOutY(sender));
+            //CopySequenceRoot.SetShowAnimation(CompositionFactory.CreateSlideIn(sender));
 
             CopySequenceRoot.SetTranslation(new Vector3(0, (float)CopySequenceRoot.Height, 0));
             CopySequenceRoot.GetElementVisual().StartAnimation(CompositionFactory.TRANSLATION, CompositionFactory.CreateSlideIn(sender));
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
+        }
+
+        private void PreviewPaneStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
+        {
         }
     }
 

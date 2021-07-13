@@ -219,6 +219,7 @@
     <Compile Include="Core\Localizer.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
+    <Compile Include="Helpers\Animation.cs" />
     <Compile Include="Helpers\Composition.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
@@ -299,6 +300,7 @@
     <Compile Include="Views\ExportView.xaml.cs">
       <DependentUpon>ExportView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FontMapView.Animation.cs" />
     <Compile Include="Views\FontMapView.xaml.cs">
       <DependentUpon>FontMapView.xaml</DependentUpon>
     </Compile>

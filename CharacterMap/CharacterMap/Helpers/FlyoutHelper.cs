@@ -315,6 +315,7 @@ namespace CharacterMap.Helpers
                         menu.Items.Add(removeItem);
                     }
                 }
+
                 if (showAdvanced)
                 {
                     if (Windows.Graphics.Printing.PrintManager.IsSupported())
