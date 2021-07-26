@@ -46,7 +46,7 @@ namespace CharacterMap.ViewModels
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton<IDialogService, DialogService>();
             services.AddSingleton(s => _navigationService);
-            services.AddSingleton(s => ResourceHelper.Get<AppSettings>(nameof(AppSettings)));
+            services.AddSingleton(s => ResourceHelper.AppSettings);
             services.AddSingleton(s => new NativeInterop(Utils.CanvasDevice));
             services.AddSingleton<UserCollectionsService>();
             services.AddSingleton<MainViewModel>();

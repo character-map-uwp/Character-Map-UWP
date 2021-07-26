@@ -29,7 +29,7 @@ namespace CharacterMap.Views
             var items = TypeRampList.ItemsPanelRoot.Children.OfType<FrameworkElement>();
 
             if (VariableAxis.ItemsPanelRoot is not null)
-                items.Concat(VariableAxis.ItemsPanelRoot.Children.OfType<FrameworkElement>());
+                items = items.Concat(VariableAxis.ItemsPanelRoot.Children.OfType<FrameworkElement>());
 
             return items.Append(TypeRampInputRow).OrderBy(g => Guid.NewGuid()).ToList();
         }
@@ -66,7 +66,7 @@ namespace CharacterMap.Views
             Storyboard sb = new Storyboard();
 
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewColumn, nameof(PreviewColumn.Width))
-                .AddKeyFrame(0, new GridLength(326));
+                .AddKeyFrame(0, new GridLength(ViewModel.Settings.LastColumnWidth));
 
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewColumn, nameof(PreviewColumn.MinWidth))
                 .AddKeyFrame(0, 150);
@@ -154,10 +154,10 @@ namespace CharacterMap.Views
             double fromDepth = -400;
             double toDepth = 300;
 
-            TimeSpan outStagger = TimeSpan.FromMilliseconds(400d / childs.Count);
+            TimeSpan outStagger = TimeSpan.FromMilliseconds(250d / childs.Count);
             TimeSpan startOffset = TimeSpan.FromSeconds(0);
-            TimeSpan staggerTime = TimeSpan.FromMilliseconds(60);
-            TimeSpan duration = TimeSpan.FromMilliseconds(500);
+            TimeSpan staggerTime = TimeSpan.FromMilliseconds(50);
+            TimeSpan duration = TimeSpan.FromMilliseconds(400);
             TimeSpan durationOpacityOut = TimeSpan.FromMilliseconds(150);
             TimeSpan durationOpacityIn = TimeSpan.FromMilliseconds(300);
 
@@ -172,6 +172,20 @@ namespace CharacterMap.Views
             // 2. Animate out PreviewGrid, Splitter, CopyPane
             sb.Children.Add(CreateHidePreview(false));
             sb.Children.Add(CreateHideCopyPane(true));
+
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharGridHeader, TargetProperty.GridColumnSpan)
+                .AddKeyFrame(0, 3);
+
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(MoreOptionsButton, nameof(MoreOptionsButton.Margin))
+                .AddKeyFrame(0, new Thickness(0, 0, -8, 0));
+
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SearchBox, TargetProperty.Visiblity)
+                .AddKeyFrame(0, Visibility.Visible);
+
+            sb.CreateTimeline<DoubleAnimation>(SearchBox, TargetProperty.CompositeTransform.TranslateY)
+                .To(-70)
+                .SetDuration(0.4)
+                .SetEase(new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseIn});
 
             // 3. Animate out Character Grid items
             foreach (var item in childs)
@@ -197,21 +211,21 @@ namespace CharacterMap.Views
                 }
 
                 // 3.4. Add randomised 3D rotation
-                var d = 60;
-                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationX)
-                       .AddKeyFrame(TimeSpan.Zero, trans.RotationX)
-                       .AddKeyFrame(startOffset, trans.RotationX)
-                       .AddKeyFrame(startOffset.Add(duration), _r.Next(-d, d), KeySplines.EntranceTheme);
+                //var d = 60;
+                //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationX)
+                //       .AddKeyFrame(TimeSpan.Zero, trans.RotationX)
+                //       .AddKeyFrame(startOffset, trans.RotationX)
+                //       .AddKeyFrame(startOffset.Add(duration), _r.Next(-d, d), KeySplines.EntranceTheme);
 
-                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationY)
-                      .AddKeyFrame(TimeSpan.Zero, trans.RotationY)
-                      .AddKeyFrame(startOffset, trans.RotationY)
-                      .AddKeyFrame(startOffset.Add(duration), _r.Next(-d, d), KeySplines.EntranceTheme);
+                //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationY)
+                //      .AddKeyFrame(TimeSpan.Zero, trans.RotationY)
+                //      .AddKeyFrame(startOffset, trans.RotationY)
+                //      .AddKeyFrame(startOffset.Add(duration), _r.Next(-d, d), KeySplines.EntranceTheme);
 
-                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationZ)
-                      .AddKeyFrame(TimeSpan.Zero, trans.RotationZ)
-                      .AddKeyFrame(startOffset, trans.RotationZ)
-                      .AddKeyFrame(startOffset.Add(duration), _r.Next(-d, d), KeySplines.EntranceTheme);
+                //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationZ)
+                //      .AddKeyFrame(TimeSpan.Zero, trans.RotationZ)
+                //      .AddKeyFrame(startOffset, trans.RotationZ)
+                //      .AddKeyFrame(startOffset.Add(duration), _r.Next(-d, d), KeySplines.EntranceTheme);
 
                 // 3.5. Increment start offset
                 startOffset = startOffset.Add(outStagger);
@@ -253,7 +267,7 @@ namespace CharacterMap.Views
             }
         }
 
-        public void UpdateStateTransitionBack()
+        public void UpdateRampToGridTransition()
         {
             if (TypeRampList == null)
                 return;
@@ -264,7 +278,7 @@ namespace CharacterMap.Views
             //sb.Children.Add(GridToTypeBase);
             RampToGridTransition.Storyboard = sb;
 
-            var toChilds = CharGrid.ItemsPanelRoot.Children
+            var toChilds = CharGrid.Realize().ItemsPanelRoot.Children
                 .OfType<FrameworkElement>()
                 .Where(c => c.IsInViewport(CharGrid))
                 .OrderBy(c => Guid.NewGuid()).ToList();
@@ -274,11 +288,11 @@ namespace CharacterMap.Views
             var fromDepth = 400;
             double toDepth = -300;
 
-            TimeSpan outStagger = TimeSpan.FromMilliseconds(400d / toChilds.Count);
+            TimeSpan charStagger = TimeSpan.FromMilliseconds(250d / toChilds.Count);
 
             TimeSpan startOffset = TimeSpan.FromSeconds(0);
-            TimeSpan staggerTime = TimeSpan.FromMilliseconds(60);
-            TimeSpan duration = TimeSpan.FromMilliseconds(500);
+            TimeSpan staggerTime = TimeSpan.FromMilliseconds(40);
+            TimeSpan duration = TimeSpan.FromMilliseconds(300);
             TimeSpan durationOpacityOut = TimeSpan.FromMilliseconds(150);
             TimeSpan durationOpacityIn = TimeSpan.FromMilliseconds(300);
 
@@ -311,11 +325,10 @@ namespace CharacterMap.Views
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SearchBox, TargetProperty.Visiblity)
                 .AddKeyFrame(0, Visibility.Visible);
 
-            sb.CreateTimeline<DoubleAnimation>(SearchBox, TargetProperty.CompositeTransform.TranslateY)
-                .From(-60)
-                .To(0)
-                .SetDuration(0.4)
-                .SetEase(new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseOut });
+            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(SearchBox, TargetProperty.CompositeTransform.TranslateY)
+                .AddKeyFrame(0, -70)
+                .AddKeyFrame(startOffset, -70)
+                .AddKeyFrame(startOffset.TotalSeconds + 0.4, 0, new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseOut });
 
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(TypeRampRoot, TargetProperty.Visiblity)
                 .AddKeyFrame(startOffset.Add(duration.Multiply(0.8)), Visibility.Collapsed);
@@ -366,26 +379,26 @@ namespace CharacterMap.Views
                         .AddKeyFrame(startOffset.Add(duration), 0, KeySplines.EntranceTheme);
                 }
 
-                var x = _r.Next(-90, 90);
-                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationX)
-                     .AddKeyFrame(TimeSpan.Zero, x)
-                     .AddKeyFrame(startOffset, x)
-                     .AddKeyFrame(startOffset.Add(duration), 0, KeySplines.EntranceTheme);
+                //var x = _r.Next(-90, 90);
+                //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationX)
+                //     .AddKeyFrame(TimeSpan.Zero, x)
+                //     .AddKeyFrame(startOffset, x)
+                //     .AddKeyFrame(startOffset.Add(duration), 0, KeySplines.EntranceTheme);
 
-                var y = _r.Next(-90, 90);
-                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationY)
-                     .AddKeyFrame(TimeSpan.Zero, y)
-                     .AddKeyFrame(startOffset, y)
-                     .AddKeyFrame(startOffset.Add(duration), 0, KeySplines.EntranceTheme);
+                //var y = _r.Next(-90, 90);
+                //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationY)
+                //     .AddKeyFrame(TimeSpan.Zero, y)
+                //     .AddKeyFrame(startOffset, y)
+                //     .AddKeyFrame(startOffset.Add(duration), 0, KeySplines.EntranceTheme);
 
-                var z = _r.Next(-90, 90);
-                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationZ)
-                     .AddKeyFrame(TimeSpan.Zero, z)
-                     .AddKeyFrame(startOffset, z)
-                     .AddKeyFrame(startOffset.Add(duration), 0, KeySplines.EntranceTheme);
+                //var z = _r.Next(-90, 90);
+                //sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(item, TargetProperty.CompositeTransform3D.RotationZ)
+                //     .AddKeyFrame(TimeSpan.Zero, z)
+                //     .AddKeyFrame(startOffset, z)
+                //     .AddKeyFrame(startOffset.Add(duration), 0, KeySplines.EntranceTheme);
 
                 // 3.4. Increment start offset
-                startOffset = startOffset.Add(outStagger);
+                startOffset = startOffset.Add(charStagger);
             }
         }
     }

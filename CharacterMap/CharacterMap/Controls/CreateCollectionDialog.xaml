@@ -5,22 +5,14 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="DigCreateCollection"
-    CornerRadius="4"
+    CornerRadius="{StaticResource PopupCornerRadius}"
     IsPrimaryButtonEnabled="{x:Bind TemplateSettings.IsCollectionTitleValid, Mode=OneWay}"
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
-    PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
+    PrimaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
     SecondaryButtonClick="{x:Bind Hide}"
-    SecondaryButtonStyle="{StaticResource ButtonRevealStyle}"
+    SecondaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
+    Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d">
-
-    <ContentDialog.TitleTemplate>
-        <DataTemplate>
-            <TextBlock
-                FontSize="22"
-                FontWeight="Bold"
-                Text="{Binding}" />
-        </DataTemplate>
-    </ContentDialog.TitleTemplate>
 
     <TextBox
         x:Name="InputBox"

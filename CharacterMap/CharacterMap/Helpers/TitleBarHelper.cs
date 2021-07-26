@@ -23,7 +23,7 @@ namespace CharacterMap.Helpers
 
         // Using a DependencyProperty as the backing store for DefaultTitleBar.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DefaultTitleBarProperty =
-            DependencyProperty.RegisterAttached("DefaultTitleBar", typeof(UIElement), typeof(TitleBarHelper), new PropertyMetadata(0));
+            DependencyProperty.RegisterAttached("DefaultTitleBar", typeof(UIElement), typeof(TitleBarHelper), new PropertyMetadata(null));
 
 
 

@@ -47,6 +47,7 @@ namespace CharacterMap.Services
                         FontMapView map = new FontMapView
                         {
                             IsStandalone = true,
+                            RequestedTheme = ResourceHelper.GetEffectiveTheme()
                         };
                         _ = map.ViewModel.LoadFromFileArgsAsync(fileArgs);
 

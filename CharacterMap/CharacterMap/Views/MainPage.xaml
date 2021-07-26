@@ -10,8 +10,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="using:CharacterMap.Views"
     xmlns:wct="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
+    Background="{ThemeResource DefaultPageBackgroundBrush}"
+    DataContext="{x:Bind ViewModel}"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -65,15 +65,21 @@
             Grid.ColumnSpan="3"
             DisplayMode="Inline"
             IsPaneOpen="True"
-            OpenPaneLength="{StaticResource SplitViewPaneWidth}">
+            OpenPaneLength="{StaticResource SplitViewPaneWidth}"
+            PaneBackground="Transparent">
             <SplitView.Pane>
-                <Grid x:Name="PaneRoot" Background="{StaticResource DefaultHostBrush}">
+                <Grid x:Name="PaneRoot">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, Mode=OneWay}" />
                         <RowDefinition Height="{StaticResource TitleRowGridHeight}" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
+
+                    <Border
+                        x:Name="PaneRootBackground"
+                        Grid.RowSpan="5"
+                        Background="{StaticResource DefaultHostBrush}" />
 
                     <!--  Pane Header Commands  -->
                     <Grid x:Name="PaneHeaderGrid" Grid.Row="1">
@@ -90,7 +96,8 @@
                             Width="{StaticResource TitleRowHeight}"
                             Height="{StaticResource TitleRowHeight}"
                             VerticalAlignment="Bottom"
-                            Click="{x:Bind OpenFont}">
+                            Click="{x:Bind OpenFont}"
+                            Style="{StaticResource DefaultThemeAppBarButtonStyle}">
                             <AppBarButton.Icon>
                                 <FontIcon
                                     Margin="0 -1 0 0"
@@ -121,13 +128,14 @@
                             Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom">
 
+                            <Control.Resources />
+
                             <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                                 <TextBlock
                                     x:Name="GroupLabel"
-                                    FontSize="16"
-                                    FontWeight="Bold"
                                     OpticalMarginAlignment="TrimSideBearings"
-                                    Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}"
+                                    Style="{StaticResource FontFilterTitleStyle}"
+                                    Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay, Converter={StaticResource FontSelectorTitleConverter}}"
                                     TextLineBounds="Tight"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
@@ -144,18 +152,10 @@
                             </StackPanel>
 
                             <Button.Flyout>
-                                <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedRight">
-                                    <MenuFlyout.MenuFlyoutPresenterStyle>
-                                        <Style TargetType="MenuFlyoutPresenter">
-                                            <Setter Property="FontSize" Value="14" />
-                                            <Setter Property="CornerRadius" Value="0" />
-                                            <Setter Property="Margin" Value="0 -4 0 0" />
-                                            <Setter Property="Padding" Value="0" />
-                                            <!--<Setter Property="BorderBrush" Value="{ThemeResource SystemAccentColor}" />-->
-                                            <Setter Property="BorderThickness" Value="1" />
-                                            <Setter Property="BorderThickness" Value="1" />
-                                        </Style>
-                                    </MenuFlyout.MenuFlyoutPresenterStyle>
+                                <MenuFlyout
+                                    MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
+                                    Opening="MenuFlyout_Opening"
+                                    Placement="BottomEdgeAlignedRight">
                                     <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.All}" />
                                     <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SerifFonts}" />
                                     <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SansSerifFonts}" />
@@ -341,7 +341,7 @@
 
                         <SemanticZoom x:Name="FontsSemanticZoom" Grid.Row="3">
                             <SemanticZoom.ZoomedInView>
-                                <ListView
+                                <controls:ExtendedListView
                                     x:Name="LstFontFamily"
                                     IsItemClickEnabled="False"
                                     IsSwipeEnabled="False"
@@ -356,51 +356,13 @@
                                         <TransitionCollection />
                                     </ListView.ItemContainerTransitions>
 
-                                    <ListView.Resources>
-                                        <Style BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
-                                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                            <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
-                                            <Setter Property="Padding" Value="0" />
-                                            <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
-                                        </Style>
-                                    </ListView.Resources>
-
                                     <ListView.GroupStyle>
-                                        <GroupStyle HeaderContainerStyle="{ThemeResource FontListHeaderItem}" HidesIfEmpty="True">
-                                            <GroupStyle.HeaderTemplate>
-                                                <DataTemplate>
-                                                    <GridViewItem
-                                                        x:Name="Root"
-                                                        Margin="0"
-                                                        Padding="0"
-                                                        HorizontalAlignment="Stretch"
-                                                        HorizontalContentAlignment="Stretch"
-                                                        BorderBrush="{ThemeResource ButtonRevealBorderBrush}"
-                                                        BorderThickness="1"
-                                                        IsHitTestVisible="True"
-                                                        Style="{StaticResource GridViewItemRevealStyle}">
-                                                        <Grid>
-                                                            <Border
-                                                                Margin="15,0"
-                                                                BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
-                                                                BorderThickness="0,0,0,1"
-                                                                Opacity="0.2" />
-                                                            <TextBlock
-                                                                Padding="15,8,15,10"
-                                                                HorizontalAlignment="Stretch"
-                                                                VerticalAlignment="Stretch"
-                                                                FontSize="30"
-                                                                FontWeight="SemiBold"
-                                                                Text="{Binding Key}" />
-                                                        </Grid>
-                                                    </GridViewItem>
-                                                </DataTemplate>
-                                            </GroupStyle.HeaderTemplate>
-                                        </GroupStyle>
+                                        <GroupStyle
+                                            HeaderContainerStyle="{ThemeResource FontListHeaderItem}"
+                                            HeaderTemplate="{StaticResource FontListGroupHeaderTemplate}"
+                                            HidesIfEmpty="True" />
                                     </ListView.GroupStyle>
-                                </ListView>
+                                </controls:ExtendedListView>
                             </SemanticZoom.ZoomedInView>
                             <SemanticZoom.ZoomedOutView>
                                 <GridView
@@ -474,6 +436,7 @@
                             Grid.Column="1"
                             Width="45"
                             HorizontalAlignment="Right"
+                            Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                             VerticalAlignment="Stretch"
                             Click="TogglePane_Click">
                             <FontIcon
@@ -490,6 +453,7 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Stretch"
                             Click="TogglePane_Click"
+                            Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                             Visibility="Collapsed">
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -608,7 +572,7 @@
             x:Load="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}"
             Grid.RowSpan="20"
             Grid.ColumnSpan="20"
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+            Background="{ThemeResource DefaultPageBackgroundBrush}"
             Loading="LoadingRoot_Loading">
 
             <StackPanel
@@ -639,7 +603,7 @@
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
-                        <Setter Target="PaneRoot.Background" Value="{ThemeResource SystemChromeMediumColor}" />
+                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="CollapsedViewState">
@@ -649,7 +613,7 @@
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
-                        <Setter Target="PaneRoot.Background" Value="{ThemeResource SystemChromeMediumColor}" />
+                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DefaultViewState">
@@ -711,6 +675,20 @@
                     <VisualState.Setters>
                         <Setter Target="ImportFontHelpBlock.Visibility" Value="Collapsed" />
                         <Setter Target="CollectionFontHelpBlock.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="DesignThemeStates">
+                <VisualState x:Name="DefaultThemeState" />
+                <VisualState x:Name="FUIThemeState">
+                    <VisualState.Setters>
+                        <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ZuneThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="PaneRootBackground.Visibility" Value="Collapsed" />
+                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

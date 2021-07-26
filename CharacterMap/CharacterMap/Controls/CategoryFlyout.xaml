@@ -83,7 +83,7 @@
             Margin="12 12 12 0"
             HorizontalAlignment="Right"
             Click="FilterAccept_Click"
-            Style="{StaticResource DefaultButtonStyle}" />
+            Style="{StaticResource DefaultThemeButtonStyle}" />
 
     </Grid>
 </Flyout>

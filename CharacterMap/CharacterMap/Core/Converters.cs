@@ -98,7 +98,7 @@ namespace CharacterMap.Core
         {
             if (_settings == null)
             {
-                _settings = ResourceHelper.Get<AppSettings>(nameof(AppSettings));
+                _settings = ResourceHelper.AppSettings;
                 _userCollections = Ioc.Default.GetService<UserCollectionsService>();
             }
 

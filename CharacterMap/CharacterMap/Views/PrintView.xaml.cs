@@ -146,12 +146,12 @@ namespace CharacterMap.Views
             UpdatePreview();
 
             // Focus the close button to ensure keyboard focus is retained inside the panel
-            BtnClose.Focus(FocusState.Programmatic);
+            Presenter.SetDefaultFocus();
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            TitleBarHelper.SetTranisentTitleBar(TitleBackground);
+            Presenter.SetTitleBar();
         }
 
         public override void Hide()
@@ -291,11 +291,6 @@ namespace CharacterMap.Views
         private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
             _sizeDebouncer.Debounce(350, UpdateDisplay);
-        }
-
-        private void ContentPanel_Loading(FrameworkElement sender, object args)
-        {
-            CompositionFactory.SetThemeShadow(ContentPanel, 40, TitleBackground);
         }
 
         private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)

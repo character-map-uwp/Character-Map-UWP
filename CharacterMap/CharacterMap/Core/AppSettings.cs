@@ -58,6 +58,12 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public int ApplicationDesignTheme
+        {
+            get => Get(0);
+            set => BroadcastSet(value);
+        }
+
         public int MaxSearchResult
         {
             get => Get(26);
@@ -242,7 +248,7 @@ namespace CharacterMap.Core
             _ = WindowService.RunOnViewsAsync(() =>
             {
                 if (Window.Current.Content is FrameworkElement e)
-                    e.RequestedTheme = UserRequestedTheme;
+                    e.RequestedTheme = ResourceHelper.GetEffectiveTheme();
             });
         }
 

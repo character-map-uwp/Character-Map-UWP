@@ -126,7 +126,7 @@ namespace CharacterMap.Services
             {
                 Create();
                 if (Window.Current.Content is FrameworkElement f)
-                    f.RequestedTheme = ResourceHelper.AppSettings.UserRequestedTheme;
+                    f.RequestedTheme = ResourceHelper.GetEffectiveTheme();
             }
 
             if (view.Dispatcher.HasThreadAccess)

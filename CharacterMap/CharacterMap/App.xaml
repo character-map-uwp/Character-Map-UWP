@@ -4,28 +4,61 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:styles="using:CharacterMap.Styles"
+    xmlns:themes="using:CharacterMap.Themes"
     xmlns:viewModels="using:CharacterMap.ViewModels"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
     <Application.Resources>
         <ResourceDictionary>
-            <viewModels:ViewModelLocator x:Key="Locator" />
+
+            <!--<muxc:XamlControlsResources x:Key="StyleSource1" ControlsResourcesVersion="Version1">
+                <muxc:XamlControlsResources.MergedDictionaries>
+                    <ResourceDictionary Source="/Themes/DefaultThemeStyles.xaml" />
+                </muxc:XamlControlsResources.MergedDictionaries>
+            </muxc:XamlControlsResources>
+
+            <muxc:XamlControlsResources x:Key="StyleSource2" ControlsResourcesVersion="Version2">
+                <muxc:XamlControlsResources.MergedDictionaries>
+                    <ResourceDictionary Source="/Themes/FluentThemeStyles.xaml" />
+                </muxc:XamlControlsResources.MergedDictionaries>
+            </muxc:XamlControlsResources>
+
+            <muxc:XamlControlsResources x:Key="StyleSource3" ControlsResourcesVersion="Version1">
+                <muxc:XamlControlsResources.MergedDictionaries>
+                    <ResourceDictionary Source="/Themes/ZuneThemeStyles.xaml" />
+                </muxc:XamlControlsResources.MergedDictionaries>
+            </muxc:XamlControlsResources>-->
+
+            <x:Double x:Key="TitleRowHeight">45</x:Double>
+            <GridLength x:Key="TitleRowGridHeight">45</GridLength>
 
             <ResourceDictionary.MergedDictionaries>
-                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+
+                <themes:DefaultTheme />
+
                 <styles:ItemTemplates />
+
                 <styles:Controls />
+
+                <!--<ResourceDictionary Source="/Themes/FluentTheme.xaml" />
+                <ResourceDictionary Source="/Styles/ToggleSwitch.xaml" />-->
                 <ResourceDictionary>
-                    <core:AppSettings x:Key="AppSettings" />
                     <converters:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
+
                     <x:Boolean x:Key="TrueValue">True</x:Boolean>
                     <x:Boolean x:Key="FalseValue">False</x:Boolean>
+                    <x:Double x:Key="ToggleSwitchThemeMinWidth">0</x:Double>
+
                     <TransitionCollection x:Key="NoTransitions" />
                     <TransitionCollection x:Key="RepositionTransitions">
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
 
                     <BrushTransition x:Key="RootBackgroundTransition" Duration="0:0:0.25" />
+
+                    <!--  FUI Theme Styles  -->
+
 
                     <Style x:Key="CharItemUnicodeStyle" TargetType="TextBlock">
                         <Setter Property="FontFamily" Value="Consolas" />
@@ -231,35 +264,7 @@
                         </Setter>
                     </Style>
 
-                    <win1903:Style x:Name="ThemeFlyoutStyle" TargetType="FlyoutPresenter">
-                        <Setter Property="AllowFocusOnInteraction" Value="False" />
-                        <Setter Property="Margin" Value="12 0 0 0" />
-                        <Setter Property="Padding" Value="0 0" />
-                        <!--<Setter Property="Background" Value="{StaticResource DefaultAcrylicBrush}" />-->
-                        <Setter Property="BorderBrush" Value="DarkGray" />
-                        <Setter Property="BorderThickness" Value="1" />
-                        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Disabled" />
-                        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Disabled" />
-                        <Setter Property="CornerRadius" Value="{StaticResource ControlCornerRadius}" />
-                        <Setter Property="IsDefaultShadowEnabled" Value="False" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="FlyoutPresenter">
-                                    <ContentPresenter
-                                        Padding="{TemplateBinding Padding}"
-                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                        Background="{TemplateBinding Background}"
-                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}"
-                                        Content="{TemplateBinding Content}"
-                                        ContentTemplate="{TemplateBinding ContentTemplate}"
-                                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                                        CornerRadius="{TemplateBinding CornerRadius}" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </win1903:Style>
+
 
                     <SolidColorBrush x:Key="WhiteBrush" Color="White" />
                     <SolidColorBrush x:Key="BlackBrush" Color="Black" />
@@ -269,6 +274,7 @@
                     <Thickness x:Key="ListViewItemRevealBorderThemeThickness">0</Thickness>
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
+
                     <SolidColorBrush
                         x:Key="ExportBorderBrush"
                         Opacity="0.5"
@@ -282,12 +288,6 @@
                         TintColor="{ThemeResource SystemAltHighColor}"
                         TintOpacity="0.8" />
 
-                    <AcrylicBrush
-                        x:Key="AltHostBrush"
-                        BackgroundSource="HostBackdrop"
-                        FallbackColor="{ThemeResource SystemChromeLowColor}"
-                        TintColor="{ThemeResource SystemAltHighColor}"
-                        TintOpacity="0.8" />
 
                     <AcrylicBrush
                         x:Name="DefaultAcrylicBrush"
@@ -302,8 +302,7 @@
                     <x:Double x:Key="StatusBarHeight">26</x:Double>
                     <GridLength x:Key="StatusBarGridHeight">26</GridLength>
 
-                    <x:Double x:Key="TitleRowHeight">45</x:Double>
-                    <GridLength x:Key="TitleRowGridHeight">45</GridLength>
+
 
                 </ResourceDictionary>
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />

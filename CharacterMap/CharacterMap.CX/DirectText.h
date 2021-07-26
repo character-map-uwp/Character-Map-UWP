@@ -46,6 +46,11 @@ namespace CharacterMapCX
 				DependencyProperty^ get() { return _IsColorFontEnabledProperty; }
 			}
 
+			static property DependencyProperty^ IsCharacterFitEnabledProperty
+			{
+				DependencyProperty^ get() { return _IsCharacterFitEnabledProperty; }
+			}
+
 			static property DependencyProperty^ FallbackFontProperty
 			{
 				DependencyProperty^ get() { return _FallbackFontProperty; }
@@ -91,6 +96,12 @@ namespace CharacterMapCX
 			{
 				bool get() { return (bool)GetValue(IsColorFontEnabledProperty); }
 				void set(bool value) { SetValue(IsColorFontEnabledProperty, value); }
+			}
+
+			property bool IsCharacterFitEnabled
+			{
+				bool get() { return (bool)GetValue(IsCharacterFitEnabledProperty); }
+				void set(bool value) { SetValue(IsCharacterFitEnabledProperty, value); }
 			}
 
 			property UINT32 UnicodeIndex
@@ -140,6 +151,7 @@ namespace CharacterMapCX
 			static DependencyProperty^ _FontFaceProperty;
 			static DependencyProperty^ _TypographyProperty;
 			static DependencyProperty^ _IsTextWrappingEnabledProperty;
+			static DependencyProperty^ _IsCharacterFitEnabledProperty;
 
 			Windows::Foundation::EventRegistrationToken m_drawToken;
 			CanvasControl^ m_canvas;
@@ -183,6 +195,12 @@ namespace CharacterMapCX
 			{
 				_IsColorFontEnabledProperty = DependencyProperty::Register(
 					"IsColorFontEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(true, callback));
+			}
+
+			if (_IsCharacterFitEnabledProperty == nullptr)
+			{
+				_IsCharacterFitEnabledProperty = DependencyProperty::Register(
+					"IsCharacterFitEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(false, callback));
 			}
 
 			if (_UnicodeIndexProperty == nullptr)

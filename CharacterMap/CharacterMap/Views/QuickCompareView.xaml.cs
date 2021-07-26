@@ -57,8 +57,10 @@ namespace CharacterMap.Views
         private void QuickCompareView_Loaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
-            TitleBarHelper.SetTitle(CompareFontsTitle.Text);
-            Window.Current.SetTitleBar(TitleBackground);
+            TitleBarHelper.SetTitle(Presenter.Title);
+
+            //await Task.Delay(150);
+            //Presenter.SetWindowTitleBar();
         }
 
         private void QuickCompareView_Unloaded(object sender, RoutedEventArgs e)
@@ -131,7 +133,7 @@ namespace CharacterMap.Views
                     menu.Items.Add(new MenuFlyoutSeparator());
                     foreach (var item in ViewModel.FontCollections.Items)
                     {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, FontSize = 16 };
+                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name };
                         m.Click += (s, a) =>
                         {
                             if (m.DataContext is UserFontCollection u)
@@ -159,7 +161,6 @@ namespace CharacterMap.Views
 
                 static void SetCommand(MenuFlyoutItemBase b, ICommand c)
                 {
-                    b.FontSize = 16;
                     if (b is MenuFlyoutSubItem i)
                     {
                         foreach (var child in i.Items)

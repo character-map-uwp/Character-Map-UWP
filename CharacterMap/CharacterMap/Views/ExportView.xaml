@@ -539,319 +539,295 @@
 
     </UserControl.Resources>
 
-    <Grid x:Name="LayoutRoot">
+    <cmControls:ModalPagePresenter
+        x:Name="Presenter"
+        Title="{core:Localizer Key=ExportGlyphsHeader/Text}"
+        d:TitleBarHeight="32"
+        CloseClicked="{x:Bind Hide}"
+        TitleBarHeight="{x:Bind TitleBarHeight, Mode=OneWay}">
+        <Grid x:Name="LayoutRoot">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="{x:Bind TitleBarHeight, Mode=OneWay}" d:Height="32" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="8" />
+            </Grid.RowDefinitions>
 
-        <Border
-            x:Name="TitleBackground"
-            Grid.RowSpan="2"
-            Margin="0 0 0 -10"
-            Background="{StaticResource DefaultHostBrush}" />
+            <Grid
+                x:Name="ContentPanel"
+                Grid.Row="2"
+                ColumnSpacing="24"
+                CornerRadius="8 8 0 0"
+                Loading="ContentPanel_Loading">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.8*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
 
-        <Grid
-            x:Name="HeaderGrid"
-            Grid.Row="1"
-            Height="{StaticResource TitleRowHeight}">
-            <TextBlock
-                x:Uid="ExportGlyphsHeader"
-                Margin="20 0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                d:Text="{core:Localizer Key=ExportGlyphsHeader/Text}"
-                FontSize="22"
-                FontWeight="Bold"
-                IsHitTestVisible="False" />
+                <!--  Requires it's own element to enable theme shadows  -->
+                <Border x:Name="ContentBackground" Grid.ColumnSpan="2" />
 
-            <AppBarButton
-                x:Name="BtnClose"
-                x:Uid="BtnClose"
-                Width="{StaticResource TitleRowHeight}"
-                Height="{StaticResource TitleRowHeight}"
-                HorizontalAlignment="Right"
-                Click="{x:Bind Hide}">
-                <SymbolIcon Symbol="Cancel" />
-            </AppBarButton>
+                <!--  Options Scroller  -->
+                <ScrollViewer x:Name="ContentScroller">
+                    <StackPanel
+                        x:Name="OptionsPanel"
+                        Margin="20 20 20 120"
+                        ChildrenTransitions="{StaticResource RepositionTransitions}">
 
-        </Grid>
-
-        <Grid
-            x:Name="ContentPanel"
-            Grid.Row="2"
-            ColumnSpacing="24"
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            BackgroundTransition="{StaticResource RootBackgroundTransition}"
-            CornerRadius="8 8 0 0"
-            Loading="ContentPanel_Loading">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.8*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <!--  Requires it's own element to enable theme shadows  -->
-            <Border x:Name="ContentBackground" Grid.ColumnSpan="2" />
-
-            <!--  Options Scroller  -->
-            <ScrollViewer x:Name="ContentScroller">
-                <StackPanel
-                    x:Name="OptionsPanel"
-                    Margin="20 20 20 120"
-                    ChildrenTransitions="{StaticResource RepositionTransitions}">
-
-                    <StackPanel>
-                        <TextBlock
-                            x:Uid="PrintDataHeader"
-                            d:Text="{core:Localizer Key=PrintDataHeader/Text}"
-                            Style="{StaticResource SubheaderTextBlockStyle}" />
-
-                        <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
-                            <Button.Content>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
-                                    <TextBlock
-                                        Margin="4 2 0 0"
-                                        VerticalAlignment="Center"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="12"
-                                        Text="&#xE019;"
-                                        TextLineBounds="Tight" />
-                                </StackPanel>
-                            </Button.Content>
-                            <Button.Flyout>
-                                <cmControls:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
-                            </Button.Flyout>
-                        </Button>
-                        <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
-
-                        <Border Style="{StaticResource SpacerStyle}" />
-                    </StackPanel>
-
-                    <StackPanel d:Visibility="Collapsed" ChildrenTransitions="{StaticResource RepositionTransitions}">
-
-                        <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Preferred Format" />
-
-                        <TextBlock
-                            x:Uid="ExportGlyphFormatDescription"
-                            d:Text="{core:Localizer Key=ExportGlyphFormatDescription/Text}"
-                            TextWrapping="Wrap" />
-
-                        <ComboBox
-                            Margin="0 24 0 0"
-                            Header="{x:Null}"
-                            HeaderTemplate="{x:Null}"
-                            SelectedIndex="{x:Bind ViewModel.SelectedFormat, Mode=TwoWay}">
-                            <ComboBoxItem Content="PNG" />
-                            <ComboBoxItem Content="SVG" />
-                        </ComboBox>
-
-                        <StackPanel Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
+                        <StackPanel>
                             <TextBlock
-                                x:Uid="PrintViewCharSize"
-                                d:Text="{core:Localizer Key=PrintViewCharSize/Text}"
-                                Style="{StaticResource HeaderStyle}" />
-                            <Slider
-                                x:Name="SldResolution"
-                                HorizontalAlignment="Stretch"
-                                IsThumbToolTipEnabled="True"
-                                Maximum="2048"
-                                Minimum="128"
-                                StepFrequency="64"
-                                TickFrequency="64"
-                                TickPlacement="Outside"
-                                Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
-                            <TextBlock Margin="0,0,0,16">
-                                <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
-                                <Run Text="x" />
-                                <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
-                            </TextBlock>
+                                x:Uid="PrintDataHeader"
+                                d:Text="{core:Localizer Key=PrintDataHeader/Text}"
+                                Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                            <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
+                                <Button.Content>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
+                                        <TextBlock
+                                            Margin="4 2 0 0"
+                                            VerticalAlignment="Center"
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="12"
+                                            Text="&#xE019;"
+                                            TextLineBounds="Tight" />
+                                    </StackPanel>
+                                </Button.Content>
+                                <Button.Flyout>
+                                    <cmControls:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
+                                </Button.Flyout>
+                            </Button>
+                            <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
+
+                            <Border Style="{StaticResource SpacerStyle}" />
                         </StackPanel>
 
-                        <Border Style="{StaticResource SpacerStyle}" />
+                        <StackPanel d:Visibility="Collapsed" ChildrenTransitions="{StaticResource RepositionTransitions}">
+
+                            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Preferred Format" />
+
+                            <TextBlock
+                                x:Uid="ExportGlyphFormatDescription"
+                                d:Text="{core:Localizer Key=ExportGlyphFormatDescription/Text}"
+                                TextWrapping="Wrap" />
+
+                            <ComboBox
+                                Margin="0 24 0 0"
+                                Header="{x:Null}"
+                                HeaderTemplate="{x:Null}"
+                                SelectedIndex="{x:Bind ViewModel.SelectedFormat, Mode=TwoWay}">
+                                <ComboBoxItem Content="PNG" />
+                                <ComboBoxItem Content="SVG" />
+                            </ComboBox>
+
+                            <StackPanel Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
+                                <TextBlock
+                                    x:Uid="PrintViewCharSize"
+                                    d:Text="{core:Localizer Key=PrintViewCharSize/Text}"
+                                    Style="{StaticResource HeaderStyle}" />
+                                <Slider
+                                    x:Name="SldResolution"
+                                    HorizontalAlignment="Stretch"
+                                    IsThumbToolTipEnabled="True"
+                                    Maximum="2048"
+                                    Minimum="128"
+                                    StepFrequency="64"
+                                    TickFrequency="64"
+                                    TickPlacement="Outside"
+                                    Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
+                                <TextBlock Margin="0,0,0,16">
+                                    <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
+                                    <Run Text="x" />
+                                    <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
+                                </TextBlock>
+                            </StackPanel>
+
+                            <Border Style="{StaticResource SpacerStyle}" />
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock
+                                x:Uid="ExportColorHeader"
+                                d:Text="{core:Localizer Key=ExportColorHeader/Text}"
+                                Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                            <CheckBox
+                                x:Uid="ExportAllowColor"
+                                d:Content="{core:Localizer Key=ExportAllowColor/Content}"
+                                IsChecked="{x:Bind ViewModel.ExportColor, Mode=TwoWay}" />
+
+                            <muxc:ColorPicker
+                                HorizontalAlignment="Left"
+                                IsAlphaEnabled="True"
+                                Style="{StaticResource ColorPickerStyle1}"
+                                Color="{x:Bind ViewModel.GlyphColor, Mode=TwoWay}" />
+
+                            <Border Style="{StaticResource SpacerStyle}" />
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock
+                                x:Uid="ExportFileOptionsHeader"
+                                d:Text="{core:Localizer Key=ExportFileOptionsHeader/Text}"
+                                Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                            <CheckBox
+                                x:Uid="ExportSkipBlank"
+                                d:Content="{core:Localizer Key=ExportSkipBlank/Content}"
+                                IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}" />
+
+                            <Border Style="{StaticResource SpacerStyle}" />
+                        </StackPanel>
+
                     </StackPanel>
+                </ScrollViewer>
 
-                    <StackPanel>
-                        <TextBlock
-                            x:Uid="ExportColorHeader"
-                            d:Text="{core:Localizer Key=ExportColorHeader/Text}"
-                            Style="{StaticResource SubheaderTextBlockStyle}" />
-
-                        <CheckBox
-                            x:Uid="ExportAllowColor"
-                            d:Content="{core:Localizer Key=ExportAllowColor/Content}"
-                            IsChecked="{x:Bind ViewModel.ExportColor, Mode=TwoWay}" />
-
-                        <muxc:ColorPicker
-                            HorizontalAlignment="Left"
-                            IsAlphaEnabled="True"
-                            Style="{StaticResource ColorPickerStyle1}"
-                            Color="{x:Bind ViewModel.GlyphColor, Mode=TwoWay}" />
-
-                        <Border Style="{StaticResource SpacerStyle}" />
-                    </StackPanel>
-
-                    <StackPanel>
-                        <TextBlock
-                            x:Uid="ExportFileOptionsHeader"
-                            d:Text="{core:Localizer Key=ExportFileOptionsHeader/Text}"
-                            Style="{StaticResource SubheaderTextBlockStyle}" />
-
-                        <CheckBox
-                            x:Uid="ExportSkipBlank"
-                            d:Content="{core:Localizer Key=ExportSkipBlank/Content}"
-                            IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}" />
-
-                        <Border Style="{StaticResource SpacerStyle}" />
-                    </StackPanel>
-
-                </StackPanel>
-            </ScrollViewer>
-
-            <!--  Page Preview Container  -->
-            <Grid
-                x:Name="PreviewContainer"
-                Grid.Column="1"
-                RowSpacing="8"
-                Margin="12 24 12 12"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Grid x:Name="PreviewOptions" Grid.Row="0">
-
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            d:Text="0 of 0 characters selected"
-                            Text="{x:Bind ViewModel.SelectedText, Mode=OneWay}" />
-                    </StackPanel>
-
-                    <AppBarButton
-                        Width="42"
-                        Height="32"
-                        Padding="0"
-                        HorizontalAlignment="Right"
-                        Click="{x:Bind ViewModel.ToggleTheme}"
-                        Style="{StaticResource TransparentButton}">
-                        <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
-                    </AppBarButton>
-
-                </Grid>
-
+                <!--  Page Preview Container  -->
                 <Grid
-                    Grid.Row="1"
-                    helpers:CompositionFactory.CornerRadius="4.0"
-                    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-                    RequestedTheme="{x:Bind ViewModel.PreviewTheme, Mode=OneWay}">
-                    <Grid.BackgroundTransition>
-                        <BrushTransition Duration="0:0:0.25" />
-                    </Grid.BackgroundTransition>
-                    <cmControls:CharacterGridView
-                        x:Name="ItemsGridView"
+                    x:Name="PreviewContainer"
+                    Grid.Column="1"
+                    RowSpacing="8"
+                    Margin="12 24 12 12"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid x:Name="PreviewOptions" Grid.Row="0">
+
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                d:Text="0 of 0 characters selected"
+                                Text="{x:Bind ViewModel.SelectedText, Mode=OneWay}" />
+                        </StackPanel>
+
+                        <AppBarButton
+                            Width="42"
+                            Height="32"
+                            Padding="0"
+                            HorizontalAlignment="Right"
+                            Click="{x:Bind ViewModel.ToggleTheme}"
+                            Style="{StaticResource TransparentButton}">
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
+                        </AppBarButton>
+
+                    </Grid>
+
+                    <Grid
                         Grid.Row="1"
-                        Margin="0 0 16 0"
-                        Padding="0 24 0 24"
-                        ContainerContentChanging="ItemsPanel_ContainerContentChanging"
-                        IsItemClickEnabled="False"
-                        ItemAnnotation="None"
-                        ItemContainerTransitions="{StaticResource NoTransitions}"
-                        ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedVariant.FontFace}"
-                        ItemFontFamily="{x:Bind _fontMap.ViewModel.FontFamily}"
-                        ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"
-                        ItemTemplate="{x:Bind _fontMap.CharGrid.ItemTemplate}"
-                        ItemTypography="{x:Bind _fontMap.ViewModel.SelectedTypography}"
-                        ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"
-                        SelectionMode="None"
-                        ShowColorGlyphs="{x:Bind ViewModel.ExportColor, Mode=OneWay}">
-                        <GridView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
-                            </ItemsPanelTemplate>
-                        </GridView.ItemsPanel>
-                        <ItemsControl.Foreground>
-                            <SolidColorBrush Color="{x:Bind ViewModel.GlyphColor, Mode=OneWay}" />
-                        </ItemsControl.Foreground>
-                    </cmControls:CharacterGridView>
+                        helpers:CompositionFactory.CornerRadius="4.0"
+                        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                        RequestedTheme="{x:Bind ViewModel.PreviewTheme, Mode=OneWay}">
+                        <Grid.BackgroundTransition>
+                            <BrushTransition Duration="0:0:0.25" />
+                        </Grid.BackgroundTransition>
+                        <cmControls:CharacterGridView
+                            x:Name="ItemsGridView"
+                            Grid.Row="1"
+                            Margin="0 0 16 0"
+                            Padding="0 24 0 24"
+                            ContainerContentChanging="ItemsPanel_ContainerContentChanging"
+                            IsItemClickEnabled="False"
+                            ItemAnnotation="None"
+                            ItemContainerTransitions="{StaticResource NoTransitions}"
+                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedVariant.FontFace}"
+                            ItemFontFamily="{x:Bind _fontMap.ViewModel.FontFamily}"
+                            ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"
+                            ItemTemplate="{x:Bind _fontMap.CharGrid.ItemTemplate}"
+                            ItemTypography="{x:Bind _fontMap.ViewModel.SelectedTypography}"
+                            ItemsSource="{x:Bind ViewModel.Characters, Mode=OneWay}"
+                            SelectionMode="None"
+                            ShowColorGlyphs="{x:Bind ViewModel.ExportColor, Mode=OneWay}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <ItemsControl.Foreground>
+                                <SolidColorBrush Color="{x:Bind ViewModel.GlyphColor, Mode=OneWay}" />
+                            </ItemsControl.Foreground>
+                        </cmControls:CharacterGridView>
+                    </Grid>
                 </Grid>
             </Grid>
-        </Grid>
 
-        <Grid
-            x:Name="ExportRoot"
-            Grid.Row="2"
-            Grid.RowSpan="2"
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            Canvas.ZIndex="1"
-            Visibility="{x:Bind ViewModel.IsExporting, Mode=OneWay, FallbackValue=Collapsed}">
-            <StackPanel
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Spacing="24">
-                <ProgressRing
-                    Width="75"
-                    Height="75"
-                    Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
-                    IsActive="{x:Bind ViewModel.IsExporting, Mode=OneWay}" />
+            <Grid
+                x:Name="ExportRoot"
+                Grid.Row="2"
+                Grid.RowSpan="2"
+                Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+                Canvas.ZIndex="1"
+                Visibility="{x:Bind ViewModel.IsExporting, Mode=OneWay, FallbackValue=Collapsed}">
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="24">
+                    <ProgressRing
+                        Width="75"
+                        Height="75"
+                        Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
+                        IsActive="{x:Bind ViewModel.IsExporting, Mode=OneWay}" />
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        FontSize="24"
+                        FontWeight="Bold"
+                        Text="{x:Bind ViewModel.ExportMessage, Mode=OneWay}" />
+
+                    <Button
+                        x:Uid="BtnCancel"
+                        Width="150"
+                        HorizontalAlignment="Center"
+                        d:Content="Cancel"
+                        Click="{x:Bind ViewModel.CancelExport}"
+                        Style="{StaticResource AccentButtonStyle}"
+                        Visibility="{x:Bind ViewModel.ShowCancelExport, Mode=OneWay, FallbackValue=Collapsed}" />
+                </StackPanel>
+            </Grid>
+
+            <Grid
+                x:Name="BottomBar"
+                Grid.Row="3"
+                Background="{StaticResource AltHostBrush}">
+
                 <TextBlock
-                    HorizontalAlignment="Center"
-                    FontSize="24"
-                    FontWeight="Bold"
-                    Text="{x:Bind ViewModel.ExportMessage, Mode=OneWay}" />
+                    x:Name="BottomLabel"
+                    Margin="12 0"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
+                    TextLineBounds="Tight" />
 
-                <Button
-                    x:Uid="BtnCancel"
-                    Width="150"
-                    HorizontalAlignment="Center"
-                    d:Content="Cancel"
-                    Click="{x:Bind ViewModel.CancelExport}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Visibility="{x:Bind ViewModel.ShowCancelExport, Mode=OneWay, FallbackValue=Collapsed}" />
-            </StackPanel>
+                <StackPanel
+                    x:Name="BottomButtonOptions"
+                    Margin="8"
+                    HorizontalAlignment="Right"
+                    Orientation="Horizontal"
+                    Spacing="8">
+                    <Button
+                        x:Uid="BtnContinue"
+                        Width="150"
+                        d:Content="Export"
+                        Click="{x:Bind ViewModel.StartExport}"
+                        IsEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
+                        Style="{StaticResource AccentButtonStyle}" />
+                    <Button
+                        x:Uid="BtnCancel"
+                        Width="150"
+                        d:Content="Cancel"
+                        Click="{x:Bind Hide}"
+                        Style="{StaticResource DefaultThemeButtonStyle}" />
+                </StackPanel>
+            </Grid>
+
         </Grid>
 
-        <Grid
-            x:Name="BottomBar"
-            Grid.Row="3"
-            Background="{StaticResource AltHostBrush}">
+    </cmControls:ModalPagePresenter>
 
-            <TextBlock
-                x:Name="BottomLabel"
-                Margin="12 0"
-                VerticalAlignment="Center"
-                FontSize="12"
-                Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
-                TextLineBounds="Tight" />
-
-            <StackPanel
-                x:Name="BottomButtonOptions"
-                Margin="8"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal"
-                Spacing="8">
-                <Button
-                    x:Uid="BtnContinue"
-                    Width="150"
-                    d:Content="Export"
-                    Click="{x:Bind ViewModel.StartExport}"
-                    IsEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
-                    Style="{StaticResource AccentButtonStyle}" />
-                <Button
-                    x:Uid="BtnCancel"
-                    Width="150"
-                    d:Content="Cancel"
-                    Click="{x:Bind Hide}"
-                    Style="{StaticResource ButtonRevealStyle}" />
-            </StackPanel>
-        </Grid>
-
-    </Grid>
 </views:PopoverViewBase>

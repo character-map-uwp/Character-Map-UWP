@@ -6,6 +6,7 @@ using CharacterMap.Services;
 using CharacterMap.Controls;
 using UnhandledExceptionEventArgs = CharacterMap.Core.UnhandledExceptionEventArgs;
 using CharacterMapCX.Controls;
+using CharacterMap.ViewModels;
 
 namespace CharacterMap
 {
@@ -28,6 +29,7 @@ namespace CharacterMap
             }
 
             this.FocusVisualKind = FocusVisualKind.Reveal;
+            var loc = new ViewModelLocator();
             this.InitializeComponent();
 
             this.UnhandledException += OnUnhandledException;

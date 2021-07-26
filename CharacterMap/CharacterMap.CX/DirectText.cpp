@@ -36,6 +36,7 @@ DependencyProperty^ DirectText::_TextProperty = nullptr;
 DependencyProperty^ DirectText::_FontFaceProperty = nullptr;
 DependencyProperty^ DirectText::_TypographyProperty = nullptr;
 DependencyProperty^ DirectText::_IsTextWrappingEnabledProperty = nullptr;
+DependencyProperty^ DirectText::_IsCharacterFitEnabledProperty = nullptr;
 
 DirectText::DirectText()
 {
@@ -168,6 +169,13 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         else
             layout->Options = CanvasDrawTextOptions::Clip;
 
+
+        if (IsCharacterFitEnabled)
+        {
+            layout->VerticalAlignment = CanvasVerticalAlignment::Top;
+            layout->HorizontalAlignment = CanvasHorizontalAlignment::Center;
+        }
+
         m_layout = layout;
         m_render = true;
         
@@ -195,8 +203,29 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     // Useful for debugging to see which textboxes are DX
     //args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
 
+    auto t = m_layout->DrawBounds.Top;
+    auto dt = m_layout->LayoutBounds.Top;
+
     auto left = -min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);
-    args->DrawingSession->DrawTextLayout(m_layout, float2(left, 0), ((SolidColorBrush^)this->Foreground)->Color);
+
+    if (IsCharacterFitEnabled)
+    {
+        auto hw = m_layout->DrawBounds.Width / 2.;
+        auto cent = this->RenderSize.Width / 2.;
+        left = cent - hw + left;
+
+        if (m_layout->DrawBounds.Bottom > this->RenderSize.Height || m_layout->DrawBounds.Width > this->RenderSize.Width)
+        {
+            double destWidth = this->RenderSize.Width;
+            double destHeight = this->RenderSize.Height;
+
+            double scale = min(destWidth / (double)m_layout->DrawBounds.Width, destHeight / (double)m_layout->DrawBounds.Bottom);
+
+            args->DrawingSession->Transform = Windows::Foundation::Numerics::make_float3x2_scale(scale / 1.);
+        }
+    }
+
+    args->DrawingSession->DrawTextLayout(m_layout, float2(left, -0), ((SolidColorBrush^)this->Foreground)->Color);
 
     m_render = false;
 }

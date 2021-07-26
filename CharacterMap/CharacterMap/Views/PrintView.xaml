@@ -25,13 +25,9 @@
             <Setter Property="MinWidth" Value="200" />
         </Style>
 
-        <DataTemplate x:Key="HeaderTemplate">
-            <TextBlock Style="{StaticResource HeaderStyle}" Text="{Binding}" />
-        </DataTemplate>
-
-        <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
+        <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox">
             <Setter Property="MinWidth" Value="168" />
-            <Setter Property="HeaderTemplate" Value="{StaticResource HeaderTemplate}" />
+            <Setter Property="HeaderTemplate" Value="{StaticResource DefaultControlHeaderTemplate}" />
         </Style>
 
         <Style x:Name="NumberBoxSpinButtonStyle" BasedOn="{StaticResource DefaultRepeatButtonStyle}" TargetType="RepeatButton">
@@ -123,309 +119,286 @@
 
     <Grid x:Name="LayoutRoot">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="{x:Bind TitleBarHeight, Mode=OneWay}" d:Height="32" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <Border
-            x:Name="TitleBackground"
-            Grid.RowSpan="2"
-            Margin="0 0 0 -10"
-            Background="{StaticResource DefaultHostBrush}" />
-
-        <Grid
-            x:Name="HeaderGrid"
-            Grid.Row="1"
-            Height="{StaticResource TitleRowHeight}">
-            <TextBlock
-                x:Uid="PrintViewTitle"
-                Margin="20 0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                d:Text="{core:Localizer Key=PrintViewTitle/Text}"
-                FontSize="22"
-                FontWeight="Bold"
-                IsHitTestVisible="False" />
-
-            <AppBarButton
-                x:Name="BtnClose"
-                x:Uid="BtnClose"
-                Width="{StaticResource TitleRowHeight}"
-                Height="{StaticResource TitleRowHeight}"
-                HorizontalAlignment="Right"
-                Click="{x:Bind Hide}">
-                <SymbolIcon Symbol="Cancel" />
-            </AppBarButton>
-
-        </Grid>
-
-        <Grid
-            x:Name="ContentPanel"
-            Grid.Row="2"
-            ColumnSpacing="24"
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            BackgroundTransition="{StaticResource RootBackgroundTransition}"
-            CornerRadius="8 8 0 0"
-            Loading="ContentPanel_Loading">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="0.8*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <!--  Requires it's own element to enable theme shadows  -->
-            <Border x:Name="ContentBackground" Grid.ColumnSpan="2" />
-
-            <!--  Options Scroller  -->
-            <ScrollViewer x:Name="ContentScroller">
-                <StackPanel
-                    x:Name="OptionsPanel"
-                    Margin="20 20 20 120"
-                    ChildrenTransitions="{StaticResource RepositionTransitions}">
-
-                    <StackPanel>
-                        <TextBlock x:Uid="PrintDataHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
-
-                        <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
-                            <Button.Content>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
-                                    <TextBlock
-                                        Margin="4 2 0 0"
-                                        VerticalAlignment="Center"
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="12"
-                                        Text="&#xE019;"
-                                        TextLineBounds="Tight" />
-                                </StackPanel>
-                            </Button.Content>
-                            <Button.Flyout>
-                                <controls1:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
-                            </Button.Flyout>
-                        </Button>
-                        <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
-
-                        <Border Style="{StaticResource SpacerStyle}" />
-                    </StackPanel>
-
-                    <StackPanel>
-                        <TextBlock x:Uid="PrintViewLayoutHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
-
-                        <TextBlock x:Uid="PrintViewCharSize" Style="{StaticResource HeaderStyle}" />
-                        <Slider
-                            HorizontalAlignment="Stretch"
-                            IsThumbToolTipEnabled="True"
-                            Maximum="224"
-                            Minimum="64"
-                            StepFrequency="2"
-                            TickFrequency="4"
-                            TickPlacement="Outside"
-                            Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
-                        <TextBlock>
-                            <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" />
-                            <Run Text="px" />
-                        </TextBlock>
-
-                        <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />-->
-                        <CheckBox
-                            x:Uid="ChkBxShowBorders"
-                            Margin="0 16 0 -8"
-                            IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}" />
-
-                        <controls:WrapPanel ChildrenTransitions="{StaticResource RepositionTransitions}" HorizontalSpacing="24">
-                            <ComboBox
-                                x:Uid="CbListStyle"
-                                ItemsSource="{x:Bind Layouts}"
-                                SelectedIndex="0"
-                                SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="models:PrintLayout">
-                                        <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:PrintLayout))}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-
-                            <ComboBox
-                                x:Uid="CbCharacterLabel"
-                                ItemsSource="{x:Bind Annotations}"
-                                SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
-                                <ComboBox.ItemTemplate>
-                                    <DataTemplate x:DataType="models:GlyphAnnotation">
-                                        <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
-                                    </DataTemplate>
-                                </ComboBox.ItemTemplate>
-                            </ComboBox>
-                        </controls:WrapPanel>
-
-                        <Border Style="{StaticResource SpacerStyle}" />
-                    </StackPanel>
-
-                    <StackPanel>
-                        <TextBlock x:Uid="PrintViewPageSetupHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
-
-                        <TextBlock x:Uid="PrintViewPageRange" Style="{StaticResource HeaderStyle}" />
-                        <TextBlock x:Uid="PrintViewPageRangeDesc" Style="{StaticResource DescriptionStyle}" />
-                        <controls:WrapPanel
-                            ChildrenTransitions="{StaticResource RepositionTransitions}"
-                            HorizontalSpacing="24"
-                            Orientation="Horizontal"
-                            VerticalSpacing="12">
-                            <muxc:NumberBox
-                                x:Uid="PrintViewPageSelector"
-                                Maximum="{x:Bind PageCount, Mode=OneWay}"
-                                Minimum="1"
-                                SpinButtonPlacementMode="Inline"
-                                Value="{x:Bind ViewModel.FirstPage, Mode=TwoWay}" />
-
-                            <muxc:NumberBox
-                                x:Uid="PrintViewPageRangeSelector"
-                                Maximum="{x:Bind GetMaxPageRange(ViewModel.FirstPage, PageCount), Mode=OneWay}"
-                                Minimum="1"
-                                SpinButtonPlacementMode="Inline"
-                                Value="{x:Bind ViewModel.PagesToPrint, Mode=TwoWay}" />
-                        </controls:WrapPanel>
-
-                        <TextBlock Style="{StaticResource HintStyle}" Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
-
-                        <ComboBox
-                            x:Uid="PrintViewPageOrientation"
-                            SelectedIndex="0"
-                            SelectionChanged="RadioButtons_SelectionChanged">
-                            <ComboBoxItem x:Uid="CbiPageOrientationPortrait" />
-                            <ComboBoxItem x:Uid="CbiPageOrientationLandscape" />
-                        </ComboBox>
-
-                        <TextBlock x:Uid="PrintViewHorizontalMarginHeader" Style="{StaticResource HeaderStyle}" />
-                        <Slider
-                            HorizontalAlignment="Stretch"
-                            IsThumbToolTipEnabled="True"
-                            Maximum="84"
-                            Minimum="44"
-                            StepFrequency="2"
-                            TickFrequency="4"
-                            TickPlacement="Outside"
-                            Value="{x:Bind ViewModel.HorizontalMargin, Mode=TwoWay}" />
-                        <TextBlock>
-                            <Run Text="{x:Bind ViewModel.HorizontalMargin, Mode=OneWay}" />
-                            <Run Text="px" />
-                        </TextBlock>
-
-                        <TextBlock x:Uid="PrintViewVerticalMarginHeader" Style="{StaticResource HeaderStyle}" />
-                        <Slider
-                            HorizontalAlignment="Stretch"
-                            IsThumbToolTipEnabled="True"
-                            Maximum="84"
-                            Minimum="44"
-                            StepFrequency="2"
-                            TickFrequency="4"
-                            TickPlacement="Outside"
-                            Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}" />
-                        <TextBlock>
-                            <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
-                            <Run Text="px" />
-                        </TextBlock>
-                    </StackPanel>
-
-                </StackPanel>
-            </ScrollViewer>
-
-            <!--  Page Preview Container  -->
-            <Grid
-                Grid.Column="1"
-                Margin="12"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
+        <controls1:ModalPagePresenter
+            x:Name="Presenter"
+            Title="{core:Localizer Key=PrintViewTitle/Text}"
+            d:TitleBarHeight="32"
+            CloseClicked="{x:Bind Hide}"
+            TitleBarHeight="{x:Bind TitleBarHeight, Mode=OneWay}">
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="8" />
                 </Grid.RowDefinitions>
 
-                <StackPanel x:Name="PreviewOptions" Grid.Row="0">
+                <Grid
+                    x:Name="ContentPanel"
+                    Grid.Row="0"
+                    ColumnSpacing="24"
+                    CornerRadius="8 8 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="0.8*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
 
-                    <CheckBox
-                        x:Uid="CbShowMargins"
-                        HorizontalAlignment="Center"
-                        IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
-                        IsThreeState="False" />
+                    <!--  Requires it's own element to enable theme shadows  -->
+                    <Border x:Name="ContentBackground" Grid.ColumnSpan="2" />
 
-                    <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                        <TextBlock x:Uid="PrintViewPreviewingLabel" VerticalAlignment="Center" />
-                        <muxc:NumberBox
-                            Margin="8 0"
-                            LargeChange="1"
-                            Maximum="{x:Bind PageCount, Mode=OneWay}"
-                            Minimum="1"
-                            SmallChange="1"
-                            SpinButtonPlacementMode="Inline"
-                            Template="{StaticResource HorizontalNumberBoxTemplate}"
-                            ValueChanged="NumberBox_ValueChanged"
-                            Value="{x:Bind CurrentPage, Mode=TwoWay}" />
-                        <TextBlock VerticalAlignment="Center">
-                            <Run x:Uid="PrintViewOfLabel" />
-                            <Run Text="{x:Bind PageCount, Mode=OneWay}" />
-                        </TextBlock>
-                    </StackPanel>
+                    <!--  Options Scroller  -->
+                    <ScrollViewer x:Name="ContentScroller">
+                        <StackPanel
+                            x:Name="OptionsPanel"
+                            Margin="20 20 20 120"
+                            ChildrenTransitions="{StaticResource RepositionTransitions}">
+
+                            <StackPanel>
+                                <TextBlock x:Uid="PrintDataHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                                <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
+                                            <TextBlock
+                                                Margin="4 2 0 0"
+                                                VerticalAlignment="Center"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="12"
+                                                Text="&#xE019;"
+                                                TextLineBounds="Tight" />
+                                        </StackPanel>
+                                    </Button.Content>
+                                    <Button.Flyout>
+                                        <controls1:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
+                                    </Button.Flyout>
+                                </Button>
+                                <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
+
+                                <Border Style="{StaticResource SpacerStyle}" />
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock x:Uid="PrintViewLayoutHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                                <TextBlock x:Uid="PrintViewCharSize" Style="{StaticResource HeaderStyle}" />
+                                <Slider
+                                    HorizontalAlignment="Stretch"
+                                    IsThumbToolTipEnabled="True"
+                                    Maximum="224"
+                                    Minimum="64"
+                                    StepFrequency="2"
+                                    TickFrequency="4"
+                                    TickPlacement="Outside"
+                                    Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                                    <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" />
+                                    <Run Text="px" />
+                                </TextBlock>
+
+                                <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />-->
+                                <CheckBox
+                                    x:Uid="ChkBxShowBorders"
+                                    Margin="0 16 0 -8"
+                                    IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}" />
+
+                                <controls:WrapPanel ChildrenTransitions="{StaticResource RepositionTransitions}" HorizontalSpacing="24">
+                                    <ComboBox
+                                        x:Uid="CbListStyle"
+                                        ItemsSource="{x:Bind Layouts}"
+                                        SelectedIndex="0"
+                                        SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate x:DataType="models:PrintLayout">
+                                                <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:PrintLayout))}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+
+                                    <ComboBox
+                                        x:Uid="CbCharacterLabel"
+                                        ItemsSource="{x:Bind Annotations}"
+                                        SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate x:DataType="models:GlyphAnnotation">
+                                                <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </controls:WrapPanel>
+
+                                <Border Style="{StaticResource SpacerStyle}" />
+                            </StackPanel>
+
+                            <StackPanel>
+                                <TextBlock x:Uid="PrintViewPageSetupHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
+
+                                <TextBlock x:Uid="PrintViewPageRange" Style="{StaticResource HeaderStyle}" />
+                                <TextBlock x:Uid="PrintViewPageRangeDesc" Style="{StaticResource DescriptionStyle}" />
+                                <controls:WrapPanel
+                                    ChildrenTransitions="{StaticResource RepositionTransitions}"
+                                    HorizontalSpacing="24"
+                                    Orientation="Horizontal"
+                                    VerticalSpacing="12">
+                                    <muxc:NumberBox
+                                        x:Uid="PrintViewPageSelector"
+                                        HeaderTemplate="{StaticResource DefaultControlHeaderTemplate}"
+                                        Maximum="{x:Bind PageCount, Mode=OneWay}"
+                                        Minimum="1"
+                                        SpinButtonPlacementMode="Inline"
+                                        Value="{x:Bind ViewModel.FirstPage, Mode=TwoWay}" />
+
+                                    <muxc:NumberBox
+                                        x:Uid="PrintViewPageRangeSelector"
+                                        HeaderTemplate="{StaticResource DefaultControlHeaderTemplate}"
+                                        Maximum="{x:Bind GetMaxPageRange(ViewModel.FirstPage, PageCount), Mode=OneWay}"
+                                        Minimum="1"
+                                        SpinButtonPlacementMode="Inline"
+                                        Value="{x:Bind ViewModel.PagesToPrint, Mode=TwoWay}" />
+                                </controls:WrapPanel>
+
+                                <TextBlock Style="{StaticResource HintStyle}" Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
+
+                                <ComboBox
+                                    x:Uid="PrintViewPageOrientation"
+                                    SelectedIndex="0"
+                                    SelectionChanged="RadioButtons_SelectionChanged">
+                                    <ComboBoxItem x:Uid="CbiPageOrientationPortrait" />
+                                    <ComboBoxItem x:Uid="CbiPageOrientationLandscape" />
+                                </ComboBox>
+
+                                <TextBlock x:Uid="PrintViewHorizontalMarginHeader" Style="{StaticResource HeaderStyle}" />
+                                <Slider
+                                    HorizontalAlignment="Stretch"
+                                    IsThumbToolTipEnabled="True"
+                                    Maximum="84"
+                                    Minimum="44"
+                                    StepFrequency="2"
+                                    TickFrequency="4"
+                                    TickPlacement="Outside"
+                                    Value="{x:Bind ViewModel.HorizontalMargin, Mode=TwoWay}" />
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                                    <Run Text="{x:Bind ViewModel.HorizontalMargin, Mode=OneWay}" />
+                                    <Run Text="px" />
+                                </TextBlock>
+
+                                <TextBlock x:Uid="PrintViewVerticalMarginHeader" Style="{StaticResource HeaderStyle}" />
+                                <Slider
+                                    HorizontalAlignment="Stretch"
+                                    IsThumbToolTipEnabled="True"
+                                    Maximum="84"
+                                    Minimum="44"
+                                    StepFrequency="2"
+                                    TickFrequency="4"
+                                    TickPlacement="Outside"
+                                    Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}" />
+                                <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                                    <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
+                                    <Run Text="px" />
+                                </TextBlock>
+                            </StackPanel>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!--  Page Preview Container  -->
+                    <Grid
+                        Grid.Column="1"
+                        Margin="12"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel x:Name="PreviewOptions" Grid.Row="0">
+
+                            <CheckBox
+                                x:Uid="CbShowMargins"
+                                HorizontalAlignment="Center"
+                                IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
+                                IsThreeState="False" />
+
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock x:Uid="PrintViewPreviewingLabel" VerticalAlignment="Center" />
+                                <muxc:NumberBox
+                                    Margin="8 0"
+                                    LargeChange="1"
+                                    Maximum="{x:Bind PageCount, Mode=OneWay}"
+                                    Minimum="1"
+                                    SmallChange="1"
+                                    SpinButtonPlacementMode="Inline"
+                                    Template="{StaticResource HorizontalNumberBoxTemplate}"
+                                    ValueChanged="NumberBox_ValueChanged"
+                                    Value="{x:Bind CurrentPage, Mode=TwoWay}" />
+                                <TextBlock VerticalAlignment="Center">
+                                    <Run x:Uid="PrintViewOfLabel" />
+                                    <Run Text="{x:Bind PageCount, Mode=OneWay}" />
+                                </TextBlock>
+                            </StackPanel>
+
+                            <TextBlock
+                                x:Uid="PrintViewPreviewOutOfBoundsLabel"
+                                Margin="0 4 0 0"
+                                HorizontalAlignment="Center"
+                                Style="{StaticResource HintStyle}"
+                                TextAlignment="Center"
+                                Visibility="{x:Bind IsOutOfRange(ViewModel.FirstPage, ViewModel.PagesToPrint, CurrentPage), Mode=OneWay}" />
+
+                        </StackPanel>
+
+                        <Viewbox
+                            x:Name="PreviewViewBox"
+                            Grid.Row="1"
+                            Margin="12"
+                            HorizontalAlignment="Center"
+                            IsHitTestVisible="False"
+                            Stretch="Uniform" />
+
+                    </Grid>
+                </Grid>
+
+                <Grid
+                    x:Name="BottomBar"
+                    Grid.Row="1"
+                    Background="{StaticResource AltHostBrush}">
 
                     <TextBlock
-                        x:Uid="PrintViewPreviewOutOfBoundsLabel"
-                        Margin="0 4 0 0"
-                        HorizontalAlignment="Center"
-                        Style="{StaticResource HintStyle}"
-                        TextAlignment="Center"
-                        Visibility="{x:Bind IsOutOfRange(ViewModel.FirstPage, ViewModel.PagesToPrint, CurrentPage), Mode=OneWay}" />
+                        x:Name="BottomLabel"
+                        Margin="12 0"
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        TextLineBounds="Tight">
+                        <Run Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
+                    </TextBlock>
 
-                </StackPanel>
-
-                <Viewbox
-                    x:Name="PreviewViewBox"
-                    Grid.Row="1"
-                    Margin="12"
-                    HorizontalAlignment="Center"
-                    IsHitTestVisible="False"
-                    Stretch="Uniform" />
-
+                    <StackPanel
+                        x:Name="BottomButtonOptions"
+                        Margin="8"
+                        HorizontalAlignment="Right"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <Button
+                            x:Name="BtnContinue"
+                            x:Uid="BtnContinue"
+                            Width="150"
+                            d:Content="{core:Localizer Key=BtnContinue/Content}"
+                            Click="BtnContinue_Click"
+                            IsEnabled="{x:Bind CanContinue, Mode=OneWay}"
+                            Style="{StaticResource AccentButtonStyle}" />
+                        <Button
+                            x:Uid="BtnCancel"
+                            Width="150"
+                            d:Content="{core:Localizer Key=BtnCancel/Content}"
+                            Click="{x:Bind Hide}"
+                            Style="{StaticResource DefaultThemeButtonStyle}" />
+                    </StackPanel>
+                </Grid>
             </Grid>
-        </Grid>
+        </controls1:ModalPagePresenter>
 
-        <Grid
-            x:Name="BottomBar"
-            Grid.Row="3"
-            Background="{StaticResource AltHostBrush}">
 
-            <TextBlock
-                x:Name="BottomLabel"
-                Margin="12 0"
-                VerticalAlignment="Center"
-                FontSize="12"
-                TextLineBounds="Tight">
-                <Run Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
-            </TextBlock>
-
-            <StackPanel
-                x:Name="BottomButtonOptions"
-                Margin="8"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal"
-                Spacing="8">
-                <Button
-                    x:Name="BtnContinue"
-                    x:Uid="BtnContinue"
-                    Width="150"
-                    d:Content="{core:Localizer Key=BtnContinue/Content}"
-                    Click="BtnContinue_Click"
-                    IsEnabled="{x:Bind CanContinue, Mode=OneWay}"
-                    Style="{StaticResource AccentButtonStyle}" />
-                <Button
-                    x:Uid="BtnCancel"
-                    Width="150"
-                    d:Content="{core:Localizer Key=BtnCancel/Content}"
-                    Click="{x:Bind Hide}"
-                    Style="{StaticResource ButtonRevealStyle}" />
-            </StackPanel>
-        </Grid>
 
     </Grid>
 </views:PopoverViewBase>

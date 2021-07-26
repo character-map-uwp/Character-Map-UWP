@@ -88,7 +88,7 @@ namespace CharacterMap.Helpers
             return new List<UIElement> { control };
         }
 
-        public static T Realize<T>(this T list) where T : ListViewBase
+        public static T Realize<T>(this T list) where T : ItemsControl
         {
             if (list.ItemsPanelRoot == null)
                 list.Measure(new (100, 100));

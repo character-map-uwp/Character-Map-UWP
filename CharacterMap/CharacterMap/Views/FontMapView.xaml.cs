@@ -113,6 +113,7 @@ namespace CharacterMap.Views
             Loaded += FontMapView_Loaded;
             Unloaded += FontMapView_Unloaded;
 
+            RequestedTheme = ResourceHelper.GetEffectiveTheme();
             ViewModel = new FontMapViewModel(
                 Ioc.Default.GetService<IDialogService>(), 
                 ResourceHelper.AppSettings);
@@ -177,7 +178,8 @@ namespace CharacterMap.Views
             PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
             _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
             {
-                ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
+                if (PreviewColumn.Width.Value > 0)
+                    ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
             });
 
             //Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
@@ -375,7 +377,7 @@ namespace CharacterMap.Views
             }
             else
             {
-                UpdateStateTransitionBack();
+                UpdateRampToGridTransition();
                 VisualStateManager.GoToState(this, CharacterMapState.Name, true);
             }
 

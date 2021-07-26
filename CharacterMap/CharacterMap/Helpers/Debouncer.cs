@@ -36,5 +36,15 @@ namespace CharacterMap.Helpers
 
             _timer.Start();
         }
+
+
+        public void Cancel()
+        {
+            if (_timer is not null && _timer.IsEnabled)
+            {
+                _timer?.Stop();
+                _timer = null;
+            }
+        }
     }
 }

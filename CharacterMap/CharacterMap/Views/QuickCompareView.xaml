@@ -20,7 +20,10 @@
     mc:Ignorable="d">
 
     <UserControl.Resources>
-        <MenuFlyout x:Name="ContextFlyout" Placement="Bottom">
+        <MenuFlyout
+            x:Name="ContextFlyout"
+            MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
+            Placement="Bottom">
             <MenuFlyoutItem
                 Click="Remove_Clicked"
                 Icon="Clear"
@@ -294,14 +297,342 @@
 
     <Grid x:Name="LayoutRoot">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+        <controls:ModalPagePresenter
+            x:Name="Presenter"
+            Title="{core:Localizer Key='CompareFontsTitle/Text'}"
+            CloseButtonVisibility="Collapsed"
+            IsWindowRoot="True">
+            <controls:ModalPagePresenter.TitleBarContent>
+                <Grid>
+                    <controls:XamlTitleBar IsDragTarget="False" />
+                    <StackPanel Orientation="Horizontal">
+                        <Button
+                            x:Name="BackButton"
+                            Width="45"
+                            VerticalAlignment="Stretch"
+                            d:Visibility="Visible"
+                            Background="Transparent"
+                            Click="BackButton_Click"
+                            CornerRadius="0"
+                            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Visibility="Collapsed">
+                            <FontIcon
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="12"
+                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                                Glyph="&#xE0A6;" />
+                        </Button>
+                    </StackPanel>
+                </Grid>
 
-        <controls:XamlTitleBar
+            </controls:ModalPagePresenter.TitleBarContent>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <Grid
+                    x:Name="ContentPanel"
+                    Grid.Row="2"
+                    ColumnSpacing="24"
+                    RowSpacing="12"
+                    Padding="24 12 24 0"
+                    CornerRadius="8 8 0 0">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Spacing="12">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                x:Name="FontListFilter"
+                                x:Uid="FontListFilter"
+                                Margin="0,0,0,0"
+                                Padding="0 0"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Style="{StaticResource TextBlockButtonStyle}"
+                                ToolTipService.Placement="Bottom">
+
+                                <TextBlock Margin="0 0 12 0">
+                                    <Run d:Text="All Fonts" Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" />
+                                    <Run />
+                                    <Run
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="10"
+                                        Text="&#xE011;" />
+                                </TextBlock>
+
+                                <Button.Flyout>
+                                    <MenuFlyout
+                                        MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
+                                        Opening="MenuFlyout_Opening"
+                                        Placement="BottomEdgeAlignedLeft">
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.All}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SerifFonts}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SansSerifFonts}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SymbolFonts}" />
+                                        <MenuFlyoutSubItem Text="Supported Scripts">
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptArabic}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCyrillic}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptGreekAndCoptic}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptHebrew}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptBasicLatin}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptThai}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCJKUnifiedIdeographs}" />
+                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutSubItem x:Uid="OptionMoreFilters">
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ColorFonts}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseDecorativeFonts}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseScriptFonts}" />
+                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.MonospacedFonts}" />
+                                            <MenuFlyoutItem x:Name="VariableOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.VariableFonts}" />
+                                            <MenuFlyoutSubItem Text="Emoji">
+                                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiAll}" />
+                                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiEmoticons}" />
+                                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiDingbats}" />
+                                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiSymbols}" />
+                                            </MenuFlyoutSubItem>
+                                            <MenuFlyoutSeparator x:Name="FontSourceSeperator" />
+                                            <MenuFlyoutItem x:Name="AppxOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.RemoteFonts}" />
+                                            <MenuFlyoutItem x:Name="CloudFontsOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.AppXFonts}" />
+                                        </MenuFlyoutSubItem>
+                                        <MenuFlyoutSeparator />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ImportedFonts}" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+
+                            <ComboBox
+                                x:Name="InputText"
+                                x:Uid="TypeRampInputBox"
+                                Grid.Column="1"
+                                MinHeight="0"
+                                HorizontalAlignment="Stretch"
+                                Background="Transparent"
+                                BorderThickness="0 0 0 1"
+                                CornerRadius="0"
+                                IsEditable="True"
+                                ItemsSource="{x:Bind ViewModel.TextOptions}"
+                                SelectedIndex="0"
+                                Style="{StaticResource RampComboBoxStyle}"
+                                Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition Width="20" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="30" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Margin="-8 -2 0 0" Orientation="Horizontal">
+                                <RadioButton
+                                    x:Uid="LayoutGridToggle"
+                                    Click="GridView_Click"
+                                    IsChecked="True">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
+                                </RadioButton>
+                                <RadioButton x:Uid="LayoutListToggle" Click="ListView_Click">
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
+                                </RadioButton>
+                            </StackPanel>
+
+                            <TextBlock
+                                Grid.Column="2"
+                                VerticalAlignment="Center"
+                                IsTextScaleFactorEnabled="False"
+                                Text="A">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="-1" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+
+                            <Slider
+                                x:Name="FontSizeSlider"
+                                Grid.Column="3"
+                                Margin="0 0 4 0"
+                                CornerRadius="0"
+                                Maximum="64"
+                                Minimum="10"
+                                ValueChanged="FontSizeSlider_ValueChanged"
+                                Value="40" />
+
+                            <TextBlock
+                                Grid.Column="4"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontSize="24"
+                                FontWeight="Normal"
+                                IsTextScaleFactorEnabled="False"
+                                Text="A">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform Y="-2" />
+                                </TextBlock.RenderTransform>
+                            </TextBlock>
+
+
+                        </Grid>
+
+                    </StackPanel>
+
+                    <Border
+                        x:Name="ListingViewRoot"
+                        Grid.Row="1"
+                        Margin="0 0 -24 0"
+                        RenderTransformOrigin="0.5,0.5">
+                        <Border.RenderTransform>
+                            <CompositeTransform />
+                        </Border.RenderTransform>
+                        <GridView
+                            x:Name="Repeater"
+                            Padding="0 0 24 0"
+                            ContainerContentChanging="Repeater_ContainerContentChanging"
+                            ItemTemplate="{StaticResource StackTemplate}"
+                            ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid
+                                        CacheLength="1"
+                                        ItemHeight="262"
+                                        ItemWidth="412"
+                                        Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemContainerStyle>
+                                <Style TargetType="GridViewItem">
+                                    <Setter Property="Margin" Value="0 0 12 12" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewItem">
+                                                <Button
+                                                    HorizontalContentAlignment="Stretch"
+                                                    VerticalContentAlignment="Stretch"
+                                                    AutomationProperties.AccessibilityView="Raw"
+                                                    Click="ItemClick"
+                                                    Content="{TemplateBinding Content}"
+                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                    ContextRequested="ItemContextRequested"
+                                                    Style="{StaticResource ChromelessButtonStyle}" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GridView.ItemContainerStyle>
+                        </GridView>
+                    </Border>
+
+                    <Grid
+                        x:Name="DetailsViewRoot"
+                        Grid.Row="1"
+                        RowSpacing="12"
+                        d:Visibility="Visible"
+                        RenderTransformOrigin="0.5,0.5"
+                        Visibility="Collapsed">
+                        <Grid.RenderTransform>
+                            <CompositeTransform />
+                        </Grid.RenderTransform>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid
+                            x:Name="DetailsTitleContainer"
+                            ColumnSpacing="4"
+                            HorizontalAlignment="Left">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <!--  Text is set in code rather than binding to better support connected animation  -->
+                            <TextBlock
+                                x:Name="DetailsFontTitle"
+                                Grid.Column="0"
+                                d:Text="Segoe UI"
+                                FontSize="24"
+                                FontWeight="Bold" />
+                            <Button
+                                Grid.Column="1"
+                                Padding="8 0"
+                                Click="{x:Bind ViewModel.OpenCurrentFont}"
+                                Foreground="{StaticResource SystemColorControlAccentBrush}"
+                                Style="{StaticResource ChromelessButtonStyle}"
+                                ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}">
+                                <FontIcon
+                                    Margin="0 2 0 0"
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="16"
+                                    Glyph="&#xE17C;" />
+                            </Button>
+                        </Grid>
+
+                        <ScrollViewer
+                            x:Name="DetailsViewContent"
+                            Grid.Row="1"
+                            Margin="0 0 -24 0"
+                            Padding="0 0 24 0"
+                            RenderTransformOrigin="0.5,0.5">
+                            <FrameworkElement.RenderTransform>
+                                <CompositeTransform />
+                            </FrameworkElement.RenderTransform>
+                            <muxc:ItemsRepeater
+                                x:Name="DetailsRepeater"
+                                ElementClearing="DetailsRepeater_ElementClearing"
+                                ElementPrepared="Repeater_ElementPrepared"
+                                ItemsSource="{x:Bind ViewModel.SelectedFont.Variants, Mode=OneWay}"
+                                Layout="{StaticResource GridLayout}"
+                                VerticalCacheLength="0.5">
+                                <muxc:ItemsRepeater.ItemTemplate>
+                                    <DataTemplate x:DataType="core:FontVariant">
+                                        <Grid BorderBrush="{ThemeResource SystemColorControlAccentBrush}" BorderThickness="0 0 0 0">
+                                            <TextBlock Margin="0 4 0 0" Foreground="{ThemeResource TextControlPlaceholderForeground}">
+                                                <Run Text="{x:Bind PreferredName}" />
+                                            </TextBlock>
+                                            <TextBlock
+                                                Margin="0 24 0 0"
+                                                FontFamily="{x:Bind DisplaySource}"
+                                                FontStretch="{x:Bind FontFace.Stretch}"
+                                                FontStyle="{x:Bind FontFace.Style}"
+                                                FontWeight="{x:Bind FontFace.Weight}"
+                                                IsColorFontEnabled="True"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="Wrap" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </muxc:ItemsRepeater.ItemTemplate>
+                            </muxc:ItemsRepeater>
+                        </ScrollViewer>
+
+
+
+                    </Grid>
+                </Grid>
+            </Grid>
+
+        </controls:ModalPagePresenter>
+
+
+
+        <!--<controls:XamlTitleBar
             x:Name="TitleBar"
             Background="{x:Null}"
             Canvas.ZIndex="101">
@@ -324,9 +655,9 @@
                         Glyph="&#xE0A6;" />
                 </Button>
             </StackPanel>
-        </controls:XamlTitleBar>
+        </controls:XamlTitleBar>-->
 
-        <Border
+        <!--<Border
             x:Name="TitleBackground"
             Grid.RowSpan="2"
             Margin="0 0 0 -10"
@@ -347,308 +678,9 @@
                 FontSize="22"
                 FontWeight="Bold"
                 OpticalMarginAlignment="TrimSideBearings" />
-        </Grid>
-
-        <Grid
-            x:Name="ContentPanel"
-            Grid.Row="2"
-            ColumnSpacing="24"
-            RowSpacing="12"
-            Padding="24 12 24 0"
-            Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-            BackgroundTransition="{StaticResource RootBackgroundTransition}"
-            CornerRadius="8 8 0 0">
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <StackPanel Spacing="12">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Button
-                        x:Name="FontListFilter"
-                        x:Uid="FontListFilter"
-                        Margin="0,0,0,0"
-                        Padding="0 0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Style="{StaticResource TextBlockButtonStyle}"
-                        ToolTipService.Placement="Bottom">
-
-                        <TextBlock Margin="0 0 12 0">
-                            <Run d:Text="All Fonts" Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" />
-                            <Run />
-                            <Run
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="10"
-                                Text="&#xE011;" />
-                        </TextBlock>
-
-                        <Button.Flyout>
-                            <MenuFlyout Opening="MenuFlyout_Opening" Placement="BottomEdgeAlignedLeft">
-                                <MenuFlyout.MenuFlyoutPresenterStyle>
-                                    <Style TargetType="MenuFlyoutPresenter">
-                                        <Setter Property="FontSize" Value="16" />
-                                        <Setter Property="CornerRadius" Value="0" />
-                                        <Setter Property="Margin" Value="0 -4 0 0" />
-                                        <Setter Property="Padding" Value="0" />
-                                        <!--<Setter Property="BorderBrush" Value="{ThemeResource SystemAccentColor}" />-->
-                                        <Setter Property="BorderThickness" Value="1" />
-                                        <Setter Property="BorderThickness" Value="1" />
-                                    </Style>
-                                </MenuFlyout.MenuFlyoutPresenterStyle>
-                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.All}" />
-                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SerifFonts}" />
-                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SansSerifFonts}" />
-                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SymbolFonts}" />
-                                <MenuFlyoutSubItem FontSize="16" Text="Supported Scripts">
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptArabic}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCyrillic}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptGreekAndCoptic}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptHebrew}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptBasicLatin}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptThai}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCJKUnifiedIdeographs}" />
-                                </MenuFlyoutSubItem>
-                                <MenuFlyoutSubItem x:Uid="OptionMoreFilters" FontSize="16">
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ColorFonts}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseDecorativeFonts}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseScriptFonts}" />
-                                    <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.MonospacedFonts}" />
-                                    <MenuFlyoutItem x:Name="VariableOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.VariableFonts}" />
-                                    <MenuFlyoutSubItem FontSize="16" Text="Emoji">
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiAll}" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiEmoticons}" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiDingbats}" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiSymbols}" />
-                                    </MenuFlyoutSubItem>
-                                    <MenuFlyoutSeparator x:Name="FontSourceSeperator" />
-                                    <MenuFlyoutItem x:Name="AppxOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.RemoteFonts}" />
-                                    <MenuFlyoutItem x:Name="CloudFontsOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.AppXFonts}" />
-                                </MenuFlyoutSubItem>
-                                <MenuFlyoutSeparator />
-                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ImportedFonts}" />
-                            </MenuFlyout>
-                        </Button.Flyout>
-                    </Button>
-
-                    <ComboBox
-                        x:Name="InputText"
-                        x:Uid="TypeRampInputBox"
-                        Grid.Column="1"
-                        MinHeight="0"
-                        HorizontalAlignment="Stretch"
-                        Background="Transparent"
-                        BorderThickness="0 0 0 1"
-                        CornerRadius="0"
-                        IsEditable="True"
-                        ItemsSource="{x:Bind ViewModel.TextOptions}"
-                        SelectedIndex="0"
-                        Style="{StaticResource RampComboBoxStyle}"
-                        Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                </Grid>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition Width="20" />
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="30" />
-                    </Grid.ColumnDefinitions>
-
-                    <StackPanel Margin="-8 -2 0 0" Orientation="Horizontal">
-                        <RadioButton
-                            x:Uid="LayoutGridToggle"
-                            Click="GridView_Click"
-                            IsChecked="True">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
-                        </RadioButton>
-                        <RadioButton x:Uid="LayoutListToggle" Click="ListView_Click">
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
-                        </RadioButton>
-                    </StackPanel>
-
-                    <TextBlock
-                        Grid.Column="2"
-                        VerticalAlignment="Center"
-                        IsTextScaleFactorEnabled="False"
-                        Text="A">
-                        <TextBlock.RenderTransform>
-                            <TranslateTransform Y="-1" />
-                        </TextBlock.RenderTransform>
-                    </TextBlock>
-
-                    <Slider
-                        x:Name="FontSizeSlider"
-                        Grid.Column="3"
-                        Margin="0 0 4 0"
-                        CornerRadius="0"
-                        Maximum="64"
-                        Minimum="10"
-                        ValueChanged="FontSizeSlider_ValueChanged"
-                        Value="40" />
-
-                    <TextBlock
-                        Grid.Column="4"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        FontWeight="Normal"
-                        IsTextScaleFactorEnabled="False"
-                        Text="A">
-                        <TextBlock.RenderTransform>
-                            <TranslateTransform Y="-2" />
-                        </TextBlock.RenderTransform>
-                    </TextBlock>
+        </Grid>-->
 
 
-                </Grid>
-
-            </StackPanel>
-
-            <Border
-                x:Name="ListingViewRoot"
-                Grid.Row="1"
-                Margin="0 0 -24 0"
-                RenderTransformOrigin="0.5,0.5">
-                <Border.RenderTransform>
-                    <CompositeTransform />
-                </Border.RenderTransform>
-                <GridView
-                    x:Name="Repeater"
-                    Padding="0 0 24 0"
-                    ContainerContentChanging="Repeater_ContainerContentChanging"
-                    ItemTemplate="{StaticResource StackTemplate}"
-                    ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ItemsWrapGrid
-                                CacheLength="1"
-                                ItemHeight="262"
-                                ItemWidth="412"
-                                Orientation="Horizontal" />
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                    <GridView.ItemContainerStyle>
-                        <Style TargetType="GridViewItem">
-                            <Setter Property="Margin" Value="0 0 12 12" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="GridViewItem">
-                                        <Button
-                                            HorizontalContentAlignment="Stretch"
-                                            VerticalContentAlignment="Stretch"
-                                            AutomationProperties.AccessibilityView="Raw"
-                                            Click="ItemClick"
-                                            Content="{TemplateBinding Content}"
-                                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                                            ContextRequested="ItemContextRequested"
-                                            Style="{StaticResource ChromelessButtonStyle}" />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </GridView.ItemContainerStyle>
-                </GridView>
-            </Border>
-
-            <Grid
-                x:Name="DetailsViewRoot"
-                Grid.Row="1"
-                RowSpacing="12"
-                d:Visibility="Visible"
-                RenderTransformOrigin="0.5,0.5"
-                Visibility="Collapsed">
-                <Grid.RenderTransform>
-                    <CompositeTransform />
-                </Grid.RenderTransform>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <Grid
-                    x:Name="DetailsTitleContainer"
-                    ColumnSpacing="4"
-                    HorizontalAlignment="Left">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <!--  Text is set in code rather than binding to better support connected animation  -->
-                    <TextBlock
-                        x:Name="DetailsFontTitle"
-                        Grid.Column="0"
-                        d:Text="Segoe UI"
-                        FontSize="24"
-                        FontWeight="Bold" />
-                    <Button
-                        Grid.Column="1"
-                        Padding="8 0"
-                        Click="{x:Bind ViewModel.OpenCurrentFont}"
-                        Foreground="{StaticResource SystemColorControlAccentBrush}"
-                        Style="{StaticResource ChromelessButtonStyle}"
-                        ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}">
-                        <FontIcon
-                            Margin="0 2 0 0"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            FontSize="16"
-                            Glyph="&#xE17C;" />
-                    </Button>
-                </Grid>
-
-                <ScrollViewer
-                    x:Name="DetailsViewContent"
-                    Grid.Row="1"
-                    Margin="0 0 -24 0"
-                    Padding="0 0 24 0"
-                    RenderTransformOrigin="0.5,0.5">
-                    <FrameworkElement.RenderTransform>
-                        <CompositeTransform />
-                    </FrameworkElement.RenderTransform>
-                    <muxc:ItemsRepeater
-                        x:Name="DetailsRepeater"
-                        ElementClearing="DetailsRepeater_ElementClearing"
-                        ElementPrepared="Repeater_ElementPrepared"
-                        ItemsSource="{x:Bind ViewModel.SelectedFont.Variants, Mode=OneWay}"
-                        Layout="{StaticResource GridLayout}"
-                        VerticalCacheLength="0.5">
-                        <muxc:ItemsRepeater.ItemTemplate>
-                            <DataTemplate x:DataType="core:FontVariant">
-                                <Grid BorderBrush="{ThemeResource SystemColorControlAccentBrush}" BorderThickness="0 0 0 0">
-                                    <TextBlock Margin="0 4 0 0" Foreground="{ThemeResource TextControlPlaceholderForeground}">
-                                        <Run Text="{x:Bind PreferredName}" />
-                                    </TextBlock>
-                                    <TextBlock
-                                        Margin="0 24 0 0"
-                                        FontFamily="{x:Bind DisplaySource}"
-                                        FontStretch="{x:Bind FontFace.Stretch}"
-                                        FontStyle="{x:Bind FontFace.Style}"
-                                        FontWeight="{x:Bind FontFace.Weight}"
-                                        IsColorFontEnabled="True"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="Wrap" />
-                                </Grid>
-                            </DataTemplate>
-                        </muxc:ItemsRepeater.ItemTemplate>
-                    </muxc:ItemsRepeater>
-                </ScrollViewer>
-
-
-
-            </Grid>
-        </Grid>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ViewStates" CurrentStateChanging="ViewStates_CurrentStateChanging">
@@ -804,7 +836,7 @@
                 <VisualState x:Name="QuickCompareState">
                     <VisualState.Setters>
                         <Setter Target="FontListFilter.Visibility" Value="Collapsed" />
-                        <Setter Target="CompareFontsTitle.Text" Value="{core:Localizer Key='QuickCompareTitle/Text'}" />
+                        <Setter Target="Presenter.Title" Value="{core:Localizer Key='QuickCompareTitle/Text'}" />
                         <Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplateQuick}" />
                         <Setter Target="Repeater.IsItemClickEnabled" Value="False" />
                     </VisualState.Setters>

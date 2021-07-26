@@ -4,6 +4,7 @@ using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
@@ -23,6 +24,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
@@ -48,7 +50,7 @@ namespace CharacterMap.Views
         {
             InitializeComponent();
 
-            ViewModel = DataContext as MainViewModel;
+            ViewModel = Ioc.Default.GetService<MainViewModel>();
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
@@ -92,6 +94,8 @@ namespace CharacterMap.Views
             };
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
+
+            UpdateDesignTheme();
         }
 
 
@@ -149,7 +153,23 @@ namespace CharacterMap.Views
                 case nameof(AppSettings.UseFontForPreview):
                     OnFontPreviewUpdated();
                     break;
+
+                case nameof(AppSettings.ApplicationDesignTheme):
+                    UpdateDesignTheme();
+                    break;
             }
+        }
+
+        private void UpdateDesignTheme()
+        {
+            string state = ViewModel.Settings.ApplicationDesignTheme switch
+            {
+                1 => "FUIThemeState",
+                2 => "ZuneThemeState",
+                _ => "DefaultThemeState"
+            };
+
+            VisualStateManager.GoToState(this, state, true);
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -340,7 +360,10 @@ namespace CharacterMap.Views
         private string UpdateFontCountLabel(List<InstalledFont> fontList)
         {
             if (fontList != null)
-                return Localization.Get("StatusBarFontCount", fontList.Count);
+            {
+                return (string)ResourceHelper.Get<IValueConverter>("TitleConverter").Convert(
+                    Localization.Get("StatusBarFontCount", fontList.Count), typeof(string), null, null);
+            }
 
             return string.Empty;
         }
@@ -407,14 +430,14 @@ namespace CharacterMap.Views
                     AppxOption.SetVisible(FontFinder.HasAppxFonts);
                 }
 
-                static void SetCommand(MenuFlyoutItemBase b, ICommand c)
+                static void SetCommand(MenuFlyoutItemBase b, ICommand c, double fontSize)
                 {
-                    b.FontSize = 14;
+                    b.FontSize = fontSize;
                     if (b is MenuFlyoutSubItem i)
                     {
                         i.Height = 40;
                         foreach (var child in i.Items)
-                            SetCommand(child, c);
+                            SetCommand(child, c, fontSize);
                     }
                     else if (b is MenuFlyoutItem m)
                     {
@@ -423,8 +446,9 @@ namespace CharacterMap.Views
                     }
                 }
 
+                var size = ResourceHelper.Get<double>("FontListFlyoutFontSize");
                 foreach (var item in menu.Items)
-                    SetCommand(item, FilterCommand);
+                    SetCommand(item, FilterCommand, size);
             }
         }
 

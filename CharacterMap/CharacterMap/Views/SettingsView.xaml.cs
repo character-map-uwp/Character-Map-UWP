@@ -1,4 +1,5 @@
-﻿using CharacterMap.Core;
+﻿using CharacterMap.Controls;
+using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
@@ -84,6 +85,7 @@ namespace CharacterMap.Views
             GridSize = Settings.GridSize;
 
             this.InitializeComponent();
+
             CompositionFactory.SetupOverlayPanelAnimation(this);
 
             FontNamingSelection.SelectedIndex = (int)Settings.ExportNamingScheme;
@@ -94,6 +96,8 @@ namespace CharacterMap.Views
             SupportedLanguages.Insert(0, SupportedLanguage.SystemLanguage);
 
             Changelog = CreateChangelog();
+
+            //UpdateStyle();
         }
 
         void OnAppSettingsUpdated(AppSettingsChangedMessage msg)
@@ -115,6 +119,9 @@ namespace CharacterMap.Views
                     // We can't direct bind here as it may be updated from a different UI Thread.
                     GridSize = Settings.GridSize;
                     break;
+                case nameof(Settings.ApplicationDesignTheme):
+                    UpdateStyle();
+                    break;
             }
         }
 
@@ -132,7 +139,6 @@ namespace CharacterMap.Views
             if (IsOpen)
                 return;
 
-            MenuItem_Clicked(MenuColumn.Children.First(), null);
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
@@ -143,7 +149,7 @@ namespace CharacterMap.Views
             }
 
             // 1. Focus the close button to ensure keyboard focus is retained inside the settings panel
-            BtnClose.Focus(FocusState.Programmatic);
+            Presenter.SetDefaultFocus();
 
 #pragma warning disable CS0618 // ChangeView doesn't work well when not properly visible
             ContentScroller.ScrollToVerticalOffset(0);
@@ -172,7 +178,7 @@ namespace CharacterMap.Views
             // 3. Set correct Developer features language
             UpdateExport();
 
-            TitleBarHelper.SetTranisentTitleBar(TitleBackground);
+            Presenter.SetTitleBar();
             IsOpen = true;
         }
 
@@ -193,6 +199,8 @@ namespace CharacterMap.Views
             //elements.AddRange(LeftPanel.Children);
             CompositionFactory.PlayEntrance(elements, 0, 200);
 
+            UpdateStyle();
+
             //elements.Clear();
             //elements.AddRange(RightPanel.Children);
             //Composition.PlayEntrance(elements, 0, 200);
@@ -200,8 +208,6 @@ namespace CharacterMap.Views
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            CompositionFactory.SetThemeShadow(ContentRoot, 40, TitleBackground);
-
             // Set the settings that can't be set with bindings
             switch (Settings.UserRequestedTheme)
             {
@@ -224,7 +230,9 @@ namespace CharacterMap.Views
 
         private void View_Loaded(object sender, RoutedEventArgs e)
         {
-            MenuItem_Clicked(MenuColumn.Children.First(), null);
+            UpdateStyle();
+
+            ((RadioButton)MenuColumn.Children.First()).IsChecked = true;
         }
 
 
@@ -288,21 +296,22 @@ namespace CharacterMap.Views
         public void SelectedLanguageToString(object selected) => 
             Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "en-US";
 
-        private void MenuItem_Clicked(object sender, RoutedEventArgs e)
+
+        private void MenuItem_Checked(object sender, RoutedEventArgs e)
         {
-            if (sender is Button item
-               && item.Tag is Panel panel
-               && panel.Visibility == Visibility.Collapsed)
+            if (sender is RadioButton item
+              && item.Tag is Panel panel
+              && panel.Visibility == Visibility.Collapsed)
             {
-                foreach (var child in MenuColumn.Children.OfType<Button>())
-                    VisualStateManager.GoToState(child, "NotSelectedState", true);
+                //foreach (var child in MenuColumn.Children.OfType<Button>())
+                //    VisualStateManager.GoToState(child, "NotSelectedState", true);
 
                 foreach (var child in ContentPanel.Children.OfType<FrameworkElement>())
                     child.Visibility = Visibility.Collapsed;
 
                 ContentScroller.ChangeView(null, 0, null, true);
 
-                VisualStateManager.GoToState(item, "SelectedState", true);
+                //VisualStateManager.GoToState(item, "SelectedState", true);
 
                 if (Settings.UseSelectionAnimations)
                     CompositionFactory.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
@@ -385,6 +394,29 @@ namespace CharacterMap.Views
             };
         }
 
+        void UpdateStyle()
+        {
+            //string key = Settings.ApplicationDesignTheme == 0 ? "Default" : "FUI";
+            //if (Settings.ApplicationDesignTheme == 2) key = "Zune";
+            //var controls = this.GetDescendants().OfType<FrameworkElement>().Where(e => e is not IThemeableControl && Properties.GetStyleKey(e) is not null).ToList();
+            //foreach (var p in controls)
+            //{
+            //    string target = $"{key}{Properties.GetStyleKey(p)}";
+            //    Style style = ResourceHelper.Get<Style>(this, target);
+            //    p.Style = style;
+            //}
+
+            //ResourceHelper.SendThemeChanged();
+
+
+            string key = Settings.ApplicationDesignTheme switch
+            {
+                1 => "FUI",
+                2 => " Zune",
+                _ => "Default"
+            };
+            bool t = VisualStateManager.GoToState(this, $"{key}ThemeState", true);
+        }
 
 
 
@@ -393,6 +425,12 @@ namespace CharacterMap.Views
         Visibility ShowUnicode(GlyphAnnotation annotation)
         {
             return annotation != GlyphAnnotation.None ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+
+        private void Design_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Settings.ApplicationDesignTheme = ((ComboBox)sender).SelectedIndex;
         }
     }
 }

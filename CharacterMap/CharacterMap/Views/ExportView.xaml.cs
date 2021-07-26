@@ -51,12 +51,13 @@ namespace CharacterMap.Views
             this.Visibility = Visibility.Visible;
 
             // Focus the close button to ensure keyboard focus is retained inside the panel
-            BtnClose.Focus(FocusState.Programmatic);
+            //BtnClose.Focus(FocusState.Programmatic);
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            TitleBarHelper.SetTranisentTitleBar(TitleBackground);
+            Presenter.SetTitleBar();
+            //TitleBarHelper.SetTranisentTitleBar(TitleBackground);
         }
 
         private void StartShowAnimation()

@@ -47,7 +47,7 @@
             PointerPressed="Grid_PointerPressed">
             <Grid.ContextFlyout>
                 <!--  Menu content created dynamically  -->
-                <MenuFlyout Opening="FontContextFlyout_Opening" />
+                <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Opening="FontContextFlyout_Opening" />
             </Grid.ContextFlyout>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
