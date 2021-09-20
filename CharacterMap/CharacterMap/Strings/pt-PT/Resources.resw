@@ -52,7 +52,7 @@
     <value>Nome da Familia</value>
   </data>
   <data name="FontPropMonospaced.Text" xml:space="preserve">
-    <value>É Monoespaçoado</value>
+    <value>É Monoespaçado</value>
   </data>
   <data name="FontPropStretch.Text" xml:space="preserve">
     <value>Esticar</value>
@@ -76,7 +76,7 @@
     <value>Pedimos desculpa, não encontramos nenhum dado de fonte suportado neste ficheiro.</value>
   </data>
   <data name="InvalidFontTitle" xml:space="preserve">
-    <value>Ficheiro não suportado</value>
+    <value>Ficheiro não Suportado</value>
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
     <value>Abrir numa Nova Janela</value>
@@ -228,7 +228,7 @@
     <value>Fontes sem Serifa</value>
   </data>
   <data name="OptionSerifFonts.Text" xml:space="preserve">
-    <value>Fontes Serifada</value>
+    <value>Fontes Serifadas</value>
   </data>
   <data name="NewCollectionItem.Text" xml:space="preserve">
     <value>Nova Coleção</value>
@@ -261,7 +261,7 @@
     <value>Todos os Utilizadores</value>
   </data>
   <data name="DWriteSourcePerUser" xml:space="preserve">
-    <value>Apenas Utilizador atual</value>
+    <value>Apenas o Utilizador Atual</value>
   </data>
   <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
     <value>Fornecedor de Nuvem</value>
