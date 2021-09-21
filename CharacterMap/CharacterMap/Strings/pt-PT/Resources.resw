@@ -273,7 +273,7 @@
     <value>Instalar Tipo</value>
   </data>
   <data name="OptionAppxFonts.Text" xml:space="preserve">
-    <value>da Microsoft Store</value>
+    <value>Da Microsoft Store</value>
   </data>
   <data name="OptionCloudFonts.Text" xml:space="preserve">
     <value>Fontes baseadas em Nuvem</value>
