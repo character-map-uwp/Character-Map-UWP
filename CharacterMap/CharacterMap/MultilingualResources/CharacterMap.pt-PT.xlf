@@ -351,7 +351,7 @@
         </trans-unit>
         <trans-unit id="OptionAppxFonts.Text" translate="yes" xml:space="preserve">
           <source>From Microsoft Store</source>
-          <target state="translated">da Microsoft Store</target>
+          <target state="translated">Da Microsoft Store</target>
         </trans-unit>
         <trans-unit id="OptionCloudFonts.Text" translate="yes" xml:space="preserve">
           <source>Cloud-based Fonts</source>
