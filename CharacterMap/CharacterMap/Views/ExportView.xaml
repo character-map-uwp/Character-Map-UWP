@@ -31,7 +31,7 @@
             <TextBlock Style="{StaticResource HeaderStyle}" Text="{Binding}" />
         </DataTemplate>
 
-        <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
+        <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox">
             <Setter Property="MinWidth" Value="168" />
             <Setter Property="HeaderTemplate" Value="{StaticResource HeaderTemplate}" />
         </Style>
@@ -445,6 +445,7 @@
                                                     x:Name="RedLabel"
                                                     Margin="8,0,0,0"
                                                     VerticalAlignment="Center"
+                                                    Style="{StaticResource BaseTextStyle}"
                                                     Text="Red" />
                                             </StackPanel>
                                             <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
@@ -457,6 +458,7 @@
                                                     x:Name="GreenLabel"
                                                     Margin="8,0,0,0"
                                                     VerticalAlignment="Center"
+                                                    Style="{StaticResource BaseTextStyle}"
                                                     Text="Green" />
                                             </StackPanel>
                                             <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
@@ -469,6 +471,7 @@
                                                     x:Name="BlueLabel"
                                                     Margin="8,0,0,0"
                                                     VerticalAlignment="Center"
+                                                    Style="{StaticResource BaseTextStyle}"
                                                     Text="Blue" />
                                             </StackPanel>
                                         </StackPanel>
@@ -486,6 +489,7 @@
                                                     x:Name="HueLabel"
                                                     Margin="8,0,0,0"
                                                     VerticalAlignment="Center"
+                                                    Style="{StaticResource BaseTextStyle}"
                                                     Text="Hue" />
                                             </StackPanel>
                                             <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
@@ -498,6 +502,7 @@
                                                     x:Name="SaturationLabel"
                                                     Margin="8,0,0,0"
                                                     VerticalAlignment="Center"
+                                                    Style="{StaticResource BaseTextStyle}"
                                                     Text="Saturation" />
                                             </StackPanel>
                                             <StackPanel Margin="0,12,0,0" Orientation="Horizontal">
@@ -510,6 +515,7 @@
                                                     x:Name="ValueLabel"
                                                     Margin="8,0,0,0"
                                                     VerticalAlignment="Center"
+                                                    Style="{StaticResource BaseTextStyle}"
                                                     Text="Value" />
                                             </StackPanel>
                                         </StackPanel>
@@ -527,6 +533,7 @@
                                             x:Name="AlphaLabel"
                                             Margin="8,0,0,0"
                                             VerticalAlignment="Center"
+                                            Style="{StaticResource BaseTextStyle}"
                                             Text="Opacity" />
                                     </StackPanel>
                                 </StackPanel>
@@ -576,12 +583,7 @@
                         Margin="20 20 20 120"
                         ChildrenTransitions="{StaticResource RepositionTransitions}">
 
-                        <StackPanel>
-                            <TextBlock
-                                x:Uid="PrintDataHeader"
-                                d:Text="{core:Localizer Key=PrintDataHeader/Text}"
-                                Style="{StaticResource SubheaderTextBlockStyle}" />
-
+                        <cmControls:ContentGroup x:Uid="PrintDataHeader" d:Text="{core:Localizer Key=PrintDataHeader/Text}">
                             <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
                                 <Button.Content>
                                     <StackPanel Orientation="Horizontal">
@@ -601,20 +603,17 @@
                             </Button>
                             <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
 
-                            <Border Style="{StaticResource SpacerStyle}" />
-                        </StackPanel>
+                        </cmControls:ContentGroup>
 
-                        <StackPanel d:Visibility="Collapsed" ChildrenTransitions="{StaticResource RepositionTransitions}">
-
-                            <TextBlock Style="{StaticResource SubheaderTextBlockStyle}" Text="Preferred Format" />
+                        <cmControls:ContentGroup d:Visibility="Collapsed" Text="Preferred Format">
 
                             <TextBlock
                                 x:Uid="ExportGlyphFormatDescription"
                                 d:Text="{core:Localizer Key=ExportGlyphFormatDescription/Text}"
-                                TextWrapping="Wrap" />
+                                Style="{StaticResource BaseTextStyle}" />
 
                             <ComboBox
-                                Margin="0 24 0 0"
+                                Margin="0 12 0 0"
                                 Header="{x:Null}"
                                 HeaderTemplate="{x:Null}"
                                 SelectedIndex="{x:Bind ViewModel.SelectedFormat, Mode=TwoWay}">
@@ -622,7 +621,7 @@
                                 <ComboBoxItem Content="SVG" />
                             </ComboBox>
 
-                            <StackPanel Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
+                            <StackPanel Transitions="{StaticResource RepositionTransitions}" Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
                                 <TextBlock
                                     x:Uid="PrintViewCharSize"
                                     d:Text="{core:Localizer Key=PrintViewCharSize/Text}"
@@ -637,21 +636,15 @@
                                     TickFrequency="64"
                                     TickPlacement="Outside"
                                     Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
-                                <TextBlock Margin="0,0,0,16">
+                                <TextBlock Margin="0,0,0,16" Style="{StaticResource BaseTextStyle}">
                                     <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
                                     <Run Text="x" />
                                     <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
                                 </TextBlock>
                             </StackPanel>
+                        </cmControls:ContentGroup>
 
-                            <Border Style="{StaticResource SpacerStyle}" />
-                        </StackPanel>
-
-                        <StackPanel>
-                            <TextBlock
-                                x:Uid="ExportColorHeader"
-                                d:Text="{core:Localizer Key=ExportColorHeader/Text}"
-                                Style="{StaticResource SubheaderTextBlockStyle}" />
+                        <cmControls:ContentGroup x:Uid="ExportColorHeader" d:Text="{core:Localizer Key=ExportColorHeader/Text}">
 
                             <CheckBox
                                 x:Uid="ExportAllowColor"
@@ -664,22 +657,14 @@
                                 Style="{StaticResource ColorPickerStyle1}"
                                 Color="{x:Bind ViewModel.GlyphColor, Mode=TwoWay}" />
 
-                            <Border Style="{StaticResource SpacerStyle}" />
-                        </StackPanel>
+                        </cmControls:ContentGroup>
 
-                        <StackPanel>
-                            <TextBlock
-                                x:Uid="ExportFileOptionsHeader"
-                                d:Text="{core:Localizer Key=ExportFileOptionsHeader/Text}"
-                                Style="{StaticResource SubheaderTextBlockStyle}" />
-
+                        <cmControls:ContentGroup x:Uid="ExportFileOptionsHeader" d:Text="{core:Localizer Key=ExportFileOptionsHeader/Text}">
                             <CheckBox
                                 x:Uid="ExportSkipBlank"
                                 d:Content="{core:Localizer Key=ExportSkipBlank/Content}"
                                 IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}" />
-
-                            <Border Style="{StaticResource SpacerStyle}" />
-                        </StackPanel>
+                        </cmControls:ContentGroup>
 
                     </StackPanel>
                 </ScrollViewer>
@@ -699,16 +684,15 @@
                     </Grid.RowDefinitions>
 
                     <Grid x:Name="PreviewOptions" Grid.Row="0">
-
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-
                             <TextBlock
                                 VerticalAlignment="Center"
                                 d:Text="0 of 0 characters selected"
+                                Style="{StaticResource BaseTextStyle}"
                                 Text="{x:Bind ViewModel.SelectedText, Mode=OneWay}" />
                         </StackPanel>
 
-                        <AppBarButton
+                        <cmControls:UXButton
                             Width="42"
                             Height="32"
                             Padding="0"
@@ -716,8 +700,7 @@
                             Click="{x:Bind ViewModel.ToggleTheme}"
                             Style="{StaticResource TransparentButton}">
                             <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE793;" />
-                        </AppBarButton>
-
+                        </cmControls:UXButton>
                     </Grid>
 
                     <Grid

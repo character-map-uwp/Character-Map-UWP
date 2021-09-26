@@ -143,7 +143,7 @@
         <Setter Property="Visibility" Value="Collapsed" />
         <Setter Property="BorderThickness" Value="2" />
         <Setter Property="MinHeight" Value="55" />
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="RenderTransformOrigin" Value="0.5,1" />
         <Setter Property="Padding" Value="24,12" />
@@ -243,12 +243,11 @@
                                 <Button.RenderTransform>
                                     <TranslateTransform x:Name="DismissButtonTransform" X="18" />
                                 </Button.RenderTransform>
-                                <SymbolIcon
+                                <FontIcon
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Symbol="Cancel" />
+                                    Glyph="&#xE10A;" />
                             </AppBarButton>
-
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -375,18 +374,19 @@
                                 Style="{StaticResource TitleTextStyle}"
                                 Text="{Binding Path=Title, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource TitleConverter}}" />
 
-                            <AppBarButton
+                            <controls:UXButton
                                 x:Name="BtnClose"
                                 x:Uid="BtnClose"
                                 Width="45"
                                 Height="45"
                                 HorizontalAlignment="Right"
+                                Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                                 Visibility="{TemplateBinding CloseButtonVisibility}">
-                                <SymbolIcon Symbol="Cancel" />
-                                <AppBarButton.KeyboardAccelerators>
+                                <FontIcon Glyph="&#xE10A;" />
+                                <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Escape" Modifiers="None" />
-                                </AppBarButton.KeyboardAccelerators>
-                            </AppBarButton>
+                                </Button.KeyboardAccelerators>
+                            </controls:UXButton>
 
                         </Grid>
 
@@ -401,6 +401,35 @@
                             </Border>
                         </Grid>
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:ContentGroup">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ContentGroup">
+                    <StackPanel
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter
+                            FontSize="24"
+                            FontWeight="Light"
+                            OpticalMarginAlignment="TrimSideBearings"
+                            Content="{TemplateBinding Text}" />
+                        <ItemsPresenter />
+                        <Border Style="{StaticResource SpacerStyle}" />
+                    </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

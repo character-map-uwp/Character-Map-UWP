@@ -132,7 +132,7 @@ namespace CharacterMap.Controls
 
         public void UpdateTheme()
         {
-            ResourceHelper.TryResolveThemeStyle2(this);
+            ResourceHelper.TryResolveThemeStyle3(this);
         }
     }
 }

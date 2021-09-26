@@ -152,9 +152,7 @@
                             Margin="20 20 20 120"
                             ChildrenTransitions="{StaticResource RepositionTransitions}">
 
-                            <StackPanel>
-                                <TextBlock x:Uid="PrintDataHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
-
+                            <controls1:ContentGroup x:Uid="PrintDataHeader">
                                 <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
                                     <Button.Content>
                                         <StackPanel Orientation="Horizontal">
@@ -173,13 +171,9 @@
                                     </Button.Flyout>
                                 </Button>
                                 <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
+                            </controls1:ContentGroup>
 
-                                <Border Style="{StaticResource SpacerStyle}" />
-                            </StackPanel>
-
-                            <StackPanel>
-                                <TextBlock x:Uid="PrintViewLayoutHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
-
+                            <controls1:ContentGroup x:Uid="PrintViewLayoutHeader">
                                 <TextBlock x:Uid="PrintViewCharSize" Style="{StaticResource HeaderStyle}" />
                                 <Slider
                                     HorizontalAlignment="Stretch"
@@ -190,7 +184,7 @@
                                     TickFrequency="4"
                                     TickPlacement="Outside"
                                     Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
-                                <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                                <TextBlock Style="{StaticResource HeaderStyle}">
                                     <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" />
                                     <Run Text="px" />
                                 </TextBlock>
@@ -226,14 +220,14 @@
                                     </ComboBox>
                                 </controls:WrapPanel>
 
-                                <Border Style="{StaticResource SpacerStyle}" />
-                            </StackPanel>
+                            </controls1:ContentGroup>
 
-                            <StackPanel>
-                                <TextBlock x:Uid="PrintViewPageSetupHeader" Style="{StaticResource SubheaderTextBlockStyle}" />
-
+                            <controls1:ContentGroup x:Uid="PrintViewPageSetupHeader">
                                 <TextBlock x:Uid="PrintViewPageRange" Style="{StaticResource HeaderStyle}" />
-                                <TextBlock x:Uid="PrintViewPageRangeDesc" Style="{StaticResource DescriptionStyle}" />
+                                <TextBlock
+                                    x:Uid="PrintViewPageRangeDesc"
+                                    Margin="0 0 0 8"
+                                    Style="{StaticResource BaseTextStyle}" />
                                 <controls:WrapPanel
                                     ChildrenTransitions="{StaticResource RepositionTransitions}"
                                     HorizontalSpacing="24"
@@ -276,7 +270,7 @@
                                     TickFrequency="4"
                                     TickPlacement="Outside"
                                     Value="{x:Bind ViewModel.HorizontalMargin, Mode=TwoWay}" />
-                                <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                                <TextBlock Style="{StaticResource BaseTextStyle}">
                                     <Run Text="{x:Bind ViewModel.HorizontalMargin, Mode=OneWay}" />
                                     <Run Text="px" />
                                 </TextBlock>
@@ -291,11 +285,11 @@
                                     TickFrequency="4"
                                     TickPlacement="Outside"
                                     Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}" />
-                                <TextBlock Style="{StaticResource BaseTextBlockStyle}">
+                                <TextBlock Style="{StaticResource HeaderStyle}">
                                     <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
                                     <Run Text="px" />
                                 </TextBlock>
-                            </StackPanel>
+                            </controls1:ContentGroup>
 
                         </StackPanel>
                     </ScrollViewer>
@@ -321,7 +315,10 @@
                                 IsThreeState="False" />
 
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                                <TextBlock x:Uid="PrintViewPreviewingLabel" VerticalAlignment="Center" />
+                                <TextBlock
+                                    x:Uid="PrintViewPreviewingLabel"
+                                    VerticalAlignment="Center"
+                                    Style="{StaticResource BaseTextStyle}" />
                                 <muxc:NumberBox
                                     Margin="8 0"
                                     LargeChange="1"

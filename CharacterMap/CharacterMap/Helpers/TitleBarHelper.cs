@@ -21,13 +21,10 @@ namespace CharacterMap.Helpers
             obj.SetValue(DefaultTitleBarProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for DefaultTitleBar.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DefaultTitleBarProperty =
             DependencyProperty.RegisterAttached("DefaultTitleBar", typeof(UIElement), typeof(TitleBarHelper), new PropertyMetadata(null));
 
 
-
-        static WeakReference<FrameworkElement> _previousElement;
 
         internal static void SetTitle(string name)
         {

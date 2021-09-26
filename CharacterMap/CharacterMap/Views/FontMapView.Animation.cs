@@ -140,7 +140,7 @@ namespace CharacterMap.Views
             return sb;
         }
 
-        public void UpdateStateTransition()
+        public void UpdateGridToRampTransition()
         {
             // 1.0. Get all the items we'll be animating
             List<FrameworkElement> childs = CharGrid.ItemsPanelRoot.Children
@@ -156,7 +156,7 @@ namespace CharacterMap.Views
 
             TimeSpan outStagger = TimeSpan.FromMilliseconds(250d / childs.Count);
             TimeSpan startOffset = TimeSpan.FromSeconds(0);
-            TimeSpan staggerTime = TimeSpan.FromMilliseconds(50);
+            TimeSpan staggerTime = TimeSpan.FromMilliseconds(40);
             TimeSpan duration = TimeSpan.FromMilliseconds(400);
             TimeSpan durationOpacityOut = TimeSpan.FromMilliseconds(150);
             TimeSpan durationOpacityIn = TimeSpan.FromMilliseconds(300);

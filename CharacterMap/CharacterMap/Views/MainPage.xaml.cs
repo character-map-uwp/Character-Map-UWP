@@ -95,7 +95,7 @@ namespace CharacterMap.Views
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
 
-            UpdateDesignTheme();
+            ResourceHelper.GoToThemeState(this);
         }
 
 
@@ -154,22 +154,10 @@ namespace CharacterMap.Views
                     OnFontPreviewUpdated();
                     break;
 
-                case nameof(AppSettings.ApplicationDesignTheme):
-                    UpdateDesignTheme();
-                    break;
+                //case nameof(AppSettings.ApplicationDesignTheme):
+                //    UpdateDesignTheme();
+                //    break;
             }
-        }
-
-        private void UpdateDesignTheme()
-        {
-            string state = ViewModel.Settings.ApplicationDesignTheme switch
-            {
-                1 => "FUIThemeState",
-                2 => "ZuneThemeState",
-                _ => "DefaultThemeState"
-            };
-
-            VisualStateManager.GoToState(this, state, true);
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -430,25 +418,28 @@ namespace CharacterMap.Views
                     AppxOption.SetVisible(FontFinder.HasAppxFonts);
                 }
 
-                static void SetCommand(MenuFlyoutItemBase b, ICommand c, double fontSize)
+                static void SetCommand(
+                    MenuFlyoutItemBase b, ICommand c, double fontSize, double height)
                 {
                     b.FontSize = fontSize;
+                    if (b is not MenuFlyoutSeparator && height > 0)
+                        b.Height = 40;
+
                     if (b is MenuFlyoutSubItem i)
                     {
-                        i.Height = 40;
                         foreach (var child in i.Items)
-                            SetCommand(child, c, fontSize);
+                            SetCommand(child, c, fontSize, height);
                     }
                     else if (b is MenuFlyoutItem m)
                     {
                         m.Command = c;
-                        m.Height = 40;
                     }
                 }
 
                 var size = ResourceHelper.Get<double>("FontListFlyoutFontSize");
+                var height = ResourceHelper.Get<double>("FontListFlyoutHeight");
                 foreach (var item in menu.Items)
-                    SetCommand(item, FilterCommand, size);
+                    SetCommand(item, FilterCommand, size, height);
             }
         }
 

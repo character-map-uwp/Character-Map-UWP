@@ -42,7 +42,7 @@
     <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
         <Grid
             ColumnSpacing="12"
-            Padding="12 0"
+            Padding="12 4"
             Background="Transparent"
             PointerPressed="Grid_PointerPressed">
             <Grid.ContextFlyout>
@@ -57,7 +57,7 @@
                 Padding="5"
                 VerticalAlignment="Center"
                 FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
-                FontSize="14"
+                FontSize="{ThemeResource FontListFontSize}"
                 Text="{x:Bind Name}"
                 TextTrimming="CharacterEllipsis"
                 TextWrapping="NoWrap" />

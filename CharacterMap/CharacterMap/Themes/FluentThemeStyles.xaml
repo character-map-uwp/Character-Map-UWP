@@ -5,6 +5,10 @@
     xmlns:core="using:CharacterMap.Core"
     xmlns:helpers="using:CharacterMap.Helpers">
 
+    <!--<ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///Styles/ToggleSwitch.xaml" />
+    </ResourceDictionary.MergedDictionaries>-->
+
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
@@ -19,17 +23,24 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
+    <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
-    <Style TargetType="controls:ModalPagePresenter">
-        <Setter Property="ContentBackground" Value="Transparent" />
-        <Setter Property="TitleBackgroundBrush" Value="Transparent" />
-        <Setter Property="AllowShadows" Value="False" />
-        <Setter Property="Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+
+
+    <!--  TEXT STYLES  -->
+    <Style x:Key="HeaderStyle" TargetType="TextBlock">
+        <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Margin" Value="0 0 0 4" />
     </Style>
 
-    <Style x:Key="DefaultThemeContentDialogStyle" BasedOn="{StaticResource DefaultContentDialogStyle}" TargetType="ContentDialog" />
-
-    <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
+    <Style x:Key="BaseTextStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+    </Style>
 
     <Style x:Key="SectionHeaderTextBlockStyle" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="28" />
@@ -40,140 +51,26 @@
         <Setter Property="Margin" Value="0 10 0 4" />
     </Style>
 
+
+
+
+    <!--  MISC CONTROLS  -->
+
+    <Style TargetType="controls:ModalPagePresenter">
+        <Setter Property="ContentBackground" Value="Transparent" />
+        <Setter Property="TitleBackgroundBrush" Value="Transparent" />
+        <Setter Property="AllowShadows" Value="False" />
+        <Setter Property="Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+    </Style>
+
+    <Style x:Key="DefaultThemeContentDialogStyle" BasedOn="{StaticResource DefaultContentDialogStyle}" TargetType="ContentDialog" />
+
     <Style x:Key="DefaultThemeListViewItemStyle" BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
         <Setter Property="Padding" Value="0" />
-    </Style>
-
-
-    <Style x:Key="DefaultMenuButtonStyle" TargetType="controls:MenuButton">
-        <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-        <Setter Property="BorderBrush" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="Margin" Value="12,2,12,2" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="CornerRadius" Value="4" />
-        <Setter Property="FocusVisualMargin" Value="-3" />
-        <Setter Property="MinHeight" Value="36" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="controls:MenuButton">
-                    <Grid
-                        x:Name="RootGrid"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}"
-                        ToolTipService.ToolTip="{TemplateBinding Content}">
-
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentRoot" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentRoot" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Pressed">
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="ContentRoot" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="RootGrid.Opacity" Value="0.5" />
-                                    </VisualState.Setters>
-                                </VisualState>
-
-                            </VisualStateGroup>
-                            <VisualStateGroup x:Name="CheckStates">
-                                <VisualState x:Name="Checked">
-                                    <VisualState.Setters>
-                                        <!--<Setter Target="ContentPresenter.FontWeight" Value="Bold" />-->
-                                        <!--<Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemAccentColor}" />-->
-                                        <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForeground}" />
-                                        <Setter Target="SelectionIndicator.Visibility" Value="Visible" />
-                                        <Setter Target="RootGrid.Background" Value="#0FFFFFFF" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Unchecked">
-                                    <VisualState.Setters>
-                                        <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForeground}" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="Indeterminate">
-                                    <VisualState.Setters>
-                                        <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForeground}" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Border
-                            x:Name="BorderElement"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                            <Grid x:Name="ContentRoot">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="36" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
-
-                                <Rectangle
-                                    x:Name="SelectionIndicator"
-                                    Width="3"
-                                    Height="16"
-                                    HorizontalAlignment="Left"
-                                    Fill="{ThemeResource SystemAccentColor}"
-                                    RadiusX="2"
-                                    RadiusY="2"
-                                    Visibility="Collapsed" />
-
-                                <Viewbox
-                                    Width="16"
-                                    Height="16"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                                    <ContentPresenter x:Name="IconPresenter" Content="{TemplateBinding Icon}" />
-                                </Viewbox>
-
-                                <ContentPresenter
-                                    x:Name="ContentPresenter"
-                                    Grid.Column="1"
-                                    Padding="{TemplateBinding Padding}"
-                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    Content="{TemplateBinding Content}"
-                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                    ContentTransitions="{TemplateBinding ContentTransitions}" />
-                            </Grid>
-                        </Border>
-
-                    </Grid>
-
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
 
     <Style x:Key="DefaultSettingsPresenterStyle" TargetType="controls:SettingsPresenter">
@@ -271,9 +168,158 @@
         </Setter>
     </Style>
 
+    <Style TargetType="controls:ContentGroup">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Padding" Value="16,14,16,14" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="MinHeight" Value="67" />
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="Margin" Value="0 8 0 4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ContentGroup">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0 12"
+                            FontWeight="SemiBold"
+                            Text="{TemplateBinding Text}" />
+
+                        <Grid
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <ItemsPresenter Margin="0 0" />
+                        </Grid>
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CompareCardStyle" TargetType="controls:ContentGroup">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Padding" Value="16,14,16,4" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="MinHeight" Value="0" />
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="Margin" Value="0 8 0 4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ContentGroup">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <ContentPresenter
+                            Margin="0 0 0 4"
+                            Content="{TemplateBinding Text}"
+                            FontWeight="SemiBold" />
+
+                        <ContentPresenter
+                            Grid.Row="1"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Content="{TemplateBinding SecondaryContent}"
+                            CornerRadius="{TemplateBinding CornerRadius}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="GridViewItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="TabNavigation" Value="Local" />
+        <Setter Property="IsHoldingEnabled" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="0,0,4,4" />
+        <Setter Property="AllowDrop" Value="False" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="FocusVisualMargin" Value="-2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GridViewItem">
+                    <ContentPresenter
+                        x:Name="ContentPresenter"
+                        Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        Control.IsTemplateFocusTarget="True"
+                        CornerRadius="4"
+                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                        FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
+                        FocusVisualSecondaryThickness="2">
+                        <ContentPresenter.BackgroundTransition>
+                            <BrushTransition Duration="0:0:0.06" />
+                        </ContentPresenter.BackgroundTransition>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Selected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="PointerOverSelected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="PressedSelected">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 
-    <Style x:Key="DefaultThemeSliderStyle" BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider" />
 
 
 
@@ -292,6 +338,7 @@
     <Style x:Key="DefaultFlyoutStyle" BasedOn="{StaticResource FontListFlyoutStyle}" TargetType="MenuFlyoutPresenter">
         <Setter Property="CornerRadius" Value="8" />
     </Style>
+
 
 
 
@@ -576,7 +623,178 @@
 
     <Style x:Key="DefaultThemeButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button" />
 
-    <Style BasedOn="{StaticResource DefaultThemeAppBarButtonStyle}" TargetType="AppBarButton" />
+    <Style BasedOn="{StaticResource DefaultThemeButtonStyle}" TargetType="controls:UXButton" />
+
+    <Style x:Key="TransparentButton" TargetType="controls:UXButton">
+        <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />
+        <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="8,4,8,5" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:UXButton">
+
+                    <Grid
+                        x:Name="Root"
+                        MinWidth="{TemplateBinding MinWidth}"
+                        MaxWidth="{TemplateBinding MaxWidth}"
+                        Background="Transparent">
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
+                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <PointerDownThemeAnimation TargetName="ContentPresenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}" />
+                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}" />
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
+                                        <Setter Target="DropDownGlyph.Opacity" Value="0" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="HintStates">
+                                <VisualState x:Name="HintHidden" />
+                                <VisualState x:Name="HintVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="HintColumn.Width" Value="24" />
+                                        <Setter Target="DropDownGlyph.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+
+                            <VisualStateGroup x:Name="LabelStates">
+                                <VisualState x:Name="LabelHidden" />
+                                <VisualState x:Name="LabelVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Height" Value="32" />
+                                        <Setter Target="ContentPresenter.VerticalAlignment" Value="Top" />
+                                        <Setter Target="LabelPresenter.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Border
+                            x:Name="AppBarButtonInnerBorder"
+                            Margin="2"
+                            VerticalAlignment="Stretch"
+                            Background="{TemplateBinding Background}"
+                            BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Control.IsTemplateFocusTarget="True"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <Border.BackgroundTransition>
+                                <BrushTransition Duration="0:0:0.083" />
+                            </Border.BackgroundTransition>
+                        </Border>
+
+                        <Grid x:Name="ContentRoot">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition x:Name="HintColumn" Width="0" />
+                            </Grid.ColumnDefinitions>
+
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Padding="{TemplateBinding Padding}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                Foreground="{TemplateBinding Foreground}" />
+
+                            <TextBlock
+                                x:Name="LabelPresenter"
+                                x:Load="False"
+                                Margin="0 0 0 6"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                FontSize="11.333"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                Text="{TemplateBinding Label}"
+                                Visibility="Collapsed" />
+
+                            <FontIcon
+                                x:Name="DropDownGlyph"
+                                x:Load="False"
+                                Grid.Column="1"
+                                Margin="0,10,10,10"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                helpers:CompositionFactory.OpacityDuration="0:0:0.1"
+                                AutomationProperties.AccessibilityView="Raw"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="12"
+                                Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
+                                Glyph="&#xE0E5;"
+                                IsHitTestVisible="False"
+                                Visibility="Collapsed" />
+
+                        </Grid>
+
+                    </Grid>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TransparentHintButton" BasedOn="{StaticResource TransparentButton}" TargetType="controls:UXButton">
+        <Setter Property="IsHintVisible" Value="True" />
+    </Style>
+
+    <Style x:Key="MapInfoButtonStyle" BasedOn="{StaticResource TransparentButton}" TargetType="controls:UXButton">
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+        <Setter Property="Height" Value="47" />
+        <Setter Property="MinWidth" Value="47" />
+    </Style>
+
+    <Style x:Key="DefaultThemeAppBarButtonStyle" BasedOn="{StaticResource TransparentButton}" TargetType="controls:UXButton">
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Width" Value="50" />
+        <Setter Property="Padding" Value="0" />
+    </Style>
 
     <Style x:Key="LabelAppBarButtonStyle" TargetType="AppBarButton">
         <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />
@@ -584,7 +802,7 @@
         <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Padding" Value="12" />
@@ -685,8 +903,6 @@
                             </Border.BackgroundTransition>
                         </Border>
 
-
-
                         <StackPanel
                             x:Name="ContentRoot"
                             Padding="{TemplateBinding Padding}"
@@ -703,350 +919,135 @@
                                 FontSize="12"
                                 Text="{TemplateBinding Label}" />
                         </StackPanel>
-
-
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style x:Key="TransparentButton" TargetType="Button">
-        <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="8,4,8,5" />
+
+    <Style x:Key="DefaultMenuButtonStyle" TargetType="controls:MenuButton">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Margin" Value="12,2,12,2" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="MinHeight" Value="36" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="Button">
-
+                <ControlTemplate TargetType="controls:MenuButton">
                     <Grid
-                        x:Name="Root"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="Transparent">
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        ToolTipService.ToolTip="{TemplateBinding Content}">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Border
-                            x:Name="AppBarButtonInnerBorder"
-                            Margin="2"
-                            VerticalAlignment="Stretch"
-                            Background="{TemplateBinding Background}"
-                            BackgroundSizing="{TemplateBinding BackgroundSizing}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Control.IsTemplateFocusTarget="True"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <Border.BackgroundTransition>
-                                <BrushTransition Duration="0:0:0.083" />
-                            </Border.BackgroundTransition>
-                        </Border>
-
-                        <ContentPresenter
-                            x:Name="ContentPresenter"
-                            Padding="{TemplateBinding Padding}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}" />
-
-                    </Grid>
-
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="TransparentHintButton" TargetType="Button">
-        <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="8,4,8,5" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="FocusVisualMargin" Value="-3" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-
-                    <Grid
-                        x:Name="Root"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="Transparent">
-
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
-                                        <Setter Target="DropDownGlyph.Opacity" Value="0" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Border
-                            x:Name="AppBarButtonInnerBorder"
-                            Margin="2"
-                            VerticalAlignment="Stretch"
-                            Background="{TemplateBinding Background}"
-                            BackgroundSizing="{TemplateBinding BackgroundSizing}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Control.IsTemplateFocusTarget="True"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <Border.BackgroundTransition>
-                                <BrushTransition Duration="0:0:0.083" />
-                            </Border.BackgroundTransition>
-                        </Border>
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="24" />
-                            </Grid.ColumnDefinitions>
-
-                            <ContentPresenter
-                                x:Name="ContentPresenter"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}" />
-
-                            <FontIcon
-                                x:Name="DropDownGlyph"
-                                Grid.Column="1"
-                                Margin="0,10,10,10"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                helpers:CompositionFactory.OpacityDuration="0:0:0.1"
-                                AutomationProperties.AccessibilityView="Raw"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="12"
-                                Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                                Glyph="&#xE0E5;"
-                                IsHitTestVisible="False" />
-
-                        </Grid>
-
-
-
-                    </Grid>
-
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="DefaultThemeAppBarButtonStyle" TargetType="AppBarButton">
-        <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}" />
-        <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="Width" Value="50" />
-        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-        <Setter Property="FocusVisualMargin" Value="-3" />
-        <Setter Property="AllowFocusOnInteraction" Value="False" />
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
-        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="AppBarButton">
-                    <Grid
-                        x:Name="Root"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="Transparent">
-
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Content" />
+                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentRoot" />
                                     </Storyboard>
                                 </VisualState>
 
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
+                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Content" />
+                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentRoot" />
                                     </Storyboard>
                                 </VisualState>
 
                                 <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
-                                    </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="Content" />
+                                        <PointerDownThemeAnimation Storyboard.TargetName="ContentRoot" />
                                     </Storyboard>
                                 </VisualState>
 
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
+                                        <Setter Target="RootGrid.Opacity" Value="0.5" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Content" />
-                                    </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="OverflowNormal" />
-                                <VisualState x:Name="OverflowPointerOver">
+
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckStates">
+                                <VisualState x:Name="Checked">
                                     <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
+                                        <!--<Setter Target="ContentPresenter.FontWeight" Value="Bold" />-->
+                                        <!--<Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemAccentColor}" />-->
+                                        <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForeground}" />
+                                        <Setter Target="SelectionIndicator.Visibility" Value="Visible" />
+                                        <Setter Target="RootGrid.Background" Value="#0FFFFFFF" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Content" />
-                                    </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="OverflowPressed">
+                                <VisualState x:Name="Unchecked">
                                     <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
+                                        <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForeground}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="Content" />
-                                    </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="OverflowSubMenuOpened">
+                                <VisualState x:Name="Indeterminate">
                                     <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundSubMenuOpened}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushSubMenuOpened}" />
-                                        <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundSubMenuOpened}" />
+                                        <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForeground}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Content" />
-                                    </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <Border
-                            x:Name="AppBarButtonInnerBorder"
-                            Margin="2"
-                            VerticalAlignment="Stretch"
-                            Background="{TemplateBinding Background}"
-                            BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                            x:Name="BorderElement"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Control.IsTemplateFocusTarget="True"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <Border.BackgroundTransition>
-                                <BrushTransition Duration="0:0:0.083" />
-                            </Border.BackgroundTransition>
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid x:Name="ContentRoot">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="36" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Rectangle
+                                    x:Name="SelectionIndicator"
+                                    Width="3"
+                                    Height="16"
+                                    HorizontalAlignment="Left"
+                                    Fill="{ThemeResource SystemAccentColor}"
+                                    RadiusX="2"
+                                    RadiusY="2"
+                                    Visibility="Collapsed" />
+
+                                <Viewbox
+                                    Width="16"
+                                    Height="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <ContentPresenter x:Name="IconPresenter" Content="{TemplateBinding Icon}" />
+                                </Viewbox>
+
+                                <ContentPresenter
+                                    x:Name="ContentPresenter"
+                                    Grid.Column="1"
+                                    Padding="{TemplateBinding Padding}"
+                                    HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}" />
+                            </Grid>
                         </Border>
 
-                        <ContentPresenter
-                            x:Name="Content"
-                            Content="{TemplateBinding Icon}"
-                            Foreground="{TemplateBinding Foreground}" />
-
                     </Grid>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1819,8 +1820,14 @@
     </Style>
 
     <Style x:Key="DefaultThemeToggleSwitchStyle" BasedOn="{StaticResource DefaultToggleSwitchStyle}" TargetType="ToggleSwitch" />
-    
+
     <Style BasedOn="{StaticResource DefaultToggleSwitchStyle}" TargetType="ToggleSwitch" />
 
+
+
+
+    <!--  SLIDER  -->
+
+    <Style x:Key="DefaultThemeSliderStyle" BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider" />
 
 </ResourceDictionary>

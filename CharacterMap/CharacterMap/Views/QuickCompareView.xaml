@@ -107,23 +107,29 @@
         <muxc:StackLayout
             x:Name="StackLayout"
             Orientation="Vertical"
-            Spacing="48" />
+            Spacing="24" />
 
         <ItemsPanelTemplate x:Key="StackingPanelTemplate">
             <ItemsStackPanel CacheLength="1" />
         </ItemsPanelTemplate>
 
+        <Style BasedOn="{StaticResource CompareCardStyle}" TargetType="controls:ContentGroup" />
+
         <DataTemplate x:Key="GridTemplate" x:DataType="core:InstalledFont">
+
             <!--  Canvas is required for maximum performance when updating properties  -->
-            <Canvas Width="400" Height="250">
+            <controls:ContentGroup Width="400" Height="250">
+                <controls:ContentGroup.Text>
+                    <TextBlock
+                        Canvas.Top="4"
+                        Width="400"
+                        Foreground="{ThemeResource TextControlPlaceholderForeground}">
+                        <Run Text="{x:Bind Name}" />
+                        <Run Text="{x:Bind DefaultVariant.PreferredName}" />
+                    </TextBlock>
+                </controls:ContentGroup.Text>
                 <TextBlock
-                    Canvas.Top="4"
-                    Width="400"
-                    Foreground="{ThemeResource TextControlPlaceholderForeground}">
-                    <Run Text="{x:Bind Name}" />
-                    <Run Text="{x:Bind DefaultVariant.PreferredName}" />
-                </TextBlock>
-                <TextBlock
+                    x:Phase="1"
                     Canvas.Top="24"
                     Width="400"
                     MaxHeight="226"
@@ -134,69 +140,77 @@
                     IsColorFontEnabled="True"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="Wrap" />
-            </Canvas>
+            </controls:ContentGroup>
         </DataTemplate>
 
         <DataTemplate x:Key="StackTemplate" x:DataType="core:InstalledFont">
-            <Grid>
-                <TextBlock Margin="0 4 0 0" Foreground="{ThemeResource SystemColorControlAccentBrush}">
-                    <Run Text="{x:Bind Name}" />
-                    <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind Variants.Count}" />
-                    <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="face(s)" />
-                </TextBlock>
-                <TextBlock
-                    x:Phase="1"
-                    Margin="0 24 0 0"
-                    FontFamily="{x:Bind DefaultVariant.DisplaySource}"
-                    FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
-                    FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
-                    FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
-                    IsColorFontEnabled="True"
-                    MaxLines="5"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="Wrap" />
-            </Grid>
+            <controls:ContentGroup VerticalAlignment="Stretch">
+                <controls:ContentGroup.Text>
+                    <TextBlock Foreground="{ThemeResource SystemColorControlAccentBrush}">
+                        <Run Text="{x:Bind Name}" />
+                        <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind Variants.Count}" />
+                        <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="face(s)" />
+                    </TextBlock>
+                </controls:ContentGroup.Text>
+                <controls:ContentGroup.SecondaryContent>
+                    <TextBlock
+                        x:Name="ContentRender"
+                        x:Phase="1"
+                        Margin="0 0 0 0"
+                        FontFamily="{x:Bind DefaultVariant.DisplaySource}"
+                        FontStretch="{x:Bind DefaultVariant.FontFace.Stretch}"
+                        FontStyle="{x:Bind DefaultVariant.FontFace.Style}"
+                        FontWeight="{x:Bind DefaultVariant.FontFace.Weight}"
+                        IsColorFontEnabled="True"
+                        MaxLines="5"
+                        TextTrimming="CharacterEllipsis"
+                        TextWrapping="Wrap" />
+                </controls:ContentGroup.SecondaryContent>
+            </controls:ContentGroup>
         </DataTemplate>
 
         <DataTemplate x:Key="StackTemplateQuick" x:DataType="m:CharacterRenderingOptions">
-            <Grid>
-                <TextBlock
-                    Margin="0 4 0 0"
-                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                    Text="{x:Bind GetName()}"
-                    TextTrimming="CharacterEllipsis"
-                    ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" />
-                <cx:DirectText
-                    x:Name="NativeRender"
-                    x:Load="{x:Bind RequiresNativeRender, FallbackValue=False, TargetNullValue=False}"
-                    x:Phase="1"
-                    Margin="0 24 0 0"
-                    Axis="{x:Bind Axis}"
-                    FallbackFont="{x:Bind core:Converters.GetFontFallback()}"
-                    FontFace="{x:Bind Variant.FontFace}"
-                    FontFamily="{x:Bind Variant.Source, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
-                    FontStretch="{x:Bind Variant.FontFace.Stretch}"
-                    FontStyle="{x:Bind Variant.FontFace.Style}"
-                    FontWeight="{x:Bind Variant.FontFace.Weight}"
-                    IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
-                    IsTextWrappingEnabled="True"
-                    Typography="{x:Bind DXTypography}" />
-                <TextBlock
-                    x:Name="XAMLRender"
-                    x:Load="{x:Bind core:Converters.False(RequiresNativeRender), FallbackValue=False, TargetNullValue=False}"
-                    x:Phase="1"
-                    Margin="0 24 0 0"
-                    core:Properties.Typography="{x:Bind DefaultTypography}"
-                    FontFamily="{x:Bind Variant.DisplaySource, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
-                    FontStretch="{x:Bind Variant.FontFace.Stretch}"
-                    FontStyle="{x:Bind Variant.FontFace.Style}"
-                    FontWeight="{x:Bind Variant.FontFace.Weight}"
-                    IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
-                    MaxLines="5"
-                    TextTrimming="CharacterEllipsis"
-                    TextWrapping="Wrap" />
-            </Grid>
+            <controls:ContentGroup VerticalAlignment="Stretch">
+                <controls:ContentGroup.Text>
+                    <TextBlock
+                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                        Text="{x:Bind GetName()}"
+                        TextTrimming="CharacterEllipsis"
+                        ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" />
+                </controls:ContentGroup.Text>
+                <controls:ContentGroup.SecondaryContent>
+                    <Grid>
+                        <cx:DirectText
+                            x:Name="NativeRender"
+                            x:Load="{x:Bind RequiresNativeRender, FallbackValue=False, TargetNullValue=False}"
+                            x:Phase="1"
+                            Axis="{x:Bind Axis}"
+                            FallbackFont="{x:Bind core:Converters.GetFontFallback()}"
+                            FontFace="{x:Bind Variant.FontFace}"
+                            FontFamily="{x:Bind Variant.Source, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
+                            FontStretch="{x:Bind Variant.FontFace.Stretch}"
+                            FontStyle="{x:Bind Variant.FontFace.Style}"
+                            FontWeight="{x:Bind Variant.FontFace.Weight}"
+                            IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
+                            IsTextWrappingEnabled="True"
+                            Typography="{x:Bind DXTypography}" />
+                        <TextBlock
+                            x:Name="XAMLRender"
+                            x:Load="{x:Bind core:Converters.False(RequiresNativeRender), FallbackValue=False, TargetNullValue=False}"
+                            x:Phase="1"
+                            core:Properties.Typography="{x:Bind DefaultTypography}"
+                            FontFamily="{x:Bind Variant.DisplaySource, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
+                            FontStretch="{x:Bind Variant.FontFace.Stretch}"
+                            FontStyle="{x:Bind Variant.FontFace.Style}"
+                            FontWeight="{x:Bind Variant.FontFace.Weight}"
+                            IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
+                            MaxLines="5"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap" />
+                    </Grid>
+                </controls:ContentGroup.SecondaryContent>
+            </controls:ContentGroup>
+
         </DataTemplate>
 
         <Style TargetType="RadioButton">
@@ -304,26 +318,28 @@
             IsWindowRoot="True">
             <controls:ModalPagePresenter.TitleBarContent>
                 <Grid>
-                    <controls:XamlTitleBar IsDragTarget="False" />
-                    <StackPanel Orientation="Horizontal">
-                        <Button
-                            x:Name="BackButton"
-                            Width="45"
-                            VerticalAlignment="Stretch"
-                            d:Visibility="Visible"
-                            Background="Transparent"
-                            Click="BackButton_Click"
-                            CornerRadius="0"
-                            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                            Style="{StaticResource AccentButtonStyle}"
-                            Visibility="Collapsed">
-                            <FontIcon
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="12"
+                    <controls:XamlTitleBar IsDragTarget="False">
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                x:Name="BackButton"
+                                Width="45"
+                                VerticalAlignment="Stretch"
+                                d:Visibility="Visible"
+                                Background="Transparent"
+                                Click="BackButton_Click"
+                                CornerRadius="0"
                                 Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                Glyph="&#xE0A6;" />
-                        </Button>
-                    </StackPanel>
+                                Style="{StaticResource AccentButtonStyle}"
+                                Visibility="Collapsed">
+                                <FontIcon
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                                    Glyph="&#xE0A6;" />
+                            </Button>
+                        </StackPanel>
+                    </controls:XamlTitleBar>
+
                 </Grid>
 
             </controls:ModalPagePresenter.TitleBarContent>
@@ -503,7 +519,7 @@
                         </Border.RenderTransform>
                         <GridView
                             x:Name="Repeater"
-                            Padding="0 0 24 0"
+                            Padding="0 0 0 0"
                             ContainerContentChanging="Repeater_ContainerContentChanging"
                             ItemTemplate="{StaticResource StackTemplate}"
                             ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
@@ -519,10 +535,13 @@
                             <GridView.ItemContainerStyle>
                                 <Style TargetType="GridViewItem">
                                     <Setter Property="Margin" Value="0 0 12 12" />
+                                    <Setter Property="VerticalAlignment" Value="Stretch" />
+                                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="GridViewItem">
                                                 <Button
+                                                    VerticalAlignment="Stretch"
                                                     HorizontalContentAlignment="Stretch"
                                                     VerticalContentAlignment="Stretch"
                                                     AutomationProperties.AccessibilityView="Raw"
@@ -603,20 +622,22 @@
                                 VerticalCacheLength="0.5">
                                 <muxc:ItemsRepeater.ItemTemplate>
                                     <DataTemplate x:DataType="core:FontVariant">
-                                        <Grid BorderBrush="{ThemeResource SystemColorControlAccentBrush}" BorderThickness="0 0 0 0">
-                                            <TextBlock Margin="0 4 0 0" Foreground="{ThemeResource TextControlPlaceholderForeground}">
-                                                <Run Text="{x:Bind PreferredName}" />
-                                            </TextBlock>
-                                            <TextBlock
-                                                Margin="0 24 0 0"
-                                                FontFamily="{x:Bind DisplaySource}"
-                                                FontStretch="{x:Bind FontFace.Stretch}"
-                                                FontStyle="{x:Bind FontFace.Style}"
-                                                FontWeight="{x:Bind FontFace.Weight}"
-                                                IsColorFontEnabled="True"
-                                                TextTrimming="CharacterEllipsis"
-                                                TextWrapping="Wrap" />
-                                        </Grid>
+                                        <controls:ContentGroup>
+                                            <controls:ContentGroup.Text>
+                                                <TextBlock Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind PreferredName}" />
+                                            </controls:ContentGroup.Text>
+                                            <controls:ContentGroup.SecondaryContent>
+                                                <TextBlock
+                                                    x:Name="TargetRender"
+                                                    FontFamily="{x:Bind DisplaySource}"
+                                                    FontStretch="{x:Bind FontFace.Stretch}"
+                                                    FontStyle="{x:Bind FontFace.Style}"
+                                                    FontWeight="{x:Bind FontFace.Weight}"
+                                                    IsColorFontEnabled="True"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap" />
+                                            </controls:ContentGroup.SecondaryContent>
+                                        </controls:ContentGroup>
                                     </DataTemplate>
                                 </muxc:ItemsRepeater.ItemTemplate>
                             </muxc:ItemsRepeater>

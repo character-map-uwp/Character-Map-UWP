@@ -8,7 +8,8 @@
     x:Uid="DlgException"
     CornerRadius="4"
     IsSecondaryButtonEnabled="False"
-    PrimaryButtonStyle="{StaticResource ButtonRevealStyle}"
+    PrimaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
+    Style="{StaticResource DefaultThemeContentDialogStyle}"
     PrimaryButtonText="OK"
     mc:Ignorable="d">
 
@@ -28,15 +29,16 @@
         </StackPanel>
 
         <!--<controls:Expander x:Uid="DlgExceptionExpander">-->
-            <ScrollViewer Grid.Row="1"
-                MaxHeight="500"
-                HorizontalScrollBarVisibility="Auto"
-                HorizontalScrollMode="Auto">
-                <TextBlock
-                    x:Name="ExceptionBlock"
-                    Margin="8 8 8 24"
-                    IsTextSelectionEnabled="True" />
-            </ScrollViewer>
+        <ScrollViewer
+            Grid.Row="1"
+            MaxHeight="500"
+            HorizontalScrollBarVisibility="Auto"
+            HorizontalScrollMode="Auto">
+            <TextBlock
+                x:Name="ExceptionBlock"
+                Margin="8 8 8 24"
+                IsTextSelectionEnabled="True" />
+        </ScrollViewer>
         <!--</controls:Expander>-->
     </Grid>
 </ContentDialog>

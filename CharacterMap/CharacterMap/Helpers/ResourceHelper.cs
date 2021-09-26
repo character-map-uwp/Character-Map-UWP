@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
@@ -22,7 +23,8 @@ namespace CharacterMap.Helpers
     {
         Default = 0,
         Fluent11 = 1,
-        ZuneDesktop = 2
+        ClassicWindows = 2,
+        ZuneDesktop = 3,
     }
 
     public class ThemeChangedMessage { }
@@ -95,7 +97,6 @@ namespace CharacterMap.Helpers
             get => _settings ??= new AppSettings();
         }
 
-
         public static ElementTheme GetEffectiveTheme()
         {
 #if DEBUG
@@ -103,8 +104,8 @@ namespace CharacterMap.Helpers
                 return ElementTheme.Default;
 #endif
 
-            // Zune Theme only supports 
-            if (AppSettings.ApplicationDesignTheme == (int)DesignStyle.ZuneDesktop)
+            // Certain themes only support Light theme
+            if (Get<bool>("SupportsDarkTheme") is false)
                 return ElementTheme.Light;
 
             return AppSettings.UserRequestedTheme switch
@@ -130,6 +131,20 @@ namespace CharacterMap.Helpers
 
 
         /* Dynamic theme-ability */
+
+        public static void GoToThemeState(Control control)
+        {
+            string state = AppSettings.ApplicationDesignTheme switch
+            {
+                0 => "DefaultThemeState",
+                1 => "FUIThemeState",
+                2 => "ClassicThemeState",
+                3 => "ZuneThemeState",
+                _ => "DefaultThemeState"
+            };
+
+            VisualStateManager.GoToState(control, state, false);
+        }
 
         public static void UpdateResolvedThemes()
         {

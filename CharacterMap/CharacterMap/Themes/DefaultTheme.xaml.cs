@@ -33,13 +33,18 @@ namespace CharacterMap.Themes
                     break;
 
                 case 1:
-                    var d = new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version2 };
-                    d.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/SystemThemes.xaml") });
-                    d.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/FluentThemeStyles.xaml") });
-                    this.MergedDictionaries.Add(d);
+                    this.MergedDictionaries.Add(new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version2 });
+                    this.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/SystemThemes.xaml") });
+                    this.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/FluentThemeStyles.xaml") });
                     break;
 
                 case 2:
+                    this.MergedDictionaries.Add(new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version1 });
+                    this.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/SystemThemes.xaml") });
+                    this.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ClassicThemeStyles.xaml") });
+                    break;
+
+                case 3:
                     this.MergedDictionaries.Add(new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version1 });
                     this.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("ms-appx:///Themes/ZuneThemeStyles.xaml") });
                     break;

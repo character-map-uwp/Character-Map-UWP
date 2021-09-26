@@ -124,6 +124,7 @@ namespace CharacterMap.Views
             _xamlDirect = XamlDirect.GetDefault();
 
             LeakTrackingService.Register(this);
+            ResourceHelper.GoToThemeState(this);
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -133,6 +134,8 @@ namespace CharacterMap.Views
 
             if (IsStandalone)
             {
+                VisualStateManager.GoToState(this, nameof(StandaloneViewState), false);
+
                 ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
 
@@ -225,9 +228,19 @@ namespace CharacterMap.Views
                         {
                             try
                             {
-                                var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar, "Text");
-                                ani.TryStart(TxtPreview);
-                                CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                                // Empty glyphs will cause the connected animation service to crash, so manually
+                                // check if the rendered glyph contains content
+                                if (CharGrid.ContainerFromItem(ViewModel.SelectedChar) is FrameworkElement container
+                                    && container.GetFirstDescendantOfType<TextBlock>() is TextBlock t)
+                                {
+                                    t.Measure(container.DesiredSize);
+                                    if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
+                                    {
+                                        var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar, "Text");
+                                        ani.TryStart(TxtPreview);
+                                        CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                                    }
+                                }
                             }
                             catch
                             {
@@ -372,7 +385,7 @@ namespace CharacterMap.Views
         {
             if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
             {
-                UpdateStateTransition();
+                UpdateGridToRampTransition();
                 VisualStateManager.GoToState(this, TypeRampState.Name, true);
             }
             else
@@ -814,6 +827,9 @@ namespace CharacterMap.Views
 
         async void AddCharToSequence(Character c)
         {
+            if (CopySequenceText == null)
+                return;
+
             int selection = CopySequenceText.SelectionStart;
             ViewModel.AddCharToSequence(
                 CopySequenceText.SelectionStart,

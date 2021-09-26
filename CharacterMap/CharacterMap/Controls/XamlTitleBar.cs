@@ -217,6 +217,10 @@ namespace CharacterMap.Controls
             var btnHoverColor = _settings.GetColorValue(UIColorType.AccentLight1);
             var foreground = ResourceHelper.GetEffectiveTheme() == ElementTheme.Dark ? Colors.White : Colors.Black;
 
+            // TODO: HACK - make proper
+            if (ResourceHelper.AppSettings.ApplicationDesignTheme == (int)DesignStyle.ClassicWindows)
+                foreground = Colors.White;
+
             ApplyColorToTitleBar(
                 Colors.Transparent,
                 foreground,

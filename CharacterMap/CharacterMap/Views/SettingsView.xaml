@@ -33,7 +33,7 @@
             <Setter Property="MinWidth" Value="200" />
         </Style>-->
 
-        <Style BasedOn="{StaticResource DefaultThemeToggleSwitchStyle}" TargetType="ToggleSwitch" />
+        <!--<Style BasedOn="{StaticResource DefaultThemeToggleSwitchStyle}" TargetType="ToggleSwitch" />-->
 
 
     </UserControl.Resources>
@@ -97,7 +97,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
                         Tag="{x:Bind UserInterfacePanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
+                            <FontIcon Glyph="&#xE771;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -118,15 +118,16 @@
                         Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
                         Tag="{x:Bind ExportPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE2B4;" />
+                            <FontIcon Glyph="&#xE2B4;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
+
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
                         Tag="{x:Bind SearchPanel}">
                         <controls:MenuButton.Icon>
-                            <SymbolIcon Symbol="Find" />
+                            <FontIcon Glyph="&#xE11A;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -141,7 +142,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
                         Tag="{x:Bind ChangePanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
+                            <FontIcon Glyph="&#xEC7A;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -150,10 +151,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
                         Tag="{x:Bind LicensesPanel}">
                         <controls:MenuButton.Icon>
-                            <PathIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Data="F1 M 17.5 0.302734 L 17.5 15.332031 L 9.375 19.130859 L 1.25 15.332031 L 1.25 0.302734 L 9.375 3.759766 Z M 2.5 14.541016 L 8.75 17.451172 L 8.75 4.853516 L 2.5 2.197266 Z M 16.25 2.197266 L 10 4.853516 L 10 17.451172 L 16.25 14.541016 Z M 15 9.765625 L 11.25 11.640625 L 11.25 6.484375 L 15 4.609375 Z M 13.75 6.640625 L 12.5 7.265625 L 12.5 9.609375 L 13.75 8.984375 Z M 7.5 8.359375 L 7.5 9.765625 L 3.75 7.890625 L 3.75 6.484375 Z M 3.75 10.234375 L 7.5 12.109375 L 7.5 13.515625 L 3.75 11.640625 Z M 11.25 14.765625 L 11.25 13.359375 L 15 11.484375 L 15 12.890625 Z " />
+                            <FontIcon Glyph="&#xF571;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -162,7 +160,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsAboutLabel/Text')}"
                         Tag="{x:Bind AboutPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
+                            <FontIcon Glyph="&#xE946;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -212,7 +210,6 @@
                                         </TextBlock>
                                     </StackPanel>
                                 </controls:SettingsPresenter>
-
 
                                 <controls:SettingsPresenter
                                     Title="{core:Localizer Key=SettingsCharLabel/Text}"
@@ -357,7 +354,7 @@
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
-                                    <ToggleSwitch IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsThemeHeader/Text}" ContentPlacement="Bottom">
@@ -397,7 +394,7 @@
                                 <TextBlock x:Uid="SettingsAdvancedUILabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSimpleAnimationHeader/Text}" Description="{core:Localizer Key=SettingsSimpleAnimationDescription/Text}">
-                                    <ToggleSwitch IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsTransparencyHeader/Text}" Description="{core:Localizer Key=SettingsTransparencyDescription/Text}">
@@ -405,11 +402,11 @@
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsShadowsHeader/Text}" Description="{core:Localizer Key=SettingsShadowsDescription/Text}">
-                                    <win1903:ToggleSwitch IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
+                                    <win1903:ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}" Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}">
-                                    <ToggleSwitch IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsLanguageHeader/Text}">
@@ -431,24 +428,27 @@
 
                                 <controls:SettingsPresenter Title="Design Style">
                                     <StackPanel>
-                                        <controls:UXComboBox
+                                        <ComboBox
                                             MinWidth="256"
                                             Margin="0 8 0 0"
                                             SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
                                             SelectionChanged="Design_SelectionChanged">
                                             <x:String>Windows 10</x:String>
                                             <x:String>Windows 11</x:String>
+                                            <x:String>Classic Windows</x:String>
                                             <x:String>Zune Desktop</x:String>
-                                        </controls:UXComboBox>
-                                        <controls:UXButton
-                                            x:Uid="RestartButton"
-                                            Width="200"
-                                            Margin="0 24 0 0"
-                                            HorizontalAlignment="Left"
-                                            Click="BtnRestart_Click" />
+                                        </ComboBox>
+
                                     </StackPanel>
 
                                 </controls:SettingsPresenter>
+
+                                <controls:UXButton
+                                    x:Uid="RestartButton"
+                                    Width="200"
+                                    Margin="0 24 0 0"
+                                    HorizontalAlignment="Left"
+                                    Click="BtnRestart_Click" />
 
                             </StackPanel>
 
@@ -513,7 +513,7 @@
                                 <TextBlock x:Uid="SettingsCharacterSearchHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=InstantSearchToggleHeader/Text}" Description="{core:Localizer Key=SettingsCharacterSearchDescription/Text}">
-                                    <ToggleSwitch IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SearchDelaySelector/Header}" Visibility="{x:Bind Settings.UseInstantSearch, Mode=OneWay}">
@@ -578,106 +578,101 @@
                                     Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSystemFontHeader/Text}">
-                                    <controls:UXHyperlinkButton
-                                        x:Uid="SettingsManageSystemFonts"
-                                        NavigateUri="ms-settings:fonts"
-                                        Style="{StaticResource TextBlockButtonStyle}" />
+                                    <controls:UXHyperlinkButton x:Uid="SettingsManageSystemFonts" NavigateUri="ms-settings:fonts" />
                                 </controls:SettingsPresenter>
 
-                                <StackPanel>
-                                    <TextBlock
-                                        x:Uid="SettingsImportedFontsLabel"
-                                        Margin="0 24 0 0"
-                                        OpticalMarginAlignment="None"
-                                        Style="{StaticResource SubheaderTextBlockStyle}" />
+                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsImportedFontsLabel/Text}" ContentPlacement="Bottom">
 
-                                    <TextBlock x:Uid="SettingsFontImportDescription" Style="{StaticResource DescriptionStyle}" />
-                                </StackPanel>
+                                    <StackPanel>
 
-                                <StackPanel Spacing="6">
-                                    <TextBlock Style="{StaticResource HeaderStyle}" Text="Import" />
-                                    <Grid
-                                        x:Name="ImportFontsRegion"
-                                        Width="340"
-                                        Height="80"
-                                        HorizontalAlignment="Left">
-                                        <Rectangle
-                                            Opacity="0.4"
-                                            Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                            StrokeDashArray="2 2"
-                                            StrokeThickness="1" />
+                                        <TextBlock x:Uid="SettingsFontImportDescription" Style="{StaticResource DescriptionStyle}" />
 
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
+                                        <StackPanel Spacing="6">
+                                            <TextBlock Style="{StaticResource HeaderStyle}" Text="Import" />
+                                            <Grid
+                                                x:Name="ImportFontsRegion"
+                                                Width="340"
+                                                Height="80"
+                                                HorizontalAlignment="Left">
+                                                <Rectangle
+                                                    Opacity="0.4"
+                                                    Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                    StrokeDashArray="2 2"
+                                                    StrokeThickness="1" />
 
-                                            <FontIcon
-                                                Margin="12 12 0 12"
-                                                VerticalAlignment="Top"
-                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                FontSize="30"
-                                                Glyph="&#xE1E3;" />
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
 
-                                            <StackPanel Grid.Column="1" Margin="12">
-                                                <TextBlock
-                                                    x:Uid="ImportDragDropLabel"
-                                                    FontWeight="SemiBold"
-                                                    Opacity="0.7" />
-                                                <TextBlock
-                                                    x:Uid="ImportDragDropDescriptionLabel"
-                                                    FontSize="12"
-                                                    Opacity="0.6"
-                                                    TextWrapping="Wrap" />
-                                            </StackPanel>
+                                                    <FontIcon
+                                                        Margin="12 12 0 12"
+                                                        VerticalAlignment="Top"
+                                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                        FontSize="30"
+                                                        Glyph="&#xE1E3;" />
 
-                                        </Grid>
+                                                    <StackPanel Grid.Column="1" Margin="12">
+                                                        <TextBlock
+                                                            x:Uid="ImportDragDropLabel"
+                                                            FontWeight="SemiBold"
+                                                            Opacity="0.7" />
+                                                        <TextBlock
+                                                            x:Uid="ImportDragDropDescriptionLabel"
+                                                            FontSize="12"
+                                                            Opacity="0.6"
+                                                            TextWrapping="Wrap" />
+                                                    </StackPanel>
+
+                                                </Grid>
 
 
-                                    </Grid>
-                                </StackPanel>
-
-                                <StackPanel x:Name="ImportedExportPanel" Spacing="6">
-                                    <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource HeaderStyle}" />
-                                    <Button
-                                        Width="340"
-                                        Padding="12 10 12 10"
-                                        HorizontalAlignment="Left"
-                                        HorizontalContentAlignment="Left"
-                                        Background="Transparent"
-                                        BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
-                                        IsEnabled="{x:Bind IsCollectionExportEnabled, Mode=OneWay}"
-                                        Style="{StaticResource ButtonRevealStyle}">
-                                        <StackPanel Orientation="Horizontal" Spacing="12">
-                                            <PathIcon
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                Data="F1 M 18.046875 8.75 C 18.320313 8.75 18.575846 8.798828 18.813477 8.896484 C 19.051105 8.994141 19.257813 9.129232 19.433594 9.301758 C 19.609375 9.474284 19.747721 9.679362 19.848633 9.916992 C 19.949543 10.154623 20 10.410156 20 10.683594 C 20 10.9375 19.951172 11.184896 19.853516 11.425781 C 19.755859 11.666667 19.615885 11.878256 19.433594 12.060547 L 12.431641 19.0625 L 8.75 19.980469 L 9.667969 16.298828 L 16.669922 9.306641 C 16.858723 9.117839 17.070313 8.977865 17.304688 8.886719 C 17.539063 8.795573 17.786457 8.75 18.046875 8.75 Z M 18.544922 11.181641 C 18.681641 11.044922 18.75 10.878906 18.75 10.683594 C 18.75 10.481771 18.683268 10.317383 18.549805 10.19043 C 18.41634 10.063477 18.248697 10 18.046875 10 C 17.955729 10 17.867838 10.014648 17.783203 10.043945 C 17.698566 10.073242 17.623697 10.120443 17.558594 10.185547 L 10.800781 16.943359 L 10.46875 18.261719 L 11.787109 17.929688 Z M 7.5 15 L 8.75 15 L 7.5 16.25 L 2.861328 16.25 L 1.25 14.638672 L 1.25 2.5 C 1.25 2.324219 1.282552 2.161459 1.347656 2.011719 C 1.41276 1.86198 1.502279 1.730145 1.616211 1.616211 C 1.730143 1.502279 1.861979 1.412762 2.011719 1.347656 C 2.161458 1.282553 2.324219 1.25 2.5 1.25 L 15 1.25 C 15.17578 1.25 15.338541 1.282553 15.488281 1.347656 C 15.638021 1.412762 15.769856 1.502279 15.883789 1.616211 C 15.997721 1.730145 16.087238 1.86198 16.152344 2.011719 C 16.217447 2.161459 16.25 2.324219 16.25 2.5 L 16.25 7.5 L 15 8.75 L 15 2.5 L 13.75 2.5 L 13.75 8.75 L 3.75 8.75 L 3.75 2.5 L 2.5 2.5 L 2.5 14.111328 L 3.388672 15 L 3.75 15 L 3.75 10 L 12.5 10 L 12.5 11.25 L 11.25 12.5 L 11.25 11.25 L 5 11.25 L 5 15 L 6.25 15 L 6.25 12.5 L 7.5 12.5 Z M 5 7.5 L 12.5 7.5 L 12.5 2.5 L 5 2.5 Z " />
-                                            <TextBlock
-                                                x:Uid="SettingsExportImportedLabel"
-                                                VerticalAlignment="Center"
-                                                FontWeight="SemiBold"
-                                                Opacity="0.7" />
-                                            <ProgressRing
-                                                Width="20"
-                                                Height="20"
-                                                MinWidth="20"
-                                                MinHeight="20"
-                                                HorizontalAlignment="Center"
-                                                VerticalAlignment="Center"
-                                                IsActive="{x:Bind core:Converters.False(IsCollectionExportEnabled), Mode=OneWay}"
-                                                Visibility="{x:Bind core:Converters.FalseToVis(IsCollectionExportEnabled), Mode=OneWay}" />
+                                            </Grid>
                                         </StackPanel>
-                                        <Button.Flyout>
-                                            <MenuFlyout Placement="Bottom">
-                                                <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ExportToFolder}" />
-                                                <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ExportAsZip}" />
-                                            </MenuFlyout>
-                                        </Button.Flyout>
-                                    </Button>
-                                </StackPanel>
 
+                                        <StackPanel x:Name="ImportedExportPanel" Spacing="6">
+                                            <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource HeaderStyle}" />
+                                            <Button
+                                                Width="340"
+                                                Padding="12 10 12 10"
+                                                HorizontalAlignment="Left"
+                                                HorizontalContentAlignment="Left"
+                                                Background="Transparent"
+                                                BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
+                                                IsEnabled="{x:Bind IsCollectionExportEnabled, Mode=OneWay}"
+                                                Style="{StaticResource ButtonRevealStyle}">
+                                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                                    <PathIcon
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        Data="F1 M 18.046875 8.75 C 18.320313 8.75 18.575846 8.798828 18.813477 8.896484 C 19.051105 8.994141 19.257813 9.129232 19.433594 9.301758 C 19.609375 9.474284 19.747721 9.679362 19.848633 9.916992 C 19.949543 10.154623 20 10.410156 20 10.683594 C 20 10.9375 19.951172 11.184896 19.853516 11.425781 C 19.755859 11.666667 19.615885 11.878256 19.433594 12.060547 L 12.431641 19.0625 L 8.75 19.980469 L 9.667969 16.298828 L 16.669922 9.306641 C 16.858723 9.117839 17.070313 8.977865 17.304688 8.886719 C 17.539063 8.795573 17.786457 8.75 18.046875 8.75 Z M 18.544922 11.181641 C 18.681641 11.044922 18.75 10.878906 18.75 10.683594 C 18.75 10.481771 18.683268 10.317383 18.549805 10.19043 C 18.41634 10.063477 18.248697 10 18.046875 10 C 17.955729 10 17.867838 10.014648 17.783203 10.043945 C 17.698566 10.073242 17.623697 10.120443 17.558594 10.185547 L 10.800781 16.943359 L 10.46875 18.261719 L 11.787109 17.929688 Z M 7.5 15 L 8.75 15 L 7.5 16.25 L 2.861328 16.25 L 1.25 14.638672 L 1.25 2.5 C 1.25 2.324219 1.282552 2.161459 1.347656 2.011719 C 1.41276 1.86198 1.502279 1.730145 1.616211 1.616211 C 1.730143 1.502279 1.861979 1.412762 2.011719 1.347656 C 2.161458 1.282553 2.324219 1.25 2.5 1.25 L 15 1.25 C 15.17578 1.25 15.338541 1.282553 15.488281 1.347656 C 15.638021 1.412762 15.769856 1.502279 15.883789 1.616211 C 15.997721 1.730145 16.087238 1.86198 16.152344 2.011719 C 16.217447 2.161459 16.25 2.324219 16.25 2.5 L 16.25 7.5 L 15 8.75 L 15 2.5 L 13.75 2.5 L 13.75 8.75 L 3.75 8.75 L 3.75 2.5 L 2.5 2.5 L 2.5 14.111328 L 3.388672 15 L 3.75 15 L 3.75 10 L 12.5 10 L 12.5 11.25 L 11.25 12.5 L 11.25 11.25 L 5 11.25 L 5 15 L 6.25 15 L 6.25 12.5 L 7.5 12.5 Z M 5 7.5 L 12.5 7.5 L 12.5 2.5 L 5 2.5 Z " />
+                                                    <TextBlock
+                                                        x:Uid="SettingsExportImportedLabel"
+                                                        VerticalAlignment="Center"
+                                                        FontWeight="SemiBold"
+                                                        Opacity="0.7" />
+                                                    <ProgressRing
+                                                        Width="20"
+                                                        Height="20"
+                                                        MinWidth="20"
+                                                        MinHeight="20"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        IsActive="{x:Bind core:Converters.False(IsCollectionExportEnabled), Mode=OneWay}"
+                                                        Visibility="{x:Bind core:Converters.FalseToVis(IsCollectionExportEnabled), Mode=OneWay}" />
+                                                </StackPanel>
+                                                <Button.Flyout>
+                                                    <MenuFlyout Placement="Bottom">
+                                                        <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ExportToFolder}" />
+                                                        <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ExportAsZip}" />
+                                                    </MenuFlyout>
+                                                </Button.Flyout>
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                </controls:SettingsPresenter>
 
                             </StackPanel>
 
@@ -728,47 +723,39 @@
 
                                 <TextBlock x:Uid="SettingsAboutLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
-                                <Image
-                                    Width="150"
-                                    Margin="0 12 0 0"
-                                    HorizontalAlignment="Left"
-                                    Source="/Assets/FileAssociationTile.png" />
+                                <controls:SettingsPresenter Title="{x:Bind core:Utils.GetAppDescription()}" ContentPlacement="Bottom">
+                                    <StackPanel Spacing="12">
+                                        <Image
+                                            Width="150"
+                                            HorizontalAlignment="Left"
+                                            Source="/Assets/FileAssociationTile.png" />
 
-                                <StackPanel>
+                                        <TextBlock
+                                            x:Uid="Settings_AboutDescription"
+                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Text="#Settings_AboutDescription"
+                                            TextWrapping="Wrap" />
 
-                                    <TextBlock
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="{x:Bind core:Utils.GetAppDescription()}"
-                                        TextWrapping="Wrap" />
-                                    <TextBlock />
-                                    <TextBlock
-                                        x:Uid="Settings_AboutDescription"
-                                        Style="{StaticResource BodyTextBlockStyle}"
-                                        Text="#Settings_AboutDescription"
-                                        TextWrapping="Wrap" />
-                                </StackPanel>
+                                        <StackPanel>
+                                            <controls:UXHyperlinkButton Content="GitHub" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP" />
+                                            <controls:UXHyperlinkButton x:Uid="BtnContributors" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/graphs/contributors" />
+                                        </StackPanel>
 
-                                <StackPanel Margin="0 12 0 0">
-                                    <controls:UXHyperlinkButton Content="GitHub" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP" />
-                                    <controls:UXHyperlinkButton x:Uid="BtnContributors" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/graphs/contributors" />
-                                </StackPanel>
+                                        <controls:UXButton
+                                            x:Name="BtnReview"
+                                            x:Uid="BtnRateAndReview"
+                                            Width="200"
+                                            HorizontalAlignment="Left"
+                                            Click="BtnReview_Click" />
+                                        <controls:UXButton
+                                            x:Name="BtnRestart"
+                                            x:Uid="RestartButton"
+                                            Width="200"
+                                            HorizontalAlignment="Left"
+                                            Click="BtnRestart_Click" />
 
-                                <StackPanel>
-                                    <controls:UXButton
-                                        x:Name="BtnReview"
-                                        x:Uid="BtnRateAndReview"
-                                        Width="200"
-                                        Margin="0 24 0 0"
-                                        HorizontalAlignment="Left"
-                                        Click="BtnReview_Click" />
-                                    <controls:UXButton
-                                        x:Name="BtnRestart"
-                                        x:Uid="RestartButton"
-                                        Width="200"
-                                        Margin="0 24 0 0"
-                                        HorizontalAlignment="Left"
-                                        Click="BtnRestart_Click" />
-                                </StackPanel>
+                                    </StackPanel>
+                                </controls:SettingsPresenter>
 
                             </StackPanel>
                         </Grid>

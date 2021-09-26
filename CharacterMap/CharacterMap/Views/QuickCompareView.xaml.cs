@@ -7,6 +7,7 @@ using CharacterMapCX.Controls;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -175,11 +176,6 @@ namespace CharacterMap.Views
             }
         }
 
-        private void Repeater_EffectiveViewportChanged(FrameworkElement sender, EffectiveViewportChangedEventArgs args)
-        {
-            Debug.WriteLine($"{args.EffectiveViewport}");
-        }
-
 
 
 
@@ -197,7 +193,7 @@ namespace CharacterMap.Views
                 return;
 
             XamlBindingHelper.SuspendRendering(target);
-            foreach (var g in target.GetFirstLevelDescendantsOfType<Panel>().Where(g => g.ActualOffset.X >= 0))
+            foreach (var g in GetTargets(target))
                 SetText(g, text);
             XamlBindingHelper.ResumeRendering(target);
         }
@@ -209,9 +205,17 @@ namespace CharacterMap.Views
                 return;
 
             XamlBindingHelper.SuspendRendering(target);
-            foreach (var g in target.GetFirstLevelDescendantsOfType<Panel>().Where(g => g.ActualOffset.X >= 0))
+            foreach (var g in GetTargets(target))
                 SetFontSize(g, size);
             XamlBindingHelper.ResumeRendering(target);
+        }
+
+        IEnumerable<FrameworkElement> GetTargets(FrameworkElement target)
+        {
+            if (target.DesiredSize.Height == 0 && target.DesiredSize.Width == 0)
+                target.Measure(new Windows.Foundation.Size(50, 50));
+
+            return target.GetFirstLevelDescendants(d => (d is TextBlock or DirectText) && d.Name.EndsWith("Render"));
         }
 
         private void FontSizeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -223,18 +227,16 @@ namespace CharacterMap.Views
             UpdateFontSize(v);
         }
 
-        void SetText(Panel root, string text)
+        void SetText(object t, string text)
         {
-            var t = root.Children.Skip(1).FirstOrDefault();
             if (t is TextBlock tb)
                 tb.Text = text;
             else if (t is DirectText d)
                 d.Text = text;
         }
 
-        void SetFontSize(Panel root, double size)
+        void SetFontSize(object t, double size)
         {
-            var t = root.Children.Skip(1).FirstOrDefault();
             if (t is TextBlock tb)
                 tb.FontSize = size;
             else if (t is DirectText d)
@@ -258,10 +260,10 @@ namespace CharacterMap.Views
                 SetText(g, InputText.Text);
                 SetFontSize(g, FontSizeSlider.Value);
             }
-            else if (args.Element is Panel g1)
+            else if (args.Element is FrameworkElement p && GetTargets(p).FirstOrDefault() is FrameworkElement t)
             {
-                SetText(g1, InputText.Text);
-                SetFontSize(g1, FontSizeSlider.Value);
+                SetText(t, InputText.Text);
+                SetFontSize(t, FontSizeSlider.Value);
             }
         }
 
@@ -358,8 +360,16 @@ namespace CharacterMap.Views
 
         private void Repeater_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            var g = args.ItemContainer.GetFirstDescendantOfType<Panel>();
-            if (!args.InRecycleQueue)
+            // This is hack for Quick Compare view - force ItemTemplate
+            // to be inflated so our code will work
+            if (args.ItemContainer.Content is null)
+            {
+                args.ItemContainer.Content = args.Item;
+                args.ItemContainer.Measure(new Windows.Foundation.Size(50, 50));
+            }
+
+            var g = GetTargets(args.ItemContainer).FirstOrDefault();
+            if (!args.InRecycleQueue && g is not null)
             {
                 g.DataContext = args.Item;
                 SetText(g, ViewModel.Text);

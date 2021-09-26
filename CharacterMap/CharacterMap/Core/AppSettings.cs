@@ -13,7 +13,7 @@ namespace CharacterMap.Core
 {
     public class AppSettings : INotifyPropertyChanged
     {
-        public const int MinGridSize = 64;
+        public const int MinGridSize = 48;
         public const int MaxGridSize = 192;
 
         public double PngSize

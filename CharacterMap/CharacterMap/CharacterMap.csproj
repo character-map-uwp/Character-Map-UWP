@@ -147,7 +147,7 @@
       <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Mvvm">
-      <Version>7.0.2</Version>
+      <Version>7.1.0</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.6.1</Version>
@@ -195,6 +195,7 @@
       <DependentUpon>CategoryFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CharacterGridView.cs" />
+    <Compile Include="Controls\ContentGroup.cs" />
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>
@@ -465,6 +466,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Themes\ClassicThemeStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Themes\FluentThemeStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -474,10 +479,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\DefaultThemeStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\FluentTheme.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
