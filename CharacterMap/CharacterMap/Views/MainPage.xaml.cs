@@ -345,12 +345,18 @@ namespace CharacterMap.Views
             }
         }
 
-        private string UpdateFontCountLabel(List<InstalledFont> fontList)
+        private string UpdateFontCountLabel(List<InstalledFont> fontList, bool keepCasing)
         {
             if (fontList != null)
             {
-                return (string)ResourceHelper.Get<IValueConverter>("TitleConverter").Convert(
+                string s = (string)ResourceHelper.Get<IValueConverter>("TitleConverter").Convert(
                     Localization.Get("StatusBarFontCount", fontList.Count), typeof(string), null, null);
+
+                // Hack for Zune Theme.
+                if (!keepCasing)
+                    s = s.ToUpper();
+
+                return s;
             }
 
             return string.Empty;

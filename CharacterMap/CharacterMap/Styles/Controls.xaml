@@ -7,9 +7,6 @@
 
     <x:Double x:Key="ToggleSwitchThemeMinWidth">0</x:Double>
 
-
-
-
     <Style TargetType="SplitView">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />

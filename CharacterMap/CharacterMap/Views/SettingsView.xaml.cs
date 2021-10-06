@@ -75,6 +75,9 @@ namespace CharacterMap.Views
             GlyphAnnotation.UnicodeIndex
         };
 
+        private bool _themeSupportsShadows = false;
+        private bool _themeSupportsDark = false;
+
         public SettingsView()
         {
             Settings = ResourceHelper.AppSettings;
@@ -96,6 +99,9 @@ namespace CharacterMap.Views
             SupportedLanguages.Insert(0, SupportedLanguage.SystemLanguage);
 
             Changelog = CreateChangelog();
+
+            _themeSupportsShadows = ResourceHelper.Get<Boolean>("SupportsShadows");
+            _themeSupportsDark = ResourceHelper.Get<Boolean>("SupportsDarkTheme");
 
             //UpdateStyle();
         }
@@ -208,24 +214,7 @@ namespace CharacterMap.Views
 
         private void View_Loading(FrameworkElement sender, object args)
         {
-            // Set the settings that can't be set with bindings
-            switch (Settings.UserRequestedTheme)
-            {
-                case ElementTheme.Default:
-                    ThemeSystem.IsChecked = true;
-                    break;
-                case ElementTheme.Light:
-                    ThemeLight.IsChecked = true;
-                    break;
-                case ElementTheme.Dark:
-                    ThemeDark.IsChecked = true;
-                    break;
-            }
-
-            if (Settings.UseFontForPreview)
-                UseActualFont.IsChecked = true;
-            else
-                UseSystemFont.IsChecked = true;
+           
         }
 
         private void View_Loaded(object sender, RoutedEventArgs e)
@@ -233,6 +222,28 @@ namespace CharacterMap.Views
             UpdateStyle();
 
             ((RadioButton)MenuColumn.Children.First()).IsChecked = true;
+
+            // Set the settings that can't be set with bindings
+            if (_themeSupportsDark)
+            {
+                switch (Settings.UserRequestedTheme)
+                {
+                    case ElementTheme.Default:
+                        ThemeSystem.IsChecked = true;
+                        break;
+                    case ElementTheme.Light:
+                        ThemeLight.IsChecked = true;
+                        break;
+                    case ElementTheme.Dark:
+                        ThemeDark.IsChecked = true;
+                        break;
+                }
+            }
+
+            if (Settings.UseFontForPreview)
+                UseActualFont.IsChecked = true;
+            else
+                UseSystemFont.IsChecked = true;
         }
 
 

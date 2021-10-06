@@ -8,8 +8,10 @@
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:m="using:CharacterMap.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:views="using:CharacterMap.Views"
     xmlns:wct="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    x:Name="PageRoot"
     Background="{ThemeResource DefaultPageBackgroundBrush}"
     DataContext="{x:Bind ViewModel}"
     mc:Ignorable="d">
@@ -80,7 +82,7 @@
                     <Border
                         x:Name="PaneRootBackground"
                         Grid.RowSpan="5"
-                        Background="{StaticResource DefaultHostBrush}" />
+                        Background="{ThemeResource DefaultHostBrush}" />
 
                     <!--  Pane Header Commands  -->
                     <Grid
@@ -150,7 +152,7 @@
                                         Margin="0 8 0 0"
                                         OpticalMarginAlignment="TrimSideBearings"
                                         Style="{StaticResource StatusBarTextStyle}"
-                                        Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList), Mode=OneWay}"
+                                        Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList, InlineLabelCount.IsHitTestVisible), Mode=OneWay}"
                                         TextLineBounds="Tight" />
                                 </Border>
                             </StackPanel>
@@ -390,7 +392,7 @@
                                         x:Name="ZoomGridView"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        ItemContainerStyle="{StaticResource GridViewItemRevealStyle}"
+                                        ItemContainerStyle="{StaticResource FontListGridViewItemStyle}"
                                         ItemsSource="{Binding CollectionGroups, Source={StaticResource GroupedFontList}}">
                                         <GridView.ItemTemplate>
                                             <DataTemplate>
@@ -601,7 +603,7 @@
             x:Load="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}"
             Grid.RowSpan="20"
             Grid.ColumnSpan="20"
-            Background="{ThemeResource DefaultPageBackgroundBrush}"
+            Background="{Binding Background, ElementName=PageRoot}"
             Loading="LoadingRoot_Loading">
 
             <StackPanel
@@ -609,16 +611,16 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Spacing="24">
-                <ProgressRing
+                <muxc:ProgressRing
                     Width="75"
                     Height="75"
+                    Background="Transparent"
                     Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                     IsActive="True" />
                 <TextBlock
-                    x:Uid="TxtLoadingFonts"
                     HorizontalAlignment="Center"
-                    FontSize="24"
-                    FontWeight="Bold" />
+                    Style="{StaticResource TitleTextStyle}"
+                    Text="{core:Localizer Key=TxtLoadingFonts/Text, Lowercase={StaticResource LowercaseTitles}}" />
             </StackPanel>
 
         </Grid>
@@ -711,12 +713,15 @@
                 <VisualState x:Name="DefaultThemeState" />
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
+                        <Setter Target="PageRoot.Background" Value="Transparent" />
+                        <Setter Target="PageRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Collapsed" />
                         <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
+                        <Setter Target="SplitView.Margin" Value="8 0 0 0" />
                         <Setter Target="InlineLabelCount.Visibility" Value="Collapsed" />
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="OpenFontButton.VerticalAlignment" Value="Center" />
@@ -727,6 +732,11 @@
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
+                        <Setter Target="InlineLabelCount.IsHitTestVisible" Value="False" />
+                        <Setter Target="InlineLabelCount.FontSize" Value="11" />
+                        <Setter Target="InlineLabelCount.FontWeight" Value="SemiBold" />
+                        <Setter Target="LstFontFamily.FontWeight" Value="SemiBold" />
+                        <Setter Target="InlineLabelCount.Margin" Value="0 6 0 0" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Collapsed" />
                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <!--<Setter Target="FontListFilter.Foreground" Value="Black" />-->

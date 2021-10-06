@@ -3,9 +3,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
-    xmlns:helpers="using:CharacterMap.Helpers">
+    xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
+    <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
 
 
     <Color x:Key="SystemAccentColor">#FF0073CF</Color>
@@ -53,6 +55,7 @@
     <Color x:Key="SystemAccentColorDark2">#FF0055AD</Color>
     <Color x:Key="SystemAccentColorDark3">#FF00459D</Color>
 
+    <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
     <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#F0F0F0" />
     <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FDFDFD" />
     <SolidColorBrush x:Key="ControlForegroundBrush" Color="Black" />
@@ -126,7 +129,7 @@
     <Style x:Key="FontListStyle" TargetType="Border">
         <Setter Property="Background" Value="{ThemeResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ControlBorderBrush}" />
-        <Setter Property="BorderThickness" Value="0 1 1 1" />
+        <Setter Property="BorderThickness" Value="1 1 1 1" />
     </Style>
 
     <Style x:Key="BodyTextBlockStyle" BasedOn="{StaticResource BaseTextStyle}" TargetType="TextBlock">
@@ -146,8 +149,6 @@
             Content="{Binding}"
             FontSize="{ThemeResource ControlContentThemeFontSize}" />
     </DataTemplate>
-
-
 
     <Style TargetType="controls:XamlTitleBar">
         <Setter Property="Background" Value="{ThemeResource SystemColorControlAccentBrush}" />
@@ -193,6 +194,50 @@
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                 ContentTransitions="{TemplateBinding ContentTransitions}" />
                         </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="toolkit:GridSplitter">
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="IsFocusEngagementEnabled" Value="True" />
+        <Setter Property="MinWidth" Value="12" />
+        <Setter Property="MinHeight" Value="16" />
+        <Setter Property="BorderThickness" Value="0 0" />
+        <Setter Property="Background" Value="{ThemeResource SystemControlHighlightChromeHighBrush}" />
+        <Setter Property="GripperForeground" Value="{ThemeResource SystemControlForegroundAltHighBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="toolkit:GridSplitter">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="GridSplitterStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Content="{TemplateBinding Element}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -1120,6 +1165,7 @@
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="Padding" Value="{ThemeResource ComboBoxItemThemePadding}" />
         <Setter Property="Margin" Value="0" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="Template">
@@ -1142,7 +1188,6 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ControlHighlightContrastForegroundBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="LayoutRoot" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -1169,7 +1214,6 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxItemForegroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="LayoutRoot" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Selected">
@@ -1183,7 +1227,6 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ComboBoxItemForegroundSelected}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="LayoutRoot" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="SelectedUnfocused">
@@ -1223,7 +1266,6 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ControlHighlightContrastForegroundBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="LayoutRoot" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="SelectedPressed">
@@ -1642,7 +1684,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="VariantComboBoxStyle" TargetType="ComboBox">
+    <Style x:Key="VariantComboBoxStyle" TargetType="controls:UXComboBox">
         <Setter Property="Padding" Value="12,0,0,2" />
         <Setter Property="MinWidth" Value="{ThemeResource ComboBoxThemeMinWidth}" />
         <Setter Property="MinHeight" Value="26" />
@@ -1665,6 +1707,7 @@
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="CornerRadius" Value="{StaticResource ButtonControlCornerRadius}" />
         <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}" />
+        <Setter Property="ContentOrientation" Value="Horizontal" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -1674,7 +1717,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ComboBox">
+                <ControlTemplate TargetType="controls:UXComboBox">
                     <Grid x:Name="LayoutRoot">
                         <Grid.Resources>
                             <Storyboard x:Key="OverlayOpeningAnimation">
@@ -1802,6 +1845,19 @@
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup>
+                                <VisualState x:Name="DefaultContentState" />
+                                <VisualState x:Name="PreContentState">
+                                    <VisualState.Setters>
+                                        <Setter Target="PreContentPresenter.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="PostContentState">
+                                    <VisualState.Setters>
+                                        <Setter Target="PostContentPresenter.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
 
                         </VisualStateManager.VisualStateGroups>
 
@@ -1830,13 +1886,28 @@
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Orientation="Horizontal"
-                            Spacing="4">
-                            <ContentPresenter Content="{TemplateBinding SelectedItem}" FontSize="{TemplateBinding FontSize}" />
-                            <TextBlock
-                                FontSize="12"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Text="{TemplateBinding PlaceholderText}" />
+                            Orientation="{TemplateBinding ContentOrientation}"
+                            Spacing="{TemplateBinding ContentSpacing}">
+                            <ContentPresenter
+                                x:Name="PreContentPresenter"
+                                x:Load="False"
+                                MinHeight="0"
+                                Content="{TemplateBinding PreContent}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding SelectedItem}"
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontStyle="Normal"
+                                FontWeight="Normal" />
+                            <ContentPresenter
+                                x:Name="PostContentPresenter"
+                                x:Load="False"
+                                MinHeight="0"
+                                Content="{TemplateBinding SecondaryContent}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
                         </StackPanel>
                         <FontIcon
                             x:Name="DropDownGlyph"

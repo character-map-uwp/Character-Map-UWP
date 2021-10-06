@@ -624,6 +624,7 @@
                             <StackPanel Transitions="{StaticResource RepositionTransitions}" Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
                                 <TextBlock
                                     x:Uid="PrintViewCharSize"
+                                    Margin="0,16,0,0"
                                     d:Text="{core:Localizer Key=PrintViewCharSize/Text}"
                                     Style="{StaticResource HeaderStyle}" />
                                 <Slider

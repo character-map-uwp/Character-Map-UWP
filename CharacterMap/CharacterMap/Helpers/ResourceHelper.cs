@@ -119,8 +119,11 @@ namespace CharacterMap.Helpers
         {
             return WindowService.RunOnViewsAsync(() =>
             {
-                Get<AcrylicBrush>("DefaultHostBrush").AlwaysUseFallback = !enable;
-                Get<AcrylicBrush>("DefaultAcrylicBrush").AlwaysUseFallback = !enable;
+                if (Get<AcrylicBrush>("DefaultHostBrush") is AcrylicBrush def)
+                    def.AlwaysUseFallback = !enable;
+
+                if (Get<AcrylicBrush>("DefaultAcrylicBrush") is AcrylicBrush ac)
+                    ac.AlwaysUseFallback = !enable;
 
                 if (Get<AcrylicBrush>("AltHostBrush") is AcrylicBrush alt)
                     alt.AlwaysUseFallback = !enable;
@@ -321,13 +324,13 @@ namespace CharacterMap.Helpers
             ResourceHelper.TryResolveThemeStyle3(_element);
             return;
 
-            if (DesignMode.DesignModeEnabled)
-                return;
+            //if (DesignMode.DesignModeEnabled)
+            //    return;
 
-            if (_element is IThemeableControl themeable)
-                ResourceHelper.TryResolveThemeStyle2(_element);
+            //if (_element is IThemeableControl themeable)
+            //    ResourceHelper.TryResolveThemeStyle2(_element);
 
-            ResourceHelper.RegisterForThemeChanges(_element);
+            //ResourceHelper.RegisterForThemeChanges(_element);
         }
     }
 

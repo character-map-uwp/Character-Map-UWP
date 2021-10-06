@@ -52,6 +52,7 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
             }
 
+            ResourceHelper.GoToThemeState(this);
             LeakTrackingService.Register(this);
         }
 

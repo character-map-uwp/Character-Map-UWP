@@ -34,9 +34,12 @@ namespace CharacterMap.Views
             return items.Append(TypeRampInputRow).OrderBy(g => Guid.NewGuid()).ToList();
         }
 
-        private Storyboard CreateHidePreview(bool setSpan = true)
+        private Storyboard CreateHidePreview(bool setSpan = true, bool targetContent = true)
         {
             Storyboard sb = new Storyboard();
+
+            FrameworkElement target = targetContent ? PreviewGridContent : PreviewGrid;
+            FrameworkElement splitter = targetContent ? SplitterContainerContent : SplitterContainer;
 
             if (setSpan)
             {
@@ -44,51 +47,57 @@ namespace CharacterMap.Views
                     .AddKeyFrame(0, 3);
             }
 
-            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(PreviewGrid, TargetProperty.CompositeTransform.TranslateX)
+            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateX)
                 .AddKeyFrame(0.075, 0)
-                .AddKeyFrame(0.4, PreviewGrid.RenderSize.Width, KeySplines.CompositionDefault);
+                .AddKeyFrame(0.4, target.RenderSize.Width, KeySplines.CompositionDefault);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewGrid, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(target, TargetProperty.Visiblity)
                 .AddKeyFrame(0.4, Visibility.Collapsed);
 
-            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(SplitterContainer, TargetProperty.CompositeTransform.TranslateX)
+            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(splitter, TargetProperty.CompositeTransform.TranslateX)
                 .AddKeyFrame(0.075, 0)
-                .AddKeyFrame(0.4, PreviewGrid.RenderSize.Width + SplitterContainer.RenderSize.Width, KeySplines.CompositionDefault);
+                .AddKeyFrame(0.4, target.RenderSize.Width + splitter.RenderSize.Width, KeySplines.CompositionDefault);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SplitterContainer, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(splitter, TargetProperty.Visiblity)
                 .AddKeyFrame(0.4, Visibility.Collapsed);
 
             return sb;
         }
 
-        private Storyboard CreateShowPreview(double offset = 0)
+        private Storyboard CreateShowPreview(double offset = 0, bool targetContent = true)
         {
+            FrameworkElement target = targetContent ? PreviewGridContent : PreviewGrid;
+            FrameworkElement splitter = targetContent ? SplitterContainerContent : SplitterContainer;
+
             Storyboard sb = new Storyboard();
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewColumn, nameof(PreviewColumn.Width))
-                .AddKeyFrame(0, new GridLength(ViewModel.Settings.LastColumnWidth));
+            if (!targetContent)
+            {
+                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewColumn, nameof(PreviewColumn.Width))
+             .AddKeyFrame(0, new GridLength(ViewModel.Settings.LastColumnWidth));
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewColumn, nameof(PreviewColumn.MinWidth))
-                .AddKeyFrame(0, 150);
+                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewColumn, nameof(PreviewColumn.MinWidth))
+                    .AddKeyFrame(0, 150);
+            }
 
-            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(PreviewGrid, TargetProperty.CompositeTransform.TranslateX)
-               .AddKeyFrame(0, PreviewGrid.RenderSize.Width)
-               .If(offset != 0, t => t.AddKeyFrame(offset, PreviewGrid.RenderSize.Width))
+            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateX)
+               .AddKeyFrame(0, target.RenderSize.Width)
+               .If(offset != 0, t => t.AddKeyFrame(offset, target.RenderSize.Width))
                .AddKeyFrame(offset + CompositionFactory.DefaultOffsetDuration, 0, KeySplines.CompositionDefault);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewGrid, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(target, TargetProperty.Visiblity)
                 .If(offset != 0, t => t.AddKeyFrame(0, Visibility.Collapsed))
                 .AddKeyFrame(offset, Visibility.Visible);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SplitterColumn, nameof(PreviewColumn.Width))
-                .AddKeyFrame(0, new GridLength(10));
+            //sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(splitter, nameof(PreviewColumn.Width))
+            //    .AddKeyFrame(0, new GridLength(10));
 
-            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(SplitterContainer, TargetProperty.CompositeTransform.TranslateX)
-                .AddKeyFrame(0, PreviewGrid.RenderSize.Width + SplitterContainer.RenderSize.Width)
-                .If(offset != 0, t => t.AddKeyFrame(offset, PreviewGrid.RenderSize.Width + SplitterContainer.RenderSize.Width))
+            sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(splitter, TargetProperty.CompositeTransform.TranslateX)
+                .AddKeyFrame(0, target.RenderSize.Width + splitter.RenderSize.Width)
+                .If(offset != 0, t => t.AddKeyFrame(offset, target.RenderSize.Width + splitter.RenderSize.Width))
                 .AddKeyFrame(offset + CompositionFactory.DefaultOffsetDuration, 0, KeySplines.CompositionDefault);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SplitterContainer, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(splitter, TargetProperty.Visiblity)
                 .If(offset != 0, t => t.AddKeyFrame(0, Visibility.Collapsed))
                 .AddKeyFrame(offset, Visibility.Visible);
 
@@ -181,6 +190,9 @@ namespace CharacterMap.Views
 
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SearchBox, TargetProperty.Visiblity)
                 .AddKeyFrame(0, Visibility.Visible);
+
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharacterFilterButton, TargetProperty.Visiblity)
+               .AddKeyFrame(0, Visibility.Collapsed);
 
             sb.CreateTimeline<DoubleAnimation>(SearchBox, TargetProperty.CompositeTransform.TranslateY)
                 .To(-70)

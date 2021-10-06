@@ -2,10 +2,20 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
-    xmlns:converters="using:CharacterMap.Converters">
+    xmlns:converters="using:CharacterMap.Converters"
+    xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
 
+    <x:Boolean x:Key="LowercaseTitles">False</x:Boolean>
     <x:Boolean x:Key="SupportsDarkTheme">True</x:Boolean>
     <x:Double x:Key="FontListFlyoutHeight">40</x:Double>
+
+    <AcrylicBrush
+        x:Key="DefaultHostBrush"
+        win1903:TintLuminosityOpacity="0.8"
+        BackgroundSource="HostBackdrop"
+        FallbackColor="{ThemeResource SystemChromeMediumColor}"
+        TintColor="{ThemeResource SystemAltHighColor}"
+        TintOpacity="0.8" />
 
     <Style x:Key="HeaderStyle" TargetType="TextBlock">
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
@@ -47,12 +57,13 @@
         <Setter Property="Width" Value="50" />
     </Style>
 
+    <Style x:Key="DefaultThemeButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button" />
+
     <CornerRadius x:Key="PopupCornerRadius">4</CornerRadius>
     <x:Double x:Key="FontListFontSize">14</x:Double>
 
     <Style x:Key="SettingsMenuStyle" TargetType="StackPanel" />
 
-    <Style x:Key="DefaultThemeButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button" />
 
     <converters:PassthroughConverter x:Key="TitleConverter" />
 
@@ -63,6 +74,8 @@
     <Style x:Key="CharacterMapStyle" TargetType="GridView">
         <Setter Property="Padding" Value="10 10 6 10" />
     </Style>
+
+    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource GridViewItemRevealStyle}" TargetType="GridViewItem" />
 
     <Style TargetType="GridViewItem">
         <Setter Property="Background" Value="Transparent" />
@@ -151,8 +164,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
 
     <DataTemplate x:Key="DefaultControlHeaderTemplate">
         <ContentPresenter Margin="0 12 0 0" Content="{Binding}" />

@@ -8,8 +8,13 @@ namespace CharacterMap.Core
     {
         public string Key { get; set; }
 
+        public bool Lowercase { get; set; }
+
         protected override object ProvideValue()
         {
+            if (Lowercase)
+                return Localization.Get(Key).ToLower();
+
             return Localization.Get(Key);
         }
     }

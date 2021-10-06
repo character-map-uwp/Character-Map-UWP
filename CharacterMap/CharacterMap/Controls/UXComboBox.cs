@@ -36,29 +36,89 @@ namespace CharacterMap.Controls
         }
     }
 
-    public class UXComboBox : ComboBox, IThemeableControl
+    public class UXComboBox : ComboBox//, IThemeableControl
     {
+        public double ContentSpacing
+        {
+            get { return (double)GetValue(ContentSpacingProperty); }
+            set { SetValue(ContentSpacingProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentSpacingProperty =
+            DependencyProperty.Register("ContentSpacing", typeof(double), typeof(UXComboBox), new PropertyMetadata(0d));
+
+
+        public Orientation ContentOrientation
+        {
+            get { return (Orientation)GetValue(ContentOrientationProperty); }
+            set { SetValue(ContentOrientationProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentOrientationProperty =
+            DependencyProperty.Register("ContentOrientation", typeof(Orientation), typeof(UXComboBox), new PropertyMetadata(Orientation.Vertical));
+
+        public object PreContent
+        {
+            get { return (object)GetValue(PreContentProperty); }
+            set { SetValue(PreContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty PreContentProperty =
+            DependencyProperty.Register("PreContent", typeof(object), typeof(UXComboBox), new PropertyMetadata(null, (d, e) =>
+            {
+                ((UXComboBox)d).UpdateContentStates();
+            }));
+
+        public object SecondaryContent
+        {
+            get { return (object)GetValue(SecondaryContentProperty); }
+            set { SetValue(SecondaryContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty SecondaryContentProperty =
+            DependencyProperty.Register("SecondaryContent", typeof(object), typeof(UXComboBox), new PropertyMetadata(null, (d, e) =>
+            {
+                ((UXComboBox)d).UpdateContentStates();
+            }));
+
         public ThemeHelper _themer;
+        bool _isTemplateApplied = false;
         public UXComboBox()
         {
-            Properties.SetStyleKey(this, "DefaultThemeComboBoxStyle");
-            _themer = new ThemeHelper(this);
+            //Properties.SetStyleKey(this, "DefaultThemeComboBoxStyle");
+            //_themer = new ThemeHelper(this);
         }
 
         public void UpdateTheme()
         {
-            _themer.Update();
+            //_themer.Update();
         }
 
         protected override void OnApplyTemplate()
         {
+            _isTemplateApplied = true;
+
             base.OnApplyTemplate();
-            _themer.Update();
+            //_themer.Update();
+
+            UpdateContentStates();
         }
 
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new UXComboBoxItem();
+        }
+
+        void UpdateContentStates()
+        {
+            if (_isTemplateApplied is false)
+                return;
+
+            if (SecondaryContent is not null)
+                VisualStateManager.GoToState(this, "PostContentState", false);
+            else if (PreContent is not null)
+                VisualStateManager.GoToState(this, "PreContentState", false);
+
         }
     }
 }

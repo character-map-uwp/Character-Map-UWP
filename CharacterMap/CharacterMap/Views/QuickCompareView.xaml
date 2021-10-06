@@ -863,6 +863,21 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
+            <VisualStateGroup x:Name="DesignThemeStates">
+                <VisualState x:Name="DefaultThemeState" />
+                <VisualState x:Name="FUIThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="Presenter.Background" Value="Transparent" />
+                        <Setter Target="Presenter.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ClassicThemeState">
+                    <VisualState.Setters />
+                </VisualState>
+                <VisualState x:Name="ZuneThemeState">
+                    <VisualState.Setters />
+                </VisualState>
+            </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
     </Grid>

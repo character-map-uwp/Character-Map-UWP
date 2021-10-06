@@ -3,30 +3,30 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
-    xmlns:helpers="using:CharacterMap.Helpers">
-
-    <!--<ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="ms-appx:///Styles/ToggleSwitch.xaml" />
-    </ResourceDictionary.MergedDictionaries>-->
-
+    xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
             <Color x:Key="SolidBackgroundFillColorBase">#202020</Color>
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
+            <SolidColorBrush x:Key="DefaultHostBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="SolidBackgroundFillColorBase">#F3F3F3</Color>
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
+            <SolidColorBrush x:Key="DefaultHostBrush" Color="{ThemeResource SolidBackgroundFillColorBase}" />
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
+    
     <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
-
+    <BrushTransition x:Key="QuickBrushTransition" Duration="0:0:0.06" />
 
     <!--  TEXT STYLES  -->
     <Style x:Key="HeaderStyle" TargetType="TextBlock">
@@ -257,6 +257,7 @@
                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                         Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource QuickBrushTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         ContentTransitions="{TemplateBinding ContentTransitions}"
@@ -265,9 +266,6 @@
                         FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
                         FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
                         FocusVisualSecondaryThickness="2">
-                        <ContentPresenter.BackgroundTransition>
-                            <BrushTransition Duration="0:0:0.06" />
-                        </ContentPresenter.BackgroundTransition>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -319,7 +317,77 @@
         </Setter>
     </Style>
 
+    <DataTemplate x:Key="FontListGroupHeaderTemplate">
+        <controls:UXButton
+            x:Name="Root"
+            Margin="0"
+            Padding="0"
+            HorizontalAlignment="Stretch"
+            HorizontalContentAlignment="Stretch"
+            IsHitTestVisible="True"
+            Style="{StaticResource TransparentButton}">
+            <Grid>
+                <Border
+                    Margin="15,0"
+                    BorderBrush="{ThemeResource ApplicationForegroundThemeBrush}"
+                    BorderThickness="0,0,0,1"
+                    Opacity="0.2" />
+                <TextBlock
+                    Padding="15,8,15,10"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    FontSize="30"
+                    FontWeight="SemiBold"
+                    Text="{Binding Key}" />
+            </Grid>
+        </controls:UXButton>
+    </DataTemplate>
 
+    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem" />
+
+    <Style TargetType="toolkit:GridSplitter">
+        <Setter Property="IsTabStop" Value="True" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="IsFocusEngagementEnabled" Value="True" />
+        <Setter Property="MinWidth" Value="12" />
+        <Setter Property="MinHeight" Value="16" />
+        <Setter Property="BorderThickness" Value="0 0" />
+        <Setter Property="Background" Value="{ThemeResource SystemControlHighlightChromeHighBrush}" />
+        <Setter Property="GripperForeground" Value="{ThemeResource SystemControlForegroundAltHighBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="toolkit:GridSplitter">
+                    <Grid
+                        x:Name="RootGrid"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="GridSplitterStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch"
+                            Content="{TemplateBinding Element}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 
 
@@ -348,7 +416,7 @@
         <Setter Property="CornerRadius" Value="4" />
     </Style>
 
-    <Style x:Key="VariantComboBoxStyle" TargetType="ComboBox">
+    <Style x:Key="VariantComboBoxStyle" TargetType="controls:UXComboBox">
         <Setter Property="Padding" Value="12,5,0,7" />
         <Setter Property="MinWidth" Value="{ThemeResource ComboBoxThemeMinWidth}" />
         <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />
@@ -379,7 +447,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ComboBox">
+                <ControlTemplate TargetType="controls:UXComboBox">
                     <Grid x:Name="LayoutRoot">
                         <Grid.Resources>
                             <Storyboard x:Key="OverlayOpeningAnimation">
@@ -505,19 +573,6 @@
 
                         </VisualStateManager.VisualStateGroups>
 
-                        <ContentPresenter
-                            x:Name="HeaderContentPresenter"
-                            x:DeferLoadStrategy="Lazy"
-                            Margin="12 0 0 4"
-                            Content="{TemplateBinding Header}"
-                            ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            FlowDirection="{TemplateBinding FlowDirection}"
-                            FontFamily="Segoe UI"
-                            FontSize="12"
-                            FontWeight="Normal"
-                            Foreground="{Binding PlaceholderForeground, RelativeSource={RelativeSource TemplatedParent}, TargetNullValue={ThemeResource TextControlPlaceholderForeground}}"
-                            Visibility="Collapsed" />
-
                         <Border
                             x:Name="Background"
                             Grid.Row="1"
@@ -558,11 +613,20 @@
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                            <ContentPresenter Content="{TemplateBinding SelectedItem}" FontSize="{TemplateBinding FontSize}" />
-                            <TextBlock
-                                FontSize="12"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Text="{TemplateBinding PlaceholderText}" />
+                            <ContentPresenter
+                                MinHeight="0"
+                                Content="{TemplateBinding PreContent}"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding SelectedItem}"
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontStyle="Normal"
+                                FontWeight="Normal" />
+                            <ContentPresenter
+                                MinHeight="0"
+                                Content="{TemplateBinding SecondaryContent}"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
                         </StackPanel>
 
                         <FontIcon
@@ -925,7 +989,6 @@
         </Setter>
     </Style>
 
-
     <Style x:Key="DefaultMenuButtonStyle" TargetType="controls:MenuButton">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
@@ -949,6 +1012,7 @@
                     <Grid
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource QuickBrushTransition}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         ToolTipService.ToolTip="{TemplateBinding Content}">
 
@@ -962,7 +1026,7 @@
 
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
+                                        <Setter Target="BorderElement.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
                                     </VisualState.Setters>
                                     <Storyboard>
                                         <PointerUpThemeAnimation Storyboard.TargetName="ContentRoot" />
@@ -970,6 +1034,9 @@
                                 </VisualState>
 
                                 <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="BorderElement.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+                                    </VisualState.Setters>
                                     <Storyboard>
                                         <PointerDownThemeAnimation Storyboard.TargetName="ContentRoot" />
                                     </Storyboard>
@@ -1007,6 +1074,7 @@
 
                         <Border
                             x:Name="BorderElement"
+                            BackgroundTransition="{StaticResource QuickBrushTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                             <Grid x:Name="ContentRoot">

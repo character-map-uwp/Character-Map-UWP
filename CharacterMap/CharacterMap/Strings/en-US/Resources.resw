@@ -1099,7 +1099,7 @@ Default variant copied.</value>
     <comment>Labels must be as short as possible</comment>
   </data>
   <data name="SettingsDesignStyle.Description" xml:space="preserve">
-    <value>Change the design theme of the application.
+    <value>Change the design style of the application.
 Requires a restart to take effect.</value>
   </data>
   <data name="SettingsDesignStyle.Title" xml:space="preserve">

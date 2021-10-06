@@ -14,6 +14,8 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <x:Boolean x:Key="SupportsShadows">True</x:Boolean>
+
     <Style x:Key="BaseTextStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
@@ -40,7 +42,6 @@
         FallbackColor="{ThemeResource SystemChromeLowColor}"
         TintColor="{ThemeResource SystemAltHighColor}"
         TintOpacity="0.8" />
-
 
 
 
@@ -298,7 +299,7 @@
         <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Padding" Value="12 6" />
@@ -1085,7 +1086,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="VariantComboBoxStyle" TargetType="ComboBox">
+    <Style x:Key="VariantComboBoxStyle" TargetType="controls:UXComboBox">
         <Setter Property="Padding" Value="12,5,0,7" />
         <Setter Property="MinWidth" Value="{ThemeResource ComboBoxThemeMinWidth}" />
         <Setter Property="Foreground" Value="{ThemeResource ComboBoxForeground}" />
@@ -1115,7 +1116,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ComboBox">
+                <ControlTemplate TargetType="controls:UXComboBox">
                     <Grid x:Name="LayoutRoot">
                         <Grid.Resources>
                             <Storyboard x:Key="OverlayOpeningAnimation">
@@ -1277,17 +1278,28 @@
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Visibility="Collapsed" />
+
                         <StackPanel
                             Grid.Row="1"
                             Margin="{TemplateBinding Padding}"
                             HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
-                            <ContentPresenter Content="{TemplateBinding SelectedItem}" FontSize="{TemplateBinding FontSize}" />
-                            <TextBlock
-                                FontSize="12"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Text="{TemplateBinding PlaceholderText}" />
+                            <ContentPresenter
+                                MinHeight="0"
+                                Content="{TemplateBinding PreContent}"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
+                            <ContentPresenter
+                                Content="{TemplateBinding SelectedItem}"
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                FontStyle="Normal"
+                                FontWeight="Normal" />
+                            <ContentPresenter
+                                MinHeight="0"
+                                Content="{TemplateBinding SecondaryContent}"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
                         </StackPanel>
+
                         <FontIcon
                             x:Name="DropDownGlyph"
                             Grid.Row="1"

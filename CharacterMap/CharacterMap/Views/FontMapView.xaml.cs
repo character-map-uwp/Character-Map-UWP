@@ -129,8 +129,8 @@ namespace CharacterMap.Views
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
         {
-            PaneHideTransition.Storyboard = CreateHidePreview();
-            PaneShowTransition.Storyboard = CreateShowPreview();
+            PaneHideTransition.Storyboard = CreateHidePreview(false);
+            PaneShowTransition.Storyboard = CreateShowPreview(0, false);
 
             if (IsStandalone)
             {
@@ -294,6 +294,9 @@ namespace CharacterMap.Views
                         break;
                     case nameof(AppSettings.EnableCopyPane):
                         UpdateCopyPane();
+                        break;
+                    case nameof(AppSettings.UserRequestedTheme):
+                        this.RequestedTheme = ResourceHelper.GetEffectiveTheme();
                         break;
                 }
             });
@@ -500,6 +503,20 @@ namespace CharacterMap.Views
             UpdateCopyPane();
         }
 
+        private string UpdateStatusBarLabel(FontVariant variant, bool keepCasing)
+        {
+            if (variant == null)
+                return string.Empty;
+
+            string s = Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
+
+            // Hack for Zune Theme.
+            if (!keepCasing)
+                s = s.ToUpper();
+
+            return s;
+        }
+
 
 
 
@@ -512,14 +529,6 @@ namespace CharacterMap.Views
                 CharGrid.SelectedItem = ch;
                 CharGrid.ScrollIntoView(ch);
             }
-        }
-
-        public string UpdateStatusBarLabel(FontVariant variant)
-        {
-            if (variant == null)
-                return string.Empty;
-
-            return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
         }
 
         public void TryCopy()
@@ -1033,10 +1042,6 @@ namespace CharacterMap.Views
             CopySequenceRoot.GetElementVisual().StartAnimation(CompositionFactory.TRANSLATION, CompositionFactory.CreateSlideIn(sender));
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
-        }
-
-        private void PreviewPaneStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
-        {
         }
     }
 

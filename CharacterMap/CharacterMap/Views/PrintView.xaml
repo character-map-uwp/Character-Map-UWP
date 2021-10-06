@@ -21,6 +21,8 @@
 
     <UserControl.Resources>
 
+        <Thickness x:Key="HeaderMargin">0,16,0,0</Thickness>
+
         <Style TargetType="RadioButton">
             <Setter Property="MinWidth" Value="200" />
         </Style>
@@ -184,7 +186,7 @@
                                     TickFrequency="4"
                                     TickPlacement="Outside"
                                     Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
-                                <TextBlock Style="{StaticResource HeaderStyle}">
+                                <TextBlock Style="{StaticResource BaseTextStyle}">
                                     <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" />
                                     <Run Text="px" />
                                 </TextBlock>
@@ -192,10 +194,14 @@
                                 <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />-->
                                 <CheckBox
                                     x:Uid="ChkBxShowBorders"
-                                    Margin="0 16 0 -8"
+                                    Margin="0 16 0 -12"
                                     IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}" />
 
-                                <controls:WrapPanel ChildrenTransitions="{StaticResource RepositionTransitions}" HorizontalSpacing="24">
+
+                                <controls:WrapPanel
+                                    Margin="{StaticResource HeaderMargin}"
+                                    ChildrenTransitions="{StaticResource RepositionTransitions}"
+                                    HorizontalSpacing="24">
                                     <ComboBox
                                         x:Uid="CbListStyle"
                                         ItemsSource="{x:Bind Layouts}"
@@ -260,7 +266,10 @@
                                     <ComboBoxItem x:Uid="CbiPageOrientationLandscape" />
                                 </ComboBox>
 
-                                <TextBlock x:Uid="PrintViewHorizontalMarginHeader" Style="{StaticResource HeaderStyle}" />
+                                <TextBlock
+                                    x:Uid="PrintViewHorizontalMarginHeader"
+                                    Margin="{StaticResource HeaderMargin}"
+                                    Style="{StaticResource HeaderStyle}" />
                                 <Slider
                                     HorizontalAlignment="Stretch"
                                     IsThumbToolTipEnabled="True"
@@ -275,7 +284,10 @@
                                     <Run Text="px" />
                                 </TextBlock>
 
-                                <TextBlock x:Uid="PrintViewVerticalMarginHeader" Style="{StaticResource HeaderStyle}" />
+                                <TextBlock
+                                    x:Uid="PrintViewVerticalMarginHeader"
+                                    Margin="{StaticResource HeaderMargin}"
+                                    Style="{StaticResource HeaderStyle}" />
                                 <Slider
                                     HorizontalAlignment="Stretch"
                                     IsThumbToolTipEnabled="True"
@@ -285,7 +297,7 @@
                                     TickFrequency="4"
                                     TickPlacement="Outside"
                                     Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}" />
-                                <TextBlock Style="{StaticResource HeaderStyle}">
+                                <TextBlock Style="{StaticResource BaseTextStyle}">
                                     <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
                                     <Run Text="px" />
                                 </TextBlock>

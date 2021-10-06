@@ -49,13 +49,7 @@
                         Opacity="0.5"
                         Color="{StaticResource ScrollBarPanningThumbBackgroundColor}" />
 
-                    <AcrylicBrush
-                        x:Key="DefaultHostBrush"
-                        win1903:TintLuminosityOpacity="0.8"
-                        BackgroundSource="HostBackdrop"
-                        FallbackColor="{ThemeResource SystemChromeMediumColor}"
-                        TintColor="{ThemeResource SystemAltHighColor}"
-                        TintOpacity="0.8" />
+
 
                     <AcrylicBrush
                         x:Name="DefaultAcrylicBrush"

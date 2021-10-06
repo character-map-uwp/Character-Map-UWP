@@ -195,7 +195,7 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsCharGridDescription/Text}">
                                     <StackPanel>
-                                        <controls:UXSlider
+                                        <Slider
                                             HorizontalAlignment="Stretch"
                                             IsThumbToolTipEnabled="True"
                                             Maximum="{x:Bind core:AppSettings.MaxGridSize}"
@@ -216,13 +216,16 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsCharLabelDesc/Text}">
                                     <StackPanel>
-                                        <controls:UXComboBox ItemsSource="{x:Bind Annotations}" SelectedItem="{x:Bind Settings.GlyphAnnotation, Mode=TwoWay}">
+                                        <ComboBox
+                                            MinWidth="160"
+                                            ItemsSource="{x:Bind Annotations}"
+                                            SelectedItem="{x:Bind Settings.GlyphAnnotation, Mode=TwoWay}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
-                                        </controls:UXComboBox>
+                                        </ComboBox>
 
                                         <Border
                                             Margin="0 12 0 0"
@@ -328,7 +331,9 @@
                                             Width="256"
                                             Margin="0 12 0 0"
                                             HorizontalAlignment="Left"
-                                            Background="{StaticResource DefaultHostBrush}"
+                                            Background="{ThemeResource DefaultHostBrush}"
+                                            BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                                            BorderThickness="1"
                                             CornerRadius="4"
                                             IsHitTestVisible="False"
                                             IsItemClickEnabled="False"
@@ -357,7 +362,11 @@
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsThemeHeader/Text}" ContentPlacement="Bottom">
+                                <controls:SettingsPresenter
+                                    x:Name="ColorThemeSettings"
+                                    x:Load="{x:Bind _themeSupportsDark}"
+                                    Title="{core:Localizer Key=SettingsThemeHeader/Text}"
+                                    ContentPlacement="Bottom">
                                     <StackPanel>
                                         <controls:UXRadioButton
                                             x:Name="ThemeLight"
@@ -401,7 +410,11 @@
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.IsTransparencyEnabled, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsShadowsHeader/Text}" Description="{core:Localizer Key=SettingsShadowsDescription/Text}">
+                                <controls:SettingsPresenter
+                                    x:Name="ShadowSettings"
+                                    x:Load="{x:Bind _themeSupportsShadows}"
+                                    Title="{core:Localizer Key=SettingsShadowsHeader/Text}"
+                                    Description="{core:Localizer Key=SettingsShadowsDescription/Text}">
                                     <win1903:ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
@@ -411,7 +424,7 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsLanguageHeader/Text}">
                                     <StackPanel>
-                                        <controls:UXComboBox
+                                        <ComboBox
                                             MinWidth="256"
                                             Margin="0 8 0 0"
                                             ItemsSource="{x:Bind SupportedLanguages}"
@@ -459,7 +472,7 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsPNGExportDescription/Text}">
                                     <StackPanel>
-                                        <controls:UXSlider
+                                        <Slider
                                             x:Name="SldResolution"
                                             HorizontalAlignment="Stretch"
                                             IsThumbToolTipEnabled="True"
@@ -586,7 +599,10 @@
                                         <TextBlock x:Uid="SettingsFontImportDescription" Style="{StaticResource DescriptionStyle}" />
 
                                         <StackPanel Spacing="6">
-                                            <TextBlock Style="{StaticResource HeaderStyle}" Text="Import" />
+                                            <TextBlock
+                                                Margin="0 16 0 0"
+                                                Style="{StaticResource HeaderStyle}"
+                                                Text="Import" />
                                             <Grid
                                                 x:Name="ImportFontsRegion"
                                                 Width="340"
@@ -630,7 +646,10 @@
                                         </StackPanel>
 
                                         <StackPanel x:Name="ImportedExportPanel" Spacing="6">
-                                            <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource HeaderStyle}" />
+                                            <TextBlock
+                                                x:Uid="SettingsExportHeader"
+                                                Margin="0 16 0 0"
+                                                Style="{StaticResource HeaderStyle}" />
                                             <Button
                                                 Width="340"
                                                 Padding="12 10 12 10"

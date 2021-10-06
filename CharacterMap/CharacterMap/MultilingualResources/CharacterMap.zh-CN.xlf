@@ -1296,9 +1296,9 @@ Default variant copied.</target>
           <target state="new">Skip exporting glyphs with no visible content</target>
         </trans-unit>
         <trans-unit id="SettingsDesignStyle.Description" translate="yes" xml:space="preserve">
-          <source>Change the design theme of the application.
+          <source>Change the design style of the application.
 Requires a restart to take effect.</source>
-          <target state="new">Change the design theme of the application.
+          <target state="new">Change the design style of the application.
 Requires a restart to take effect.</target>
         </trans-unit>
         <trans-unit id="SettingsDesignStyle.Title" translate="yes" xml:space="preserve">
