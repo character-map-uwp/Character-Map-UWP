@@ -100,9 +100,9 @@
                             Height="Auto"
                             Padding="4"
                             VerticalAlignment="Stretch"
+                            d:Label="Open"
                             Click="{x:Bind OpenFont}"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                            Label="Open"
                             Style="{StaticResource MapInfoButtonStyle}">
                             <FontIcon
                                 Margin="0 -1 0 0"
@@ -228,9 +228,9 @@
                                     x:Uid="RenameCollectionButton"
                                     Height="Auto"
                                     VerticalAlignment="Stretch"
+                                    d:Label="Rename"
                                     Click="RenameFontCollection_Click"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                    Label="Rename"
                                     Style="{StaticResource MapInfoButtonStyle}"
                                     ToolTipService.Placement="Bottom">
                                     <FontIcon Glyph="&#xE13E;" />
@@ -239,9 +239,9 @@
                                     x:Uid="DeleteCollectionButton"
                                     Height="Auto"
                                     VerticalAlignment="Stretch"
+                                    d:Label="Delete"
                                     Click="DeleteCollection_Click"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                    Label="Delete"
                                     Style="{StaticResource MapInfoButtonStyle}"
                                     ToolTipService.Placement="Bottom">
                                     <FontIcon Glyph="&#xE107;" />
@@ -251,9 +251,9 @@
                                     x:Uid="CollectionExportButton"
                                     Height="Auto"
                                     VerticalAlignment="Stretch"
+                                    d:Label="Export"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     IsEnabled="{x:Bind core:Converters.TrueTrue(ViewModel.HasFonts, ViewModel.IsCollectionExportEnabled), Mode=OneWay}"
-                                    Label="Export"
                                     Style="{StaticResource MapInfoButtonStyle}">
                                     <Button.Flyout>
                                         <MenuFlyout Placement="Bottom">
@@ -711,6 +711,7 @@
                 <VisualState x:Name="DefaultThemeState" />
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
+                        <Setter Target="PaneRootBackground.Visibility" Value="Collapsed" />
                         <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->
                     </VisualState.Setters>
                 </VisualState>

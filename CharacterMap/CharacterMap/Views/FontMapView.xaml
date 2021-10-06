@@ -420,8 +420,8 @@
                         x:Name="FontPropertiesButton"
                         x:Uid="FontPropertiesButton"
                         VerticalAlignment="Stretch"
+                        d:Label="Info"
                         IsHintVisible="True"
-                        Label="Info"
                         Style="{ThemeResource MapInfoButtonStyle}">
                         <FontIcon Margin="0,0,-2,0" Glyph="&#xE946;" />
                         <Button.Flyout>
@@ -603,8 +603,8 @@
                         x:Name="FontOptionsButton"
                         x:Uid="FontOptionsButton"
                         VerticalAlignment="Stretch"
+                        d:Label="Options"
                         IsHintVisible="True"
-                        Label="Options"
                         Style="{ThemeResource MapInfoButtonStyle}"
                         Visibility="Collapsed">
                         <FontIcon Margin="0,0,-2,0" Glyph="&#xE8D2;" />
@@ -661,8 +661,9 @@
 
                     <controls:UXButton
                         x:Name="ViewToggleButton"
+                        x:Uid="ViewToggleButton"
+                        d:Label="Switch"
                         Click="{x:Bind Path=ViewModel.ChangeDisplayMode}"
-                        Label="Switch"
                         Style="{ThemeResource MapInfoButtonStyle}"
                         ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
                         <FontIcon
@@ -675,8 +676,8 @@
                         x:Name="CharacterFilterButton"
                         x:Uid="CharacterFilterButton"
                         VerticalAlignment="Stretch"
+                        d:Label="Filter"
                         IsHintVisible="True"
-                        Label="Filter"
                         Loaded="{x:Bind helpers:CompositionFactory.SetStandardFadeInOut}"
                         Style="{ThemeResource MapInfoButtonStyle}">
                         <FontIcon

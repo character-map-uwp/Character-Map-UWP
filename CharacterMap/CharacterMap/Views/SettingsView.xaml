@@ -426,7 +426,7 @@
                                     </StackPanel>
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="Design Style">
+                                <controls:SettingsPresenter x:Uid="SettingsDesignStyle">
                                     <StackPanel>
                                         <ComboBox
                                             MinWidth="256"
@@ -438,9 +438,7 @@
                                             <x:String>Classic Windows</x:String>
                                             <x:String>Zune Desktop</x:String>
                                         </ComboBox>
-
                                     </StackPanel>
-
                                 </controls:SettingsPresenter>
 
                                 <controls:UXButton
