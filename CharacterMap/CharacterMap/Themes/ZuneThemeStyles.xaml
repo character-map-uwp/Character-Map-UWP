@@ -14,6 +14,8 @@
     <BrushTransition x:Key="DefaultBrushTransition" Duration="0:0:0.1" />
 
 
+    
+    
     <!--  SYSTEM BRUSHES  -->
 
     <Color x:Key="SystemAccentColor">#F10DA2</Color>
@@ -74,6 +76,7 @@
     <!--  FONTS  -->
     <FontFamily x:Key="ThemeFontFamily">Zegoe UI, XamlAutoFontFamily</FontFamily>
     <FontFamily x:Key="ContentControlThemeFontFamily">Zegoe UI, XamlAutoFontFamily</FontFamily>
+    <FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</FontFamily>
 
 
 

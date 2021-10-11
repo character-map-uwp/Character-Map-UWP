@@ -9,6 +9,8 @@
     <x:Boolean x:Key="SupportsDarkTheme">True</x:Boolean>
     <x:Double x:Key="FontListFlyoutHeight">40</x:Double>
 
+    <FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</FontFamily>
+
     <AcrylicBrush
         x:Key="DefaultHostBrush"
         win1903:TintLuminosityOpacity="0.8"

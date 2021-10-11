@@ -19,6 +19,7 @@
 
     <Style TargetType="controls:XamlTitleBar">
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
@@ -423,10 +424,10 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                         <ContentPresenter
+                            Content="{TemplateBinding Text}"
                             FontSize="24"
                             FontWeight="Light"
-                            OpticalMarginAlignment="TrimSideBearings"
-                            Content="{TemplateBinding Text}" />
+                            OpticalMarginAlignment="TrimSideBearings" />
                         <ItemsPresenter />
                         <Border Style="{StaticResource SpacerStyle}" />
                     </StackPanel>

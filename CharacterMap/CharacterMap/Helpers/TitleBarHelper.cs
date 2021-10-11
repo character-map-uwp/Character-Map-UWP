@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Controls;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
@@ -29,6 +30,12 @@ namespace CharacterMap.Helpers
         internal static void SetTitle(string name)
         {
             ApplicationView.GetForCurrentView().Title = name ?? string.Empty;
+            WeakReferenceMessenger.Default.Send(name, "TitleUpdated");
+        }
+
+        internal static string GetTitle()
+        {
+            return ApplicationView.GetForCurrentView().Title;
         }
 
         internal static void SetTitleBar(FrameworkElement e)

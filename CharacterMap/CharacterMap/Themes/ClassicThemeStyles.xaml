@@ -153,6 +153,7 @@
     <Style TargetType="controls:XamlTitleBar">
         <Setter Property="Background" Value="{ThemeResource SystemColorControlAccentBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+        <Setter Property="Foreground" Value="White" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -169,7 +170,7 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Rectangle x:Name="BackgroundElement" Fill="{TemplateBinding Background}" />
-                        <Grid>
+                        <Grid ChildrenTransitions="{StaticResource RepositionTransitions}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=TemplateSettings.LeftColumnWidth}" />
                                 <ColumnDefinition Width="Auto" />
@@ -177,22 +178,27 @@
                                 <ColumnDefinition Width="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=TemplateSettings.RightColumnWidth}" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBlock
-                                Grid.Column="2"
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                FontWeight="Normal"
-                                Foreground="White"
-                                Style="{StaticResource BaseTextStyle}"
-                                Text="Character Map UWP"
-                                TextLineBounds="Tight" />
-
                             <ContentPresenter
                                 Grid.Column="1"
                                 Content="{TemplateBinding Content}"
                                 ContentTemplate="{TemplateBinding ContentTemplate}"
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}" />
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                Foreground="{TemplateBinding Foreground}" />
+
+                            <TextBlock
+                                x:Name="TitleTextLabel"
+                                Grid.Column="2"
+                                Margin="8 0 0 0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                FontWeight="Normal"
+                                Foreground="White"
+                                IsHitTestVisible="False"
+                                Style="{StaticResource BaseTextStyle}"
+                                Text="Character Map UWP"
+                                TextLineBounds="Tight" />
+
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -250,7 +256,7 @@
     <!--  GRIDVIEW  -->
 
     <Style x:Key="CharacterMapStyle" TargetType="GridView">
-        <Setter Property="Margin" Value="10 10 6 10" />
+        <Setter Property="Margin" Value="10 10 0 10" />
         <Setter Property="Padding" Value="0 0 -1 -1" />
         <Setter Property="Background" Value="{ThemeResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ControlBorderBrush}" />
@@ -1101,17 +1107,22 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
+                        <Border x:Name="TitleBackground" Background="Transparent" />
+
                         <ContentPresenter
                             x:Name="TitleBarPresenter"
                             HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch">
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Stretch"
+                            VerticalContentAlignment="Stretch">
                             <Border />
                         </ContentPresenter>
 
                         <Grid
                             x:Name="HeaderGrid"
                             Grid.Row="1"
-                            Height="{StaticResource TitleRowHeight}">
+                            Height="{StaticResource TitleRowHeight}"
+                            Visibility="{TemplateBinding HeaderVisibility}">
 
                             <TextBlock
                                 x:Name="SettingsHeader"

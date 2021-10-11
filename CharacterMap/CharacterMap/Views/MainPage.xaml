@@ -49,6 +49,7 @@
             Canvas.ZIndex="10">
             <StackPanel Orientation="Horizontal">
                 <ToggleButton
+                    x:Name="ToggleFullScreenModeButton"
                     x:Uid="ToggleFullScreenModeButton"
                     Width="45"
                     Background="Transparent"
@@ -83,6 +84,12 @@
                         x:Name="PaneRootBackground"
                         Grid.RowSpan="5"
                         Background="{ThemeResource DefaultHostBrush}" />
+
+                    <Border
+                        x:Name="OverlayPaneRootBackground"
+                        Grid.RowSpan="5"
+                        Background="Transparent"
+                        Visibility="Collapsed" />
 
                     <!--  Pane Header Commands  -->
                     <Grid
@@ -526,7 +533,9 @@
                             Height="45"
                             Margin="-6 0 0 0"
                             Click="BtnSettings_OnClick"
-                            Style="{StaticResource DefaultThemeAppBarButtonStyle}">
+                            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                            Label="Settings"
+                            Style="{StaticResource MapInfoButtonStyle}">
                             <ToolTipService.ToolTip>
                                 <TextBlock x:Uid="SettingsHeader" Text="Settings" />
                             </ToolTipService.ToolTip>
@@ -634,6 +643,7 @@
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
+                        <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                     </VisualState.Setters>
                 </VisualState>
@@ -644,6 +654,7 @@
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
+                        <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                     </VisualState.Setters>
                 </VisualState>
@@ -716,11 +727,16 @@
                         <Setter Target="PageRoot.Background" Value="Transparent" />
                         <Setter Target="PageRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Collapsed" />
+                        <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
+                        <Setter Target="ToggleFullScreenModeButton.Foreground" Value="White" />
+                        <Setter Target="BtnSettings.Width" Value="Auto" />
+                        <Setter Target="BtnSettings.Height" Value="Auto" />
+                        <Setter Target="FontMap.Margin" Value="0 0 8 0" />
                         <Setter Target="SplitView.Margin" Value="8 0 0 0" />
                         <Setter Target="InlineLabelCount.Visibility" Value="Collapsed" />
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
@@ -739,6 +755,7 @@
                         <Setter Target="InlineLabelCount.Margin" Value="0 6 0 0" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Collapsed" />
                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+                        <Setter Target="OverlayPaneRootBackground.Background" Value="White" />
                         <!--<Setter Target="FontListFilter.Foreground" Value="Black" />-->
                     </VisualState.Setters>
                 </VisualState>

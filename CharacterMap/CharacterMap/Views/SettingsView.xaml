@@ -358,10 +358,6 @@
 
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
-
                                 <controls:SettingsPresenter
                                     x:Name="ColorThemeSettings"
                                     x:Load="{x:Bind _themeSupportsDark}"
@@ -390,6 +386,28 @@
                                             Style="{StaticResource TextBlockButtonStyle}" />
                                     </StackPanel>
                                 </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter x:Uid="SettingsDesignStyle">
+                                    <StackPanel>
+                                        <ComboBox
+                                            MinWidth="256"
+                                            Margin="0 8 0 0"
+                                            SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
+                                            SelectionChanged="Design_SelectionChanged">
+                                            <x:String>Windows 10</x:String>
+                                            <x:String>Windows 11</x:String>
+                                            <x:String>Classic Windows</x:String>
+                                            <x:String>Zune Desktop</x:String>
+                                        </ComboBox>
+                                    </StackPanel>
+                                </controls:SettingsPresenter>
+
+                                <controls:UXButton
+                                    x:Uid="RestartButton"
+                                    Width="200"
+                                    Margin="0 24 0 0"
+                                    HorizontalAlignment="Left"
+                                    Click="BtnRestart_Click" />
 
                             </StackPanel>
 
@@ -422,6 +440,10 @@
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
+                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsLanguageHeader/Text}">
                                     <StackPanel>
                                         <ComboBox
@@ -436,21 +458,6 @@
                                             Margin="4 4 0 4"
                                             Style="{StaticResource HintStyle}"
                                             Visibility="{x:Bind core:Converters.CompareLanguageToSetting(Settings.AppLanguage), Mode=OneWay}" />
-                                    </StackPanel>
-                                </controls:SettingsPresenter>
-
-                                <controls:SettingsPresenter x:Uid="SettingsDesignStyle">
-                                    <StackPanel>
-                                        <ComboBox
-                                            MinWidth="256"
-                                            Margin="0 8 0 0"
-                                            SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
-                                            SelectionChanged="Design_SelectionChanged">
-                                            <x:String>Windows 10</x:String>
-                                            <x:String>Windows 11</x:String>
-                                            <x:String>Classic Windows</x:String>
-                                            <x:String>Zune Desktop</x:String>
-                                        </ComboBox>
                                     </StackPanel>
                                 </controls:SettingsPresenter>
 

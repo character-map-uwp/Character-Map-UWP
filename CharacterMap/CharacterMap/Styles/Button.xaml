@@ -142,12 +142,12 @@
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -155,7 +155,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="Border" />
+                                        <PointerDownThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -163,7 +163,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="0.4" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -178,7 +178,7 @@
                                         </Setter>
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPointerOver">
@@ -191,7 +191,7 @@
                                         </Setter>
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPressed">
@@ -204,7 +204,7 @@
                                         </Setter>
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>

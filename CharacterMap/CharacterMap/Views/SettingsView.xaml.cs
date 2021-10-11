@@ -364,7 +364,10 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                new("Latest Release", // July
+                 new("Latest Release", // October
+                    "- Added support for navigating backwards using mouse and keyboard navigation buttons, and Alt + Left\n" +
+                    "- Added support for changing application design with themes for Windows 11, Classic Windows and Zune Desktop"),
+                new("2021.4.0.0 (July 2021)", // July
                     "- Added Export Characters view (Ctrl + E)\n" +
                     "- Quick Compare (Ctrl + Q) now supports comparing typography variations and variable axis on the same font face\n" +
                     "- Copy pane (Ctrl + B) now supports editing and cursor positioning\n" +

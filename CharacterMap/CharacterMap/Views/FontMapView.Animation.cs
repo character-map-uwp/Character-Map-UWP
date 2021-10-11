@@ -74,7 +74,7 @@ namespace CharacterMap.Views
             if (!targetContent)
             {
                 sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewColumn, nameof(PreviewColumn.Width))
-             .AddKeyFrame(0, new GridLength(ViewModel.Settings.LastColumnWidth));
+                    .AddKeyFrame(0, new GridLength(ViewModel.Settings.LastColumnWidth));
 
                 sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(PreviewColumn, nameof(PreviewColumn.MinWidth))
                     .AddKeyFrame(0, 150);
@@ -304,7 +304,7 @@ namespace CharacterMap.Views
 
             TimeSpan startOffset = TimeSpan.FromSeconds(0);
             TimeSpan staggerTime = TimeSpan.FromMilliseconds(40);
-            TimeSpan duration = TimeSpan.FromMilliseconds(300);
+            TimeSpan duration = TimeSpan.FromMilliseconds(250);
             TimeSpan durationOpacityOut = TimeSpan.FromMilliseconds(150);
             TimeSpan durationOpacityIn = TimeSpan.FromMilliseconds(300);
 

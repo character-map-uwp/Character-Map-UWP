@@ -146,7 +146,8 @@
         <DataTemplate x:Key="StackTemplate" x:DataType="core:InstalledFont">
             <controls:ContentGroup VerticalAlignment="Stretch">
                 <controls:ContentGroup.Text>
-                    <TextBlock Foreground="{ThemeResource SystemColorControlAccentBrush}">
+                    <!--<TextBlock Foreground="{ThemeResource SystemColorControlAccentBrush}">-->
+                    <TextBlock Foreground="{ThemeResource SystemAccentColor}">
                         <Run Text="{x:Bind Name}" />
                         <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind Variants.Count}" />
                         <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="face(s)" />
@@ -318,26 +319,26 @@
             IsWindowRoot="True">
             <controls:ModalPagePresenter.TitleBarContent>
                 <Grid>
-                    <controls:XamlTitleBar IsDragTarget="False">
-                        <StackPanel Orientation="Horizontal">
-                            <Button
-                                x:Name="BackButton"
-                                Width="45"
-                                VerticalAlignment="Stretch"
-                                d:Visibility="Visible"
-                                Background="Transparent"
-                                Click="BackButton_Click"
-                                CornerRadius="0"
+                    <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False">
+                        <Button
+                            x:Name="BackButton"
+                            Width="45"
+                            VerticalAlignment="Stretch"
+                            d:Visibility="Visible"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="BackButton_Click"
+                            CornerRadius="0"
+                            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Visibility="Collapsed">
+                            <FontIcon
+                                x:Name="BackIcon"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="12"
                                 Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                Style="{StaticResource AccentButtonStyle}"
-                                Visibility="Collapsed">
-                                <FontIcon
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    FontSize="12"
-                                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                    Glyph="&#xE0A6;" />
-                            </Button>
-                        </StackPanel>
+                                Glyph="&#xE0A6;" />
+                        </Button>
                     </controls:XamlTitleBar>
 
                 </Grid>
@@ -872,7 +873,11 @@
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
-                    <VisualState.Setters />
+                    <VisualState.Setters>
+                        <Setter Target="BackIcon.Foreground" Value="White" />
+                        <Setter Target="BackButton.BorderThickness" Value="0" />
+                        <Setter Target="Presenter.HeaderVisibility" Value="Collapsed" />
+                    </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters />

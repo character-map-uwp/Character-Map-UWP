@@ -129,7 +129,7 @@ namespace CharacterMap.Views
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
         {
-            PaneHideTransition.Storyboard = CreateHidePreview(false);
+            PaneHideTransition.Storyboard = CreateHidePreview(false, false);
             PaneShowTransition.Storyboard = CreateShowPreview(0, false);
 
             if (IsStandalone)
@@ -447,9 +447,9 @@ namespace CharacterMap.Views
         {
             // Update VisualState transition
             if (!ViewModel.Settings.EnablePreviewPane)
-                PaneHideTransition.Storyboard = CreateHidePreview();
+                PaneHideTransition.Storyboard = CreateHidePreview(false, false);
             else
-                PaneShowTransition.Storyboard = CreateShowPreview();
+                PaneShowTransition.Storyboard = CreateShowPreview(0, false);
 
             VisualStateManager.GoToState(
                   this,

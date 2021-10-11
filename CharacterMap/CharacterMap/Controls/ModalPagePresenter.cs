@@ -104,6 +104,19 @@ namespace CharacterMap.Controls
 
 
 
+        public Visibility HeaderVisibility
+        {
+            get { return (Visibility)GetValue(HeaderVisibilityProperty); }
+            set { SetValue(HeaderVisibilityProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for HeaderVisibility.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty HeaderVisibilityProperty =
+            DependencyProperty.Register("HeaderVisibility", typeof(Visibility), typeof(ModalPagePresenter), new PropertyMetadata(Visibility.Visible));
+
+
+
+
         public ModalPagePresenter()
         {
             this.DefaultStyleKey = typeof(ModalPagePresenter);

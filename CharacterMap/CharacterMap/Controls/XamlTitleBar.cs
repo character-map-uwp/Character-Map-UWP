@@ -136,9 +136,29 @@ namespace CharacterMap.Controls
             _settings.ColorValuesChanged += _settings_ColorValuesChanged;
 
             TemplateSettings.Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
+            TemplateSettings.Messenger.Register<string, string>(this, "TitleUpdated", (o, m) =>
+            {
+                if (Dispatcher.HasThreadAccess)
+                    UpdateTitle();
+            });
 
+            UpdateTitle();
             UpdateColors();
             UpdateMetrics(_titleBar);
+        }
+
+        void UpdateTitle()
+        {
+            if (this.GetTemplateChild("TitleTextLabel") is TextBlock t)
+            {
+                string text = TitleBarHelper.GetTitle();
+                if (string.IsNullOrWhiteSpace(text))
+                    text = ResourceHelper.GetAppName();
+                else
+                    text += $" - {ResourceHelper.GetAppName()}";
+
+                t.Text = text;
+            }
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage obj)

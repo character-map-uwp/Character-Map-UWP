@@ -179,6 +179,11 @@ namespace CharacterMap.Helpers
             }
         }
 
+        internal static string GetAppName()
+        {
+            return "Character Map UWP";
+        }
+
         public static void RegisterForThemeChanges<T>(T element) where T : FrameworkElement
         {
             UnregisterForThemeChanges(element);

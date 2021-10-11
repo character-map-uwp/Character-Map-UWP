@@ -39,7 +39,10 @@
                     <Setter Property="Width" Value="Auto" />
                 </Style>
             </Grid.Resources>
-            <Grid ColumnSpacing="0" Background="Transparent" Height="40">
+            <Grid
+                ColumnSpacing="0"
+                Height="40"
+                Background="Transparent">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -211,11 +214,15 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Border x:Name="BackgroundBorder" Grid.RowSpan="5" />
+        <Border
+            x:Name="BackgroundBorder"
+            Grid.RowSpan="5"
+            Canvas.ZIndex="-5" />
 
         <controls:XamlTitleBar
             x:Name="TitleBar"
             x:Load="{x:Bind IsStandalone}"
+            VerticalAlignment="Top"
             d:IsLocked="True"
             Canvas.ZIndex="101">
             <StackPanel Orientation="Horizontal">
@@ -224,7 +231,7 @@
                     x:Uid="CompactOverlayButton"
                     Width="45"
                     Click="{x:Bind ToggleCompactOverlay}"
-                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                    Foreground="{Binding Foreground, ElementName=TitleBar}"
                     Style="{StaticResource IconToggleButtonStyle}">
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                 </ToggleButton>
@@ -1844,7 +1851,10 @@
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
-                        <Setter Target="LayoutRoot.Margin" Value="0 0 8 0" />
+                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+                        <Setter Target="DevUtilsRoot.Margin" Value="0 0 0 8" />
+                        <Setter Target="CharGridRoot.Margin" Value="0 0 8 0" />
+                        <Setter Target="WeightSelector.ContentSpacing" Value="4" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
