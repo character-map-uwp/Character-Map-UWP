@@ -45,7 +45,7 @@ namespace CharacterMap.Views
             LeakTrackingService.Register(this);
         }
 
-        public void Show()
+        public override void Show()
         {
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
@@ -58,6 +58,8 @@ namespace CharacterMap.Views
 
             Presenter.SetTitleBar();
             //TitleBarHelper.SetTranisentTitleBar(TitleBackground);
+
+            base.Show();
         }
 
         private void StartShowAnimation()

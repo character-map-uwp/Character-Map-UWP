@@ -37,6 +37,8 @@ namespace CharacterMap.Views
 
         public QuickCompareView() : this(false) { }
 
+        private NavigationHelper _navHelper { get; } = new NavigationHelper();
+
         public QuickCompareView(bool isQuickCompare)
         {
             this.InitializeComponent();
@@ -52,6 +54,8 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
             }
 
+            _navHelper.BackRequested += (s, e) => { ViewModel.SelectedFont = null; };
+
             ResourceHelper.GoToThemeState(this);
             LeakTrackingService.Register(this);
         }
@@ -60,6 +64,7 @@ namespace CharacterMap.Views
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
             TitleBarHelper.SetTitle(Presenter.Title);
+            _navHelper.Activate();
 
             //await Task.Delay(150);
             //Presenter.SetWindowTitleBar();
@@ -68,6 +73,7 @@ namespace CharacterMap.Views
         private void QuickCompareView_Unloaded(object sender, RoutedEventArgs e)
         {
             ViewModel?.Deactivated();
+            _navHelper.Deactivate();
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

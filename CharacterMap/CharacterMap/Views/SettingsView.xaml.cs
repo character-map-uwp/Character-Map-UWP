@@ -77,6 +77,7 @@ namespace CharacterMap.Views
 
         private bool _themeSupportsShadows = false;
         private bool _themeSupportsDark = false;
+        private NavigationHelper _navHelper { get; } = new NavigationHelper();
 
         public SettingsView()
         {
@@ -102,6 +103,8 @@ namespace CharacterMap.Views
 
             _themeSupportsShadows = ResourceHelper.Get<Boolean>("SupportsShadows");
             _themeSupportsDark = ResourceHelper.Get<Boolean>("SupportsDarkTheme");
+
+            _navHelper.BackRequested += (s, e) => Hide();
 
             //UpdateStyle();
         }
@@ -145,6 +148,7 @@ namespace CharacterMap.Views
             if (IsOpen)
                 return;
 
+
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
@@ -186,10 +190,15 @@ namespace CharacterMap.Views
 
             Presenter.SetTitleBar();
             IsOpen = true;
+
+            _navHelper.Activate();
+
         }
 
         public void Hide()
         {
+            _navHelper.Deactivate();
+
             TitleBarHelper.RestoreDefaultTitleBar();
             IsOpen = false;
             this.Visibility = Visibility.Collapsed;

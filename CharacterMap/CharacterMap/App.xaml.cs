@@ -70,9 +70,6 @@ namespace CharacterMap
             }
             else
             {
-                // Force Registration of IoC
-                ViewModelLocator.Cleanup();
-
                 await FontFinder.LoadFontsAsync();
                 await Ioc.Default.GetService<UserCollectionsService>().LoadCollectionsAsync();
             }

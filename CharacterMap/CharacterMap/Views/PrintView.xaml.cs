@@ -37,11 +37,24 @@ namespace CharacterMap.Views
 
         protected FontMapView _fontMap = null;
 
+        protected NavigationHelper _navHelper { get; } = new NavigationHelper();
+
+        public PopoverViewBase()
+        {
+            _navHelper.BackRequested += (s, e) => Hide();
+        }
+
+        public virtual void Show()
+        {
+            _navHelper.Activate();
+        }
 
         public virtual void Hide()
         {
             if (_presenter == null)
                 return;
+
+            _navHelper.Deactivate();
 
             _presenter.GetPresenter().Child = null;
             _presenter = null;
@@ -134,8 +147,9 @@ namespace CharacterMap.Views
         }
 
 
-        public void Show()
+        public override void Show()
         {
+
             // Initialize common helper class and register for printing
             _printHelper = new PrintHelper(_fontMap, ViewModel);
             _printHelper.RegisterForPrinting();
@@ -152,6 +166,8 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             Presenter.SetTitleBar();
+
+            base.Show();
         }
 
         public override void Hide()
