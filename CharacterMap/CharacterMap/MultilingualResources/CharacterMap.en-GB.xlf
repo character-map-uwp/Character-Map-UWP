@@ -11,8 +11,8 @@
           <target state="new">Add to Library</target>
         </trans-unit>
         <trans-unit id="AppName" translate="yes" xml:space="preserve">
-          <source>Character Map</source>
-          <target state="new">Character Map</target>
+          <source>Character Map UWP</source>
+          <target state="new">Character Map UWP</target>
         </trans-unit>
         <trans-unit id="BlackFill.Text" translate="yes" xml:space="preserve">
           <source>Black Fill</source>

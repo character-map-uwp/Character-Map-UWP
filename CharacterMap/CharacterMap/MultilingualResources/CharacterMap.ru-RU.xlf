@@ -11,8 +11,9 @@
           <target state="new">Add to Library</target>
         </trans-unit>
         <trans-unit id="AppName" translate="yes" xml:space="preserve">
-          <source>Character Map</source>
-          <target state="translated">Таблица символов</target>
+          <source>Character Map UWP</source>
+          <target state="needs-review-translation">Таблица символов</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="BlackFill.Text" translate="yes" xml:space="preserve">
           <source>Black Fill</source>

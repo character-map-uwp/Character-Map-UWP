@@ -35,7 +35,7 @@
               <uap:FileType>.otc</uap:FileType>-->
               <uap:FileType>.woff</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Character Map</uap:DisplayName>
+            <uap:DisplayName>Character Map UWP</uap:DisplayName>
             <uap:InfoTip>Preview Font</uap:InfoTip>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets/FileAssociationTile.png</uap:Logo>
