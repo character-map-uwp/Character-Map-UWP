@@ -6,6 +6,7 @@ using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Xaml;
 
@@ -15,6 +16,12 @@ namespace CharacterMap.Core
     {
         public const int MinGridSize = 48;
         public const int MaxGridSize = 192;
+
+        public int SettingsVersion
+        {
+            get => Get(0);
+            set => Set(value);
+        }
 
         public double PngSize
         {
@@ -182,6 +189,7 @@ namespace CharacterMap.Core
         public AppSettings()
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
+            UpdateSettings();
         }
 
         private bool Set(object value, [CallerMemberName]string key = null)
@@ -250,6 +258,20 @@ namespace CharacterMap.Core
                 if (Window.Current.Content is FrameworkElement e)
                     e.RequestedTheme = ResourceHelper.GetEffectiveTheme();
             });
+        }
+
+        private void UpdateSettings()
+        {
+            if (SettingsVersion == 0)
+            {
+                // Upgrade to Version 1.0.
+
+                // 1. Check version of Windows. If Windows 11, default to the Windows 11 theme
+                if (ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 14))
+                    ApplicationDesignTheme = (int)DesignStyle.Fluent11;
+
+                SettingsVersion = 1;
+            }
         }
 
         #endregion
