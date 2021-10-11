@@ -35,9 +35,6 @@ namespace CharacterMap.Services
         {
             if (IsActivation(activationArgs))
             {
-                // Initialize things like registering background task before the app is loaded
-                await InitializeAsync();
-
                 // We spawn a separate Window for files.
                 if (activationArgs is FileActivatedEventArgs fileArgs)
                 {
@@ -119,11 +116,6 @@ namespace CharacterMap.Services
                 // Tasks after activation
                 await StartupAsync();
             }
-        }
-
-        private Task InitializeAsync()
-        {
-            return Task.CompletedTask;
         }
 
         private Task StartupAsync()

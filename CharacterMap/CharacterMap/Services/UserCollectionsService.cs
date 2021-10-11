@@ -56,6 +56,9 @@ namespace CharacterMap.Services
         {
             List<UserFontCollection> collections = new List<UserFontCollection>();
 
+            if (Items.Count > 0)
+                return;
+
             await Task.Run(async () =>
             {
                 var folder = _collectionsFolder = await GetCollectionsFolderAsync().AsTask().ConfigureAwait(false);
@@ -108,8 +111,9 @@ namespace CharacterMap.Services
                 collections = collections.OrderBy(c => c.Name).ToList();
             });
 
-            foreach (var item in collections)
-                Items.Add(item);
+
+            Items.Clear();
+            Items.AddRange(collections);
         }
 
         public bool DoesCollectionExist(string name)
