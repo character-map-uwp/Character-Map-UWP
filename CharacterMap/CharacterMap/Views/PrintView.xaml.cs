@@ -37,11 +37,24 @@ namespace CharacterMap.Views
 
         protected FontMapView _fontMap = null;
 
+        protected NavigationHelper _navHelper { get; } = new NavigationHelper();
+
+        public PopoverViewBase()
+        {
+            _navHelper.BackRequested += (s, e) => Hide();
+        }
+
+        public virtual void Show()
+        {
+            _navHelper.Activate();
+        }
 
         public virtual void Hide()
         {
             if (_presenter == null)
                 return;
+
+            _navHelper.Deactivate();
 
             _presenter.GetPresenter().Child = null;
             _presenter = null;
@@ -134,8 +147,9 @@ namespace CharacterMap.Views
         }
 
 
-        public void Show()
+        public override void Show()
         {
+
             // Initialize common helper class and register for printing
             _printHelper = new PrintHelper(_fontMap, ViewModel);
             _printHelper.RegisterForPrinting();
@@ -146,12 +160,14 @@ namespace CharacterMap.Views
             UpdatePreview();
 
             // Focus the close button to ensure keyboard focus is retained inside the panel
-            BtnClose.Focus(FocusState.Programmatic);
+            Presenter.SetDefaultFocus();
 
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            TitleBarHelper.SetTranisentTitleBar(TitleBackground);
+            Presenter.SetTitleBar();
+
+            base.Show();
         }
 
         public override void Hide()
@@ -291,11 +307,6 @@ namespace CharacterMap.Views
         private void NumberBox_ValueChanged(NumberBox sender, NumberBoxValueChangedEventArgs args)
         {
             _sizeDebouncer.Debounce(350, UpdateDisplay);
-        }
-
-        private void ContentPanel_Loading(FrameworkElement sender, object args)
-        {
-            CompositionFactory.SetThemeShadow(ContentPanel, 40, TitleBackground);
         }
 
         private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)

@@ -1,6 +1,9 @@
-﻿using CharacterMap.Core;
+﻿//#define DX
+
+using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMapCX.Controls;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Linq;
@@ -250,8 +253,17 @@ namespace CharacterMap.Controls
             _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Height, _templateSettings.Size);
 
             IXamlDirectObject cld = _xamlDirect.GetXamlDirectObjectProperty(go, XamlPropertyIndex.Panel_Children);
+#if DX
+{
+            var t = (DirectText)((Grid)item.ContentTemplateRoot).Children[0]; ;
+            SetGlyphProperties(t, _templateSettings, c);
+}
+#else
+{
             IXamlDirectObject o = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 0);
             SetGlyphProperties(_xamlDirect, o, _templateSettings, c);
+}
+#endif
 
             IXamlDirectObject o2 = _xamlDirect.GetXamlDirectObjectFromCollectionAt(cld, 1);
             if (o2 != null)
@@ -288,6 +300,23 @@ namespace CharacterMap.Controls
             UpdateTypography(xamlDirect, o, templateSettings.Typography);
 
             xamlDirect.SetStringProperty(o, XamlPropertyIndex.TextBlock_Text, c.Char);
+        }
+
+        internal static void SetGlyphProperties(DirectText o, CharacterGridViewTemplateSettings templateSettings, Character c)
+        {
+            if (o == null)
+                return;
+
+            o.FontFamily = templateSettings.FontFamily;
+            o.FontFace = templateSettings.FontFace;
+            o.FontStretch = templateSettings.FontFace.Stretch;
+            o.FontStyle = templateSettings.FontFace.Style;
+            o.FontWeight = templateSettings.FontFace.Weight;
+            o.IsColorFontEnabled = templateSettings.ShowColorGlyphs;
+            o.FontSize = templateSettings.Size / 2d;
+            o.Typography = templateSettings.Typography;
+
+            o.Text = c.Char;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -329,18 +358,24 @@ namespace CharacterMap.Controls
 
             foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
             {
+#if DX
+{
+                if (item.ContentTemplateRoot is Grid g)
+                {
+                    DirectText tb = (DirectText)g.Children[0];
+                    tb.Typography = info;
+                }
+}
+#else
+{
                 if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
                 {
                     var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
                     IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 0);
                     UpdateTypography(_xamlDirect, tb, info);
                 }
-                //if (item.ContentTemplateRoot is Grid g)
-                //{
-                //    TextBlock tb = (TextBlock)g.Children[0];
-                //    IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(tb);
-                //    UpdateTypography(_xamlDirect, o, info);
-                //}
+}
+#endif
             }
         }
 
@@ -401,8 +436,6 @@ namespace CharacterMap.Controls
         }
 
         #endregion
-
-
 
 
         #region Reposition Animation

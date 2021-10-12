@@ -3,9 +3,65 @@ using Windows.UI;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using CharacterMap.Core;
+using CharacterMap.Helpers;
 
 namespace CharacterMap.Converters
 {
+    public class PassthroughConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (parameter is string p)
+                return Localization.Get(p);
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+
+    public class LowerConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (parameter is string p)
+                return Localization.Get(p).ToLower();
+
+            if (value is string s)
+                return s.ToLower();
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class UpperConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (parameter is string p)
+                value = Localization.Get(p).ToUpper();
+
+            if (value is string s)
+                return s.ToUpper();
+
+            return null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class ZoomBackgroundConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

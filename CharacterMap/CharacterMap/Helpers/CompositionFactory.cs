@@ -410,7 +410,7 @@ namespace CharacterMap.Helpers
 
         public static void SetThemeShadow(UIElement target, float depth, params UIElement[] recievers)
         {
-            if (!Utils.Supports1903 || !ResourceHelper.AppSettings.EnableShadows)
+            if (!Utils.Supports1903 || !ResourceHelper.AppSettings.EnableShadows || ResourceHelper.Get<bool>("SupportsShadows") is false)
                 return;
 
             // Temporarily, we'll also disable shadows if Windows Animations are disabled

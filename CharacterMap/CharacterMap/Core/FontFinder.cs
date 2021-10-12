@@ -99,8 +99,13 @@ namespace CharacterMap.Core
 
             return systemFonts;
         }
-        public static Task LoadFontsAsync()
+        public static Task LoadFontsAsync(bool clearExisting = true)
         {
+            // It's possible to go down this path if the font collection
+            // was loaded during app pre--launch
+            if (clearExisting is false && Fonts is not null)
+                return Task.CompletedTask;
+
             Fonts = null;
 
             return Task.Run(async () =>

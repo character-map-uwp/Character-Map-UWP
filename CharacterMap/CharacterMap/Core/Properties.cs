@@ -153,5 +153,23 @@ namespace CharacterMap.Core
 
 
         #endregion
+
+        #region StyleKey
+
+
+        public static string GetStyleKey(DependencyObject obj)
+        {
+            return (string)obj.GetValue(StyleKeyProperty);
+        }
+
+        public static void SetStyleKey(DependencyObject obj, string value)
+        {
+            obj.SetValue(StyleKeyProperty, value);
+        }
+
+        public static readonly DependencyProperty StyleKeyProperty =
+            DependencyProperty.RegisterAttached("StyleKey", typeof(string), typeof(Properties), new PropertyMetadata(null));
+
+        #endregion
     }
 }

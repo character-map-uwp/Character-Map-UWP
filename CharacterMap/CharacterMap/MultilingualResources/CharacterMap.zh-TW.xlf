@@ -11,8 +11,9 @@
           <target state="translated">添加到庫</target>
         </trans-unit>
         <trans-unit id="AppName" translate="yes" xml:space="preserve">
-          <source>Character Map</source>
-          <target state="translated">字符映射表</target>
+          <source>Character Map UWP</source>
+          <target state="needs-review-translation">字符映射表</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="BlackFill.Text" translate="yes" xml:space="preserve">
           <source>Black Fill</source>
@@ -1286,6 +1287,56 @@ Default variant copied.</target>
         <trans-unit id="ExportSkipBlank.Content" translate="yes" xml:space="preserve">
           <source>Skip exporting glyphs with no visible content</source>
           <target state="new">Skip exporting glyphs with no visible content</target>
+        </trans-unit>
+        <trans-unit id="SettingsDesignStyle.Description" translate="yes" xml:space="preserve">
+          <source>Change the design style of the application.
+Requires a restart to take effect.</source>
+          <target state="new">Change the design style of the application.
+Requires a restart to take effect.</target>
+        </trans-unit>
+        <trans-unit id="SettingsDesignStyle.Title" translate="yes" xml:space="preserve">
+          <source>Design Style</source>
+          <target state="new">Design Style</target>
+        </trans-unit>
+        <trans-unit id="CharacterFilterButton.Label" translate="yes" xml:space="preserve">
+          <source>Filter</source>
+          <target state="new">Filter</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
+        </trans-unit>
+        <trans-unit id="CollectionExportButton.Label" translate="yes" xml:space="preserve">
+          <source>Export</source>
+          <target state="new">Export</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
+        </trans-unit>
+        <trans-unit id="DeleteCollectionButton.Label" translate="yes" xml:space="preserve">
+          <source>Delete</source>
+          <target state="new">Delete</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
+        </trans-unit>
+        <trans-unit id="FontOptionsButton.Label" translate="yes" xml:space="preserve">
+          <source>Options</source>
+          <target state="new">Options</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
+        </trans-unit>
+        <trans-unit id="FontPropertiesButton.Label" translate="yes" xml:space="preserve">
+          <source>Info</source>
+          <target state="new">Info</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
+        </trans-unit>
+        <trans-unit id="OpenFontButton.Label" translate="yes" xml:space="preserve">
+          <source>Open</source>
+          <target state="new">Open</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
+        </trans-unit>
+        <trans-unit id="RenameCollectionButton.Label" translate="yes" xml:space="preserve">
+          <source>Rename</source>
+          <target state="new">Rename</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
+        </trans-unit>
+        <trans-unit id="ViewToggleButton.Label" translate="yes" xml:space="preserve">
+          <source>Switch</source>
+          <target state="new">Switch</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
       </group>
     </body>

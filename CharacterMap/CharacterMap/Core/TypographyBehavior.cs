@@ -7,7 +7,6 @@ namespace CharacterMap.Core
 {
     public partial class TypographyBehavior
     {
-
         public static void SetTypography(IXamlDirectObject o, CanvasTypographyFeatureName f, XamlDirect _xamlDirect)
         {
             /* XAML Direct Helpers. Using XD is faster than setting Dependency Properties */

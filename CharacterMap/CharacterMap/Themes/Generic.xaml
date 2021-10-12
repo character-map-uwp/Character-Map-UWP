@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
+    xmlns:h="using:CharacterMap.Helpers"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml">
 
@@ -18,6 +19,8 @@
 
     <Style TargetType="controls:XamlTitleBar">
         <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -54,6 +57,7 @@
     </Style>
 
     <Style TargetType="controls:DirectTextBlock">
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="MinHeight" Value="10" />
         <Setter Property="MinWidth" Value="10" />
         <Setter Property="Template">
@@ -140,7 +144,8 @@
         <Setter Property="Visibility" Value="Collapsed" />
         <Setter Property="BorderThickness" Value="2" />
         <Setter Property="MinHeight" Value="55" />
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="RenderTransformOrigin" Value="0.5,1" />
         <Setter Property="Padding" Value="24,12" />
         <Setter Property="MaxWidth" Value="960" />
@@ -239,12 +244,11 @@
                                 <Button.RenderTransform>
                                     <TranslateTransform x:Name="DismissButtonTransform" X="18" />
                                 </Button.RenderTransform>
-                                <SymbolIcon
+                                <FontIcon
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Symbol="Cancel" />
+                                    Glyph="&#xE10A;" />
                             </AppBarButton>
-
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -255,6 +259,7 @@
 
     <Style TargetType="controls:LabelButton">
         <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrush}" />
@@ -317,5 +322,117 @@
             </Setter.Value>
         </Setter>
 
+    </Style>
+
+
+    <Style TargetType="controls:ModalPagePresenter">
+        <Setter Property="ContentBackground" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+        <Setter Property="TitleBackgroundBrush" Value="{ThemeResource DefaultHostBrush}" />
+        <Setter Property="TitleBarHeight" Value="32" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ModalPagePresenter">
+                    <Grid
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="{Binding TitleBarHeight, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            x:Name="TitleBackground"
+                            Grid.RowSpan="2"
+                            MinHeight="32"
+                            Margin="0 0 0 -10"
+                            Background="{TemplateBinding TitleBackgroundBrush}"
+                            BackgroundTransition="{StaticResource RootBackgroundTransition}" />
+
+                        <ContentPresenter
+                            x:Name="TitleBarPresenter"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+                            <Border />
+                        </ContentPresenter>
+
+                        <Grid
+                            x:Name="HeaderGrid"
+                            Grid.Row="1"
+                            Height="{StaticResource TitleRowHeight}">
+
+                            <TextBlock
+                                x:Name="SettingsHeader"
+                                Margin="20 0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                IsHitTestVisible="False"
+                                Style="{StaticResource TitleTextStyle}"
+                                Text="{Binding Path=Title, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource TitleConverter}}" />
+
+                            <controls:UXButton
+                                x:Name="BtnClose"
+                                x:Uid="BtnClose"
+                                Width="45"
+                                Height="45"
+                                HorizontalAlignment="Right"
+                                Style="{StaticResource DefaultThemeAppBarButtonStyle}"
+                                Visibility="{TemplateBinding CloseButtonVisibility}">
+                                <FontIcon Glyph="&#xE10A;" />
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="Escape" Modifiers="None" />
+                                </Button.KeyboardAccelerators>
+                            </controls:UXButton>
+
+                        </Grid>
+
+                        <Grid x:Name="ContentRoot" Grid.Row="2">
+                            <Border
+                                x:Name="BackgroundBorder"
+                                Margin="0 0 0 -8"
+                                h:CompositionFactory.CornerRadius="8.0"
+                                Background="{TemplateBinding ContentBackground}"
+                                BackgroundTransition="{StaticResource RootBackgroundTransition}">
+                                <ContentPresenter Content="{TemplateBinding Content}" />
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:ContentGroup">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ContentGroup">
+                    <StackPanel
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <ContentPresenter
+                            Content="{TemplateBinding Text}"
+                            FontSize="24"
+                            FontWeight="Light"
+                            OpticalMarginAlignment="TrimSideBearings" />
+                        <ItemsPresenter />
+                        <Border Style="{StaticResource SpacerStyle}" />
+                    </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 </ResourceDictionary>

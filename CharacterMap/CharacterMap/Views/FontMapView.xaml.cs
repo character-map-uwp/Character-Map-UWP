@@ -12,9 +12,11 @@ using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using System.Transactions;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Composition;
@@ -25,6 +27,8 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CharacterMap.Views
 {
@@ -109,6 +113,7 @@ namespace CharacterMap.Views
             Loaded += FontMapView_Loaded;
             Unloaded += FontMapView_Unloaded;
 
+            RequestedTheme = ResourceHelper.GetEffectiveTheme();
             ViewModel = new FontMapViewModel(
                 Ioc.Default.GetService<IDialogService>(), 
                 ResourceHelper.AppSettings);
@@ -119,12 +124,18 @@ namespace CharacterMap.Views
             _xamlDirect = XamlDirect.GetDefault();
 
             LeakTrackingService.Register(this);
+            ResourceHelper.GoToThemeState(this);
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
         {
+            PaneHideTransition.Storyboard = CreateHidePreview(false, false);
+            PaneShowTransition.Storyboard = CreateShowPreview(0, false);
+
             if (IsStandalone)
             {
+                VisualStateManager.GoToState(this, nameof(StandaloneViewState), false);
+
                 ApplicationView.GetForCurrentView()
                     .SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
 
@@ -170,12 +181,13 @@ namespace CharacterMap.Views
             PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
             _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
             {
-                ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
+                if (PreviewColumn.Width.Value > 0)
+                    ViewModel.Settings.LastColumnWidth = PreviewColumn.Width.Value;
             });
 
-            Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
-            PreviewGrid.SetHideAnimation(CompositionFactory.CreateSlideOutX(PreviewGrid));
-            PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
+            //Visual v = PreviewGrid.EnableTranslation(true).GetElementVisual();
+            //PreviewGrid.SetHideAnimation(CompositionFactory.CreateSlideOutX(PreviewGrid));
+            //PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
         }
 
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
@@ -212,8 +224,32 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.SelectedChar):
                     if (ViewModel.Settings.UseSelectionAnimations)
                     {
-                        CompositionFactory.PlayScaleEntrance(TxtPreview, .85f, 1f);
-                        CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                        if (ViewModel.SelectedChar is not null)
+                        {
+                            try
+                            {
+                                // Empty glyphs will cause the connected animation service to crash, so manually
+                                // check if the rendered glyph contains content
+                                if (CharGrid.ContainerFromItem(ViewModel.SelectedChar) is FrameworkElement container
+                                    && container.GetFirstDescendantOfType<TextBlock>() is TextBlock t)
+                                {
+                                    t.Measure(container.DesiredSize);
+                                    if (t.DesiredSize.Height != 0 && t.DesiredSize.Width != 0)
+                                    {
+                                        var ani = CharGrid.PrepareConnectedAnimation("PP", ViewModel.SelectedChar, "Text");
+                                        ani.TryStart(TxtPreview);
+                                        CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
+                                    }
+                                }
+                            }
+                            catch
+                            {
+                                // Nu Hair Dont care
+                            }
+                        }
+
+                        //CompositionFactory.PlayScaleEntrance(TxtPreview, .85f, 1f);
+                        //CompositionFactory.PlayEntrance(CharacterInfo.Children.ToList(), 0, 0, 40);
                     }
 
                     UpdateTypography(ViewModel.SelectedTypography);
@@ -258,6 +294,9 @@ namespace CharacterMap.Views
                         break;
                     case nameof(AppSettings.EnableCopyPane):
                         UpdateCopyPane();
+                        break;
+                    case nameof(AppSettings.UserRequestedTheme):
+                        this.RequestedTheme = ResourceHelper.GetEffectiveTheme();
                         break;
                 }
             });
@@ -348,9 +387,15 @@ namespace CharacterMap.Views
         private void UpdateDisplayMode(bool animate = false)
         {
             if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
+            {
+                UpdateGridToRampTransition();
                 VisualStateManager.GoToState(this, TypeRampState.Name, true);
+            }
             else
+            {
+                UpdateRampToGridTransition();
                 VisualStateManager.GoToState(this, CharacterMapState.Name, true);
+            }
 
             if (animate)
             {
@@ -400,6 +445,12 @@ namespace CharacterMap.Views
 
         private void UpdatePaneAndGridSizing()
         {
+            // Update VisualState transition
+            if (!ViewModel.Settings.EnablePreviewPane)
+                PaneHideTransition.Storyboard = CreateHidePreview(false, false);
+            else
+                PaneShowTransition.Storyboard = CreateShowPreview(0, false);
+
             VisualStateManager.GoToState(
                   this,
                   ViewModel.Settings.EnablePreviewPane && !_isCompactOverlay ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState),
@@ -411,10 +462,13 @@ namespace CharacterMap.Views
 
         private void UpdateCopyPane()
         {
-            VisualStateManager.GoToState(
-                 this,
-                 ViewModel.Settings.EnableCopyPane && !_isCompactOverlay ? nameof(CopySequenceEnabledState) : nameof(CopySequenceDisabledState),
-                 true);
+            string state = ViewModel.Settings.EnableCopyPane && !_isCompactOverlay ? nameof(CopySequenceEnabledState) : nameof(CopySequenceDisabledState);
+            if (state == nameof(CopySequenceDisabledState))
+                CopyPaneHidingTransition.Storyboard = CreateHideCopyPane();
+            else
+                CopyPaneShowingTransition.Storyboard = CreateShowCopyPane();
+
+            VisualStateManager.GoToState(this, state, true);
         }
 
         private async Task UpdateCompactOverlayAsync()
@@ -449,6 +503,20 @@ namespace CharacterMap.Views
             UpdateCopyPane();
         }
 
+        private string UpdateStatusBarLabel(FontVariant variant, bool keepCasing)
+        {
+            if (variant == null)
+                return string.Empty;
+
+            string s = Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
+
+            // Hack for Zune Theme.
+            if (!keepCasing)
+                s = s.ToUpper();
+
+            return s;
+        }
+
 
 
 
@@ -461,14 +529,6 @@ namespace CharacterMap.Views
                 CharGrid.SelectedItem = ch;
                 CharGrid.ScrollIntoView(ch);
             }
-        }
-
-        public string UpdateStatusBarLabel(FontVariant variant)
-        {
-            if (variant == null)
-                return string.Empty;
-
-            return Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
         }
 
         public void TryCopy()
@@ -776,6 +836,9 @@ namespace CharacterMap.Views
 
         async void AddCharToSequence(Character c)
         {
+            if (CopySequenceText == null)
+                return;
+
             int selection = CopySequenceText.SelectionStart;
             ViewModel.AddCharToSequence(
                 CopySequenceText.SelectionStart,
@@ -925,7 +988,7 @@ namespace CharacterMap.Views
             return vis;
         }
 
-
+        
 
 
         /* Composition */
@@ -972,8 +1035,8 @@ namespace CharacterMap.Views
 
         private void CopySequenceRoot_Loading(FrameworkElement sender, object args)
         {
-            CopySequenceRoot.SetHideAnimation(CompositionFactory.CreateSlideOutY(sender));
-            CopySequenceRoot.SetShowAnimation(CompositionFactory.CreateSlideIn(sender));
+            //CopySequenceRoot.SetHideAnimation(CompositionFactory.CreateSlideOutY(sender));
+            //CopySequenceRoot.SetShowAnimation(CompositionFactory.CreateSlideIn(sender));
 
             CopySequenceRoot.SetTranslation(new Vector3(0, (float)CopySequenceRoot.Height, 0));
             CopySequenceRoot.GetElementVisual().StartAnimation(CompositionFactory.TRANSLATION, CompositionFactory.CreateSlideIn(sender));

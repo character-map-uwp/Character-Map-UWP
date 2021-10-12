@@ -38,21 +38,29 @@
                     <AppBarButton
                         x:Uid="AppBtnSelectAll"
                         Click="FilterSelectAll_Click"
-                        Icon="SelectAll"
-                        Style="{StaticResource LabelAppBarButtonStyle}" />
+                        Style="{StaticResource LabelAppBarButtonStyle}">
+                        <AppBarButton.Icon>
+                            <FontIcon Glyph="&#xE14E;" />
+                        </AppBarButton.Icon>
+                    </AppBarButton>
                     <AppBarButton
                         x:Uid="AppBtnClear"
                         Click="FilterClear_Click"
-                        Icon="ClearSelection"
-                        Style="{StaticResource LabelAppBarButtonStyle}" />
+                        Style="{StaticResource LabelAppBarButtonStyle}">
+                        <AppBarButton.Icon>
+                            <FontIcon Glyph="&#xE1C5;" />
+                        </AppBarButton.Icon>
+                    </AppBarButton>
                 </StackPanel>
-
                 <AppBarButton
                     x:Uid="AppBtnReset"
                     HorizontalAlignment="Right"
                     Click="FilterRefresh_Click"
-                    Icon="Refresh"
-                    Style="{StaticResource LabelAppBarButtonStyle}" />
+                    Style="{StaticResource LabelAppBarButtonStyle}">
+                    <AppBarButton.Icon>
+                        <FontIcon Glyph="&#xE149;" />
+                    </AppBarButton.Icon>
+                </AppBarButton>
             </Grid>
         </StackPanel>
 
@@ -83,7 +91,7 @@
             Margin="12 12 12 0"
             HorizontalAlignment="Right"
             Click="FilterAccept_Click"
-            Style="{StaticResource DefaultButtonStyle}" />
+            Style="{StaticResource DefaultThemeButtonStyle}" />
 
     </Grid>
 </Flyout>

@@ -178,7 +178,7 @@ namespace CharacterMap.ViewModels
             CommandToggleFullScreen = new RelayCommand(Utils.ToggleFullScreenMode);
 
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
-            InitialLoad = LoadAsync();
+            InitialLoad = LoadAsync(true);
         }
 
         protected override void OnPropertyChangeNotified(string propertyName)
@@ -189,7 +189,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private async Task LoadAsync()
+        private async Task LoadAsync(bool isFirstLoad = false)
         {
             IsLoadingFonts = true;
 
@@ -197,7 +197,7 @@ namespace CharacterMap.ViewModels
             {
                 await Task.WhenAll(
                     GlyphService.InitializeAsync(),
-                    FontFinder.LoadFontsAsync(),
+                    FontFinder.LoadFontsAsync(!isFirstLoad),
                     FontCollections.LoadCollectionsAsync());
 
                 var interop = Utils.GetInterop();

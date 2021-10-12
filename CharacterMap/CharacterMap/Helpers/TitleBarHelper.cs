@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Controls;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
@@ -21,17 +22,20 @@ namespace CharacterMap.Helpers
             obj.SetValue(DefaultTitleBarProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for DefaultTitleBar.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DefaultTitleBarProperty =
-            DependencyProperty.RegisterAttached("DefaultTitleBar", typeof(UIElement), typeof(TitleBarHelper), new PropertyMetadata(0));
+            DependencyProperty.RegisterAttached("DefaultTitleBar", typeof(UIElement), typeof(TitleBarHelper), new PropertyMetadata(null));
 
 
-
-        static WeakReference<FrameworkElement> _previousElement;
 
         internal static void SetTitle(string name)
         {
             ApplicationView.GetForCurrentView().Title = name ?? string.Empty;
+            WeakReferenceMessenger.Default.Send(name, "TitleUpdated");
+        }
+
+        internal static string GetTitle()
+        {
+            return ApplicationView.GetForCurrentView().Title;
         }
 
         internal static void SetTitleBar(FrameworkElement e)

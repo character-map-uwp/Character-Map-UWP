@@ -6,6 +6,9 @@ using CharacterMap.Services;
 using CharacterMap.Controls;
 using UnhandledExceptionEventArgs = CharacterMap.Core.UnhandledExceptionEventArgs;
 using CharacterMapCX.Controls;
+using CharacterMap.ViewModels;
+using Windows.ApplicationModel.Core;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 
 namespace CharacterMap
 {
@@ -27,7 +30,10 @@ namespace CharacterMap
                 string.IsNullOrEmpty(language.ToString()) ? "" : language.ToString();
             }
 
+            CoreApplication.EnablePrelaunch(true);
+
             this.FocusVisualKind = FocusVisualKind.Reveal;
+            var loc = new ViewModelLocator();
             this.InitializeComponent();
 
             this.UnhandledException += OnUnhandledException;
@@ -61,6 +67,11 @@ namespace CharacterMap
             if (!e.PrelaunchActivated)
             {
                 await ActivationService.ActivateAsync(e);
+            }
+            else
+            {
+                await FontFinder.LoadFontsAsync();
+                await Ioc.Default.GetService<UserCollectionsService>().LoadCollectionsAsync();
             }
         }
 

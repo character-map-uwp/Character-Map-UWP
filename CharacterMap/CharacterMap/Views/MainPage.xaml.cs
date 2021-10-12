@@ -4,6 +4,7 @@ using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
@@ -23,6 +24,7 @@ using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
 
@@ -48,7 +50,7 @@ namespace CharacterMap.Views
         {
             InitializeComponent();
 
-            ViewModel = DataContext as MainViewModel;
+            ViewModel = Ioc.Default.GetService<MainViewModel>();
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
@@ -92,6 +94,8 @@ namespace CharacterMap.Views
             };
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
+
+            ResourceHelper.GoToThemeState(this);
         }
 
 
@@ -149,6 +153,10 @@ namespace CharacterMap.Views
                 case nameof(AppSettings.UseFontForPreview):
                     OnFontPreviewUpdated();
                     break;
+
+                //case nameof(AppSettings.ApplicationDesignTheme):
+                //    UpdateDesignTheme();
+                //    break;
             }
         }
 
@@ -337,10 +345,19 @@ namespace CharacterMap.Views
             }
         }
 
-        private string UpdateFontCountLabel(List<InstalledFont> fontList)
+        private string UpdateFontCountLabel(List<InstalledFont> fontList, bool keepCasing)
         {
             if (fontList != null)
-                return Localization.Get("StatusBarFontCount", fontList.Count);
+            {
+                string s = (string)ResourceHelper.Get<IValueConverter>("TitleConverter").Convert(
+                    Localization.Get("StatusBarFontCount", fontList.Count), typeof(string), null, null);
+
+                // Hack for Zune Theme.
+                if (!keepCasing)
+                    s = s.ToUpper();
+
+                return s;
+            }
 
             return string.Empty;
         }
@@ -407,24 +424,28 @@ namespace CharacterMap.Views
                     AppxOption.SetVisible(FontFinder.HasAppxFonts);
                 }
 
-                static void SetCommand(MenuFlyoutItemBase b, ICommand c)
+                static void SetCommand(
+                    MenuFlyoutItemBase b, ICommand c, double fontSize, double height)
                 {
-                    b.FontSize = 14;
+                    b.FontSize = fontSize;
+                    if (b is not MenuFlyoutSeparator && height > 0)
+                        b.Height = 40;
+
                     if (b is MenuFlyoutSubItem i)
                     {
-                        i.Height = 40;
                         foreach (var child in i.Items)
-                            SetCommand(child, c);
+                            SetCommand(child, c, fontSize, height);
                     }
                     else if (b is MenuFlyoutItem m)
                     {
                         m.Command = c;
-                        m.Height = 40;
                     }
                 }
 
+                var size = ResourceHelper.Get<double>("FontListFlyoutFontSize");
+                var height = ResourceHelper.Get<double>("FontListFlyoutHeight");
                 foreach (var item in menu.Items)
-                    SetCommand(item, FilterCommand);
+                    SetCommand(item, FilterCommand, size, height);
             }
         }
 

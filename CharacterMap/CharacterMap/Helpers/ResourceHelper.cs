@@ -1,16 +1,34 @@
-﻿using CharacterMap.Core;
+﻿using CharacterMap.Controls;
+using CharacterMap.Core;
 using CharacterMap.Services;
+using Microsoft.Toolkit.Mvvm.Messaging;
+using SQLitePCL;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
 {
+    public enum DesignStyle : int
+    {
+        Default = 0,
+        Fluent11 = 1,
+        ClassicWindows = 2,
+        ZuneDesktop = 3,
+    }
+
+    public class ThemeChangedMessage { }
+
     public static class ResourceHelper
     {
         #region Generic
@@ -29,7 +47,15 @@ namespace CharacterMap.Helpers
             return TryGetInternal(Application.Current.Resources, resourceKey, out T value) ? value : default;
         }
 
-        static bool TryGetInternal<T>(ResourceDictionary dictionary, string key, out T v)
+        public static T Get<T>(this FrameworkElement root, string resourceKey)
+        {
+            if (TryGetInternal(root.Resources, resourceKey, out T value1))
+                return value1;
+
+            return TryGetInternal(Application.Current.Resources, resourceKey, out T value) ? value : default;
+        }
+
+        public static bool TryGetInternal<T>(ResourceDictionary dictionary, string key, out T v)
         {
             if (dictionary.TryGetValue(key, out object r) && r is T c)
             {
@@ -63,10 +89,12 @@ namespace CharacterMap.Helpers
 
         /* Character Map Specific resources */
 
+        private static List<FrameworkElement> _elements { get; } = new List<FrameworkElement>();
+
         private static AppSettings _settings;
         public static AppSettings AppSettings
         {
-            get => _settings ??= Get<AppSettings>(nameof(AppSettings));
+            get => _settings ??= new AppSettings();
         }
 
         public static ElementTheme GetEffectiveTheme()
@@ -75,6 +103,10 @@ namespace CharacterMap.Helpers
             if (DesignMode.DesignMode2Enabled)
                 return ElementTheme.Default;
 #endif
+
+            // Certain themes only support Light theme
+            if (Get<bool>("SupportsDarkTheme") is false)
+                return ElementTheme.Light;
 
             return AppSettings.UserRequestedTheme switch
             {
@@ -87,11 +119,225 @@ namespace CharacterMap.Helpers
         {
             return WindowService.RunOnViewsAsync(() =>
             {
-                Get<AcrylicBrush>("DefaultHostBrush").AlwaysUseFallback = !enable;
-                Get<AcrylicBrush>("AltHostBrush").AlwaysUseFallback = !enable;
-                Get<AcrylicBrush>("DefaultAcrylicBrush").AlwaysUseFallback = !enable;
+                if (Get<AcrylicBrush>("DefaultHostBrush") is AcrylicBrush def)
+                    def.AlwaysUseFallback = !enable;
+
+                if (Get<AcrylicBrush>("DefaultAcrylicBrush") is AcrylicBrush ac)
+                    ac.AlwaysUseFallback = !enable;
+
+                if (Get<AcrylicBrush>("AltHostBrush") is AcrylicBrush alt)
+                    alt.AlwaysUseFallback = !enable;
             });
         }
+
+
+
+
+        /* Dynamic theme-ability */
+
+        public static void GoToThemeState(Control control)
+        {
+            string state = AppSettings.ApplicationDesignTheme switch
+            {
+                0 => "DefaultThemeState",
+                1 => "FUIThemeState",
+                2 => "ClassicThemeState",
+                3 => "ZuneThemeState",
+                _ => "DefaultThemeState"
+            };
+
+            VisualStateManager.GoToState(control, state, false);
+        }
+
+        public static void UpdateResolvedThemes()
+        {
+
+            var items = _elements.ToList();
+
+            //foreach (var element in items)
+            //{
+            //    if (element.Dispatcher.HasThreadAccess)
+            //        element.Style = null;
+            //    else
+            //    {
+            //        _ = element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High,
+            //            () => { element.Style = null; });
+            //    }
+            //}
+
+            //await Task.Delay(64);
+
+            foreach (var element in items)
+            {
+                if (element.Dispatcher.HasThreadAccess)
+                    TryResolveThemeStyle2(element);
+                else
+                {
+                    _ = element.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.High,
+                        () => TryResolveThemeStyle2(element));
+                }
+            }
+        }
+
+        internal static string GetAppName()
+        {
+            return "Character Map UWP";
+        }
+
+        public static void RegisterForThemeChanges<T>(T element) where T : FrameworkElement
+        {
+            UnregisterForThemeChanges(element);
+            _elements.Add(element);
+        }
+
+        public static void UnregisterForThemeChanges<T>(T element) where T : FrameworkElement
+        {
+            _elements.Remove(element);
+        }
+
+        public static bool TryResolveThemeStyle(FrameworkElement element, FrameworkElement styleAnchor = null)
+        {
+            var ver = (Microsoft.UI.Xaml.Controls.ControlsResourcesVersion)(AppSettings.ApplicationDesignTheme + 1);
+
+
+            string key = AppSettings.ApplicationDesignTheme == 0 ? "Default" : "FUI";
+            if (Properties.GetStyleKey(element) is string styleKey)
+            {
+                string target = $"{key}{styleKey}";
+                Style resolved = null;
+                if (styleAnchor != null)
+                    resolved = ResourceHelper.Get<Style>(styleAnchor, target);
+                else
+                    resolved = ResourceHelper.Get<Style>(target);
+
+                if (resolved is not null)
+                {
+                    element.Style = resolved;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TryResolveThemeStyle2(FrameworkElement element)
+        {
+            if (Properties.GetStyleKey(element) is string styleKey)
+            {
+                // Find source dictionary for current theme
+                var dic = (ResourceDictionary)App.Current.Resources[$"StyleSource{AppSettings.ApplicationDesignTheme + 1}"];
+                
+                // Try resolve style from source dictionary
+                TryGetInternal<Style>(dic, styleKey, out Style resolved);
+                if (resolved is not null && resolved != element.Style)
+                {
+                    // Assign style to element
+                    element.Style = resolved;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool TryResolveThemeStyle3(FrameworkElement element)
+        {
+            if (Properties.GetStyleKey(element) is string styleKey)
+            {
+                // Find source dictionary for current theme
+                // Try resolve style from source dictionary
+                Style resolved = Get<Style>(styleKey);
+                if (resolved is not null && resolved != element.Style)
+                {
+                    // Assign style to element
+                    element.Style = resolved;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        internal static void SendThemeChanged()
+        {
+            UpdateResolvedThemes();
+
+            //var content = Window.Current.Content;
+            //Window.Current.Content = null;
+            //Window.Current.Content = content;
+        }
     }
+
+    public class ThemeHelper
+    {
+        private FrameworkElement _element;
+
+        private Debouncer _debouncer { get; }
+
+        public ThemeHelper(FrameworkElement element)
+        {
+            if (DesignMode.DesignModeEnabled)
+                return;
+
+            _element = element;
+            ResourceHelper.TryResolveThemeStyle3(element);
+            return;
+
+            /* 
+             * For the current version of the application we are not using real-time
+             * style changing, so this code path is temporarily ignored.
+             */
+
+#pragma warning disable CS0162 // Unreachable code detected
+            _debouncer = new Debouncer();
+
+            element.Loaded += Element_Loaded;
+            element.Unloaded += Element_Unloaded;
+
+            Update();
+#pragma warning restore CS0162 // Unreachable code detected
+        }
+
+        private void Element_Loaded(object sender, RoutedEventArgs e)
+        {
+            //if (_debouncer.IsActive)
+            //{
+            //    Debug.WriteLine("CANCEL UNLOAD");
+            //    _debouncer.Cancel();
+            //}
+
+            Update();
+        }
+
+        private void Element_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine($"want unload {_element}");
+
+            _debouncer.Debounce(5000, () =>
+            {
+                if (VisualTreeHelper.GetParent(_element) is null)
+                {
+                    Debug.WriteLine($"UNREGISTERING {_element}");
+                    ResourceHelper.UnregisterForThemeChanges(_element);
+                }
+                    
+            });
+        }
+
+        public void Update()
+        {
+            ResourceHelper.TryResolveThemeStyle3(_element);
+            return;
+
+            //if (DesignMode.DesignModeEnabled)
+            //    return;
+
+            //if (_element is IThemeableControl themeable)
+            //    ResourceHelper.TryResolveThemeStyle2(_element);
+
+            //ResourceHelper.RegisterForThemeChanges(_element);
+        }
+    }
+
 
 }

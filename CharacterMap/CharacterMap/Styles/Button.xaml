@@ -16,84 +16,6 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-    <Style x:Key="TransparentButton" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
-        <Setter Property="Background" Value="{ThemeResource ListViewItemRevealBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="8,4,8,5" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-        <Setter Property="FocusVisualMargin" Value="-3" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
-
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="RootGrid.(RevealBrush.State)" Value="PointerOver" />
-                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}" />
-                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="RootGrid.(RevealBrush.State)" Value="Pressed" />
-                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonRevealBackgroundPressed}" />
-                                        <Setter Target="BorderElement.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushPressed}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="RootGrid.Opacity" Value="0.5" />
-                                    </VisualState.Setters>
-                                </VisualState>
-
-                            </VisualStateGroup>
-
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Border
-                            x:Name="BorderElement"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
-                            <ContentPresenter
-                                x:Name="ContentPresenter"
-                                Padding="{TemplateBinding Padding}"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                AutomationProperties.AccessibilityView="Raw"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}" />
-                        </Border>
-                    </Grid>
-
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style x:Key="IconButton" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource ListViewItemRevealBackground}" />
@@ -201,321 +123,9 @@
         </Setter>
     </Style>
 
-    <Style x:Key="TransparentHintButton" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
-        <Setter Property="Background" Value="{ThemeResource ListViewItemRevealBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="Padding" Value="8,4,8,5" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalAlignment" Value="Center" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-        <Setter Property="FocusVisualMargin" Value="-3" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Button">
-                    <Grid
-                        x:Name="RootGrid"
-                        helpers:CompositionFactory.OpacityDuration="0:0:0.1"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
-
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="RootGrid.(RevealBrush.State)" Value="PointerOver" />
-                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemBackgroundPointerOver}" />
-                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource ListViewItemRevealBorderBrushPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="RootGrid.(RevealBrush.State)" Value="Pressed" />
-                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ListViewItemRevealBackgroundPressed}" />
-                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource ButtonRevealBorderBrushPressed}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ButtonForegroundPressed}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="RootGrid.Opacity" Value="0.4" />
-                                        <Setter Target="DropDownGlyph.Opacity" Value="0" />
-                                    </VisualState.Setters>
-                                </VisualState>
-
-                            </VisualStateGroup>
-
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="24" />
-                        </Grid.ColumnDefinitions>
-
-                        <ContentPresenter
-                            x:Name="ContentPresenter"
-                            Padding="{TemplateBinding Padding}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}" />
-
-                        <FontIcon
-                            x:Name="DropDownGlyph"
-                            Grid.Column="1"
-                            Margin="0,10,10,10"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            helpers:CompositionFactory.OpacityDuration="0:0:0.1"
-                            AutomationProperties.AccessibilityView="Raw"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            FontSize="12"
-                            Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
-                            IsHitTestVisible="False" />
-                    </Grid>
-
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style TargetType="AppBarButton">
-        <Setter Property="Background" Value="{ThemeResource AppBarButtonRevealBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="Width" Value="50" />
-        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-        <Setter Property="AllowFocusOnInteraction" Value="False" />
-        <Setter Property="CornerRadius" Value="0" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="AppBarButton">
-                    <Grid
-                        x:Name="Root"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="{TemplateBinding Background}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPressed}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundDisabled}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushDisabled}" />
-                                        <Setter Target="Root.Opacity" Value="0.5" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="OverflowNormal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="OverflowPointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="OverflowPressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPressed}" />
-                                    </VisualState.Setters>
-
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Border
-                            x:Name="Border"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{TemplateBinding CornerRadius}" />
-
-                        <ContentPresenter
-                            x:Name="Content"
-                            Content="{TemplateBinding Icon}"
-                            Foreground="{TemplateBinding Foreground}" />
-
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="LabelAppBarButtonStyle" TargetType="AppBarButton">
-        <Setter Property="Background" Value="{ThemeResource AppBarButtonRevealBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrush}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="Padding" Value="12" />
-        <Setter Property="MaxWidth" Value="NaN" />
-        <Setter Property="Width" Value="NaN" />
-        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-        <Setter Property="AllowFocusOnInteraction" Value="False" />
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="AppBarButton">
-                    <Grid x:Name="Root" Background="{TemplateBinding Background}">
-
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="PointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.(RevealBrush.State)" Value="PointerOver" />
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Pressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.(RevealBrush.State)" Value="Pressed" />
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPressed}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-
-                                <VisualState x:Name="Disabled">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundDisabled}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushDisabled}" />
-                                        <Setter Target="Root.Opacity" Value="0.5" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="OverflowNormal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="OverflowPointerOver">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPointerOver}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPointerOver}" />
-                                    </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-                                <VisualState x:Name="OverflowPressed">
-                                    <VisualState.Setters>
-                                        <Setter Target="Root.Background" Value="{ThemeResource AppBarButtonRevealBackgroundPressed}" />
-                                        <Setter Target="Border.BorderBrush" Value="{ThemeResource AppBarButtonRevealBorderBrushPressed}" />
-                                    </VisualState.Setters>
-
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="Content" />
-                                    </Storyboard>
-                                </VisualState>
-
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Border
-                            x:Name="Border"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" />
 
 
-                        <StackPanel Padding="{TemplateBinding Padding}" Orientation="Horizontal">
 
-                            <ContentPresenter
-                                x:Name="Content"
-                                Content="{TemplateBinding Icon}"
-                                Foreground="{TemplateBinding Foreground}" />
-
-                            <TextBlock
-                                Margin="12 0 0 0"
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                Text="{TemplateBinding Label}" />
-                        </StackPanel>
-
-
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
 
     <Style x:Key="IconToggleButtonStyle" BasedOn="{StaticResource TextBlockButtonStyle}" TargetType="ToggleButton">
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
@@ -532,12 +142,12 @@
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -545,7 +155,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="Border" />
+                                        <PointerDownThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -553,7 +163,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="0.4" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -568,7 +178,7 @@
                                         </Setter>
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPointerOver">
@@ -581,7 +191,7 @@
                                         </Setter>
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPressed">
@@ -594,7 +204,7 @@
                                         </Setter>
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Border" />
+                                        <PointerUpThemeAnimation TargetName="Text" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>

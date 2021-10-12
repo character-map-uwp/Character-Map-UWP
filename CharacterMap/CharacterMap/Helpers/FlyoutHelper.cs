@@ -22,6 +22,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
 {
@@ -130,7 +131,6 @@ namespace CharacterMap.Helpers
             {
                 if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
                 {
-
                     UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == BasicFontFilter.SymbolFonts)
                         ? _collections.SymbolCollection
                         : main.SelectedCollection;
@@ -178,7 +178,7 @@ namespace CharacterMap.Helpers
                         var newWindow = new MenuFlyoutItem
                         {
                             Text = Localization.Get("OpenInNewWindow/Text"),
-                            Icon = new SymbolIcon {Symbol = Symbol.NewWindow},
+                            Icon = new FontIcon { Glyph = "\uE17C" },
                             Tag = font,
                             DataContext = options
                         };
@@ -206,7 +206,7 @@ namespace CharacterMap.Helpers
                         var exportButton = new MenuFlyoutItem
                         {
                             Text = Localization.Get("ExportCharactersLabel/Text"),
-                            Icon = new SymbolIcon(Symbol.Save),
+                            Icon = new FontIcon { Glyph = "\uE105" },
                             Tag = options,
                             DataContext = font
                         }.AddKeyboardAccelerator(VirtualKey.E, VirtualKeyModifiers.Control);
@@ -219,18 +219,15 @@ namespace CharacterMap.Helpers
                     MenuFlyoutSubItem newColl = new MenuFlyoutSubItem
                     {
                         Text = Localization.Get("AddToCollectionFlyout/Text"),
-                        Icon = new SymbolIcon {Symbol = Symbol.AllApps}
+                        Icon = new FontIcon { Glyph = "\uE71D" }
                     };
 
                     // Create "New Collection" Item
                     var newCollection = new MenuFlyoutItem
                     {
                         Text = Localization.Get("NewCollectionItem/Text"),
-                        Icon = new SymbolIcon
-                        {
-                            Symbol = Symbol.Add
-                        }
-                    };
+                        Icon = new FontIcon { Glyph = "\uE109" }
+                };
                     newCollection.Click += CreateCollection_Click;
                     if (newColl.Items != null)
                     {
@@ -308,13 +305,14 @@ namespace CharacterMap.Helpers
                         var removeItem = new MenuFlyoutItem
                         {
                             Text = Localization.Get("RemoveFromCollectionItem/Text"),
-                            Icon = new SymbolIcon {Symbol = Symbol.Remove},
+                            Icon = new FontIcon { Glyph = "\uE108" },
                             Tag = font
                         };
                         removeItem.Click += RemoveFrom_Click;
                         menu.Items.Add(removeItem);
                     }
                 }
+
                 if (showAdvanced)
                 {
                     if (Windows.Graphics.Printing.PrintManager.IsSupported())
@@ -322,8 +320,8 @@ namespace CharacterMap.Helpers
                         MenuFlyoutItem item = new MenuFlyoutItem
                         {
                             Text = Localization.Get("BtnPrint/Content"),
-                            Icon = new SymbolIcon { Symbol = Symbol.Print }
-                        }.AddKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control);
+                            Icon = new FontIcon { Glyph = "\uE749" }
+                    }.AddKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control);
 
                         item.Click += Print_Click;
                         menu.Items.Insert(standalone ? 2 : 3, item);
@@ -340,7 +338,7 @@ namespace CharacterMap.Helpers
                         var removeFont = new MenuFlyoutItem
                         {
                             Text = Localization.Get("RemoveFontFlyout/Text"),
-                            Icon = new SymbolIcon(Symbol.Delete),
+                            Icon = new FontIcon { Glyph = "\uE107" },
                             Tag = font
                         };
 
@@ -356,8 +354,8 @@ namespace CharacterMap.Helpers
                 var qq = new MenuFlyoutItem
                 {
                     Text = Localization.Get("CompareFontsButton/Text"),
-                    Icon = new SymbolIcon(Symbol.Library)
-                }.AddKeyboardAccelerator(VirtualKey.K, VirtualKeyModifiers.Control);
+                    Icon = new FontIcon { Glyph = "\uE1D3" }
+            }.AddKeyboardAccelerator(VirtualKey.K, VirtualKeyModifiers.Control);
 
                 qq.Click += (s, e) =>
                 {
@@ -373,8 +371,8 @@ namespace CharacterMap.Helpers
                     MenuFlyoutItem item = new MenuFlyoutItem
                     {
                         Text = Localization.Get("AddToQuickCompare/Text"),
-                        Icon = new SymbolIcon { Symbol = Symbol.Add }
-                    }.AddKeyboardAccelerator(VirtualKey.Q, VirtualKeyModifiers.Control);
+                        Icon = new FontIcon { Glyph = "\uE109" }
+                }.AddKeyboardAccelerator(VirtualKey.Q, VirtualKeyModifiers.Control);
 
                     item.Click += (s, e) =>
                     {
