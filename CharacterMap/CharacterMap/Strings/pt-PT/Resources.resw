@@ -965,4 +965,43 @@ Variante predefinida copiada.</value>
   <data name="ExportSkipBlank.Content" xml:space="preserve">
     <value>Ignorar exportação de glyphs sem conteúdo visível</value>
   </data>
+  <data name="CharacterFilterButton.Label" xml:space="preserve">
+    <value>Filtro</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="CollectionExportButton.Label" xml:space="preserve">
+    <value>Exportar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="DeleteCollectionButton.Label" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontOptionsButton.Label" xml:space="preserve">
+    <value>Opções</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontPropertiesButton.Label" xml:space="preserve">
+    <value>Informações</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="OpenFontButton.Label" xml:space="preserve">
+    <value>Abrir</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="RenameCollectionButton.Label" xml:space="preserve">
+    <value>Mudar o nome</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="SettingsDesignStyle.Description" xml:space="preserve">
+    <value>Alterar o tema do design da aplicação.
+Requer um reinício para ter efeito.</value>
+  </data>
+  <data name="SettingsDesignStyle.Title" xml:space="preserve">
+    <value>Estilo de Design</value>
+  </data>
+  <data name="ViewToggleButton.Label" xml:space="preserve">
+    <value>Trocar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
 </root>
