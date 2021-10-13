@@ -625,7 +625,7 @@
                                     <DataTemplate x:DataType="core:FontVariant">
                                         <controls:ContentGroup>
                                             <controls:ContentGroup.Text>
-                                                <TextBlock Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind PreferredName}" />
+                                                <TextBlock FontSize="{StaticResource ControlContentThemeFontSize}" Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind PreferredName}" />
                                             </controls:ContentGroup.Text>
                                             <controls:ContentGroup.SecondaryContent>
                                                 <TextBlock

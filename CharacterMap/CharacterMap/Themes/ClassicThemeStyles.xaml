@@ -6,46 +6,39 @@
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
-    <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#191919" />
+            <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#0C0C0C" />
+            <SolidColorBrush x:Key="ControlForegroundBrush" Color="White" />
+            <SolidColorBrush x:Key="CardBorderBrush" Color="#535353" />
+            <SolidColorBrush x:Key="ControlBorderBrush" Color="#535353" />
+            <SolidColorBrush x:Key="ControlActiveBorderBrush" Color="#0078D4" />
+            <SolidColorBrush x:Key="ControlPointerOverBackgroundBrush" Color="#4D4D4D" />
+            <SolidColorBrush x:Key="ControlDisabledForegroundBrush" Color="#838383" />
+            <SolidColorBrush x:Key="ControlPressedBackgroundBrush" Color="#CCE4F7" />
+            <SolidColorBrush x:Key="ControlHighlightBackgroundBrush" Color="#0078D7" />
+            <SolidColorBrush x:Key="ControlHighlightContrastForegroundBrush" Color="White" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Light">
+            <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
+            <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#F0F0F0" />
+            <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FDFDFD" />
+            <SolidColorBrush x:Key="ControlForegroundBrush" Color="Black" />
+            <SolidColorBrush x:Key="CardBorderBrush" Color="#DCDCDC" />
+            <SolidColorBrush x:Key="ControlBorderBrush" Color="#BABBBB" />
+            <SolidColorBrush x:Key="ControlActiveBorderBrush" Color="#0078D4" />
+            <SolidColorBrush x:Key="ControlPointerOverBackgroundBrush" Color="#E5F1FB" />
+            <SolidColorBrush x:Key="ControlDisabledForegroundBrush" Color="#838383" />
+            <SolidColorBrush x:Key="ControlPressedBackgroundBrush" Color="#CCE4F7" />
+            <SolidColorBrush x:Key="ControlHighlightBackgroundBrush" Color="#0078D7" />
+            <SolidColorBrush x:Key="ControlHighlightContrastForegroundBrush" Color="White" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <x:Boolean x:Key="SupportsDarkTheme">True</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
-
-
-    <Color x:Key="SystemAccentColor">#FF0073CF</Color>
-    <Color x:Key="SystemAltHighColor">#FFFFFFFF</Color>
-    <Color x:Key="SystemAltLowColor">#FFFFFFFF</Color>
-    <Color x:Key="SystemAltMediumColor">#FFFFFFFF</Color>
-    <Color x:Key="SystemAltMediumHighColor">#FFFFFFFF</Color>
-    <Color x:Key="SystemAltMediumLowColor">#FFFFFFFF</Color>
-    <Color x:Key="SystemBaseHighColor">#FF000000</Color>
-    <Color x:Key="SystemBaseLowColor">#FFCCCCCC</Color>
-    <Color x:Key="SystemBaseMediumColor">#FF898989</Color>
-    <Color x:Key="SystemBaseMediumHighColor">#FF5D5D5D</Color>
-    <Color x:Key="SystemBaseMediumLowColor">#FF737373</Color>
-    <Color x:Key="SystemChromeAltLowColor">#FF5D5D5D</Color>
-    <Color x:Key="SystemChromeBlackHighColor">#FF000000</Color>
-    <Color x:Key="SystemChromeBlackLowColor">#FFCCCCCC</Color>
-    <Color x:Key="SystemChromeBlackMediumColor">#FF5D5D5D</Color>
-    <Color x:Key="SystemChromeBlackMediumLowColor">#FF898989</Color>
-    <Color x:Key="SystemChromeDisabledHighColor">#FFCCCCCC</Color>
-    <Color x:Key="SystemChromeDisabledLowColor">#FF898989</Color>
-    <Color x:Key="SystemChromeGrayColor">#FF737373</Color>
-    <Color x:Key="SystemChromeHighColor">#FFCCCCCC</Color>
-    <Color x:Key="SystemChromeLowColor">#FFECECEC</Color>
-    <Color x:Key="SystemChromeMediumColor">#FFE6E6E6</Color>
-    <Color x:Key="SystemChromeMediumLowColor">#FFECECEC</Color>
-    <Color x:Key="SystemChromeWhiteColor">#FFFFFFFF</Color>
-    <Color x:Key="SystemListLowColor">#FFE6E6E6</Color>
-    <Color x:Key="SystemListMediumColor">#FFCCCCCC</Color>
-
-    <Color x:Key="SystemChromeAltMediumHighColor">#CCFFFFFF</Color>
-    <Color x:Key="SystemChromeAltHighColor">#FFCCCCCC</Color>
-    <Color x:Key="SystemRevealListLowColor">#FFE6E6E6</Color>
-    <Color x:Key="SystemRevealListMediumColor">#FFCCCCCC</Color>
-
-    <!--  Override system shape defaults  -->
-    <CornerRadius x:Key="ControlCornerRadius">1</CornerRadius>
-    <CornerRadius x:Key="ButtonControlCornerRadius">2</CornerRadius>
-    <CornerRadius x:Key="OverlayCornerRadius">2</CornerRadius>
 
     <!--  Override system generated accent colors  -->
     <Color x:Key="SystemAccentColorLight1">#FF1D85D7</Color>
@@ -54,18 +47,12 @@
     <Color x:Key="SystemAccentColorDark1">#FF0064BE</Color>
     <Color x:Key="SystemAccentColorDark2">#FF0055AD</Color>
     <Color x:Key="SystemAccentColorDark3">#FF00459D</Color>
+    <Color x:Key="SystemAccentColor">#FF0073CF</Color>
 
-    <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="#F0F0F0" />
-    <SolidColorBrush x:Key="ControlBackgroundBrush" Color="#FDFDFD" />
-    <SolidColorBrush x:Key="ControlForegroundBrush" Color="Black" />
-    <SolidColorBrush x:Key="ControlBorderBrush" Color="#BABBBB" />
-    <SolidColorBrush x:Key="ControlActiveBorderBrush" Color="#0078D4" />
-    <SolidColorBrush x:Key="ControlPointerOverBackgroundBrush" Color="#E5F1FB" />
-    <SolidColorBrush x:Key="ControlDisabledForegroundBrush" Color="#838383" />
-    <SolidColorBrush x:Key="ControlPressedBackgroundBrush" Color="#CCE4F7" />
-    <SolidColorBrush x:Key="ControlHighlightBackgroundBrush" Color="#0078D7" />
-    <SolidColorBrush x:Key="ControlHighlightContrastForegroundBrush" Color="White" />
+    <!--  Override system shape defaults  -->
+    <CornerRadius x:Key="ControlCornerRadius">1</CornerRadius>
+    <CornerRadius x:Key="ButtonControlCornerRadius">2</CornerRadius>
+    <CornerRadius x:Key="OverlayCornerRadius">2</CornerRadius>
 
     <x:Double x:Key="ContentControlThemeFontSize">12</x:Double>
     <x:Double x:Key="ControlContentThemeFontSize">12</x:Double>
@@ -143,6 +130,10 @@
         <Setter Property="OpticalMarginAlignment" Value="None" />
     </Style>
 
+
+
+    <!--  MISC TEMPLATES  -->
+
     <DataTemplate x:Key="DefaultControlHeaderTemplate">
         <ContentPresenter
             Margin="0 12 0 0"
@@ -153,7 +144,7 @@
     <Style TargetType="controls:XamlTitleBar">
         <Setter Property="Background" Value="{ThemeResource SystemColorControlAccentBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
-        <Setter Property="Foreground" Value="White" />
+        <Setter Property="Foreground" Value="{ThemeResource ControlHighlightContrastForegroundBrush}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -193,7 +184,7 @@
                                 VerticalAlignment="Center"
                                 FontSize="12"
                                 FontWeight="Normal"
-                                Foreground="White"
+                                Foreground="{ThemeResource ControlHighlightContrastForegroundBrush}"
                                 IsHitTestVisible="False"
                                 Style="{StaticResource BaseTextStyle}"
                                 Text="Character Map UWP"
@@ -965,7 +956,7 @@
 
     <Style x:Key="DefaultSettingsPresenterStyle" TargetType="controls:SettingsPresenter">
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="BorderBrush" Value="#DCDCDC" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 12 0 0" />
         <Setter Property="Template">
@@ -1044,7 +1035,7 @@
 
     <Style x:Key="CompareCardStyle" TargetType="controls:ContentGroup">
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="BorderBrush" Value="#DCDCDC" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 12 0 0" />
         <Setter Property="Template">
