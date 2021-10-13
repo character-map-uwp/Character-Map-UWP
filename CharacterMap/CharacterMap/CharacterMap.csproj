@@ -166,7 +166,6 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\ColourIcon.png" />
     <Content Include="Assets\Data\GlyphData.db" />
-    <PRIResource Include="Strings\pt-PT\Resources.resw" />
     <PRIResource Include="Strings\pl-PL\Resources.resw" />
     <PRIResource Include="Strings\ru-RU\Resources.resw" />
     <PRIResource Include="Strings\fr-FR\Resources.resw" />
@@ -538,7 +537,6 @@
     <XliffResource Include="MultilingualResources\CharacterMap.fr-FR.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.it-IT.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.pl-PL.xlf" />
-    <XliffResource Include="MultilingualResources\CharacterMap.pt-PT.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.ru-RU.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.ta.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.th-TH.xlf" />
