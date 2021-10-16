@@ -14,8 +14,8 @@
     <BrushTransition x:Key="DefaultBrushTransition" Duration="0:0:0.1" />
 
 
-    
-    
+
+
     <!--  SYSTEM BRUSHES  -->
 
     <Color x:Key="SystemAccentColor">#F10DA2</Color>
@@ -390,6 +390,8 @@
 
     <!--  GRIDVIEW  -->
 
+    <ImageBrush x:Key="TileOverlayBrush" ImageSource="ms-appx:///Assets/ZuneAssets/HoverOverlay.png" />
+
     <Style x:Key="DefaultGridViewItemStyle" TargetType="GridViewItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
@@ -416,7 +418,7 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ImageHover" Storyboard.TargetProperty="Opacity">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.8" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -458,25 +460,27 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
-                        <Rectangle x:Name="ImageHover" Opacity="0">
-                            <Rectangle.Fill>
-                                <ImageBrush ImageSource="ms-appx:///Assets/ZuneAssets/HoverOverlay.png"/>
-                            </Rectangle.Fill>
-                        </Rectangle>
                         <ContentPresenter
-                                x:Name="ContentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                Control.IsTemplateFocusTarget="True"
-                                FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
-                                FocusVisualSecondaryThickness="2">
-                        </ContentPresenter>
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            Control.IsTemplateFocusTarget="True"
+                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                            FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
+                            FocusVisualSecondaryThickness="2" />
+
+                        <Rectangle
+                            x:Name="ImageHover"
+                            x:Load="False"
+                            helpers:CompositionFactory.OpacityDuration="0:0:0.08"
+                            Fill="{StaticResource TileOverlayBrush}"
+                            IsHitTestVisible="False"
+                            Opacity="0" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
