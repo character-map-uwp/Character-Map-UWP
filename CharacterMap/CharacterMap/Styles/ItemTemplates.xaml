@@ -43,12 +43,7 @@
         <Grid
             ColumnSpacing="12"
             Padding="12 4"
-            Background="Transparent"
-            PointerPressed="Grid_PointerPressed">
-            <Grid.ContextFlyout>
-                <!--  Menu content created dynamically  -->
-                <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Opening="FontContextFlyout_Opening" />
-            </Grid.ContextFlyout>
+            Background="Transparent">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

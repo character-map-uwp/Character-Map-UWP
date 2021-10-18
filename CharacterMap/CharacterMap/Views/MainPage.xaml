@@ -27,6 +27,10 @@
             IsSourceGrouped="True"
             Source="{Binding GroupedFontList}" />
 
+        <MenuFlyout
+            x:Name="FontListFlyout"
+            MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+            Placement="Bottom" />
     </Page.Resources>
 
     <Grid
@@ -390,6 +394,7 @@
                                 <SemanticZoom.ZoomedInView>
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
+                                        ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
                                         ItemTemplate="{StaticResource FontListItemTemplate}"
