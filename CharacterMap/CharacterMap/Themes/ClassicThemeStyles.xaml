@@ -822,6 +822,8 @@
         </Setter>
     </Style>
 
+    <Style x:Key="QuickCompareContainerStyle" BasedOn="{StaticResource ChromelessButtonStyle}" TargetType="Button" />
+
 
 
 
