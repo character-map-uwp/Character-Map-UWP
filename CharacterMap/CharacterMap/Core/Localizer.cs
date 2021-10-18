@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Helpers;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Markup;
 
 namespace CharacterMap.Core
@@ -8,14 +9,21 @@ namespace CharacterMap.Core
     {
         public string Key { get; set; }
 
-        public bool Lowercase { get; set; }
+        public CharacterCasing Casing { get; set; } = CharacterCasing.Normal;
 
         protected override object ProvideValue()
         {
-            if (Lowercase)
-                return Localization.Get(Key).ToLower();
+            string text = Localization.Get(Key);
 
-            return Localization.Get(Key);
+            if (Casing != CharacterCasing.Normal)
+                text = Casing switch
+                {
+                    CharacterCasing.Upper => text.ToUpper(),
+                    CharacterCasing.Lower => text.ToLower(),
+                    _ => text
+                };
+
+            return text;
         }
     }
 }

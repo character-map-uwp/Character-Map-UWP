@@ -71,12 +71,11 @@
                     Click="BtnSettings_OnClick"
                     FontSize="9"
                     Foreground="#8A8D90"
-                    Label="Settings"
                     Style="{StaticResource MapInfoButtonStyle}">
                     <TextBlock
                         CharacterSpacing="30"
                         FontWeight="Bold"
-                        Text="SETTINGS" />
+                        Text="{core:Localizer Key='SettingsHeader/Text', Casing=Upper}" />
                 </controls:UXButton>
 
             </Grid>
@@ -555,10 +554,10 @@
                             Margin="-6 0 0 0"
                             Click="BtnSettings_OnClick"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                            Label="Settings"
+                            Label="{core:Localizer Key='SettingsHeader/Text'}"
                             Style="{StaticResource MapInfoButtonStyle}">
                             <ToolTipService.ToolTip>
-                                <TextBlock x:Uid="SettingsHeader" Text="Settings" />
+                                <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
                             </ToolTipService.ToolTip>
                             <FontIcon
                                 HorizontalAlignment="Center"
@@ -650,7 +649,7 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Style="{StaticResource TitleTextStyle}"
-                    Text="{core:Localizer Key=TxtLoadingFonts/Text, Lowercase={StaticResource LowercaseTitles}}" />
+                    Text="{core:Localizer Key=TxtLoadingFonts/Text, Casing={StaticResource TitleCasing}}" />
             </StackPanel>
 
         </Grid>

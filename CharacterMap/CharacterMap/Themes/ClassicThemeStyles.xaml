@@ -37,8 +37,9 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
-    <x:Boolean x:Key="SupportsDarkTheme">True</x:Boolean>
+    <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
+    <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
 
     <!--  Override system generated accent colors  -->
     <Color x:Key="SystemAccentColorLight1">#FF1D85D7</Color>

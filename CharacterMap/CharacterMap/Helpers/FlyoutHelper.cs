@@ -309,7 +309,8 @@ namespace CharacterMap.Helpers
                         {
                             Text = Localization.Get("RemoveFromCollectionItem/Text"),
                             Icon = new FontIcon { Glyph = "\uE108" },
-                            Tag = font
+                            Tag = font,
+                            DataContext = font
                         };
                         removeItem.Click += RemoveFrom_Click;
                         menu.Items.Add(removeItem);
@@ -342,7 +343,8 @@ namespace CharacterMap.Helpers
                         {
                             Text = Localization.Get("RemoveFontFlyout/Text"),
                             Icon = new FontIcon { Glyph = "\uE107" },
-                            Tag = font
+                            Tag = font,
+                            DataContext = font
                         };
 
                         if (showAdvanced)

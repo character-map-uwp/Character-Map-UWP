@@ -4,6 +4,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media;
 using CharacterMap.Core;
 using CharacterMap.Helpers;
+using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Converters
 {
@@ -13,6 +14,29 @@ namespace CharacterMap.Converters
         {
             if (parameter is string p)
                 return Localization.Get(p);
+
+            return value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class CasingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (parameter is CharacterCasing casing && value is string s)
+            {
+                return casing switch
+                {
+                    CharacterCasing.Upper => s.ToUpper(),
+                    CharacterCasing.Lower => s.ToLower(),
+                    _ => s
+                };
+            }
 
             return value;
         }

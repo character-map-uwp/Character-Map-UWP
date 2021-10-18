@@ -5,6 +5,7 @@
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
 
+    <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
     <x:Boolean x:Key="LowercaseTitles">False</x:Boolean>
     <x:Boolean x:Key="SupportsDarkTheme">True</x:Boolean>
     <x:Double x:Key="FontListFlyoutHeight">40</x:Double>

@@ -220,7 +220,7 @@
       <DependentUpon>UnhandledExceptionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\UXSlider.cs" />
-    <Compile Include="Converters\ZoomBackgroundConverter.cs" />
+    <Compile Include="Converters\Converters.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
