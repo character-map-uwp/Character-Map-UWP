@@ -388,7 +388,7 @@ namespace CharacterMap.Controls
             {
                 if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
                 {
-                    if (_xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.FrameworkElement_Tag) is Character c)
+                    if (_xamlDirect.GetObjectProperty(root, XamlPropertyIndex.FrameworkElement_Tag) is Character c)
                     {
                         var childs = _xamlDirect.GetXamlDirectObjectProperty(root, XamlPropertyIndex.Panel_Children);
                         IXamlDirectObject tb = _xamlDirect.GetXamlDirectObjectFromCollectionAt(childs, 1);

@@ -34,68 +34,6 @@
                 Icon="NewWindow" />
         </MenuFlyout>
 
-        <Style x:Key="ChromelessButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="VerticalContentAlignment" Value="Stretch" />
-            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-            <Setter Property="FocusVisualMargin" Value="-3" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter
-                            x:Name="ContentPresenter"
-                            Padding="{TemplateBinding Padding}"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            AutomationProperties.AccessibilityView="Raw"
-                            Background="{TemplateBinding Background}"
-                            Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            ContentTransitions="{TemplateBinding ContentTransitions}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal">
-                                        <Storyboard>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                        </Storyboard>
-                                    </VisualState>
-
-                                    <VisualState x:Name="PointerOver">
-                                        <Storyboard>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                        </Storyboard>
-                                    </VisualState>
-
-                                    <VisualState x:Name="Pressed">
-                                        <Storyboard>
-                                            <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                        </Storyboard>
-                                    </VisualState>
-
-                                    <VisualState x:Name="Disabled">
-                                        <VisualState.Setters>
-                                            <Setter Target="RootGrid.Opacity" Value="0.5" />
-                                        </VisualState.Setters>
-                                    </VisualState>
-
-                                </VisualStateGroup>
-
-                            </VisualStateManager.VisualStateGroups>
-                        </ContentPresenter>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
         <muxc:UniformGridLayout
             x:Name="GridLayout"
             ItemsStretch="Fill"
@@ -520,7 +458,8 @@
                         </Border.RenderTransform>
                         <GridView
                             x:Name="Repeater"
-                            Padding="0 0 0 0"
+                            Margin="-8 0 0 0"
+                            Padding="8 0 0 0"
                             ContainerContentChanging="Repeater_ContainerContentChanging"
                             ItemTemplate="{StaticResource StackTemplate}"
                             ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
@@ -550,7 +489,7 @@
                                                     Content="{TemplateBinding Content}"
                                                     ContentTemplate="{TemplateBinding ContentTemplate}"
                                                     ContextRequested="ItemContextRequested"
-                                                    Style="{StaticResource ChromelessButtonStyle}" />
+                                                    Style="{StaticResource QuickCompareContainerStyle}" />
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
@@ -625,7 +564,7 @@
                                     <DataTemplate x:DataType="core:FontVariant">
                                         <controls:ContentGroup>
                                             <controls:ContentGroup.Text>
-                                                <TextBlock Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind PreferredName}" />
+                                                <TextBlock FontSize="{StaticResource ControlContentThemeFontSize}" Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind PreferredName}" />
                                             </controls:ContentGroup.Text>
                                             <controls:ContentGroup.SecondaryContent>
                                                 <TextBlock

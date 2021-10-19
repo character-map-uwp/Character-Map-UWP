@@ -11,7 +11,7 @@
     <AssemblyName>CharacterMap</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.22000.0</TargetPlatformVersion>
+    <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.20348.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <LangVersion>9.0</LangVersion>
@@ -220,7 +220,7 @@
       <DependentUpon>UnhandledExceptionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\UXSlider.cs" />
-    <Compile Include="Converters\ZoomBackgroundConverter.cs" />
+    <Compile Include="Converters\Converters.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
@@ -403,6 +403,7 @@
     <Content Include="Assets\FileAssociationTile.png" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="Assets\ZBG.png" />
+    <Content Include="Assets\ZuneAssets\HoverOverlay.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />

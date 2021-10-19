@@ -226,9 +226,11 @@ namespace CharacterMap.Helpers
                     var newCollection = new MenuFlyoutItem
                     {
                         Text = Localization.Get("NewCollectionItem/Text"),
-                        Icon = new FontIcon { Glyph = "\uE109" }
-                };
+                        Icon = new FontIcon { Glyph = "\uE109" },
+                        DataContext = font
+                    };
                     newCollection.Click += CreateCollection_Click;
+
                     if (newColl.Items != null)
                     {
                         newColl.Items.Add(newCollection);
@@ -241,7 +243,8 @@ namespace CharacterMap.Helpers
                             var symb = new MenuFlyoutItem
                             {
                                 Text = Localization.Get("OptionSymbolFonts/Text"),
-                                IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name)
+                                IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name),
+                                DataContext = font
                             };
                             symb.Click += AddToSymbolFonts_Click;
                             newColl.Items.Add(symb);
@@ -306,7 +309,8 @@ namespace CharacterMap.Helpers
                         {
                             Text = Localization.Get("RemoveFromCollectionItem/Text"),
                             Icon = new FontIcon { Glyph = "\uE108" },
-                            Tag = font
+                            Tag = font,
+                            DataContext = font
                         };
                         removeItem.Click += RemoveFrom_Click;
                         menu.Items.Add(removeItem);
@@ -321,7 +325,7 @@ namespace CharacterMap.Helpers
                         {
                             Text = Localization.Get("BtnPrint/Content"),
                             Icon = new FontIcon { Glyph = "\uE749" }
-                    }.AddKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control);
+                        }.AddKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control);
 
                         item.Click += Print_Click;
                         menu.Items.Insert(standalone ? 2 : 3, item);
@@ -339,7 +343,8 @@ namespace CharacterMap.Helpers
                         {
                             Text = Localization.Get("RemoveFontFlyout/Text"),
                             Icon = new FontIcon { Glyph = "\uE107" },
-                            Tag = font
+                            Tag = font,
+                            DataContext = font
                         };
 
                         if (showAdvanced)
@@ -355,7 +360,7 @@ namespace CharacterMap.Helpers
                 {
                     Text = Localization.Get("CompareFontsButton/Text"),
                     Icon = new FontIcon { Glyph = "\uE1D3" }
-            }.AddKeyboardAccelerator(VirtualKey.K, VirtualKeyModifiers.Control);
+                }.AddKeyboardAccelerator(VirtualKey.K, VirtualKeyModifiers.Control);
 
                 qq.Click += (s, e) =>
                 {
@@ -372,7 +377,7 @@ namespace CharacterMap.Helpers
                     {
                         Text = Localization.Get("AddToQuickCompare/Text"),
                         Icon = new FontIcon { Glyph = "\uE109" }
-                }.AddKeyboardAccelerator(VirtualKey.Q, VirtualKeyModifiers.Control);
+                    }.AddKeyboardAccelerator(VirtualKey.Q, VirtualKeyModifiers.Control);
 
                     item.Click += (s, e) =>
                     {

@@ -18,12 +18,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.Foundation;
 using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Navigation;
@@ -463,6 +465,47 @@ namespace CharacterMap.Views
         private void FontCompareButton_Click(object sender, RoutedEventArgs e)
         {
             _ = QuickCompareView.CreateWindowAsync(false);
+        }
+
+        private void LstFontFamily_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            args.ItemContainer.PointerPressed -= ItemContainer_PointerPressed;
+            args.ItemContainer.PointerPressed += ItemContainer_PointerPressed;
+
+            args.ItemContainer.ContextRequested -= ItemContainer_ContextRequested;
+            args.ItemContainer.ContextRequested += ItemContainer_ContextRequested;
+        }
+
+        private void ItemContainer_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            /* MIDDLE CLICK FOR FONT LIST */
+            var pointer = e.GetCurrentPoint(sender as FrameworkElement);
+            if (pointer.Properties.IsMiddleButtonPressed
+                && sender is ListViewItem f
+                && f.Content is InstalledFont font)
+            {
+                _ = FontMapView.CreateNewViewForFontAsync(font);
+            }
+        }
+
+        private void ItemContainer_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+        {
+            /* RIGHT CLICK FOR FONT LIST */
+            if (sender is ListViewItem f
+                && f.Content is InstalledFont font)
+            {
+                args.Handled = true;
+                FlyoutBase.SetAttachedFlyout(f, FontListFlyout);
+                FlyoutHelper.CreateMenu(
+                        FontListFlyout,
+                        font,
+                        null,
+                        null,
+                        false);
+
+                args.TryGetPosition(sender, out Point pos);
+                FontListFlyout.ShowAt(sender, pos);
+            }
         }
 
 

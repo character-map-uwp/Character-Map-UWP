@@ -5,6 +5,7 @@
     xmlns:converters="using:CharacterMap.Converters"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
 
+    <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
     <x:Boolean x:Key="LowercaseTitles">False</x:Boolean>
     <x:Boolean x:Key="SupportsDarkTheme">True</x:Boolean>
     <x:Double x:Key="FontListFlyoutHeight">40</x:Double>
@@ -65,7 +66,6 @@
     <x:Double x:Key="FontListFontSize">14</x:Double>
 
     <Style x:Key="SettingsMenuStyle" TargetType="StackPanel" />
-
 
     <converters:PassthroughConverter x:Key="TitleConverter" />
 
@@ -171,14 +171,7 @@
         <ContentPresenter Margin="0 12 0 0" Content="{Binding}" />
     </DataTemplate>
 
-    <!--<Style x:Key="DefaultThemeListViewItemStyle" BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-        <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
-    </Style>-->
+    <Style x:Key="QuickCompareContainerStyle" BasedOn="{StaticResource ChromelessButtonStyle}" TargetType="Button" />
 
     <Style x:Key="FontListStyle" TargetType="Border" />
 
@@ -238,7 +231,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style TargetType="ContentDialog">
         <Setter Property="Foreground" Value="{ThemeResource ContentDialogForeground}" />
@@ -540,7 +532,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style x:Key="CompareCardStyle" TargetType="controls:ContentGroup">
         <Setter Property="IsTabStop" Value="False" />

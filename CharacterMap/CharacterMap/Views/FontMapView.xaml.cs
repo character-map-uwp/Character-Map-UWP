@@ -228,6 +228,9 @@ namespace CharacterMap.Views
                         {
                             try
                             {
+                                if (PreviewGrid.Visibility == Visibility.Collapsed || PreviewGridContent.Visibility == Visibility.Collapsed)
+                                    return;
+
                                 // Empty glyphs will cause the connected animation service to crash, so manually
                                 // check if the rendered glyph contains content
                                 if (CharGrid.ContainerFromItem(ViewModel.SelectedChar) is FrameworkElement container

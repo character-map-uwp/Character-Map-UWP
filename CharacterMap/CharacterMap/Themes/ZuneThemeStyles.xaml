@@ -7,6 +7,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
+    <CharacterCasing x:Key="TitleCasing">Lower</CharacterCasing>
     <x:Boolean x:Key="LowercaseTitles">True</x:Boolean>
     <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
@@ -14,8 +15,8 @@
     <BrushTransition x:Key="DefaultBrushTransition" Duration="0:0:0.1" />
 
 
-    
-    
+
+
     <!--  SYSTEM BRUSHES  -->
 
     <Color x:Key="SystemAccentColor">#F10DA2</Color>
@@ -107,8 +108,9 @@
     <SolidColorBrush x:Key="DefaultHostBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ScrollBarBorderBrush" Color="#B8B5B5" />
     <SolidColorBrush x:Key="ControlFocusedAccentBrush" Color="#FA6EC9" />
-    <SolidColorBrush x:Key="CheckBoxBorderBrush" Color="#7F7E7D" />
+    <SolidColorBrush x:Key="CheckBoxBorderBrush" Color="#FF000000" />
     <SolidColorBrush x:Key="ControlPointerOverForegroundBrush" Color="#828689" />
+
     <SolidColorBrush x:Key="DefaultControlForegroundBrush" Color="#373A3D" />
     <SolidColorBrush x:Key="ButtonForegroundBrush" Color="Black" />
     <SolidColorBrush x:Key="ButtonForegroundPointerOverBrush" Color="#A3A3A3" />
@@ -123,6 +125,8 @@
     <SolidColorBrush x:Key="ComboBoxDropDownBorderBrush" Color="#A6A6A6" />
     <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="#D8D8D9" />
     <SolidColorBrush x:Key="SelectedPointerOverBackgroundBrush" Color="#E7E8E8" />
+    <SolidColorBrush x:Key="ControlGlyphBrush" Color="#555555" />
+    <SolidColorBrush x:Key="ControlContentPointerOverForeground" Color="#B1B4B6" />
 
     <LinearGradientBrush x:Key="ComboBoxBackground" StartPoint="0.5,0" EndPoint="0.5,1">
         <GradientStop Offset="1" Color="#FFD8D8D8" />
@@ -159,6 +163,8 @@
 
 
     <!--  TEXT STYLES  -->
+
+    <CharacterCasing x:Key="UpperCasing">Upper</CharacterCasing>
 
     <Style x:Key="FontFilterTitleStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="16" />
@@ -390,9 +396,11 @@
 
     <!--  GRIDVIEW  -->
 
+    <ImageBrush x:Key="TileOverlayBrush" ImageSource="ms-appx:///Assets/ZuneAssets/HoverOverlay.png" />
+
     <Style x:Key="DefaultGridViewItemStyle" TargetType="GridViewItem">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="TabNavigation" Value="Local" />
         <Setter Property="IsHoldingEnabled" Value="False" />
@@ -405,19 +413,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="GridViewItem">
-                    <ContentPresenter
-                        x:Name="ContentPresenter"
-                        Margin="{TemplateBinding Padding}"
-                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        ContentTransitions="{TemplateBinding ContentTransitions}"
-                        Control.IsTemplateFocusTarget="True"
-                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                        FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
-                        FocusVisualSecondaryThickness="2">
+                    <Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal" />
@@ -426,6 +422,9 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ImageHover" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.8" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -441,7 +440,7 @@
                                 <VisualState x:Name="Selected">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAccentBrush}" />
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -450,6 +449,9 @@
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CheckBoxBorderBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ImageHover" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
                                         </ObjectAnimationUsingKeyFrames>
                                     </Storyboard>
                                 </VisualState>
@@ -463,7 +465,29 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                    </ContentPresenter>
+
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            Control.IsTemplateFocusTarget="True"
+                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                            FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
+                            FocusVisualSecondaryThickness="2" />
+
+                        <Rectangle
+                            x:Name="ImageHover"
+                            x:Load="False"
+                            helpers:CompositionFactory.OpacityDuration="0:0:0.08"
+                            Fill="{StaticResource TileOverlayBrush}"
+                            IsHitTestVisible="False"
+                            Opacity="0" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -754,10 +778,10 @@
                             Margin="0 0 0 6"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            FontSize="11.333"
+                            FontSize="10"
                             FontWeight="SemiBold"
-                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                            Text="{TemplateBinding Label}"
+                            Foreground="{ThemeResource DefaultControlForegroundBrush}"
+                            Text="{Binding TemplateSettings.EffectiveLabel, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             Visibility="Collapsed" />
 
                         <FontIcon
@@ -803,22 +827,13 @@
     <Style x:Key="DevToolsAppBarButtonStyle" BasedOn="{StaticResource DefaultThemeAppBarButtonStyle}" TargetType="controls:UXButton">
         <Setter Property="Height" Value="52" />
         <Setter Property="IsLabelVisible" Value="True" />
+        <Setter Property="LabelCasing" Value="Upper" />
     </Style>
 
     <Style x:Key="CopyButtonStyle" BasedOn="{StaticResource DefaultThemeAppBarButtonStyle}" TargetType="controls:UXButton">
         <Setter Property="Height" Value="50" />
         <Setter Property="Width" Value="50" />
     </Style>
-
-    <!--<Style x:Key="DefaultThemeListViewItemStyle" BasedOn="{StaticResource ListViewItemRevealStyle}" TargetType="ListViewItem">
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-        <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
-    </Style>-->
-
 
     <Style x:Key="DefaultThemeButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource ButtonBackgroundBrush}" />
@@ -902,6 +917,83 @@
     <Style BasedOn="{StaticResource DefaultThemeButtonStyle}" TargetType="Button" />
 
     <Style x:Key="AccentButtonStyle" BasedOn="{StaticResource DefaultThemeButtonStyle}" TargetType="Button" />
+
+    <Style x:Key="QuickCompareContainerStyle" TargetType="Button">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="PointerOver">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ImageHover" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.8" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <PointerDownThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ImageHover" Storyboard.TargetProperty="Opacity">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="0.8" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Opacity" Value="0.5" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                            </VisualStateGroup>
+
+                        </VisualStateManager.VisualStateGroups>
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Padding="{TemplateBinding Padding}"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            AutomationProperties.AccessibilityView="Raw"
+                            Background="{TemplateBinding Background}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}" />
+                        <Rectangle
+                            x:Name="ImageHover"
+                            x:Load="False"
+                            Margin="-8 0 0 0"
+                            helpers:CompositionFactory.OpacityDuration="0:0:0.08"
+                            Fill="{StaticResource TileOverlayBrush}"
+                            IsHitTestVisible="False"
+                            Opacity="0" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 
 
@@ -2357,6 +2449,22 @@
                         Orientation="Horizontal"
                         Spacing="8">
                         <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="NormalRectangle.Stroke" Value="Black" />
+                                        <Setter Target="CheckGlyph.Fill" Value="Black" />
+                                        <Setter Target="Presenter.Foreground" Value="{ThemeResource ControlContentPointerOverForeground}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="Presenter.Foreground" Value="{ThemeResource ControlContentPointerOverForeground}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled" />
+                            </VisualStateGroup>
                             <VisualStateGroup x:Name="CheckStates">
                                 <VisualState x:Name="Checked">
                                     <VisualState.Setters>
@@ -2379,12 +2487,12 @@
                         <Grid Width="18" Height="20">
                             <Rectangle
                                 x:Name="NormalRectangle"
-                                Width="18"
-                                Height="18"
+                                Width="16"
+                                Height="16"
                                 Fill="{ThemeResource CheckBoxBackgroundBrush}"
                                 RadiusX="10"
                                 RadiusY="10"
-                                Stroke="{ThemeResource CheckBoxBorderBrush}"
+                                Stroke="{ThemeResource ControlGlyphBrush}"
                                 StrokeThickness="1"
                                 UseLayoutRounding="False" />
 
@@ -2393,7 +2501,7 @@
                                 Width="9"
                                 Height="9"
                                 helpers:CompositionFactory.OpacityDuration="{StaticResource BrushDuration}"
-                                Fill="{ThemeResource CheckBoxBorderBrush}"
+                                Fill="{ThemeResource ControlGlyphBrush}"
                                 Opacity="0"
                                 RadiusX="10"
                                 RadiusY="10"
@@ -2401,6 +2509,7 @@
                         </Grid>
 
                         <ContentPresenter
+                            x:Name="Presenter"
                             VerticalAlignment="Center"
                             Content="{TemplateBinding Content}"
                             TextLineBounds="Tight" />
@@ -4686,20 +4795,15 @@
                                 <VisualState x:Name="Normal" />
 
                                 <VisualState x:Name="PointerOver">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OuterBorder" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="White" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="Fill">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleSwitchFillOnPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SwitchKnobBounds" Storyboard.TargetProperty="Stroke">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleSwitchStrokeOnPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SwitchAreaGrid" Storyboard.TargetProperty="Background">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource ToggleSwitchContainerBackgroundPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="SwitchKnobOn.Fill" Value="Black" />
+                                        <Setter Target="SwitchKnobOff.Fill" Value="Black" />
+                                        <!--<Setter Target="OuterBorder.Background" Value="White" />-->
+                                        <Setter Target="OuterBorder.BorderBrush" Value="Black" />
+                                        <!--<Setter Target="SwitchKnobBounds.Stroke" Value="Black" />-->
+                                        <Setter Target="OnContentPresenter.Foreground" Value="{ThemeResource ControlContentPointerOverForeground}" />
+                                        <Setter Target="OffContentPresenter.Foreground" Value="{ThemeResource ControlContentPointerOverForeground}" />
+                                    </VisualState.Setters>
                                 </VisualState>
 
                                 <VisualState x:Name="Pressed">
@@ -4961,7 +5065,7 @@
                                 RadiusX="4"
                                 RadiusY="4"
                                 Stroke="Transparent"
-                                StrokeThickness="2" />
+                                StrokeThickness="1" />
                             <Grid
                                 x:Name="SwitchKnob"
                                 Grid.Row="1"
@@ -4972,7 +5076,7 @@
                                     x:Name="SwitchKnobOn"
                                     Width="10"
                                     Height="10"
-                                    Fill="Black"
+                                    Fill="{ThemeResource ControlGlyphBrush}"
                                     Opacity="0"
                                     RadiusX="2"
                                     RadiusY="2" />
@@ -4980,7 +5084,7 @@
                                     x:Name="SwitchKnobOff"
                                     Width="10"
                                     Height="10"
-                                    Fill="{ThemeResource CheckBoxBorderBrush}"
+                                    Fill="{ThemeResource ControlGlyphBrush}"
                                     RadiusX="2"
                                     RadiusY="2" />
                                 <Grid.RenderTransform>
@@ -4998,11 +5102,8 @@
                                     </ControlTemplate>
                                 </Thumb.Template>
                             </Thumb>
-
                         </Grid>
-
                     </Grid>
-
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

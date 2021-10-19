@@ -1,11 +1,29 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls
 {
+    [ObservableObject]
+    public partial class UXButtonTemplateSettings
+    {
+        [ObservableProperty]
+        string _effectiveLabel;
+
+        public void Update(string text, CharacterCasing casing)
+        {
+            EffectiveLabel = casing switch
+            {
+                CharacterCasing.Upper => text.ToUpper(),
+                CharacterCasing.Lower => text.ToLower(),
+                _ => text
+            };
+        }
+    }
+
     public class UXButton : Button//, IThemeableControl
     {
         public bool IsHintVisible
@@ -32,6 +50,17 @@ namespace CharacterMap.Controls
                 ((UXButton)d).UpdateLabel();
             }));
 
+        public CharacterCasing LabelCasing
+        {
+            get { return (CharacterCasing)GetValue(LabelCasingProperty); }
+            set { SetValue(LabelCasingProperty, value); }
+        }
+
+        public static readonly DependencyProperty LabelCasingProperty =
+            DependencyProperty.Register(nameof(LabelCasing), typeof(CharacterCasing), typeof(UXButton), new PropertyMetadata(CharacterCasing.Normal, (d, e) =>
+            {
+                ((UXButton)d).UpdateLabelText();
+            }));
 
         public string Label
         {
@@ -40,8 +69,12 @@ namespace CharacterMap.Controls
         }
 
         public static readonly DependencyProperty LabelProperty =
-            DependencyProperty.Register(nameof(Label), typeof(string), typeof(UXButton), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Label), typeof(string), typeof(UXButton), new PropertyMetadata(null, (d, e) =>
+            {
+                ((UXButton)d).UpdateLabelText();
+            }));
 
+        public UXButtonTemplateSettings TemplateSettings { get; } = new UXButtonTemplateSettings();
 
         bool _isTemplateApplied = false;
 
@@ -75,6 +108,11 @@ namespace CharacterMap.Controls
         {
             if (_isTemplateApplied)
                 VisualStateManager.GoToState(this, IsLabelVisible ? "LabelVisible" : "LabelHidden", animate);
+        }
+
+        private void UpdateLabelText()
+        {
+            TemplateSettings.Update(Label, LabelCasing);
         }
 
         public void UpdateTheme()

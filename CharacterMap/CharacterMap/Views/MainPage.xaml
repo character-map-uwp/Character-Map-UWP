@@ -27,6 +27,10 @@
             IsSourceGrouped="True"
             Source="{Binding GroupedFontList}" />
 
+        <MenuFlyout
+            x:Name="FontListFlyout"
+            MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+            Placement="Bottom" />
     </Page.Resources>
 
     <Grid
@@ -47,7 +51,7 @@
             Grid.ColumnSpan="2"
             VerticalAlignment="Top"
             Canvas.ZIndex="10">
-            <StackPanel Orientation="Horizontal">
+            <Grid>
                 <ToggleButton
                     x:Name="ToggleFullScreenModeButton"
                     x:Uid="ToggleFullScreenModeButton"
@@ -59,7 +63,22 @@
                     ToolTipService.Placement="Right">
                     <FontIcon FontSize="14" Glyph="&#xE740;" />
                 </ToggleButton>
-            </StackPanel>
+
+                <controls:UXButton
+                    x:Name="ZuneSettingsButton"
+                    x:Load="False"
+                    HorizontalAlignment="Right"
+                    Click="BtnSettings_OnClick"
+                    FontSize="9"
+                    Foreground="#8A8D90"
+                    Style="{StaticResource MapInfoButtonStyle}">
+                    <TextBlock
+                        CharacterSpacing="30"
+                        FontWeight="Bold"
+                        Text="{core:Localizer Key='SettingsHeader/Text', Casing=Upper}" />
+                </controls:UXButton>
+
+            </Grid>
         </controls:XamlTitleBar>
 
         <!--  Main Content  -->
@@ -374,6 +393,7 @@
                                 <SemanticZoom.ZoomedInView>
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
+                                        ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
                                         ItemTemplate="{StaticResource FontListItemTemplate}"
@@ -534,10 +554,10 @@
                             Margin="-6 0 0 0"
                             Click="BtnSettings_OnClick"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                            Label="Settings"
+                            Label="{core:Localizer Key='SettingsHeader/Text'}"
                             Style="{StaticResource MapInfoButtonStyle}">
                             <ToolTipService.ToolTip>
-                                <TextBlock x:Uid="SettingsHeader" Text="Settings" />
+                                <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
                             </ToolTipService.ToolTip>
                             <FontIcon
                                 HorizontalAlignment="Center"
@@ -629,7 +649,7 @@
                 <TextBlock
                     HorizontalAlignment="Center"
                     Style="{StaticResource TitleTextStyle}"
-                    Text="{core:Localizer Key=TxtLoadingFonts/Text, Lowercase={StaticResource LowercaseTitles}}" />
+                    Text="{core:Localizer Key=TxtLoadingFonts/Text, Casing={StaticResource TitleCasing}}" />
             </StackPanel>
 
         </Grid>
@@ -748,6 +768,8 @@
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
+                        <Setter Target="BtnSettings.Visibility" Value="Collapsed" />
+                        <Setter Target="ZuneSettingsButton.Visibility" Value="Visible" />
                         <Setter Target="InlineLabelCount.IsHitTestVisible" Value="False" />
                         <Setter Target="InlineLabelCount.FontSize" Value="11" />
                         <Setter Target="InlineLabelCount.FontWeight" Value="SemiBold" />

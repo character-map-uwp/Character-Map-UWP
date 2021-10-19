@@ -38,7 +38,7 @@ namespace CharacterMap.Helpers
             return ApplicationView.GetForCurrentView().Title;
         }
 
-        internal static void SetTitleBar(FrameworkElement e)
+        internal static void SetTitleBar(UIElement e)
         {
             SetDefaultTitleBar(Window.Current.Content, e);
 
@@ -61,7 +61,7 @@ namespace CharacterMap.Helpers
             if (GetDefaultTitleBar(Window.Current.Content) is XamlTitleBar bar)
                 bar.IsDragTarget = true;
 
-            Window.Current.SetTitleBar(GetDefaultTitleBar(Window.Current.Content));
+            SetTitleBar(GetDefaultTitleBar(Window.Current.Content));
         }
     }
 }
