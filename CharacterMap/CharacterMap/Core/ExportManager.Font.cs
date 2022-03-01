@@ -132,7 +132,13 @@ namespace CharacterMap.Core
 
             var src = DirectWrite.GetFileName(font.FontFace);
             if (!string.IsNullOrWhiteSpace(src))
-                ext = Path.GetExtension(src);
+            {
+                var strsrc = Path.GetExtension(src);
+                if (!string.IsNullOrWhiteSpace(strsrc))
+                    ext = strsrc;
+            }
+
+            if (string.IsNullOrEmpty(ext))
 
             if (scheme == ExportNamingScheme.System)
                 fileName = src;
