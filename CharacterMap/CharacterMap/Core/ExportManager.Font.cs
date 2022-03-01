@@ -46,7 +46,7 @@ namespace CharacterMap.Core
             WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(null, false)));
         }
 
-        internal static Task ExportCollectionAsZipAsync(List<InstalledFont> fontList, UserFontCollection selectedCollection)
+        internal static Task ExportCollectionAsZipAsync(IList<InstalledFont> fontList, UserFontCollection selectedCollection)
         {
             var fonts = fontList.SelectMany(f => f.Variants).ToList();
             return ExportFontsAsZipAsync(fonts, selectedCollection.Name);
@@ -80,7 +80,7 @@ namespace CharacterMap.Core
             }
         }
 
-        internal static Task ExportCollectionToFolderAsync(List<InstalledFont> fontList)
+        internal static Task ExportCollectionToFolderAsync(IList<InstalledFont> fontList)
         {
             var fonts = fontList.SelectMany(f => f.Variants).ToList();
             return ExportFontsToFolderAsync(fonts);
@@ -144,7 +144,7 @@ namespace CharacterMap.Core
                 fileName = src;
 
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = $"{font.FamilyName} {font.PreferredName}{ext}";
+                fileName = $"{font.FamilyName.Trim()} {font.PreferredName.Trim()}{ext}";
 
             return $"{Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false)}{Path.GetExtension(fileName).ToLower()}";
         }

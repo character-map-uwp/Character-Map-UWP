@@ -520,7 +520,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SettingsPresenter">
-                    <StackPanel
+                    <Grid
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
@@ -534,14 +534,20 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
                         <TextBlock Style="{StaticResource HeaderStyle}" Text="{TemplateBinding Title}" />
                         <TextBlock
                             x:Name="Description"
+                            Grid.Row="1"
                             Style="{StaticResource DescriptionStyle}"
                             Text="{TemplateBinding Description}"
                             Visibility="Collapsed" />
-                        <ContentPresenter Content="{TemplateBinding Content}" />
-                    </StackPanel>
+                        <ContentPresenter Grid.Row="2" Content="{TemplateBinding Content}" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

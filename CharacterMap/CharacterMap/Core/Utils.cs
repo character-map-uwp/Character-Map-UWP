@@ -285,7 +285,9 @@ namespace CharacterMap.Core
                         || (sb.Length > 0 && char.IsDigit(c) && !char.IsDigit(prev))
                         || (char.IsDigit(prev) && char.IsLetter(c)))
                     {
-                        sb.Append(' ');
+                        if (c != 32)
+                            sb.Append(' ');
+
                         if (!title)
                             c = char.ToLowerInvariant(c);
                     }

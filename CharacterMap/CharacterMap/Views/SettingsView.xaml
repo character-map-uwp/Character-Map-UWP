@@ -11,12 +11,12 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
-    d:DesignHeight="1880"
-    d:DesignWidth="1920"
     Loaded="View_Loaded"
     Loading="View_Loading"
     TabFocusNavigation="Cycle"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DesignHeight="1880"
+    d:DesignWidth="1920">
 
     <UserControl.Resources>
 
@@ -69,6 +69,15 @@
                     <VisualState.Setters>
                         <Setter Target="MenuColumn.Spacing" Value="8" />
                         <Setter Target="MenuColumn.Padding" Value="20 0 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="ScrollStates">
+                <VisualState x:Name="ContentScrollEnabledState" />
+                <VisualState x:Name="ContentScrollDisabledState">
+                    <VisualState.Setters>
+                        <Setter Target="ContentScroller.VerticalScrollBarVisibility" Value="Disabled" />
+                        <Setter Target="ContentScroller.VerticalScrollMode" Value="Disabled" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -128,6 +137,15 @@
                         Tag="{x:Bind SearchPanel}">
                         <controls:MenuButton.Icon>
                             <FontIcon Glyph="&#xE11A;" />
+                        </controls:MenuButton.Icon>
+                    </controls:MenuButton>
+
+                    <controls:MenuButton
+                        Checked="MenuItem_Checked"
+                        Content="Collections"
+                        Tag="{x:Bind CollectionPanel}">
+                        <controls:MenuButton.Icon>
+                            <FontIcon Glyph="&#xE71D;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -569,6 +587,13 @@
                                 </controls:SettingsPresenter>
 
                             </StackPanel>
+
+                            <Grid
+                                x:Name="CollectionPanel"
+                                HorizontalAlignment="Stretch"
+                                Visibility="Collapsed">
+                                <views:CollectionManagementView HorizontalAlignment="Stretch" />
+                            </Grid>
 
                             <StackPanel x:Name="ChangePanel" Visibility="Collapsed">
                                 <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />

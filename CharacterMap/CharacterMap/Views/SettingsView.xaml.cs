@@ -323,19 +323,37 @@ namespace CharacterMap.Views
               && item.Tag is Panel panel
               && panel.Visibility == Visibility.Collapsed)
             {
-                //foreach (var child in MenuColumn.Children.OfType<Button>())
-                //    VisualStateManager.GoToState(child, "NotSelectedState", true);
-
+                // X: Ensure all settings panels are hidden
                 foreach (var child in ContentPanel.Children.OfType<FrameworkElement>())
-                    child.Visibility = Visibility.Collapsed;
+                {
+                    // X: Deactivate old content if supported
+                    if (child.Visibility == Visibility.Visible
+                        && child is Panel p
+                        && p.Children.Count == 1
+                        && p.Children[0] is IActivateableControl d)
+                        d.Deactivate();
 
+                    child.Visibility = Visibility.Collapsed;
+                }
+
+                // X: Reset scroll position
                 ContentScroller.ChangeView(null, 0, null, true);
 
-                //VisualStateManager.GoToState(item, "SelectedState", true);
+                // X: Activate new content if supported
+                if (panel.Children.Count == 1 && panel.Children[0] is IActivateableControl a)
+                {
+                    a.Activate();
+                    VisualStateManager.GoToState(this, ContentScrollDisabledState.Name, false);
+                }
+                else
+                    VisualStateManager.GoToState(this, ContentScrollEnabledState.Name, false);
 
+
+                // X: Start child animation
                 if (Settings.UseSelectionAnimations)
                     CompositionFactory.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
 
+                // X: Show selected panel
                 panel.Visibility = Visibility.Visible;
             }
         }

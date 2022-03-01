@@ -83,7 +83,7 @@ namespace CharacterMap.ViewModels
 
         protected virtual void OnPropertyChangeNotified(string propertyName) { }
 
-        public WeakReferenceMessenger Messenger => WeakReferenceMessenger.Default;
+        public IMessenger Messenger => WeakReferenceMessenger.Default;
 
         public void Register<T>(Action<T> action, string token = null) where T : class
         {
