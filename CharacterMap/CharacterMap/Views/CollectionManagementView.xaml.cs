@@ -1,5 +1,9 @@
 ﻿using CharacterMap.Controls;
+using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
+using Microsoft.Toolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -49,15 +53,51 @@ namespace CharacterMap.Views
             ViewModel.RefreshFontLists();
         }
 
+        private async void NewCollection_Click(object sender, RoutedEventArgs e)
+        {
+            CreateCollectionDialog d = new();
+            await d.ShowAsync();
+
+            if (d.Result is AddToCollectionResult result && result.Success)
+            {
+                SelectCollection(result.Collection);
+            }
+        }
+
+        void SelectCollection(UserFontCollection collection)
+        {
+            ViewModel.Activate();
+            ViewModel.SelectedCollection = collection;
+        }
+
         private async void RenameFontCollection_Click(object sender, RoutedEventArgs e)
         {
             await (new CreateCollectionDialog(ViewModel.SelectedCollection)).ShowAsync();
-            this.Bindings.Update();
+            SelectCollection(ViewModel.SelectedCollection);
         }
 
         private void DeleteCollection_Click(object sender, RoutedEventArgs e)
         {
+            var d = new ContentDialog
+            {
+                Title = Localization.Get("DigDeleteCollection/Title"),
+                IsPrimaryButtonEnabled = true,
+                IsSecondaryButtonEnabled = true,
+                PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
+                SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+            };
 
+            d.PrimaryButtonClick += DigDeleteCollection_PrimaryButtonClick;
+            _ = d.ShowAsync();
+        }
+
+        private async void DigDeleteCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            string name = ViewModel.SelectedCollection.Name;
+            await ViewModel.CollectionService.DeleteCollectionAsync(ViewModel.SelectedCollection);
+            SelectCollection(null);
+
+            ViewModel.Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
         }
     }
 }

@@ -52,7 +52,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private UserCollectionsService _collectionService = null;
+        public UserCollectionsService CollectionService { get; private set; } = null;
 
         #endregion
 
@@ -61,8 +61,8 @@ namespace CharacterMap.ViewModels
 
         public void Activate()
         {
-            if (_collectionService is null)
-                _collectionService = Ioc.Default.GetService<UserCollectionsService>();
+            if (CollectionService is null)
+                CollectionService = Ioc.Default.GetService<UserCollectionsService>();
 
             RefreshCollections();
             RefreshFontLists();
@@ -77,7 +77,7 @@ namespace CharacterMap.ViewModels
 
         void RefreshCollections()
         {
-            Collections = _collectionService.Items;
+            Collections = CollectionService.Items;
         }
 
         public void RefreshFontLists()
@@ -140,7 +140,7 @@ namespace CharacterMap.ViewModels
             try
             {
                 SelectedCollection.Fonts = new HashSet<string>(CollectionFonts.Select(c => c.Name));
-                await _collectionService.SaveCollectionAsync(SelectedCollection);
+                await CollectionService.SaveCollectionAsync(SelectedCollection);
             }
             finally
             {

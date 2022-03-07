@@ -175,9 +175,11 @@ namespace CharacterMap.Services
 
         public async Task<AddToCollectionResult> AddToCollectionAsync(InstalledFont font, UserFontCollection collection)
         {
-            if (!collection.Fonts.Contains(font.Name))
+            if (font is null || !collection.Fonts.Contains(font.Name))
             {
-                collection.Fonts.Add(font.Name);
+                if (font is not null)
+                    collection.Fonts.Add(font.Name);
+
                 await SaveCollectionAsync(collection);
                 return new AddToCollectionResult(true, font, collection);
             }

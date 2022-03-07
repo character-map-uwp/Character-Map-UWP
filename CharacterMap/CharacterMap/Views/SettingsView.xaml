@@ -142,7 +142,7 @@
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
-                        Content="Collections"
+                        Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
                         Tag="{x:Bind CollectionPanel}">
                         <controls:MenuButton.Icon>
                             <FontIcon Glyph="&#xE71D;" />
