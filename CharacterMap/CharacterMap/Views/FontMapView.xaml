@@ -15,11 +15,11 @@
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     x:Name="ViewRoot"
-    d:DesignHeight="800"
-    d:DesignWidth="1280"
     BorderThickness="0"
     SizeChanged="UserControl_SizeChanged"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DesignHeight="800"
+    d:DesignWidth="1280">
 
     <Control.Tag>
         <Grid x:Name="MoreOptionsBar">
@@ -204,9 +204,9 @@
 
     <Grid
         x:Name="LayoutRoot"
+        DataContext="{x:Bind ViewModel}"
         d:Background="{ThemeResource DefaultPageBackgroundBrush}"
-        d:BackgroundTransition="{StaticResource RootBackgroundTransition}"
-        DataContext="{x:Bind ViewModel}">
+        d:BackgroundTransition="{StaticResource RootBackgroundTransition}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="{StaticResource TitleRowGridHeight}" />
@@ -223,8 +223,8 @@
             x:Name="TitleBar"
             x:Load="{x:Bind IsStandalone}"
             VerticalAlignment="Top"
-            d:IsLocked="True"
-            Canvas.ZIndex="101">
+            Canvas.ZIndex="101"
+            d:IsLocked="True">
             <StackPanel Orientation="Horizontal">
                 <ToggleButton
                     x:Name="OverlayButton"
@@ -289,6 +289,7 @@
                 HorizontalAlignment="Right"
                 Click="{x:Bind ViewModel.ImportFile}"
                 IsEnabled="{Binding ImportButtonEnabled}"
+                Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                 Style="{ThemeResource TransparentButton}"
                 Visibility="{x:Bind ViewModel.IsExternalFile}">
                 <Grid ColumnSpacing="12">
@@ -300,7 +301,8 @@
                     <TextBlock
                         x:Uid="AddToCollectionHint"
                         Grid.Column="1"
-                        TextTrimming="CharacterEllipsis" />
+                        TextTrimming="CharacterEllipsis"
+                        d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
                 </Grid>
             </controls:UXButton>
 
@@ -439,9 +441,9 @@
                         x:Name="FontPropertiesButton"
                         x:Uid="FontPropertiesButton"
                         VerticalAlignment="Stretch"
-                        d:Label="Info"
                         IsHintVisible="True"
-                        Style="{ThemeResource MapInfoButtonStyle}">
+                        Style="{ThemeResource MapInfoButtonStyle}"
+                        d:Label="Info">
                         <FontIcon Margin="0,0,-2,0" Glyph="&#xE946;" />
                         <Button.Flyout>
                             <Flyout win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}" Opened="InfoFlyout_Opened">
@@ -622,10 +624,10 @@
                         x:Name="FontOptionsButton"
                         x:Uid="FontOptionsButton"
                         VerticalAlignment="Stretch"
-                        d:Label="Options"
                         IsHintVisible="True"
                         Style="{ThemeResource MapInfoButtonStyle}"
-                        Visibility="Collapsed">
+                        Visibility="Collapsed"
+                        d:Label="Options">
                         <FontIcon Margin="0,0,-2,0" Glyph="&#xE8D2;" />
                         <Button.Flyout>
                             <Flyout win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}" Placement="Bottom">
@@ -682,10 +684,10 @@
                     <controls:UXButton
                         x:Name="ViewToggleButton"
                         x:Uid="ViewToggleButton"
-                        d:Label="Switch"
                         Click="{x:Bind Path=ViewModel.ChangeDisplayMode}"
                         Style="{ThemeResource MapInfoButtonStyle}"
-                        ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
+                        ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}"
+                        d:Label="Switch">
                         <FontIcon
                             Margin="0,0,-2,0"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -696,10 +698,10 @@
                         x:Name="CharacterFilterButton"
                         x:Uid="CharacterFilterButton"
                         VerticalAlignment="Stretch"
-                        d:Label="Filter"
                         IsHintVisible="True"
                         Loaded="{x:Bind helpers:CompositionFactory.SetStandardFadeInOut}"
-                        Style="{ThemeResource MapInfoButtonStyle}">
+                        Style="{ThemeResource MapInfoButtonStyle}"
+                        d:Label="Filter">
                         <FontIcon
                             Margin="0,0,-2,0"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -719,7 +721,6 @@
 
                     <controls:UXButton
                         x:Name="MoreOptionsButton"
-                        x:Load="{x:Bind core:Converters.False(ViewModel.IsExternalFile)}"
                         x:Uid="BtnMoreIcon"
                         DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
                         Label="&#x2026;"
@@ -761,8 +762,8 @@
                 Grid.Row="2"
                 Grid.Column="0"
                 Margin="0"
-                d:Background="Red"
-                RenderTransformOrigin="0.5,0.5">
+                RenderTransformOrigin="0.5,0.5"
+                d:Background="Red">
                 <Grid.RenderTransform>
                     <CompositeTransform />
                 </Grid.RenderTransform>
@@ -920,10 +921,10 @@
                 Grid.Row="2"
                 Grid.ColumnSpan="3"
                 Margin="0"
-                d:Background="Green"
                 Canvas.ZIndex="10"
                 RenderTransformOrigin="0.5,0.5"
-                Visibility="Collapsed">
+                Visibility="Collapsed"
+                d:Background="Green">
                 <Grid.RenderTransform>
                     <CompositeTransform />
                 </Grid.RenderTransform>
@@ -1610,8 +1611,8 @@
             x:DeferLoadStrategy="Lazy"
             Grid.RowSpan="10"
             Grid.ColumnSpan="10"
-            d:IsHidden="True"
-            Canvas.ZIndex="100" />
+            Canvas.ZIndex="100"
+            d:IsHidden="True" />
 
         <!--  Off-screen printer render container  -->
         <Canvas

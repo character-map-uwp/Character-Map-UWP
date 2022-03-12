@@ -69,7 +69,8 @@ namespace CharacterMap.Helpers
             CharacterRenderingOptions options,
             FrameworkElement headerContent,
             bool standalone,
-            bool showAdvanced = false)
+            bool showAdvanced = false,
+            bool isExternalFile = false)
         {
             MainViewModel main = Ioc.Default.GetService<MainViewModel>();
 
@@ -216,77 +217,80 @@ namespace CharacterMap.Helpers
                     }
 
                     // Add "Add to Collection" button
-                    MenuFlyoutSubItem newColl = new MenuFlyoutSubItem
+                    if (isExternalFile is false)
                     {
-                        Text = Localization.Get("AddToCollectionFlyout/Text"),
-                        Icon = new FontIcon { Glyph = "\uE71D" }
-                    };
-
-                    // Create "New Collection" Item
-                    var newCollection = new MenuFlyoutItem
-                    {
-                        Text = Localization.Get("NewCollectionItem/Text"),
-                        Icon = new FontIcon { Glyph = "\uE109" },
-                        DataContext = font
-                    };
-                    newCollection.Click += CreateCollection_Click;
-
-                    if (newColl.Items != null)
-                    {
-                        newColl.Items.Add(newCollection);
-
-                        // Create "Symbol Font" item
-                        if (!font.IsSymbolFont)
+                        MenuFlyoutSubItem newColl = new MenuFlyoutSubItem
                         {
-                            newColl.Items.Add(new MenuFlyoutSeparator());
+                            Text = Localization.Get("AddToCollectionFlyout/Text"),
+                            Icon = new FontIcon { Glyph = "\uE71D" }
+                        };
 
-                            var symb = new MenuFlyoutItem
-                            {
-                                Text = Localization.Get("OptionSymbolFonts/Text"),
-                                IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name),
-                                DataContext = font
-                            };
-                            symb.Click += AddToSymbolFonts_Click;
-                            newColl.Items.Add(symb);
-                        }
-                    }
-
-                    coll = newColl;
-                    menu.Items.Add(coll);
-                }
-
-                // Add items for each user Collection
-                if (_collections.Items.Count > 0)
-                {
-                    if (coll.Items != null)
-                    {
-                        coll.Items.Add(new MenuFlyoutSeparator());
-
-                        foreach (var m in
-                                _collections.Items.Select(item => new MenuFlyoutItem
-                                {
-                                    DataContext = item,
-                                    Text = item.Name,
-                                    IsEnabled = !item.Fonts.Contains(font.Name)
-                                }))
+                        // Create "New Collection" Item
+                        var newCollection = new MenuFlyoutItem
                         {
-                            if (m.IsEnabled)
-                            {
-                                m.Click += async (s, a) =>
-                                {
-                                    UserFontCollection collection =
-                                        (UserFontCollection)((FrameworkElement)s).DataContext;
-                                    AddToCollectionResult result =
-                                        await _collections.AddToCollectionAsync(font, collection);
+                            Text = Localization.Get("NewCollectionItem/Text"),
+                            Icon = new FontIcon { Glyph = "\uE109" },
+                            DataContext = font
+                        };
+                        newCollection.Click += CreateCollection_Click;
 
-                                    if (result.Success)
-                                    {
-                                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
-                                    }
+                        if (newColl.Items != null)
+                        {
+                            newColl.Items.Add(newCollection);
+
+                            // Create "Symbol Font" item
+                            if (!font.IsSymbolFont)
+                            {
+                                newColl.Items.Add(new MenuFlyoutSeparator());
+
+                                var symb = new MenuFlyoutItem
+                                {
+                                    Text = Localization.Get("OptionSymbolFonts/Text"),
+                                    IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name),
+                                    DataContext = font
                                 };
+                                symb.Click += AddToSymbolFonts_Click;
+                                newColl.Items.Add(symb);
                             }
+                        }
 
-                            coll.Items.Add(m);
+                        coll = newColl;
+                        menu.Items.Add(coll);
+
+                        // Add items for each user Collection
+                        if (_collections.Items.Count > 0)
+                        {
+                            if (coll.Items != null)
+                            {
+                                coll.Items.Add(new MenuFlyoutSeparator());
+
+                                foreach (var m in
+                                        _collections.Items.Select(item => new MenuFlyoutItem
+                                        {
+                                            DataContext = item,
+                                            Text = item.Name,
+                                            IsEnabled = !item.Fonts.Contains(font.Name)
+                                        }))
+                                {
+                                    if (m.IsEnabled)
+                                    {
+                                        m.Click += async (s, a) =>
+                                        {
+                                            UserFontCollection collection =
+                                                (UserFontCollection)((FrameworkElement)s).DataContext;
+                                            AddToCollectionResult result =
+                                                await _collections.AddToCollectionAsync(font, collection);
+
+                                            if (result.Success)
+                                            {
+                                                WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
+                                            }
+                                        };
+                                    }
+
+                                    coll.Items.Add(m);
+                                }
+                            }
                         }
                     }
                 }
@@ -371,7 +375,7 @@ namespace CharacterMap.Helpers
                 menu.Items.Add(qq);
 
                 // Add "Add to quick compare" button if we're viewing a variant
-                if (showAdvanced)
+                if (showAdvanced && isExternalFile is false)
                 {
                     MenuFlyoutItem item = new MenuFlyoutItem
                     {
