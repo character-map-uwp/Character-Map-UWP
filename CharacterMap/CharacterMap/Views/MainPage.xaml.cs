@@ -72,7 +72,12 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                 {
                     PrintView.Show(this);
-                    OnModalOpened();
+                    
+                    // NB: Printing works by using an off-screen canvas inside
+                    //     the FontMapView. OnModelOpened hides this canvas
+                    //     preventing printing from working. So in the case of 
+                    //     printing, we do *not* hide the FontMap
+                    OnModalOpened(false);
                 }
             });
             Messenger.Register<ExportRequestedMessage>(this, (o, m) =>
@@ -258,7 +263,7 @@ namespace CharacterMap.Views
             OnModalOpened();
         }
 
-        async void OnModalOpened()
+        async void OnModalOpened(bool hideFontMap = true)
         {
             // Hide FontMap when a modal is showing to improve the performance
             // of resizing the window (by skipping having to rearrange the character
@@ -266,9 +271,12 @@ namespace CharacterMap.Views
             
             // We delay disabling rendering as animations for showing the modal
             // may still be playing
-            await Task.Delay(200);
-            if (AreModalsOpen())
-                FontMap.Visibility = Visibility.Collapsed;
+            if (hideFontMap)
+            {
+                await Task.Delay(200);
+                if (AreModalsOpen())
+                    FontMap.Visibility = Visibility.Collapsed;
+            }
         }
 
         void OnModalClosed()
