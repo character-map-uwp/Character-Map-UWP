@@ -382,7 +382,9 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                 new("Latest Release", // October
+                new("Latest Release", // March 2002
+                    "- Added support for bulk adding and removing fonts from Collections (in Settings)"),
+                new("2021.7.4.0 (October 2021)", // October
                     "- Added support for navigating backwards using mouse and keyboard navigation buttons, and Alt + Left\n" +
                     "- Added support for changing application design with themes for Windows 11, Classic Windows and Zune Desktop"),
                 new("2021.4.0.0 (July 2021)", // July
