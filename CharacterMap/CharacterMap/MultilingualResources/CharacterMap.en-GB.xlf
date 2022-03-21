@@ -1335,6 +1335,44 @@ Requires a restart to take effect.</target>
           <target state="new">Switch</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
+        <trans-unit id="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Add to Collection</source>
+          <target state="new">Add to Collection</target>
+        </trans-unit>
+        <trans-unit id="ClearSelectionLabel" translate="yes" xml:space="preserve">
+          <source>Clear selection</source>
+          <target state="new">Clear selection</target>
+        </trans-unit>
+        <trans-unit id="CreateNewButton.Content" translate="yes" xml:space="preserve">
+          <source>Create New</source>
+          <target state="new">Create New</target>
+        </trans-unit>
+        <trans-unit id="FontsPartialLabel" translate="yes" xml:space="preserve">
+          <source>fonts,</source>
+          <target state="new">fonts,</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">{0} fonts, {1} selected</note>
+        </trans-unit>
+        <trans-unit id="OrLabel.Text" translate="yes" xml:space="preserve">
+          <source>or</source>
+          <target state="new">or</target>
+        </trans-unit>
+        <trans-unit id="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Remove from Collection</source>
+          <target state="new">Remove from Collection</target>
+        </trans-unit>
+        <trans-unit id="SelectCollectionLabel" translate="yes" xml:space="preserve">
+          <source>Select Collection</source>
+          <target state="new">Select Collection</target>
+        </trans-unit>
+        <trans-unit id="SelectedPartialLabel" translate="yes" xml:space="preserve">
+          <source>selected</source>
+          <target state="new">selected</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">{0} fonts, {1} selected</note>
+        </trans-unit>
+        <trans-unit id="SettingsCollectionsHeader" translate="yes" xml:space="preserve">
+          <source>Collections</source>
+          <target state="new">Collections</target>
+        </trans-unit>
       </group>
     </body>
   </file>
