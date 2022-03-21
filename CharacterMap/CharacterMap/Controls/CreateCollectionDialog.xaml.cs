@@ -51,6 +51,9 @@ namespace CharacterMap.Controls
 
         public bool IsRenameMode { get; }
 
+        public object Result { get; private set; }
+
+
         private UserFontCollection _collection = null;
 
         public CreateCollectionDialog(UserFontCollection collection = null)
@@ -67,6 +70,7 @@ namespace CharacterMap.Controls
                 TemplateSettings.CollectionTitle = _collection.Name;
             }
         }
+
 
         private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
@@ -90,6 +94,7 @@ namespace CharacterMap.Controls
             {
                 var collection = await collections.CreateCollectionAsync(TemplateSettings.CollectionTitle);
                 var result = await collections.AddToCollectionAsync(this.DataContext as InstalledFont, collection);
+                Result = result;
                 d.Complete();
 
                 await Task.Yield();

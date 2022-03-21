@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using CharacterMapCX;
 using Microsoft.Graphics.Canvas.Text;
@@ -7,7 +9,7 @@ using Windows.UI.Text;
 
 namespace CharacterMap.Core
 {
-    public class InstalledFont
+    public class InstalledFont : IComparable
     {
         private List<FontVariant> _variants;
 
@@ -84,6 +86,13 @@ namespace CharacterMap.Core
             font._variants.Add(FontVariant.CreateDefault(face.FontFace));
             return font;
         }
-        
+
+        public int CompareTo(object obj)
+        {
+            if (obj is InstalledFont f)
+                return Name.CompareTo(f.Name);
+
+            return 0;
+        }
     }
 }

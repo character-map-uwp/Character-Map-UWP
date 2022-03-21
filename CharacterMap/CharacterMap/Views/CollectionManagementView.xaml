@@ -1,0 +1,232 @@
+﻿<UserControl
+    x:Class="CharacterMap.Views.CollectionManagementView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CharacterMap.Controls"
+    xmlns:core="using:CharacterMap.Core"
+    xmlns:ct="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    DataContext="{x:Bind}"
+    mc:Ignorable="d"
+    d:DesignHeight="600"
+    d:DesignWidth="800">
+
+    <Grid RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="{core:Localizer Key=SettingsCollectionsHeader}" />
+
+        <controls:SettingsPresenter
+            Title="{core:Localizer Key=SelectCollectionLabel}"
+            Grid.Row="1"
+            ContentPlacement="Bottom">
+            <Grid>
+                <StackPanel Orientation="Horizontal" Spacing="12">
+                    <ComboBox
+                        x:Name="CollectionSelector"
+                        Width="200"
+                        DisplayMemberPath="Name"
+                        ItemsSource="{x:Bind ViewModel.Collections, Mode=OneWay}"
+                        SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=TwoWay}"
+                        SelectionChanged="CollectionSelector_SelectionChanged" />
+                    <TextBlock
+                        x:Uid="OrLabel"
+                        VerticalAlignment="Center"
+                        d:Text="or" />
+                    <HyperlinkButton
+                        x:Uid="CreateNewButton"
+                        VerticalAlignment="Center"
+                        Click="NewCollection_Click"
+                        d:Content="Create New" />
+                </StackPanel>
+
+                <StackPanel
+                    Height="40"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    Orientation="Horizontal"
+                    Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}">
+                    <controls:UXButton
+                        x:Uid="RenameCollectionButton"
+                        Height="Auto"
+                        VerticalAlignment="Stretch"
+                        Click="RenameFontCollection_Click"
+                        Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                        IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay}"
+                        Style="{StaticResource MapInfoButtonStyle}"
+                        ToolTipService.Placement="Bottom"
+                        d:Label="Rename">
+                        <FontIcon Glyph="&#xE13E;" />
+                    </controls:UXButton>
+                    <controls:UXButton
+                        x:Uid="DeleteCollectionButton"
+                        Height="Auto"
+                        VerticalAlignment="Stretch"
+                        Click="DeleteCollection_Click"
+                        Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                        IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay}"
+                        Style="{StaticResource MapInfoButtonStyle}"
+                        ToolTipService.Placement="Bottom"
+                        d:Label="Delete">
+                        <FontIcon Glyph="&#xE107;" />
+                    </controls:UXButton>
+                    <controls:UXButton
+                        x:Name="CollectionExportButton"
+                        x:Uid="CollectionExportButton"
+                        Height="Auto"
+                        VerticalAlignment="Stretch"
+                        Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                        IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay}"
+                        Style="{StaticResource MapInfoButtonStyle}"
+                        d:Label="Export">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
+                                <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportAsFolder}" />
+                                <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                        <Grid>
+                            <ProgressRing
+                                Width="20"
+                                Height="20"
+                                MinWidth="20"
+                                MinHeight="20"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                IsActive="{x:Bind ViewModel.IsExporting, Mode=OneWay}"
+                                Visibility="{x:Bind ViewModel.IsExporting, Mode=OneWay}" />
+                            <Path
+                                Height="16"
+                                Data="F1 M 38.613281 -43.886719 L 47.167969 -52.500000 L 0.000000 -52.500000 L 0.000000 -60.000000 L 47.167969 -60.000000 L 38.613281 -68.613281 L 43.886719 -73.886719 L 61.523438 -56.250000 L 43.886719 -38.613281 Z M 62.167969 -112.500000 L 120.000000 -112.500000 L 120.000000 -22.500000 L 0.000000 -22.500000 L 0.000000 -45.000000 L 7.500000 -45.000000 L 7.500000 -30.000000 L 112.500000 -30.000000 L 112.500000 -75.000000 L 62.167969 -75.000000 L 47.167969 -90.000000 L 7.500000 -90.000000 L 7.500000 -67.500000 L 0.000000 -67.500000 L 0.000000 -97.500000 L 47.167969 -97.500000 Z M 112.500000 -82.500000 L 112.500000 -105.000000 L 65.332031 -105.000000 L 54.023438 -93.750000 L 65.332031 -82.500000 Z "
+                                Fill="{Binding ElementName=CollectionExportButton, Path=Foreground}"
+                                Stretch="Uniform"
+                                Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsExporting), Mode=OneWay}" />
+                        </Grid>
+
+                    </controls:UXButton>
+                </StackPanel>
+
+
+            </Grid>
+        </controls:SettingsPresenter>
+
+
+
+
+        <Grid
+            Grid.Row="3"
+            ColumnSpacing="8"
+            Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MaxWidth="300" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <controls:SettingsPresenter Title="All Fonts" ContentPlacement="Bottom">
+                <Grid RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <RelativePanel>
+                        <TextBlock
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignVerticalCenterWithPanel="True"
+                            Style="{StaticResource DescriptionStyle}">
+                            <Run Text="{x:Bind ViewModel.FontList.Count, Mode=OneWay, FallbackValue='0', TargetNullValue='0'}" />
+                            <Run Text="fonts," />
+                            <Run Text="{x:Bind AllFontsList.SelectionCount, Mode=OneWay, FallbackValue='0', TargetNullValue='0'}" />
+                            <Run Text="selected" />
+                        </TextBlock>
+                        <controls:UXButton
+                            Click="{x:Bind AllFontsList.ClearSelection}"
+                            IsEnabled="{x:Bind AllFontsList.HasSelection, Mode=OneWay}"
+                            RelativePanel.AlignRightWithPanel="True"
+                            ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}">
+                            <SymbolIcon Symbol="ClearSelection" />
+                        </controls:UXButton>
+                    </RelativePanel>
+                    <controls:ExtendedListView
+                        x:Name="AllFontsList"
+                        Grid.Row="1"
+                        BindableSelectedItems="{x:Bind ViewModel.SelectedFonts, Mode=TwoWay}"
+                        IsMultiSelectCheckBoxEnabled="False"
+                        IsSelectionBindingEnabled="True"
+                        ItemTemplate="{StaticResource FontListItemTemplate}"
+                        ItemsSource="{x:Bind ViewModel.FontList, Mode=OneWay}"
+                        SelectionMode="Multiple" />
+                </Grid>
+            </controls:SettingsPresenter>
+
+            <StackPanel
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Spacing="20">
+                <controls:UXButton
+                    x:Uid="AddTooButton"
+                    Click="{x:Bind ViewModel.AddToCollection}"
+                    IsEnabled="{x:Bind core:Converters.TrueFalse(AllFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}"
+                    IsLabelVisible="True">
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE0E3;" />
+                </controls:UXButton>
+
+                <controls:UXButton
+                    x:Uid="RemoveFromButton"
+                    Click="{x:Bind ViewModel.RemoveFromCollection}"
+                    IsEnabled="{x:Bind core:Converters.TrueFalse(CollectionFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}">
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE0E2;" />
+                </controls:UXButton>
+            </StackPanel>
+
+            <controls:SettingsPresenter
+                Title="{x:Bind ViewModel.SelectedCollection.Name, Mode=OneWay, FallbackValue='', TargetNullValue=''}"
+                Grid.Column="2"
+                ContentPlacement="Bottom">
+                <Grid RowSpacing="8">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <RelativePanel>
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignVerticalCenterWithPanel="True"
+                            Style="{StaticResource DescriptionStyle}">
+                            <Run Text="{x:Bind ViewModel.CollectionFonts.Count, Mode=OneWay, FallbackValue='0', TargetNullValue='0'}" />
+                            <Run Text="{core:Localizer Key=FontsPartialLabel}" />
+                            <Run Text="{x:Bind CollectionFontsList.SelectionCount, Mode=OneWay, FallbackValue='0', TargetNullValue='0'}" />
+                            <Run Text="{core:Localizer Key=SelectedPartialLabel}" />
+                        </TextBlock>
+                        <controls:UXButton
+                            Click="{x:Bind CollectionFontsList.ClearSelection}"
+                            IsEnabled="{x:Bind CollectionFontsList.HasSelection, Mode=OneWay}"
+                            RelativePanel.AlignRightWithPanel="True"
+                            ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}">
+                            <SymbolIcon Symbol="ClearSelection" />
+                        </controls:UXButton>
+                    </RelativePanel>
+
+                    <controls:ExtendedListView
+                        x:Name="CollectionFontsList"
+                        Grid.Row="1"
+                        BindableSelectedItems="{x:Bind ViewModel.SelectedCollectionFonts, Mode=TwoWay}"
+                        IsMultiSelectCheckBoxEnabled="False"
+                        IsSelectionBindingEnabled="True"
+                        ItemTemplate="{StaticResource FontListItemTemplate}"
+                        ItemsSource="{x:Bind ViewModel.CollectionFonts, Mode=OneWay}"
+                        SelectionMode="Multiple" />
+                </Grid>
+
+            </controls:SettingsPresenter>
+        </Grid>
+    </Grid>
+</UserControl>

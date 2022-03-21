@@ -1109,4 +1109,33 @@ Requires a restart to take effect.</value>
     <value>Switch</value>
     <comment>Labels must be as short as possible</comment>
   </data>
+  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add to Collection</value>
+  </data>
+  <data name="ClearSelectionLabel" xml:space="preserve">
+    <value>Clear selection</value>
+  </data>
+  <data name="CreateNewButton.Content" xml:space="preserve">
+    <value>Create New</value>
+  </data>
+  <data name="FontsPartialLabel" xml:space="preserve">
+    <value>fonts,</value>
+    <comment>{0} fonts, {1} selected</comment>
+  </data>
+  <data name="OrLabel.Text" xml:space="preserve">
+    <value>or</value>
+  </data>
+  <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove from Collection</value>
+  </data>
+  <data name="SelectCollectionLabel" xml:space="preserve">
+    <value>Select Collection</value>
+  </data>
+  <data name="SelectedPartialLabel" xml:space="preserve">
+    <value>selected</value>
+    <comment>{0} fonts, {1} selected</comment>
+  </data>
+  <data name="SettingsCollectionsHeader" xml:space="preserve">
+    <value>Collections</value>
+  </data>
 </root>

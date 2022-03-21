@@ -699,7 +699,8 @@ namespace CharacterMap.Views
                     ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
                     this.Tag as FrameworkElement,
                     IsStandalone,
-                    true);
+                    showAdvanced: true,
+                    isExternalFile: ViewModel.IsExternalFile);
             }
         }
 

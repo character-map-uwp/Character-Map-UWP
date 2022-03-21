@@ -102,6 +102,8 @@
                                         <Setter Target="Presenter.(Grid.Row)" Value="1" />
                                         <Setter Target="Presenter.(Grid.Column)" Value="1" />
                                         <Setter Target="Presenter.Margin" Value="0 12 0 0" />
+                                        <Setter Target="TopRow.Height" Value="Auto" />
+                                        <Setter Target="BottomRow.Height" Value="*" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -129,8 +131,8 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition x:Name="TopRow" Height="*" />
+                            <RowDefinition x:Name="BottomRow" Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <ContentControl

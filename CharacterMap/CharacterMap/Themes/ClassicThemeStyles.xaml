@@ -996,14 +996,21 @@
                             <TextBlock FontSize="{ThemeResource ControlContentThemeFontSize}" Text="{TemplateBinding Title}" />
                         </Border>
 
-                        <StackPanel Grid.Row="1" Margin="16 8 16 16">
+                        <RelativePanel Grid.Row="1" Margin="16 8 16 16">
                             <TextBlock
                                 x:Name="Description"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.AlignRightWithPanel="True"
+                                RelativePanel.AlignTopWithPanel="True"
                                 Style="{StaticResource DescriptionStyle}"
                                 Text="{TemplateBinding Description}"
                                 Visibility="Collapsed" />
-                            <ContentPresenter Content="{TemplateBinding Content}" />
-                        </StackPanel>
+                            <ContentPresenter
+                                Content="{TemplateBinding Content}"
+                                RelativePanel.AlignLeftWithPanel="True"
+                                RelativePanel.AlignRightWithPanel="True"
+                                RelativePanel.Below="Description" />
+                        </RelativePanel>
 
                     </Grid>
                 </ControlTemplate>

@@ -323,19 +323,37 @@ namespace CharacterMap.Views
               && item.Tag is Panel panel
               && panel.Visibility == Visibility.Collapsed)
             {
-                //foreach (var child in MenuColumn.Children.OfType<Button>())
-                //    VisualStateManager.GoToState(child, "NotSelectedState", true);
-
+                // X: Ensure all settings panels are hidden
                 foreach (var child in ContentPanel.Children.OfType<FrameworkElement>())
-                    child.Visibility = Visibility.Collapsed;
+                {
+                    // X: Deactivate old content if supported
+                    if (child.Visibility == Visibility.Visible
+                        && child is Panel p
+                        && p.Children.Count == 1
+                        && p.Children[0] is IActivateableControl d)
+                        d.Deactivate();
 
+                    child.Visibility = Visibility.Collapsed;
+                }
+
+                // X: Reset scroll position
                 ContentScroller.ChangeView(null, 0, null, true);
 
-                //VisualStateManager.GoToState(item, "SelectedState", true);
+                // X: Activate new content if supported
+                if (panel.Children.Count == 1 && panel.Children[0] is IActivateableControl a)
+                {
+                    a.Activate();
+                    VisualStateManager.GoToState(this, ContentScrollDisabledState.Name, false);
+                }
+                else
+                    VisualStateManager.GoToState(this, ContentScrollEnabledState.Name, false);
 
+
+                // X: Start child animation
                 if (Settings.UseSelectionAnimations)
                     CompositionFactory.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
 
+                // X: Show selected panel
                 panel.Visibility = Visibility.Visible;
             }
         }
@@ -364,7 +382,9 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                 new("Latest Release", // October
+                new("Latest Release", // March 2002
+                    "- Added support for bulk adding and removing fonts from Collections (in Settings)"),
+                new("2021.7.4.0 (October 2021)", // October
                     "- Added support for navigating backwards using mouse and keyboard navigation buttons, and Alt + Left\n" +
                     "- Added support for changing application design with themes for Windows 11, Classic Windows and Zune Desktop"),
                 new("2021.4.0.0 (July 2021)", // July
