@@ -17,6 +17,8 @@ using WoffToOtf;
 
 namespace CharacterMap.Core
 {
+
+
     public class FontImportResult
     {
         public FontImportResult(List<StorageFile> imported, List<StorageFile> existing, List<(IStorageItem, string)> invalid)
@@ -249,6 +251,12 @@ namespace CharacterMap.Core
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetAppPath(StorageFile file)
         {
+            if (file.Path.StartsWith(ApplicationData.Current.TemporaryFolder.Path))
+            {
+                var str = file.Path.Replace(ApplicationData.Current.TemporaryFolder.Path, "ms-appdata:///temp")
+                    .Replace("\\", "/");
+                return str;
+            }
             var temp = Path.GetDirectoryName(file.Path).EndsWith(TEMP);
             return $"ms-appdata:///local/{(temp ? $"{TEMP}/" :  string.Empty)}{file.Name}";
         }
@@ -494,6 +502,38 @@ namespace CharacterMap.Core
 
             GC.Collect();
             return resultList.Count > 0 ? resultList.First().Value : null;
+        }
+
+        public static async Task<FolderContents> LoadToTempFolderAsync(StorageFolder folder)
+        {
+            await InitialiseAsync().ConfigureAwait(false);
+
+            // 1. Create temporary storage folder
+            var dest = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync("i", CreationCollisionOption.GenerateUniqueName);
+            
+            // 2. Copy all files to temporary storage
+            var files = await folder.GetFilesAsync();
+            var tasks = files
+                .Where(f => SupportedFormats.Contains(f.FileType.ToLower()))
+                .Select(f => f.CopyAsync(dest).AsTask()).ToList();
+            await Task.WhenAll(tasks);
+
+            // 3. Create font sets
+            var interop = Ioc.Default.GetService<NativeInterop>();
+            var dwSets = interop.GetFonts(tasks.Select(t => t.Result).ToList()).ToList();
+
+            // 4. Create InstalledFonts list
+            Dictionary<string, InstalledFont> resultList = new();
+            for (int i = 0; i < dwSets.Count; i++)
+            {
+                StorageFile file = tasks[i].Result;
+                DWriteFontSet set = dwSets[i];
+
+                foreach (DWriteFontFace font in set.Fonts)
+                    AddFont(resultList, font, file);
+            }
+
+            return new FolderContents(folder, dest, CreateFontList(resultList));
         }
 
         public static bool IsMDL2(FontVariant variant) => variant != null && (variant.FamilyName.Contains("MDL2") || variant.FamilyName.Equals("Segoe Fluent Icons"));

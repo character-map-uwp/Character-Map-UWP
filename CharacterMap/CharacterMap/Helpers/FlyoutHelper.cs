@@ -368,7 +368,7 @@ namespace CharacterMap.Helpers
 
                 qq.Click += (s, e) =>
                 {
-                    _ = QuickCompareView.CreateWindowAsync(false);
+                    _ = QuickCompareView.CreateWindowAsync(new(false));
                 };
 
                 menu.Items.Add(new MenuFlyoutSeparator());

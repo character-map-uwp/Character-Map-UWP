@@ -35,24 +35,24 @@ namespace CharacterMap.Views
     {
         public QuickCompareViewModel ViewModel { get; }
 
-        public QuickCompareView() : this(false) { }
+        public QuickCompareView() : this(new(false)) { }
 
         private NavigationHelper _navHelper { get; } = new NavigationHelper();
 
-        public QuickCompareView(bool isQuickCompare)
+        public QuickCompareView(QuickCompareArgs args)
         {
             this.InitializeComponent();
 
-            ViewModel = new QuickCompareViewModel(isQuickCompare);
+            ViewModel = new QuickCompareViewModel(args);
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
             this.Loaded += QuickCompareView_Loaded;
             this.Unloaded += QuickCompareView_Unloaded;
 
-            if (isQuickCompare)
-            {
+            if (args.IsQuickCompare)
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
-            }
+            else if (args.IsFolderView)
+                VisualStateManager.GoToState(this, FontFolderState.Name, false);
 
             _navHelper.BackRequested += (s, e) => { ViewModel.SelectedFont = null; };
 
@@ -400,24 +400,24 @@ namespace CharacterMap.Views
 
     public partial class QuickCompareView
     {
-        public static async Task<WindowInformation> CreateWindowAsync(bool isQuickCompare)
+        public static async Task<WindowInformation> CreateWindowAsync(QuickCompareArgs args)
         {
             // 1. If QuickCompare (rather than FontCompare), return the existing window
             //    if we have one. (QuickCompare is ALWAYS single window)
-            if (isQuickCompare && QuickCompareViewModel.QuickCompareWindow is not null)
+            if (args.IsQuickCompare && QuickCompareViewModel.QuickCompareWindow is not null)
                 return QuickCompareViewModel.QuickCompareWindow;
 
-            static void CreateView(bool isQuickCompare)
+            static void CreateView(QuickCompareArgs a)
             {
-                QuickCompareView view = new(isQuickCompare);
+                QuickCompareView view = new(a);
                 Window.Current.Content = view;
                 Window.Current.Activate();
             }
 
-            var view = await WindowService.CreateViewAsync(() => CreateView(isQuickCompare), false);
+            var view = await WindowService.CreateViewAsync(() => CreateView(args), false);
             await WindowService.TrySwitchToWindowAsync(view, false);
 
-            if(isQuickCompare)
+            if(args.IsQuickCompare)
                 QuickCompareViewModel.QuickCompareWindow = view;
             
             return view;
@@ -426,7 +426,7 @@ namespace CharacterMap.Views
         public static async Task AddAsync(CharacterRenderingOptions options)
         {
             // 1. Ensure QuickCompare Window exists
-            var window = await CreateWindowAsync(true);
+            var window = await CreateWindowAsync(new(true));
 
             // 2. Add selected font to QuickCompare
             await QuickCompareViewModel.QuickCompareWindow.CoreView.Dispatcher.ExecuteAsync(() =>

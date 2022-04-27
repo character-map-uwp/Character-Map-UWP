@@ -411,6 +411,29 @@ namespace CharacterMap.Core
             return FileIO.WriteTextAsync(file, sb.ToString()).AsTask();
         }
 
+        public static async Task DeleteAsync(this StorageFolder folder, bool deleteFolder = false)
+        {
+            // 1. Delete all child folders
+            var folders = await folder.GetFoldersAsync().AsTask().ConfigureAwait(false);
+            if (folders.Count > 0)
+            {
+                var tasks = folders.Select(f => DeleteAsync(f, true));
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+
+            // 2. Delete child files
+            var files = await folder.GetFilesAsync().AsTask().ConfigureAwait(false);
+            if (files.Count > 0)
+            {
+                var tasks = files.Select(f => f.DeleteAsync(StorageDeleteOption.PermanentDelete).AsTask());
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+            }
+
+            // 3. Delete folder
+            if (deleteFolder)
+                await folder.DeleteAsync(StorageDeleteOption.PermanentDelete).AsTask().ConfigureAwait(false);
+        }
+
         public static bool Supports1809 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7);
 
         public static bool Supports1903 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8);

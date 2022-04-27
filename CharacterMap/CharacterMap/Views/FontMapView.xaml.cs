@@ -344,7 +344,7 @@ namespace CharacterMap.Views
                         ViewModel.ChangeDisplayMode();
                         break;
                     case VirtualKey.K:
-                        _ = QuickCompareView.CreateWindowAsync(false);
+                        _ = QuickCompareView.CreateWindowAsync(new(false));
                         break;
                     case VirtualKey.Q:
                         if (ViewModel.SelectedVariant is FontVariant va)

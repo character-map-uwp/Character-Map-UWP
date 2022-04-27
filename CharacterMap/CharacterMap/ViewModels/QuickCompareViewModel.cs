@@ -14,9 +14,24 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel;
 using System.Collections.ObjectModel;
+using CharacterMapCX;
 
 namespace CharacterMap.ViewModels
 {
+    public class QuickCompareArgs
+    {
+        public FolderContents Folder { get; set; }
+        public bool IsQuickCompare { get; set; }
+
+        public bool IsFolderView => Folder is not null;
+
+        public QuickCompareArgs(bool isQuickCompare, FolderContents folder = null)
+        {
+            IsQuickCompare = isQuickCompare;
+            Folder = folder;
+        }
+    }
+
     public class QuickCompareViewModel : ViewModelBase
     {
         public static WindowInformation QuickCompareWindow { get; set; }
@@ -65,15 +80,24 @@ namespace CharacterMap.ViewModels
 
         public bool IsQuickCompare { get;  }
 
-        public QuickCompareViewModel(bool isQuickCompare)
+        public bool IsFolderMode { get; }
+
+        FolderContents _folder = null;
+
+        public QuickCompareViewModel(QuickCompareArgs args)
         {
-            IsQuickCompare = isQuickCompare;
+            IsQuickCompare = args.IsQuickCompare;
+
             if (DesignMode.DesignModeEnabled)
                 return;
 
+            _folder = args.Folder;
             RefreshFontList();
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
+
+            if (_folder is not null)
+                IsFolderMode = true;
 
             if (IsQuickCompare)
             {
@@ -118,7 +142,7 @@ namespace CharacterMap.ViewModels
         {
             try
             {
-                var fontList = FontFinder.Fonts.AsEnumerable();
+                IEnumerable<InstalledFont> fontList = _folder?.Fonts ?? FontFinder.Fonts;
 
                 if (collection != null)
                 {

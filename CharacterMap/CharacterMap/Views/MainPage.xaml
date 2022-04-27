@@ -71,7 +71,8 @@
                     Click="BtnSettings_OnClick"
                     FontSize="9"
                     Foreground="#8A8D90"
-                    Style="{StaticResource MapInfoButtonStyle}">
+                    Style="{StaticResource MapInfoButtonStyle}"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
                     <TextBlock
                         CharacterSpacing="30"
                         FontWeight="Bold"
@@ -94,7 +95,7 @@
                 <Grid x:Name="PaneRoot">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, Mode=OneWay}" />
-                        <RowDefinition Height="{StaticResource TitleRowGridHeight}" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
@@ -128,10 +129,10 @@
                             Height="Auto"
                             Padding="4"
                             VerticalAlignment="Stretch"
-                            d:Label="Open"
-                            Click="{x:Bind OpenFont}"
+                            Click="{x:Bind ViewModel.OpenFolder}"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                            Style="{StaticResource MapInfoButtonStyle}">
+                            Style="{StaticResource MapInfoButtonStyle}"
+                            d:Label="Open">
                             <FontIcon
                                 Margin="0 -1 0 0"
                                 HorizontalAlignment="Center"
@@ -157,7 +158,8 @@
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
                             Style="{StaticResource TransparentHintButton}"
-                            ToolTipService.Placement="Bottom">
+                            ToolTipService.Placement="Bottom"
+                            Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
 
                             <StackPanel
                                 Margin="0 -4"
@@ -223,6 +225,47 @@
                             </Button.Flyout>
                         </controls:UXButton>
 
+                        <controls:UXButton
+                            x:Name="SecondaryHeader"
+                            x:Load="{x:Bind ViewModel.IsSecondaryView}"
+                            Grid.Column="1"
+                            MinHeight="26"
+                            Margin="0,0,0,0"
+                            Padding="12 0"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch"
+                            HorizontalContentAlignment="Left"
+                            VerticalContentAlignment="Center"
+                            IsHintVisible="False"
+                            IsHitTestVisible="False"
+                            Style="{StaticResource TransparentHintButton}">
+
+                            <StackPanel
+                                Margin="0 -4"
+                                VerticalAlignment="Center"
+                                Orientation="Vertical">
+                                <TextBlock
+                                    x:Name="GroupLabel2"
+                                    OpticalMarginAlignment="TrimSideBearings"
+                                    Style="{StaticResource FontFilterTitleStyle}"
+                                    Text="{x:Bind ViewModel.Folder.SourceFolder.DisplayName, Mode=OneWay, Converter={StaticResource FontSelectorTitleConverter}}"
+                                    TextLineBounds="Tight"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
+                                <Border Opacity="0.5">
+                                    <TextBlock
+                                        x:Name="InlineLabelCount2"
+                                        Grid.Row="0"
+                                        Margin="0 8 0 0"
+                                        OpticalMarginAlignment="TrimSideBearings"
+                                        Style="{StaticResource StatusBarTextStyle}"
+                                        Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList, InlineLabelCount.IsHitTestVisible), Mode=OneWay}"
+                                        TextLineBounds="Tight"
+                                        Visibility="{Binding ElementName=InlineLabelCount, Path=Visibility}" />
+                                </Border>
+                            </StackPanel>
+                        </controls:UXButton>
+
                     </Grid>
 
                     <!--  Font List Grid  -->
@@ -256,22 +299,22 @@
                                     x:Uid="RenameCollectionButton"
                                     Height="Auto"
                                     VerticalAlignment="Stretch"
-                                    d:Label="Rename"
                                     Click="RenameFontCollection_Click"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     Style="{StaticResource MapInfoButtonStyle}"
-                                    ToolTipService.Placement="Bottom">
+                                    ToolTipService.Placement="Bottom"
+                                    d:Label="Rename">
                                     <FontIcon Glyph="&#xE13E;" />
                                 </controls:UXButton>
                                 <controls:UXButton
                                     x:Uid="DeleteCollectionButton"
                                     Height="Auto"
                                     VerticalAlignment="Stretch"
-                                    d:Label="Delete"
                                     Click="DeleteCollection_Click"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     Style="{StaticResource MapInfoButtonStyle}"
-                                    ToolTipService.Placement="Bottom">
+                                    ToolTipService.Placement="Bottom"
+                                    d:Label="Delete">
                                     <FontIcon Glyph="&#xE107;" />
                                 </controls:UXButton>
                                 <controls:UXButton
@@ -279,10 +322,10 @@
                                     x:Uid="CollectionExportButton"
                                     Height="Auto"
                                     VerticalAlignment="Stretch"
-                                    d:Label="Export"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     IsEnabled="{x:Bind core:Converters.TrueTrue(ViewModel.HasFonts, ViewModel.IsCollectionExportEnabled), Mode=OneWay}"
-                                    Style="{StaticResource MapInfoButtonStyle}">
+                                    Style="{StaticResource MapInfoButtonStyle}"
+                                    d:Label="Export">
                                     <Button.Flyout>
                                         <MenuFlyout Placement="Bottom">
                                             <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
@@ -547,24 +590,27 @@
                         </controls:UXButton>
                     </views:FontMapView.TitleLeftContent>
                     <views:FontMapView.TitleRightContent>
-                        <controls:UXButton
-                            x:Name="BtnSettings"
-                            Width="45"
-                            Height="45"
-                            Margin="-6 0 0 0"
-                            Click="BtnSettings_OnClick"
-                            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                            Label="{core:Localizer Key='SettingsHeader/Text'}"
-                            Style="{StaticResource MapInfoButtonStyle}">
-                            <ToolTipService.ToolTip>
-                                <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
-                            </ToolTipService.ToolTip>
-                            <FontIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Glyph="&#xE115;" />
-                        </controls:UXButton>
+                        <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
+                            <controls:UXButton
+                                x:Name="BtnSettings"
+                                Width="45"
+                                Height="45"
+                                Margin="-6 0 0 0"
+                                Click="BtnSettings_OnClick"
+                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                                Label="{core:Localizer Key='SettingsHeader/Text'}"
+                                Style="{StaticResource MapInfoButtonStyle}">
+                                <ToolTipService.ToolTip>
+                                    <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
+                                </ToolTipService.ToolTip>
+                                <FontIcon
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Glyph="&#xE115;" />
+                            </controls:UXButton>
+                        </Border>
+
                     </views:FontMapView.TitleRightContent>
                 </views:FontMapView>
 
@@ -655,6 +701,9 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="WindowPrimaryState">
+                <VisualState x:Name="SecondaryViewState" />
+            </VisualStateGroup>
             <VisualStateGroup x:Name="ViewStates">
                 <VisualState x:Name="CompactViewState">
                     <VisualState.Setters>
@@ -746,7 +795,9 @@
                     <VisualState.Setters>
                         <Setter Target="PageRoot.Background" Value="Transparent" />
                         <Setter Target="PageRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
-                        <Setter Target="PaneRootBackground.Visibility" Value="Collapsed" />
+                        <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
+                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                        <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->
                     </VisualState.Setters>
@@ -769,7 +820,7 @@
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
                         <Setter Target="BtnSettings.Visibility" Value="Collapsed" />
-                        <Setter Target="ZuneSettingsButton.Visibility" Value="Visible" />
+                        <Setter Target="ZuneSettingsButton.IsTabStopEnabled" Value="True" />
                         <Setter Target="InlineLabelCount.IsHitTestVisible" Value="False" />
                         <Setter Target="InlineLabelCount.FontSize" Value="11" />
                         <Setter Target="InlineLabelCount.FontWeight" Value="SemiBold" />

@@ -830,6 +830,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Rectangle
+                            x:Name="CopyTopBorder"
                             Grid.ColumnSpan="2"
                             Height="1"
                             HorizontalAlignment="Stretch"
@@ -1846,8 +1847,12 @@
             <VisualStateGroup x:Name="VisualThemeState">
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
+                        <!--<Setter Target="CopySequenceRoot.CornerRadius" Value="8" />
+                        <Setter Target="CopySequenceRoot.Margin" Value="8 0 8 8" />
+                        <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />
+                        <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">

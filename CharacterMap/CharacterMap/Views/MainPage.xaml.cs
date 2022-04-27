@@ -3,6 +3,7 @@ using CharacterMap.Controls;
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -48,18 +49,29 @@ namespace CharacterMap.Views
 
         private WeakReferenceMessenger Messenger => WeakReferenceMessenger.Default;
 
-        public MainPage()
+        public MainPage() : this(null) { }
+
+        public MainPage(MainViewModelArgs args)
         {
             InitializeComponent();
 
-            ViewModel = Ioc.Default.GetService<MainViewModel>();
+            // If ViewModel is null, then this is the "primary" application Window
+            if (args is null)
+            {
+                ViewModel = Ioc.Default.GetService<MainViewModel>();
+                MainDispatcher = Dispatcher;
+            }
+            else
+            {
+                ViewModel = new MainViewModel(args);
+            }
+
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
             Loaded += MainPage_Loaded;
             Unloaded += MainPage_Unloaded;
 
-            MainDispatcher = Dispatcher;
             Messenger.Register<CollectionsUpdatedMessage>(this, (o, m) => OnCollectionsUpdated(m));
             Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
             Messenger.Register<ModalClosedMessage>(this, (o, m) =>
@@ -101,7 +113,6 @@ namespace CharacterMap.Views
             };
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
-
             ResourceHelper.GoToThemeState(this);
         }
 
@@ -472,7 +483,7 @@ namespace CharacterMap.Views
 
         private void FontCompareButton_Click(object sender, RoutedEventArgs e)
         {
-            _ = QuickCompareView.CreateWindowAsync(false);
+            _ = QuickCompareView.CreateWindowAsync(new(false, ViewModel.Folder));
         }
 
         private void LstFontFamily_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -734,6 +745,23 @@ namespace CharacterMap.Views
 
             // Animate in Loading items
             CompositionFactory.PlayEntrance(LoadingStack.Children.ToList(), 60);
+        }
+    }
+
+    public partial class MainPage
+    {
+        public static async Task<WindowInformation> CreateWindowAsync(MainViewModelArgs args)
+        {
+            static void CreateView(MainViewModelArgs a)
+            {
+                MainPage view = new(a);
+                Window.Current.Content = view;
+                Window.Current.Activate();
+            }
+
+            var view = await WindowService.CreateViewAsync(() => CreateView(args), false);
+            await WindowService.TrySwitchToWindowAsync(view, false);
+            return view;
         }
     }
 }
