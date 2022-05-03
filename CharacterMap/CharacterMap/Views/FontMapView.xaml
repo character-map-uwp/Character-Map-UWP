@@ -1738,6 +1738,13 @@
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="DevCSharpWinUI3State">
+                    <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="C#" />
+                        <Setter Target="DevCSharpIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="DevVisualBasicState">
                     <VisualState.Setters>
                         <Setter Target="BtnToggleDev.Label" Value="VB" />

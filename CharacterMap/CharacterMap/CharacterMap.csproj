@@ -275,6 +275,7 @@
     <Compile Include="Provider\CppCxDevProvider.cs" />
     <Compile Include="Provider\CppWinrtDevProvider.cs" />
     <Compile Include="Provider\CSharpDevProvider.cs" />
+    <Compile Include="Provider\CSharpWinUI3DevProvider.cs" />
     <Compile Include="Provider\DevProviderBase.cs" />
     <Compile Include="Provider\DevProviderNone.cs" />
     <Compile Include="Provider\DevProviderType.cs" />
