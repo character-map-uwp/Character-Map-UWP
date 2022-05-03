@@ -17,6 +17,7 @@ using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Windows.ApplicationModel.Core;
 using Windows.Storage.Pickers;
+using Windows.System;
 
 namespace CharacterMap.ViewModels
 {
@@ -393,6 +394,12 @@ namespace CharacterMap.ViewModels
             {
                 IsCollectionExportEnabled = true;
             }
+        }
+
+        public void OpenSourceFolder()
+        {
+            if (Folder is not null)
+                _ = Launcher.LaunchFolderAsync(Folder.SourceFolder);
         }
 
         public async void OpenFolder()

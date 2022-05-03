@@ -817,7 +817,6 @@
                 <!--  Character Copy Pane  -->
                 <Border
                     x:Name="CopySequenceRoot"
-                    x:Load="False"
                     Grid.Row="3"
                     Height="120"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"

@@ -104,13 +104,7 @@ namespace CharacterMap.Views
             this.SizeChanged += MainPage_SizeChanged;
 
             _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += (s, e) =>
-            {
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
-                });
-            };
+            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
             ResourceHelper.GoToThemeState(this);
@@ -191,8 +185,23 @@ namespace CharacterMap.Views
 
         private void MainPage_Unloaded(object sender, RoutedEventArgs e)
         {
-            Messenger.Unregister<ImportMessage>(this);
-            Messenger.Unregister<AppNotificationMessage>(this);
+            if (ViewModel.IsSecondaryView)
+            {
+                // For Secondary Views, cleanup EVERYTHING to allow the view to get
+                // dropped from memory
+                _uiSettings.ColorValuesChanged -= OnColorValuesChanged;
+                Messenger.UnregisterAll(this);
+                this.Bindings.StopTracking();
+                ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+                this.FontMap.Cleanup();
+            }
+            else
+            {
+                // Primary/Main view might actually be restored at some point, so
+                // don't unhook *everything*
+                Messenger.Unregister<ImportMessage>(this);
+                Messenger.Unregister<AppNotificationMessage>(this);
+            }
 
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
         }
@@ -207,6 +216,14 @@ namespace CharacterMap.Views
             {
                 VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
             }
+        }
+
+        private void OnColorValuesChanged(UISettings settings, object e)
+        {
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
+            });
         }
 
         private void UpdateLoadingStates()

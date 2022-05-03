@@ -129,7 +129,6 @@
                             Height="Auto"
                             Padding="4"
                             VerticalAlignment="Stretch"
-                            Click="{x:Bind ViewModel.OpenFolder}"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource MapInfoButtonStyle}"
                             d:Label="Open">
@@ -144,6 +143,12 @@
                                     <ScaleTransform ScaleX="-1" ScaleY="1" />
                                 </FontIcon.RenderTransform>
                             </FontIcon>
+                            <Button.Flyout>
+                                <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                    <MenuFlyoutItem Click="{x:Bind OpenFont}" Text="Font File" />
+                                    <MenuFlyoutItem Click="{x:Bind ViewModel.OpenFolder}" Text="Font Folder" />
+                                </MenuFlyout>
+                            </Button.Flyout>
                         </controls:UXButton>
 
                         <controls:UXButton
@@ -232,12 +237,12 @@
                             MinHeight="26"
                             Margin="0,0,0,0"
                             Padding="12 0"
+                            Click="{x:Bind ViewModel.OpenSourceFolder}"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
                             IsHintVisible="False"
-                            IsHitTestVisible="False"
                             Style="{StaticResource TransparentHintButton}">
 
                             <StackPanel

@@ -193,12 +193,15 @@ namespace CharacterMap.Views
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
         {
             PreviewColumn.UnregisterPropertyChangedCallback(ColumnDefinition.WidthProperty, _previewColumnToken);
-
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
-
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
             WeakReferenceMessenger.Default.UnregisterAll(this);
+        }
+
+        public void Cleanup()
+        {
+            this.Bindings.StopTracking();
         }
 
         private void Current_Closed(object sender, CoreWindowEventArgs e)

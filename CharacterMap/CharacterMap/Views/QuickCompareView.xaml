@@ -534,13 +534,9 @@
                                 Padding="8 0"
                                 Click="{x:Bind ViewModel.OpenCurrentFont}"
                                 Foreground="{StaticResource SystemColorControlAccentBrush}"
-                                Style="{StaticResource ChromelessButtonStyle}"
+                                Style="{StaticResource TextBlockButtonStyle}"
                                 ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}">
-                                <FontIcon
-                                    Margin="0 2 0 0"
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    FontSize="16"
-                                    Glyph="&#xE17C;" />
+                               Open
                             </Button>
                         </Grid>
 
