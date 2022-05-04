@@ -1271,7 +1271,10 @@
                                     <controls:UXButton x:Uid="BtnSaveGlyph">
                                         <FontIcon Glyph="&#xE105;" />
                                         <Button.Flyout>
-                                            <MenuFlyout x:Name="SaveAsFlyout" Placement="Top">
+                                            <MenuFlyout
+                                                x:Name="SaveAsFlyout"
+                                                MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+                                                Placement="Top">
                                                 <MenuFlyoutItem x:Uid="ExportPNGLabel" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
                                                 <MenuFlyoutItem
                                                     x:Uid="ColoredGlyphLabel"
@@ -1354,6 +1357,7 @@
                                     <Button.Flyout>
                                         <MenuFlyout
                                             x:Name="DevFlyout"
+                                            MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                             Opening="DevFlyout_Opening"
                                             Placement="Top">
                                             <MenuFlyoutItem x:Uid="DevPopupHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
@@ -1884,6 +1888,7 @@
                 <VisualState x:Name="StandaloneViewState">
                     <VisualState.Setters>
                         <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+                        <Setter Target="BackgroundBorder.BackgroundTransition" Value="{ThemeResource RootBackgroundTransition}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

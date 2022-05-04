@@ -196,7 +196,7 @@
     <value>Requires application restart to take effect.</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
-    <value>Search character name or unicode hex</value>
+    <value>Search by name or unicode hex</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>About this application</value>

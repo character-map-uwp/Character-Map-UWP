@@ -86,7 +86,7 @@
                         Style="{StaticResource MapInfoButtonStyle}"
                         d:Label="Export">
                         <Button.Flyout>
-                            <MenuFlyout Placement="Bottom">
+                            <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
                                 <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
                                 <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportAsFolder}" />
                                 <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />

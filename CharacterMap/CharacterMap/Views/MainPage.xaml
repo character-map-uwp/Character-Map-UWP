@@ -144,7 +144,7 @@
                                 </FontIcon.RenderTransform>
                             </FontIcon>
                             <Button.Flyout>
-                                <MenuFlyout Placement="BottomEdgeAlignedLeft">
+                                <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="BottomEdgeAlignedLeft">
                                     <MenuFlyoutItem Click="{x:Bind OpenFont}" Text="Font File" />
                                     <MenuFlyoutItem Click="{x:Bind ViewModel.OpenFolder}" Text="Font Folder" />
                                 </MenuFlyout>
@@ -237,11 +237,11 @@
                             MinHeight="26"
                             Margin="0,0,0,0"
                             Padding="12 0"
-                            Click="{x:Bind ViewModel.OpenSourceFolder}"
                             HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"
+                            VerticalAlignment="{Binding ElementName=FontListFilter, Path=VerticalAlignment}"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
+                            Click="{x:Bind ViewModel.OpenSourceFolder}"
                             IsHintVisible="False"
                             Style="{StaticResource TransparentHintButton}">
 
@@ -261,7 +261,9 @@
                                     <TextBlock
                                         x:Name="InlineLabelCount2"
                                         Grid.Row="0"
-                                        Margin="0 8 0 0"
+                                        Margin="{Binding ElementName=InlineLabelCount, Path=Margin}"
+                                        FontSize="{Binding ElementName=InlineLabelCount, Path=FontSize}"
+                                        FontWeight="{Binding ElementName=InlineLabelCount, Path=FontWeight}"
                                         OpticalMarginAlignment="TrimSideBearings"
                                         Style="{StaticResource StatusBarTextStyle}"
                                         Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList, InlineLabelCount.IsHitTestVisible), Mode=OneWay}"
@@ -332,7 +334,7 @@
                                     Style="{StaticResource MapInfoButtonStyle}"
                                     d:Label="Export">
                                     <Button.Flyout>
-                                        <MenuFlyout Placement="Bottom">
+                                        <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
                                             <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
                                             <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportAsFolder}" />
                                             <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
@@ -503,7 +505,8 @@
                             <controls:LabelButton.IconContent>
                                 <FontIcon
                                     Width="45"
-                                    Height="12"
+                                    MinHeight="12"
+                                    VerticalAlignment="Center"
                                     FontSize="16"
                                     Glyph="&#xE1D3;" />
                                 <!--<Path
@@ -718,7 +721,7 @@
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
+                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource PaneCollapsedBackgroundBrush}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="CollapsedViewState">
@@ -729,7 +732,7 @@
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
                         <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
+                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource PaneCollapsedBackgroundBrush}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DefaultViewState">
@@ -738,6 +741,8 @@
                         <Setter Target="SplitView.DisplayMode" Value="Inline" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
+                        <Setter Target="OverlayPaneRootBackground.Visibility" Value="Collapsed" />
+                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource PaneCollapsedBackgroundBrush}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -803,7 +808,7 @@
                         <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
                         <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
-                        <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+                        <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                         <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->
                     </VisualState.Setters>
                 </VisualState>
@@ -825,7 +830,7 @@
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
                         <Setter Target="BtnSettings.Visibility" Value="Collapsed" />
-                        <Setter Target="ZuneSettingsButton.IsTabStopEnabled" Value="True" />
+                        <Setter Target="ZuneSettingsButton.IsHitTestVisible" Value="True" />
                         <Setter Target="InlineLabelCount.IsHitTestVisible" Value="False" />
                         <Setter Target="InlineLabelCount.FontSize" Value="11" />
                         <Setter Target="InlineLabelCount.FontWeight" Value="SemiBold" />
