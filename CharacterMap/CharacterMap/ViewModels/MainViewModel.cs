@@ -399,7 +399,7 @@ namespace CharacterMap.ViewModels
         public void OpenSourceFolder()
         {
             if (Folder is not null)
-                _ = Launcher.LaunchFolderAsync(Folder.SourceFolder);
+                _ = Folder.LaunchSourceAsync();
         }
 
         public async void OpenFolder()

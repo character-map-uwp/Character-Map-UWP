@@ -66,7 +66,7 @@ namespace CharacterMap.Core
 
         public static HashSet<string> ImportFormats { get; } = new HashSet<string>
         {
-            ".ttf", ".otf", ".otc", ".ttc", ".woff"//, ".woff2"
+            ".ttf", ".otf", ".otc", ".ttc", ".woff", ".zip"//, ".woff2"
         };
 
         public static async Task<DWriteFontSet> InitialiseAsync()
@@ -506,34 +506,64 @@ namespace CharacterMap.Core
 
         public static async Task<FolderContents> LoadToTempFolderAsync(StorageFolder folder)
         {
+            var files = await folder.GetFilesAsync();
+            return await LoadToTempFolderAsync(files, folder).ConfigureAwait(false);
+        }
+
+        public static async Task<FolderContents> LoadZipToTempFolderAsync(StorageFile zipFile)
+        {
+            var files = new List<StorageFile> { zipFile };
+            return await LoadToTempFolderAsync(files, zipFile).ConfigureAwait(false);
+        }
+
+        public static async Task<FolderContents> LoadToTempFolderAsync(IReadOnlyList<StorageFile> files, IStorageItem source = null)
+        {
             await InitialiseAsync().ConfigureAwait(false);
 
             // 1. Create temporary storage folder
             var dest = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync("i", CreationCollisionOption.GenerateUniqueName);
-            
+            Func<StorageFile, Task<List<StorageFile>>> func = (storageFile) => GetFontsAsync(storageFile, dest);
+
             // 2. Copy all files to temporary storage
-            var files = await folder.GetFilesAsync();
-            var tasks = files
-                .Where(f => SupportedFormats.Contains(f.FileType.ToLower()))
-                .Select(f => f.CopyAsync(dest).AsTask()).ToList();
+            List<Task<List<StorageFile>>> tasks = files
+                .Where(f => ImportFormats.Contains(f.FileType.ToLower()))
+                .Select(func)
+                .ToList();
             await Task.WhenAll(tasks);
 
             // 3. Create font sets
-            var interop = Ioc.Default.GetService<NativeInterop>();
-            var dwSets = interop.GetFonts(tasks.Select(t => t.Result).ToList()).ToList();
+            var interop = Utils.GetInterop();
+            var results = tasks.Where(t => t.Result is not null).SelectMany(t => t.Result).ToList();
+            var dwSets = interop.GetFonts(results).ToList();
 
             // 4. Create InstalledFonts list
             Dictionary<string, InstalledFont> resultList = new();
             for (int i = 0; i < dwSets.Count; i++)
             {
-                StorageFile file = tasks[i].Result;
+                StorageFile file = results[i];
                 DWriteFontSet set = dwSets[i];
 
                 foreach (DWriteFontFace font in set.Fonts)
                     AddFont(resultList, font, file);
             }
 
-            return new FolderContents(folder, dest, CreateFontList(resultList));
+            return new FolderContents(source, dest, CreateFontList(resultList));
+        }
+
+        private static async Task<List<StorageFile>> GetFontsAsync(StorageFile f, StorageFolder dest)
+        {
+            if (f.FileType == ".zip")
+            {
+                return await FontConverter.ExtractFontsFromZipAsync(f, dest);
+            }
+            else
+            {
+                var file = await f.CopyAsync(dest);
+                var convert = await FontConverter.TryConvertAsync(file);
+                if (convert.Result != ConversionStatus.OK)
+                    return null;
+                return new List<StorageFile> { file };
+            }
         }
 
         public static bool IsMDL2(FontVariant variant) => variant != null && (variant.FamilyName.Contains("MDL2") || variant.FamilyName.Equals("Segoe Fluent Icons"));

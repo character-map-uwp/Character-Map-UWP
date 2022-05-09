@@ -628,7 +628,17 @@ namespace CharacterMap.Views
                 {
                     ViewModel.IsLoadingFonts = true;
 
-                    if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
+                    if (file.FileType == ".zip")
+                    {
+                        if (await FontFinder.LoadZipToTempFolderAsync(file) is FolderContents folder && folder.Fonts.Count > 0)
+                        {
+                            await MainPage.CreateWindowAsync(new(
+                                Ioc.Default.GetService<IDialogService>(),
+                                Ioc.Default.GetService<AppSettings>(),
+                                folder));
+                        }
+                    }
+                    else if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                     {
                         await FontMapView.CreateNewViewForFontAsync(font, file);
                     }

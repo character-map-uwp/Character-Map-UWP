@@ -253,7 +253,7 @@
                                     x:Name="GroupLabel2"
                                     OpticalMarginAlignment="TrimSideBearings"
                                     Style="{StaticResource FontFilterTitleStyle}"
-                                    Text="{x:Bind ViewModel.Folder.SourceFolder.DisplayName, Mode=OneWay, Converter={StaticResource FontSelectorTitleConverter}}"
+                                    Text="{x:Bind ViewModel.Folder.Source.Name, Mode=OneWay, Converter={StaticResource FontSelectorTitleConverter}}"
                                     TextLineBounds="Tight"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
