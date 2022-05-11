@@ -17,8 +17,6 @@ using WoffToOtf;
 
 namespace CharacterMap.Core
 {
-
-
     public class FontImportResult
     {
         public FontImportResult(List<StorageFile> imported, List<StorageFile> existing, List<(IStorageItem, string)> invalid)
@@ -185,7 +183,7 @@ namespace CharacterMap.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static List<InstalledFont> CreateFontList(Dictionary<string, InstalledFont> fonts)
+        public static List<InstalledFont> CreateFontList(Dictionary<string, InstalledFont> fonts)
         {
             return fonts.OrderBy(f => f.Key).Select(f =>
             {
@@ -220,7 +218,7 @@ namespace CharacterMap.Core
          * Helper method for adding fonts. 
          */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void AddFont(
+        public static void AddFont(
             IDictionary<string, InstalledFont> fontList,
             DWriteFontFace font,
             StorageFile file = null)
@@ -504,71 +502,139 @@ namespace CharacterMap.Core
             return resultList.Count > 0 ? resultList.First().Value : null;
         }
 
-        public static async Task<FolderContents> LoadToTempFolderAsync(StorageFolder folder)
+        public static async Task<FolderContents> LoadToTempFolderAsync(FolderOpenOptions options)
         {
-            var files = await folder.GetFilesAsync();
-            return await LoadToTempFolderAsync(files, folder).ConfigureAwait(false);
+            var folder = options.Root as StorageFolder;
+            Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+
+            var items = await folder.GetItemsAsync();
+            var files = items.OfType<StorageFile>().ToList();
+            FolderContents contents = await LoadToTempFolderAsync(files, options).ConfigureAwait(false);
+
+            // Recursive helper method
+            async Task LoadAsync(StorageFolder src, bool getFiles = true)
+            {
+                if (getFiles)
+                {
+                    var childFiles = await src.GetFilesAsync().AsTask(options.Token.Value).ConfigureAwait(false);
+                    if (options.IsCancelled)
+                        return;
+
+                    var result = await LoadToTempFolderAsync(childFiles, options, contents.TempFolder, contents).ConfigureAwait(false);
+                }
+
+                var childs = await src.GetFoldersAsync().AsTask().ConfigureAwait(false);
+                if (options.IsCancelled)
+                    return;
+
+                if (childs.Count > 0)
+                {
+                    var tasks = childs.Select(c => LoadAsync(c)).ToList();
+                    await Task.WhenAll(tasks);
+                }
+            }
+
+            if (options.IsCancelled)
+                return contents;
+
+            if (options.Recursive)
+            {
+                await LoadAsync(folder, false);
+            }
+
+            contents.UpdateFontSet();
+            return contents;
         }
 
         public static async Task<FolderContents> LoadZipToTempFolderAsync(StorageFile zipFile)
         {
             var files = new List<StorageFile> { zipFile };
-            return await LoadToTempFolderAsync(files, zipFile).ConfigureAwait(false);
+            var contents = await LoadToTempFolderAsync(files, new FolderOpenOptions { AllowZip = true, Root = zipFile }).ConfigureAwait(false);
+            contents.UpdateFontSet();
+            return contents;
         }
 
-        public static async Task<FolderContents> LoadToTempFolderAsync(IReadOnlyList<StorageFile> files, IStorageItem source = null)
+        public static Task<FolderContents> LoadToTempFolderAsync(
+            IReadOnlyList<StorageFile> files, FolderOpenOptions options, StorageFolder tempFolder = null, FolderContents contents = null)
         {
-            await InitialiseAsync().ConfigureAwait(false);
-
-            // 1. Create temporary storage folder
-            var dest = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync("i", CreationCollisionOption.GenerateUniqueName);
-            Func<StorageFile, Task<List<StorageFile>>> func = (storageFile) => GetFontsAsync(storageFile, dest);
-
-            // 2. Copy all files to temporary storage
-            List<Task<List<StorageFile>>> tasks = files
-                .Where(f => ImportFormats.Contains(f.FileType.ToLower()))
-                .Select(func)
-                .ToList();
-            await Task.WhenAll(tasks);
-
-            // 3. Create font sets
-            var interop = Utils.GetInterop();
-            var results = tasks.Where(t => t.Result is not null).SelectMany(t => t.Result).ToList();
-            var dwSets = interop.GetFonts(results).ToList();
-
-            // 4. Create InstalledFonts list
-            Dictionary<string, InstalledFont> resultList = new();
-            for (int i = 0; i < dwSets.Count; i++)
+            return Task.Run(async () =>
             {
-                StorageFile file = results[i];
-                DWriteFontSet set = dwSets[i];
+                await InitialiseAsync().ConfigureAwait(false);
 
-                foreach (DWriteFontFace font in set.Fonts)
-                    AddFont(resultList, font, file);
-            }
+                // 1. Create temporary storage folder
+                var dest = tempFolder ?? await ApplicationData.Current.TemporaryFolder.CreateFolderAsync("i", CreationCollisionOption.GenerateUniqueName)
+                    .AsTask().ConfigureAwait(false);
+                contents ??= new(options.Root, dest);
+                Func<StorageFile, Task<List<StorageFile>>> func = (storageFile) => GetFontsAsync(storageFile, dest, options);
+                if (options.IsCancelled)
+                    return contents;
 
-            return new FolderContents(source, dest, CreateFontList(resultList));
+                // 2. Copy all files to temporary storage
+                List<Task<List<StorageFile>>> tasks = files
+                    .Where(f => ImportFormats.Contains(f.FileType.ToLower()))
+                    .Select(func)
+                    .ToList();
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+
+                if (options.IsCancelled)
+                    return contents;
+
+                // 3. Create font sets
+                var interop = Utils.GetInterop();
+                var results = tasks.Where(t => t.Result is not null).SelectMany(t => t.Result).ToList();
+                var dwSets = interop.GetFonts(results).ToList();
+
+                // 4. Create InstalledFonts list
+                for (int i = 0; i < dwSets.Count; i++)
+                {
+                    StorageFile file = results[i];
+                    DWriteFontSet set = dwSets[i];
+
+                    foreach (DWriteFontFace font in set.Fonts)
+                        AddFont(contents.FontCache, font, file);
+                }
+
+                return contents;
+            });
+            
         }
 
-        private static async Task<List<StorageFile>> GetFontsAsync(StorageFile f, StorageFolder dest)
+        private static async Task<List<StorageFile>> GetFontsAsync(StorageFile f, StorageFolder dest, FolderOpenOptions options)
         {
+            if (options.IsCancelled)
+                return new();
+
             if (f.FileType == ".zip")
             {
-                return await FontConverter.ExtractFontsFromZipAsync(f, dest);
+                if (options.AllowZip)
+                    return await FontConverter.ExtractFontsFromZipAsync(f, dest, options).ConfigureAwait(false);
+                else
+                    return new List<StorageFile>();
             }
             else
             {
-                var file = await f.CopyAsync(dest);
-                var convert = await FontConverter.TryConvertAsync(file);
+                var convert = await FontConverter.TryConvertAsync(f, dest).ConfigureAwait(false);
                 if (convert.Result != ConversionStatus.OK)
                     return null;
-                return new List<StorageFile> { file };
+
+                if (options.IsCancelled)
+                    return new();
+
+                if (convert.File == f)
+                {
+                    var file = await f.CopyAsync(dest, f.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
+                    return new() { file };
+                }
+
+                return new() { convert.File };
             }
+            
         }
 
-        public static bool IsMDL2(FontVariant variant) => variant != null && (variant.FamilyName.Contains("MDL2") || variant.FamilyName.Equals("Segoe Fluent Icons"));
+        public static bool IsMDL2(FontVariant variant) => variant != null && (
+            variant.FamilyName.Contains("MDL2") || variant.FamilyName.Contains("Fluent Icons"));
+
         public static bool IsSystemSymbolFamily(FontVariant variant) => variant != null && (
             variant.FamilyName.Equals("Segoe MDL2 Assets") || variant.FamilyName.Equals("Segoe Fluent Icons"));
-
     }
 }

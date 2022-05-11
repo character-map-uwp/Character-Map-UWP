@@ -5351,10 +5351,10 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid
-                            x:Name="LayoutRoot"
-                            Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}"
-                            Visibility="Collapsed">
+                        <Grid x:Name="LayoutRoot" Visibility="Collapsed">
+                            <Grid.Background>
+                                <SolidColorBrush Opacity="0.1" Color="White" />
+                            </Grid.Background>
 
                             <Border
                                 x:Name="BackgroundElement"

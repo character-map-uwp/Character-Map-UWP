@@ -145,8 +145,16 @@
                             </FontIcon>
                             <Button.Flyout>
                                 <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="BottomEdgeAlignedLeft">
-                                    <MenuFlyoutItem Click="{x:Bind OpenFont}" Text="Font File" />
-                                    <MenuFlyoutItem Click="{x:Bind ViewModel.OpenFolder}" Text="Font Folder" />
+                                    <MenuFlyoutItem Click="{x:Bind OpenFont}" Text="Font File">
+                                        <MenuFlyoutItem.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="O" Modifiers="Control" />
+                                        </MenuFlyoutItem.KeyboardAccelerators>
+                                    </MenuFlyoutItem>
+                                    <MenuFlyoutItem Click="{x:Bind OpenFolder}" Text="Font Folder">
+                                        <MenuFlyoutItem.KeyboardAccelerators>
+                                            <KeyboardAccelerator Key="O" Modifiers="Control,Shift" />
+                                        </MenuFlyoutItem.KeyboardAccelerators>
+                                    </MenuFlyoutItem>
                                 </MenuFlyout>
                             </Button.Flyout>
                         </controls:UXButton>

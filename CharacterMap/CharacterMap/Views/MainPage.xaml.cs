@@ -544,6 +544,11 @@ namespace CharacterMap.Views
             }
         }
 
+        private void OpenFolder()
+        {
+            _ = (new OpenFolderDialog()).ShowAsync();
+        }
+
 
 
 

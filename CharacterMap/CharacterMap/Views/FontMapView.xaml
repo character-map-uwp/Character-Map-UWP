@@ -1744,7 +1744,7 @@
                 </VisualState>
                 <VisualState x:Name="DevCSharpWinUI3State">
                     <VisualState.Setters>
-                        <Setter Target="BtnToggleDev.Label" Value="C#" />
+                        <Setter Target="BtnToggleDev.Label" Value="C# WU3" />
                         <Setter Target="DevCSharpIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>

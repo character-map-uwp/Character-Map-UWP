@@ -402,31 +402,32 @@ namespace CharacterMap.ViewModels
                 _ = Folder.LaunchSourceAsync();
         }
 
-        public async void OpenFolder()
-        {
-            var picker = new FolderPicker();
+        //public async void OpenFolder()
+        //{
+        //    var picker = new FolderPicker();
 
-            picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
-            var file = await picker.PickSingleFolderAsync();
-            if (file != null)
-            {
-                try
-                {
-                    IsLoadingFonts = true;
+        //    picker.FileTypeFilter.Add("*");
+        //    picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
+        //    var src = await picker.PickSingleFolderAsync();
+        //    if (src  is not null)
+        //    {
+        //        try
+        //        {
+        //            IsLoadingFonts = true;
 
-                    if (await FontFinder.LoadToTempFolderAsync(file) is FolderContents folder && folder.Fonts.Count > 0)
-                    {
-                        await MainPage.CreateWindowAsync(new(
-                            Ioc.Default.GetService<IDialogService>(), 
-                            Ioc.Default.GetService<AppSettings>(), 
-                            folder));
-                    }
-                }
-                finally
-                {
-                    IsLoadingFonts = false;
-                }
-            }
-        }
+        //            if (await FontFinder.LoadToTempFolderAsync(src) is FolderContents folder && folder.Fonts.Count > 0)
+        //            {
+        //                await MainPage.CreateWindowAsync(new(
+        //                    Ioc.Default.GetService<IDialogService>(), 
+        //                    Ioc.Default.GetService<AppSettings>(), 
+        //                    folder));
+        //            }
+        //        }
+        //        finally
+        //        {
+        //            IsLoadingFonts = false;
+        //        }
+        //    }
+        //}
     }
 }

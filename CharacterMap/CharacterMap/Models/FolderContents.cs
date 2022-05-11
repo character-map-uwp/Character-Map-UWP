@@ -3,21 +3,34 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.System;
 
 namespace CharacterMap.Models
 {
+    public record FolderOpenOptions
+    {
+        public IStorageItem Root { get; init; }
+        public bool Recursive { get; init; }
+        public bool AllowZip { get; init; }
+        public CancellationToken? Token { get; init; }
+
+        public bool IsCancelled => Token is not null && Token.HasValue && Token.Value.IsCancellationRequested;
+    }
+
     public class FolderContents
     {
-        public FolderContents(IStorageItem source, StorageFolder tempFolder, IReadOnlyList<InstalledFont> fonts)
+        public FolderContents(IStorageItem source, StorageFolder tempFolder)
         {
             Source = source;
             SourceFolder = source as StorageFolder;
             TempFolder = tempFolder;
-            Fonts = fonts;
+            FontCache = new();
         }
+
+        public Dictionary<string, InstalledFont> FontCache { get; }
 
         /// <summary>
         /// The original StorageItem source the content was loaded from. 
@@ -36,7 +49,12 @@ namespace CharacterMap.Models
         /// </summary>
         public StorageFolder TempFolder { get; }
 
-        public IReadOnlyList<InstalledFont> Fonts { get; }
+        public IReadOnlyList<InstalledFont> Fonts { get; private set; }
+
+        public void UpdateFontSet()
+        {
+            Fonts = FontFinder.CreateFontList(FontCache);
+        }
 
         public Task LaunchSourceAsync()
         {
