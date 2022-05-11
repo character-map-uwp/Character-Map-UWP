@@ -12,6 +12,7 @@ using CharacterMapCX;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Windows.Storage;
+using Windows.Storage.Search;
 using Windows.UI.Text;
 using WoffToOtf;
 
@@ -502,48 +503,35 @@ namespace CharacterMap.Core
             return resultList.Count > 0 ? resultList.First().Value : null;
         }
 
-        public static async Task<FolderContents> LoadToTempFolderAsync(FolderOpenOptions options)
+        public static Task<FolderContents> LoadToTempFolderAsync(FolderOpenOptions options)
         {
-            var folder = options.Root as StorageFolder;
-            Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
-
-            var items = await folder.GetItemsAsync();
-            var files = items.OfType<StorageFile>().ToList();
-            FolderContents contents = await LoadToTempFolderAsync(files, options).ConfigureAwait(false);
-
-            // Recursive helper method
-            async Task LoadAsync(StorageFolder src, bool getFiles = true)
+            return Task.Run(async () =>
             {
-                if (getFiles)
+                var folder = options.Root as StorageFolder;
+                Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+
+                List<StorageFile> files = new();
+
+                try
                 {
-                    var childFiles = await src.GetFilesAsync().AsTask(options.Token.Value).ConfigureAwait(false);
-                    if (options.IsCancelled)
-                        return;
+                    var query = folder.CreateFileQueryWithOptions(
+                        new QueryOptions(CommonFileQuery.DefaultQuery, FontFinder.ImportFormats)
+                        {
+                            FolderDepth = options.Recursive ? FolderDepth.Deep : FolderDepth.Shallow,
+                            IndexerOption = IndexerOption.UseIndexerWhenAvailable,
+                        });
 
-                    var result = await LoadToTempFolderAsync(childFiles, options, contents.TempFolder, contents).ConfigureAwait(false);
+                    files = (await query.GetFilesAsync().AsTask(options.Token.Value)).ToList();
                 }
+                catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException) { }
 
-                var childs = await src.GetFoldersAsync().AsTask().ConfigureAwait(false);
+                FolderContents contents = await LoadToTempFolderAsync(files, options).ConfigureAwait(false);
                 if (options.IsCancelled)
-                    return;
+                    return contents;
 
-                if (childs.Count > 0)
-                {
-                    var tasks = childs.Select(c => LoadAsync(c)).ToList();
-                    await Task.WhenAll(tasks);
-                }
-            }
-
-            if (options.IsCancelled)
+                contents.UpdateFontSet();
                 return contents;
-
-            if (options.Recursive)
-            {
-                await LoadAsync(folder, false);
-            }
-
-            contents.UpdateFontSet();
-            return contents;
+            });
         }
 
         public static async Task<FolderContents> LoadZipToTempFolderAsync(StorageFile zipFile)
@@ -604,31 +592,31 @@ namespace CharacterMap.Core
             if (options.IsCancelled)
                 return new();
 
+            List<StorageFile> results = new();
+
             if (f.FileType == ".zip")
             {
                 if (options.AllowZip)
-                    return await FontConverter.ExtractFontsFromZipAsync(f, dest, options).ConfigureAwait(false);
-                else
-                    return new List<StorageFile>();
+                    results = await FontConverter.ExtractFontsFromZipAsync(f, dest, options).ConfigureAwait(false);
             }
             else
             {
                 var convert = await FontConverter.TryConvertAsync(f, dest).ConfigureAwait(false);
-                if (convert.Result != ConversionStatus.OK)
-                    return null;
-
-                if (options.IsCancelled)
-                    return new();
+                if (convert.Result is not ConversionStatus.OK || options.IsCancelled)
+                    goto Exit;
 
                 if (convert.File == f)
                 {
                     var file = await f.CopyAsync(dest, f.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
-                    return new() { file };
+                    results.Add(file);
                 }
-
-                return new() { convert.File };
+                else
+                    results.Add(convert.File);
             }
-            
+
+        Exit:
+            options?.Increment(results.Count);
+            return results;
         }
 
         public static bool IsMDL2(FontVariant variant) => variant != null && (

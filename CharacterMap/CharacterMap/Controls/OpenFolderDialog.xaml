@@ -27,8 +27,7 @@
             MinWidth="500"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Spacing="24"
-            d:IsHidden="True">
+            Spacing="24">
             <muxc:ProgressRing
                 Width="75"
                 Height="75"
@@ -36,13 +35,26 @@
                 Background="Transparent"
                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                 IsActive="True" />
+            <!--<TextBlock
+                HorizontalAlignment="Center"
+                Style="{StaticResource TitleTextStyle}"
+                Text="{core:Localizer Key=TxtLoadingFonts/Text, Casing={StaticResource TitleCasing}}" />-->
             <TextBlock
                 HorizontalAlignment="Center"
                 Style="{StaticResource TitleTextStyle}"
-                Text="{core:Localizer Key=TxtLoadingFonts/Text, Casing={StaticResource TitleCasing}}" />
+                Text="Finding Fonts..." />
+
+            <TextBlock HorizontalAlignment="Center" Margin="0 -8 0 0">
+                <Run Text="Found" />
+                <Run Text="{x:Bind TemplateSettings.Count, Mode=OneWay}" />
+                <Run Text="font files" />
+            </TextBlock>
         </StackPanel>
 
-        <StackPanel x:Name="EntryRoot" x:Load="{x:Bind core:Converters.False(TemplateSettings.IsLoading), Mode=OneWay, FallbackValue=True}">
+        <StackPanel
+            x:Name="EntryRoot"
+            x:Load="{x:Bind core:Converters.False(TemplateSettings.IsLoading), Mode=OneWay, FallbackValue=True}"
+            d:IsHidden="True">
             <TextBlock FontWeight="SemiBold" Text="Selected Folder (click to change)" />
             <Button
                 Margin="0 4 0 0"

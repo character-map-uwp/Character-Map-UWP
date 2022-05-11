@@ -34,6 +34,7 @@ namespace CharacterMap.Controls
         public bool IsLoading       { get => GetV(false); set => Set(value); }
         public bool AllowZip        { get => GetV(false); set => Set(value); }
         public bool AllowRecursive  { get => GetV(false); set => Set(value); }
+        public int Count            { get => GetV(0); set => Set(value); }
         public StorageFolder Folder { get => Get<StorageFolder>(); set => Set(value); }
 
         private CancellationTokenSource _cts = new CancellationTokenSource();
@@ -59,14 +60,19 @@ namespace CharacterMap.Controls
                 OnPropertyChanged(nameof(CanContinue));
         }
 
+
+
         public FolderOpenOptions GetOptions()
         {
+            var ctx = SynchronizationContext.Current;
+
             return new FolderOpenOptions
             {
                 AllowZip = AllowZip,
                 Recursive = AllowRecursive,
                 Root = Folder,
-                Token = _cts.Token
+                Token = _cts.Token,
+                Callback = i => ctx.Post(s => Count += i, null)
             };
         }
 
@@ -139,7 +145,6 @@ namespace CharacterMap.Controls
                     TemplateSettings.IsLoading = true;
 
                     FolderOpenOptions opts = TemplateSettings.GetOptions();
-
                     if (await FontFinder.LoadToTempFolderAsync(opts) is FolderContents folder)
                     {
                         if (opts.IsCancelled)

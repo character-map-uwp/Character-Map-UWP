@@ -16,8 +16,10 @@ namespace CharacterMap.Models
         public bool Recursive { get; init; }
         public bool AllowZip { get; init; }
         public CancellationToken? Token { get; init; }
+        public Action<int> Callback { get; init; }
 
         public bool IsCancelled => Token is not null && Token.HasValue && Token.Value.IsCancellationRequested;
+        public void Increment(int count) => Callback?.Invoke(count);
     }
 
     public class FolderContents
