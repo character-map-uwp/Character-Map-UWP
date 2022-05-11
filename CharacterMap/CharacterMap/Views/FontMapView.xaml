@@ -1770,6 +1770,13 @@
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="DevCppWinRTWinUI3State">
+                    <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="WinRT 3" />
+                        <Setter Target="DevCppIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="DevUnicodeState">
                     <VisualState.Setters>
                         <Setter Target="BtnToggleDev.Label" Value="Unicode" />

@@ -26,6 +26,7 @@ namespace CharacterMap.Provider
                 new VBDevProvider(o, c),
                 new CppCxDevProvider(o, c),
                 new CppWinrtDevProvider(o, c),
+                new CppWinrtWinUI3DevProvider(o, c),
                 new XamarinFormsDevProvider(o,c)
             };
         }

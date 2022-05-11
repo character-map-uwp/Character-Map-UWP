@@ -6,13 +6,16 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Provider
 {
-    public class CppWinrtDevProvider : DevProviderBase
+    /// <summary>
+    /// Base for Jupiter-based C++/WinRT XAML platforms (UWP, WinUI3)
+    /// </summary>
+    public abstract class CppWinrtJupiterDevProviderBase : DevProviderBase
     {
-        public CppWinrtDevProvider(CharacterRenderingOptions r, Character c) : base(r, c) { 
-            DisplayName = "C++/WinRT";
-        }
+        public CppWinrtJupiterDevProviderBase(CharacterRenderingOptions r, Character c) : base(r, c) { }
 
-        protected override DevProviderType GetDevProviderType() => DevProviderType.CppWinRT;
+        protected abstract string Namespace { get; }
+        protected abstract DevProviderType DevProviderType { get; }
+        protected override DevProviderType GetDevProviderType() => DevProviderType;
         protected override IReadOnlyList<DevOption> OnGetContextOptions() => Inflate();
         protected override IReadOnlyList<DevOption> OnGetOptions() => Inflate();
 
@@ -26,7 +29,7 @@ namespace CharacterMap.Provider
             string pathIconData = GetOutlineGeometry(c, Options);
         
             string fontIcon = 
-                "// Add \"#include <winrt/Windows.UI.Xaml.Media.h>\" to pch.h\n" +
+                $"// Add \"#include <winrt/{Namespace}.UI.Xaml.Media.h>\" to pch.h\n" +
                 "auto f = FontIcon();\n" +
                 $"f.Glyph(L\"\\u{hex}\");\n" +
                 $"f.FontFamily(Media::FontFamily(L\"{v?.XamlFontSource}\"));";
@@ -40,7 +43,7 @@ namespace CharacterMap.Provider
             if (!string.IsNullOrWhiteSpace(pathIconData))
             {
                 var data =
-                    $"// Add \"#include <winrt/Windows.UI.Xaml.Media.h>\" to pch.h\n" +
+                    $"// Add \"#include <winrt/{Namespace}.UI.Xaml.Media.h>\" to pch.h\n" +
                     $"auto p = PathIcon();\n" +
                     $"p.VerticalAlignment(VerticalAlignment::Center);\n" +
                     $"p.HorizontalAlignment(HorizontalAlignment::Center);\n" +
@@ -56,5 +59,25 @@ namespace CharacterMap.Provider
         }
     }
 
+    public class CppWinrtDevProvider : CppWinrtJupiterDevProviderBase
+    {
+        public CppWinrtDevProvider(CharacterRenderingOptions r, Character c) : base(r, c) {
+            DisplayName = "C++/WinRT (UWP)";
+        }
 
+        protected override string Namespace { get; } = "Windows";
+
+        protected override DevProviderType DevProviderType { get; } = DevProviderType.CppWinRT;
+    }
+
+    public class CppWinrtWinUI3DevProvider : CppWinrtJupiterDevProviderBase
+    {
+        public CppWinrtWinUI3DevProvider(CharacterRenderingOptions r, Character c) : base(r, c) {
+            DisplayName = "C++/WinRT (WinUI 3)";
+        }
+
+        protected override string Namespace { get; } = "Microsoft";
+
+        protected override DevProviderType DevProviderType { get; } = DevProviderType.CppWinRTWinUI3;
+    }
 }
