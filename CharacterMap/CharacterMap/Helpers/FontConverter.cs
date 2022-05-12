@@ -13,13 +13,20 @@ namespace CharacterMap.Helpers
 {
     public static class FontConverter
     {
+        private static Random _random { get; } = new Random();
+
         public static async Task<(StorageFile File, ConversionStatus Result)> TryConvertAsync(
             StorageFile file, StorageFolder targetFolder = null)
         {
             if (file.FileType.ToLower().EndsWith("woff"))
             {
-                var folder = targetFolder ?? ApplicationData.Current.TemporaryFolder;
-                var newFile = await folder.CreateFileAsync(Path.GetFileNameWithoutExtension(file.DisplayName) + ".otf", CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
+                StorageFolder folder = targetFolder ?? ApplicationData.Current.TemporaryFolder;
+                string name = Path.GetFileNameWithoutExtension(file.DisplayName);
+
+                if (targetFolder is not null) // Avoid threading errors with multiple converts to the same target folder
+                    name += $"-{_random.Next(1000,100000)}";
+
+                StorageFile newFile = await folder.CreateFileAsync($"{name}.otf", CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
                 ConversionStatus result = await TryConvertWoffToOtfAsync(file, newFile).ConfigureAwait(false);
                 if (result == ConversionStatus.OK)
                 {
@@ -43,18 +50,20 @@ namespace CharacterMap.Helpers
 
         static Uri GetAppUri(StorageFile file)
         {
-            return new Uri($"ms-appdata:///temp/{file.Name}");
+            string p = file.Path.Replace(ApplicationData.Current.TemporaryFolder.Path, String.Empty).Replace("\\", "/");
+            return new Uri($"ms-appdata:///temp{p}");
         }
 
         private static Task<ConversionStatus> TryConvertWoffToOtfAsync(StorageFile inputFile, StorageFile outputFile)
         {
             return Task.Run(async () =>
             {
-                using var input = await inputFile.OpenReadAsync();
-                using var output = await outputFile.OpenAsync(FileAccessMode.ReadWrite);
-                using var si = input.AsStream();
-                using var so = output.AsStream();
-                return Converter.Convert(si, so);
+                System.Diagnostics.Debug.WriteLine($"CONVERT ${inputFile.Path} to {outputFile.Path}");
+                using var input = await inputFile.OpenStreamForReadAsync().ConfigureAwait(false);
+                using var output = await outputFile.OpenStreamForWriteAsync().ConfigureAwait(false);
+                var result =  Converter.Convert(input, output);
+                System.Diagnostics.Debug.WriteLine($"COMPLETE ${inputFile.Path} to {outputFile.Path}");
+                return result;
             });
         }
 
@@ -81,13 +90,10 @@ namespace CharacterMap.Helpers
                     var ext = Path.GetExtension(entry.Name);
                     if (FontFinder.ImportFormats.Contains(ext))
                     {
-                        string dest = Path.Combine(folder.Path, entry.Name);
                         try
                         {
-                            entry.ExtractToFile(dest, true);
-
-                            var extracted = await StorageFile.GetFileFromPathAsync(dest);
-                            var result = await FontConverter.TryConvertAsync(extracted, folder);
+                            var extracted = await entry.ExtractToFolderAsync(folder, entry.Name, CreationCollisionOption.GenerateUniqueName).ConfigureAwait(false);
+                            var result = await FontConverter.TryConvertAsync(extracted, folder).ConfigureAwait(false);
 
                             // If the file was converted we can delete the original extracted file.
                             // We don't need to await this.

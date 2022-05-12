@@ -8,6 +8,9 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using System.IO.Compression;
+using Windows.Storage;
+using System.IO;
 
 namespace CharacterMap.Helpers
 {
@@ -106,6 +109,21 @@ namespace CharacterMap.Helpers
                 list.Measure(new (100, 100));
 
             return list;
+        }
+
+        public static Task<StorageFile> ExtractToFolderAsync(
+            this ZipArchiveEntry entry, StorageFolder targetFolder, string fileName, CreationCollisionOption option)
+        {
+            return Task.Run(async () =>
+            {
+                using var s = entry.Open();
+                var file = await targetFolder.CreateFileAsync($"{Path.GetRandomFileName()}.{Path.GetExtension(entry.Name)}", option).AsTask().ConfigureAwait(false);
+                using var fs = await file.OpenStreamForWriteAsync().ConfigureAwait(false);
+                s.CopyTo(fs);
+                fs.Flush();
+
+                return file;
+            });
         }
     }
 }
