@@ -145,12 +145,12 @@
                             </FontIcon>
                             <Button.Flyout>
                                 <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="BottomEdgeAlignedLeft">
-                                    <MenuFlyoutItem Click="{x:Bind OpenFont}" Text="Font File">
+                                    <MenuFlyoutItem x:Uid="FontFileMenuItem" Click="{x:Bind OpenFont}" d:Text="Font File">
                                         <MenuFlyoutItem.KeyboardAccelerators>
                                             <KeyboardAccelerator Key="O" Modifiers="Control" />
                                         </MenuFlyoutItem.KeyboardAccelerators>
                                     </MenuFlyoutItem>
-                                    <MenuFlyoutItem Click="{x:Bind OpenFolder}" Text="Font Folder">
+                                    <MenuFlyoutItem x:Uid="FontFolderMenuItem" Click="{x:Bind OpenFolder}" d:Text="Font Folder">
                                         <MenuFlyoutItem.KeyboardAccelerators>
                                             <KeyboardAccelerator Key="O" Modifiers="Control,Shift" />
                                         </MenuFlyoutItem.KeyboardAccelerators>

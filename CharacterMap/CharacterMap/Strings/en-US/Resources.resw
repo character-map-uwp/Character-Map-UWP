@@ -1138,4 +1138,43 @@ Requires a restart to take effect.</value>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
     <value>Collections</value>
   </data>
+  <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
+    <value>Open Fonts</value>
+  </data>
+  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="DigOpenFolder.Title" xml:space="preserve">
+    <value>Open Font Folder</value>
+  </data>
+  <data name="DigOpenFolderContent.CheckRecursiveContent" xml:space="preserve">
+    <value>Look for fonts inside child folders</value>
+  </data>
+  <data name="DigOpenFolderContent.CheckZipContent" xml:space="preserve">
+    <value>Look for fonts inside .ZIP archives</value>
+  </data>
+  <data name="DigOpenFolderContent.FindDescription" xml:space="preserve">
+    <value>Enabling options may dramatically increase time required to open the folder</value>
+  </data>
+  <data name="DigOpenFolderContent.FindHeader" xml:space="preserve">
+    <value>Find Options</value>
+  </data>
+  <data name="DigOpenFolderContent.FindingFontsLabel" xml:space="preserve">
+    <value>Finding Fonts...</value>
+  </data>
+  <data name="DigOpenFolderContent.PrefixLabel" xml:space="preserve">
+    <value>Found</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectHeader" xml:space="preserve">
+    <value>Selected Folder (click to change)</value>
+  </data>
+  <data name="DigOpenFolderContent.SuffixLabel" xml:space="preserve">
+    <value>font files</value>
+  </data>
+  <data name="FontFileMenuItem.Text" xml:space="preserve">
+    <value>Font File</value>
+  </data>
+  <data name="FontFolderMenuItem.Text" xml:space="preserve">
+    <value>Font Folder</value>
+  </data>
 </root>

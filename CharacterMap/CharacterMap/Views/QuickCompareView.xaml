@@ -533,11 +533,10 @@
                                 Grid.Column="1"
                                 Padding="8 0"
                                 Click="{x:Bind ViewModel.OpenCurrentFont}"
+                                Content="{core:Localizer Key='OpenFontButton/Label'}"
                                 Foreground="{StaticResource SystemColorControlAccentBrush}"
                                 Style="{StaticResource TextBlockButtonStyle}"
-                                ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}">
-                               Open
-                            </Button>
+                                ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}" />
                         </Grid>
 
                         <ScrollViewer
