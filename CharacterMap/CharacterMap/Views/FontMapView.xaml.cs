@@ -701,9 +701,13 @@ namespace CharacterMap.Views
                     font,
                     ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
                     this.Tag as FrameworkElement,
-                    IsStandalone,
-                    showAdvanced: true,
-                    isExternalFile: ViewModel.IsExternalFile);
+                    new()
+                    {
+                        Standalone = IsStandalone,
+                        ShowAdvanced = true,
+                        IsExternalFile = ViewModel.IsExternalFile,
+                        Folder = ViewModel.Folder
+                    });
             }
         }
 

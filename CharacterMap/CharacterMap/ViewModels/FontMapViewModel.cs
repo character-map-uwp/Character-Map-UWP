@@ -76,6 +76,7 @@ namespace CharacterMap.ViewModels
         public bool ImportButtonEnabled                                     { get => GetV(true); set => Set(value); }
         public bool HasFontOptions                                          { get => GetV(false); set => Set(value); }
         public bool IsSvgChar                                               { get => GetV(false); set => Set(value); }
+        public FolderContents Folder                                        { get => Get<FolderContents>(); set => Set(value); }
         public bool IsSequenceRootVisible                                   { get => GetV(false); set => Set(value); }
         public string XamlPath                                              { get => Get<string>(); set => Set(value); }
         public string Sequence                                              { get => GetV(string.Empty); set => Set(value); }

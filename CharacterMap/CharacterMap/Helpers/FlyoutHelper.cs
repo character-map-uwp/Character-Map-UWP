@@ -26,6 +26,38 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
 {
+    public class FlyoutArgs
+    {
+        /// <summary>
+        /// A window showing a folder of fonts
+        /// </summary>
+        public bool IsFolderView        => Folder is not null;
+
+        /// <summary>
+        /// Folder of fonts associated with the view that initiates
+        /// the flyout menu
+        /// </summary>
+        public FolderContents Folder    { get; set; }
+
+        /// <summary>
+        /// ... menu 
+        /// </summary>
+        public bool ShowAdvanced        { get; set; }
+
+        /// <summary>
+        /// A stand-alone Window showing a single Font Family
+        /// </summary>
+        public bool Standalone          { get; set; }
+        
+        /// <summary>
+        /// The font family is from file that is not installed in the system
+        /// or imported into the app. (I.e., opened via Drag & Drop or open
+        /// button)
+        /// </summary>
+        public bool IsExternalFile      { get; set; }
+    }
+
+
     public static class FlyoutHelper
     {
         private static UserCollectionsService _collections { get; } = Ioc.Default.GetService<UserCollectionsService>();
@@ -52,7 +84,7 @@ namespace CharacterMap.Helpers
             _ = d.ShowAsync();
         }
 
-        
+
         /// <summary>
         /// Creates the context menu for the Font List or the "..." button.
         /// Both of these have a font as their main target.
@@ -68,11 +100,13 @@ namespace CharacterMap.Helpers
             InstalledFont font,
             CharacterRenderingOptions options,
             FrameworkElement headerContent,
-            bool standalone,
-            bool showAdvanced = false,
-            bool isExternalFile = false)
+            FlyoutArgs args)
         {
             MainViewModel main = Ioc.Default.GetService<MainViewModel>();
+
+            bool standalone = args.Standalone;
+            bool showAdvanced = args.ShowAdvanced;
+            bool isExternalFile = args.IsExternalFile;
 
             #region Handlers 
 
@@ -120,7 +154,7 @@ namespace CharacterMap.Helpers
 
             static void Export_Click(object sender, RoutedEventArgs e)
             {
-                if (sender is FrameworkElement f && 
+                if (sender is FrameworkElement f &&
                     f.DataContext is InstalledFont fnt
                     && f.Tag is CharacterRenderingOptions o)
                 {
@@ -176,7 +210,7 @@ namespace CharacterMap.Helpers
                     // Add "Open in New Window" button
                     if (!standalone)
                     {
-                        var newWindow = new MenuFlyoutItem
+                        MenuFlyoutItem newWindow = new()
                         {
                             Text = Localization.Get("OpenInNewWindow/Text"),
                             Icon = new FontIcon { Glyph = "\uE17C" },
@@ -194,7 +228,7 @@ namespace CharacterMap.Helpers
 
                     if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.FontFace))
                     {
-                        var saveButton = new MenuFlyoutItem
+                        MenuFlyoutItem saveButton = new MenuFlyoutItem()
                         {
                             Text = Localization.Get("ExportFontFileLabel/Text"),
                             Icon = new FontIcon { Glyph = "\uE792" },
@@ -204,7 +238,7 @@ namespace CharacterMap.Helpers
                         saveButton.Click += SaveFont_Click;
                         menu.Items.Add(saveButton);
 
-                        var exportButton = new MenuFlyoutItem
+                        MenuFlyoutItem exportButton = new MenuFlyoutItem()
                         {
                             Text = Localization.Get("ExportCharactersLabel/Text"),
                             Icon = new FontIcon { Glyph = "\uE105" },
@@ -217,16 +251,16 @@ namespace CharacterMap.Helpers
                     }
 
                     // Add "Add to Collection" button
-                    if (isExternalFile is false)
+                    if (isExternalFile is false && args.IsFolderView is false)
                     {
-                        MenuFlyoutSubItem newColl = new MenuFlyoutSubItem
+                        MenuFlyoutSubItem newColl = new()
                         {
                             Text = Localization.Get("AddToCollectionFlyout/Text"),
                             Icon = new FontIcon { Glyph = "\uE71D" }
                         };
 
                         // Create "New Collection" Item
-                        var newCollection = new MenuFlyoutItem
+                        MenuFlyoutItem newCollection = new()
                         {
                             Text = Localization.Get("NewCollectionItem/Text"),
                             Icon = new FontIcon { Glyph = "\uE109" },
@@ -243,7 +277,7 @@ namespace CharacterMap.Helpers
                             {
                                 newColl.Items.Add(new MenuFlyoutSeparator());
 
-                                var symb = new MenuFlyoutItem
+                                MenuFlyoutItem symb = new()
                                 {
                                     Text = Localization.Get("OptionSymbolFonts/Text"),
                                     IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name),
@@ -296,20 +330,20 @@ namespace CharacterMap.Helpers
                 }
 
                 // Only show the "Remove from Collection" menu item if:
-                //  -- we are not in a standalone window
+                //  -- we are not in a stand-alone window
                 //  AND
                 //  -- we are in a custom collection
                 //  OR 
                 //  -- we are in the Symbol Font collection, and this is a font that 
                 //     the user has manually tagged as a symbol font
-                if (!standalone)
+                if (!standalone && !args.IsFolderView)
                 {
                     if (main.SelectedCollection != null ||
                         (main.FontListFilter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
                     {
                         menu.Items.Add(new MenuFlyoutSeparator());
 
-                        var removeItem = new MenuFlyoutItem
+                        MenuFlyoutItem removeItem = new()
                         {
                             Text = Localization.Get("RemoveFromCollectionItem/Text"),
                             Icon = new FontIcon { Glyph = "\uE108" },
@@ -337,13 +371,13 @@ namespace CharacterMap.Helpers
                 }
 
                 // Add "Delete Font" button
-                if (!standalone)
+                if (!standalone && !args.IsFolderView)
                 {
                     if (font.HasImportedFiles)
                     {
                         menu.Items.Add(new MenuFlyoutSeparator());
 
-                        var removeFont = new MenuFlyoutItem
+                        MenuFlyoutItem removeFont = new()
                         {
                             Text = Localization.Get("RemoveFontFlyout/Text"),
                             Icon = new FontIcon { Glyph = "\uE107" },
@@ -359,6 +393,7 @@ namespace CharacterMap.Helpers
                     }
                 }
 
+                // Handle Compare options
                 // Add "Compare Fonts button"
                 var qq = new MenuFlyoutItem
                 {
@@ -368,14 +403,14 @@ namespace CharacterMap.Helpers
 
                 qq.Click += (s, e) =>
                 {
-                    _ = QuickCompareView.CreateWindowAsync(new(false));
+                    _ = QuickCompareView.CreateWindowAsync(new(false, args.Folder));
                 };
 
                 menu.Items.Add(new MenuFlyoutSeparator());
                 menu.Items.Add(qq);
 
                 // Add "Add to quick compare" button if we're viewing a variant
-                if (showAdvanced && isExternalFile is false)
+                if (args.IsFolderView is false && showAdvanced && isExternalFile is false)
                 {
                     MenuFlyoutItem item = new MenuFlyoutItem
                     {

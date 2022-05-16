@@ -181,6 +181,8 @@ namespace CharacterMap.Views
             ViewModel.FontListCreated += ViewModel_FontListCreated;
 
             UpdateLoadingStates();
+            
+            FontMap.ViewModel.Folder = ViewModel.Folder;
         }
 
         private void MainPage_Unloaded(object sender, RoutedEventArgs e)
@@ -526,9 +528,8 @@ namespace CharacterMap.Views
 
         private void ItemContainer_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            /* RIGHT CLICK FOR FONT LIST */
-            if (sender is ListViewItem f
-                && f.Content is InstalledFont font)
+            /* RIGHT CLICK MENU FOR FONT LIST */
+            if (sender is ListViewItem f && f.Content is InstalledFont font)
             {
                 args.Handled = true;
                 FlyoutBase.SetAttachedFlyout(f, FontListFlyout);
@@ -537,7 +538,7 @@ namespace CharacterMap.Views
                         font,
                         null,
                         null,
-                        false);
+                        new () { Folder = ViewModel.Folder });
 
                 args.TryGetPosition(sender, out Point pos);
                 FontListFlyout.ShowAt(sender, pos);
@@ -561,7 +562,7 @@ namespace CharacterMap.Views
 
         private void DeleteCollection_Click(object sender, RoutedEventArgs e)
         {
-            var d = new ContentDialog
+            ContentDialog d = new ()
             {
                 Title = Localization.Get("DigDeleteCollection/Title"),
                 IsPrimaryButtonEnabled = true,

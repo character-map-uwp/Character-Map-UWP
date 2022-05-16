@@ -36,6 +36,8 @@ namespace CharacterMap.ViewModels
     {
         public static WindowInformation QuickCompareWindow { get; set; }
 
+        public string Title                 { get => Get<string>(); set => Set(value); }
+
         public string Text                  { get => Get<string>(); set => Set(value); }
 
         public string FilterTitle           { get => Get<string>(); set => Set(value); }
@@ -111,6 +113,13 @@ namespace CharacterMap.ViewModels
                         QuickFonts.Add(m);
                 }, nameof(QuickCompareViewModel));
             }
+
+            if (IsQuickCompare)
+                Title = Localization.Get("QuickCompareTitle/Text");
+            else if (IsFolderMode)
+                Title = _folder.Source.Name;
+            else
+                Title = Localization.Get("CompareFontsTitle/Text");
         }
 
         public void Deactivated()

@@ -252,7 +252,7 @@
 
         <controls:ModalPagePresenter
             x:Name="Presenter"
-            Title="{core:Localizer Key='CompareFontsTitle/Text'}"
+            Title="{x:Bind ViewModel.Title}"
             CloseButtonVisibility="Collapsed"
             IsWindowRoot="True">
             <controls:ModalPagePresenter.TitleBarContent>
@@ -795,7 +795,6 @@
                 <VisualState x:Name="QuickCompareState">
                     <VisualState.Setters>
                         <Setter Target="FontListFilter.Visibility" Value="Collapsed" />
-                        <Setter Target="Presenter.Title" Value="{core:Localizer Key='QuickCompareTitle/Text'}" />
                         <Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplateQuick}" />
                         <Setter Target="Repeater.IsItemClickEnabled" Value="False" />
                     </VisualState.Setters>

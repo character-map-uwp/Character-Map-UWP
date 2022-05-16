@@ -58,11 +58,10 @@ namespace CharacterMap.Helpers
         {
             return Task.Run(async () =>
             {
-                System.Diagnostics.Debug.WriteLine($"CONVERT ${inputFile.Path} to {outputFile.Path}");
                 using var input = await inputFile.OpenStreamForReadAsync().ConfigureAwait(false);
                 using var output = await outputFile.OpenStreamForWriteAsync().ConfigureAwait(false);
                 var result =  Converter.Convert(input, output);
-                System.Diagnostics.Debug.WriteLine($"COMPLETE ${inputFile.Path} to {outputFile.Path}");
+                await output.FlushAsync().ConfigureAwait(false);
                 return result;
             });
         }

@@ -37,33 +37,30 @@ namespace CharacterMap.Core
         private const string PENDING = nameof(PENDING);
         private const string TEMP = nameof(TEMP);
 
-        private static SemaphoreSlim _initSemaphore { get; } = new SemaphoreSlim(1,1);
-        private static SemaphoreSlim _loadSemaphore { get; } = new SemaphoreSlim(1,1);
+        private static SemaphoreSlim _initSemaphore                 { get; } = new (1,1);
+        private static SemaphoreSlim _loadSemaphore                 { get; } = new (1,1);
 
         /* If we can't delete a font during a session, we mark it here */
-        private static HashSet<string> _ignoredFonts { get; } = new HashSet<string>();
+        private static HashSet<string> _ignoredFonts                { get; } = new ();
 
-        private static StorageFolder _importFolder => ApplicationData.Current.LocalFolder;
+        private static StorageFolder _importFolder                  => ApplicationData.Current.LocalFolder;
 
-        public static IReadOnlyList<InstalledFont> Fonts         { get; private set; }
-        public static IReadOnlyList<InstalledFont> ImportedFonts { get; private set; }
+        public static IReadOnlyList<InstalledFont> Fonts            { get; private set; }
+        public static IReadOnlyList<InstalledFont> ImportedFonts    { get; private set; }
 
-        public static InstalledFont DefaultFont { get; private set; }
+        public static InstalledFont DefaultFont                     { get; private set; }
+        public static bool HasAppxFonts                             { get; private set; }
+        public static bool HasRemoteFonts                           { get; private set; }
+        public static bool HasVariableFonts                         { get; private set; }
 
-        public static bool HasAppxFonts                { get; private set; }
-                
-        public static bool HasRemoteFonts              { get; private set; }
+        public static DWriteFallbackFont Fallback                   { get; private set; }
 
-        public static bool HasVariableFonts            { get; private set; }
-
-        public static DWriteFallbackFont Fallback       { get; private set; }
-
-        public static HashSet<string> SupportedFormats { get; } = new HashSet<string>
+        public static HashSet<string> SupportedFormats              { get; } = new ()
         {
             ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
         };
 
-        public static HashSet<string> ImportFormats { get; } = new HashSet<string>
+        public static HashSet<string> ImportFormats                 { get; } = new ()
         {
             ".ttf", ".otf", ".otc", ".ttc", ".woff", ".zip"//, ".woff2"
         };
@@ -170,20 +167,6 @@ namespace CharacterMap.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Dictionary<string, InstalledFont> CreateFontCollection(NativeInterop interop, IReadOnlyList<DWriteFontFace> fonts)
-        {
-            var resultList = new Dictionary<string, InstalledFont>(fonts.Count);
-
-            /* Add all system fonts */
-            foreach (var font in fonts)
-            {
-                AddFont(resultList, font);
-            }
-
-            return resultList;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static List<InstalledFont> CreateFontList(Dictionary<string, InstalledFont> fonts)
         {
             return fonts.OrderBy(f => f.Key).Select(f =>
@@ -192,7 +175,6 @@ namespace CharacterMap.Core
                 return f.Value;
             }).ToList();
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void UpdateMeta(DWriteFontSet set)
@@ -246,7 +228,6 @@ namespace CharacterMap.Core
             }
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetAppPath(StorageFile file)
         {
@@ -264,9 +245,9 @@ namespace CharacterMap.Core
         {
             return Task.Run(async () =>
             {
-                var imported = new List<StorageFile>();
-                var existing = new List<StorageFile>();
-                var invalid = new List<(IStorageItem, string)>();
+                List<StorageFile> imported = new ();
+                List<StorageFile> existing = new ();
+                List<(IStorageItem, string)> invalid = new ();
 
                 foreach (var item in items)
                 {
@@ -322,7 +303,6 @@ namespace CharacterMap.Core
                                 invalid.Add((file, Localization.Get("ImportFileCopyFail")));
                                 continue;
                             }
-                           
 
                             /* Avoid Garbage Collection (?) issue preventing immediate file deletion 
                              * by dropping to C++ */
@@ -536,7 +516,7 @@ namespace CharacterMap.Core
 
         public static async Task<FolderContents> LoadZipToTempFolderAsync(StorageFile zipFile)
         {
-            var files = new List<StorageFile> { zipFile };
+            List<StorageFile> files = new (){ zipFile };
             var contents = await LoadToTempFolderAsync(files, new FolderOpenOptions { AllowZip = true, Root = zipFile }).ConfigureAwait(false);
             contents.UpdateFontSet();
             return contents;
