@@ -112,8 +112,9 @@
           <target state="translated">செயற்படுத்து பயன்பாட்டு மறுதொடக்கம் தேவை.</target>
         </trans-unit>
         <trans-unit id="SearchBox.PlaceholderText" translate="yes" xml:space="preserve">
-          <source>Search character name or unicode hex</source>
-          <target state="translated">எழுத்து பெயர் அல்லது Unicode Hexஐ தேடு</target>
+          <source>Search by name or unicode hex</source>
+          <target state="needs-review-translation">எழுத்து பெயர் அல்லது Unicode Hexஐ தேடு</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="Settings_About.Text" translate="yes" xml:space="preserve">
           <source>About this application</source>
@@ -1380,6 +1381,58 @@ Requires a restart to take effect.</target>
         <trans-unit id="SettingsCollectionsHeader" translate="yes" xml:space="preserve">
           <source>Collections</source>
           <target state="new">Collections</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolder.PrimaryButtonText" translate="yes" xml:space="preserve">
+          <source>Open Fonts</source>
+          <target state="new">Open Fonts</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolder.SecondaryButtonText" translate="yes" xml:space="preserve">
+          <source>Cancel</source>
+          <target state="new">Cancel</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolder.Title" translate="yes" xml:space="preserve">
+          <source>Open Font Folder</source>
+          <target state="new">Open Font Folder</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolderContent.CheckRecursiveContent" translate="yes" xml:space="preserve">
+          <source>Look for fonts inside child folders</source>
+          <target state="new">Look for fonts inside child folders</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolderContent.CheckZipContent" translate="yes" xml:space="preserve">
+          <source>Look for fonts inside .ZIP archives</source>
+          <target state="new">Look for fonts inside .ZIP archives</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolderContent.FindDescription" translate="yes" xml:space="preserve">
+          <source>Enabling options may dramatically increase time required to open the folder</source>
+          <target state="new">Enabling options may dramatically increase time required to open the folder</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolderContent.FindHeader" translate="yes" xml:space="preserve">
+          <source>Find Options</source>
+          <target state="new">Find Options</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolderContent.FindingFontsLabel" translate="yes" xml:space="preserve">
+          <source>Finding Fonts...</source>
+          <target state="new">Finding Fonts...</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolderContent.PrefixLabel" translate="yes" xml:space="preserve">
+          <source>Found</source>
+          <target state="new">Found</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolderContent.SelectHeader" translate="yes" xml:space="preserve">
+          <source>Selected Folder (click to change)</source>
+          <target state="new">Selected Folder (click to change)</target>
+        </trans-unit>
+        <trans-unit id="DigOpenFolderContent.SuffixLabel" translate="yes" xml:space="preserve">
+          <source>font files</source>
+          <target state="new">font files</target>
+        </trans-unit>
+        <trans-unit id="FontFileMenuItem.Text" translate="yes" xml:space="preserve">
+          <source>Font File</source>
+          <target state="new">Font File</target>
+        </trans-unit>
+        <trans-unit id="FontFolderMenuItem.Text" translate="yes" xml:space="preserve">
+          <source>Font Folder</source>
+          <target state="new">Font Folder</target>
         </trans-unit>
       </group>
     </body>
