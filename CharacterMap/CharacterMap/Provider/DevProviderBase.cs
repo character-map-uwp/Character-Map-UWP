@@ -22,9 +22,11 @@ namespace CharacterMap.Provider
                 new DevProviderNone(o, c),
                 new XamlDevProvider(o, c),
                 new CSharpDevProvider(o, c),
+                new CSharpWinUI3DevProvider(o, c),
                 new VBDevProvider(o, c),
                 new CppCxDevProvider(o, c),
                 new CppWinrtDevProvider(o, c),
+                new CppWinrtWinUI3DevProvider(o, c),
                 new XamarinFormsDevProvider(o,c)
             };
         }

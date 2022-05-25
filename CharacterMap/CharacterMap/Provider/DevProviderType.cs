@@ -8,6 +8,8 @@
         CppCX,
         CppWinRT,
         XamarinForms,
-        VisualBasic
+        VisualBasic,
+        CSharpWinUI3,
+        CppWinRTWinUI3,
     }
 }

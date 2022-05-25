@@ -3067,10 +3067,10 @@
                             <Border
                                 x:Name="SuggestionsContainer"
                                 Padding="{ThemeResource AutoSuggestListMargin}"
-                                Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
-                                BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
+                                Background="{ThemeResource ControlBackgroundBrush}"
+                                BorderBrush="{ThemeResource ControlHighlightBackgroundBrush}"
                                 BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
-                                CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                CornerRadius="0">
                                 <ListView
                                     x:Name="SuggestionsList"
                                     MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"

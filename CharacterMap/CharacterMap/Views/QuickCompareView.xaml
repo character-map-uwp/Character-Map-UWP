@@ -13,11 +13,11 @@
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     x:Name="ViewRoot"
-    d:DesignHeight="720"
-    d:DesignWidth="1280"
     Background="Transparent"
     TabFocusNavigation="Cycle"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DesignHeight="720"
+    d:DesignWidth="1280">
 
     <UserControl.Resources>
         <MenuFlyout
@@ -252,7 +252,7 @@
 
         <controls:ModalPagePresenter
             x:Name="Presenter"
-            Title="{core:Localizer Key='CompareFontsTitle/Text'}"
+            Title="{x:Bind ViewModel.Title}"
             CloseButtonVisibility="Collapsed"
             IsWindowRoot="True">
             <controls:ModalPagePresenter.TitleBarContent>
@@ -262,14 +262,14 @@
                             x:Name="BackButton"
                             Width="45"
                             VerticalAlignment="Stretch"
-                            d:Visibility="Visible"
                             Background="Transparent"
                             BorderThickness="0"
                             Click="BackButton_Click"
                             CornerRadius="0"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource AccentButtonStyle}"
-                            Visibility="Collapsed">
+                            Visibility="Collapsed"
+                            d:Visibility="Visible">
                             <FontIcon
                                 x:Name="BackIcon"
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -325,7 +325,7 @@
                                 ToolTipService.Placement="Bottom">
 
                                 <TextBlock Margin="0 0 12 0">
-                                    <Run d:Text="All Fonts" Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" />
+                                    <Run Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="All Fonts" />
                                     <Run />
                                     <Run
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -502,9 +502,9 @@
                         x:Name="DetailsViewRoot"
                         Grid.Row="1"
                         RowSpacing="12"
-                        d:Visibility="Visible"
                         RenderTransformOrigin="0.5,0.5"
-                        Visibility="Collapsed">
+                        Visibility="Collapsed"
+                        d:Visibility="Visible">
                         <Grid.RenderTransform>
                             <CompositeTransform />
                         </Grid.RenderTransform>
@@ -526,22 +526,17 @@
                             <TextBlock
                                 x:Name="DetailsFontTitle"
                                 Grid.Column="0"
-                                d:Text="Segoe UI"
                                 FontSize="24"
-                                FontWeight="Bold" />
+                                FontWeight="Bold"
+                                d:Text="Segoe UI" />
                             <Button
                                 Grid.Column="1"
                                 Padding="8 0"
                                 Click="{x:Bind ViewModel.OpenCurrentFont}"
+                                Content="{core:Localizer Key='OpenFontButton/Label'}"
                                 Foreground="{StaticResource SystemColorControlAccentBrush}"
-                                Style="{StaticResource ChromelessButtonStyle}"
-                                ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}">
-                                <FontIcon
-                                    Margin="0 2 0 0"
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    FontSize="16"
-                                    Glyph="&#xE17C;" />
-                            </Button>
+                                Style="{StaticResource TextBlockButtonStyle}"
+                                ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}" />
                         </Grid>
 
                         <ScrollViewer
@@ -564,7 +559,10 @@
                                     <DataTemplate x:DataType="core:FontVariant">
                                         <controls:ContentGroup>
                                             <controls:ContentGroup.Text>
-                                                <TextBlock FontSize="{StaticResource ControlContentThemeFontSize}" Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind PreferredName}" />
+                                                <TextBlock
+                                                    FontSize="{StaticResource ControlContentThemeFontSize}"
+                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                    Text="{x:Bind PreferredName}" />
                                             </controls:ContentGroup.Text>
                                             <controls:ContentGroup.SecondaryContent>
                                                 <TextBlock
@@ -797,9 +795,13 @@
                 <VisualState x:Name="QuickCompareState">
                     <VisualState.Setters>
                         <Setter Target="FontListFilter.Visibility" Value="Collapsed" />
-                        <Setter Target="Presenter.Title" Value="{core:Localizer Key='QuickCompareTitle/Text'}" />
                         <Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplateQuick}" />
                         <Setter Target="Repeater.IsItemClickEnabled" Value="False" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FontFolderState">
+                    <VisualState.Setters>
+                        <Setter Target="FontListFilter.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

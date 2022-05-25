@@ -382,8 +382,13 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                new("Latest Release", // March 2002
-                    "- Added support for bulk adding and removing fonts from Collections (in Settings)"),
+                new("Latest Release", // May 2002
+                    "- Added support for opening folders of fonts using the Open button (Ctrl + Shift + O)\n" +
+                    "- Added keyboard shortcut for opening individual font files from main window (Ctrl + O)\n" +
+                    "- Added support for selecting a .ZIP archive when opening a font file and showing all the fonts in the .ZIP\n" +
+                    "- Added C# WinUI 3 & C++/WinRT WinUI 3 developer features"),
+                new("2022.1.2.0 (March 2022)",
+                    "- Added support for bulk adding and removing fonts from Collections (in Settings)"), 
                 new("2021.7.4.0 (October 2021)", // October
                     "- Added support for navigating backwards using mouse and keyboard navigation buttons, and Alt + Left\n" +
                     "- Added support for changing application design with themes for Windows 11, Classic Windows and Zune Desktop"),

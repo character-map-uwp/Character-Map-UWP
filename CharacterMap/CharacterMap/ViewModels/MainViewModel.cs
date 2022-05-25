@@ -16,9 +16,26 @@ using Microsoft.Toolkit.Mvvm.Input;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Windows.ApplicationModel.Core;
+using Windows.Storage.Pickers;
+using Windows.System;
 
 namespace CharacterMap.ViewModels
 {
+    public class MainViewModelArgs
+    {
+        public MainViewModelArgs(IDialogService dialogService, AppSettings settings, FolderContents folder)
+        {
+            DialogService = dialogService;
+            Settings = settings;
+            Folder = folder;
+        }
+
+        public IDialogService DialogService { get; }
+        public AppSettings Settings { get; }
+        public FolderContents Folder { get; }
+    }
+
+
     public class MainViewModel : ViewModelBase
     {
         public event EventHandler FontListCreated;
@@ -64,61 +81,18 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private string _titlePrefix;
-        public string TitlePrefix
-        {
-            get => _titlePrefix;
-            set => Set(ref _titlePrefix, value);
-        }
+        public double Progress      { get => GetV(0d); set => Set(value); }
 
-        private string _fontSearch;
-        public string FontSearch
-        {
-            get => _fontSearch;
-            set => Set(ref _fontSearch, value);
-        }
+        public string TitlePrefix   { get => Get<string>(); set => Set(value); }
+        public string FontSearch    { get => Get<string>(); set => Set(value); }
+        public string FilterTitle   { get => Get<string>(); set => Set(value); }
 
-        private string _filterTitle;
-        public string FilterTitle
-        {
-            get => _filterTitle;
-            set => Set(ref _filterTitle, value); 
-        }
-
-        private bool _isLoadingFonts;
-        public bool IsLoadingFonts
-        {
-            get => _isLoadingFonts;
-            set => Set(ref _isLoadingFonts, value);
-        }
-
-        private bool _isSearchResults;
-        public bool IsSearchResults
-        {
-            get => _isSearchResults;
-            set => Set(ref _isSearchResults, value);
-        }
-
-        private bool _isLoadingFontsFailed;
-        public bool IsLoadingFontsFailed
-        {
-            get => _isLoadingFontsFailed;
-            set => Set(ref _isLoadingFontsFailed, value);
-        }
-
-        private bool _hasFonts;
-        public bool HasFonts
-        {
-            get => _hasFonts;
-            set => Set(ref _hasFonts, value);
-        }
-
-        private bool _isFontSetExpired;
-        public bool IsFontSetExpired
-        {
-            get => _isFontSetExpired;
-            set => Set(ref _isFontSetExpired, value);
-        }
+        public bool IsSecondaryView         { get; }
+        public bool IsLoadingFonts          { get => GetV(false); set => Set(value); }
+        public bool IsSearchResults         { get => GetV(false); set => Set(value); }
+        public bool IsLoadingFontsFailed    { get => GetV(false); set => Set(value); }
+        public bool HasFonts                { get => GetV(false); set => Set(value); }
+        public bool IsFontSetExpired        { get => GetV(false); set => Set(value); }
 
         private bool _isCollectionExportEnabled = true;
         public bool IsCollectionExportEnabled
@@ -170,10 +144,22 @@ namespace CharacterMap.ViewModels
 
         #endregion
 
+        public FolderContents Folder { get; set; } = null;
+
+        // This constructor is used by the IoC container;
         public MainViewModel(IDialogService dialogService, AppSettings settings)
+            : this(new MainViewModelArgs(dialogService, settings, null)) { }
+
+        public MainViewModel(MainViewModelArgs args)
         {
-            DialogService = dialogService;
-            Settings = settings;
+            DialogService = args.DialogService;
+            Settings = args.Settings;
+
+            if (args.Folder is not null)
+            {
+                IsSecondaryView = true;
+                Folder = args.Folder;
+            }
 
             CommandToggleFullScreen = new RelayCommand(Utils.ToggleFullScreenMode);
 
@@ -195,13 +181,17 @@ namespace CharacterMap.ViewModels
 
             try
             {
-                await Task.WhenAll(
-                    GlyphService.InitializeAsync(),
-                    FontFinder.LoadFontsAsync(!isFirstLoad),
-                    FontCollections.LoadCollectionsAsync());
+                if (IsSecondaryView is false)
+                {
+                    _ = Utils.DeleteAsync(ApplicationData.Current.TemporaryFolder);
+                    await Task.WhenAll(
+                        GlyphService.InitializeAsync(),
+                        FontFinder.LoadFontsAsync(!isFirstLoad),
+                        FontCollections.LoadCollectionsAsync());
 
-                var interop = Utils.GetInterop();
-                interop.FontSetInvalidated += FontSetInvalidated;
+                    NativeInterop interop = Utils.GetInterop();
+                    interop.FontSetInvalidated += FontSetInvalidated;
+                }
 
                 RefreshFontList();
             }
@@ -254,7 +244,7 @@ namespace CharacterMap.ViewModels
         {
             try
             {
-                var fontList = FontFinder.Fonts.AsEnumerable();
+                IEnumerable<InstalledFont> fontList = Folder?.Fonts ?? FontFinder.Fonts;
 
                 if (collection != null)
                 {
@@ -405,5 +395,39 @@ namespace CharacterMap.ViewModels
                 IsCollectionExportEnabled = true;
             }
         }
+
+        public void OpenSourceFolder()
+        {
+            if (Folder is not null)
+                _ = Folder.LaunchSourceAsync();
+        }
+
+        //public async void OpenFolder()
+        //{
+        //    var picker = new FolderPicker();
+
+        //    picker.FileTypeFilter.Add("*");
+        //    picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
+        //    var src = await picker.PickSingleFolderAsync();
+        //    if (src  is not null)
+        //    {
+        //        try
+        //        {
+        //            IsLoadingFonts = true;
+
+        //            if (await FontFinder.LoadToTempFolderAsync(src) is FolderContents folder && folder.Fonts.Count > 0)
+        //            {
+        //                await MainPage.CreateWindowAsync(new(
+        //                    Ioc.Default.GetService<IDialogService>(), 
+        //                    Ioc.Default.GetService<AppSettings>(), 
+        //                    folder));
+        //            }
+        //        }
+        //        finally
+        //        {
+        //            IsLoadingFonts = false;
+        //        }
+        //    }
+        //}
     }
 }

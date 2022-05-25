@@ -10,7 +10,10 @@
     mc:Ignorable="d">
 
     <DataTemplate x:Key="SearchResultTemplate" x:DataType="services:IGlyphData">
-        <Grid HorizontalAlignment="Stretch">
+        <Grid
+            HorizontalAlignment="Stretch"
+            Background="Transparent"
+            ToolTipService.ToolTip="{x:Bind Description}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="*" />

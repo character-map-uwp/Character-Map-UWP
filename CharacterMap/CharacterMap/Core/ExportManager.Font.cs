@@ -74,6 +74,8 @@ namespace CharacterMap.Core
                             await DirectWrite.WriteToStreamAsync(font.FontFace, s);
                         }
                     }
+
+                    await i.FlushAsync();
                 });
 
                 WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(true, file)));
@@ -118,6 +120,7 @@ namespace CharacterMap.Core
 
                 using IOutputStream o = s.GetOutputStreamAt(0);
                 await DirectWrite.WriteToStreamAsync(font.FontFace, o).AsTask().ConfigureAwait(false);
+                await s.FlushAsync(); // using statements force synchronous flushes
                 return true;
             }
             catch { }

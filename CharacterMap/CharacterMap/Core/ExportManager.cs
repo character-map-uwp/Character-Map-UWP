@@ -441,6 +441,7 @@ namespace CharacterMap.Core
                         using var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite);
                         fileStream.Size = 0;
                         await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
+                        await fileStream.FlushAsync();
                     }
 
                     await CachedFileManager.CompleteUpdatesAsync(file);

@@ -193,12 +193,15 @@ namespace CharacterMap.Views
         private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
         {
             PreviewColumn.UnregisterPropertyChangedCallback(ColumnDefinition.WidthProperty, _previewColumnToken);
-
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
-
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
             WeakReferenceMessenger.Default.UnregisterAll(this);
+        }
+
+        public void Cleanup()
+        {
+            this.Bindings.StopTracking();
         }
 
         private void Current_Closed(object sender, CoreWindowEventArgs e)
@@ -344,7 +347,7 @@ namespace CharacterMap.Views
                         ViewModel.ChangeDisplayMode();
                         break;
                     case VirtualKey.K:
-                        _ = QuickCompareView.CreateWindowAsync(false);
+                        _ = QuickCompareView.CreateWindowAsync(new(false));
                         break;
                     case VirtualKey.Q:
                         if (ViewModel.SelectedVariant is FontVariant va)
@@ -698,9 +701,13 @@ namespace CharacterMap.Views
                     font,
                     ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
                     this.Tag as FrameworkElement,
-                    IsStandalone,
-                    showAdvanced: true,
-                    isExternalFile: ViewModel.IsExternalFile);
+                    new()
+                    {
+                        Standalone = IsStandalone,
+                        ShowAdvanced = true,
+                        IsExternalFile = ViewModel.IsExternalFile,
+                        Folder = ViewModel.Folder
+                    });
             }
         }
 

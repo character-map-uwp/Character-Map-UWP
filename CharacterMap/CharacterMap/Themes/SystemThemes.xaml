@@ -20,6 +20,8 @@
         TintColor="{ThemeResource SystemAltHighColor}"
         TintOpacity="0.8" />
 
+    <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource SystemChromeMediumColor}" />
+
     <Style x:Key="HeaderStyle" TargetType="TextBlock">
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
         <Setter Property="FontWeight" Value="Bold" />

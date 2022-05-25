@@ -817,7 +817,6 @@
                 <!--  Character Copy Pane  -->
                 <Border
                     x:Name="CopySequenceRoot"
-                    x:Load="False"
                     Grid.Row="3"
                     Height="120"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
@@ -830,6 +829,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Rectangle
+                            x:Name="CopyTopBorder"
                             Grid.ColumnSpan="2"
                             Height="1"
                             HorizontalAlignment="Stretch"
@@ -1271,7 +1271,10 @@
                                     <controls:UXButton x:Uid="BtnSaveGlyph">
                                         <FontIcon Glyph="&#xE105;" />
                                         <Button.Flyout>
-                                            <MenuFlyout x:Name="SaveAsFlyout" Placement="Top">
+                                            <MenuFlyout
+                                                x:Name="SaveAsFlyout"
+                                                MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+                                                Placement="Top">
                                                 <MenuFlyoutItem x:Uid="ExportPNGLabel" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
                                                 <MenuFlyoutItem
                                                     x:Uid="ColoredGlyphLabel"
@@ -1354,6 +1357,7 @@
                                     <Button.Flyout>
                                         <MenuFlyout
                                             x:Name="DevFlyout"
+                                            MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                             Opening="DevFlyout_Opening"
                                             Placement="Top">
                                             <MenuFlyoutItem x:Uid="DevPopupHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
@@ -1738,6 +1742,13 @@
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="DevCSharpWinUI3State">
+                    <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="C# WU3" />
+                        <Setter Target="DevCSharpIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="DevVisualBasicState">
                     <VisualState.Setters>
                         <Setter Target="BtnToggleDev.Label" Value="VB" />
@@ -1755,6 +1766,13 @@
                 <VisualState x:Name="DevCppWinRTState">
                     <VisualState.Setters>
                         <Setter Target="BtnToggleDev.Label" Value="WinRT" />
+                        <Setter Target="DevCppIcon.Visibility" Value="Visible" />
+                        <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DevCppWinRTWinUI3State">
+                    <VisualState.Setters>
+                        <Setter Target="BtnToggleDev.Label" Value="WinRT 3" />
                         <Setter Target="DevCppIcon.Visibility" Value="Visible" />
                         <Setter Target="DevUtilsRoot.Visibility" Value="Visible" />
                     </VisualState.Setters>
@@ -1846,8 +1864,12 @@
             <VisualStateGroup x:Name="VisualThemeState">
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
+                        <!--<Setter Target="CopySequenceRoot.CornerRadius" Value="8" />
+                        <Setter Target="CopySequenceRoot.Margin" Value="8 0 8 8" />
+                        <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />
+                        <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
@@ -1873,6 +1895,7 @@
                 <VisualState x:Name="StandaloneViewState">
                     <VisualState.Setters>
                         <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+                        <Setter Target="BackgroundBorder.BackgroundTransition" Value="{ThemeResource RootBackgroundTransition}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -12,6 +12,7 @@ using CharacterMapCX;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Messaging;
 using Windows.Storage;
+using Windows.Storage.Search;
 using Windows.UI.Text;
 using WoffToOtf;
 
@@ -36,35 +37,32 @@ namespace CharacterMap.Core
         private const string PENDING = nameof(PENDING);
         private const string TEMP = nameof(TEMP);
 
-        private static SemaphoreSlim _initSemaphore { get; } = new SemaphoreSlim(1,1);
-        private static SemaphoreSlim _loadSemaphore { get; } = new SemaphoreSlim(1,1);
+        private static SemaphoreSlim _initSemaphore                 { get; } = new (1,1);
+        private static SemaphoreSlim _loadSemaphore                 { get; } = new (1,1);
 
         /* If we can't delete a font during a session, we mark it here */
-        private static HashSet<string> _ignoredFonts { get; } = new HashSet<string>();
+        private static HashSet<string> _ignoredFonts                { get; } = new ();
 
-        private static StorageFolder _importFolder => ApplicationData.Current.LocalFolder;
+        private static StorageFolder _importFolder                  => ApplicationData.Current.LocalFolder;
 
-        public static IReadOnlyList<InstalledFont> Fonts         { get; private set; }
-        public static IReadOnlyList<InstalledFont> ImportedFonts { get; private set; }
+        public static IReadOnlyList<InstalledFont> Fonts            { get; private set; }
+        public static IReadOnlyList<InstalledFont> ImportedFonts    { get; private set; }
 
-        public static InstalledFont DefaultFont { get; private set; }
+        public static InstalledFont DefaultFont                     { get; private set; }
+        public static bool HasAppxFonts                             { get; private set; }
+        public static bool HasRemoteFonts                           { get; private set; }
+        public static bool HasVariableFonts                         { get; private set; }
 
-        public static bool HasAppxFonts                { get; private set; }
-                
-        public static bool HasRemoteFonts              { get; private set; }
+        public static DWriteFallbackFont Fallback                   { get; private set; }
 
-        public static bool HasVariableFonts            { get; private set; }
-
-        public static DWriteFallbackFont Fallback       { get; private set; }
-
-        public static HashSet<string> SupportedFormats { get; } = new HashSet<string>
+        public static HashSet<string> SupportedFormats              { get; } = new ()
         {
             ".ttf", ".otf", ".otc", ".ttc", // ".woff", ".woff2"
         };
 
-        public static HashSet<string> ImportFormats { get; } = new HashSet<string>
+        public static HashSet<string> ImportFormats                 { get; } = new ()
         {
-            ".ttf", ".otf", ".otc", ".ttc", ".woff"//, ".woff2"
+            ".ttf", ".otf", ".otc", ".ttc", ".woff", ".zip"//, ".woff2"
         };
 
         public static async Task<DWriteFontSet> InitialiseAsync()
@@ -169,21 +167,7 @@ namespace CharacterMap.Core
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static Dictionary<string, InstalledFont> CreateFontCollection(NativeInterop interop, IReadOnlyList<DWriteFontFace> fonts)
-        {
-            var resultList = new Dictionary<string, InstalledFont>(fonts.Count);
-
-            /* Add all system fonts */
-            foreach (var font in fonts)
-            {
-                AddFont(resultList, font);
-            }
-
-            return resultList;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static List<InstalledFont> CreateFontList(Dictionary<string, InstalledFont> fonts)
+        public static List<InstalledFont> CreateFontList(Dictionary<string, InstalledFont> fonts)
         {
             return fonts.OrderBy(f => f.Key).Select(f =>
             {
@@ -191,7 +175,6 @@ namespace CharacterMap.Core
                 return f.Value;
             }).ToList();
         }
-
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void UpdateMeta(DWriteFontSet set)
@@ -218,7 +201,7 @@ namespace CharacterMap.Core
          * Helper method for adding fonts. 
          */
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void AddFont(
+        public static void AddFont(
             IDictionary<string, InstalledFont> fontList,
             DWriteFontFace font,
             StorageFile file = null)
@@ -245,10 +228,15 @@ namespace CharacterMap.Core
             }
         }
 
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetAppPath(StorageFile file)
         {
+            if (file.Path.StartsWith(ApplicationData.Current.TemporaryFolder.Path))
+            {
+                var str = file.Path.Replace(ApplicationData.Current.TemporaryFolder.Path, "ms-appdata:///temp")
+                    .Replace("\\", "/");
+                return str;
+            }
             var temp = Path.GetDirectoryName(file.Path).EndsWith(TEMP);
             return $"ms-appdata:///local/{(temp ? $"{TEMP}/" :  string.Empty)}{file.Name}";
         }
@@ -257,9 +245,9 @@ namespace CharacterMap.Core
         {
             return Task.Run(async () =>
             {
-                var imported = new List<StorageFile>();
-                var existing = new List<StorageFile>();
-                var invalid = new List<(IStorageItem, string)>();
+                List<StorageFile> imported = new ();
+                List<StorageFile> existing = new ();
+                List<(IStorageItem, string)> invalid = new ();
 
                 foreach (var item in items)
                 {
@@ -315,7 +303,6 @@ namespace CharacterMap.Core
                                 invalid.Add((file, Localization.Get("ImportFileCopyFail")));
                                 continue;
                             }
-                           
 
                             /* Avoid Garbage Collection (?) issue preventing immediate file deletion 
                              * by dropping to C++ */
@@ -496,9 +483,126 @@ namespace CharacterMap.Core
             return resultList.Count > 0 ? resultList.First().Value : null;
         }
 
-        public static bool IsMDL2(FontVariant variant) => variant != null && (variant.FamilyName.Contains("MDL2") || variant.FamilyName.Equals("Segoe Fluent Icons"));
+        public static Task<FolderContents> LoadToTempFolderAsync(FolderOpenOptions options)
+        {
+            return Task.Run(async () =>
+            {
+                var folder = options.Root as StorageFolder;
+                Windows.Storage.AccessCache.StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+
+                List<StorageFile> files = new();
+
+                try
+                {
+                    var query = folder.CreateFileQueryWithOptions(
+                        new QueryOptions(CommonFileQuery.DefaultQuery, FontFinder.ImportFormats)
+                        {
+                            FolderDepth = options.Recursive ? FolderDepth.Deep : FolderDepth.Shallow,
+                            IndexerOption = IndexerOption.UseIndexerWhenAvailable,
+                        });
+
+                    files = (await query.GetFilesAsync().AsTask(options.Token.Value)).ToList();
+                }
+                catch (Exception ex) when (ex is TaskCanceledException or OperationCanceledException) { }
+
+                FolderContents contents = await LoadToTempFolderAsync(files, options).ConfigureAwait(false);
+                if (options.IsCancelled)
+                    return contents;
+
+                contents.UpdateFontSet();
+                return contents;
+            });
+        }
+
+        public static async Task<FolderContents> LoadZipToTempFolderAsync(StorageFile zipFile)
+        {
+            List<StorageFile> files = new (){ zipFile };
+            var contents = await LoadToTempFolderAsync(files, new FolderOpenOptions { AllowZip = true, Root = zipFile }).ConfigureAwait(false);
+            contents.UpdateFontSet();
+            return contents;
+        }
+
+        public static Task<FolderContents> LoadToTempFolderAsync(
+            IReadOnlyList<StorageFile> files, FolderOpenOptions options, StorageFolder tempFolder = null, FolderContents contents = null)
+        {
+            return Task.Run(async () =>
+            {
+                await InitialiseAsync().ConfigureAwait(false);
+
+                // 1. Create temporary storage folder
+                var dest = tempFolder ?? await ApplicationData.Current.TemporaryFolder.CreateFolderAsync("i", CreationCollisionOption.GenerateUniqueName)
+                    .AsTask().ConfigureAwait(false);
+                contents ??= new(options.Root, dest);
+                Func<StorageFile, Task<List<StorageFile>>> func = (storageFile) => GetFontsAsync(storageFile, dest, options);
+                if (options.IsCancelled)
+                    return contents;
+
+                // 2. Copy all files to temporary storage
+                List<Task<List<StorageFile>>> tasks = files
+                    .Where(f => ImportFormats.Contains(f.FileType.ToLower()))
+                    .Select(func)
+                    .ToList();
+                await Task.WhenAll(tasks).ConfigureAwait(false);
+
+                if (options.IsCancelled)
+                    return contents;
+
+                // 3. Create font sets
+                var interop = Utils.GetInterop();
+                var results = tasks.Where(t => t.Result is not null).SelectMany(t => t.Result).ToList();
+                var dwSets = interop.GetFonts(results).ToList();
+
+                // 4. Create InstalledFonts list
+                for (int i = 0; i < dwSets.Count; i++)
+                {
+                    StorageFile file = results[i];
+                    DWriteFontSet set = dwSets[i];
+
+                    foreach (DWriteFontFace font in set.Fonts)
+                        AddFont(contents.FontCache, font, file);
+                }
+
+                return contents;
+            });
+            
+        }
+
+        private static async Task<List<StorageFile>> GetFontsAsync(StorageFile f, StorageFolder dest, FolderOpenOptions options)
+        {
+            if (options.IsCancelled)
+                return new();
+
+            List<StorageFile> results = new();
+
+            if (f.FileType == ".zip")
+            {
+                if (options.AllowZip)
+                    results = await FontConverter.ExtractFontsFromZipAsync(f, dest, options).ConfigureAwait(false);
+            }
+            else
+            {
+                var convert = await FontConverter.TryConvertAsync(f, dest).ConfigureAwait(false);
+                if (convert.Result is not ConversionStatus.OK || options.IsCancelled)
+                    goto Exit;
+
+                if (convert.File == f)
+                {
+                    var file = await f.CopyAsync(dest, f.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
+                    results.Add(file);
+                }
+                else
+                    results.Add(convert.File);
+            }
+
+        Exit:
+            options?.Increment(results.Count);
+            return results;
+        }
+
+        public static bool IsMDL2(FontVariant variant) => variant != null && (
+            variant.FamilyName.Contains("MDL2") || variant.FamilyName.Contains("Fluent Icons"));
+
         public static bool IsSystemSymbolFamily(FontVariant variant) => variant != null && (
             variant.FamilyName.Equals("Segoe MDL2 Assets") || variant.FamilyName.Equals("Segoe Fluent Icons"));
-
     }
 }

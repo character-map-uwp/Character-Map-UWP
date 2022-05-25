@@ -13,6 +13,7 @@
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
     <Duration x:Key="BrushDuration">0:0:0.1</Duration>
     <BrushTransition x:Key="DefaultBrushTransition" Duration="0:0:0.1" />
+    <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource SystemChromeMediumColor}" />
 
 
 
@@ -71,7 +72,8 @@
     <Color x:Key="RegionColor">#FFFFFFFF</Color>
     <SolidColorBrush x:Key="RegionBrush" Color="{StaticResource RegionColor}" />
 
-
+    <SolidColorBrush x:Key="TextControlBorder" Color="#BEBEBE" />
+    <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#828689" />
 
 
     <!--  FONTS  -->
@@ -2808,7 +2810,7 @@
         <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}" />
         <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}" />
         <Setter Property="Background" Value="{ThemeResource TextControlBackground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource TextControlForeground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorder}" />
         <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}" />
         <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
@@ -2979,9 +2981,6 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContent" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundPointerOver}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderIcon" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundPointerOver}" />
-                                        </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderDefaultElement" Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="0.4" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -2999,9 +2998,6 @@
                                 <VisualState x:Name="Focused">
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContent" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundFocused}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderIcon" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundFocused}" />
                                         </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
@@ -3056,7 +3052,7 @@
                             helpers:CompositionFactory.OpacityDuration="0:0:0.15"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Opacity="0"
+                            Opacity="1"
                             RequestedTheme="Light" />
                         <Border
                             x:Name="BorderElement"
@@ -3068,7 +3064,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="1"
                             CornerRadius="{TemplateBinding CornerRadius}"
-                            Opacity="0" />
+                            Opacity="1" />
                         <ScrollViewer
                             x:Name="ContentElement"
                             Grid.Row="1"
@@ -3085,28 +3081,32 @@
                             VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
                             VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
                             ZoomMode="Disabled" />
-                        <StackPanel
+                        <Grid
                             x:Name="PlaceholderTextContentPresenter"
                             Grid.Row="1"
                             Grid.ColumnSpan="3"
                             Margin="{TemplateBinding BorderThickness}"
-                            Padding="{TemplateBinding Padding}"
-                            Orientation="Horizontal"
-                            Spacing="8">
+                            Padding="{TemplateBinding Padding}">
+                            <ContentControl
+                                x:Name="PlaceholderTextContent"
+                                VerticalAlignment="Center"
+                                Content="{Binding PlaceholderText, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource Upper}}"
+                                FontFamily="Zegoe Caps, Segoe UI"
+                                FontSize="12"
+                                FontWeight="Bold"
+                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                IsHitTestVisible="False"
+                                IsTabStop="False" />
                             <FontIcon
                                 x:Name="PlaceholderIcon"
+                                Margin="0 0 4 0"
+                                HorizontalAlignment="Right"
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                 Glyph="&#xE11A;" />
-                            <ContentControl
-                                x:Name="PlaceholderTextContent"
-                                Content="{TemplateBinding PlaceholderText}"
-                                FontStyle="Italic"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                IsHitTestVisible="False"
-                                IsTabStop="False" />
-                        </StackPanel>
+
+                        </Grid>
 
                         <Button
                             x:Name="DeleteButton"
@@ -3186,16 +3186,17 @@
                         <Popup x:Name="SuggestionsPopup">
                             <Border
                                 x:Name="SuggestionsContainer"
-                                Padding="{ThemeResource AutoSuggestListMargin}"
-                                Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
-                                BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
-                                BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
-                                CornerRadius="{ThemeResource OverlayCornerRadius}">
+                                Padding="2"
+                                Background="White"
+                                BorderBrush="{ThemeResource FlyoutBorderThemeBrush}"
+                                BorderThickness="1"
+                                CornerRadius="0">
                                 <ListView
                                     x:Name="SuggestionsList"
                                     MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"
                                     Margin="{ThemeResource AutoSuggestListPadding}"
                                     DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+                                    FontWeight="SemiBold"
                                     IsItemClickEnabled="True"
                                     ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
                                     ItemTemplate="{TemplateBinding ItemTemplate}"
@@ -5350,10 +5351,10 @@
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <Grid
-                            x:Name="LayoutRoot"
-                            Background="{ThemeResource SystemControlPageBackgroundMediumAltMediumBrush}"
-                            Visibility="Collapsed">
+                        <Grid x:Name="LayoutRoot" Visibility="Collapsed">
+                            <Grid.Background>
+                                <SolidColorBrush Opacity="0.1" Color="White" />
+                            </Grid.Background>
 
                             <Border
                                 x:Name="BackgroundElement"

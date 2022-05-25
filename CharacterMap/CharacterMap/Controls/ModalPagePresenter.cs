@@ -91,8 +91,6 @@ namespace CharacterMap.Controls
             DependencyProperty.Register(nameof(AllowShadows), typeof(bool), typeof(ModalPagePresenter), new PropertyMetadata(true));
 
 
-
-
         public bool IsWindowRoot
         {
             get { return (bool)GetValue(IsWindowRootProperty); }
@@ -100,8 +98,7 @@ namespace CharacterMap.Controls
         }
 
         public static readonly DependencyProperty IsWindowRootProperty =
-            DependencyProperty.Register("IsWindowRoot", typeof(bool), typeof(ModalPagePresenter), new PropertyMetadata(false));
-
+            DependencyProperty.Register(nameof(IsWindowRoot), typeof(bool), typeof(ModalPagePresenter), new PropertyMetadata(false));
 
 
         public Visibility HeaderVisibility
@@ -110,9 +107,8 @@ namespace CharacterMap.Controls
             set { SetValue(HeaderVisibilityProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for HeaderVisibility.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty HeaderVisibilityProperty =
-            DependencyProperty.Register("HeaderVisibility", typeof(Visibility), typeof(ModalPagePresenter), new PropertyMetadata(Visibility.Visible));
+            DependencyProperty.Register(nameof(HeaderVisibility), typeof(Visibility), typeof(ModalPagePresenter), new PropertyMetadata(Visibility.Visible));
 
 
 

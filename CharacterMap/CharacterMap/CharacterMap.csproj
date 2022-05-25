@@ -203,6 +203,9 @@
     </Compile>
     <Compile Include="Controls\DirectTextBlock.cs" />
     <Compile Include="Controls\ModalPagePresenter.cs" />
+    <Compile Include="Controls\OpenFolderDialog.xaml.cs">
+      <DependentUpon>OpenFolderDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\UXButton.cs" />
     <Compile Include="Controls\UXComboBox.cs" />
     <Compile Include="Controls\ExtendedListView.cs" />
@@ -243,6 +246,7 @@
     <Compile Include="Models\BasicFontFilter.cs" />
     <Compile Include="Models\ExportNamingScheme.cs" />
     <Compile Include="Models\ExportParameters.cs" />
+    <Compile Include="Models\FolderContents.cs" />
     <Compile Include="Models\UnicodeRange.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\Messages.cs" />
@@ -434,6 +438,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\FontMapPrintPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\OpenFolderDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

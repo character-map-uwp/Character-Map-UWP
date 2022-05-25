@@ -113,7 +113,7 @@ namespace CharacterMap.Styles
                     font,
                     null,
                     null,
-                    false);
+                    new());
             }
         }
 

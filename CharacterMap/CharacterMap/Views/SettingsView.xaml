@@ -712,7 +712,7 @@
                                                         Visibility="{x:Bind core:Converters.FalseToVis(IsCollectionExportEnabled), Mode=OneWay}" />
                                                 </StackPanel>
                                                 <Button.Flyout>
-                                                    <MenuFlyout Placement="Bottom">
+                                                    <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
                                                         <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ExportToFolder}" />
                                                         <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ExportAsZip}" />
                                                     </MenuFlyout>

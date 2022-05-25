@@ -27,6 +27,7 @@
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <BrushTransition x:Key="QuickBrushTransition" Duration="0:0:0.06" />
+    <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource CardBackgroundFillColorDefault}" />
 
     <!--  TEXT STYLES  -->
     <Style x:Key="HeaderStyle" TargetType="TextBlock">
@@ -90,6 +91,7 @@
                     <Grid
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource QuickBrushTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
@@ -195,6 +197,7 @@
                         <Grid
                             Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
+                            BackgroundTransition="{StaticResource RootBackgroundTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
@@ -235,6 +238,7 @@
                             Grid.Row="1"
                             Padding="{TemplateBinding Padding}"
                             Background="{TemplateBinding Background}"
+                            BackgroundTransition="{StaticResource RootBackgroundTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Content="{TemplateBinding SecondaryContent}"
@@ -1153,7 +1157,6 @@
 
     <Style x:Key="DefaultThemeAutoSuggestBoxTextBoxStyle" TargetType="TextBox">
         <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}" />
-        <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}" />
         <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}" />
         <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />

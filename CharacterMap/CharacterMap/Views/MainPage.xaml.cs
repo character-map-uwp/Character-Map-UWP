@@ -3,6 +3,7 @@ using CharacterMap.Controls;
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using Microsoft.Toolkit.Mvvm.DependencyInjection;
 using Microsoft.Toolkit.Mvvm.Input;
@@ -48,18 +49,29 @@ namespace CharacterMap.Views
 
         private WeakReferenceMessenger Messenger => WeakReferenceMessenger.Default;
 
-        public MainPage()
+        public MainPage() : this(null) { }
+
+        public MainPage(MainViewModelArgs args)
         {
             InitializeComponent();
 
-            ViewModel = Ioc.Default.GetService<MainViewModel>();
+            // If ViewModel is null, then this is the "primary" application Window
+            if (args is null)
+            {
+                ViewModel = Ioc.Default.GetService<MainViewModel>();
+                MainDispatcher = Dispatcher;
+            }
+            else
+            {
+                ViewModel = new MainViewModel(args);
+            }
+
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             NavigationCacheMode = NavigationCacheMode.Enabled;
 
             Loaded += MainPage_Loaded;
             Unloaded += MainPage_Unloaded;
 
-            MainDispatcher = Dispatcher;
             Messenger.Register<CollectionsUpdatedMessage>(this, (o, m) => OnCollectionsUpdated(m));
             Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
             Messenger.Register<ModalClosedMessage>(this, (o, m) =>
@@ -92,16 +104,9 @@ namespace CharacterMap.Views
             this.SizeChanged += MainPage_SizeChanged;
 
             _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += (s, e) =>
-            {
-                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
-                });
-            };
+            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
-
             ResourceHelper.GoToThemeState(this);
         }
 
@@ -176,12 +181,29 @@ namespace CharacterMap.Views
             ViewModel.FontListCreated += ViewModel_FontListCreated;
 
             UpdateLoadingStates();
+            
+            FontMap.ViewModel.Folder = ViewModel.Folder;
         }
 
         private void MainPage_Unloaded(object sender, RoutedEventArgs e)
         {
-            Messenger.Unregister<ImportMessage>(this);
-            Messenger.Unregister<AppNotificationMessage>(this);
+            if (ViewModel.IsSecondaryView)
+            {
+                // For Secondary Views, cleanup EVERYTHING to allow the view to get
+                // dropped from memory
+                _uiSettings.ColorValuesChanged -= OnColorValuesChanged;
+                Messenger.UnregisterAll(this);
+                this.Bindings.StopTracking();
+                ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
+                this.FontMap.Cleanup();
+            }
+            else
+            {
+                // Primary/Main view might actually be restored at some point, so
+                // don't unhook *everything*
+                Messenger.Unregister<ImportMessage>(this);
+                Messenger.Unregister<AppNotificationMessage>(this);
+            }
 
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
         }
@@ -196,6 +218,14 @@ namespace CharacterMap.Views
             {
                 VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
             }
+        }
+
+        private void OnColorValuesChanged(UISettings settings, object e)
+        {
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
+            });
         }
 
         private void UpdateLoadingStates()
@@ -472,7 +502,7 @@ namespace CharacterMap.Views
 
         private void FontCompareButton_Click(object sender, RoutedEventArgs e)
         {
-            _ = QuickCompareView.CreateWindowAsync(false);
+            _ = QuickCompareView.CreateWindowAsync(new(false, ViewModel.Folder));
         }
 
         private void LstFontFamily_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -498,9 +528,8 @@ namespace CharacterMap.Views
 
         private void ItemContainer_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            /* RIGHT CLICK FOR FONT LIST */
-            if (sender is ListViewItem f
-                && f.Content is InstalledFont font)
+            /* RIGHT CLICK MENU FOR FONT LIST */
+            if (sender is ListViewItem f && f.Content is InstalledFont font)
             {
                 args.Handled = true;
                 FlyoutBase.SetAttachedFlyout(f, FontListFlyout);
@@ -509,11 +538,16 @@ namespace CharacterMap.Views
                         font,
                         null,
                         null,
-                        false);
+                        new () { Folder = ViewModel.Folder });
 
                 args.TryGetPosition(sender, out Point pos);
                 FontListFlyout.ShowAt(sender, pos);
             }
+        }
+
+        private void OpenFolder()
+        {
+            _ = (new OpenFolderDialog()).ShowAsync();
         }
 
 
@@ -528,7 +562,7 @@ namespace CharacterMap.Views
 
         private void DeleteCollection_Click(object sender, RoutedEventArgs e)
         {
-            var d = new ContentDialog
+            ContentDialog d = new ()
             {
                 Title = Localization.Get("DigDeleteCollection/Title"),
                 IsPrimaryButtonEnabled = true,
@@ -600,7 +634,17 @@ namespace CharacterMap.Views
                 {
                     ViewModel.IsLoadingFonts = true;
 
-                    if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
+                    if (file.FileType == ".zip")
+                    {
+                        if (await FontFinder.LoadZipToTempFolderAsync(file) is FolderContents folder && folder.Fonts.Count > 0)
+                        {
+                            await MainPage.CreateWindowAsync(new(
+                                Ioc.Default.GetService<IDialogService>(),
+                                Ioc.Default.GetService<AppSettings>(),
+                                folder));
+                        }
+                    }
+                    else if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
                     {
                         await FontMapView.CreateNewViewForFontAsync(font, file);
                     }
@@ -734,6 +778,23 @@ namespace CharacterMap.Views
 
             // Animate in Loading items
             CompositionFactory.PlayEntrance(LoadingStack.Children.ToList(), 60);
+        }
+    }
+
+    public partial class MainPage
+    {
+        public static async Task<WindowInformation> CreateWindowAsync(MainViewModelArgs args)
+        {
+            static void CreateView(MainViewModelArgs a)
+            {
+                MainPage view = new(a);
+                Window.Current.Content = view;
+                Window.Current.Activate();
+            }
+
+            var view = await WindowService.CreateViewAsync(() => CreateView(args), false);
+            await WindowService.TrySwitchToWindowAsync(view, false);
+            return view;
         }
     }
 }
