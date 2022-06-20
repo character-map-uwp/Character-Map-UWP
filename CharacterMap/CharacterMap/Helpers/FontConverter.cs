@@ -61,7 +61,6 @@ namespace CharacterMap.Helpers
                 using var input = await inputFile.OpenStreamForReadAsync().ConfigureAwait(false);
                 using var output = await outputFile.OpenStreamForWriteAsync().ConfigureAwait(false);
                 var result =  Converter.Convert(input, output);
-                await output.FlushAsync().ConfigureAwait(false);
                 return result;
             });
         }
