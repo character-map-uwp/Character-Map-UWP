@@ -425,6 +425,23 @@ namespace CharacterMap.Helpers
 
                     menu.Items.Add(item);
                 }
+
+
+
+                MenuFlyoutItem cali = new ()
+                {
+                    Text = "Calligraphy",
+                    Icon = new FontIcon { Glyph = "\uEDFB" }
+                };
+
+                cali.Click += (s, e) =>
+                {
+                    _ = CalligraphyView.CreateWindowAsync(options);
+                };
+
+                menu.Items.Add(cali);
+
+
             }
         }
 

@@ -1,0 +1,157 @@
+﻿<view:ViewBase
+    x:Class="CharacterMap.Views.CalligraphyView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CharacterMap.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:view="using:CharacterMap.Views"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
+    x:Name="ViewRoot"
+    Background="Transparent"
+    TabFocusNavigation="Cycle"
+    mc:Ignorable="d">
+
+    <Grid>
+
+        <controls:ModalPagePresenter
+            x:Name="Presenter"
+            Title="Calligraphy"
+            CloseButtonVisibility="Collapsed"
+            IsWindowRoot="True">
+            <controls:ModalPagePresenter.TitleBarContent>
+                <Grid>
+                    <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False">
+                        <!--<Button
+                            x:Name="BackButton"
+                            Width="45"
+                            VerticalAlignment="Stretch"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="BackButton_Click"
+                            CornerRadius="0"
+                            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                            Style="{StaticResource AccentButtonStyle}"
+                            Visibility="Collapsed"
+                            d:Visibility="Visible">
+                            <FontIcon
+                                x:Name="BackIcon"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="12"
+                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                                Glyph="&#xE0A6;" />
+                        </Button>-->
+                    </controls:XamlTitleBar>
+                </Grid>
+
+            </controls:ModalPagePresenter.TitleBarContent>
+
+            <Grid Padding="20 8">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <TextBox x:Name="InputBox" Text="Hello" />
+
+                <Slider
+                    x:Name="FontSizeSlider"
+                    Grid.Row="1"
+                    Maximum="400"
+                    Minimum="60"
+                    Value="120" />
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ListView ItemsSource="{x:Bind ViewModel.Histories}"
+                              SelectionMode="None"
+                              IsItemClickEnabled="True"
+                              ItemClick="ListView_ItemClick">
+                        <ListView.Header>
+                            <Button
+                                x:Name="AddHistoryButton"
+                                Click="AddHistoryButton_Click"
+                                Content="Add To History" />
+                        </ListView.Header>
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="viewmodels:CalligraphyHistoryItem">
+                                <Image
+                                    Width="150"
+                                    Height="100"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Source="{x:Bind Thumbnail}"
+                                    Stretch="Uniform" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <Grid
+                        x:Name="PresentationRoot"
+                        Grid.Column="1"
+                        ColumnSpacing="8">
+                        <!--<Grid.ChildrenTransitions>
+                        <TransitionCollection>
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </Grid.ChildrenTransitions>-->
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Canvas.ZIndex="10">
+                            <CheckBox
+                                x:Name="GuideCheck"
+                                Content="Show Guide"
+                                IsChecked="True" />
+                            <Button
+                                x:Name="SwapButton"
+                                Click="Button_Click"
+                                Content="Side By Side" />
+                        </StackPanel>
+                        <TextBlock
+                            x:Name="Guide"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{x:Bind ViewModel.Face.DisplaySource}"
+                            FontSize="{x:Bind FontSizeSlider.Value, Mode=OneWay}"
+                            Opacity="0.3"
+                            Text="{x:Bind InputBox.Text, Mode=OneWay}"
+                            Visibility="{x:Bind GuideCheck.IsChecked, Mode=OneWay}" />
+                        <InkCanvas x:Name="Ink" Grid.ColumnSpan="2" />
+                        <InkToolbar
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            TargetInkCanvas="{x:Bind Ink}" />
+                    </Grid>
+                </Grid>
+
+
+
+            </Grid>
+
+        </controls:ModalPagePresenter>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ViewStates">
+                <VisualState x:Name="OverlayState" />
+                <VisualState x:Name="SideBySideState">
+                    <VisualState.Setters>
+                        <Setter Target="SwapButton.Content" Value="Overlay" />
+                        <!--<Setter Target="Guide.(Grid.ColumnSpan)" Value="1" />
+                        <Setter Target="Ink.(Grid.ColumnSpan)" Value="1" />
+                        <Setter Target="Ink.(Grid.Column)" Value="1" />-->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+    </Grid>
+</view:ViewBase>

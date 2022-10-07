@@ -307,6 +307,7 @@
     <Compile Include="Themes\DefaultTheme.xaml.cs">
       <DependentUpon>DefaultTheme.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\CalligraphyViewModel.cs" />
     <Compile Include="ViewModels\CollectionManagementViewModel.cs" />
     <Compile Include="ViewModels\ExportViewModel.cs" />
     <Compile Include="ViewModels\FontMapViewModel.cs" />
@@ -315,6 +316,9 @@
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="ViewModels\QuickCompareViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\CalligraphyView.xaml.cs">
+      <DependentUpon>CalligraphyView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\CollectionManagementView.xaml.cs">
       <DependentUpon>CollectionManagementView.xaml</DependentUpon>
     </Compile>
@@ -506,6 +510,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\ZuneThemeStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\CalligraphyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -592,7 +592,7 @@
                                 x:Name="CollectionPanel"
                                 HorizontalAlignment="Stretch"
                                 Visibility="Collapsed">
-                                <views:CollectionManagementView HorizontalAlignment="Stretch" />
+                                <views:CollectionManagementView HorizontalAlignment="Stretch" Margin="0 0 0 -80" />
                             </Grid>
 
                             <StackPanel x:Name="ChangePanel" Visibility="Collapsed">
