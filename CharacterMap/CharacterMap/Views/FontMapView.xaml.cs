@@ -310,6 +310,10 @@ namespace CharacterMap.Views
 
         public bool HandleInput(KeyRoutedEventArgs e)
         {
+            // If ALT key is held down, ignore
+            if (e.KeyStatus.IsMenuKeyDown)
+                return false;
+
             var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
             if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
             {
