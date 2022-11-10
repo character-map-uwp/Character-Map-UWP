@@ -545,9 +545,12 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                         FontListFlyout,
                         font,
+                        CharacterRenderingOptions.CreateDefault(font),
                         null,
-                        null,
-                        new () { Folder = ViewModel.Folder });
+                        new () { 
+                            Folder = ViewModel.Folder, 
+                            PreviewText = FontMap.ViewModel.Sequence,
+                        });
 
                 args.TryGetPosition(sender, out Point pos);
                 FontListFlyout.ShowAt(sender, pos);

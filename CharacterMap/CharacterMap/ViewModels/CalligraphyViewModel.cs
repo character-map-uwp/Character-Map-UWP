@@ -15,22 +15,24 @@ namespace CharacterMap.ViewModels
     {
         public CalligraphyHistoryItem(IReadOnlyList<InkStroke> strokes)
         {
-            _strokes = strokes;
+            _strokes = strokes.Select(s => s.Clone()).ToList();
         }
 
         private IReadOnlyList<InkStroke> _strokes { get; }
+
         public BitmapImage Thumbnail { get;set;}
 
         public List<InkStroke> GetStrokes()
         {
             return _strokes.Select(s => s.Clone()).ToList();
         }
-
     }
 
 
     public class CalligraphyViewModel : ViewModelBase
     {
+        public string Text { get => Get<string>(); set => Set(value); }
+
         public FontVariant Face { get; }
 
         public ObservableCollection<CalligraphyHistoryItem> Histories { get; }

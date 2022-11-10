@@ -821,7 +821,8 @@
                     Height="120"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     Loading="CopySequenceRoot_Loading"
-                    Visibility="Collapsed">
+                    Visibility="Collapsed"
+                    d:Visibility="Visible">
                     <Grid x:Name="CopySequenceContent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />

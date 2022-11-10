@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Globalization;
 using Windows.System;
@@ -81,6 +82,11 @@ namespace CharacterMap.Views
 
         public SettingsView()
         {
+            this.InitializeComponent();
+
+            if (DesignMode.DesignModeEnabled)
+                return;
+
             Settings = ResourceHelper.AppSettings;
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsUpdated(m));
@@ -88,7 +94,6 @@ namespace CharacterMap.Views
 
             GridSize = Settings.GridSize;
 
-            this.InitializeComponent();
 
             CompositionFactory.SetupOverlayPanelAnimation(this);
 

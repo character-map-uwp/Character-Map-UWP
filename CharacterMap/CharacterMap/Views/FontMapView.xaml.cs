@@ -17,6 +17,7 @@ using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
 using System.Transactions;
+using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Composition;
@@ -109,14 +110,19 @@ namespace CharacterMap.Views
         public FontMapView()
         {
             InitializeComponent();
-            Loading += FontMapView_Loading;
-            Loaded += FontMapView_Loaded;
-            Unloaded += FontMapView_Unloaded;
 
             RequestedTheme = ResourceHelper.GetEffectiveTheme();
             ViewModel = new FontMapViewModel(
-                Ioc.Default.GetService<IDialogService>(), 
+                DesignMode.DesignModeEnabled ? 
+                    new DialogService() : Ioc.Default.GetService<IDialogService>(), 
                 ResourceHelper.AppSettings);
+
+            if (DesignMode.DesignModeEnabled)
+                return;
+
+            Loading += FontMapView_Loading;
+            Loaded += FontMapView_Loaded;
+            Unloaded += FontMapView_Unloaded;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             CharGrid.ItemSize = ViewModel.Settings.GridSize;
@@ -710,7 +716,8 @@ namespace CharacterMap.Views
                         Standalone = IsStandalone,
                         ShowAdvanced = true,
                         IsExternalFile = ViewModel.IsExternalFile,
-                        Folder = ViewModel.Folder
+                        Folder = ViewModel.Folder,
+                        PreviewText = ViewModel.Sequence
                     });
             }
         }

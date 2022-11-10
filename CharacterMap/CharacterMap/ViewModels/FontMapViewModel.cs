@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
@@ -186,7 +187,8 @@ namespace CharacterMap.ViewModels
             ToggleDev = new RelayCommand<DevProviderType>(t => SetDev(t));
             SelectedGlyphCategories = Unicode.CreateCategoriesList();
 
-            _interop = Utils.GetInterop();
+            if (DesignMode.DesignModeEnabled is false)
+                _interop = Utils.GetInterop();
 
             _searchDebouncer = new Debouncer();
             _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();

@@ -31,6 +31,18 @@ namespace CharacterMap.Models
         /// </summary>
         public bool RequiresNativeRender { get; }
 
+        public static CharacterRenderingOptions CreateDefault(InstalledFont font)
+        {
+            CharacterRenderingOptions options = new(
+                font.DefaultVariant,
+                new List<TypographyFeatureInfo> { TypographyFeatureInfo.None },
+                64,
+                null, 
+                null);
+
+            return options;
+        }
+
         public CharacterRenderingOptions(FontVariant variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis, IReadOnlyList<DWriteFontAxis> axis)
         {
             Variant = variant;

@@ -55,6 +55,8 @@ namespace CharacterMap.Helpers
         /// button)
         /// </summary>
         public bool IsExternalFile      { get; set; }
+
+        public string PreviewText { get; set; }
     }
 
 
@@ -436,12 +438,10 @@ namespace CharacterMap.Helpers
 
                 cali.Click += (s, e) =>
                 {
-                    _ = CalligraphyView.CreateWindowAsync(options);
+                    _ = CalligraphyView.CreateWindowAsync(options, args?.PreviewText);
                 };
 
                 menu.Items.Add(cali);
-
-
             }
         }
 

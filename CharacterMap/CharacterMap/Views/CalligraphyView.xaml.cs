@@ -7,10 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
+using Windows.UI.Input.Inking;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -97,14 +100,17 @@ namespace CharacterMap.Views
 
         public async void AddToHistory()
         {
-            CalligraphyHistoryItem h = new(Ink.InkPresenter.StrokeContainer.GetStrokes().Select(s => s.Clone()).ToList());
+            // 1. Create a history item
+            CalligraphyHistoryItem h = new(Ink.InkPresenter.StrokeContainer.GetStrokes());
 
+            // 2. Render a thumbnail of the drawing
             using var m = new MemoryStream();
             await Ink.InkPresenter.StrokeContainer.SaveAsync(m.AsOutputStream());
             m.Seek(0, SeekOrigin.Begin);
             var b = new BitmapImage();
             await b.SetSourceAsync(m.AsRandomAccessStream());
 
+            // 3. Add history item
             h.Thumbnail = b;
             ViewModel.Histories.Add(h);
         }
@@ -128,19 +134,37 @@ namespace CharacterMap.Views
 
     public partial class CalligraphyView
     {
-        public static async Task<WindowInformation> CreateWindowAsync(CharacterRenderingOptions options)
+        public static async Task<WindowInformation> CreateWindowAsync(CharacterRenderingOptions options, string text = null)
         {
-            static void CreateView(CharacterRenderingOptions v)
+            static void CreateView(CharacterRenderingOptions v, string t = null)
             {
                 CalligraphyView view = new(v);
+                view.ViewModel.Text = String.IsNullOrWhiteSpace(t) ? "Hello" : t;
                 Window.Current.Content = view;
                 Window.Current.Activate();
             }
 
-            var view = await WindowService.CreateViewAsync(() => CreateView(options), false);
+            var view = await WindowService.CreateViewAsync(() => CreateView(options, text), false);
             await WindowService.TrySwitchToWindowAsync(view, false);
 
             return view;
+        }
+    }
+
+    public class CalligraphicPen : InkToolbarCustomPen
+    {
+        public CalligraphicPen() { }
+
+        protected override InkDrawingAttributes CreateInkDrawingAttributesCore(Brush brush, double width)
+        {
+            return new InkDrawingAttributes()
+            {
+                IgnorePressure = false,
+                PenTip = PenTipShape.Circle,
+                Size = new (width, 2.0f * width),
+                Color = (brush as SolidColorBrush)?.Color ?? Colors.Black,
+                PenTipTransform = Matrix3x2.CreateRotation((float)(Math.PI * 45d / 180d))
+            };
         }
     }
 }
