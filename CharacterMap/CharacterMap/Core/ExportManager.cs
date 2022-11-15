@@ -353,11 +353,7 @@ namespace CharacterMap.Core
                 {
                     try
                     {
-                        if (file.Provider.Id != "computer")
-                            await CachedFileManager.CompleteUpdatesAsync(file);
                         // 3. Write the SVG to the file
-                        else
-                            CachedFileManager.DeferUpdates(file);
                         await Utils.WriteSvgAsync(svg, file);
                         return new ExportResult(ExportState.Succeeded, file);
                     }
@@ -409,10 +405,6 @@ namespace CharacterMap.Core
                 if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder)
                     is StorageFile file)
                 {
-                    if (file.Provider.Id != "computer")
-                        await CachedFileManager.CompleteUpdatesAsync(file);
-                    else
-                        CachedFileManager.DeferUpdates(file);
                     using var typography = options.CreateCanvasTypography();
 
                     // If the glyph is actually a PNG file inside the font we should export it directly.
