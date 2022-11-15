@@ -348,13 +348,16 @@ namespace CharacterMap.Core
                     return new ExportResult(ExportState.Skipped, null);
 
                 // 2. Get the file we will save the image to.
-                if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "svg", targetFolder)
-                    is StorageFile file)
+                var providedFile = await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "svg", targetFolder);                
+                if (providedFile is StorageFile file)
                 {
                     try
                     {
+                        if (file.Provider.Id != "computer")
+                            await CachedFileManager.CompleteUpdatesAsync(file);
                         // 3. Write the SVG to the file
-                        CachedFileManager.DeferUpdates(file);
+                        else
+                            CachedFileManager.DeferUpdates(file);
                         await Utils.WriteSvgAsync(svg, file);
                         return new ExportResult(ExportState.Succeeded, file);
                     }
