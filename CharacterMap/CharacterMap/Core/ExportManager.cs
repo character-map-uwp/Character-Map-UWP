@@ -409,7 +409,10 @@ namespace CharacterMap.Core
                 if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder)
                     is StorageFile file)
                 {
-                    CachedFileManager.DeferUpdates(file);
+                    if (file.Provider.Id != "computer")
+                        await CachedFileManager.CompleteUpdatesAsync(file);
+                    else
+                        CachedFileManager.DeferUpdates(file);
                     using var typography = options.CreateCanvasTypography();
 
                     // If the glyph is actually a PNG file inside the font we should export it directly.
