@@ -359,7 +359,7 @@ namespace CharacterMap.Core
                     }
                     finally
                     {
-                        await CachedFileManager.CompleteUpdatesAsync(file);
+
                     }
                 }
             }
@@ -441,8 +441,6 @@ namespace CharacterMap.Core
                         await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
                         await fileStream.FlushAsync();
                     }
-
-                    await CachedFileManager.CompleteUpdatesAsync(file);
                     return new ExportResult(ExportState.Succeeded, file);
                 }
             }
