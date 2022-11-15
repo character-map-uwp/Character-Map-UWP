@@ -348,19 +348,18 @@ namespace CharacterMap.Core
                     return new ExportResult(ExportState.Skipped, null);
 
                 // 2. Get the file we will save the image to.
-                if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "svg", targetFolder)
-                    is StorageFile file)
+                var providedFile = await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "svg", targetFolder);                
+                if (providedFile is StorageFile file)
                 {
                     try
                     {
                         // 3. Write the SVG to the file
-                        CachedFileManager.DeferUpdates(file);
                         await Utils.WriteSvgAsync(svg, file);
                         return new ExportResult(ExportState.Succeeded, file);
                     }
                     finally
                     {
-                        await CachedFileManager.CompleteUpdatesAsync(file);
+
                     }
                 }
             }
@@ -406,7 +405,6 @@ namespace CharacterMap.Core
                 if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder)
                     is StorageFile file)
                 {
-                    CachedFileManager.DeferUpdates(file);
                     using var typography = options.CreateCanvasTypography();
 
                     // If the glyph is actually a PNG file inside the font we should export it directly.
@@ -443,8 +441,6 @@ namespace CharacterMap.Core
                         await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
                         await fileStream.FlushAsync();
                     }
-
-                    await CachedFileManager.CompleteUpdatesAsync(file);
                     return new ExportResult(ExportState.Succeeded, file);
                 }
             }
