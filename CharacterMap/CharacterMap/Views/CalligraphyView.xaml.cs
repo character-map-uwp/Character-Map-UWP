@@ -38,7 +38,7 @@ namespace CharacterMap.Views
         {
             VisualStateManager.GoToState(this, "NormalState", false);
             VisualStateManager.GoToState(this, "OverlayState", false);
-            
+
             TitleBarHelper.SetTitle(Presenter.Title);
 
             Ink.InkPresenter.StrokesCollected -= InkPresenter_StrokesCollected;
@@ -46,6 +46,12 @@ namespace CharacterMap.Views
 
             Ink.InkPresenter.StrokesErased -= InkPresenter_StrokesErased;
             Ink.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
+
+            // Pre-create element visuals to ensure animations run
+            // properly when requested later
+            PresentationRoot.GetElementVisual();
+            Guide.GetElementVisual();
+            CanvasContainer.GetElementVisual();
         }
 
         private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
@@ -93,7 +99,7 @@ namespace CharacterMap.Views
                     Inker.Opacity = 0;
 
                 _container.AddStrokes(h.GetStrokes());
-                GoToOverlay();
+                //GoToOverlay();
                 TryAnimateToInkCanvas(e);
             }
 
@@ -199,8 +205,12 @@ namespace CharacterMap.Views
             var gv = Guide.EnableCompositionTranslation().GetElementVisual();
             var iv = CanvasContainer.EnableCompositionTranslation().GetElementVisual();
 
-            gv.StopAnimation(CompositionFactory.TRANSLATION);
-            iv.StopAnimation(CompositionFactory.TRANSLATION);
+            if (ViewModel.AllowAnimation)
+            {
+                var scale = CompositionFactory.CreateScaleAnimation(gv.Compositor);
+                gv.WithStandardTranslation().SetImplicitAnimation("Scale", scale);
+                iv.WithStandardTranslation().SetImplicitAnimation("Scale", scale);
+            }
 
             gv.SetTranslation(0, 0, 0);
             iv.SetTranslation(0, 0, 0);
@@ -209,14 +219,43 @@ namespace CharacterMap.Views
             iv.Scale = new System.Numerics.Vector3(1f);
         }
 
-        void GoToSideBySide()
+        async void GoToSideBySide()
         {
+            // 0. Go to state & disable swap button
+            //    We need to disable because we're doing funky animation things
+            SwapButton.IsEnabled = false;
+
             VisualStateManager.GoToState(this, nameof(SideBySideState), false);
 
+            // 1. Prepare visuals
             var v = PresentationRoot.GetElementVisual();
             var gv = Guide.EnableCompositionTranslation().GetElementVisual();
             var iv = CanvasContainer.EnableCompositionTranslation().GetElementVisual();
 
+            // 2. Prepare implicit animations
+            if (ViewModel.AllowAnimation)
+            {
+                var scale = CompositionFactory.CreateScaleAnimation(gv.Compositor);
+                gv.WithStandardTranslation().SetImplicitAnimation("Scale", scale);
+                iv.WithStandardTranslation().SetImplicitAnimation("Scale", scale);
+            }
+
+            CompositionFactory.StartCentering(gv);
+            CompositionFactory.StartCentering(iv);
+
+            // 3. Set scale & translation. If implicit animations applied, these
+            //    will cause animations to start playing
+            gv.SetTranslation(v.Size.X / -4f, 0, 0);
+            iv.SetTranslation(v.Size.X / 4f, 0, 0);
+
+            gv.Scale = new System.Numerics.Vector3(0.5f, 0.5f, 1f);
+            iv.Scale = new System.Numerics.Vector3(0.5f, 0.5f, 1f);
+
+            if (ViewModel.AllowAnimation)
+                await Task.Delay((int)(CompositionFactory.DefaultOffsetDuration * 1000) + 32);
+
+            // 4. Now enable expression animation for layout. This will stomp over our
+            //    translation implicit animations (which is why we do this after the delay)
             gv.StartAnimation(
                 gv.CreateExpressionAnimation(CompositionFactory.TRANSLATION)
                 .SetExpression("Vector3(-(v.Size.X / 4f), 0, 0)")
@@ -227,11 +266,8 @@ namespace CharacterMap.Views
                 .SetExpression("Vector3((v.Size.X / 4f), 0, 0)")
                 .SetParameter("v", v));
 
-            CompositionFactory.StartCentering(gv);
-            CompositionFactory.StartCentering(iv);
-
-            gv.Scale = new System.Numerics.Vector3(0.5f, 0.5f, 1f);
-            iv.Scale = new System.Numerics.Vector3(0.5f, 0.5f, 1f);
+            // 5. Re-enable button to swap
+            SwapButton.IsEnabled = true;
         }
     }
 

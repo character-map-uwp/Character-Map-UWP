@@ -102,7 +102,7 @@
 
                                                 <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverlayGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                                     <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
-                                                    <EasingDoubleKeyFrame EasingFunction="{StaticResource Deccel}" KeyTime="00:00:00.25" Value="50" />
+                                                    <EasingDoubleKeyFrame EasingFunction="{StaticResource Deccel}" KeyTime="00:00:00.15" Value="50" />
                                                 </DoubleAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualTransition>
@@ -195,7 +195,7 @@
                                 x:Name="OverlayGrid"
                                 x:Load="False"
                                 Margin="4"
-                                HorizontalAlignment="Center"
+                                HorizontalAlignment="Right"
                                 VerticalAlignment="Bottom"
                                 RenderTransformOrigin="0.5,0.5"
                                 Visibility="Collapsed"

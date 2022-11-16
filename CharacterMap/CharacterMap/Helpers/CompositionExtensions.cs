@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Composition;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Hosting;
 
@@ -22,6 +23,11 @@ namespace CharacterMap.Helpers
         {
             element.GetElementVisual().Properties.InsertVector3("Translation", value);
             return element;
+        }
+
+        public static Visual WithStandardTranslation(this Visual v)
+        {
+            return CompositionFactory.EnableStandardTranslation(v);
         }
 
         //------------------------------------------------------
