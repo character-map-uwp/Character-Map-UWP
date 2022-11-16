@@ -2,7 +2,7 @@
 using CharacterMap.Models;
 using CharacterMap.Provider;
 using CharacterMap.Services;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;

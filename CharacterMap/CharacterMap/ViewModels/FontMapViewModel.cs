@@ -6,8 +6,8 @@ using CharacterMap.Services;
 using CharacterMap.Views;
 using CharacterMapCX;
 using Microsoft.Graphics.Canvas.Text;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +18,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace CharacterMap.ViewModels
 {

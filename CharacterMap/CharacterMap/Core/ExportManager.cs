@@ -21,7 +21,7 @@ using CharacterMap.Models;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System.Threading;
 
 namespace CharacterMap.Core

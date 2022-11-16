@@ -585,6 +585,7 @@ IAsyncOperation<bool>^ DirectWrite::WriteToStreamAsync(CanvasFontFace^ fontFace,
 
 IBuffer^ DirectWrite::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format)
 {
+	// 1. Get font reference
 	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
 	ComPtr<IDWriteFontFace3> face;
 	faceRef->CreateFontFace(&face);
@@ -592,23 +593,28 @@ IBuffer^ DirectWrite::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixels
 	ComPtr<IDWriteFontFace5> face5;
 	face.As(&face5);
 
+	// 2. Get index of glyph inside the font
 	UINT16 idx = 0;
 	auto arr = new UINT[1];
 	arr[0] = unicodeIndex;
 	auto hr3 = face5->GetGlyphIndices(arr, 1, &idx);
 	delete arr;
 
+	// 3. Get the actual image data
 	DWRITE_GLYPH_IMAGE_DATA data;
 	void* context;
 	auto formats = face5->GetGlyphImageData(idx, pixelsPerEm, static_cast<DWRITE_GLYPH_IMAGE_FORMATS>(format), &data, &context);
 
+	// 4. Write image data to a WinRT buffer
 	auto b = (byte*)data.imageData;
 	DataWriter^ writer = ref new DataWriter();
 	writer->WriteBytes(Platform::ArrayReference<BYTE>(b, data.imageDataSize));
 	IBuffer^ buffer = writer->DetachBuffer();
 
+	// 5. Cleanup
 	face5->ReleaseGlyphImageData(context);
 	delete writer;
 
+	// 6. Return buffer
 	return buffer;
 }

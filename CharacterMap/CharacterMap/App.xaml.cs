@@ -8,7 +8,7 @@ using UnhandledExceptionEventArgs = CharacterMap.Core.UnhandledExceptionEventArg
 using CharacterMapCX.Controls;
 using CharacterMap.ViewModels;
 using Windows.ApplicationModel.Core;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CharacterMap
 {
