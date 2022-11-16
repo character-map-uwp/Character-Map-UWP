@@ -1,27 +1,20 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
+﻿using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Input.Inking;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views
 {
@@ -29,12 +22,12 @@ namespace CharacterMap.Views
     {
         public CalligraphyViewModel ViewModel { get; }
 
+        private InkStrokeContainer _container => Ink.InkPresenter.StrokeContainer;
+
         public CalligraphyView(CharacterRenderingOptions options)
         {
             this.InitializeComponent();
-
             ViewModel = new CalligraphyViewModel(options);
-
             this.Loaded += OnLoaded;
 
             ResourceHelper.GoToThemeState(this);
@@ -45,7 +38,25 @@ namespace CharacterMap.Views
         {
             VisualStateManager.GoToState(this, "NormalState", false);
             VisualStateManager.GoToState(this, "OverlayState", false);
+            
             TitleBarHelper.SetTitle(Presenter.Title);
+
+            Ink.InkPresenter.StrokesCollected -= InkPresenter_StrokesCollected;
+            Ink.InkPresenter.StrokesCollected += InkPresenter_StrokesCollected;
+
+            Ink.InkPresenter.StrokesErased -= InkPresenter_StrokesErased;
+            Ink.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
+        }
+
+        private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
+        {
+            UpdateStrokes();
+        }
+
+        private void InkPresenter_StrokesCollected(InkPresenter sender, InkStrokesCollectedEventArgs args)
+        {
+            if (args.Strokes.Count > 0)
+                ViewModel.HasStrokes = true;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -56,12 +67,137 @@ namespace CharacterMap.Views
                 GoToOverlay();
         }
 
+        private async void AddHistoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (_container.GetStrokes().Count > 0)
+            {
+                TryPrepareHistoryAnimation();
+                await ViewModel.AddToHistoryAsync(_container);
+
+                // Scroll to the end of the list view to ensure the ConnectedAnimation
+                // can play properly
+                HistoryList.ScrollIntoView(HistoryList.Items.Last());
+
+                _container.Clear();
+                UpdateStrokes();
+            }
+        }
+
+        private void HistoryList_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            _container.Clear();
+
+            if (e.ClickedItem is CalligraphyHistoryItem h)
+            {
+                if (ViewModel.AllowAnimation)
+                    Inker.Opacity = 0;
+
+                _container.AddStrokes(h.GetStrokes());
+                GoToOverlay();
+                TryAnimateToInkCanvas(e);
+            }
+
+            UpdateStrokes();
+        }
+
+
+
+        private void Reset()
+        {
+            /// Clear the Ink Canvas and reset back to the 
+            /// default calligraphy pen
+
+            _container.Clear();
+
+            // This needs to be done on the dispatcher or the 
+            // InkButton will not go into the correct VisualState
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                Toolbar.ActiveTool = calligraphyPen;
+            });
+
+            UpdateStrokes();
+        }
+
+        private void HistoryList_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            TryAnimateInkIntoHistory(args);
+        }
+
+        public void UndoLastStroke()
+        {
+            IReadOnlyList<InkStroke> strokes = _container.GetStrokes();
+            if (strokes.Count > 0)
+            {
+                strokes[strokes.Count - 1].Selected = true;
+                _container.DeleteSelected();
+
+                UpdateStrokes();
+            }
+        }
+
+        private void UpdateStrokes()
+        {
+            ViewModel.HasStrokes = _container.GetStrokes().Count > 0;
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is CalligraphyHistoryItem item)
+            {
+                ViewModel.Histories.Remove(item);
+            }
+        }
+
+
+        /* ANIMATION HELPERS */
+
+        ConnectedAnimation _addHistoryAnim;
+
+        private void TryPrepareHistoryAnimation()
+        {
+            if (ViewModel.AllowAnimation)
+                _addHistoryAnim = ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("ink", Ink);
+        }
+
+        private void TryAnimateInkIntoHistory(ContainerContentChangingEventArgs args)
+        {
+            if (_addHistoryAnim is not null && args.Item == ViewModel.Histories.Last())
+            {
+                args.ItemContainer.Opacity = 0;
+                _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    args.ItemContainer.Opacity = 1;
+                    HistoryList.ScrollIntoView(ViewModel.Histories.Last());
+                    _addHistoryAnim.TryStart(args.ItemContainer);
+                    _addHistoryAnim = null;
+                });
+            }
+        }
+
+        private void TryAnimateToInkCanvas(ItemClickEventArgs e)
+        {
+            if (ViewModel.AllowAnimation)
+            {
+                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate(
+                    "ToInk", HistoryList.ContainerFromItem(e.ClickedItem).GetFirstDescendantOfType<Image>())
+                        .TryStart(Inker);
+
+                Inker.Opacity = 1;
+            }
+        }
+
+
+
+
+        /* VISUAL STATE HELPERS */
+
         private void GoToOverlay()
         {
             VisualStateManager.GoToState(this, nameof(OverlayState), false);
 
             var gv = Guide.EnableCompositionTranslation().GetElementVisual();
-            var iv = Ink.EnableCompositionTranslation().GetElementVisual();
+            var iv = CanvasContainer.EnableCompositionTranslation().GetElementVisual();
 
             gv.StopAnimation(CompositionFactory.TRANSLATION);
             iv.StopAnimation(CompositionFactory.TRANSLATION);
@@ -79,7 +215,7 @@ namespace CharacterMap.Views
 
             var v = PresentationRoot.GetElementVisual();
             var gv = Guide.EnableCompositionTranslation().GetElementVisual();
-            var iv = Ink.EnableCompositionTranslation().GetElementVisual();
+            var iv = CanvasContainer.EnableCompositionTranslation().GetElementVisual();
 
             gv.StartAnimation(
                 gv.CreateExpressionAnimation(CompositionFactory.TRANSLATION)
@@ -96,39 +232,6 @@ namespace CharacterMap.Views
 
             gv.Scale = new System.Numerics.Vector3(0.5f, 0.5f, 1f);
             iv.Scale = new System.Numerics.Vector3(0.5f, 0.5f, 1f);
-        }
-
-        public async void AddToHistory()
-        {
-            // 1. Create a history item
-            CalligraphyHistoryItem h = new(Ink.InkPresenter.StrokeContainer.GetStrokes());
-
-            // 2. Render a thumbnail of the drawing
-            using var m = new MemoryStream();
-            await Ink.InkPresenter.StrokeContainer.SaveAsync(m.AsOutputStream());
-            m.Seek(0, SeekOrigin.Begin);
-            var b = new BitmapImage();
-            await b.SetSourceAsync(m.AsRandomAccessStream());
-
-            // 3. Add history item
-            h.Thumbnail = b;
-            ViewModel.Histories.Add(h);
-        }
-
-        private void AddHistoryButton_Click(object sender, RoutedEventArgs e)
-        {
-            AddToHistory();
-            Ink.InkPresenter.StrokeContainer.Clear();
-        }
-
-        private void ListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            Ink.InkPresenter.StrokeContainer.Clear();
-            if (e.ClickedItem is CalligraphyHistoryItem h)
-            {
-                Ink.InkPresenter.StrokeContainer.AddStrokes(h.GetStrokes());
-                GoToOverlay();
-            }
         }
     }
 

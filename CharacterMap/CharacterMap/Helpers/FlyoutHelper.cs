@@ -429,6 +429,7 @@ namespace CharacterMap.Helpers
                 }
 
 
+                menu.Items.Add(new MenuFlyoutSeparator());
 
                 MenuFlyoutItem cali = new ()
                 {

@@ -5,6 +5,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:view="using:CharacterMap.Views"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
@@ -16,6 +17,293 @@
 
     <Control.Resources>
         <view:CalligraphicPen x:Key="CalligraphyPen" />
+
+        <ExponentialEase
+            x:Key="Accel"
+            EasingMode="EaseOut"
+            Exponent="7" />
+
+        <ExponentialEase
+            x:Key="Deccel"
+            EasingMode="EaseIn"
+            Exponent="7" />
+
+
+        <Style x:Key="HelloMoto" TargetType="ListViewItem">
+            <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+            <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+            <Setter Property="TabNavigation" Value="Local" />
+            <Setter Property="IsHoldingEnabled" Value="True" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="0 0 0 4" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="MinWidth" Value="{ThemeResource ListViewItemMinWidth}" />
+            <Setter Property="MinHeight" Value="{ThemeResource ListViewItemMinHeight}" />
+            <Setter Property="AllowDrop" Value="False" />
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+            <Setter Property="FocusVisualMargin" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Grid
+                            x:Name="ContentBorder"
+                            Width="150"
+                            Height="100"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Control.IsTemplateFocusTarget="True"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                            RenderTransformOrigin="0.5,0.5">
+
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition From="Normal" To="PointerOver">
+                                            <Storyboard>
+
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    To="1"
+                                                    Duration="00:00:0.1" />
+
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverlayGrid" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                                </ObjectAnimationUsingKeyFrames>
+
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverlayGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="50" />
+                                                    <EasingDoubleKeyFrame EasingFunction="{StaticResource Accel}" KeyTime="00:00:00.4" Value="0" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition>
+
+                                        <VisualTransition From="PointerOver" To="Normal">
+                                            <Storyboard>
+
+                                                <DoubleAnimation
+                                                    Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Opacity"
+                                                    From="1"
+                                                    To="0"
+                                                    Duration="00:00:0.1" />
+
+                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="OverlayGrid" Storyboard.TargetProperty="Visibility">
+                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                                </ObjectAnimationUsingKeyFrames>
+
+                                                <DoubleAnimationUsingKeyFrames Storyboard.TargetName="OverlayGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                    <EasingDoubleKeyFrame KeyTime="00:00:00" Value="0" />
+                                                    <EasingDoubleKeyFrame EasingFunction="{StaticResource Deccel}" KeyTime="00:00:00.25" Value="50" />
+                                                </DoubleAnimationUsingKeyFrames>
+                                            </Storyboard>
+                                        </VisualTransition>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                    <VisualState x:Name="PointerOver">
+
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="BorderBackground"
+                                                Storyboard.TargetProperty="Opacity"
+                                                To="1"
+                                                Duration="0" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListLowBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
+
+                                        </Storyboard>
+                                        <VisualState.Setters>
+                                            <Setter Target="OverlayGrid.Visibility" Value="Visible" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="Pressed">
+
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="BorderBackground"
+                                                Storyboard.TargetProperty="Opacity"
+                                                To="1"
+                                                Duration="0" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderBackground" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightListMediumBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <PointerDownThemeAnimation TargetName="ContentPresenter" />
+                                        </Storyboard>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled" />
+                                    <VisualState x:Name="Disabled">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ContentBorder"
+                                                Storyboard.TargetProperty="Opacity"
+                                                To="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                                                Duration="0" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+
+                            <Rectangle
+                                x:Name="BorderBackground"
+                                Control.IsTemplateFocusTarget="True"
+                                Fill="{ThemeResource SystemControlHighlightListLowBrush}"
+                                IsHitTestVisible="False"
+                                Opacity="0" />
+
+
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="Stretch"
+                                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                Content="{TemplateBinding Content}"
+                                ContentTemplate="{TemplateBinding ContentTemplate}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                d:Background="#88DDDDDD" />
+
+
+
+                            <Grid
+                                x:Name="OverlayGrid"
+                                x:Load="False"
+                                Margin="4"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Bottom"
+                                RenderTransformOrigin="0.5,0.5"
+                                Visibility="Collapsed"
+                                d:Visibility="Visible">
+                                <Grid.RenderTransform>
+                                    <CompositeTransform TranslateY="0" />
+                                </Grid.RenderTransform>
+                                <StackPanel
+                                    Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                                    CornerRadius="4"
+                                    Orientation="Horizontal"
+                                    Spacing="4">
+                                    <Button
+                                        x:Name="DeleteButton"
+                                        Click="DeleteButton_Click"
+                                        DataContext="{TemplateBinding Content}"
+                                        Style="{StaticResource SmolButton}">
+                                        <SymbolIcon Symbol="Delete" />
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+
+                        </Grid>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="SmolButton" TargetType="Button">
+            <Setter Property="MinWidth" Value="{ThemeResource InkToolbarButtonWidth}" />
+            <Setter Property="MinHeight" Value="{ThemeResource InkToolbarButtonHeight}" />
+            <Setter Property="MaxWidth" Value="{ThemeResource InkToolbarButtonWidth}" />
+            <Setter Property="MaxHeight" Value="{ThemeResource InkToolbarButtonHeight}" />
+            <Setter Property="BorderThickness" Value="{ThemeResource InkToolbarButtonBorderThemeThickness}" />
+            <Setter Property="Background" Value="{ThemeResource InkToolbarButtonBackground}" />
+            <Setter Property="Foreground" Value="{ThemeResource InkToolbarButtonForeground}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrush}" />
+            <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="FocusVisualMargin" Value="-3" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="0,0,0,0" />
+            <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid
+                            x:Name="RootElement"
+                            Width="{ThemeResource InkToolbarButtonWidth}"
+                            Height="{ThemeResource InkToolbarButtonHeight}"
+                            h:CompositionFactory.OpacityDuration="0:0:0.12"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal" />
+                                    <VisualState x:Name="PointerOver">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootElement.(RevealBrush.State)" Value="PointerOver" />
+                                            <Setter Target="RootElement.Background" Value="{ThemeResource InkToolbarButtonBackgroundPointerOver}" />
+                                            <Setter Target="Border.BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrushPointerOver}" />
+                                            <Setter Target="Content.Foreground" Value="{ThemeResource InkToolbarButtonForegroundPointerOver}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootElement.(RevealBrush.State)" Value="Pressed" />
+                                            <Setter Target="RootElement.Background" Value="{ThemeResource InkToolbarButtonBackgroundPressed}" />
+                                            <Setter Target="Border.BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrushPressed}" />
+                                            <Setter Target="Content.Foreground" Value="{ThemeResource InkToolbarButtonForegroundPressed}" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                    <VisualState x:Name="Disabled">
+                                        <VisualState.Setters>
+                                            <Setter Target="RootElement.Opacity" Value="0.4" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="FocusStates">
+                                    <VisualState x:Name="Focused" />
+                                    <VisualState x:Name="Unfocused" />
+                                    <VisualState x:Name="PointerFocused" />
+                                </VisualStateGroup>
+                                <VisualStateGroup x:Name="FlowDirectionStates">
+                                    <VisualState x:Name="LeftToRight" />
+                                    <VisualState x:Name="RightToLeft" />
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Rectangle x:Name="ContentBackground" Fill="Transparent" />
+                            <ContentPresenter
+                                x:Name="Content"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                HighContrastAdjustment="None" />
+                            <Border
+                                x:Name="Border"
+                                Grid.RowSpan="2"
+                                Grid.ColumnSpan="2"
+                                Margin="1,0"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </Control.Resources>
 
     <Grid>
@@ -26,30 +314,7 @@
             CloseButtonVisibility="Collapsed"
             IsWindowRoot="True">
             <controls:ModalPagePresenter.TitleBarContent>
-                <Grid>
-                    <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False">
-                        <!--<Button
-                            x:Name="BackButton"
-                            Width="45"
-                            VerticalAlignment="Stretch"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Click="BackButton_Click"
-                            CornerRadius="0"
-                            Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                            Style="{StaticResource AccentButtonStyle}"
-                            Visibility="Collapsed"
-                            d:Visibility="Visible">
-                            <FontIcon
-                                x:Name="BackIcon"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="12"
-                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                Glyph="&#xE0A6;" />
-                        </Button>-->
-                    </controls:XamlTitleBar>
-                </Grid>
-
+                <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False" />
             </controls:ModalPagePresenter.TitleBarContent>
 
             <Grid Padding="20 8">
@@ -59,37 +324,278 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBox x:Name="InputBox" Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                <Slider
-                    x:Name="FontSizeSlider"
-                    Grid.Row="1"
-                    Maximum="400"
-                    Minimum="60"
-                    Value="120" />
-
-                <Grid Grid.Row="2">
+                <Grid ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="2*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        x:Name="InputBox"
+                        VerticalAlignment="Bottom"
+                        Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        d:Text="Preview" />
+                    <Slider
+                        x:Name="FontSizeSlider"
+                        Grid.Column="1"
+                        Header="Font Size"
+                        Maximum="400"
+                        Minimum="60"
+                        Value="120" />
+                </Grid>
+
+                <Grid
+                    Grid.Row="2"
+                    ColumnSpacing="4"
+                    Margin="0 8 0 0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" MinWidth="160" />
                     </Grid.ColumnDefinitions>
 
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="12" />
+                    </Grid.RowDefinitions>
+
+                    <!--  LEFT COLUMN  -->
+
+                    <Border
+                        Grid.ColumnSpan="1"
+                        Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                        CornerRadius="4 4 0 0"
+                        d:Background="#88DDDDDD" />
+
+
+                    <StackPanel
+                        Grid.Column="0"
+                        Margin="0 0 4 0"
+                        HorizontalAlignment="Right"
+                        Canvas.ZIndex="10"
+                        Orientation="Horizontal">
+                        <!--<CheckBox
+                            x:Name="GuideCheck"
+                            Content="Show Guide"
+                            IsChecked="True" />-->
+
+                        <Button
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Click="AddHistoryButton_Click"
+                            IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                            Style="{StaticResource SmolButton}"
+                            ToolTipService.ToolTip="Add to History"
+                            d:IsEnabled="False">
+                            <TextBlock
+                                AutomationProperties.AccessibilityView="Raw"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Text="&#xE109;" />
+                        </Button>
+                    </StackPanel>
+
+                    <StackPanel
+                        Grid.Column="0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Orientation="Horizontal"
+                        Spacing="4">
+
+                        <StackPanel
+                            x:Name="ButtonsPanel"
+                            Margin="4 0"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <Button
+                                Click="{x:Bind UndoLastStroke}"
+                                IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                                Style="{StaticResource SmolButton}"
+                                d:IsEnabled="False">
+                                <TextBlock
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Text="&#xE10E;" />
+                            </Button>
+
+                            <AppBarSeparator />
+
+                            <!--<Button Style="{StaticResource SmolButton}">
+                                    <TextBlock
+                                        AutomationProperties.AccessibilityView="Raw"
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        Text="&#xE10D;" />
+                                </Button>-->
+
+                            <InkToolbar
+                                x:Name="Toolbar"
+                                core:Properties.DefaultTool="{x:Bind calligraphyPen}"
+                                CornerRadius="8"
+                                InitialControls="None"
+                                TargetInkCanvas="{x:Bind Ink}">
+                                <InkToolbarCustomPenButton
+                                    x:Name="calligraphyPen"
+                                    CustomPen="{StaticResource CalligraphyPen}"
+                                    MaxStrokeWidth="10"
+                                    MinStrokeWidth="4"
+                                    Palette="{x:Bind BallpointPen.Palette, Mode=OneWay}"
+                                    SelectedBrushIndex="0"
+                                    ToolTipService.ToolTip="Calligraphy pen">
+                                    <Border>
+                                        <Grid>
+                                            <TextBlock
+                                                AutomationProperties.AccessibilityView="Raw"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                Foreground="{x:Bind calligraphyPen.SelectedBrush, Mode=OneWay}"
+                                                Text="&#xF0C7;" />
+                                            <TextBlock
+                                                AutomationProperties.AccessibilityView="Raw"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                Text="&#xEDFB;" />
+                                        </Grid>
+                                    </Border>
+                                    <InkToolbarCustomPenButton.ConfigurationContent>
+                                        <InkToolbarPenConfigurationControl />
+                                    </InkToolbarCustomPenButton.ConfigurationContent>
+                                </InkToolbarCustomPenButton>
+                                <InkToolbarBallpointPenButton
+                                    x:Name="BallpointPen"
+                                    MaxStrokeWidth="10"
+                                    MinStrokeWidth="4" />
+                                <InkToolbarEraserButton />
+                                <InkToolbarCustomToolButton Click="{x:Bind Reset}" ToolTipService.ToolTip="Clear">
+                                    <Border CornerRadius="4">
+                                        <TextBlock
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            Text="&#xE107;" />
+                                    </Border>
+                                </InkToolbarCustomToolButton>
+
+                            </InkToolbar>
+
+                            <AppBarSeparator />
+
+                            <InkToolbarCustomToggleButton
+                                x:Name="GuideCheck"
+                                IsChecked="True"
+                                ToolTipService.ToolTip="Show Preview">
+                                <TextBlock
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Text="&#xE80A;" />
+                            </InkToolbarCustomToggleButton>
+
+                            <InkToolbarCustomToggleButton
+                                x:Name="SwapButton"
+                                Click="Button_Click"
+                                ToolTipService.ToolTip="Side by Side">
+                                <PathIcon
+                                    Margin="0 -4 0 0"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Data="F1 M 0 7.861328 L 4.111328 3.75 L 8.75 3.75 L 8.75 16.25 L 0 16.25 Z M 3.75 5.888672 L 2.138672 7.5 L 3.75 7.5 Z M 7.5 15 L 7.5 5 L 5 5 L 5 8.75 L 1.25 8.75 L 1.25 15 Z M 15.888672 3.75 L 20 7.861328 L 20 16.25 L 11.25 16.25 L 11.25 3.75 Z M 16.25 5.888672 L 16.25 7.5 L 17.861328 7.5 Z M 12.5 15 L 18.75 15 L 18.75 8.75 L 15 8.75 L 15 5 L 12.5 5 Z " />
+                            </InkToolbarCustomToggleButton>
+
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                    <Grid
+                        x:Name="PresentationRoot"
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        ColumnSpacing="8">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock
+                            x:Name="Guide"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{x:Bind ViewModel.Face.DisplaySource}"
+                            FontSize="{x:Bind FontSizeSlider.Value, Mode=OneWay}"
+                            Opacity="0.3"
+                            Text="{Binding ViewModel.Text, Mode=OneWay}"
+                            Visibility="{x:Bind GuideCheck.IsChecked, Mode=OneWay}"
+                            d:FontSize="124"
+                            d:Text="Preview" />
+
+                        <Border
+                            x:Name="CanvasContainer"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            CornerRadius="0 0 4 4"
+                            d:Background="#88DDDDDD">
+                            <Border x:Name="Inker">
+                                <InkCanvas x:Name="Ink" core:Properties.IsMouseInputEnabled="True" />
+                            </Border>
+                        </Border>
+
+                    </Grid>
+
+                    <!--  RIGHT COLUMN  -->
+
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel
+                            Margin="1 0 0 0"
+                            HorizontalAlignment="Center"
+                            Opacity="0.4"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                Text="&#xE81C;"
+                                TextLineBounds="Tight" />
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="History"
+                                TextLineBounds="Tight" />
+                        </StackPanel>
+                    </Grid>
+
+
+
                     <ListView
+                        x:Name="HistoryList"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="0 0 0 0"
+                        ContainerContentChanging="HistoryList_ContainerContentChanging"
                         IsItemClickEnabled="True"
-                        ItemClick="ListView_ItemClick"
+                        ItemClick="HistoryList_ItemClick"
+                        ItemContainerStyle="{StaticResource HelloMoto}"
                         ItemsSource="{x:Bind ViewModel.Histories}"
                         SelectionMode="None">
-                        <ListView.Header>
-                            <Button
-                                x:Name="AddHistoryButton"
-                                Click="AddHistoryButton_Click"
-                                Content="Add To History" />
-                        </ListView.Header>
+
+                        <ListView.ItemContainerTransitions>
+                            <TransitionCollection>
+                                <RepositionThemeTransition IsStaggeringEnabled="False" />
+                            </TransitionCollection>
+                        </ListView.ItemContainerTransitions>
+
+                        <d:ListView.Items>
+                            <viewmodels:CalligraphyHistoryItem />
+                            <viewmodels:CalligraphyHistoryItem />
+                            <viewmodels:CalligraphyHistoryItem />
+                            <viewmodels:CalligraphyHistoryItem />
+                            <viewmodels:CalligraphyHistoryItem />
+                        </d:ListView.Items>
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="viewmodels:CalligraphyHistoryItem">
                                 <Image
-                                    Width="150"
-                                    Height="100"
+                                    x:Name="Thumb"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Source="{x:Bind Thumbnail}"
@@ -98,99 +604,7 @@
                         </ListView.ItemTemplate>
                     </ListView>
 
-                    <Grid
-                        x:Name="PresentationRoot"
-                        Grid.Column="1"
-                        ColumnSpacing="8">
-                        <!--<Grid.ChildrenTransitions>
-                        <TransitionCollection>
-                            <RepositionThemeTransition IsStaggeringEnabled="False" />
-                        </TransitionCollection>
-                    </Grid.ChildrenTransitions>-->
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Canvas.ZIndex="10">
-                            <CheckBox
-                                x:Name="GuideCheck"
-                                Content="Show Guide"
-                                IsChecked="True" />
-                            <Button
-                                x:Name="SwapButton"
-                                Click="Button_Click"
-                                Content="Side By Side" />
-                        </StackPanel>
-                        <TextBlock
-                            x:Name="Guide"
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontFamily="{x:Bind ViewModel.Face.DisplaySource}"
-                            FontSize="{x:Bind FontSizeSlider.Value, Mode=OneWay}"
-                            Opacity="0.3"
-                            Text="{Binding ViewModel.Text, Mode=OneWay}"
-                            Visibility="{x:Bind GuideCheck.IsChecked, Mode=OneWay}" />
-
-                        <InkCanvas
-                            x:Name="Ink"
-                            Grid.ColumnSpan="2"
-                            core:Properties.IsMouseInputEnabled="True" />
-
-                        <InkToolbar
-                            Grid.ColumnSpan="2"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Top"
-                            core:Properties.DefaultTool="{x:Bind calligraphyPen}"
-                            InitialControls="None"
-                            TargetInkCanvas="{x:Bind Ink}">
-                            <InkToolbarCustomPenButton
-                                x:Name="calligraphyPen"
-                                CustomPen="{StaticResource CalligraphyPen}"
-                                MaxStrokeWidth="10"
-                                MinStrokeWidth="4"
-                                Palette="{x:Bind BallpointPen.Palette, Mode=OneWay}"
-                                SelectedBrushIndex="0"
-                                ToolTipService.ToolTip="Calligraphy pen">
-                                <Border>
-                                    <Grid>
-                                        <TextBlock
-                                            AutomationProperties.AccessibilityView="Raw"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Foreground="{x:Bind calligraphyPen.SelectedBrush, Mode=OneWay}"
-                                            Text="&#xF0C7;" />
-                                        <TextBlock
-                                            AutomationProperties.AccessibilityView="Raw"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Text="&#xEDFB;" />
-                                    </Grid>
-                                </Border>
-                                <InkToolbarCustomPenButton.ConfigurationContent>
-                                    <InkToolbarPenConfigurationControl />
-                                </InkToolbarCustomPenButton.ConfigurationContent>
-                            </InkToolbarCustomPenButton>
-                            <InkToolbarBallpointPenButton
-                                x:Name="BallpointPen"
-                                MaxStrokeWidth="10"
-                                MinStrokeWidth="4" />
-                            <InkToolbarEraserButton />
-                            <InkToolbarCustomToolButton
-                                Click="{x:Bind Ink.InkPresenter.StrokeContainer.Clear}"
-                                CornerRadius="{Binding ElementName=BallpointPen, Path=CornerRadius}"
-                                ToolTipService.ToolTip="Clear">
-                                <Border>
-                                    <TextBlock
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        Text="&#xE107;" />
-                                </Border>
-                            </InkToolbarCustomToolButton>
-                        </InkToolbar>
-
-                    </Grid>
                 </Grid>
-
-
 
             </Grid>
 
@@ -199,14 +613,7 @@
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ViewStates">
                 <VisualState x:Name="OverlayState" />
-                <VisualState x:Name="SideBySideState">
-                    <VisualState.Setters>
-                        <Setter Target="SwapButton.Content" Value="Overlay" />
-                        <!--<Setter Target="Guide.(Grid.ColumnSpan)" Value="1" />
-                        <Setter Target="Ink.(Grid.ColumnSpan)" Value="1" />
-                        <Setter Target="Ink.(Grid.Column)" Value="1" />-->
-                    </VisualState.Setters>
-                </VisualState>
+                <VisualState x:Name="SideBySideState" />
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
