@@ -103,11 +103,11 @@
     <value>已复制</value>
   </data>
   <data name="TxtFontIcon.Header" xml:space="preserve">
-    <value>字体图标</value>
+    <value>FontIcon 图标</value>
     <comment>Xaml FontIcon. Does not need translation.</comment>
   </data>
   <data name="TxtSymbolIcon.Header" xml:space="preserve">
-    <value>Symbol图标</value>
+    <value>SymbolIcon 图标</value>
     <comment>Xaml SymbolIcon. Does not need translation.</comment>
   </data>
   <data name="TxtTitle.Text" xml:space="preserve">
@@ -339,7 +339,7 @@
     <value>切换全屏</value>
   </data>
   <data name="DlgDeleteFont.Title" xml:space="preserve">
-    <value>你确定要将改字体从库中删除吗？ </value>
+    <value>你确定要将该字体从库中删除吗？ </value>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
     <value>"{0}" 集合已删除</value>
@@ -439,8 +439,12 @@
     <value>用户界面</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
-    <value>路径几何坐标</value>
+    <value>Path Geometry</value>
     <comment>Xaml PathGeometry. Does not need translation.</comment>
+  </data>
+  <data name="TxtPathIcon.Text" xml:space="preserve">
+    <value>PathIcon 图标</value>
+    <comment>Xaml PathIcon. Does not need translation.</comment>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>跟随系统语言设置</value>

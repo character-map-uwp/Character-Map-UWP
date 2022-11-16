@@ -133,12 +133,12 @@
         </trans-unit>
         <trans-unit id="TxtFontIcon.Header" translate="yes" xml:space="preserve">
           <source>Font Icon</source>
-          <target state="translated">字体图标</target>
+          <target state="translated">FontIcon 图标</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Xaml FontIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="TxtSymbolIcon.Header" translate="yes" xml:space="preserve">
           <source>Symbol Icon</source>
-          <target state="translated">Symbol图标</target>
+          <target state="translated">SymbolIcon 图标</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Xaml SymbolIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="TxtTitle.Text" translate="yes" xml:space="preserve">
@@ -454,7 +454,7 @@
         </trans-unit>
         <trans-unit id="DlgDeleteFont.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this font from your library?</source>
-          <target state="translated">你确定要将改字体从库中删除吗？ </target>
+          <target state="translated">你确定要将该字体从库中删除吗？ </target>
         </trans-unit>
         <trans-unit id="NotificationCollectionDeleted" translate="yes" xml:space="preserve">
           <source>"{0}" collection deleted</source>
@@ -632,7 +632,7 @@ Turning this on has negligible performance impact.</target>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
-          <target state="translated">路径几何坐标</target>
+          <target state="translated">Path Geometry</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Xaml PathGeometry. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="UseSystemLanguage" translate="yes" xml:space="preserve">
@@ -933,7 +933,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="TxtPathIcon.Text" translate="yes" xml:space="preserve">
           <source>Path Icon</source>
-          <target state="new">Path Icon</target>
+          <target state="translated">PathIcon 图标</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Xaml PathIcon. Does not need translation.</note>
         </trans-unit>
         <trans-unit id="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
