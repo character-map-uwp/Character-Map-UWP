@@ -10,6 +10,7 @@
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:view="using:CharacterMap.Views"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
+    xmlns:xaml="using:Microsoft.Graphics.Canvas.UI.Xaml"
     x:Name="ViewRoot"
     Background="Transparent"
     DataContext="{x:Bind}"
@@ -191,7 +192,6 @@
                                 d:Background="#88DDDDDD" />
 
 
-
                             <Grid
                                 x:Name="OverlayGrid"
                                 x:Load="False"
@@ -213,8 +213,33 @@
                                         x:Name="DeleteButton"
                                         Click="DeleteButton_Click"
                                         DataContext="{TemplateBinding Content}"
-                                        Style="{StaticResource SmolButton}">
-                                        <SymbolIcon Symbol="Delete" />
+                                        Style="{StaticResource SmolButton}"
+                                        ToolTipService.ToolTip="Remove">
+                                        <TextBlock
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            Text="&#xE107;" />
+                                    </Button>
+                                    <Button
+                                        DataContext="{TemplateBinding Content}"
+                                        Style="{StaticResource SmolButton}"
+                                        ToolTipService.ToolTip="Save">
+                                        <TextBlock
+                                            AutomationProperties.AccessibilityView="Raw"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            Text="&#xE105;" />
+                                        <Button.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <MenuFlyoutItem
+                                                    Click="SaveHistoryAsPNG"
+                                                    DataContext="{TemplateBinding Content}"
+                                                    Text="As PNG" />
+                                                <MenuFlyoutItem
+                                                    Click="SaveHistoryAsSVG"
+                                                    DataContext="{TemplateBinding Content}"
+                                                    Text="As SVG" />
+                                            </MenuFlyout>
+                                        </Button.Flyout>
                                     </Button>
                                 </StackPanel>
                             </Grid>
@@ -318,6 +343,8 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
+                <xaml:CanvasControl x:Name="ShimCanvas" Visibility="Collapsed" />
+
                 <Grid ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -325,8 +352,8 @@
                     </Grid.ColumnDefinitions>
                     <TextBox
                         x:Name="InputBox"
-                        Header="Preview Text"
                         VerticalAlignment="Bottom"
+                        Header="Preview Text"
                         Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         d:Text="Preview" />
                     <Slider
@@ -335,7 +362,7 @@
                         Header="Font Size"
                         Maximum="400"
                         Minimum="60"
-                        Value="220" />
+                        Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}" />
                 </Grid>
 
                 <Grid
@@ -490,19 +517,39 @@
                         </toolkit:WrapPanel>
 
 
-                        <Button
+                        <StackPanel
                             Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Click="AddHistoryButton_Click"
-                            IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
-                            Style="{StaticResource SmolButton}"
-                            ToolTipService.ToolTip="Add to History"
-                            d:IsEnabled="False">
-                            <TextBlock
-                                AutomationProperties.AccessibilityView="Raw"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                Text="&#xE109;" />
-                        </Button>
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <Button
+                                IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                                Style="{StaticResource SmolButton}"
+                                ToolTipService.ToolTip="Save">
+                                <TextBlock
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Text="&#xE105;" />
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutItem Click="SaveAsPNG" Text="As PNG" />
+                                        <MenuFlyoutItem Click="SaveAsSVG" Text="As SVG" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                            </Button>
+                            <Button
+                                HorizontalAlignment="Right"
+                                Click="AddHistoryButton_Click"
+                                IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                                Style="{StaticResource SmolButton}"
+                                ToolTipService.ToolTip="Add to History"
+                                d:IsEnabled="False">
+                                <TextBlock
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Text="&#xE109;" />
+                            </Button>
+                        </StackPanel>
+
                     </Grid>
 
 
@@ -525,7 +572,7 @@
                             VerticalAlignment="Center"
                             h:CompositionFactory.OpacityDuration="0:0:0.15"
                             FontFamily="{x:Bind ViewModel.Face.DisplaySource}"
-                            FontSize="{x:Bind FontSizeSlider.Value, Mode=OneWay}"
+                            FontSize="{x:Bind ViewModel.FontSize, Mode=OneWay}"
                             Text="{Binding ViewModel.Text, Mode=OneWay}"
                             d:FontSize="124"
                             d:Opacity="0.3"
@@ -614,6 +661,11 @@
             </Grid>
 
         </controls:ModalPagePresenter>
+
+        <!--  Notification Presenter  -->
+        <Grid x:Name="NotificationRoot" x:Load="False">
+            <toolkit:InAppNotification x:Name="DefaultNotification" />
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
 

@@ -1,7 +1,10 @@
-﻿using CharacterMap.Helpers;
+﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +13,6 @@ using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Input.Inking;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -18,7 +20,7 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class CalligraphyView : ViewBase
+    public sealed partial class CalligraphyView : ViewBase, IInAppNotificationPresenter
     {
         public CalligraphyViewModel ViewModel { get; }
 
@@ -28,13 +30,12 @@ namespace CharacterMap.Views
         {
             this.InitializeComponent();
             ViewModel = new CalligraphyViewModel(options);
-            this.Loaded += OnLoaded;
 
             ResourceHelper.GoToThemeState(this);
             LeakTrackingService.Register(this);
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, "NormalState", false);
             VisualStateManager.GoToState(this, "OverlayState", false);
@@ -46,6 +47,8 @@ namespace CharacterMap.Views
 
             Ink.InkPresenter.StrokesErased -= InkPresenter_StrokesErased;
             Ink.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
+
+            Messenger.Register<AppNotificationMessage>(this, (o, m) => OnNotificationMessage(m));
 
             // Pre-create element visuals to ensure animations run
             // properly when requested later
@@ -100,8 +103,12 @@ namespace CharacterMap.Views
                 if (ViewModel.AllowAnimation)
                     Inker.Opacity = 0;
 
+                // Restore History Item
                 _container.AddStrokes(h.GetStrokes());
-                //GoToOverlay();
+                ViewModel.FontSize = h.FontSize;
+                ViewModel.Text = h.Text;
+
+                // Animate if required
                 TryAnimateToInkCanvas(e);
             }
 
@@ -150,6 +157,56 @@ namespace CharacterMap.Views
                 ViewModel.Histories.Remove(item);
             }
         }
+
+        private void SaveAsSVG(object sender, RoutedEventArgs e)
+        {
+            _ = SaveAsync(_container.GetStrokes(), ExportFormat.Svg);
+        }
+
+        private void SaveAsPNG(object sender, RoutedEventArgs e)
+        {
+            _ = SaveAsync(_container.GetStrokes(), ExportFormat.Png);
+        }
+
+        private void SaveHistoryAsSVG(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is CalligraphyHistoryItem item)
+                _ = SaveAsync(item.GetStrokes(), ExportFormat.Svg);
+        }
+
+        private void SaveHistoryAsPNG(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is CalligraphyHistoryItem item)
+                _ = SaveAsync(item.GetStrokes(), ExportFormat.Png);
+        }
+
+        private Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format)
+        {
+            return ViewModel.SaveAsync(strokes, format, ShimCanvas, Ink.ActualWidth, Ink.ActualHeight);
+        }
+
+
+
+
+        /* Notification Helpers */
+
+        public InAppNotification GetNotifier()
+        {
+            if (NotificationRoot == null)
+                this.FindName(nameof(NotificationRoot));
+
+            return DefaultNotification;
+        }
+
+        void OnNotificationMessage(AppNotificationMessage msg)
+        {
+            if (!Dispatcher.HasThreadAccess)
+                return;
+
+            InAppNotificationHelper.OnMessage(this, msg);
+        }
+
+
 
 
         /* ANIMATION HELPERS */

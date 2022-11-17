@@ -121,8 +121,6 @@ namespace CharacterMap.Views
                 return;
 
             Loading += FontMapView_Loading;
-            Loaded += FontMapView_Loaded;
-            Unloaded += FontMapView_Unloaded;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             CharGrid.ItemSize = ViewModel.Settings.GridSize;
@@ -154,24 +152,24 @@ namespace CharacterMap.Views
             }
         }
 
-        private void FontMapView_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            WeakReferenceMessenger.Default.Register<AppNotificationMessage>(this, (o,m) => OnNotificationMessage(m));
-            WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
-            WeakReferenceMessenger.Default.Register<PrintRequestedMessage>(this, (o,m) =>
+            Messenger.Register<AppNotificationMessage>(this, (o,m) => OnNotificationMessage(m));
+            Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
+            Messenger.Register<PrintRequestedMessage>(this, (o,m) =>
             {
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
-            WeakReferenceMessenger.Default.Register<ExportRequestedMessage>(this, (o, m) =>
+            Messenger.Register<ExportRequestedMessage>(this, (o, m) =>
             {
                 if (Dispatcher.HasThreadAccess)
                     TryExport();
             });
-            WeakReferenceMessenger.Default.Register<CopyToClipboardMessage>(this, async (o, m) =>
+            Messenger.Register<CopyToClipboardMessage>(this, async (o, m) =>
             {
                 if (Dispatcher.HasThreadAccess)
                     await ViewModel.RequestCopyToClipboardAsync(m);
@@ -196,13 +194,13 @@ namespace CharacterMap.Views
             //PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
         }
 
-        private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded(object sender, RoutedEventArgs e)
         {
             PreviewColumn.UnregisterPropertyChangedCallback(ColumnDefinition.WidthProperty, _previewColumnToken);
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
-            WeakReferenceMessenger.Default.UnregisterAll(this);
+            Messenger.UnregisterAll(this);
         }
 
         public void Cleanup()

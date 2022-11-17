@@ -1,5 +1,6 @@
 ﻿using CharacterMap.Annotations;
 using CharacterMap.Core;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -31,6 +32,23 @@ namespace CharacterMap.Views
             }
 
             return false;
+        }
+
+        protected IMessenger Messenger => WeakReferenceMessenger.Default;
+
+        public ViewBase()
+        {
+            this.Loaded += OnLoaded;
+            this.Unloaded += OnUnloaded;
+        }
+
+        protected virtual void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+        }
+
+        protected virtual void OnUnloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Messenger.UnregisterAll(this);
         }
 
         protected void RunOnUI(Action a)
