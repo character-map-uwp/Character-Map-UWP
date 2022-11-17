@@ -442,10 +442,6 @@
     <value>Path Geometry</value>
     <comment>Xaml PathGeometry. Does not need translation.</comment>
   </data>
-  <data name="TxtPathIcon.Text" xml:space="preserve">
-    <value>PathIcon 图标</value>
-    <comment>Xaml PathIcon. Does not need translation.</comment>
-  </data>
   <data name="UseSystemLanguage" xml:space="preserve">
     <value>跟随系统语言设置</value>
   </data>
@@ -638,6 +634,10 @@
   </data>
   <data name="CollectionExportZip.Text" xml:space="preserve">
     <value>Zip 压缩包</value>
+  </data>
+  <data name="TxtPathIcon.Text" xml:space="preserve">
+    <value>PathIcon 图标</value>
+    <comment>Xaml PathIcon. Does not need translation.</comment>
   </data>
   <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>打开或关闭程序猿工具</value>
