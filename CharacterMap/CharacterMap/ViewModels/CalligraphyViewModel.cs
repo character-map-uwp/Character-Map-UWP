@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.UI.Input.Inking;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace CharacterMap.ViewModels
@@ -43,10 +44,15 @@ namespace CharacterMap.ViewModels
 
     public partial class CalligraphyViewModel : ViewModelBase
     {
-        [ObservableProperty]
-        private bool _hasStrokes;
+        private Stack<InkStroke> _redoStack { get; } = new();
 
-        public string Text { get => Get<string>(); set => Set(value); }
+        [ObservableProperty] private bool _hasStrokes;
+
+        [ObservableProperty] private bool _canRedo;
+
+        [ObservableProperty] private bool _isOverlayVisible = true;
+
+        [ObservableProperty] private string _text;
 
         public FontVariant Face { get; }
 
@@ -74,6 +80,64 @@ namespace CharacterMap.ViewModels
             // 3. Add history item
             h.Thumbnail = b;
             Histories.Add(h);
+        }
+
+        public bool Undo(InkStrokeContainer container)
+        {
+            // 1. Get the most recent stroke
+            IReadOnlyList<InkStroke> strokes = container.GetStrokes();
+            if (strokes.Count > 0)
+            {
+                // 2. Add it to the redo stack
+                _redoStack.Push(strokes[^1]);
+                strokes[^1].Selected = true;
+                
+                // 3. Remove it from the ink canvas
+                container.DeleteSelected();
+
+                // 4. Notify UI we can now "Redo"
+                CanRedo = true;
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool Redo(InkStrokeContainer container)
+        {
+            if (_redoStack.Count > 0)
+            {
+                container.AddStroke(_redoStack.Pop().Clone());
+                HasStrokes = true;
+                CanRedo = _redoStack.Count > 0;
+                return true;
+            }
+
+            return false;
+        }
+
+        public void Clear(InkStrokeContainer container)
+        {
+            container.Clear();
+            _redoStack.Clear();
+            CanRedo = false;
+            HasStrokes = false;
+        }
+
+        internal void OnStrokesErased(IReadOnlyList<InkStroke> strokes)
+        {
+            // Add deleted strokes to the Redo stack
+            foreach (var s in strokes)
+                _redoStack.Push(s);
+
+            CanRedo = strokes.Count > 0;
+        }
+
+        internal void OnStrokeDrawn()
+        {
+            // When user draws a stroke manually, clear the redo stack
+            _redoStack.Clear();
+            CanRedo = false;
         }
     }
 }

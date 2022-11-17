@@ -831,6 +831,16 @@ namespace CharacterMap.Views
             }
         }
 
+        private void OpenCalligraphyClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item
+                && item.DataContext is Character c)
+            {
+                _ = CalligraphyView.CreateWindowAsync(
+                    ViewModel.RenderingOptions, c.Char);
+            }
+        }
+
         private void PaneButton_Loaded(object sender, RoutedEventArgs e)
         {
             ((AppBarToggleButton)sender).IsChecked = !ResourceHelper.AppSettings.EnablePreviewPane;
@@ -1065,6 +1075,8 @@ namespace CharacterMap.Views
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
+
+        
     }
 
 

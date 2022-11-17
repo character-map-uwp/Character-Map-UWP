@@ -130,6 +130,17 @@
                 Click="AddClick"
                 Icon="Add" />
             <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem
+                x:Uid="CalligraphyPenItem"
+                Click="OpenCalligraphyClick"
+                Text="Calligraphy">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEDFB;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutSeparator />
+
             <MenuFlyoutSubItem
                 x:Name="PngRoot"
                 x:Uid="ExportPNGLabel"

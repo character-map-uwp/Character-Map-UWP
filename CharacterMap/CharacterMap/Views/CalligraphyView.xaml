@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:view="using:CharacterMap.Views"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     x:Name="ViewRoot"
@@ -29,7 +30,7 @@
             Exponent="7" />
 
 
-        <Style x:Key="HelloMoto" TargetType="ListViewItem">
+        <Style TargetType="ListViewItem">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
@@ -39,7 +40,7 @@
             <Setter Property="TabNavigation" Value="Local" />
             <Setter Property="IsHoldingEnabled" Value="True" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="Margin" Value="0 0 0 4" />
+            <Setter Property="Margin" Value="0 0 0 8" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -234,6 +235,7 @@
             <Setter Property="Background" Value="{ThemeResource InkToolbarButtonBackground}" />
             <Setter Property="Foreground" Value="{ThemeResource InkToolbarButtonForeground}" />
             <Setter Property="BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
             <Setter Property="FocusVisualMargin" Value="-3" />
             <Setter Property="CornerRadius" Value="4" />
@@ -275,15 +277,7 @@
                                     </VisualState>
                                 </VisualStateGroup>
 
-                                <VisualStateGroup x:Name="FocusStates">
-                                    <VisualState x:Name="Focused" />
-                                    <VisualState x:Name="Unfocused" />
-                                    <VisualState x:Name="PointerFocused" />
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="FlowDirectionStates">
-                                    <VisualState x:Name="LeftToRight" />
-                                    <VisualState x:Name="RightToLeft" />
-                                </VisualStateGroup>
+
                             </VisualStateManager.VisualStateGroups>
                             <Rectangle x:Name="ContentBackground" Fill="Transparent" />
                             <ContentPresenter
@@ -331,6 +325,7 @@
                     </Grid.ColumnDefinitions>
                     <TextBox
                         x:Name="InputBox"
+                        Header="Preview Text"
                         VerticalAlignment="Bottom"
                         Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         d:Text="Preview" />
@@ -340,16 +335,18 @@
                         Header="Font Size"
                         Maximum="400"
                         Minimum="60"
-                        Value="120" />
+                        Value="220" />
                 </Grid>
 
                 <Grid
                     Grid.Row="2"
-                    ColumnSpacing="4"
+                    ColumnSpacing="0"
+                    RowSpacing="8"
                     Margin="0 8 0 0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" MinWidth="160" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="Auto" MinWidth="150" />
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
@@ -361,54 +358,33 @@
                     <!--  LEFT COLUMN  -->
 
                     <Border
-                        Grid.ColumnSpan="1"
+                        Grid.ColumnSpan="3"
                         Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
-                        CornerRadius="4 4 0 0"
+                        CornerRadius="4"
                         d:Background="#88DDDDDD" />
 
+                    <AppBarSeparator Grid.Column="1" HorizontalAlignment="Center" />
 
-                    <StackPanel
-                        Grid.Column="0"
-                        Margin="0 0 4 0"
-                        HorizontalAlignment="Right"
-                        Canvas.ZIndex="10"
-                        Orientation="Horizontal">
-                        <!--<CheckBox
-                            x:Name="GuideCheck"
-                            Content="Show Guide"
-                            IsChecked="True" />-->
 
-                        <Button
-                            Grid.Column="1"
-                            HorizontalAlignment="Right"
-                            Click="AddHistoryButton_Click"
-                            IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
-                            Style="{StaticResource SmolButton}"
-                            ToolTipService.ToolTip="Add to History"
-                            d:IsEnabled="False">
-                            <TextBlock
-                                AutomationProperties.AccessibilityView="Raw"
-                                FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                Text="&#xE109;" />
-                        </Button>
-                    </StackPanel>
+                    <Grid Padding="4 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <StackPanel
-                        Grid.Column="0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
-                        Orientation="Horizontal"
-                        Spacing="4">
-
-                        <StackPanel
+                        <toolkit:WrapPanel
                             x:Name="ButtonsPanel"
-                            Margin="4 0"
-                            Orientation="Horizontal"
-                            Spacing="4">
+                            Padding="0 4 0 4"
+                            VerticalAlignment="Stretch"
+                            ChildrenTransitions="{StaticResource RepositionTransitions}"
+                            HorizontalSpacing="4"
+                            Orientation="Horizontal">
+
                             <Button
                                 Click="{x:Bind UndoLastStroke}"
                                 IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
                                 Style="{StaticResource SmolButton}"
+                                ToolTipService.ToolTip="Undo"
                                 d:IsEnabled="False">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
@@ -416,17 +392,28 @@
                                     Text="&#xE10E;" />
                             </Button>
 
-                            <AppBarSeparator />
+                            <Button
+                                Click="{x:Bind RedoLastStroke}"
+                                IsEnabled="{x:Bind ViewModel.CanRedo, Mode=OneWay}"
+                                Style="{StaticResource SmolButton}"
+                                ToolTipService.ToolTip="Redo"
+                                d:IsEnabled="False">
+                                <TextBlock
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Text="&#xE10D;" />
+                            </Button>
 
-                            <!--<Button Style="{StaticResource SmolButton}">
-                                    <TextBlock
-                                        AutomationProperties.AccessibilityView="Raw"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        Text="&#xE10D;" />
-                                </Button>-->
+                            <AppBarSeparator
+                                Width="8"
+                                Height="40"
+                                Margin="0 -2 0 0"
+                                VerticalAlignment="Stretch" />
+
 
                             <InkToolbar
                                 x:Name="Toolbar"
+                                Margin="0 -4 0 4"
                                 core:Properties.DefaultTool="{x:Bind calligraphyPen}"
                                 CornerRadius="8"
                                 InitialControls="None"
@@ -460,7 +447,7 @@
                                     x:Name="BallpointPen"
                                     MaxStrokeWidth="10"
                                     MinStrokeWidth="4" />
-                                <InkToolbarEraserButton />
+                                <InkToolbarEraserButton IsClearAllVisible="False" />
                                 <InkToolbarCustomToolButton Click="{x:Bind Reset}" ToolTipService.ToolTip="Clear">
                                     <Border CornerRadius="4">
                                         <TextBlock
@@ -472,11 +459,16 @@
 
                             </InkToolbar>
 
-                            <AppBarSeparator />
+                            <AppBarSeparator
+                                Width="8"
+                                Height="40"
+                                Margin="0 -2 0 0"
+                                VerticalAlignment="Stretch" />
 
                             <InkToolbarCustomToggleButton
                                 x:Name="GuideCheck"
-                                IsChecked="True"
+                                Margin="0 0 0 4"
+                                IsChecked="{x:Bind ViewModel.IsOverlayVisible, Mode=TwoWay}"
                                 ToolTipService.ToolTip="Show Preview">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
@@ -486,6 +478,7 @@
 
                             <InkToolbarCustomToggleButton
                                 x:Name="SwapButton"
+                                Margin="0 0 0 4"
                                 Click="Button_Click"
                                 ToolTipService.ToolTip="Side by Side">
                                 <PathIcon
@@ -494,11 +487,24 @@
                                     VerticalAlignment="Center"
                                     Data="F1 M 0 7.861328 L 4.111328 3.75 L 8.75 3.75 L 8.75 16.25 L 0 16.25 Z M 3.75 5.888672 L 2.138672 7.5 L 3.75 7.5 Z M 7.5 15 L 7.5 5 L 5 5 L 5 8.75 L 1.25 8.75 L 1.25 15 Z M 15.888672 3.75 L 20 7.861328 L 20 16.25 L 11.25 16.25 L 11.25 3.75 Z M 16.25 5.888672 L 16.25 7.5 L 17.861328 7.5 Z M 12.5 15 L 18.75 15 L 18.75 8.75 L 15 8.75 L 15 5 L 12.5 5 Z " />
                             </InkToolbarCustomToggleButton>
+                        </toolkit:WrapPanel>
 
 
-                        </StackPanel>
+                        <Button
+                            Grid.Column="1"
+                            HorizontalAlignment="Right"
+                            Click="AddHistoryButton_Click"
+                            IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                            Style="{StaticResource SmolButton}"
+                            ToolTipService.ToolTip="Add to History"
+                            d:IsEnabled="False">
+                            <TextBlock
+                                AutomationProperties.AccessibilityView="Raw"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Text="&#xE109;" />
+                        </Button>
+                    </Grid>
 
-                    </StackPanel>
 
                     <Grid
                         x:Name="PresentationRoot"
@@ -517,12 +523,12 @@
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
+                            h:CompositionFactory.OpacityDuration="0:0:0.15"
                             FontFamily="{x:Bind ViewModel.Face.DisplaySource}"
                             FontSize="{x:Bind FontSizeSlider.Value, Mode=OneWay}"
-                            Opacity="0.3"
                             Text="{Binding ViewModel.Text, Mode=OneWay}"
-                            Visibility="{x:Bind GuideCheck.IsChecked, Mode=OneWay}"
                             d:FontSize="124"
+                            d:Opacity="0.3"
                             d:Text="Preview" />
 
                         <Border
@@ -530,7 +536,7 @@
                             Grid.Row="1"
                             Grid.ColumnSpan="2"
                             Background="{ThemeResource LayerFillColorDefaultBrush}"
-                            CornerRadius="0 0 4 4"
+                            CornerRadius="4"
                             d:Background="#88DDDDDD">
                             <Border x:Name="Inker">
                                 <InkCanvas x:Name="Ink" core:Properties.IsMouseInputEnabled="True" />
@@ -541,7 +547,7 @@
 
                     <!--  RIGHT COLUMN  -->
 
-                    <Grid Grid.Column="1">
+                    <Grid Grid.Column="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -570,12 +576,11 @@
                     <ListView
                         x:Name="HistoryList"
                         Grid.Row="1"
-                        Grid.Column="1"
+                        Grid.Column="2"
                         Margin="0 0 0 0"
                         ContainerContentChanging="HistoryList_ContainerContentChanging"
                         IsItemClickEnabled="True"
                         ItemClick="HistoryList_ItemClick"
-                        ItemContainerStyle="{StaticResource HelloMoto}"
                         ItemsSource="{x:Bind ViewModel.Histories}"
                         SelectionMode="None">
 
@@ -611,6 +616,26 @@
         </controls:ModalPagePresenter>
 
         <VisualStateManager.VisualStateGroups>
+
+            <VisualStateGroup x:Name="PreviewStates">
+                <VisualState x:Name="PreviewVisibleState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind ViewModel.IsOverlayVisible, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Guide.Opacity" Value="0.3" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="PreviewHiddenState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind core:Converters.False(ViewModel.IsOverlayVisible), Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="Guide.Opacity" Value="0" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+
             <VisualStateGroup x:Name="ViewStates">
                 <VisualState x:Name="OverlayState" />
                 <VisualState x:Name="SideBySideState" />

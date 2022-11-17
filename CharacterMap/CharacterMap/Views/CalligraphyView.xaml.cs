@@ -56,6 +56,7 @@ namespace CharacterMap.Views
 
         private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
         {
+            ViewModel.OnStrokesErased(args.Strokes);
             UpdateStrokes();
         }
 
@@ -63,6 +64,8 @@ namespace CharacterMap.Views
         {
             if (args.Strokes.Count > 0)
                 ViewModel.HasStrokes = true;
+
+            ViewModel.OnStrokeDrawn();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -84,14 +87,13 @@ namespace CharacterMap.Views
                 // can play properly
                 HistoryList.ScrollIntoView(HistoryList.Items.Last());
 
-                _container.Clear();
-                UpdateStrokes();
+                ViewModel.Clear(_container);
             }
         }
 
         private void HistoryList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            _container.Clear();
+            ViewModel.Clear(_container);
 
             if (e.ClickedItem is CalligraphyHistoryItem h)
             {
@@ -113,7 +115,7 @@ namespace CharacterMap.Views
             /// Clear the Ink Canvas and reset back to the 
             /// default calligraphy pen
 
-            _container.Clear();
+            ViewModel.Clear(_container);
 
             // This needs to be done on the dispatcher or the 
             // InkButton will not go into the correct VisualState
@@ -121,8 +123,6 @@ namespace CharacterMap.Views
             {
                 Toolbar.ActiveTool = calligraphyPen;
             });
-
-            UpdateStrokes();
         }
 
         private void HistoryList_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -132,15 +132,11 @@ namespace CharacterMap.Views
 
         public void UndoLastStroke()
         {
-            IReadOnlyList<InkStroke> strokes = _container.GetStrokes();
-            if (strokes.Count > 0)
-            {
-                strokes[strokes.Count - 1].Selected = true;
-                _container.DeleteSelected();
-
+            if (ViewModel.Undo(_container))
                 UpdateStrokes();
-            }
         }
+
+        public void RedoLastStroke() => ViewModel.Redo(_container);
 
         private void UpdateStrokes()
         {

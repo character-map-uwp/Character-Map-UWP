@@ -228,6 +228,7 @@
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Core\ExportManager.Font.cs" />
+    <Compile Include="Core\Index.cs" />
     <Compile Include="Core\Localizer.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
@@ -583,26 +584,22 @@
   <Target Name="MATPrerequisite" BeforeTargets="PrepareForBuild" Condition="!Exists('$(MSBuildExtensionsPath)\Microsoft\Multilingual App Toolkit\Microsoft.Multilingual.PriResources.targets')" Label="MultilingualAppToolkit">
     <Warning Text="$(MSBuildProjectFile) is Multilingual build enabled, but the Multilingual App Toolkit is unavailable during the build. If building with Visual Studio, please check to ensure that toolkit is properly installed." />
   </Target>
-
-	<Target Name="RemoveWebView2" BeforeTargets="ResolveAssemblyReferences">
-		<ItemGroup>
-			<_WebView2Reference Include="@(Reference)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Core'" />
-			<Reference Remove="@(_WebView2Reference)" />
-			<Reference Include="@(_WebView2Reference)" RemoveMetadata="Implementation">
-				<Private>false</Private>
-			</Reference>
-
-			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Core'" />
-
-			<_WebView2LoaderReference Include="@(Reference)" Condition="'%(Filename)' == 'WebView2Loader'" />
-			<Reference Remove="@(_WebView2LoaderReference)" />
-			<Reference Include="@(_WebView2LoaderReference)" RemoveMetadata="Implementation">
-				<Private>false</Private>
-			</Reference>
-
-			<ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' == 'WebView2Loader'" />
-		</ItemGroup>
-	</Target>
+  <Target Name="RemoveWebView2" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <_WebView2Reference Include="@(Reference)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Core'" />
+      <Reference Remove="@(_WebView2Reference)" />
+      <Reference Include="@(_WebView2Reference)" RemoveMetadata="Implementation">
+        <Private>false</Private>
+      </Reference>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' == 'Microsoft.Web.WebView2.Core'" />
+      <_WebView2LoaderReference Include="@(Reference)" Condition="'%(Filename)' == 'WebView2Loader'" />
+      <Reference Remove="@(_WebView2LoaderReference)" />
+      <Reference Include="@(_WebView2LoaderReference)" RemoveMetadata="Implementation">
+        <Private>false</Private>
+      </Reference>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(Filename)' == 'WebView2Loader'" />
+    </ItemGroup>
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
