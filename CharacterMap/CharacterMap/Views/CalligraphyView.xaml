@@ -110,13 +110,12 @@
                                         </VisualTransition>
                                     </VisualStateGroup.Transitions>
                                     <VisualState x:Name="Normal">
-                                        <Storyboard>
+                                        <!--<Storyboard>
                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-                                        </Storyboard>
+                                        </Storyboard>-->
                                     </VisualState>
 
                                     <VisualState x:Name="PointerOver">
-
                                         <Storyboard>
                                             <DoubleAnimation
                                                 Storyboard.TargetName="BorderBackground"
@@ -129,8 +128,7 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
-
+                                            <!--<PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />-->
                                         </Storyboard>
                                         <VisualState.Setters>
                                             <Setter Target="OverlayGrid.Visibility" Value="Visible" />
@@ -138,7 +136,6 @@
                                     </VisualState>
 
                                     <VisualState x:Name="Pressed">
-
                                         <Storyboard>
                                             <DoubleAnimation
                                                 Storyboard.TargetName="BorderBackground"
@@ -151,10 +148,9 @@
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlHighlightAltBaseHighBrush}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                            <PointerDownThemeAnimation TargetName="ContentPresenter" />
+                                            <!--<PointerDownThemeAnimation TargetName="ContentPresenter" />-->
                                         </Storyboard>
                                     </VisualState>
-
                                 </VisualStateGroup>
 
                                 <VisualStateGroup x:Name="DisabledStates">
@@ -178,7 +174,6 @@
                                 Fill="{ThemeResource SystemControlHighlightListLowBrush}"
                                 IsHitTestVisible="False"
                                 Opacity="0" />
-
 
                             <ContentPresenter
                                 x:Name="ContentPresenter"

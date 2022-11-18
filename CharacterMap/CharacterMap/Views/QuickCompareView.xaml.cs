@@ -46,8 +46,6 @@ namespace CharacterMap.Views
             ViewModel = new QuickCompareViewModel(args);
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
-            this.Loaded += QuickCompareView_Loaded;
-            this.Unloaded += QuickCompareView_Unloaded;
 
             if (args.IsQuickCompare)
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
@@ -55,12 +53,9 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(this, FontFolderState.Name, false);
 
             _navHelper.BackRequested += (s, e) => { ViewModel.SelectedFont = null; };
-
-            ResourceHelper.GoToThemeState(this);
-            LeakTrackingService.Register(this);
         }
 
-        private void QuickCompareView_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
             TitleBarHelper.SetTitle(Presenter.Title);
@@ -70,7 +65,7 @@ namespace CharacterMap.Views
             //Presenter.SetWindowTitleBar();
         }
 
-        private void QuickCompareView_Unloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel?.Deactivated();
             _navHelper.Deactivate();

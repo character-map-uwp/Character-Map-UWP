@@ -111,7 +111,6 @@ namespace CharacterMap.Views
         {
             InitializeComponent();
 
-            RequestedTheme = ResourceHelper.GetEffectiveTheme();
             ViewModel = new FontMapViewModel(
                 DesignMode.DesignModeEnabled ? 
                     new DialogService() : Ioc.Default.GetService<IDialogService>(), 
@@ -126,9 +125,6 @@ namespace CharacterMap.Views
             CharGrid.ItemSize = ViewModel.Settings.GridSize;
             CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
             _xamlDirect = XamlDirect.GetDefault();
-
-            LeakTrackingService.Register(this);
-            ResourceHelper.GoToThemeState(this);
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -157,19 +153,19 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            Messenger.Register<AppNotificationMessage>(this, (o,m) => OnNotificationMessage(m));
-            Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
-            Messenger.Register<PrintRequestedMessage>(this, (o,m) =>
+            Register<AppNotificationMessage>(OnNotificationMessage);
+            Register<AppSettingsChangedMessage>(OnAppSettingsChanged);
+            Register<PrintRequestedMessage>(m =>
             {
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
-            Messenger.Register<ExportRequestedMessage>(this, (o, m) =>
+            Register<ExportRequestedMessage>(m =>
             {
                 if (Dispatcher.HasThreadAccess)
                     TryExport();
             });
-            Messenger.Register<CopyToClipboardMessage>(this, async (o, m) =>
+            Register<CopyToClipboardMessage>(async m =>
             {
                 if (Dispatcher.HasThreadAccess)
                     await ViewModel.RequestCopyToClipboardAsync(m);

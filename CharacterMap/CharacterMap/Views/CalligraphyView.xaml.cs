@@ -30,9 +30,6 @@ namespace CharacterMap.Views
         {
             this.InitializeComponent();
             ViewModel = new CalligraphyViewModel(options);
-
-            ResourceHelper.GoToThemeState(this);
-            LeakTrackingService.Register(this);
         }
 
         protected override void OnLoaded(object sender, RoutedEventArgs e)
@@ -48,7 +45,7 @@ namespace CharacterMap.Views
             Ink.InkPresenter.StrokesErased -= InkPresenter_StrokesErased;
             Ink.InkPresenter.StrokesErased += InkPresenter_StrokesErased;
 
-            Messenger.Register<AppNotificationMessage>(this, (o, m) => OnNotificationMessage(m));
+            Register<AppNotificationMessage>(OnNotificationMessage);
 
             // Pre-create element visuals to ensure animations run
             // properly when requested later

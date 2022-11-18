@@ -4,10 +4,11 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
-using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Numerics;
 using Windows.ApplicationModel;
 using Windows.Foundation;
@@ -17,57 +18,7 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
-    public interface IPopoverPresenter
-    {
-        Border GetPresenter();
-        FontMapView GetFontMap();
-        GridLength GetTitleBarHeight();
-    }
-
-    public class PopoverViewBase : ViewBase
-    {
-        protected GridLength _titleBarHeight = new (32);
-        public GridLength TitleBarHeight
-        {
-            get => _titleBarHeight;
-            set => Set(ref _titleBarHeight, value);
-        }
-
-        protected IPopoverPresenter _presenter = null;
-
-        protected FontMapView _fontMap = null;
-
-        protected NavigationHelper _navHelper { get; } = new NavigationHelper();
-
-        public PopoverViewBase()
-        {
-            _navHelper.BackRequested += (s, e) => Hide();
-        }
-
-        public virtual void Show()
-        {
-            _navHelper.Activate();
-        }
-
-        public virtual void Hide()
-        {
-            if (_presenter == null)
-                return;
-
-            _navHelper.Deactivate();
-
-            _presenter.GetPresenter().Child = null;
-            _presenter = null;
-            _fontMap = null;
-          
-            TitleBarHelper.RestoreDefaultTitleBar();
-            WeakReferenceMessenger.Default.Send(new ModalClosedMessage());
-        }
-    }
-
-
-
-    public sealed partial class PrintView : PopoverViewBase
+    public partial class PrintView : PopoverViewBase
     {
         /* 
          * UWP printing requires us to create ALL pages ahead of time
@@ -79,27 +30,11 @@ namespace CharacterMap.Views
 
         public PrintViewModel ViewModel { get; }
 
-        private int _currentPage = 1;
-        public int CurrentPage
-        {
-            get => _currentPage;
-            private set => Set(ref _currentPage, value);
-        }
+        [ObservableProperty] private int _currentPage = 1;
 
-        private int _pageCount = 1;
-        public int PageCount
-        {
-            get => _pageCount;
-            private set => Set(ref _pageCount, value);
-        }
+        [ObservableProperty] private int _pageCount = 1;
 
-        private bool _canContinue = true;
-        public bool CanContinue
-        {
-            get => _canContinue;
-            private set => Set(ref _canContinue, value);
-        }
-
+        [ObservableProperty] private bool _canContinue = true;
 
         public List<PrintLayout> Layouts { get; } = new List<PrintLayout>
         {

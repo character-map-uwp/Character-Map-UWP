@@ -3,6 +3,7 @@ using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
@@ -46,19 +47,11 @@ namespace CharacterMap.Views
 
         public bool IsOpen { get; private set; }
 
+        [ObservableProperty] 
         private bool _isCollectionExportEnabled = true;
-        public bool IsCollectionExportEnabled
-        {
-            get => _isCollectionExportEnabled;
-            set => Set(ref _isCollectionExportEnabled, value);
-        }
 
+        [ObservableProperty] 
         private GridLength _titleBarHeight = new GridLength(32);
-        public GridLength TitleBarHeight
-        {
-            get => _titleBarHeight;
-            set => Set(ref _titleBarHeight, value);
-        }
 
         public int GridSize
         {
@@ -89,8 +82,8 @@ namespace CharacterMap.Views
 
             Settings = ResourceHelper.AppSettings;
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
-            WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsUpdated(m));
-            WeakReferenceMessenger.Default.Register<FontListCreatedMessage>(this, (o, m) => UpdateExport());
+            Register<AppSettingsChangedMessage>(OnAppSettingsUpdated);
+            Register<FontListCreatedMessage>(m => UpdateExport());
 
             GridSize = Settings.GridSize;
 
@@ -207,7 +200,7 @@ namespace CharacterMap.Views
             TitleBarHelper.RestoreDefaultTitleBar();
             IsOpen = false;
             this.Visibility = Visibility.Collapsed;
-            WeakReferenceMessenger.Default.Send(new ModalClosedMessage());
+            Messenger.Send(new ModalClosedMessage());
         }
 
         private void StartShowAnimation()
@@ -224,6 +217,11 @@ namespace CharacterMap.Views
             //elements.Clear();
             //elements.AddRange(RightPanel.Children);
             //Composition.PlayEntrance(elements, 0, 200);
+        }
+
+        protected override void OnUnloaded(object sender, RoutedEventArgs e)
+        {
+            // Do not unregister messages
         }
 
         private void View_Loading(FrameworkElement sender, object args)
