@@ -91,7 +91,7 @@
     <value>จะมีผลเมื่อแอปรีสตาร์ทแล้ว</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
-    <value>ค้นหาตัวอักษรหรือค้นด้วยรหัส Unicode</value>
+    <value>ค้นหาตัวอักษรด้วยชื่อหรือด้วยรหัส Unicode</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>เกี่ยวกับแอพพลิเคชั่นนี้</value>
@@ -318,7 +318,7 @@
     <value>เปิดโฟล์เดอร์</value>
   </data>
   <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>ซ่อนรายการฟอนต์</value>
+    <value>ซ่อนรายการฟอนต์ (Ctrl+L)</value>
   </data>
   <data name="NotificationImportFailed" xml:space="preserve">
     <value>นำเข้าฟอนต์ล้มเหลว</value>
@@ -330,7 +330,7 @@
     <value>เพิ่มฟอนต์ {0} เข้ารายการสะสมเรียบร้อย</value>
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>แสดงรายการฟอนต์</value>
+    <value>แสดงรายการฟอนต์ (Ctrl+L)</value>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>อื่นๆ </value>
@@ -695,7 +695,7 @@
     <value>บันทึกเป็น Zip</value>
   </data>
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
-    <value>มีฟอนต์ถูกเพิ่มหรือลบออก กรุณาโหลดรายการใหม่</value>
+    <value>มีฟอนต์ถูกเพิ่มหรือลบออก คลิกที่นี่เพิ่อโหลดอัพเดตรายการฟ้อนต์ใหม่</value>
   </data>
   <data name="TxtPathIcon.Text" xml:space="preserve">
     <value>Path Icon</value>
@@ -744,10 +744,10 @@
     <value>เป็นมนุษย์สุดประเสริฐเลิศคุณค่ากว่าบรรดาฝูงสัตว์เดรัจฉาน ๑๒๓๔๕๖๗๘๙๐</value>
   </data>
   <data name="LblSwitchToCharMap.Text" xml:space="preserve">
-    <value>สลับเป็นมุมมองผังอักษร</value>
+    <value>สลับเป็นมุมมองผังอักษร (Ctrl+T)</value>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
-    <value>สลับเป็นมุมมองแสดงตัวอย่างอักษร</value>
+    <value>สลับเป็นมุมมองแสดงตัวอย่างอักษร (Ctrl+T)</value>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>พิมพ์หรือเลือกข้อความจากรายการ</value>
@@ -806,10 +806,272 @@
     <value>ฟอนต์ตัวแปร</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
-    <value>ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่าง.
-</value>
+    <value>ฟอนต์นี้สามารถปรับแต่งตามค่าตัวแปรได้. หากต้องการดูให้สลับไปยังมุมมองแสดงตัวอย่างโดยคลิกที่ปุ่มสลับมุมมองด้านบน.</value>
   </data>
   <data name="BtnReset.Content" xml:space="preserve">
     <value>รีเซท</value>
+  </data>
+  <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
+    <value>ซ่อนหรือแสดงตัวอย่างอักษรที่เลือกด้านขวา. หากปิดไป ฟังก์ชั่นต่างๆ ยังสามารถเข้าถึงได้ด้วยเมนูคลิกขวาที่ตัวอักษรในรายการผังอักษร.</value>
+  </data>
+  <data name="SettingsEnablePaneHeader.Text" xml:space="preserve">
+    <value>ผังแสดงตัวอย่างอักษรที่เลือก</value>
+  </data>
+  <data name="CopyFontIconCode.Text" xml:space="preserve">
+    <value>คัดลอกโค้ดแบบ FontIcon</value>
+  </data>
+  <data name="CopyGlyphCode.Text" xml:space="preserve">
+    <value>คัดลอกโค้ดแบบ Glyph</value>
+  </data>
+  <data name="CopyPathIconCode.Text" xml:space="preserve">
+    <value>คัดลอกโค้ดแบบ PathIcon </value>
+  </data>
+  <data name="SearchBoxShorter" xml:space="preserve">
+    <value>ค้นหา...</value>
+  </data>
+  <data name="CopyUnicodeValue.Text" xml:space="preserve">
+    <value>คัดลอกโค้ดแบบ Unicode Value</value>
+  </data>
+  <data name="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ย่อขนาดการแสดงอักษรในผังอักษร (Ctrl+-)</value>
+  </data>
+  <data name="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ขยายขนาดการแสดงอักษรในผังอักษร (Ctrl++)</value>
+  </data>
+  <data name="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>สลับมุมมอง (Ctrl+T)</value>
+  </data>
+  <data name="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ซ่อน/แสดง ผังแสดงตัวอย่างอักขระที่เลือก(Ctrl+R)</value>
+  </data>
+  <data name="NotificationCopied" xml:space="preserve">
+    <value>คัดลอกเรียบร้อยแล้ว</value>
+  </data>
+  <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ซ่อน/แสดง ผังคัดลอกอักขระ (Ctrl+B)</value>
+  </data>
+  <data name="AddButton.Label" xml:space="preserve">
+    <value>เพิ่ม</value>
+  </data>
+  <data name="CopySequencePlaceholder.Text" xml:space="preserve">
+    <value>ดับเบิ้ลคลิกที่ตัวอักษรเพื่อเพิ่่มเข้าผังคัดลอกอักขระ</value>
+  </data>
+  <data name="AddSelectionItem.Text" xml:space="preserve">
+    <value>เพิ่มเข้าผังคัดลอกอักขระ</value>
+  </data>
+  <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ตรึงให้แสดงเหนือโปรแกรมอื่น</value>
+  </data>
+  <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
+    <value>Typography Variations</value>
+  </data>
+  <data name="ToggleDevDefaultLabel" xml:space="preserve">
+    <value>เครื่องมือ</value>
+  </data>
+  <data name="BtnFit.Label" xml:space="preserve">
+    <value>ย่อ/ขยาย</value>
+  </data>
+  <data name="TxtCopiedVariantMessage.Text" xml:space="preserve">
+    <value>ไม่สามารถคัดลอกรูปแบบอักษรที่เลือกได้.
+คัดลอกรูปแบบเริ่มต้นแทนแล้ว.</value>
+  </data>
+  <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
+    <value>รายการสะสมนี้ยังไม่มีฟ้อนค์ใดๆ</value>
+  </data>
+  <data name="SearchFontHelpBlock.Text" xml:space="preserve">
+    <value>ไม่พบผลการค้นหาที่ต้องการ. กรุณาลองค้นหาด้วยคำอื่น.</value>
+  </data>
+  <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
+    <value>ค้นหาฟ้อนต์</value>
+  </data>
+  <data name="BtnToggleDev.Label" xml:space="preserve">
+    <value>เครื่องมือ</value>
+  </data>
+  <data name="DevPopupHeader.Text" xml:space="preserve">
+    <value>แสดงเครื่องมือนักพัฒนา</value>
+  </data>
+  <data name="ContextMenuDevCopyCommand" xml:space="preserve">
+    <value>คัดลอก {0}</value>
+    <comment>Examples: "Copy Font Icon" or "Copy Glyph Code"</comment>
+  </data>
+  <data name="ProviderNone" xml:space="preserve">
+    <value>ไม่มี</value>
+  </data>
+  <data name="SettingsChangelogLabel.Text" xml:space="preserve">
+    <value>รายการเปลี่ยนแปลง</value>
+  </data>
+  <data name="TxtFontImageSource.Text" xml:space="preserve">
+    <value>Font Image Source</value>
+    <comment>Xamarin FontImageSource. Does not need translation.</comment>
+  </data>
+  <data name="ImportFailedWoff" xml:space="preserve">
+    <value>ฟ้อนต์รูปแบบ WOFF นี้ ไม่สามารถถูกแปลงเป็นฟ้อนต์รูปแบบ OTF ได้.</value>
+  </data>
+  <data name="ImportWOFF2NotSupported" xml:space="preserve">
+    <value>ฟ้อนต์รูปแบบ WOFF2 ยังไม่รองรับ</value>
+  </data>
+  <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>กรองตัวอักษร</value>
+  </data>
+  <data name="CompareFontsTitle.Text" xml:space="preserve">
+    <value>เปรียบเทียบฟ้อนต์</value>
+  </data>
+  <data name="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เปลี่ยนเป็นมุมมองแบบตาราง</value>
+  </data>
+  <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เปลี่ยนเป็นมุมมองแบบรายการ</value>
+  </data>
+  <data name="QuickCompareTitle.Text" xml:space="preserve">
+    <value>รายการเปรียบเทียบด่วน</value>
+  </data>
+  <data name="AddToQuickCompare.Text" xml:space="preserve">
+    <value>เพิ่มเข้ารายการเปรียบเทียบด่วน</value>
+  </data>
+  <data name="CompareFontsButton.Text" xml:space="preserve">
+    <value>เปรียบเทียบทุกฟ้อนต์</value>
+  </data>
+  <data name="BtnGithubCommits.Content" xml:space="preserve">
+    <value>ดูสถานาความคืบหน้าการอัพเดตบน GitHub</value>
+  </data>
+  <data name="ExportGlyphsHeader.Text" xml:space="preserve">
+    <value>ส่งออกตัวอักขระ</value>
+  </data>
+  <data name="ExportGlyphsSummary.Text" xml:space="preserve">
+    <value>พร้อมส่งออกอักษร {0} ด้วยวิธี {1}</value>
+  </data>
+  <data name="ExportCharactersLabel.Text" xml:space="preserve">
+    <value>ส่งออกอักขระ...</value>
+  </data>
+  <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
+    <value>อักขระทั้ง {0} ตัว ถูกส่งออกเรียบร้อย</value>
+  </data>
+  <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
+    <value>กำลังบันทึกอักขระที่ {0} จากทั้งหมด {1} ตัว</value>
+  </data>
+  <data name="ExportAllowColor.Content" xml:space="preserve">
+    <value>ปล่อยให้ฟ้อนต์ใช้สีที่ระบุไว้ในฟ้อนต์หากมี</value>
+  </data>
+  <data name="ExportColorHeader.Text" xml:space="preserve">
+    <value>เติมสีอักขระ</value>
+  </data>
+  <data name="ExportGlyphFormatDescription.Text" xml:space="preserve">
+    <value>Glyphs stored in binary formats will be exported as their native format regardless of this choice.</value>
+  </data>
+  <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
+    <value>อักษร {0} ตัว จะถูกส่งออก จากทั้งหมด {1} ตัว</value>
+  </data>
+  <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
+    <value>ตั้งค่าไฟล์</value>
+  </data>
+  <data name="ExportSkipBlank.Content" xml:space="preserve">
+    <value>ไม่ส่งออกอักษรที่ว่างเปล่า</value>
+  </data>
+  <data name="SettingsDesignStyle.Description" xml:space="preserve">
+    <value>เปลี่ยนรูปแบบการแสดงผลแอป.
+จะมีผลเมื่อออกเข้าใหม่</value>
+  </data>
+  <data name="SettingsDesignStyle.Title" xml:space="preserve">
+    <value>รูปแบบการแสดงผลโปรแกรม</value>
+  </data>
+  <data name="CharacterFilterButton.Label" xml:space="preserve">
+    <value>ตัวกรอง</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="CollectionExportButton.Label" xml:space="preserve">
+    <value>ส่งออก</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="DeleteCollectionButton.Label" xml:space="preserve">
+    <value>ลบ</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontOptionsButton.Label" xml:space="preserve">
+    <value>ตั้งค่า</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontPropertiesButton.Label" xml:space="preserve">
+    <value>ข้อมูล</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="OpenFontButton.Label" xml:space="preserve">
+    <value>เปิด</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="RenameCollectionButton.Label" xml:space="preserve">
+    <value>เปลี่ยนชื่อ</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="ViewToggleButton.Label" xml:space="preserve">
+    <value>สลับ</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>เพิ่มเข้ารายการสะสม</value>
+  </data>
+  <data name="ClearSelectionLabel" xml:space="preserve">
+    <value>ล้างรายการสะสม</value>
+  </data>
+  <data name="CreateNewButton.Content" xml:space="preserve">
+    <value>สร้างรายการสะสมใหม่</value>
+  </data>
+  <data name="FontsPartialLabel" xml:space="preserve">
+    <value>ฟ้อนต์. </value>
+    <comment>{0} fonts, {1} selected</comment>
+  </data>
+  <data name="OrLabel.Text" xml:space="preserve">
+    <value>หรือ</value>
+  </data>
+  <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>ลบจากรายการสะสม</value>
+  </data>
+  <data name="SelectCollectionLabel" xml:space="preserve">
+    <value>เลือกรายการสะสม</value>
+  </data>
+  <data name="SelectedPartialLabel" xml:space="preserve">
+    <value>เลือกแล้ว</value>
+    <comment>{0} fonts, {1} selected</comment>
+  </data>
+  <data name="SettingsCollectionsHeader" xml:space="preserve">
+    <value>รายการสะสม</value>
+  </data>
+  <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
+    <value>เปิดฟ้อนต์</value>
+  </data>
+  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
+    <value>ยกเลืก</value>
+  </data>
+  <data name="DigOpenFolder.Title" xml:space="preserve">
+    <value>เปิดโฟลเดอร์ฟ้อนค์</value>
+  </data>
+  <data name="DigOpenFolderContent.CheckRecursiveContent" xml:space="preserve">
+    <value>เพิ่มฟ้อนค์ที่อยู่ในโฟล์เดอร์ย่อย</value>
+  </data>
+  <data name="DigOpenFolderContent.CheckZipContent" xml:space="preserve">
+    <value>เพิ่มฟ้อนต์ที่อยู่ในแฟ้มบิบอัด .zip</value>
+  </data>
+  <data name="DigOpenFolderContent.FindDescription" xml:space="preserve">
+    <value>ตั้งค่านี้อาจทำให้การหาฟ้อนต์ช้าลงไปอีก</value>
+  </data>
+  <data name="DigOpenFolderContent.FindHeader" xml:space="preserve">
+    <value>ตั้งค่าการหาฟ้อนต์</value>
+  </data>
+  <data name="DigOpenFolderContent.FindingFontsLabel" xml:space="preserve">
+    <value>กำลังค้นหาฟ้อนต์...</value>
+  </data>
+  <data name="DigOpenFolderContent.PrefixLabel" xml:space="preserve">
+    <value>เจอ</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectHeader" xml:space="preserve">
+    <value>โฟลเดอร์ที่เลือกไว้ (คลิกเพื่อเปลี่ยน)</value>
+  </data>
+  <data name="DigOpenFolderContent.SuffixLabel" xml:space="preserve">
+    <value>ไฟล์ฟ้อนต์</value>
+  </data>
+  <data name="FontFileMenuItem.Text" xml:space="preserve">
+    <value>ไฟล์ฟ้อนต์</value>
+  </data>
+  <data name="FontFolderMenuItem.Text" xml:space="preserve">
+    <value>โฟลเดอร์ฟ้อนต์</value>
   </data>
 </root>
