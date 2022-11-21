@@ -409,6 +409,12 @@ String^ DirectWrite::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, in
 
 	if (!SUCCEEDED(hr) || !exists) // if the above find did not find a match, retry with US English
 		hr = strings->FindLocaleName(L"en-us", &fidx, &exists);
+	
+	if (!SUCCEEDED(hr) || !exists) // if we fail again, use the first name
+	{
+		hr = NOERROR;
+		fidx = 0;
+	}
 
 	// 3. Get FAMILY Locale string
 	UINT32 length = 0;
