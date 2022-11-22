@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Input.Inking;
@@ -60,24 +61,20 @@ namespace CharacterMap.Views
             AnimateIn();
         }
 
-        private void AnimateIn()
+        /// <summary>
+        /// Clear the InkCanvas and reset back to the 
+        /// default calligraphy pen
+        /// </summary>
+        private void Reset()
         {
-            ContentRoot.Opacity = 1;
-            int s = 100;
-            int o = 110;
+            ViewModel.Clear();
 
-            // Title
-            CompositionFactory.PlayEntrance(Presenter.GetTitleElement(), s+30, o);
-
-            // First Row
-            CompositionFactory.PlayEntrance(InputBox, s + 113, o);
-            CompositionFactory.PlayEntrance(FontSizeSlider, s + 113, o);
-
-            // Second Row
-            CompositionFactory.PlayEntrance(ContentGrid, s + 200, o);
-
-            // Third Row
-            CompositionFactory.PlayEntrance(PresentationRoot, s + 300, o);
+            // This needs to be done on the dispatcher or the 
+            // InkButton will not go into the correct VisualState
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                Toolbar.ActiveTool = calligraphyPen;
+            });
         }
 
         private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
@@ -103,7 +100,8 @@ namespace CharacterMap.Views
             if (_container.GetStrokes().Count > 0)
             {
                 TryPrepareHistoryAnimation();
-                await ViewModel.AddToHistoryAsync(_container);
+
+                await ViewModel.AddToHistoryAsync();
 
                 // Scroll to the end of the list view to ensure the ConnectedAnimation
                 // can play properly
@@ -111,6 +109,11 @@ namespace CharacterMap.Views
 
                 ViewModel.Clear();
             }
+        }
+
+        private void HistoryList_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            TryAnimateInkIntoHistory(args);
         }
 
         private void HistoryList_ItemClick(object sender, ItemClickEventArgs e)
@@ -131,31 +134,6 @@ namespace CharacterMap.Views
                 TryAnimateToInkCanvas(e);
             }
 
-            UpdateStrokes();
-        }
-
-        private void Reset()
-        {
-            /// Clear the Ink Canvas and reset back to the 
-            /// default calligraphy pen
-
-            ViewModel.Clear();
-
-            // This needs to be done on the dispatcher or the 
-            // InkButton will not go into the correct VisualState
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-            {
-                Toolbar.ActiveTool = calligraphyPen;
-            });
-        }
-
-        private void HistoryList_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-        {
-            TryAnimateInkIntoHistory(args);
-        }
-
-        private void UpdateStrokes()
-        {
             ViewModel.InkManager.UpdateControls();
         }
 
@@ -169,29 +147,29 @@ namespace CharacterMap.Views
 
         private void SaveAsSVG(object sender, RoutedEventArgs e)
         {
-            _ = SaveAsync(_container.GetStrokes(), ExportFormat.Svg);
+            _ = SaveAsync(_container.GetStrokes(), ExportFormat.Svg, _container.BoundingRect);
         }
 
         private void SaveAsPNG(object sender, RoutedEventArgs e)
         {
-            _ = SaveAsync(_container.GetStrokes(), ExportFormat.Png);
+            _ = SaveAsync(_container.GetStrokes(), ExportFormat.Png, _container.BoundingRect);
         }
 
         private void SaveHistoryAsSVG(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f && f.DataContext is CalligraphyHistoryItem item)
-                _ = SaveAsync(item.GetStrokes(), ExportFormat.Svg);
+                _ = SaveAsync(item.GetStrokes(), ExportFormat.Svg, item.Bounds);
         }
 
         private void SaveHistoryAsPNG(object sender, RoutedEventArgs e)
         {
             if (sender is FrameworkElement f && f.DataContext is CalligraphyHistoryItem item)
-                _ = SaveAsync(item.GetStrokes(), ExportFormat.Png);
+                _ = SaveAsync(item.GetStrokes(), ExportFormat.Png, item.Bounds);
         }
 
-        private Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format)
+        private Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format, Rect bounds)
         {
-            return ViewModel.SaveAsync(strokes, format, ShimCanvas, Ink.ActualWidth, Ink.ActualHeight);
+            return ViewModel.SaveAsync(strokes, format, ShimCanvas, bounds);
         }
 
 
@@ -219,6 +197,31 @@ namespace CharacterMap.Views
 
 
         /* ANIMATION HELPERS */
+
+        #region Animation
+
+        /// <summary>
+        /// Animates the page in on first load
+        /// </summary>
+        private void AnimateIn()
+        {
+            ContentRoot.Opacity = 1;
+            int s = 100;
+            int o = 110;
+
+            // Title
+            CompositionFactory.PlayEntrance(Presenter.GetTitleElement(), s + 30, o);
+
+            // First Row
+            CompositionFactory.PlayEntrance(InputBox, s + 113, o);
+            CompositionFactory.PlayEntrance(FontSizeSlider, s + 113, o);
+
+            // Second Row
+            CompositionFactory.PlayEntrance(ContentGrid, s + 200, o);
+
+            // Third Row
+            CompositionFactory.PlayEntrance(PresentationRoot, s + 300, o);
+        }
 
         ConnectedAnimation _addHistoryAnim;
 
@@ -255,10 +258,14 @@ namespace CharacterMap.Views
             }
         }
 
+        #endregion
+
 
 
 
         /* VISUAL STATE HELPERS */
+
+        #region State Helpers
 
         private void GoToOverlay()
         {
@@ -331,6 +338,12 @@ namespace CharacterMap.Views
             // 5. Re-enable button to swap
             SwapButton.IsEnabled = true;
         }
+
+        #endregion
+
+
+
+
     }
 
     public partial class CalligraphyView

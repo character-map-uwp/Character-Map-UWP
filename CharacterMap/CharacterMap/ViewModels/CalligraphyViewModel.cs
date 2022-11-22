@@ -1,6 +1,7 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Svg;
@@ -9,15 +10,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
-using Windows.Storage.Pickers;
+using Windows.Foundation;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI;
 using Windows.UI.Input.Inking;
 using Windows.UI.Xaml.Media.Imaging;
-using CommunityToolkit.Mvvm.Messaging;
-using System.ComponentModel;
 
 namespace CharacterMap.ViewModels
 {
@@ -29,16 +30,15 @@ namespace CharacterMap.ViewModels
 
         [ObservableProperty] private double _fontSize = 220d;
 
-        public FontVariant Face { get; }
-
         [ObservableProperty] InkStrokeManager _inkManager = null;
 
-        public ObservableCollection<CalligraphyHistoryItem> Histories { get; }
+        public FontVariant Face { get; }
+
+        public ObservableCollection<CalligraphyHistoryItem> Histories { get; } = new();
 
         public CalligraphyViewModel(CharacterRenderingOptions options)
         {
             Face = options.Variant;
-            Histories = new ObservableCollection<CalligraphyHistoryItem>();
         }
 
         void EnsureManager(InkStrokeContainer container)
@@ -47,21 +47,9 @@ namespace CharacterMap.ViewModels
                 InkManager = new InkStrokeManager(container);
         }
 
-        public async Task AddToHistoryAsync(InkStrokeContainer container)
+        public async Task AddToHistoryAsync()
         {
-            // 1. Create a history item
-            CalligraphyHistoryItem h = new(container.GetStrokes(), FontSize, Text);
-
-            // 2. Render a thumbnail of the drawing
-            using MemoryStream m = new();
-            await container.SaveAsync(m.AsOutputStream());
-            m.Seek(0, SeekOrigin.Begin);
-
-            BitmapImage b = new();
-            await b.SetSourceAsync(m.AsRandomAccessStream());
-
-            // 3. Add history item
-            h.Thumbnail = b;
+            CalligraphyHistoryItem h = await InkManager.CreateHistoryItemAsync(FontSize, Text);
             Histories.Add(h);
         }
 
@@ -85,18 +73,18 @@ namespace CharacterMap.ViewModels
             InkManager.OnDrawn(strokes);
         }
 
-        public async Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format, ICanvasResourceCreatorWithDpi device, double width, double height)
+        public async Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format, ICanvasResourceCreatorWithDpi device, Rect bounds)
         {
             // 1. Setup and render ink strokes
             bool isPng = format == ExportFormat.Png;
             using CanvasSvgDocument svgDocument = new(device);
-            using CanvasRenderTarget target = new CanvasRenderTarget(device, (float)width, (float)height);
+            using CanvasRenderTarget target = new CanvasRenderTarget(device, (float)bounds.Width, (float)bounds.Height);
             using (var ds = target.CreateDrawingSession())
             {
                 if (isPng)
-                    RenderBitmap(strokes, ds);
+                    RenderBitmap(strokes, ds, bounds);
                 else
-                    RenderSVG(strokes, svgDocument, ds);
+                    RenderSVG(strokes, svgDocument, ds, bounds);
             }
 
             // 2. Pick save file
@@ -125,14 +113,32 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private static void RenderBitmap(IReadOnlyList<InkStroke> strokes, CanvasDrawingSession ds)
+        private static void RenderBitmap(IReadOnlyList<InkStroke> sourceStrokes, CanvasDrawingSession ds, Rect bounds)
         {
+            // We only want to render the drawn parts of the canvas but our strokes are
+            // relative to the entire size of the canvas, so we need to move them back.
+            
+            // 1. Create a translation to move drawing to 0,0
+            Matrix3x2 translate = Matrix3x2.CreateTranslation((float)-bounds.X, (float)-bounds.Y);
+
+            // 2. Clone the strokes and apply the translation to each of them
+            var strokes = sourceStrokes.Select(s => s.Clone()).ToList();
+            foreach (var st in strokes)
+                st.PointTransform *= translate;
+
+            // 3. Render the transformed strokes
             ds.Clear(Colors.Transparent);
             ds.DrawInk(strokes);
         }
 
-        private static void RenderSVG(IReadOnlyList<InkStroke> strokes, CanvasSvgDocument svgDocument, CanvasDrawingSession ds)
+        private static void RenderSVG(IReadOnlyList<InkStroke> strokes, CanvasSvgDocument svgDocument, CanvasDrawingSession ds, Rect bounds)
         {
+            // 1. We only want to render the drawn parts of the canvas but our strokes are
+            //    relative to the entire size of the canvas, so set the viewBox to only
+            //    the drawn bounds.
+            svgDocument.Root.SetRectangleAttribute("viewBox", bounds);
+
+            // 2. Create an SVG path for each stroke
             InkStroke[] s = new InkStroke[1]; 
             foreach (InkStroke stroke in strokes)
             {
@@ -171,8 +177,8 @@ namespace CharacterMap.ViewModels
 
         [ObservableProperty] private bool _canRedo;
 
-        private Stack<InkCommandBase> _redoStack { get; } = new();
-        private Stack<InkCommandBase> _undoStack { get; } = new();
+        private Stack<InkActionBase> _redoStack { get; } = new();
+        private Stack<InkActionBase> _undoStack { get; } = new();
         private HashSet<InkStrokeReference> _strokeSet { get; } = new HashSet<InkStrokeReference>();
 
         private InkStrokeContainer _container;
@@ -182,6 +188,9 @@ namespace CharacterMap.ViewModels
             _container = container;
         }
 
+        /// <summary>
+        /// Clears the ink canvas, undo & redo stacks and updates UI bindings.
+        /// </summary>
         public void Clear()
         {
             _strokeSet.Clear();
@@ -193,6 +202,12 @@ namespace CharacterMap.ViewModels
             UpdateControls();
         }
 
+        /// <summary>
+        /// Gets an existing reference too an InkStroke or creates a new one 
+        /// if one doesn't exist
+        /// </summary>
+        /// <param name="stroke"></param>
+        /// <returns></returns>
         public InkStrokeReference GetReference(InkStroke stroke)
         {
             if (FindReference(stroke) is InkStrokeReference r)
@@ -203,6 +218,11 @@ namespace CharacterMap.ViewModels
             return r;
         }
 
+        /// <summary>
+        /// Finds an existing reference too an InkStroke
+        /// </summary>
+        /// <param name="stroke"></param>
+        /// <returns></returns>
         public InkStrokeReference FindReference(InkStroke stroke)
         {
             return _strokeSet.FirstOrDefault(s => s.ActiveStroke == stroke);
@@ -217,14 +237,14 @@ namespace CharacterMap.ViewModels
 
         internal void OnErased(IReadOnlyList<InkStroke> strokes)
         {
-            _undoStack.Push(new StrokeErasedCommand(this, strokes));
+            _undoStack.Push(new StrokeErasedAction(this, strokes));
             _redoStack.Clear();
             UpdateControls();
         }
 
         internal void OnDrawn(IReadOnlyList<InkStroke> strokes)
         {
-            _undoStack.Push(new StrokeDrawnCommand(this, strokes));
+            _undoStack.Push(new StrokeDrawnAction(this, strokes));
             CanUndo = true;
             HasStrokes = true;
 
@@ -270,19 +290,41 @@ namespace CharacterMap.ViewModels
 
             return false;
         }
+
+        public async Task<CalligraphyHistoryItem> CreateHistoryItemAsync(double fontSize, string text)
+        {
+            // 1. Create a History Item
+            CalligraphyHistoryItem h = new(_container.GetStrokes(), fontSize, text, _container.BoundingRect);
+
+            // 2. Render a thumbnail of the drawing to a memory stream
+            using MemoryStream m = new();
+            await _container.SaveAsync(m.AsOutputStream());
+            m.Seek(0, SeekOrigin.Begin);
+
+            // 3. Create a XAML BitmapImage from the memory stream
+            BitmapImage b = new();
+            b.DecodePixelType = DecodePixelType.Logical;
+            b.DecodePixelWidth = 150;
+            await b.SetSourceAsync(m.AsRandomAccessStream());
+
+            // 4. Add the thumbnail to the History Item
+            h.Thumbnail = b;
+
+            return h;
+        }
     }
 
-    public abstract class InkCommandBase
+    public abstract class InkActionBase
     {
         public abstract void Undo(InkStrokeContainer container);
         public abstract void Redo(InkStrokeContainer container);
     }
 
-    public class StrokeDrawnCommand : InkCommandBase
+    public class StrokeDrawnAction : InkActionBase
     {
         private readonly List<InkStrokeReference> _strokes;
 
-        public StrokeDrawnCommand(InkStrokeManager manager, IEnumerable<InkStroke> strokes)
+        public StrokeDrawnAction(InkStrokeManager manager, IEnumerable<InkStroke> strokes)
         {
             _strokes = strokes.Select(s => manager.GetReference(s)).ToList();
         }
@@ -306,18 +348,17 @@ namespace CharacterMap.ViewModels
         }
     }
 
-    public class StrokeErasedCommand : InkCommandBase
+    public class StrokeErasedAction : InkActionBase
     {
         private readonly List<InkStrokeReference> _strokes;
 
-        public StrokeErasedCommand(InkStrokeManager manager, IEnumerable<InkStroke> strokes)
+        public StrokeErasedAction(InkStrokeManager manager, IEnumerable<InkStroke> strokes)
         {
             _strokes = strokes.Select(s => manager.GetReference(s)).ToList();
         }
 
         public override void Redo(InkStrokeContainer container)
         {
-            // This relies on stack being correctly ordered
             foreach (var stroke in _strokes)
             {
                 stroke.ActiveStroke.Selected = true;
@@ -347,14 +388,15 @@ namespace CharacterMap.ViewModels
         public CalligraphyHistoryItem()
         {
             if (DesignMode.DesignModeEnabled is false)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Only for use by VS Designer");
         }
 
-        public CalligraphyHistoryItem(IReadOnlyList<InkStroke> strokes, double fontSize, string text)
+        public CalligraphyHistoryItem(IReadOnlyList<InkStroke> strokes, double fontSize, string text, Rect bounds)
         {
             _strokes = strokes.Select(s => s.Clone()).ToList();
             FontSize = fontSize;
             Text = text;
+            Bounds = bounds;
         }
 
         private IReadOnlyList<InkStroke> _strokes { get; }
@@ -364,6 +406,8 @@ namespace CharacterMap.ViewModels
         public double FontSize { get; }
 
         public string Text { get; }
+
+        public Rect Bounds { get; }
 
         public List<InkStroke> GetStrokes()
         {
