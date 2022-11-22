@@ -1,5 +1,4 @@
-﻿using CharacterMap.Controls;
-using CharacterMap.Core;
+﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
@@ -11,10 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Globalization;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -77,7 +74,7 @@ namespace CharacterMap.Views
         {
             this.InitializeComponent();
 
-            if (DesignMode.DesignModeEnabled)
+            if (DesignMode)
                 return;
 
             Settings = ResourceHelper.AppSettings;
@@ -385,7 +382,9 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                new("Latest Release", // May 2002
+                new("Latest Update (Dec 2022)", // May 2002
+                    "- Added Calligraphy view to practice drawing characters in the style of the chosen font (Ctrl + I)"),
+                new("2022.2.0.0 (May 2022)", // May 2002
                     "- Added support for opening folders of fonts using the Open button (Ctrl + Shift + O)\n" +
                     "- Added keyboard shortcut for opening individual font files from main window (Ctrl + O)\n" +
                     "- Added support for selecting a .ZIP archive when opening a font file and showing all the fonts in the .ZIP\n" +

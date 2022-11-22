@@ -30,7 +30,6 @@
             EasingMode="EaseIn"
             Exponent="7" />
 
-
         <Style TargetType="ListViewItem">
             <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
@@ -206,19 +205,21 @@
                                     Spacing="4">
                                     <Button
                                         x:Name="DeleteButton"
+                                        x:Uid="RemoveButton"
                                         Click="DeleteButton_Click"
                                         DataContext="{TemplateBinding Content}"
                                         Style="{StaticResource SmolButton}"
-                                        ToolTipService.ToolTip="Remove">
+                                        d:ToolTipService.ToolTip="Remove">
                                         <TextBlock
                                             AutomationProperties.AccessibilityView="Raw"
                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
                                             Text="&#xE107;" />
                                     </Button>
                                     <Button
+                                        x:Uid="SaveButton"
                                         DataContext="{TemplateBinding Content}"
                                         Style="{StaticResource SmolButton}"
-                                        ToolTipService.ToolTip="Save">
+                                        d:ToolTipService.ToolTip="Save">
                                         <TextBlock
                                             AutomationProperties.AccessibilityView="Raw"
                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -226,13 +227,15 @@
                                         <Button.Flyout>
                                             <MenuFlyout Placement="Bottom">
                                                 <MenuFlyoutItem
+                                                    x:Uid="ExportPNGLabel"
                                                     Click="SaveHistoryAsPNG"
                                                     DataContext="{TemplateBinding Content}"
-                                                    Text="As PNG" />
+                                                    d:Text="As PNG" />
                                                 <MenuFlyoutItem
+                                                    x:Uid="ExportSVGLabel"
                                                     Click="SaveHistoryAsSVG"
                                                     DataContext="{TemplateBinding Content}"
-                                                    Text="As SVG" />
+                                                    d:Text="As SVG" />
                                             </MenuFlyout>
                                         </Button.Flyout>
                                     </Button>
@@ -318,14 +321,15 @@
 
         <controls:ModalPagePresenter
             x:Name="Presenter"
-            Title="Calligraphy"
+            Title="{core:Localizer Key=CalligraphyLabel/Text}"
             CloseButtonVisibility="Collapsed"
-            IsWindowRoot="True">
+            IsWindowRoot="True"
+            d:Title="Calligraphy">
             <controls:ModalPagePresenter.TitleBarContent>
                 <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False" />
             </controls:ModalPagePresenter.TitleBarContent>
 
-            <Grid Padding="20 8">
+            <Grid x:Name="ContentRoot" Padding="20 8">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -341,21 +345,25 @@
                     </Grid.ColumnDefinitions>
                     <TextBox
                         x:Name="InputBox"
+                        x:Uid="GuidePreviewInput"
                         VerticalAlignment="Bottom"
-                        Header="Guide Text"
                         Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        d:Header="Guide Text"
                         d:Text="Preview" />
                     <Slider
                         x:Name="FontSizeSlider"
+                        x:Uid="GuideFontSlider"
                         Grid.Column="1"
-                        Header="Font Size"
                         Maximum="400"
                         Minimum="60"
                         Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                        d:Header="Guide Size"
+                        d:Margin="0 4 0 0"
                         d:Value="220" />
                 </Grid>
 
                 <Grid
+                    x:Name="ContentGrid"
                     Grid.Row="2"
                     ColumnSpacing="0"
                     RowSpacing="8"
@@ -380,8 +388,10 @@
                         CornerRadius="4"
                         d:Background="#88DDDDDD" />
 
-                    <AppBarSeparator Grid.Column="1" HorizontalAlignment="Center" />
-
+                    <AppBarSeparator
+                        x:Name="Separator"
+                        Grid.Column="1"
+                        HorizontalAlignment="Center" />
 
                     <Grid Padding="4 0">
                         <Grid.ColumnDefinitions>
@@ -398,10 +408,10 @@
                             Orientation="Horizontal">
 
                             <Button
+                                x:Uid="UndoButton"
                                 Click="{x:Bind UndoLastStroke}"
                                 IsEnabled="{x:Bind ViewModel.CanUndo, Mode=OneWay}"
                                 Style="{StaticResource SmolButton}"
-                                ToolTipService.ToolTip="Undo"
                                 d:IsEnabled="False">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
@@ -410,10 +420,10 @@
                             </Button>
 
                             <Button
+                                x:Uid="RedoButton"
                                 Click="{x:Bind RedoLastStroke}"
                                 IsEnabled="{x:Bind ViewModel.CanRedo, Mode=OneWay}"
                                 Style="{StaticResource SmolButton}"
-                                ToolTipService.ToolTip="Redo"
                                 d:IsEnabled="False">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
@@ -468,13 +478,16 @@
                             </InkToolbar>
 
                             <Button
+                                x:Uid="ClearAllButton"
                                 IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
                                 Style="{StaticResource SmolButton}"
-                                ToolTipService.ToolTip="Clear All"
                                 d:IsEnabled="False">
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem Click="{x:Bind Reset}" Text="Clear All" />
+                                        <MenuFlyoutItem
+                                            x:Uid="ClearAllItem"
+                                            Click="{x:Bind Reset}"
+                                            d:Text="Clear All" />
                                     </MenuFlyout>
                                 </Button.Flyout>
                                 <TextBlock
@@ -491,9 +504,10 @@
 
                             <InkToolbarCustomToggleButton
                                 x:Name="GuideCheck"
+                                x:Uid="GuideToggle"
                                 Margin="0 0 0 4"
                                 IsChecked="{x:Bind ViewModel.IsOverlayVisible, Mode=TwoWay}"
-                                ToolTipService.ToolTip="Show Preview">
+                                d:ToolTipService.ToolTip="Show Guide">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -502,9 +516,9 @@
 
                             <InkToolbarCustomToggleButton
                                 x:Name="SwapButton"
+                                x:Uid="SideBySideToggle"
                                 Margin="0 0 0 4"
-                                Click="Button_Click"
-                                ToolTipService.ToolTip="Side by Side">
+                                Click="Button_Click">
                                 <PathIcon
                                     Margin="0 -4 0 0"
                                     HorizontalAlignment="Center"
@@ -519,27 +533,34 @@
                             Orientation="Horizontal"
                             Spacing="4">
                             <Button
+                                x:Uid="SaveButton"
                                 IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
-                                Style="{StaticResource SmolButton}"
-                                ToolTipService.ToolTip="Save">
+                                Style="{StaticResource SmolButton}">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     Text="&#xE105;" />
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem Click="SaveAsPNG" Text="As PNG" />
-                                        <MenuFlyoutItem Click="SaveAsSVG" Text="As SVG" />
+                                        <MenuFlyoutItem
+                                            x:Uid="ExportPNGLabel"
+                                            Click="SaveAsPNG"
+                                            d:Text="As PNG" />
+                                        <MenuFlyoutItem
+                                            x:Uid="ExportSVGLabel"
+                                            Click="SaveAsSVG"
+                                            d:Text="As SVG" />
                                     </MenuFlyout>
                                 </Button.Flyout>
                             </Button>
                             <Button
+                                x:Uid="AddHistoryButton"
                                 HorizontalAlignment="Right"
                                 Click="AddHistoryButton_Click"
                                 IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
                                 Style="{StaticResource SmolButton}"
-                                ToolTipService.ToolTip="Add to History"
-                                d:IsEnabled="False">
+                                d:IsEnabled="False"
+                                d:ToolTipService.ToolTip="Add to History">
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -609,9 +630,10 @@
                                 Text="&#xE81C;"
                                 TextLineBounds="Tight" />
                             <TextBlock
+                                x:Uid="HistoryLabel"
                                 VerticalAlignment="Center"
-                                Text="History"
-                                TextLineBounds="Tight" />
+                                TextLineBounds="Tight"
+                                d:Text="History" />
                         </StackPanel>
                     </Grid>
 
@@ -665,6 +687,15 @@
         </Grid>
 
         <VisualStateManager.VisualStateGroups>
+
+            <VisualStateGroup x:Name="VisualThemeState">
+                <VisualState x:Name="FUIThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="FontSizeSlider.Margin" Value="0 4 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+
+            </VisualStateGroup>
 
             <VisualStateGroup x:Name="PreviewStates">
                 <VisualState x:Name="PreviewVisibleState">

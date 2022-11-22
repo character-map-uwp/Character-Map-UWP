@@ -305,7 +305,7 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Spacing="12">
-                        <Grid>
+                        <Grid x:Name="TopRow">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
@@ -389,7 +389,7 @@
                                 Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         </Grid>
-                        <Grid>
+                        <Grid x:Name="SecondRow">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="20" />
@@ -445,201 +445,148 @@
 
 
                         </Grid>
-
                     </StackPanel>
 
-                    <Border
-                        x:Name="ListingViewRoot"
-                        Grid.Row="1"
-                        Margin="0 0 -24 0"
-                        RenderTransformOrigin="0.5,0.5">
-                        <Border.RenderTransform>
-                            <CompositeTransform />
-                        </Border.RenderTransform>
-                        <GridView
-                            x:Name="Repeater"
-                            Margin="-8 0 0 0"
-                            Padding="8 0 0 0"
-                            ContainerContentChanging="Repeater_ContainerContentChanging"
-                            ItemTemplate="{StaticResource StackTemplate}"
-                            ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
-                            <GridView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <ItemsWrapGrid
-                                        CacheLength="1"
-                                        ItemHeight="262"
-                                        ItemWidth="412"
-                                        Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </GridView.ItemsPanel>
-                            <GridView.ItemContainerStyle>
-                                <Style TargetType="GridViewItem">
-                                    <Setter Property="Margin" Value="0 0 12 12" />
-                                    <Setter Property="VerticalAlignment" Value="Stretch" />
-                                    <Setter Property="VerticalContentAlignment" Value="Stretch" />
-                                    <Setter Property="Template">
-                                        <Setter.Value>
-                                            <ControlTemplate TargetType="GridViewItem">
-                                                <Button
-                                                    VerticalAlignment="Stretch"
-                                                    HorizontalContentAlignment="Stretch"
-                                                    VerticalContentAlignment="Stretch"
-                                                    AutomationProperties.AccessibilityView="Raw"
-                                                    Click="ItemClick"
-                                                    Content="{TemplateBinding Content}"
-                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                    ContextRequested="ItemContextRequested"
-                                                    Style="{StaticResource QuickCompareContainerStyle}" />
-                                            </ControlTemplate>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </GridView.ItemContainerStyle>
-                        </GridView>
-                    </Border>
-
-                    <Grid
-                        x:Name="DetailsViewRoot"
-                        Grid.Row="1"
-                        RowSpacing="12"
-                        RenderTransformOrigin="0.5,0.5"
-                        Visibility="Collapsed"
-                        d:Visibility="Visible">
-                        <Grid.RenderTransform>
-                            <CompositeTransform />
-                        </Grid.RenderTransform>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
+                    <Grid x:Name="FontsRoot" Grid.Row="1">
+                        <Border
+                            x:Name="ListingViewRoot"
+                            Margin="0 0 -24 0"
+                            RenderTransformOrigin="0.5,0.5">
+                            <Border.RenderTransform>
+                                <CompositeTransform />
+                            </Border.RenderTransform>
+                            <GridView
+                                x:Name="Repeater"
+                                Margin="-8 0 0 0"
+                                Padding="8 0 0 0"
+                                ContainerContentChanging="Repeater_ContainerContentChanging"
+                                ItemTemplate="{StaticResource StackTemplate}"
+                                ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
+                                <GridView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <ItemsWrapGrid
+                                            CacheLength="1"
+                                            ItemHeight="262"
+                                            ItemWidth="412"
+                                            Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </GridView.ItemsPanel>
+                                <GridView.ItemContainerStyle>
+                                    <Style TargetType="GridViewItem">
+                                        <Setter Property="Margin" Value="0 0 12 12" />
+                                        <Setter Property="VerticalAlignment" Value="Stretch" />
+                                        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="GridViewItem">
+                                                    <Button
+                                                        VerticalAlignment="Stretch"
+                                                        HorizontalContentAlignment="Stretch"
+                                                        VerticalContentAlignment="Stretch"
+                                                        AutomationProperties.AccessibilityView="Raw"
+                                                        Click="ItemClick"
+                                                        Content="{TemplateBinding Content}"
+                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                        ContextRequested="ItemContextRequested"
+                                                        Style="{StaticResource QuickCompareContainerStyle}" />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </GridView.ItemContainerStyle>
+                            </GridView>
+                        </Border>
 
                         <Grid
-                            x:Name="DetailsTitleContainer"
-                            ColumnSpacing="4"
-                            HorizontalAlignment="Left">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <!--  Text is set in code rather than binding to better support connected animation  -->
-                            <TextBlock
-                                x:Name="DetailsFontTitle"
-                                Grid.Column="0"
-                                FontSize="24"
-                                FontWeight="Bold"
-                                d:Text="Segoe UI" />
-                            <Button
-                                Grid.Column="1"
-                                Padding="8 0"
-                                Click="{x:Bind ViewModel.OpenCurrentFont}"
-                                Content="{core:Localizer Key='OpenFontButton/Label'}"
-                                Foreground="{StaticResource SystemColorControlAccentBrush}"
-                                Style="{StaticResource TextBlockButtonStyle}"
-                                ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}" />
-                        </Grid>
-
-                        <ScrollViewer
-                            x:Name="DetailsViewContent"
-                            Grid.Row="1"
-                            Margin="0 0 -24 0"
-                            Padding="0 0 24 0"
-                            RenderTransformOrigin="0.5,0.5">
-                            <FrameworkElement.RenderTransform>
+                            x:Name="DetailsViewRoot"
+                            RowSpacing="12"
+                            RenderTransformOrigin="0.5,0.5"
+                            Visibility="Collapsed"
+                            d:Visibility="Visible">
+                            <Grid.RenderTransform>
                                 <CompositeTransform />
-                            </FrameworkElement.RenderTransform>
-                            <muxc:ItemsRepeater
-                                x:Name="DetailsRepeater"
-                                ElementClearing="DetailsRepeater_ElementClearing"
-                                ElementPrepared="Repeater_ElementPrepared"
-                                ItemsSource="{x:Bind ViewModel.SelectedFont.Variants, Mode=OneWay}"
-                                Layout="{StaticResource GridLayout}"
-                                VerticalCacheLength="0.5">
-                                <muxc:ItemsRepeater.ItemTemplate>
-                                    <DataTemplate x:DataType="core:FontVariant">
-                                        <controls:ContentGroup>
-                                            <controls:ContentGroup.Text>
-                                                <TextBlock
-                                                    FontSize="{StaticResource ControlContentThemeFontSize}"
-                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text="{x:Bind PreferredName}" />
-                                            </controls:ContentGroup.Text>
-                                            <controls:ContentGroup.SecondaryContent>
-                                                <TextBlock
-                                                    x:Name="TargetRender"
-                                                    FontFamily="{x:Bind DisplaySource}"
-                                                    FontStretch="{x:Bind FontFace.Stretch}"
-                                                    FontStyle="{x:Bind FontFace.Style}"
-                                                    FontWeight="{x:Bind FontFace.Weight}"
-                                                    IsColorFontEnabled="True"
-                                                    TextTrimming="CharacterEllipsis"
-                                                    TextWrapping="Wrap" />
-                                            </controls:ContentGroup.SecondaryContent>
-                                        </controls:ContentGroup>
-                                    </DataTemplate>
-                                </muxc:ItemsRepeater.ItemTemplate>
-                            </muxc:ItemsRepeater>
-                        </ScrollViewer>
+                            </Grid.RenderTransform>
+
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <Grid
+                                x:Name="DetailsTitleContainer"
+                                ColumnSpacing="4"
+                                HorizontalAlignment="Left">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <!--  Text is set in code rather than binding to better support connected animation  -->
+                                <TextBlock
+                                    x:Name="DetailsFontTitle"
+                                    Grid.Column="0"
+                                    FontSize="24"
+                                    FontWeight="Bold"
+                                    d:Text="Segoe UI" />
+                                <Button
+                                    Grid.Column="1"
+                                    Padding="8 0"
+                                    Click="{x:Bind ViewModel.OpenCurrentFont}"
+                                    Content="{core:Localizer Key='OpenFontButton/Label'}"
+                                    Foreground="{StaticResource SystemColorControlAccentBrush}"
+                                    Style="{StaticResource TextBlockButtonStyle}"
+                                    ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}" />
+                            </Grid>
+
+                            <ScrollViewer
+                                x:Name="DetailsViewContent"
+                                Grid.Row="1"
+                                Margin="0 0 -24 0"
+                                Padding="0 0 24 0"
+                                RenderTransformOrigin="0.5,0.5">
+                                <FrameworkElement.RenderTransform>
+                                    <CompositeTransform />
+                                </FrameworkElement.RenderTransform>
+                                <muxc:ItemsRepeater
+                                    x:Name="DetailsRepeater"
+                                    ElementClearing="DetailsRepeater_ElementClearing"
+                                    ElementPrepared="Repeater_ElementPrepared"
+                                    ItemsSource="{x:Bind ViewModel.SelectedFont.Variants, Mode=OneWay}"
+                                    Layout="{StaticResource GridLayout}"
+                                    VerticalCacheLength="0.5">
+                                    <muxc:ItemsRepeater.ItemTemplate>
+                                        <DataTemplate x:DataType="core:FontVariant">
+                                            <controls:ContentGroup>
+                                                <controls:ContentGroup.Text>
+                                                    <TextBlock
+                                                        FontSize="{StaticResource ControlContentThemeFontSize}"
+                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                        Text="{x:Bind PreferredName}" />
+                                                </controls:ContentGroup.Text>
+                                                <controls:ContentGroup.SecondaryContent>
+                                                    <TextBlock
+                                                        x:Name="TargetRender"
+                                                        FontFamily="{x:Bind DisplaySource}"
+                                                        FontStretch="{x:Bind FontFace.Stretch}"
+                                                        FontStyle="{x:Bind FontFace.Style}"
+                                                        FontWeight="{x:Bind FontFace.Weight}"
+                                                        IsColorFontEnabled="True"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        TextWrapping="Wrap" />
+                                                </controls:ContentGroup.SecondaryContent>
+                                            </controls:ContentGroup>
+                                        </DataTemplate>
+                                    </muxc:ItemsRepeater.ItemTemplate>
+                                </muxc:ItemsRepeater>
+                            </ScrollViewer>
 
 
 
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
 
         </controls:ModalPagePresenter>
-
-
-
-        <!--<controls:XamlTitleBar
-            x:Name="TitleBar"
-            Background="{x:Null}"
-            Canvas.ZIndex="101">
-            <StackPanel Orientation="Horizontal">
-                <Button
-                    x:Name="BackButton"
-                    Width="45"
-                    VerticalAlignment="Stretch"
-                    d:Visibility="Visible"
-                    Background="Transparent"
-                    Click="BackButton_Click"
-                    CornerRadius="0"
-                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Visibility="Collapsed">
-                    <FontIcon
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="12"
-                        Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                        Glyph="&#xE0A6;" />
-                </Button>
-            </StackPanel>
-        </controls:XamlTitleBar>-->
-
-        <!--<Border
-            x:Name="TitleBackground"
-            Grid.RowSpan="2"
-            Margin="0 0 0 -10"
-            Background="{StaticResource DefaultHostBrush}" />
-
-        <Grid
-            x:Name="HeaderGrid"
-            Grid.Row="1"
-            Height="{StaticResource TitleRowHeight}"
-            IsHitTestVisible="False">
-            <TextBlock
-                x:Name="CompareFontsTitle"
-                x:Uid="CompareFontsTitle"
-                Margin="24 0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                d:Text="Compare Fonts"
-                FontSize="22"
-                FontWeight="Bold"
-                OpticalMarginAlignment="TrimSideBearings" />
-        </Grid>-->
-
-
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ViewStates" CurrentStateChanging="ViewStates_CurrentStateChanging">
@@ -825,6 +772,5 @@
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
-
     </Grid>
 </views:ViewBase>

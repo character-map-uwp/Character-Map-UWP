@@ -431,11 +431,11 @@ namespace CharacterMap.Helpers
 
                 menu.Items.Add(new MenuFlyoutSeparator());
 
-                MenuFlyoutItem cali = new ()
+                MenuFlyoutItem cali = new MenuFlyoutItem
                 {
-                    Text = "Calligraphy",
+                    Text = Localization.Get("CalligraphyLabel/Text"),
                     Icon = new FontIcon { Glyph = "\uEDFB" }
-                };
+                }.AddKeyboardAccelerator(VirtualKey.I, VirtualKeyModifiers.Control);
 
                 cali.Click += (s, e) =>
                 {

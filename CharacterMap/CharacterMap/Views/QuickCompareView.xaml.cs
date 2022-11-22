@@ -8,7 +8,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -19,7 +18,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CharacterMap.Views
 {
@@ -53,6 +51,11 @@ namespace CharacterMap.Views
                 VisualStateManager.GoToState(this, FontFolderState.Name, false);
 
             _navHelper.BackRequested += (s, e) => { ViewModel.SelectedFont = null; };
+
+            if (DesignMode)
+                return;
+
+            this.Opacity = 0;
         }
 
         protected override void OnLoaded(object sender, RoutedEventArgs e)
@@ -63,6 +66,27 @@ namespace CharacterMap.Views
 
             //await Task.Delay(150);
             //Presenter.SetWindowTitleBar();
+
+            AnimateIn();
+        }
+
+        private void AnimateIn()
+        {
+            this.Opacity = 1;
+            int s = 66;
+            int o = 110;
+
+            // Title
+            CompositionFactory.PlayEntrance(Presenter.GetTitleElement(), s + 30, o);
+
+            // First Row
+            CompositionFactory.PlayEntrance(TopRow, s + 113, o);
+
+            // Second Row
+            CompositionFactory.PlayEntrance(SecondRow, s + 200, o);
+
+            // Third Row
+            CompositionFactory.PlayEntrance(FontsRoot, s + 300, o);
         }
 
         protected override void OnUnloaded(object sender, RoutedEventArgs e)

@@ -5,22 +5,17 @@ using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMapCX;
-using Microsoft.Graphics.Canvas.Text;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Transactions;
-using Windows.ApplicationModel;
 using Windows.Storage;
 using Windows.System;
-using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -28,8 +23,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CharacterMap.Views
 {
@@ -112,13 +105,13 @@ namespace CharacterMap.Views
             InitializeComponent();
 
             ViewModel = new FontMapViewModel(
-                DesignMode.DesignModeEnabled ? 
-                    new DialogService() : Ioc.Default.GetService<IDialogService>(), 
+                DesignMode ? new DialogService() : Ioc.Default.GetService<IDialogService>(), 
                 ResourceHelper.AppSettings);
 
-            if (DesignMode.DesignModeEnabled)
+            if (DesignMode)
                 return;
 
+            RequestedTheme = ResourceHelper.GetEffectiveTheme();
             Loading += FontMapView_Loading;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -356,6 +349,10 @@ namespace CharacterMap.Views
                     case VirtualKey.Q:
                         if (ViewModel.SelectedVariant is FontVariant va)
                             _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
+                        break;
+                    case VirtualKey.I:
+                        _ = CalligraphyView.CreateWindowAsync(
+                                ViewModel.RenderingOptions, ViewModel.Sequence);
                         break;
                     default:
                         return false;

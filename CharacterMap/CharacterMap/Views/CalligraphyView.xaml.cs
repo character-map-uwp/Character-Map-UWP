@@ -3,15 +3,12 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using Windows.Foundation.Diagnostics;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Input.Inking;
@@ -32,6 +29,11 @@ namespace CharacterMap.Views
         {
             this.InitializeComponent();
             ViewModel = new CalligraphyViewModel(options);
+
+            if (DesignMode)
+                return;
+
+            ContentRoot.Opacity = 0;
         }
 
         protected override void OnLoaded(object sender, RoutedEventArgs e)
@@ -54,6 +56,28 @@ namespace CharacterMap.Views
             PresentationRoot.GetElementVisual();
             Guide.GetElementVisual();
             CanvasContainer.GetElementVisual();
+
+            AnimateIn();
+        }
+
+        private void AnimateIn()
+        {
+            ContentRoot.Opacity = 1;
+            int s = 100;
+            int o = 110;
+
+            // Title
+            CompositionFactory.PlayEntrance(Presenter.GetTitleElement(), s+30, o);
+
+            // First Row
+            CompositionFactory.PlayEntrance(InputBox, s + 113, o);
+            CompositionFactory.PlayEntrance(FontSizeSlider, s + 113, o);
+
+            // Second Row
+            CompositionFactory.PlayEntrance(ContentGrid, s + 200, o);
+
+            // Third Row
+            CompositionFactory.PlayEntrance(PresentationRoot, s + 300, o);
         }
 
         private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)

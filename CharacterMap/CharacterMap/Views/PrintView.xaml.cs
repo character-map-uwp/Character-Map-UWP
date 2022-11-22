@@ -8,9 +8,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Numerics;
-using Windows.ApplicationModel;
 using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -72,7 +70,7 @@ namespace CharacterMap.Views
             Settings = _fontMap.ViewModel.Settings;
             ViewModel = PrintViewModel.Create(_fontMap.ViewModel);
 
-            if (!DesignMode.DesignMode2Enabled)
+            if (!DesignMode)
                 this.Visibility = Visibility.Collapsed;
 
             this.InitializeComponent();

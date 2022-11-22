@@ -1,5 +1,4 @@
-﻿using CharacterMap.Annotations;
-using CharacterMap.Controls;
+﻿using CharacterMap.Controls;
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
@@ -13,7 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -29,7 +27,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
 {

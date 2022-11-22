@@ -13,7 +13,6 @@ using System.Runtime.CompilerServices;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Views
@@ -23,18 +22,28 @@ namespace CharacterMap.Views
     {
         protected IMessenger Messenger => WeakReferenceMessenger.Default;
 
+        /// <summary>
+        /// Returns true if the process is running within the VS designer
+        /// </summary>
+        protected bool DesignMode => Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+
         public ViewBase()
         {
-            this.Loaded += OnLoaded;
+            this.Loaded += OnLoadedBase;
             this.Unloaded += OnUnloaded;
 
-            RequestedTheme = ResourceHelper.GetEffectiveTheme();
             ResourceHelper.GoToThemeState(this);
 
-            if (DesignMode.DesignModeEnabled)
+            if (DesignMode)
                 return;
 
             LeakTrackingService.Register(this);
+        }
+
+        private void OnLoadedBase(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            ResourceHelper.GoToThemeState(this);
+            OnLoaded(sender, e);
         }
 
         protected virtual void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
