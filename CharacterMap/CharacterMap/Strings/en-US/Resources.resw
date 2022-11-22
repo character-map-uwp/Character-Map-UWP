@@ -1196,19 +1196,19 @@ Requires a restart to take effect.</value>
     <value>History</value>
   </data>
   <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Redo</value>
+    <value>Redo (Ctrl + Y)</value>
   </data>
   <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Remove</value>
   </data>
   <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Save</value>
+    <value>Save (Ctrl + S)</value>
   </data>
   <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Side by side</value>
   </data>
   <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Undo</value>
+    <value>Undo (Ctrl + Z)</value>
   </data>
   <data name="GuideFontSlider.Header" xml:space="preserve">
     <value>Guide Size</value>

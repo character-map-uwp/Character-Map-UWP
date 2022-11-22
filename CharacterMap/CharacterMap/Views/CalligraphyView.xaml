@@ -15,7 +15,8 @@
     Background="Transparent"
     DataContext="{x:Bind}"
     TabFocusNavigation="Cycle"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=view:CalligraphyView}">
 
     <Control.Resources>
         <view:CalligraphicPen x:Key="CalligraphyPen" />
@@ -409,10 +410,13 @@
 
                             <Button
                                 x:Uid="UndoButton"
-                                Click="{x:Bind UndoLastStroke}"
-                                IsEnabled="{x:Bind ViewModel.CanUndo, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.InkManager.Undo}"
+                                IsEnabled="{x:Bind ViewModel.InkManager.CanUndo, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="Z" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -421,10 +425,13 @@
 
                             <Button
                                 x:Uid="RedoButton"
-                                Click="{x:Bind RedoLastStroke}"
-                                IsEnabled="{x:Bind ViewModel.CanRedo, Mode=OneWay}"
+                                Click="{x:Bind ViewModel.InkManager.Redo}"
+                                IsEnabled="{x:Bind ViewModel.InkManager.CanRedo, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="Y" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -479,7 +486,7 @@
 
                             <Button
                                 x:Uid="ClearAllButton"
-                                IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
                                 <Button.Flyout>
@@ -534,8 +541,11 @@
                             Spacing="4">
                             <Button
                                 x:Uid="SaveButton"
-                                IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}">
+                                <Button.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="S" Modifiers="Control" />
+                                </Button.KeyboardAccelerators>
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
@@ -557,7 +567,7 @@
                                 x:Uid="AddHistoryButton"
                                 HorizontalAlignment="Right"
                                 Click="AddHistoryButton_Click"
-                                IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False"
                                 d:ToolTipService.ToolTip="Add to History">

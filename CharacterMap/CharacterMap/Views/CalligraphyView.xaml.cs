@@ -83,15 +83,11 @@ namespace CharacterMap.Views
         private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
         {
             ViewModel.OnStrokesErased(sender.StrokeContainer, args.Strokes);
-            UpdateStrokes();
         }
 
         private void InkPresenter_StrokesCollected(InkPresenter sender, InkStrokesCollectedEventArgs args)
         {
-            if (args.Strokes.Count > 0)
-                ViewModel.HasStrokes = true;
-
-            ViewModel.OnStrokeDrawn(args.Strokes);
+            ViewModel.OnStrokeDrawn(_container, args.Strokes);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -113,13 +109,13 @@ namespace CharacterMap.Views
                 // can play properly
                 HistoryList.ScrollIntoView(HistoryList.Items.Last());
 
-                ViewModel.Clear(_container);
+                ViewModel.Clear();
             }
         }
 
         private void HistoryList_ItemClick(object sender, ItemClickEventArgs e)
         {
-            ViewModel.Clear(_container);
+            ViewModel.Clear();
 
             if (e.ClickedItem is CalligraphyHistoryItem h)
             {
@@ -138,14 +134,12 @@ namespace CharacterMap.Views
             UpdateStrokes();
         }
 
-
-
         private void Reset()
         {
             /// Clear the Ink Canvas and reset back to the 
             /// default calligraphy pen
 
-            ViewModel.Clear(_container);
+            ViewModel.Clear();
 
             // This needs to be done on the dispatcher or the 
             // InkButton will not go into the correct VisualState
@@ -160,17 +154,9 @@ namespace CharacterMap.Views
             TryAnimateInkIntoHistory(args);
         }
 
-        public void UndoLastStroke()
-        {
-            if (ViewModel.Undo(_container))
-                UpdateStrokes();
-        }
-
-        public void RedoLastStroke() => ViewModel.Redo(_container);
-
         private void UpdateStrokes()
         {
-            ViewModel.HasStrokes = _container.GetStrokes().Count > 0;
+            ViewModel.InkManager.UpdateControls();
         }
 
         private void DeleteButton_Click(object sender, RoutedEventArgs e)

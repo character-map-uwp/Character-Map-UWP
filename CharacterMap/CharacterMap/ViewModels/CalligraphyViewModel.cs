@@ -17,20 +17,12 @@ using Windows.UI;
 using Windows.UI.Input.Inking;
 using Windows.UI.Xaml.Media.Imaging;
 using CommunityToolkit.Mvvm.Messaging;
+using System.ComponentModel;
 
 namespace CharacterMap.ViewModels
 {
     public partial class CalligraphyViewModel : ViewModelBase
     {
-        private Stack<InkCommandBase> _redoStack { get; } = new();
-        private Stack<InkCommandBase> _undoStack { get; } = new();
-
-        [ObservableProperty] private bool _hasStrokes;
-
-        [ObservableProperty] private bool _canUndo;
-
-        [ObservableProperty] private bool _canRedo;
-
         [ObservableProperty] private bool _isOverlayVisible = true;
 
         [ObservableProperty] private string _text;
@@ -39,12 +31,20 @@ namespace CharacterMap.ViewModels
 
         public FontVariant Face { get; }
 
+        [ObservableProperty] InkStrokeManager _inkManager = null;
+
         public ObservableCollection<CalligraphyHistoryItem> Histories { get; }
 
         public CalligraphyViewModel(CharacterRenderingOptions options)
         {
             Face = options.Variant;
             Histories = new ObservableCollection<CalligraphyHistoryItem>();
+        }
+
+        void EnsureManager(InkStrokeContainer container)
+        {
+            if (_inkManager is null)
+                InkManager = new InkStrokeManager(container);
         }
 
         public async Task AddToHistoryAsync(InkStrokeContainer container)
@@ -65,79 +65,24 @@ namespace CharacterMap.ViewModels
             Histories.Add(h);
         }
 
-        public bool Undo(InkStrokeContainer container)
-        {
-            if (_undoStack.Count > 0)
-            {
-                // 1. Get and execute the most recent undo command
-                var command = _undoStack.Pop();
-                command.Undo(container);
-                
-                // 2. Push it to the redo stack
-                _redoStack.Push(command);
-
-                // 3. Update UI commands
-                UpdateControls(container);
-                return true;
-            }
-
-            return false;
-        }
-
-        void UpdateControls(InkStrokeContainer container)
-        {
-            HasStrokes = container.GetStrokes().Any();
-            CanUndo = _undoStack.Count > 0;
-            CanRedo = _redoStack.Count > 0;
-        }
-
-        public bool Redo(InkStrokeContainer container)
-        {
-            if (_redoStack.Count > 0)
-            {
-                // 1. Get and execute the most recent redo command
-                var command = _redoStack.Pop();
-                command.Redo(container);
-
-                // 2. Push it to the undo stack
-                _undoStack.Push(command);
-
-                // 3. Update UI commands
-                UpdateControls(container);
-                return true;
-            }
-
-            return false;
-        }
-
         /// <summary>
         /// Clear contents of Ink container and the Redo stack
         /// </summary>
         /// <param name="container"></param>
-        public void Clear(InkStrokeContainer container)
+        public void Clear()
         {
-            container.Clear();
-            _undoStack.Clear();
-            _redoStack.Clear();
-            UpdateControls(container);
+            _inkManager.Clear();
         }
 
         internal void OnStrokesErased(InkStrokeContainer container, IReadOnlyList<InkStroke> strokes)
         {
-            _undoStack.Push(new StrokeErasedCommand(strokes));
-            _redoStack.Clear();
-            UpdateControls(container);
+            InkManager.OnErased(strokes);
         }
 
-        internal void OnStrokeDrawn(IReadOnlyList<InkStroke> strokes)
+        internal void OnStrokeDrawn(InkStrokeContainer container, IReadOnlyList<InkStroke> strokes)
         {
-            _undoStack.Push(new StrokeDrawnCommand(strokes));
-            CanUndo = true;
-            HasStrokes = true;
-
-            // When user draws a stroke manually, clear the redo stack
-            _redoStack.Clear();
-            CanRedo = false;
+            EnsureManager(container);
+            InkManager.OnDrawn(strokes);
         }
 
         public async Task SaveAsync(IReadOnlyList<InkStroke> strokes, ExportFormat format, ICanvasResourceCreatorWithDpi device, double width, double height)
@@ -201,6 +146,132 @@ namespace CharacterMap.ViewModels
         }
     }
 
+    /// <summary>
+    /// Helper class to maintain reference between strokes in
+    /// Undo/Redo/Container ink strokes, including when cloned.
+    /// </summary>
+    public class InkStrokeReference
+    {
+        public InkStroke ActiveStroke { get; private set; }
+
+        public InkStrokeReference(InkStroke stroke)
+        {
+            ActiveStroke = stroke;
+        }
+
+        public InkStroke Clone() => (ActiveStroke = ActiveStroke.Clone());
+    }
+
+    [ObservableObject]
+    public partial class InkStrokeManager
+    {
+        [ObservableProperty] private bool _hasStrokes;
+
+        [ObservableProperty] private bool _canUndo;
+
+        [ObservableProperty] private bool _canRedo;
+
+        private Stack<InkCommandBase> _redoStack { get; } = new();
+        private Stack<InkCommandBase> _undoStack { get; } = new();
+        private HashSet<InkStrokeReference> _strokeSet { get; } = new HashSet<InkStrokeReference>();
+
+        private InkStrokeContainer _container;
+
+        public InkStrokeManager(InkStrokeContainer container)
+        {
+            _container = container;
+        }
+
+        public void Clear()
+        {
+            _strokeSet.Clear();
+            _container.Clear();
+
+            _redoStack.Clear();
+            _undoStack.Clear();
+
+            UpdateControls();
+        }
+
+        public InkStrokeReference GetReference(InkStroke stroke)
+        {
+            if (FindReference(stroke) is InkStrokeReference r)
+                return r;
+
+            r = new InkStrokeReference(stroke);
+            _strokeSet.Add(r);
+            return r;
+        }
+
+        public InkStrokeReference FindReference(InkStroke stroke)
+        {
+            return _strokeSet.FirstOrDefault(s => s.ActiveStroke == stroke);
+        }
+
+        public void UpdateControls()
+        {
+            HasStrokes = _container.GetStrokes().Any();
+            CanUndo = _undoStack.Count > 0;
+            CanRedo = _redoStack.Count > 0;
+        }
+
+        internal void OnErased(IReadOnlyList<InkStroke> strokes)
+        {
+            _undoStack.Push(new StrokeErasedCommand(this, strokes));
+            _redoStack.Clear();
+            UpdateControls();
+        }
+
+        internal void OnDrawn(IReadOnlyList<InkStroke> strokes)
+        {
+            _undoStack.Push(new StrokeDrawnCommand(this, strokes));
+            CanUndo = true;
+            HasStrokes = true;
+
+            // When user draws a stroke manually, clear the redo stack
+            _redoStack.Clear();
+            CanRedo = false;
+        }
+
+        public bool Redo()
+        {
+            if (CanRedo)
+            {
+                // 1. Get and execute the most recent redo command
+                var command = _redoStack.Pop();
+                command.Redo(_container);
+
+                // 2. Push it to the undo stack
+                _undoStack.Push(command);
+
+                // 3. Update UI commands
+                UpdateControls();
+                return true;
+            }
+
+            return false;
+        }
+
+        public bool Undo()
+        {
+            if (CanUndo)
+            {
+                // 1. Get and execute the most recent undo command
+                var command = _undoStack.Pop();
+                command.Undo(_container);
+
+                // 2. Push it to the redo stack
+                _redoStack.Push(command);
+
+                // 3. Update UI commands
+                UpdateControls();
+                return true;
+            }
+
+            return false;
+        }
+    }
+
     public abstract class InkCommandBase
     {
         public abstract void Undo(InkStrokeContainer container);
@@ -209,30 +280,25 @@ namespace CharacterMap.ViewModels
 
     public class StrokeDrawnCommand : InkCommandBase
     {
-        private readonly List<InkStroke> _strokes;
+        private readonly List<InkStrokeReference> _strokes;
 
-        public StrokeDrawnCommand(IReadOnlyList<InkStroke> strokes)
+        public StrokeDrawnCommand(InkStrokeManager manager, IEnumerable<InkStroke> strokes)
         {
-            _strokes = strokes.ToList();
+            _strokes = strokes.Select(s => manager.GetReference(s)).ToList();
         }
 
         public override void Redo(InkStrokeContainer container)
         {
-            for (int i = 0; i < _strokes.Count; i++) 
-            {
-                var stroke = _strokes[i].Clone();
-                container.AddStroke(stroke);
-                _strokes[i] = stroke;
-            }
+            foreach (var stroke in _strokes)
+                container.AddStroke(stroke.Clone());
         }
 
         public override void Undo(InkStrokeContainer container)
         {
             // Delete the strokes from the canvas
-            var cStrokes = container.GetStrokes().ToList();
             foreach (var stroke in _strokes)
             {
-                var cStroke = cStrokes.First(s => s.BoundingRect == stroke.BoundingRect);
+                var cStroke = stroke.ActiveStroke;
                 cStroke.Selected = true;
                 container.DeleteSelected();
                 cStroke.Selected = false;
@@ -242,37 +308,34 @@ namespace CharacterMap.ViewModels
 
     public class StrokeErasedCommand : InkCommandBase
     {
-        private readonly List<InkStroke> _strokes;
+        private readonly List<InkStrokeReference> _strokes;
 
-        public StrokeErasedCommand(IReadOnlyList<InkStroke> strokes)
+        public StrokeErasedCommand(InkStrokeManager manager, IEnumerable<InkStroke> strokes)
         {
-            _strokes = strokes.ToList();
+            _strokes = strokes.Select(s => manager.GetReference(s)).ToList();
         }
 
         public override void Redo(InkStrokeContainer container)
         {
             // This relies on stack being correctly ordered
-            List<InkStroke> strokes = container.GetStrokes().Reverse().Take(_strokes.Count).ToList();
-            foreach (var stroke in strokes)
+            foreach (var stroke in _strokes)
             {
-                stroke.Selected = true;
+                stroke.ActiveStroke.Selected = true;
                 container.DeleteSelected();
             }
         }
 
         public override void Undo(InkStrokeContainer container)
         {
-            for (int i = 0; i < _strokes.Count; i++)
+            foreach (var stroke in _strokes)
             {
-                var stroke = _strokes[i].Clone();
-                container.AddStroke(stroke);
-                stroke.Selected = true; // select it so InkToolbar deletion works properly
-                _strokes[i] = stroke;
+                container.AddStroke(stroke.Clone());
+                stroke.ActiveStroke.Selected = true; // select it so InkToolbar deletion works properly
             }
 
             // Unselect everything to stop container.DeleteSelected() deleting everything
             foreach (var stroke in _strokes)
-                stroke.Selected = false;
+                stroke.ActiveStroke.Selected = false;
         }
     }
 
