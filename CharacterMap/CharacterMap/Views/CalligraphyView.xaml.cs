@@ -7,9 +7,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
+using Windows.Foundation.Diagnostics;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Input.Inking;
@@ -56,7 +58,7 @@ namespace CharacterMap.Views
 
         private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
         {
-            ViewModel.OnStrokesErased(args.Strokes);
+            ViewModel.OnStrokesErased(sender.StrokeContainer, args.Strokes);
             UpdateStrokes();
         }
 
@@ -65,7 +67,7 @@ namespace CharacterMap.Views
             if (args.Strokes.Count > 0)
                 ViewModel.HasStrokes = true;
 
-            ViewModel.OnStrokeDrawn();
+            ViewModel.OnStrokeDrawn(args.Strokes);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

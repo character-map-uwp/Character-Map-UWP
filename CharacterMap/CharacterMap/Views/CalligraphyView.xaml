@@ -296,10 +296,7 @@
                                         </VisualState.Setters>
                                     </VisualState>
                                 </VisualStateGroup>
-
-
                             </VisualStateManager.VisualStateGroups>
-                            <Rectangle x:Name="ContentBackground" Fill="Transparent" />
                             <ContentPresenter
                                 x:Name="Content"
                                 HorizontalAlignment="Center"
@@ -307,8 +304,6 @@
                                 HighContrastAdjustment="None" />
                             <Border
                                 x:Name="Border"
-                                Grid.RowSpan="2"
-                                Grid.ColumnSpan="2"
                                 Margin="1,0"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}" />
@@ -317,7 +312,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
     </Control.Resources>
 
     <Grid>
@@ -348,7 +342,7 @@
                     <TextBox
                         x:Name="InputBox"
                         VerticalAlignment="Bottom"
-                        Header="Preview Text"
+                        Header="Guide Text"
                         Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         d:Text="Preview" />
                     <Slider
@@ -357,7 +351,8 @@
                         Header="Font Size"
                         Maximum="400"
                         Minimum="60"
-                        Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}" />
+                        Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                        d:Value="220" />
                 </Grid>
 
                 <Grid
@@ -404,7 +399,7 @@
 
                             <Button
                                 Click="{x:Bind UndoLastStroke}"
-                                IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                                IsEnabled="{x:Bind ViewModel.CanUndo, Mode=OneWay}"
                                 Style="{StaticResource SmolButton}"
                                 ToolTipService.ToolTip="Undo"
                                 d:IsEnabled="False">
@@ -432,10 +427,9 @@
                                 Margin="0 -2 0 0"
                                 VerticalAlignment="Stretch" />
 
-
                             <InkToolbar
                                 x:Name="Toolbar"
-                                Margin="0 -4 0 4"
+                                Margin="0 -4 -4 4"
                                 core:Properties.DefaultTool="{x:Bind calligraphyPen}"
                                 CornerRadius="8"
                                 InitialControls="None"
@@ -469,17 +463,25 @@
                                     x:Name="BallpointPen"
                                     MaxStrokeWidth="10"
                                     MinStrokeWidth="4" />
-                                <InkToolbarEraserButton IsClearAllVisible="False" />
-                                <InkToolbarCustomToolButton Click="{x:Bind Reset}" ToolTipService.ToolTip="Clear">
-                                    <Border CornerRadius="4">
-                                        <TextBlock
-                                            AutomationProperties.AccessibilityView="Raw"
-                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                            Text="&#xE107;" />
-                                    </Border>
-                                </InkToolbarCustomToolButton>
+                                <InkToolbarEraserButton IsClearAllVisible="False" IsExtensionGlyphShown="False" />
 
                             </InkToolbar>
+
+                            <Button
+                                IsEnabled="{x:Bind ViewModel.HasStrokes, Mode=OneWay}"
+                                Style="{StaticResource SmolButton}"
+                                ToolTipService.ToolTip="Clear All"
+                                d:IsEnabled="False">
+                                <Button.Flyout>
+                                    <MenuFlyout Placement="Bottom">
+                                        <MenuFlyoutItem Click="{x:Bind Reset}" Text="Clear All" />
+                                    </MenuFlyout>
+                                </Button.Flyout>
+                                <TextBlock
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    Text="&#xE107;" />
+                            </Button>
 
                             <AppBarSeparator
                                 Width="8"
