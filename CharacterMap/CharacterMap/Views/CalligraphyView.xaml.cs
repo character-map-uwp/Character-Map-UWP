@@ -15,6 +15,7 @@ using Windows.UI.Core;
 using Windows.UI.Input.Inking;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -77,14 +78,27 @@ namespace CharacterMap.Views
             });
         }
 
+        void FocusCanvas()
+        {
+            // Ensures keyboard shortcuts work (as focus by default falls on the TextBox
+            // which will steal keyboard shortcut input)
+            if (InputBox.ContainsFocus() || FontSizeSlider.ContainsFocus())
+            {
+                AddButton.Focus(FocusState.Programmatic);
+                AddButton.RemoveFocusEngagement();
+            }
+        }
+
         private void InkPresenter_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
         {
             ViewModel.OnStrokesErased(sender.StrokeContainer, args.Strokes);
+            FocusCanvas();
         }
 
         private void InkPresenter_StrokesCollected(InkPresenter sender, InkStrokesCollectedEventArgs args)
         {
             ViewModel.OnStrokeDrawn(_container, args.Strokes);
+            FocusCanvas();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

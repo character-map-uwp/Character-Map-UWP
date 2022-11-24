@@ -719,7 +719,7 @@ namespace CharacterMap.Views
             {
                 foreach (var provider in ViewModel.Providers)
                 {
-                    var item = new MenuFlyoutItem
+                    MenuFlyoutItem item = new()
                     {
                         Command = ViewModel.ToggleDev,
                         CommandParameter = provider.Type,

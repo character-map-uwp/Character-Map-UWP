@@ -147,7 +147,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private void RefreshFontList(UserFontCollection collection = null)
+        internal void RefreshFontList(UserFontCollection collection = null)
         {
             try
             {

@@ -455,7 +455,7 @@
                                     x:Name="calligraphyPen"
                                     CustomPen="{StaticResource CalligraphyPen}"
                                     MaxStrokeWidth="10"
-                                    MinStrokeWidth="4"
+                                    MinStrokeWidth="3"
                                     Palette="{x:Bind BallpointPen.Palette, Mode=OneWay}"
                                     SelectedBrushIndex="0"
                                     ToolTipService.ToolTip="Calligraphy pen">
@@ -479,9 +479,8 @@
                                 <InkToolbarBallpointPenButton
                                     x:Name="BallpointPen"
                                     MaxStrokeWidth="10"
-                                    MinStrokeWidth="4" />
+                                    MinStrokeWidth="3" />
                                 <InkToolbarEraserButton IsClearAllVisible="False" IsExtensionGlyphShown="False" />
-
                             </InkToolbar>
 
                             <Button
@@ -564,6 +563,7 @@
                                 </Button.Flyout>
                             </Button>
                             <Button
+                                x:Name="AddButton"
                                 x:Uid="AddHistoryButton"
                                 HorizontalAlignment="Right"
                                 Click="AddHistoryButton_Click"

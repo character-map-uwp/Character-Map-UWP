@@ -81,8 +81,19 @@ namespace CharacterMap.Styles
             if (sender is Windows.UI.Xaml.Documents.Hyperlink b)
             {
                 var t = b.GetFirstAncestorOfType<TextBlock>();
+                b.GetFirstAncestorOfType<InAppNotification>()?.Dismiss();
+
                 AddToCollectionResult result = (AddToCollectionResult)t.DataContext;
 
+                // 1. Send a message to see if anyone wants to handle this before
+                //    falling back to the default path
+                CollectionRequestedMessage msg = new(result.Collection);
+                WeakReferenceMessenger.Default.Send(msg);
+                if (msg.Handled)
+                    return;
+
+                // 2. This code path with be followed from a secondary Font-only
+                //    character map view
                 MainViewModel main = Ioc.Default.GetService<MainViewModel>();
 
                 if (MainPage.MainDispatcher.HasThreadAccess)
@@ -100,7 +111,6 @@ namespace CharacterMap.Styles
                     });
                 }
 
-                b.GetFirstAncestorOfType<InAppNotification>()?.Dismiss();
             }
         }
 
@@ -130,12 +140,12 @@ namespace CharacterMap.Styles
                     if (!args.IsAdd)
                     {
                         await collections.AddToCollectionAsync(args.Font, args.Collection);
-                        WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
+                        WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage {  SourceCollection = args.Collection });
                     }
                     else
                     {
                         await collections.RemoveFromCollectionAsync(args.Font, args.Collection);
-                        WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
+                        WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage { SourceCollection = args.Collection });
                     }
                 }
                 else if (b.Tag is AddToCollectionResult result)

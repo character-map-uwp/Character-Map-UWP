@@ -10,6 +10,7 @@
     xmlns:m="using:CharacterMap.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     x:Name="ViewRoot"
@@ -20,6 +21,14 @@
     d:DesignWidth="1280">
 
     <UserControl.Resources>
+
+        <MenuFlyout x:Name="MainContextFlyout" MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}">
+            <MenuFlyoutItem
+                x:Uid="OpenInNewWindow"
+                Click="OpenWindow_Click"
+                Icon="NewWindow" />
+        </MenuFlyout>
+
         <MenuFlyout
             x:Name="ContextFlyout"
             MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
@@ -488,6 +497,7 @@
                                                         Content="{TemplateBinding Content}"
                                                         ContentTemplate="{TemplateBinding ContentTemplate}"
                                                         ContextRequested="ItemContextRequested"
+                                                        PointerPressed="Button_PointerPressed"
                                                         Style="{StaticResource QuickCompareContainerStyle}" />
                                                 </ControlTemplate>
                                             </Setter.Value>
@@ -587,6 +597,11 @@
             </Grid>
 
         </controls:ModalPagePresenter>
+
+        <!--  Notification Presenter  -->
+        <Grid x:Name="NotificationRoot" x:Load="False">
+            <toolkit:InAppNotification x:Name="DefaultNotification" />
+        </Grid>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ViewStates" CurrentStateChanging="ViewStates_CurrentStateChanging">

@@ -47,6 +47,19 @@ namespace CharacterMap.Models
 
     public class CollectionsUpdatedMessage
     {
+        public UserFontCollection SourceCollection { get; set; }
+    }
+
+    public class CollectionRequestedMessage
+    {
+        public UserFontCollection Collection { get; }
+
+        public bool Handled { get; set; }
+
+        public CollectionRequestedMessage(UserFontCollection sourceCollection)
+        {
+            Collection = sourceCollection;
+        }
     }
 
     public class PrintRequestedMessage

@@ -14,12 +14,12 @@
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
-    d:DataContext="{d:DesignInstance Type=views:ExportView}"
-    d:DesignHeight="720"
-    d:DesignWidth="1280"
     Background="Transparent"
     TabFocusNavigation="Cycle"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=views:ExportView}"
+    d:DesignHeight="720"
+    d:DesignWidth="1280">
 
     <UserControl.Resources>
 
@@ -549,9 +549,9 @@
     <cmControls:ModalPagePresenter
         x:Name="Presenter"
         Title="{core:Localizer Key=ExportGlyphsHeader/Text}"
-        d:TitleBarHeight="32"
         CloseClicked="{x:Bind Hide}"
-        TitleBarHeight="{x:Bind TitleBarHeight, Mode=OneWay}">
+        TitleBarHeight="{x:Bind TitleBarHeight, Mode=OneWay}"
+        d:TitleBarHeight="32">
         <Grid x:Name="LayoutRoot">
 
             <Grid.RowDefinitions>
@@ -605,12 +605,12 @@
 
                         </cmControls:ContentGroup>
 
-                        <cmControls:ContentGroup d:Visibility="Collapsed" Text="Preferred Format">
+                        <cmControls:ContentGroup Text="Preferred Format" d:Visibility="Collapsed">
 
                             <TextBlock
                                 x:Uid="ExportGlyphFormatDescription"
-                                d:Text="{core:Localizer Key=ExportGlyphFormatDescription/Text}"
-                                Style="{StaticResource BaseTextStyle}" />
+                                Style="{StaticResource BaseTextStyle}"
+                                d:Text="{core:Localizer Key=ExportGlyphFormatDescription/Text}" />
 
                             <ComboBox
                                 Margin="0 12 0 0"
@@ -625,8 +625,8 @@
                                 <TextBlock
                                     x:Uid="PrintViewCharSize"
                                     Margin="0,16,0,0"
-                                    d:Text="{core:Localizer Key=PrintViewCharSize/Text}"
-                                    Style="{StaticResource HeaderStyle}" />
+                                    Style="{StaticResource HeaderStyle}"
+                                    d:Text="{core:Localizer Key=PrintViewCharSize/Text}" />
                                 <Slider
                                     x:Name="SldResolution"
                                     HorizontalAlignment="Stretch"
@@ -649,8 +649,8 @@
 
                             <CheckBox
                                 x:Uid="ExportAllowColor"
-                                d:Content="{core:Localizer Key=ExportAllowColor/Content}"
-                                IsChecked="{x:Bind ViewModel.ExportColor, Mode=TwoWay}" />
+                                IsChecked="{x:Bind ViewModel.ExportColor, Mode=TwoWay}"
+                                d:Content="{core:Localizer Key=ExportAllowColor/Content}" />
 
                             <muxc:ColorPicker
                                 HorizontalAlignment="Left"
@@ -663,8 +663,8 @@
                         <cmControls:ContentGroup x:Uid="ExportFileOptionsHeader" d:Text="{core:Localizer Key=ExportFileOptionsHeader/Text}">
                             <CheckBox
                                 x:Uid="ExportSkipBlank"
-                                d:Content="{core:Localizer Key=ExportSkipBlank/Content}"
-                                IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}" />
+                                IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}"
+                                d:Content="{core:Localizer Key=ExportSkipBlank/Content}" />
                         </cmControls:ContentGroup>
 
                     </StackPanel>
@@ -688,9 +688,9 @@
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                             <TextBlock
                                 VerticalAlignment="Center"
-                                d:Text="0 of 0 characters selected"
                                 Style="{StaticResource BaseTextStyle}"
-                                Text="{x:Bind ViewModel.SelectedText, Mode=OneWay}" />
+                                Text="{x:Bind ViewModel.SelectedText, Mode=OneWay}"
+                                d:Text="0 of 0 characters selected" />
                         </StackPanel>
 
                         <cmControls:UXButton
@@ -768,10 +768,10 @@
                         x:Uid="BtnCancel"
                         Width="150"
                         HorizontalAlignment="Center"
-                        d:Content="Cancel"
                         Click="{x:Bind ViewModel.CancelExport}"
                         Style="{StaticResource AccentButtonStyle}"
-                        Visibility="{x:Bind ViewModel.ShowCancelExport, Mode=OneWay, FallbackValue=Collapsed}" />
+                        Visibility="{x:Bind ViewModel.ShowCancelExport, Mode=OneWay, FallbackValue=Collapsed}"
+                        d:Content="Cancel" />
                 </StackPanel>
             </Grid>
 
@@ -797,20 +797,31 @@
                     <Button
                         x:Uid="BtnContinue"
                         Width="150"
-                        d:Content="Export"
                         Click="{x:Bind ViewModel.StartExport}"
                         IsEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
-                        Style="{StaticResource AccentButtonStyle}" />
+                        Style="{StaticResource AccentButtonStyle}"
+                        d:Content="Export" />
                     <Button
                         x:Uid="BtnCancel"
                         Width="150"
-                        d:Content="Cancel"
                         Click="{x:Bind Hide}"
-                        Style="{StaticResource DefaultThemeButtonStyle}" />
+                        Style="{StaticResource DefaultThemeButtonStyle}"
+                        d:Content="Cancel" />
                 </StackPanel>
             </Grid>
 
         </Grid>
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ThemeStates">
+                <VisualState x:Name="ClassicThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="BottomBar.Background" Value="Transparent" />
+                        <Setter Target="Presenter.Margin" Value="0 0 0 -6" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
 
     </cmControls:ModalPagePresenter>
 

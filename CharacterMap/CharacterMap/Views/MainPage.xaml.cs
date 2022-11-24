@@ -146,10 +146,6 @@ namespace CharacterMap.Views
                 case nameof(AppSettings.UseFontForPreview):
                     OnFontPreviewUpdated();
                     break;
-
-                //case nameof(AppSettings.ApplicationDesignTheme):
-                //    UpdateDesignTheme();
-                //    break;
             }
         }
 
@@ -203,10 +199,7 @@ namespace CharacterMap.Views
 
         private void OnColorValuesChanged(UISettings settings, object e)
         {
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
-            });
+            RunOnUI(() => Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme))));
         }
 
         private void UpdateLoadingStates()
@@ -366,12 +359,7 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                     ViewModel.RefreshFontList(ViewModel.SelectedCollection);
                 else
-                {
-                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        ViewModel.RefreshFontList(ViewModel.SelectedCollection);
-                    });
-                }
+                    RunOnUI(() => ViewModel.RefreshFontList(ViewModel.SelectedCollection));
             }
         }
 
@@ -730,6 +718,18 @@ namespace CharacterMap.Views
         void OnNotificationMessage(AppNotificationMessage msg)
         {
             InAppNotificationHelper.OnMessage(this, msg);
+            
+            if (msg.Data is AddToCollectionResult result 
+                && result.Success 
+                && result.Collection is not null
+                && result.Collection == ViewModel.SelectedCollection
+                && Dispatcher.HasThreadAccess == false)
+            {
+                // If we don't have thread access, it means another window has added an item to
+                // the collection we're currently viewing, and we should refresh our view
+
+                RunOnUI(() => ViewModel.RefreshFontList(ViewModel.SelectedCollection));
+            }
         }
 
 

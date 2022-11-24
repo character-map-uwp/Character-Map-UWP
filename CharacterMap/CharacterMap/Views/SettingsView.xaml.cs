@@ -218,12 +218,7 @@ namespace CharacterMap.Views
 
         protected override void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            // Do not unregister messages
-        }
-
-        private void View_Loading(FrameworkElement sender, object args)
-        {
-           
+            // Override base so we do not unregister messages
         }
 
         private void View_Loaded(object sender, RoutedEventArgs e)
@@ -323,10 +318,10 @@ namespace CharacterMap.Views
               && item.Tag is Panel panel
               && panel.Visibility == Visibility.Collapsed)
             {
-                // X: Ensure all settings panels are hidden
+                // 1: Ensure all settings panels are hidden
                 foreach (var child in ContentPanel.Children.OfType<FrameworkElement>())
                 {
-                    // X: Deactivate old content if supported
+                    // 2: Deactivate old content if supported
                     if (child.Visibility == Visibility.Visible
                         && child is Panel p
                         && p.Children.Count == 1
@@ -336,10 +331,10 @@ namespace CharacterMap.Views
                     child.Visibility = Visibility.Collapsed;
                 }
 
-                // X: Reset scroll position
+                // 3: Reset scroll position
                 ContentScroller.ChangeView(null, 0, null, true);
 
-                // X: Activate new content if supported
+                // 4: Activate new content if supported
                 if (panel.Children.Count == 1 && panel.Children[0] is IActivateableControl a)
                 {
                     a.Activate();
@@ -349,11 +344,11 @@ namespace CharacterMap.Views
                     VisualStateManager.GoToState(this, ContentScrollEnabledState.Name, false);
 
 
-                // X: Start child animation
+                // 5: Start child animation
                 if (Settings.UseSelectionAnimations)
                     CompositionFactory.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
 
-                // X: Show selected panel
+                // 6: Show selected panel
                 panel.Visibility = Visibility.Visible;
             }
         }
@@ -458,11 +453,10 @@ namespace CharacterMap.Views
 
             //ResourceHelper.SendThemeChanged();
 
-
             string key = Settings.ApplicationDesignTheme switch
             {
                 1 => "FUI",
-                2 => " Zune",
+                2 => "Zune",
                 _ => "Default"
             };
             bool t = VisualStateManager.GoToState(this, $"{key}ThemeState", true);
