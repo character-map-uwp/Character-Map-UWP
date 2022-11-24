@@ -24,6 +24,10 @@ namespace CharacterMap.Models
         public bool IsVariation { get; }
 
         public TypographyFeatureInfo DefaultTypography { get; }
+
+        /// <summary>
+        /// Typography to pass to DirectText control
+        /// </summary>
         public TypographyFeatureInfo DXTypography { get; }
 
         /// <summary>

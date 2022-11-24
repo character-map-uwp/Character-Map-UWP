@@ -1,5 +1,6 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Models;
+using CharacterMapCX;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Graphics.Canvas;
@@ -34,11 +35,14 @@ namespace CharacterMap.ViewModels
 
         public FontVariant Face { get; }
 
+        public TypographyFeatureInfo Typography { get; }
+
         public ObservableCollection<CalligraphyHistoryItem> Histories { get; } = new();
 
         public CalligraphyViewModel(CharacterRenderingOptions options)
         {
             Face = options.Variant;
+            Typography = options.DXTypography;
         }
 
         void EnsureManager(InkStrokeContainer container)

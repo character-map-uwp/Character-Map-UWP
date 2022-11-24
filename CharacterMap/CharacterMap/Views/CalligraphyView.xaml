@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -592,19 +593,24 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock
+                        <cx:DirectText
                             x:Name="Guide"
                             Grid.Row="1"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             h:CompositionFactory.OpacityDuration="0:0:0.15"
-                            FontFamily="{x:Bind ViewModel.Face.DisplaySource}"
+                            FallbackFont="{x:Bind core:Converters.GetFontFallback()}"
+                            FontFace="{x:Bind ViewModel.Face.FontFace}"
+                            FontFamily="{x:Bind ViewModel.Face.Source}"
                             FontSize="{x:Bind ViewModel.FontSize, Mode=OneWay}"
                             FontStretch="{x:Bind ViewModel.Face.FontFace.Stretch}"
                             FontStyle="{x:Bind ViewModel.Face.FontFace.Style}"
                             FontWeight="{x:Bind ViewModel.Face.FontFace.Weight}"
+                            IsOverwriteCompensationEnabled="True"
+                            IsTextWrappingEnabled="True"
                             Text="{Binding ViewModel.Text, Mode=OneWay}"
+                            Typography="{x:Bind ViewModel.Typography}"
                             d:FontSize="124"
                             d:Opacity="0.3"
                             d:Text="Preview" />
