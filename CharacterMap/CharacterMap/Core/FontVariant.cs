@@ -84,6 +84,9 @@ namespace CharacterMap.Core
         /// </summary>
         public string DisplaySource => $"{Source}, /Assets/AdobeBlank.otf#Adobe Blank";
 
+        /// <summary>
+        /// Font source that external applications should use to display this font in XAML
+        /// </summary>
         public string XamlFontSource =>
             (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 
