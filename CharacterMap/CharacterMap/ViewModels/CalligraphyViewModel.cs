@@ -35,14 +35,15 @@ namespace CharacterMap.ViewModels
 
         public FontVariant Face { get; }
 
-        public TypographyFeatureInfo Typography { get; }
+        public CharacterRenderingOptions Options { get; }
+
 
         public ObservableCollection<CalligraphyHistoryItem> Histories { get; } = new();
 
         public CalligraphyViewModel(CharacterRenderingOptions options)
         {
             Face = options.Variant;
-            Typography = options.DXTypography;
+            Options = options;
         }
 
         void EnsureManager(InkStrokeContainer container)

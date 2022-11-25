@@ -197,6 +197,9 @@
       <DependentUpon>CategoryFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CharacterGridView.cs" />
+    <Compile Include="Controls\CharacterPicker.xaml.cs">
+      <DependentUpon>CharacterPicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ContentGroup.cs" />
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
@@ -437,6 +440,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Controls\CategoryFlyout.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\CharacterPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

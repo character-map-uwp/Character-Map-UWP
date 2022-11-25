@@ -343,6 +343,7 @@
                 <Grid ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
                     <TextBox
@@ -352,10 +353,21 @@
                         Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         d:Header="Guide Text"
                         d:Text="Preview" />
+
+                    <Button
+                        Grid.Column="1"
+                        Margin="-8 0 0 0"
+                        VerticalAlignment="Bottom"
+                        Style="{StaticResource SmolButton}">
+                        <SymbolIcon Symbol="Add" />
+                        <Button.Flyout>
+                            <Flyout Opening="Flyout_Opening" />
+                        </Button.Flyout>
+                    </Button>
                     <Slider
                         x:Name="FontSizeSlider"
                         x:Uid="GuideFontSlider"
-                        Grid.Column="1"
+                        Grid.Column="2"
                         Maximum="400"
                         Minimum="60"
                         Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
@@ -595,7 +607,6 @@
 
                         <cx:DirectText
                             x:Name="Guide"
-                            Grid.Row="1"
                             Grid.ColumnSpan="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -610,14 +621,13 @@
                             IsOverwriteCompensationEnabled="True"
                             IsTextWrappingEnabled="True"
                             Text="{Binding ViewModel.Text, Mode=OneWay}"
-                            Typography="{x:Bind ViewModel.Typography}"
+                            Typography="{x:Bind ViewModel.Options.DXTypography}"
                             d:FontSize="124"
                             d:Opacity="0.3"
                             d:Text="Preview" />
 
                         <Border
                             x:Name="CanvasContainer"
-                            Grid.Row="1"
                             Grid.ColumnSpan="2"
                             Background="{ThemeResource LayerFillColorDefaultBrush}"
                             CornerRadius="4"

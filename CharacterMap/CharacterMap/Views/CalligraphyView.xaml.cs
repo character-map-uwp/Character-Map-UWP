@@ -1,4 +1,5 @@
-﻿using CharacterMap.Core;
+﻿using CharacterMap.Controls;
+using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
@@ -157,6 +158,24 @@ namespace CharacterMap.Views
             {
                 ViewModel.Histories.Remove(item);
             }
+        }
+
+        private void Flyout_Opening(object sender, object e)
+        {
+            if (sender is Flyout flyout)
+            {
+                if (flyout.Content is CharacterPicker p)
+                    p.CharacterSelected -= P_CharacterSelected;
+
+                p = new CharacterPicker(ViewModel.Options);
+                p.CharacterSelected += P_CharacterSelected;
+                flyout.Content = p;
+            }
+        }
+
+        private void P_CharacterSelected(object sender, Character e)
+        {
+            ViewModel.Text += e.Char;
         }
 
         private void SaveAsSVG(object sender, RoutedEventArgs e)
@@ -353,11 +372,12 @@ namespace CharacterMap.Views
             SwapButton.IsEnabled = true;
         }
 
+
+
+
         #endregion
 
-
-
-
+        
     }
 
     public partial class CalligraphyView
