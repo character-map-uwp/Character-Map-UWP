@@ -7,8 +7,8 @@ using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
 using CharacterMapCX;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +55,8 @@ namespace CharacterMap.Helpers
         /// button)
         /// </summary>
         public bool IsExternalFile      { get; set; }
+
+        public string PreviewText { get; set; }
     }
 
 
@@ -116,29 +118,6 @@ namespace CharacterMap.Helpers
                     _ = FontMapView.CreateNewViewForFontAsync(fnt, null, f.DataContext as CharacterRenderingOptions);
             }
 
-            static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
-            {
-                if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
-                {
-                    var result = await _collections.AddToCollectionAsync(fnt, _collections.SymbolCollection);
-
-                    WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
-
-                    if (result.Success)
-                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
-                }
-            }
-
-            static void CreateCollection_Click(object sender, RoutedEventArgs e)
-            {
-                var d = new CreateCollectionDialog
-                {
-                    DataContext = (sender as FrameworkElement)?.DataContext
-                };
-
-                _ = d.ShowAsync();
-            }
-
             static void SaveFont_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is MenuFlyoutItem item && item.Tag is FontVariant fnt)
@@ -159,20 +138,6 @@ namespace CharacterMap.Helpers
                     && f.Tag is CharacterRenderingOptions o)
                 {
                     WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
-                }
-            }
-
-            async void RemoveFrom_Click(object sender, RoutedEventArgs e)
-            {
-                if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
-                {
-                    UserFontCollection collection = (main.SelectedCollection == null && main.FontListFilter == BasicFontFilter.SymbolFonts)
-                        ? _collections.SymbolCollection
-                        : main.SelectedCollection;
-
-                    await _collections.RemoveFromCollectionAsync(fnt, collection);
-                    WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new CollectionUpdatedArgs(fnt, collection, false)));
-                    WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
                 }
             }
 
@@ -207,7 +172,7 @@ namespace CharacterMap.Helpers
 
                     menu.Items.Add(new MenuFlyoutSeparator().SetVisible(headerContent != null));
 
-                    // Add "Open in New Window" button
+                    // 1. Add "Open in New Window" button
                     if (!standalone)
                     {
                         MenuFlyoutItem newWindow = new()
@@ -226,6 +191,7 @@ namespace CharacterMap.Helpers
                         }
                     }
 
+                    // 2. Add Save Font File & Export Font Glyphs options
                     if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.FontFace))
                     {
                         MenuFlyoutItem saveButton = new MenuFlyoutItem()
@@ -250,85 +216,14 @@ namespace CharacterMap.Helpers
                         menu.Items.Add(exportButton);
                     }
 
-                    // Add "Add to Collection" button
+                    // 3. Add "Add to Collection" button
                     if (isExternalFile is false && args.IsFolderView is false)
                     {
-                        MenuFlyoutSubItem newColl = new()
-                        {
-                            Text = Localization.Get("AddToCollectionFlyout/Text"),
-                            Icon = new FontIcon { Glyph = "\uE71D" }
-                        };
-
-                        // Create "New Collection" Item
-                        MenuFlyoutItem newCollection = new()
-                        {
-                            Text = Localization.Get("NewCollectionItem/Text"),
-                            Icon = new FontIcon { Glyph = "\uE109" },
-                            DataContext = font
-                        };
-                        newCollection.Click += CreateCollection_Click;
-
-                        if (newColl.Items != null)
-                        {
-                            newColl.Items.Add(newCollection);
-
-                            // Create "Symbol Font" item
-                            if (!font.IsSymbolFont)
-                            {
-                                newColl.Items.Add(new MenuFlyoutSeparator());
-
-                                MenuFlyoutItem symb = new()
-                                {
-                                    Text = Localization.Get("OptionSymbolFonts/Text"),
-                                    IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name),
-                                    DataContext = font
-                                };
-                                symb.Click += AddToSymbolFonts_Click;
-                                newColl.Items.Add(symb);
-                            }
-                        }
-
-                        coll = newColl;
-                        menu.Items.Add(coll);
-
-                        // Add items for each user Collection
-                        if (_collections.Items.Count > 0)
-                        {
-                            if (coll.Items != null)
-                            {
-                                coll.Items.Add(new MenuFlyoutSeparator());
-
-                                foreach (var m in
-                                        _collections.Items.Select(item => new MenuFlyoutItem
-                                        {
-                                            DataContext = item,
-                                            Text = item.Name,
-                                            IsEnabled = !item.Fonts.Contains(font.Name)
-                                        }))
-                                {
-                                    if (m.IsEnabled)
-                                    {
-                                        m.Click += async (s, a) =>
-                                        {
-                                            UserFontCollection collection =
-                                                (UserFontCollection)((FrameworkElement)s).DataContext;
-                                            AddToCollectionResult result =
-                                                await _collections.AddToCollectionAsync(font, collection);
-
-                                            if (result.Success)
-                                            {
-                                                WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
-                                            }
-                                        };
-                                    }
-
-                                    coll.Items.Add(m);
-                                }
-                            }
-                        }
+                        coll = AddCollectionItems(menu, font);
                     }
                 }
 
+                // 4. Add "Remove from Collection" item
                 // Only show the "Remove from Collection" menu item if:
                 //  -- we are not in a stand-alone window
                 //  AND
@@ -338,21 +233,7 @@ namespace CharacterMap.Helpers
                 //     the user has manually tagged as a symbol font
                 if (!standalone && !args.IsFolderView)
                 {
-                    if (main.SelectedCollection != null ||
-                        (main.FontListFilter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
-                    {
-                        menu.Items.Add(new MenuFlyoutSeparator());
-
-                        MenuFlyoutItem removeItem = new()
-                        {
-                            Text = Localization.Get("RemoveFromCollectionItem/Text"),
-                            Icon = new FontIcon { Glyph = "\uE108" },
-                            Tag = font,
-                            DataContext = font
-                        };
-                        removeItem.Click += RemoveFrom_Click;
-                        menu.Items.Add(removeItem);
-                    }
+                    TryAddRemoveFromCollection(menu, font, main.SelectedCollection, main.FontListFilter);
                 }
 
                 if (showAdvanced)
@@ -425,7 +306,172 @@ namespace CharacterMap.Helpers
 
                     menu.Items.Add(item);
                 }
+
+
+                menu.Items.Add(new MenuFlyoutSeparator());
+
+                MenuFlyoutItem cali = new MenuFlyoutItem
+                {
+                    Text = Localization.Get("CalligraphyLabel/Text"),
+                    Icon = new FontIcon { Glyph = "\uEDFB" }
+                }.AddKeyboardAccelerator(VirtualKey.I, VirtualKeyModifiers.Control);
+
+                cali.Click += (s, e) =>
+                {
+                    _ = CalligraphyView.CreateWindowAsync(options, args?.PreviewText);
+                };
+
+                menu.Items.Add(cali);
             }
+
+        }
+
+        public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, UserFontCollection collection, BasicFontFilter filter)
+        {
+            if (collection != null || (filter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
+            {
+                menu.Items.Add(new MenuFlyoutSeparator());
+
+                MenuFlyoutItem removeItem = new()
+                {
+                    Text = Localization.Get("RemoveFromCollectionItem/Text"),
+                    Icon = new FontIcon { Glyph = "\uE108" },
+                    Tag = collection == null && filter == BasicFontFilter.SymbolFonts ? _collections.SymbolCollection : collection,
+                    DataContext = font
+                };
+                removeItem.Click += RemoveFrom_Click;
+                menu.Items.Add(removeItem);
+
+                async void RemoveFrom_Click(object sender, RoutedEventArgs e)
+                {
+                    if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt
+                        && f.Tag is UserFontCollection collection)
+                    {
+                        await _collections.RemoveFromCollectionAsync(fnt, collection);
+                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new CollectionUpdatedArgs(fnt, collection, false)));
+                        WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage { SourceCollection = collection });
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds the "Add To Collection" item to a menu with all user collections
+        /// and the ability to create a new collection.
+        /// </summary>
+        /// <param name="menu"></param>
+        /// <param name="font"></param>
+        /// <returns></returns>
+        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font)
+        {
+            #region Event Handlers
+
+            static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
+            {
+                if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
+                {
+                    var result = await _collections.AddToCollectionAsync(fnt, _collections.SymbolCollection);
+
+                    WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
+
+                    if (result.Success)
+                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
+                }
+            }
+
+            static void CreateCollection_Click(object sender, RoutedEventArgs e)
+            {
+                var d = new CreateCollectionDialog
+                {
+                    DataContext = (sender as FrameworkElement)?.DataContext
+                };
+
+                _ = d.ShowAsync();
+            }
+
+            #endregion
+
+            // 1. Add "Add To Collection" item
+            MenuFlyoutSubItem coll;
+            MenuFlyoutSubItem newColl = new()
+            {
+                Text = Localization.Get("AddToCollectionFlyout/Text"),
+                Icon = new FontIcon { Glyph = "\uE71D" }
+            };
+
+            // 2. Add "New Collection" Item
+            MenuFlyoutItem newCollection = new()
+            {
+                Text = Localization.Get("NewCollectionItem/Text"),
+                Icon = new FontIcon { Glyph = "\uE109" },
+                DataContext = font
+            };
+            newCollection.Click += CreateCollection_Click;
+
+
+            if (newColl.Items != null)
+            {
+                newColl.Items.Add(newCollection);
+
+                // 3. Create "Symbol Font" item
+                if (!font.IsSymbolFont)
+                {
+                    newColl.Items.Add(new MenuFlyoutSeparator());
+
+                    MenuFlyoutItem symb = new()
+                    {
+                        Text = Localization.Get("OptionSymbolFonts/Text"),
+                        IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name),
+                        DataContext = font
+                    };
+                    symb.Click += AddToSymbolFonts_Click;
+                    newColl.Items.Add(symb);
+                }
+            }
+
+            coll = newColl;
+            menu.Items.Add(coll);
+
+            // 4. Add items for each user Collection
+            if (_collections.Items.Count > 0)
+            {
+                if (coll.Items != null)
+                {
+                    coll.Items.Add(new MenuFlyoutSeparator());
+
+                    foreach (var m in
+                            _collections.Items.Select(item => new MenuFlyoutItem
+                            {
+                                Tag = item,
+                                DataContext = font,
+                                Text = item.Name,
+                                IsEnabled = !item.Fonts.Contains(font.Name)
+                            }))
+                    {
+                        if (m.IsEnabled)
+                        {
+                            m.Click += async (s, a) =>
+                            {
+                                if (s is FrameworkElement f 
+                                    && f.DataContext is InstalledFont fnt
+                                    && f.Tag is UserFontCollection clct)
+                                {
+                                    AddToCollectionResult result = await _collections.AddToCollectionAsync(fnt, clct);
+
+                                    if (result.Success)
+                                    {
+                                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
+                                    }
+                                }
+                            };
+                        }
+
+                        coll.Items.Add(m);
+                    }
+                }
+            }
+
+            return coll;
         }
 
         /// <summary>

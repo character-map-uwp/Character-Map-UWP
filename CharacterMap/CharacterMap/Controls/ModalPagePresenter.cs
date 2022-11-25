@@ -144,7 +144,10 @@ namespace CharacterMap.Controls
             OnTitleContentChanged();
         }
 
-
+        public UIElement GetTitleElement()
+        {
+            return this.GetTemplateChild("TitleHeader") as UIElement;
+        }
 
         private void OnTitleContentChanged()
         {

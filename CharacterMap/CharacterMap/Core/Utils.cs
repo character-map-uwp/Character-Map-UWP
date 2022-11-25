@@ -4,7 +4,7 @@ using CharacterMapCX;
 using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -167,7 +167,7 @@ namespace CharacterMap.Core
             return false;
         }
 
-        private static string AsHex(Color c)
+        private static string AsHex(this Color c)
         {
             return $"#{c.R:x2}{c.G:x2}{c.B:x2}";
         }
@@ -303,7 +303,6 @@ namespace CharacterMap.Core
                 sb.Clear();
                 _builderPool.Return(sb);
             }
-            
         }
 
         public static string GetWeightName(FontWeight weight)
@@ -383,7 +382,7 @@ namespace CharacterMap.Core
 
                     sb.AppendFormat("<path d=\"{0}\" style=\"fill: {1}; fill-opacity: {2}\" />",
                         p,
-                        AsHex(colors[paths.IndexOf(path)]),
+                        colors[paths.IndexOf(path)].AsHex(),
                         (double)colors[paths.IndexOf(path)].A / 255d);
                 }
                 sb.Append("</svg>");

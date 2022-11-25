@@ -1,7 +1,7 @@
 ﻿using CharacterMap.Controls;
 using CharacterMap.Core;
 using CharacterMap.Services;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using SQLitePCL;
 using System;
 using System.Collections.Generic;

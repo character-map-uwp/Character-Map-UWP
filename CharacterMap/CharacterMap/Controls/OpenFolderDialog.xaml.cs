@@ -4,7 +4,7 @@ using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMap.Views;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.IO;

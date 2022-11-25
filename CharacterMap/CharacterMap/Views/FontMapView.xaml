@@ -130,6 +130,14 @@
                 Click="AddClick"
                 Icon="Add" />
             <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem x:Uid="CalligraphyLabel" Click="OpenCalligraphyClick">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEDFB;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+            <MenuFlyoutSeparator />
+
             <MenuFlyoutSubItem
                 x:Name="PngRoot"
                 x:Uid="ExportPNGLabel"
@@ -461,6 +469,7 @@
                                                     <Setter Property="Grid.Column" Value="1" />
                                                     <Setter Property="TextWrapping" Value="Wrap" />
                                                     <Setter Property="VerticalAlignment" Value="Top" />
+                                                    <Setter Property="IsTextSelectionEnabled" Value="True" />
                                                 </Style>
                                             </Panel.Resources>
                                             <TextBlock x:Uid="FontPropTitle" FontWeight="Bold" />
@@ -570,7 +579,6 @@
                                                     Grid.Column="0"
                                                     Grid.ColumnSpan="2"
                                                     Margin="0,-4,0,0"
-                                                    IsTextSelectionEnabled="True"
                                                     Style="{StaticResource Value}"
                                                     Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
                                                     Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
@@ -584,7 +592,6 @@
                                                     Grid.Column="0"
                                                     Grid.ColumnSpan="2"
                                                     Margin="0,-4,0,0"
-                                                    IsTextSelectionEnabled="True"
                                                     Style="{StaticResource Value}"
                                                     Text="{x:Bind ViewModel.SelectedVariantAnalysis.FilePath, Mode=OneWay}"
                                                     Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}" />
@@ -821,7 +828,8 @@
                     Height="120"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     Loading="CopySequenceRoot_Loading"
-                    Visibility="Collapsed">
+                    Visibility="Collapsed"
+                    d:Visibility="Visible">
                     <Grid x:Name="CopySequenceContent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />

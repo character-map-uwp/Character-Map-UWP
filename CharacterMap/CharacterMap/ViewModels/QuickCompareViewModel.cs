@@ -3,9 +3,9 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.Views;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Messaging;
-using Microsoft.Toolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -147,7 +147,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private void RefreshFontList(UserFontCollection collection = null)
+        internal void RefreshFontList(UserFontCollection collection = null)
         {
             try
             {

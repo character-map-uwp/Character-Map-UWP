@@ -367,7 +367,7 @@
                             Height="{StaticResource TitleRowHeight}">
 
                             <TextBlock
-                                x:Name="SettingsHeader"
+                                x:Name="TitleHeader"
                                 Margin="20 0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"

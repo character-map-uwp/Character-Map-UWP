@@ -1,5 +1,5 @@
 ﻿using CharacterMap.Controls;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI;

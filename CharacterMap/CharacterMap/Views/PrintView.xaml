@@ -13,11 +13,11 @@
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
-    d:DesignHeight="720"
-    d:DesignWidth="1280"
     Background="Transparent"
     TabFocusNavigation="Cycle"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:DesignHeight="720"
+    d:DesignWidth="1280">
 
     <UserControl.Resources>
 
@@ -120,13 +120,12 @@
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot">
-
         <controls1:ModalPagePresenter
             x:Name="Presenter"
             Title="{core:Localizer Key=PrintViewTitle/Text}"
-            d:TitleBarHeight="32"
             CloseClicked="{x:Bind Hide}"
-            TitleBarHeight="{x:Bind TitleBarHeight, Mode=OneWay}">
+            TitleBarHeight="{x:Bind TitleBarHeight, Mode=OneWay}"
+            d:TitleBarHeight="32">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
@@ -392,22 +391,30 @@
                             x:Name="BtnContinue"
                             x:Uid="BtnContinue"
                             Width="150"
-                            d:Content="{core:Localizer Key=BtnContinue/Content}"
                             Click="BtnContinue_Click"
                             IsEnabled="{x:Bind CanContinue, Mode=OneWay}"
-                            Style="{StaticResource AccentButtonStyle}" />
+                            Style="{StaticResource AccentButtonStyle}"
+                            d:Content="{core:Localizer Key=BtnContinue/Content}" />
                         <Button
                             x:Uid="BtnCancel"
                             Width="150"
-                            d:Content="{core:Localizer Key=BtnCancel/Content}"
                             Click="{x:Bind Hide}"
-                            Style="{StaticResource DefaultThemeButtonStyle}" />
+                            Style="{StaticResource DefaultThemeButtonStyle}"
+                            d:Content="{core:Localizer Key=BtnCancel/Content}" />
                     </StackPanel>
                 </Grid>
             </Grid>
         </controls1:ModalPagePresenter>
 
-
-
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="ThemeStates">
+                <VisualState x:Name="ClassicThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="BottomBar.Background" Value="Transparent" />
+                        <Setter Target="Presenter.Margin" Value="0 0 0 -6" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
     </Grid>
 </views:PopoverViewBase>

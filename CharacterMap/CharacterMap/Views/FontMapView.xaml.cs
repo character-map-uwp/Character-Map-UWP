@@ -5,21 +5,17 @@ using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMapCX;
-using Microsoft.Graphics.Canvas.Text;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
-using System.Transactions;
 using Windows.Storage;
 using Windows.System;
-using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -27,8 +23,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Animation;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CharacterMap.Views
 {
@@ -109,22 +103,21 @@ namespace CharacterMap.Views
         public FontMapView()
         {
             InitializeComponent();
-            Loading += FontMapView_Loading;
-            Loaded += FontMapView_Loaded;
-            Unloaded += FontMapView_Unloaded;
+
+            ViewModel = new FontMapViewModel(
+                DesignMode ? new DialogService() : Ioc.Default.GetService<IDialogService>(), 
+                ResourceHelper.AppSettings);
+
+            if (DesignMode)
+                return;
 
             RequestedTheme = ResourceHelper.GetEffectiveTheme();
-            ViewModel = new FontMapViewModel(
-                Ioc.Default.GetService<IDialogService>(), 
-                ResourceHelper.AppSettings);
+            Loading += FontMapView_Loading;
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             CharGrid.ItemSize = ViewModel.Settings.GridSize;
             CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
             _xamlDirect = XamlDirect.GetDefault();
-
-            LeakTrackingService.Register(this);
-            ResourceHelper.GoToThemeState(this);
         }
 
         private void FontMapView_Loading(FrameworkElement sender, object args)
@@ -148,24 +141,24 @@ namespace CharacterMap.Views
             }
         }
 
-        private void FontMapView_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded(object sender, RoutedEventArgs e)
         {
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
-            WeakReferenceMessenger.Default.Register<AppNotificationMessage>(this, (o,m) => OnNotificationMessage(m));
-            WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
-            WeakReferenceMessenger.Default.Register<PrintRequestedMessage>(this, (o,m) =>
+            Register<AppNotificationMessage>(OnNotificationMessage);
+            Register<AppSettingsChangedMessage>(OnAppSettingsChanged);
+            Register<PrintRequestedMessage>(m =>
             {
                 if (Dispatcher.HasThreadAccess)
                     TryPrint();
             });
-            WeakReferenceMessenger.Default.Register<ExportRequestedMessage>(this, (o, m) =>
+            Register<ExportRequestedMessage>(m =>
             {
                 if (Dispatcher.HasThreadAccess)
                     TryExport();
             });
-            WeakReferenceMessenger.Default.Register<CopyToClipboardMessage>(this, async (o, m) =>
+            Register<CopyToClipboardMessage>(async m =>
             {
                 if (Dispatcher.HasThreadAccess)
                     await ViewModel.RequestCopyToClipboardAsync(m);
@@ -190,13 +183,13 @@ namespace CharacterMap.Views
             //PreviewGrid.SetShowAnimation(CompositionFactory.CreateSlideIn(PreviewGrid));
         }
 
-        private void FontMapView_Unloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded(object sender, RoutedEventArgs e)
         {
             PreviewColumn.UnregisterPropertyChangedCallback(ColumnDefinition.WidthProperty, _previewColumnToken);
             ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
-            WeakReferenceMessenger.Default.UnregisterAll(this);
+            Messenger.UnregisterAll(this);
         }
 
         public void Cleanup()
@@ -356,6 +349,10 @@ namespace CharacterMap.Views
                     case VirtualKey.Q:
                         if (ViewModel.SelectedVariant is FontVariant va)
                             _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
+                        break;
+                    case VirtualKey.I:
+                        _ = CalligraphyView.CreateWindowAsync(
+                                ViewModel.RenderingOptions, ViewModel.Sequence);
                         break;
                     default:
                         return false;
@@ -710,7 +707,8 @@ namespace CharacterMap.Views
                         Standalone = IsStandalone,
                         ShowAdvanced = true,
                         IsExternalFile = ViewModel.IsExternalFile,
-                        Folder = ViewModel.Folder
+                        Folder = ViewModel.Folder,
+                        PreviewText = ViewModel.Sequence
                     });
             }
         }
@@ -721,7 +719,7 @@ namespace CharacterMap.Views
             {
                 foreach (var provider in ViewModel.Providers)
                 {
-                    var item = new MenuFlyoutItem
+                    MenuFlyoutItem item = new()
                     {
                         Command = ViewModel.ToggleDev,
                         CommandParameter = provider.Type,
@@ -821,6 +819,16 @@ namespace CharacterMap.Views
                 && item.DataContext is Character c)
             {
                 ViewModel.Sequence += c.Char;
+            }
+        }
+
+        private void OpenCalligraphyClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is MenuFlyoutItem item
+                && item.DataContext is Character c)
+            {
+                _ = CalligraphyView.CreateWindowAsync(
+                    ViewModel.RenderingOptions, c.Char);
             }
         }
 
@@ -1058,6 +1066,8 @@ namespace CharacterMap.Views
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
+
+        
     }
 
 

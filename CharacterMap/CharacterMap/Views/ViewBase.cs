@@ -1,36 +1,68 @@
 ﻿using CharacterMap.Annotations;
 using CharacterMap.Core;
+using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMap.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Views
 {
-    public abstract class ViewBase : UserControl, INotifyPropertyChanged
+    [ObservableObject]
+    public abstract partial class ViewBase : Page
     {
-        public event PropertyChangedEventHandler PropertyChanged;
+        protected IMessenger Messenger => WeakReferenceMessenger.Default;
 
-        [NotifyPropertyChangedInvocator]
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        /// <summary>
+        /// Returns true if the process is running within the VS designer
+        /// </summary>
+        protected bool DesignMode => Windows.ApplicationModel.DesignMode.DesignModeEnabled;
+
+        public ViewBase()
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            this.Loaded += OnLoadedBase;
+            this.Unloaded += OnUnloaded;
+
+            ResourceHelper.GoToThemeState(this);
+
+            if (DesignMode)
+                return;
+
+            LeakTrackingService.Register(this);
         }
 
-        protected bool Set<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        private void OnLoadedBase(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            if (!EqualityComparer<T>.Default.Equals(storage, value))
-            {
-                storage = value;
-                OnPropertyChanged(propertyName);
-                return true;
-            }
+            ResourceHelper.GoToThemeState(this);
+            OnLoaded(sender, e);
+        }
 
-            return false;
+        protected virtual void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+        }
+
+        protected virtual void OnUnloaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        {
+            Messenger.UnregisterAll(this);
+        }
+
+        protected void Register<T>(Action<T> handler) where T : class
+        {
+            Messenger.Register<T>(this, (o, m) => handler(m));
+        }
+
+        protected void Unregister<T>() where T : class
+        {
+            Messenger.Unregister<T>(this);
         }
 
         protected void RunOnUI(Action a)

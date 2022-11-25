@@ -30,7 +30,7 @@ namespace CharacterMap.Controls
 
         private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new ();
             sb.AppendLine($"<!-- If possible, please describe what you were doing before the issue occurred -->");
             sb.AppendLine();
             sb.AppendLine();
@@ -44,7 +44,7 @@ namespace CharacterMap.Controls
             sb.AppendLine($"**App Culture**: {SystemInformation.Instance.Culture.Name}");
 
             Utils.CopyToClipBoard(sb.ToString());
-            var uri = new Uri("https://github.com/character-map-uwp/Character-Map-UWP/issues/new");
+            Uri uri = new ("https://github.com/character-map-uwp/Character-Map-UWP/issues/new");
             _ = Launcher.LaunchUriAsync(uri);
         }
     }

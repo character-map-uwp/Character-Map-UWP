@@ -46,6 +46,11 @@ namespace CharacterMapCX
 				DependencyProperty^ get() { return _IsColorFontEnabledProperty; }
 			}
 
+			static property DependencyProperty^ IsOverwriteCompensationEnabledProperty
+			{
+				DependencyProperty^ get() { return _IsOverwriteCompensationEnabledProperty; }
+			}
+
 			static property DependencyProperty^ IsCharacterFitEnabledProperty
 			{
 				DependencyProperty^ get() { return _IsCharacterFitEnabledProperty; }
@@ -104,6 +109,12 @@ namespace CharacterMapCX
 				void set(bool value) { SetValue(IsCharacterFitEnabledProperty, value); }
 			}
 
+			property bool IsOverwriteCompensationEnabled
+			{
+				bool get() { return (bool)GetValue(IsOverwriteCompensationEnabledProperty); }
+				void set(bool value) { SetValue(IsOverwriteCompensationEnabledProperty, value); }
+			}
+
 			property UINT32 UnicodeIndex
 			{
 				UINT32 get() { return (UINT32)GetValue(UnicodeIndexProperty); }
@@ -145,6 +156,7 @@ namespace CharacterMapCX
 		private:
 			static DependencyProperty^ _FallbackFontProperty;
 			static DependencyProperty^ _IsColorFontEnabledProperty;
+			static DependencyProperty^ _IsOverwriteCompensationEnabledProperty;
 			static DependencyProperty^ _UnicodeIndexProperty;
 			static DependencyProperty^ _TextProperty;
 			static DependencyProperty^ _AxisProperty;
@@ -191,16 +203,22 @@ namespace CharacterMapCX
 					"FallbackFont", DWriteFallbackFont::typeid, DirectText::typeid, meta);
 			}
 
-			if (_IsColorFontEnabledProperty == nullptr)
-			{
-				_IsColorFontEnabledProperty = DependencyProperty::Register(
-					"IsColorFontEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(true, callback));
-			}
-
 			if (_IsCharacterFitEnabledProperty == nullptr)
 			{
 				_IsCharacterFitEnabledProperty = DependencyProperty::Register(
 					"IsCharacterFitEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(false, callback));
+			}
+
+			if (_IsOverwriteCompensationEnabledProperty == nullptr)
+			{
+				_IsOverwriteCompensationEnabledProperty = DependencyProperty::Register(
+					"IsOverwriteCompensationEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(false, callback));
+			}
+
+			if (_IsColorFontEnabledProperty == nullptr)
+			{
+				_IsColorFontEnabledProperty = DependencyProperty::Register(
+					"IsColorFontEnabled", bool::typeid, DirectText::typeid, ref new PropertyMetadata(true, callback));
 			}
 
 			if (_UnicodeIndexProperty == nullptr)

@@ -6,17 +6,19 @@ using CharacterMap.Services;
 using CharacterMap.Views;
 using CharacterMapCX;
 using Microsoft.Graphics.Canvas.Text;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace CharacterMap.ViewModels
 {
@@ -186,7 +188,8 @@ namespace CharacterMap.ViewModels
             ToggleDev = new RelayCommand<DevProviderType>(t => SetDev(t));
             SelectedGlyphCategories = Unicode.CreateCategoriesList();
 
-            _interop = Utils.GetInterop();
+            if (DesignMode.DesignModeEnabled is false)
+                _interop = Utils.GetInterop();
 
             _searchDebouncer = new Debouncer();
             _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();

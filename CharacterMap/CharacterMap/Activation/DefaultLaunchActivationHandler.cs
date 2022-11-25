@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using CharacterMap.Services;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Windows.ApplicationModel.Activation;
 
 namespace CharacterMap.Activation

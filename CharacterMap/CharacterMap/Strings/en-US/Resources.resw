@@ -1177,4 +1177,49 @@ Requires a restart to take effect.</value>
   <data name="FontFolderMenuItem.Text" xml:space="preserve">
     <value>Font Folder</value>
   </data>
+  <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Add to history</value>
+  </data>
+  <data name="CalligraphyLabel.Text" xml:space="preserve">
+    <value>Calligraphy</value>
+  </data>
+  <data name="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <data name="ClearAllItem.Text" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <data name="GuideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Show Guide</value>
+  </data>
+  <data name="HistoryLabel.Text" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Redo (Ctrl + Y)</value>
+  </data>
+  <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Save (Ctrl + S)</value>
+  </data>
+  <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Side by side</value>
+  </data>
+  <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Undo (Ctrl + Z)</value>
+  </data>
+  <data name="GuideFontSlider.Header" xml:space="preserve">
+    <value>Guide Size</value>
+  </data>
+  <data name="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open Character Picker</value>
+  </data>
+  <data name="GuideHeaderLabel.Text" xml:space="preserve">
+    <value>Guide Text</value>
+  </data>
+  <data name="GuideSizeLabel.Text" xml:space="preserve">
+    <value>Guide Size</value>
+  </data>
 </root>

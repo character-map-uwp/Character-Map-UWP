@@ -4,14 +4,15 @@ using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CharacterMapCX.Controls;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -19,7 +20,6 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CharacterMap.Views
 {
@@ -31,7 +31,7 @@ namespace CharacterMap.Views
         }
     }
 
-    public sealed partial class QuickCompareView : ViewBase
+    public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPresenter
     {
         public QuickCompareViewModel ViewModel { get; }
 
@@ -46,8 +46,6 @@ namespace CharacterMap.Views
             ViewModel = new QuickCompareViewModel(args);
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
-            this.Loaded += QuickCompareView_Loaded;
-            this.Unloaded += QuickCompareView_Unloaded;
 
             if (args.IsQuickCompare)
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
@@ -56,24 +54,50 @@ namespace CharacterMap.Views
 
             _navHelper.BackRequested += (s, e) => { ViewModel.SelectedFont = null; };
 
-            ResourceHelper.GoToThemeState(this);
-            LeakTrackingService.Register(this);
+            if (DesignMode)
+                return;
+
+            this.Opacity = 0;
         }
 
-        private void QuickCompareView_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded(object sender, RoutedEventArgs e)
         {
             VisualStateManager.GoToState(this, NormalState.Name, false);
             TitleBarHelper.SetTitle(Presenter.Title);
             _navHelper.Activate();
 
-            //await Task.Delay(150);
-            //Presenter.SetWindowTitleBar();
+            Register<AppNotificationMessage>(OnNotificationMessage);
+            Register<CollectionsUpdatedMessage>(HandleMessage);
+            Register<CollectionRequestedMessage>(HandleMessage);
+
+            AnimateIn();
         }
 
-        private void QuickCompareView_Unloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded(object sender, RoutedEventArgs e)
         {
             ViewModel?.Deactivated();
             _navHelper.Deactivate();
+
+            Messenger.UnregisterAll(this);
+        }
+
+        private void AnimateIn()
+        {
+            this.Opacity = 1;
+            int s = 66;
+            int o = 110;
+
+            // Title
+            CompositionFactory.PlayEntrance(Presenter.GetTitleElement(), s + 30, o);
+
+            // First Row
+            CompositionFactory.PlayEntrance(TopRow, s + 113, o);
+
+            // Second Row
+            CompositionFactory.PlayEntrance(SecondRow, s + 200, o);
+
+            // Third Row
+            CompositionFactory.PlayEntrance(FontsRoot, s + 300, o);
         }
 
         private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -145,10 +169,7 @@ namespace CharacterMap.Views
                         m.Click += (s, a) =>
                         {
                             if (m.DataContext is UserFontCollection u)
-                            {
-
                                 ViewModel.SelectedCollection = u;
-                            }
                         };
                         menu.Items.Add(m);
                     }
@@ -183,8 +204,14 @@ namespace CharacterMap.Views
             }
         }
 
-
-
+        private void Button_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            if (sender is Button b && e.GetCurrentPoint(b).Properties.IsMiddleButtonPressed
+                && b.Content is InstalledFont font)
+            {
+                _ = FontMapView.CreateNewViewForFontAsync(font);
+            }
+        }
 
         /*
          * ElementName Bindings don't work inside ItemsRepeater, so to change
@@ -299,15 +326,40 @@ namespace CharacterMap.Views
                 ContextFlyout.SetItemsDataContext(b.Content);
                 ContextFlyout.ShowAt(b);
             }
+            else if (sender is Button bu && bu.Content is InstalledFont font)
+            {
+                // 1. Clear the context menu
+                while (MainContextFlyout.Items.Count > 1)
+                    MainContextFlyout.Items.Remove(MainContextFlyout.Items[^1]);
+
+                // 2. Rebuild with the correct collection information
+                MainContextFlyout.Items.Add(new MenuFlyoutSeparator());
+                FlyoutHelper.AddCollectionItems(MainContextFlyout, font);
+                FlyoutHelper.TryAddRemoveFromCollection(
+                    MainContextFlyout, font, ViewModel.SelectedCollection, ViewModel.FontListFilter);
+
+                // 3. Show Flyout
+                MainContextFlyout.SetItemsDataContext(bu.Content);
+                if (args.TryGetPosition(bu, out Point p))
+                    MainContextFlyout.ShowAt(bu, p);
+                else
+                    MainContextFlyout.ShowAt(bu);
+            }
         }
 
         private void OpenWindow_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is MenuFlyoutItem item 
-                && item.DataContext is CharacterRenderingOptions o
-                && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is InstalledFont font)
+            if (sender is MenuFlyoutItem item)
             {
-                _ = FontMapView.CreateNewViewForFontAsync(font, null, o);
+                if (item.DataContext is CharacterRenderingOptions o
+                    && FontFinder.Fonts.FirstOrDefault(f => f.Variants.Contains(o.Variant)) is InstalledFont font)
+                {
+                    _ = FontMapView.CreateNewViewForFontAsync(font, null, o);
+                }
+                else if (item.DataContext is InstalledFont f)
+                {
+                    _ = FontMapView.CreateNewViewForFontAsync(f);
+                }
             }
         }
 
@@ -396,7 +448,61 @@ namespace CharacterMap.Views
                 }
             }
         }
+
+
+
+
+        /* Notification Helpers */
+
+        private void HandleMessage(CollectionsUpdatedMessage obj)
+        {
+            if (obj.SourceCollection is not null && obj.SourceCollection == ViewModel.SelectedCollection)
+            {
+                RunOnUI(() => ViewModel.RefreshFontList(ViewModel.SelectedCollection));
+            }
+        }
+
+        private void HandleMessage(CollectionRequestedMessage obj)
+        {
+            if (Dispatcher.HasThreadAccess)
+            {
+                obj.Handled = true;
+                ViewModel.SelectedCollection = obj.Collection;
+                GoToNormalState();
+            }
+        }
+
+        public InAppNotification GetNotifier()
+        {
+            if (NotificationRoot == null)
+                this.FindName(nameof(NotificationRoot));
+
+            return DefaultNotification;
+        }
+
+        void OnNotificationMessage(AppNotificationMessage msg)
+        {
+            if (msg.Data is AddToCollectionResult result
+                && result.Success
+                && result.Collection is not null
+                && result.Collection == ViewModel.SelectedCollection
+                && Dispatcher.HasThreadAccess == false)
+            {
+                // If we don't have thread access, it means another window has added an item to
+                // the collection we're currently viewing, and we should refresh our view
+                RunOnUI(() => ViewModel.RefreshFontList(ViewModel.SelectedCollection));
+            }
+
+            if (!Dispatcher.HasThreadAccess)
+                return;
+
+            InAppNotificationHelper.OnMessage(this, msg);
+        }
     }
+
+
+
+
 
     public partial class QuickCompareView
     {

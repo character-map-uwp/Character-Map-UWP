@@ -42,7 +42,6 @@ namespace CharacterMap.Views
             this.InitializeComponent();
 
             CompositionFactory.SetupOverlayPanelAnimation(this);
-            LeakTrackingService.Register(this);
         }
 
         public override void Show()

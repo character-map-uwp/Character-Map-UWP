@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Navigation;
 using CharacterMap.Activation;
 using CharacterMap.Helpers;
 using CharacterMap.Views;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 
 namespace CharacterMap.Services
 {

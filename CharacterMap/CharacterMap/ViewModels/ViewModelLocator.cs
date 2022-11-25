@@ -4,7 +4,7 @@ using CharacterMap.Services;
 using CharacterMap.Views;
 using CharacterMapCX;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 using Windows.UI.Popups;

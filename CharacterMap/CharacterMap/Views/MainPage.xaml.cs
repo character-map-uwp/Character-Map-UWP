@@ -1,19 +1,17 @@
-﻿using CharacterMap.Annotations;
-using CharacterMap.Controls;
+﻿using CharacterMap.Controls;
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Input;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -29,14 +27,11 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Views
 {
-    public sealed partial class MainPage : Page, INotifyPropertyChanged, IInAppNotificationPresenter, IPopoverPresenter
+    public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
         public static CoreDispatcher MainDispatcher { get; private set; }
 
         public MainViewModel ViewModel { get; }
@@ -46,8 +41,6 @@ namespace CharacterMap.Views
         private UISettings _uiSettings { get; }
 
         private ICommand FilterCommand { get; }
-
-        private WeakReferenceMessenger Messenger => WeakReferenceMessenger.Default;
 
         public MainPage() : this(null) { }
 
@@ -67,19 +60,15 @@ namespace CharacterMap.Views
             }
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-            NavigationCacheMode = NavigationCacheMode.Enabled;
 
-            Loaded += MainPage_Loaded;
-            Unloaded += MainPage_Unloaded;
-
-            Messenger.Register<CollectionsUpdatedMessage>(this, (o, m) => OnCollectionsUpdated(m));
-            Messenger.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsChanged(m));
-            Messenger.Register<ModalClosedMessage>(this, (o, m) =>
+            Register<CollectionsUpdatedMessage>(OnCollectionsUpdated);
+            Register<AppSettingsChangedMessage>(OnAppSettingsChanged);
+            Register<ModalClosedMessage>(m =>
             {
                 if (Dispatcher.HasThreadAccess)
                     OnModalClosed();
             });
-            Messenger.Register<PrintRequestedMessage>(this, (o, m) =>
+            Register<PrintRequestedMessage>(m =>
             {
                 if (Dispatcher.HasThreadAccess)
                 {
@@ -92,7 +81,7 @@ namespace CharacterMap.Views
                     OnModalOpened(false);
                 }
             });
-            Messenger.Register<ExportRequestedMessage>(this, (o, m) =>
+            Register<ExportRequestedMessage>(m =>
             {
                 if (Dispatcher.HasThreadAccess)
                 {
@@ -107,14 +96,6 @@ namespace CharacterMap.Views
             _uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
-            ResourceHelper.GoToThemeState(this);
-        }
-
-
-        [NotifyPropertyChangedInvocator]
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -165,17 +146,13 @@ namespace CharacterMap.Views
                 case nameof(AppSettings.UseFontForPreview):
                     OnFontPreviewUpdated();
                     break;
-
-                //case nameof(AppSettings.ApplicationDesignTheme):
-                //    UpdateDesignTheme();
-                //    break;
             }
         }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnLoaded(object sender, RoutedEventArgs e)
         {
-            Messenger.Register<ImportMessage>(this, (o, m) => OnFontImportRequest(m));
-            Messenger.Register<AppNotificationMessage>(this, (o, m) => OnNotificationMessage(m));
+            Register<ImportMessage>(OnFontImportRequest);
+            Register<AppNotificationMessage>(OnNotificationMessage);
 
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
             ViewModel.FontListCreated += ViewModel_FontListCreated;
@@ -185,7 +162,7 @@ namespace CharacterMap.Views
             FontMap.ViewModel.Folder = ViewModel.Folder;
         }
 
-        private void MainPage_Unloaded(object sender, RoutedEventArgs e)
+        protected override void OnUnloaded(object sender, RoutedEventArgs e)
         {
             if (ViewModel.IsSecondaryView)
             {
@@ -201,8 +178,8 @@ namespace CharacterMap.Views
             {
                 // Primary/Main view might actually be restored at some point, so
                 // don't unhook *everything*
-                Messenger.Unregister<ImportMessage>(this);
-                Messenger.Unregister<AppNotificationMessage>(this);
+                Unregister<ImportMessage>();
+                Unregister<AppNotificationMessage>();
             }
 
             ViewModel.FontListCreated -= ViewModel_FontListCreated;
@@ -222,10 +199,7 @@ namespace CharacterMap.Views
 
         private void OnColorValuesChanged(UISettings settings, object e)
         {
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
-            });
+            RunOnUI(() => Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme))));
         }
 
         private void UpdateLoadingStates()
@@ -288,6 +262,11 @@ namespace CharacterMap.Views
 
         private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
+            // Zune theme shows settings button early right now, so to avoid
+            // crashing leave early
+            if (ViewModel.IsLoadingFonts)
+                return; 
+
             this.FindName(nameof(SettingsView));
             SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont);
             OnModalOpened();
@@ -380,12 +359,7 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                     ViewModel.RefreshFontList(ViewModel.SelectedCollection);
                 else
-                {
-                    _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        ViewModel.RefreshFontList(ViewModel.SelectedCollection);
-                    });
-                }
+                    RunOnUI(() => ViewModel.RefreshFontList(ViewModel.SelectedCollection));
             }
         }
 
@@ -540,9 +514,12 @@ namespace CharacterMap.Views
                 FlyoutHelper.CreateMenu(
                         FontListFlyout,
                         font,
+                        CharacterRenderingOptions.CreateDefault(font),
                         null,
-                        null,
-                        new () { Folder = ViewModel.Folder });
+                        new () { 
+                            Folder = ViewModel.Folder, 
+                            PreviewText = FontMap.ViewModel.Sequence,
+                        });
 
                 args.TryGetPosition(sender, out Point pos);
                 FontListFlyout.ShowAt(sender, pos);
@@ -741,6 +718,18 @@ namespace CharacterMap.Views
         void OnNotificationMessage(AppNotificationMessage msg)
         {
             InAppNotificationHelper.OnMessage(this, msg);
+            
+            if (msg.Data is AddToCollectionResult result 
+                && result.Success 
+                && result.Collection is not null
+                && result.Collection == ViewModel.SelectedCollection
+                && Dispatcher.HasThreadAccess == false)
+            {
+                // If we don't have thread access, it means another window has added an item to
+                // the collection we're currently viewing, and we should refresh our view
+
+                RunOnUI(() => ViewModel.RefreshFontList(ViewModel.SelectedCollection));
+            }
         }
 
 

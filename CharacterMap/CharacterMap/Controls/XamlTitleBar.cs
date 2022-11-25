@@ -1,7 +1,7 @@
 ﻿using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.ViewModels;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.Messaging;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;

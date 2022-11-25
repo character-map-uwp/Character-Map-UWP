@@ -1,10 +1,10 @@
-﻿using CharacterMap.Controls;
-using CharacterMap.Core;
+﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
-using Microsoft.Toolkit.Mvvm.DependencyInjection;
-using Microsoft.Toolkit.Mvvm.Messaging;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -12,7 +12,6 @@ using System.Linq;
 using System.Numerics;
 using Windows.ApplicationModel.Core;
 using Windows.Globalization;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -45,19 +44,11 @@ namespace CharacterMap.Views
 
         public bool IsOpen { get; private set; }
 
+        [ObservableProperty] 
         private bool _isCollectionExportEnabled = true;
-        public bool IsCollectionExportEnabled
-        {
-            get => _isCollectionExportEnabled;
-            set => Set(ref _isCollectionExportEnabled, value);
-        }
 
+        [ObservableProperty] 
         private GridLength _titleBarHeight = new GridLength(32);
-        public GridLength TitleBarHeight
-        {
-            get => _titleBarHeight;
-            set => Set(ref _titleBarHeight, value);
-        }
 
         public int GridSize
         {
@@ -81,14 +72,18 @@ namespace CharacterMap.Views
 
         public SettingsView()
         {
+            this.InitializeComponent();
+
+            if (DesignMode)
+                return;
+
             Settings = ResourceHelper.AppSettings;
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
-            WeakReferenceMessenger.Default.Register<AppSettingsChangedMessage>(this, (o, m) => OnAppSettingsUpdated(m));
-            WeakReferenceMessenger.Default.Register<FontListCreatedMessage>(this, (o, m) => UpdateExport());
+            Register<AppSettingsChangedMessage>(OnAppSettingsUpdated);
+            Register<FontListCreatedMessage>(m => UpdateExport());
 
             GridSize = Settings.GridSize;
 
-            this.InitializeComponent();
 
             CompositionFactory.SetupOverlayPanelAnimation(this);
 
@@ -202,7 +197,7 @@ namespace CharacterMap.Views
             TitleBarHelper.RestoreDefaultTitleBar();
             IsOpen = false;
             this.Visibility = Visibility.Collapsed;
-            WeakReferenceMessenger.Default.Send(new ModalClosedMessage());
+            Messenger.Send(new ModalClosedMessage());
         }
 
         private void StartShowAnimation()
@@ -221,9 +216,9 @@ namespace CharacterMap.Views
             //Composition.PlayEntrance(elements, 0, 200);
         }
 
-        private void View_Loading(FrameworkElement sender, object args)
+        protected override void OnUnloaded(object sender, RoutedEventArgs e)
         {
-           
+            // Override base so we do not unregister messages
         }
 
         private void View_Loaded(object sender, RoutedEventArgs e)
@@ -323,10 +318,10 @@ namespace CharacterMap.Views
               && item.Tag is Panel panel
               && panel.Visibility == Visibility.Collapsed)
             {
-                // X: Ensure all settings panels are hidden
+                // 1: Ensure all settings panels are hidden
                 foreach (var child in ContentPanel.Children.OfType<FrameworkElement>())
                 {
-                    // X: Deactivate old content if supported
+                    // 2: Deactivate old content if supported
                     if (child.Visibility == Visibility.Visible
                         && child is Panel p
                         && p.Children.Count == 1
@@ -336,10 +331,10 @@ namespace CharacterMap.Views
                     child.Visibility = Visibility.Collapsed;
                 }
 
-                // X: Reset scroll position
+                // 3: Reset scroll position
                 ContentScroller.ChangeView(null, 0, null, true);
 
-                // X: Activate new content if supported
+                // 4: Activate new content if supported
                 if (panel.Children.Count == 1 && panel.Children[0] is IActivateableControl a)
                 {
                     a.Activate();
@@ -349,11 +344,11 @@ namespace CharacterMap.Views
                     VisualStateManager.GoToState(this, ContentScrollEnabledState.Name, false);
 
 
-                // X: Start child animation
+                // 5: Start child animation
                 if (Settings.UseSelectionAnimations)
                     CompositionFactory.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
 
-                // X: Show selected panel
+                // 6: Show selected panel
                 panel.Visibility = Visibility.Visible;
             }
         }
@@ -382,7 +377,9 @@ namespace CharacterMap.Views
             // application, rather than things like bug-fixes or visual changes.
             return new List<ChangelogItem>
             {
-                new("Latest Release", // May 2002
+                new("Latest Update (Dec 2022)", // May 2002
+                    "- Added Calligraphy view to practice drawing characters in the style of the chosen font (Ctrl + I)"),
+                new("2022.2.0.0 (May 2022)", // May 2002
                     "- Added support for opening folders of fonts using the Open button (Ctrl + Shift + O)\n" +
                     "- Added keyboard shortcut for opening individual font files from main window (Ctrl + O)\n" +
                     "- Added support for selecting a .ZIP archive when opening a font file and showing all the fonts in the .ZIP\n" +
@@ -456,11 +453,10 @@ namespace CharacterMap.Views
 
             //ResourceHelper.SendThemeChanged();
 
-
             string key = Settings.ApplicationDesignTheme switch
             {
                 1 => "FUI",
-                2 => " Zune",
+                2 => "Zune",
                 _ => "Default"
             };
             bool t = VisualStateManager.GoToState(this, $"{key}ThemeState", true);

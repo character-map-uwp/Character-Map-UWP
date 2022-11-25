@@ -24,12 +24,28 @@ namespace CharacterMap.Models
         public bool IsVariation { get; }
 
         public TypographyFeatureInfo DefaultTypography { get; }
+
+        /// <summary>
+        /// Typography to pass to DirectText control
+        /// </summary>
         public TypographyFeatureInfo DXTypography { get; }
 
         /// <summary>
         /// If set to true, XAML rendering cannot properly display all variations of this rendering
         /// </summary>
         public bool RequiresNativeRender { get; }
+
+        public static CharacterRenderingOptions CreateDefault(InstalledFont font)
+        {
+            CharacterRenderingOptions options = new(
+                font.DefaultVariant,
+                new List<TypographyFeatureInfo> { TypographyFeatureInfo.None },
+                64,
+                null, 
+                null);
+
+            return options;
+        }
 
         public CharacterRenderingOptions(FontVariant variant, List<TypographyFeatureInfo> typography, float fontSize, CanvasTextLayoutAnalysis analysis, IReadOnlyList<DWriteFontAxis> axis)
         {

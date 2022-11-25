@@ -12,7 +12,6 @@
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     Loaded="View_Loaded"
-    Loading="View_Loading"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
     d:DesignHeight="1880"
@@ -592,7 +591,7 @@
                                 x:Name="CollectionPanel"
                                 HorizontalAlignment="Stretch"
                                 Visibility="Collapsed">
-                                <views:CollectionManagementView HorizontalAlignment="Stretch" />
+                                <views:CollectionManagementView Margin="0 0 0 -80" HorizontalAlignment="Stretch" />
                             </Grid>
 
                             <StackPanel x:Name="ChangePanel" Visibility="Collapsed">

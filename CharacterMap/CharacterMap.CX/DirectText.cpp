@@ -30,6 +30,7 @@ using namespace Microsoft::Graphics::Canvas::UI::Composition;
 
 DependencyProperty^ DirectText::_FallbackFontProperty = nullptr;
 DependencyProperty^ DirectText::_IsColorFontEnabledProperty = nullptr;
+DependencyProperty^ DirectText::_IsOverwriteCompensationEnabledProperty = nullptr;
 DependencyProperty^ DirectText::_AxisProperty = nullptr;
 DependencyProperty^ DirectText::_UnicodeIndexProperty = nullptr;
 DependencyProperty^ DirectText::_TextProperty = nullptr;
@@ -118,9 +119,11 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         format->FontStyle = FontStyle;
         format->FontStretch = FontStretch;
 
-        if (IsColorFontEnabled)
+        if (IsColorFontEnabled && !IsOverwriteCompensationEnabled)
             format->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
-        else
+        else if (IsColorFontEnabled)
+            format->Options = CanvasDrawTextOptions::EnableColorFont;
+        else if (!IsCharacterFitEnabled)
             format->Options = CanvasDrawTextOptions::Clip;
 
         if (IsTextWrappingEnabled)
@@ -164,11 +167,12 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
         auto layout = ref new CanvasTextLayout(device, text, format, width, height);
         layout->SetTypography(0, text->Length(), typography);
-        if(IsColorFontEnabled)
+        if (IsColorFontEnabled && !IsOverwriteCompensationEnabled)
             layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
-        else
+        else if (IsColorFontEnabled)
+            layout->Options = CanvasDrawTextOptions::EnableColorFont;
+        else if (!IsCharacterFitEnabled)
             layout->Options = CanvasDrawTextOptions::Clip;
-
 
         if (IsCharacterFitEnabled)
         {
@@ -191,6 +195,10 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     auto targetsize = Size(min(m, ceil(maxw - minw)), min(m, ceil(maxh - minh)));
 
+    if (IsOverwriteCompensationEnabled && m_layout->DrawBounds.Left < 0)
+    {
+        targetsize = Size(targetsize.Width - m_layout->DrawBounds.Left, targetsize.Height);
+    }
 
     return targetsize;
 }
@@ -225,7 +233,18 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         }
     }
 
-    args->DrawingSession->DrawTextLayout(m_layout, float2(left, -0), ((SolidColorBrush^)this->Foreground)->Color);
+    if (IsOverwriteCompensationEnabled && m_layout->DrawBounds.Left < 0)
+    {
+        auto b = m_layout->DrawBounds.Left;
+        auto c = m_layout->LayoutBounds.Left;
+        m_canvas->Margin = ThicknessHelper::FromLengths(b, 0, 0, 0);
+        left -= b;
+    }
+    else
+        m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
+
+    //args->DrawingSession->Clear(Windows::UI::Colors::Red);
+    args->DrawingSession->DrawTextLayout(m_layout, float2(left, 0), ((SolidColorBrush^)this->Foreground)->Color);
 
     m_render = false;
 }

@@ -1,5 +1,6 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
-using Microsoft.Toolkit.Mvvm.Messaging;
+﻿using CharacterMap.Helpers;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -92,5 +93,9 @@ namespace CharacterMap.ViewModels
             else
                 Messenger.Register<T>(this, (r, m) => { action(m); });
         }
+
+        public bool AllowAnimation => 
+            ResourceHelper.AppSettings.UseSelectionAnimations 
+            && CompositionFactory.UISettings.AnimationsEnabled;
     }
 }

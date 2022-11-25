@@ -29,6 +29,9 @@ namespace CharacterMap.Helpers
         private static Dictionary<Compositor, ImplicitAnimationCollection> _defaultRepositionAnimations { get; }
             = new Dictionary<Compositor, ImplicitAnimationCollection>();
 
+        private static Dictionary<Compositor, ImplicitAnimationCollection> _defaultScaleAnimations { get; }
+            = new Dictionary<Compositor, ImplicitAnimationCollection>();
+
         private static string CENTRE_EXPRESSION =>
             $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * 0.5f, " +
             $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * 0.5f, 0f))";
@@ -107,6 +110,16 @@ namespace CharacterMap.Helpers
             }
 
             return collection;
+        }
+
+        public static ICompositionAnimationBase CreateScaleAnimation(Compositor c)
+        {
+            var ani = c.CreateVector3KeyFrameAnimation();
+            ani.InsertExpressionKeyFrame(1f, "this.FinalValue");
+            ani.Duration = TimeSpan.FromSeconds(CompositionFactory.DefaultOffsetDuration);
+            ani.Target = nameof(Visual.Scale);
+
+            return ani;
         }
 
         public static void PokeUIElementZIndex(UIElement e, XamlDirect xamlDirect = null)
@@ -301,6 +314,20 @@ namespace CharacterMap.Helpers
             }
 
             v.SetImplicitAnimation(nameof(Visual.Offset), value);
+        }
+
+        public static Visual EnableStandardTranslation(Visual v)
+        {
+            if (!UISettings.AnimationsEnabled)
+                return v;
+
+            var o = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                   .AddKeyFrame(0, STARTING_VALUE)
+                   .AddKeyFrame(1, FINAL_VALUE)
+                   .SetDuration(DefaultOffsetDuration);
+
+            v.Properties.SetImplicitAnimation(CompositionFactory.TRANSLATION, o);
+            return v;
         }
 
         public static void SetDropInOut(FrameworkElement background, IList<FrameworkElement> children, FrameworkElement container = null)

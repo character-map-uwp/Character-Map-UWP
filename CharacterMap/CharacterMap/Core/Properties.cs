@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
@@ -169,6 +170,64 @@ namespace CharacterMap.Core
 
         public static readonly DependencyProperty StyleKeyProperty =
             DependencyProperty.RegisterAttached("StyleKey", typeof(string), typeof(Properties), new PropertyMetadata(null));
+
+        #endregion
+
+        #region IsMouseInputEnabled
+
+        /// Enables Mouse & Touch input on an InkCanvas
+
+        public static bool GetIsMouseInputEnabled(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsMouseInputEnabledProperty);
+        }
+
+        public static void SetIsMouseInputEnabled(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsMouseInputEnabledProperty, value);
+        }
+
+        public static readonly DependencyProperty IsMouseInputEnabledProperty =
+            DependencyProperty.RegisterAttached("IsMouseInputEnabled", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, e) =>
+            {
+                if (d is InkCanvas c)
+                {
+                    if (e.NewValue is bool b && b)
+                        c.InkPresenter.InputDeviceTypes =
+                            CoreInputDeviceTypes.Mouse |
+                            CoreInputDeviceTypes.Touch |
+                            CoreInputDeviceTypes.Pen;
+                    else
+                        c.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Pen;
+
+                }
+            }));
+
+        #endregion
+
+        #region DEFAULT TOOL
+
+        /// Sets the default tool for an InkToolbar
+
+        public static InkToolbarToolButton GetDefaultTool(DependencyObject obj)
+        {
+            return (InkToolbarToolButton)obj.GetValue(DefaultToolProperty);
+        }
+
+        public static void SetDefaultTool(DependencyObject obj, InkToolbarToolButton value)
+        {
+            obj.SetValue(DefaultToolProperty, value);
+        }
+
+        public static readonly DependencyProperty DefaultToolProperty =
+            DependencyProperty.RegisterAttached("DefaultTool", typeof(InkToolbarToolButton), typeof(Properties), new PropertyMetadata(null, (d, e) =>
+            {
+                if (d is InkToolbar t)
+                {
+                    if (e.NewValue is InkToolbarToolButton b)
+                        t.ActiveTool = b;
+                }
+            }));
 
         #endregion
     }
