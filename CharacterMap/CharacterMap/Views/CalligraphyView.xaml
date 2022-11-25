@@ -611,6 +611,7 @@
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             h:CompositionFactory.OpacityDuration="0:0:0.15"
+                            Axis="{x:Bind ViewModel.Options.Axis}"
                             FallbackFont="{x:Bind core:Converters.GetFontFallback()}"
                             FontFace="{x:Bind ViewModel.Face.FontFace}"
                             FontFamily="{x:Bind ViewModel.Face.Source}"
