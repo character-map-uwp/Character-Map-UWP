@@ -209,23 +209,16 @@
                                         x:Name="DeleteButton"
                                         x:Uid="RemoveButton"
                                         Click="DeleteButton_Click"
+                                        Content="&#xE107;"
                                         DataContext="{TemplateBinding Content}"
                                         Style="{StaticResource SmolButton}"
-                                        d:ToolTipService.ToolTip="Remove">
-                                        <TextBlock
-                                            AutomationProperties.AccessibilityView="Raw"
-                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                            Text="&#xE107;" />
-                                    </Button>
+                                        d:ToolTipService.ToolTip="Remove" />
                                     <Button
                                         x:Uid="SaveButton"
+                                        Content="&#xE105;"
                                         DataContext="{TemplateBinding Content}"
                                         Style="{StaticResource SmolButton}"
                                         d:ToolTipService.ToolTip="Save">
-                                        <TextBlock
-                                            AutomationProperties.AccessibilityView="Raw"
-                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                            Text="&#xE105;" />
                                         <Button.Flyout>
                                             <MenuFlyout Placement="Bottom">
                                                 <MenuFlyoutItem
@@ -252,16 +245,15 @@
         </Style>
 
         <Style x:Key="SmolButton" TargetType="Button">
-            <Setter Property="MinWidth" Value="{ThemeResource InkToolbarButtonWidth}" />
-            <Setter Property="MinHeight" Value="{ThemeResource InkToolbarButtonHeight}" />
-            <Setter Property="MaxWidth" Value="{ThemeResource InkToolbarButtonWidth}" />
-            <Setter Property="MaxHeight" Value="{ThemeResource InkToolbarButtonHeight}" />
+            <Setter Property="Width" Value="{ThemeResource InkToolbarButtonWidth}" />
+            <Setter Property="Height" Value="{ThemeResource InkToolbarButtonHeight}" />
             <Setter Property="BorderThickness" Value="{ThemeResource InkToolbarButtonBorderThemeThickness}" />
             <Setter Property="Background" Value="{ThemeResource InkToolbarButtonBackground}" />
             <Setter Property="Foreground" Value="{ThemeResource InkToolbarButtonForeground}" />
             <Setter Property="BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrush}" />
             <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="UseSystemFocusVisuals" Value="True" />
+            <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
             <Setter Property="FocusVisualMargin" Value="-3" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="0,0,0,0" />
@@ -271,10 +263,10 @@
                     <ControlTemplate TargetType="Button">
                         <Grid
                             x:Name="RootElement"
-                            Width="{ThemeResource InkToolbarButtonWidth}"
-                            Height="{ThemeResource InkToolbarButtonHeight}"
                             h:CompositionFactory.OpacityDuration="0:0:0.12"
                             Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
@@ -283,7 +275,7 @@
                                         <VisualState.Setters>
                                             <Setter Target="RootElement.(RevealBrush.State)" Value="PointerOver" />
                                             <Setter Target="RootElement.Background" Value="{ThemeResource InkToolbarButtonBackgroundPointerOver}" />
-                                            <Setter Target="Border.BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrushPointerOver}" />
+                                            <Setter Target="RootElement.BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrushPointerOver}" />
                                             <Setter Target="Content.Foreground" Value="{ThemeResource InkToolbarButtonForegroundPointerOver}" />
                                         </VisualState.Setters>
                                     </VisualState>
@@ -291,7 +283,7 @@
                                         <VisualState.Setters>
                                             <Setter Target="RootElement.(RevealBrush.State)" Value="Pressed" />
                                             <Setter Target="RootElement.Background" Value="{ThemeResource InkToolbarButtonBackgroundPressed}" />
-                                            <Setter Target="Border.BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrushPressed}" />
+                                            <Setter Target="RootElement.BorderBrush" Value="{ThemeResource InkToolbarButtonBorderBrushPressed}" />
                                             <Setter Target="Content.Foreground" Value="{ThemeResource InkToolbarButtonForegroundPressed}" />
                                         </VisualState.Setters>
                                     </VisualState>
@@ -307,11 +299,6 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 HighContrastAdjustment="None" />
-                            <Border
-                                x:Name="Border"
-                                Margin="1,0"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -346,34 +333,70 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="2*" />
                     </Grid.ColumnDefinitions>
-                    <TextBox
-                        x:Name="InputBox"
-                        x:Uid="GuidePreviewInput"
-                        VerticalAlignment="Bottom"
-                        Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        d:Header="Guide Text"
-                        d:Text="Preview" />
 
+                    <!--
+                        Button is ordered first in XAML to ensure it becomes
+                        the default focus target
+                    -->
                     <Button
+                        x:Name="PickerButton"
+                        x:Uid="CharacterPickerButton"
                         Grid.Column="1"
+                        Height="32"
                         Margin="-8 0 0 0"
                         VerticalAlignment="Bottom"
+                        Background="{x:Bind InputBox.Background}"
+                        BorderBrush="{x:Bind InputBox.BorderBrush}"
+                        BorderThickness="0 1 1 1"
+                        Content="&#xE0A1;"
+                        CornerRadius="0 4 4 0"
                         Style="{StaticResource SmolButton}">
-                        <SymbolIcon Symbol="Add" />
                         <Button.Flyout>
                             <Flyout Opening="Flyout_Opening" />
                         </Button.Flyout>
                     </Button>
-                    <Slider
-                        x:Name="FontSizeSlider"
-                        x:Uid="GuideFontSlider"
+
+                    <StackPanel
+                        x:Name="InputContainer"
+                        VerticalAlignment="Bottom"
+                        Spacing="6">
+                        <TextBlock
+                            x:Name="InputHeader"
+                            x:Uid="GuideHeaderLabel"
+                            FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
+                            d:Text="Guide Text" />
+                        <TextBox
+                            x:Name="InputBox"
+                            x:Uid="GuidePreviewInput"
+                            Height="32"
+                            VerticalAlignment="Bottom"
+                            BorderThickness="1 1 0 1"
+                            CornerRadius="4 0 0 4"
+                            Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            d:Text="Preview" />
+                    </StackPanel>
+
+
+                    <StackPanel
+                        x:Name="SliderContainer"
                         Grid.Column="2"
-                        Maximum="400"
-                        Minimum="60"
-                        Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
-                        d:Header="Guide Size"
-                        d:Margin="0 4 0 0"
-                        d:Value="220" />
+                        Spacing="6">
+                        <TextBlock
+                            x:Name="SliderHeader"
+                            x:Uid="GuideSizeLabel"
+                            FontWeight="{ThemeResource SliderHeaderThemeFontWeight}"
+                            d:Text="Guide Size" />
+                        <Slider
+                            x:Name="FontSizeSlider"
+                            Height="32"
+                            Maximum="400"
+                            Minimum="60"
+                            Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
+                            d:Margin="0 4 0 0"
+                            d:Value="220" />
+                    </StackPanel>
+
+
                 </Grid>
 
                 <Grid
@@ -419,36 +442,33 @@
                             VerticalAlignment="Stretch"
                             ChildrenTransitions="{StaticResource RepositionTransitions}"
                             HorizontalSpacing="4"
-                            Orientation="Horizontal">
+                            Orientation="Horizontal"
+                            VerticalSpacing="4">
 
                             <Button
+                                x:Name="UndoButton"
                                 x:Uid="UndoButton"
                                 Click="{x:Bind ViewModel.InkManager.Undo}"
+                                Content="&#xE10E;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.CanUndo, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Z" Modifiers="Control" />
                                 </Button.KeyboardAccelerators>
-                                <TextBlock
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    Text="&#xE10E;" />
                             </Button>
 
                             <Button
+                                x:Name="RedoButton"
                                 x:Uid="RedoButton"
                                 Click="{x:Bind ViewModel.InkManager.Redo}"
+                                Content="&#xE10D;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.CanRedo, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Y" Modifiers="Control" />
                                 </Button.KeyboardAccelerators>
-                                <TextBlock
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    Text="&#xE10D;" />
                             </Button>
 
                             <AppBarSeparator
@@ -471,6 +491,7 @@
                                     MinStrokeWidth="3"
                                     Palette="{x:Bind BallpointPen.Palette, Mode=OneWay}"
                                     SelectedBrushIndex="0"
+                                    SelectedStrokeWidth="4"
                                     ToolTipService.ToolTip="Calligraphy pen">
                                     <Border>
                                         <Grid>
@@ -497,7 +518,9 @@
                             </InkToolbar>
 
                             <Button
+                                x:Name="ClearAllButton"
                                 x:Uid="ClearAllButton"
+                                Content="&#xE107;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
@@ -509,10 +532,6 @@
                                             d:Text="Clear All" />
                                     </MenuFlyout>
                                 </Button.Flyout>
-                                <TextBlock
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    Text="&#xE107;" />
                             </Button>
 
                             <AppBarSeparator
@@ -552,16 +571,14 @@
                             Orientation="Horizontal"
                             Spacing="4">
                             <Button
+                                x:Name="SaveButton"
                                 x:Uid="SaveButton"
+                                Content="&#xE105;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}">
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="S" Modifiers="Control" />
                                 </Button.KeyboardAccelerators>
-                                <TextBlock
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    Text="&#xE105;" />
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
                                         <MenuFlyoutItem
@@ -580,15 +597,11 @@
                                 x:Uid="AddHistoryButton"
                                 HorizontalAlignment="Right"
                                 Click="AddHistoryButton_Click"
+                                Content="&#xE109;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False"
-                                d:ToolTipService.ToolTip="Add to History">
-                                <TextBlock
-                                    AutomationProperties.AccessibilityView="Raw"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                    Text="&#xE109;" />
-                            </Button>
+                                d:ToolTipService.ToolTip="Add to History" />
                         </StackPanel>
 
                     </Grid>
@@ -722,6 +735,50 @@
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
                         <Setter Target="FontSizeSlider.Margin" Value="0 4 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ClassicThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="SaveButton.CornerRadius" Value="0" />
+                        <Setter Target="AddButton.CornerRadius" Value="0" />
+                        <Setter Target="UndoButton.CornerRadius" Value="0" />
+                        <Setter Target="RedoButton.CornerRadius" Value="0" />
+                        <Setter Target="InputBox.CornerRadius" Value="0" />
+                        <Setter Target="ClearAllButton.CornerRadius" Value="0" />
+                        <Setter Target="PickerButton.CornerRadius" Value="0" />
+                        <Setter Target="Toolbar.Margin" Value="0 0 0 0" />
+                        <Setter Target="ButtonsPanel.Padding" Value="0" />
+                        <Setter Target="ButtonsPanel.Margin" Value="0 4 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="DefaultThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="SaveButton.CornerRadius" Value="0" />
+                        <Setter Target="AddButton.CornerRadius" Value="0" />
+                        <Setter Target="UndoButton.CornerRadius" Value="0" />
+                        <Setter Target="RedoButton.CornerRadius" Value="0" />
+                        <Setter Target="InputBox.CornerRadius" Value="0" />
+                        <Setter Target="ClearAllButton.CornerRadius" Value="0" />
+                        <Setter Target="PickerButton.CornerRadius" Value="0" />
+                        <Setter Target="Toolbar.Margin" Value="0 0 0 0" />
+                        <Setter Target="ButtonsPanel.Padding" Value="0" />
+                        <Setter Target="ButtonsPanel.Margin" Value="0 -3 0 0" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="ZuneThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="SaveButton.CornerRadius" Value="0" />
+                        <Setter Target="AddButton.CornerRadius" Value="0" />
+                        <Setter Target="UndoButton.CornerRadius" Value="0" />
+                        <Setter Target="RedoButton.CornerRadius" Value="0" />
+                        <Setter Target="InputBox.CornerRadius" Value="0" />
+                        <Setter Target="ClearAllButton.CornerRadius" Value="0" />
+                        <Setter Target="PickerButton.CornerRadius" Value="0" />
+                        <Setter Target="Toolbar.Margin" Value="0 0 0 4" />
+                        <Setter Target="InputBox.Height" Value="36" />
+                        <Setter Target="InputBox.FontSize" Value="13" />
+                        <Setter Target="ButtonsPanel.Padding" Value="0" />
+                        <Setter Target="ButtonsPanel.Margin" Value="0 4 0 0" />
                     </VisualState.Setters>
                 </VisualState>
 

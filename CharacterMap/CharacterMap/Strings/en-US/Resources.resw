@@ -1213,7 +1213,13 @@ Requires a restart to take effect.</value>
   <data name="GuideFontSlider.Header" xml:space="preserve">
     <value>Guide Size</value>
   </data>
-  <data name="GuidePreviewInput.Header" xml:space="preserve">
+  <data name="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open Character Picker</value>
+  </data>
+  <data name="GuideHeaderLabel.Text" xml:space="preserve">
     <value>Guide Text</value>
+  </data>
+  <data name="GuideSizeLabel.Text" xml:space="preserve">
+    <value>Guide Size</value>
   </data>
 </root>

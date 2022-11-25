@@ -246,8 +246,9 @@ namespace CharacterMap.Views
             CompositionFactory.PlayEntrance(Presenter.GetTitleElement(), s + 30, o);
 
             // First Row
-            CompositionFactory.PlayEntrance(InputBox, s + 113, o);
-            CompositionFactory.PlayEntrance(FontSizeSlider, s + 113, o);
+            CompositionFactory.PlayEntrance(PickerButton, s + 113, o);
+            CompositionFactory.PlayEntrance(InputContainer, s + 113, o);
+            CompositionFactory.PlayEntrance(SliderContainer, s + 113, o);
 
             // Second Row
             CompositionFactory.PlayEntrance(ContentGrid, s + 200, o);
