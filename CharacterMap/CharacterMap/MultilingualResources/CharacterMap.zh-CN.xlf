@@ -1437,6 +1437,66 @@ Requires a restart to take effect.</target>
           <source>Font Folder</source>
           <target state="new">Font Folder</target>
         </trans-unit>
+        <trans-unit id="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Add to history</source>
+          <target state="new">Add to history</target>
+        </trans-unit>
+        <trans-unit id="CalligraphyLabel.Text" translate="yes" xml:space="preserve">
+          <source>Calligraphy</source>
+          <target state="new">Calligraphy</target>
+        </trans-unit>
+        <trans-unit id="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Clear All</source>
+          <target state="new">Clear All</target>
+        </trans-unit>
+        <trans-unit id="ClearAllItem.Text" translate="yes" xml:space="preserve">
+          <source>Clear All</source>
+          <target state="new">Clear All</target>
+        </trans-unit>
+        <trans-unit id="GuideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Show Guide</source>
+          <target state="new">Show Guide</target>
+        </trans-unit>
+        <trans-unit id="HistoryLabel.Text" translate="yes" xml:space="preserve">
+          <source>History</source>
+          <target state="new">History</target>
+        </trans-unit>
+        <trans-unit id="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Redo (Ctrl + Y)</source>
+          <target state="new">Redo (Ctrl + Y)</target>
+        </trans-unit>
+        <trans-unit id="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Remove</source>
+          <target state="new">Remove</target>
+        </trans-unit>
+        <trans-unit id="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Save (Ctrl + S)</source>
+          <target state="new">Save (Ctrl + S)</target>
+        </trans-unit>
+        <trans-unit id="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Side by side</source>
+          <target state="new">Side by side</target>
+        </trans-unit>
+        <trans-unit id="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Undo (Ctrl + Z)</source>
+          <target state="new">Undo (Ctrl + Z)</target>
+        </trans-unit>
+        <trans-unit id="GuideFontSlider.Header" translate="yes" xml:space="preserve">
+          <source>Guide Size</source>
+          <target state="new">Guide Size</target>
+        </trans-unit>
+        <trans-unit id="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Open Character Picker</source>
+          <target state="new">Open Character Picker</target>
+        </trans-unit>
+        <trans-unit id="GuideHeaderLabel.Text" translate="yes" xml:space="preserve">
+          <source>Guide Text</source>
+          <target state="new">Guide Text</target>
+        </trans-unit>
+        <trans-unit id="GuideSizeLabel.Text" translate="yes" xml:space="preserve">
+          <source>Guide Size</source>
+          <target state="new">Guide Size</target>
+        </trans-unit>
       </group>
     </body>
   </file>
