@@ -8,6 +8,16 @@
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
     <Application.Resources>
         <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Default">
+                    <Color x:Key="LayerOnMicaBaseAltFillColorDefault">#733A3A3A</Color>
+                    <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorDefaultBrush" Color="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="LayerOnMicaBaseAltFillColorDefault">#B3FFFFFF</Color>
+                    <SolidColorBrush x:Key="LayerOnMicaBaseAltFillColorDefaultBrush" Color="{StaticResource LayerOnMicaBaseAltFillColorDefault}" />
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
 
             <x:Double x:Key="TitleRowHeight">45</x:Double>
             <GridLength x:Key="TitleRowGridHeight">45</GridLength>
