@@ -6,4 +6,4 @@ A modern, native UWP replacement for the Win32 Character Map and Windows Font Vi
 
 ## Screenshots
 
-![image](https://raw.githubusercontent.com/EdiWang/Character-Map-UWP/master/0_artifacts/cmap.png)
+![image](https://raw.githubusercontent.com/EdiWang/Character-Map-UWP/master/0_artifacts/main.png)
