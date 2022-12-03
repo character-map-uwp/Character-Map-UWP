@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +28,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
@@ -120,6 +122,16 @@ namespace CharacterMap.Views
                     if (ViewModel.SelectedFont != null)
                     {
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
+
+                        if (ViewModel.Fonts.Count == 0)
+                        {
+                            ViewModel.Fonts.Add(new(ViewModel.SelectedFont));
+                            FontMapContainer.SelectedIndex = 0;
+                        }
+
+                        ViewModel.Fonts[FontMapContainer.SelectedIndex].Font = ViewModel.SelectedFont;
+
+                        FontMap.Font = ViewModel.SelectedFont;
                         FontMap.PlayFontChanged();
                     }
                     break;
@@ -137,6 +149,17 @@ namespace CharacterMap.Views
                     UpdateLoadingStates();
                     break;
             }
+        }
+
+        private void FontMapContainer_AddTabButtonClick(TabView sender, object args)
+        {
+            ViewModel.Fonts.Add(new (ViewModel.SelectedFont));
+            FontMapContainer.SelectedIndex = ViewModel.Fonts.Count - 1;
+        }
+
+        private void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+        {
+            ViewModel.Fonts.RemoveAt(sender.TabItems.IndexOf(args.Item));
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -500,7 +523,10 @@ namespace CharacterMap.Views
                 && sender is ListViewItem f
                 && f.Content is InstalledFont font)
             {
-                _ = FontMapView.CreateNewViewForFontAsync(font);
+                if (ViewModel.Settings.DisableTabs)
+                    _ = FontMapView.CreateNewViewForFontAsync(font);
+                else
+                    ViewModel.Fonts.Add(new (font));
             }
         }
 

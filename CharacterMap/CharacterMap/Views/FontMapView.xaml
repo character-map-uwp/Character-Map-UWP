@@ -217,7 +217,7 @@
         d:BackgroundTransition="{StaticResource RootBackgroundTransition}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="{StaticResource TitleRowGridHeight}" />
+            <RowDefinition x:Name="TitleRow" Height="{StaticResource TitleRowGridHeight}" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -253,7 +253,7 @@
             Canvas.ZIndex="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="{StaticResource TitleRowGridHeight}" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <!--  Left Content  -->
@@ -276,6 +276,11 @@
 
             <ContentPresenter Grid.Row="1" Content="{x:Bind TitleLeftContent, Mode=OneWay}" />
 
+            <Border
+                x:Name="TitleRowSpacer"
+                Grid.Row="1"
+                Height="{StaticResource TitleRowHeight}" />
+
             <TextBlock
                 x:Name="FontTitleBlock"
                 x:FieldModifier="public"
@@ -287,9 +292,12 @@
                 Style="{StaticResource TitleTextStyle}"
                 Text="{Binding SelectedFont.Name, Converter={StaticResource TitleConverter}}"
                 TextTrimming="CharacterEllipsis"
-                ToolTipService.ToolTip="{Binding SelectedFont.Name}" />
+                ToolTipService.ToolTip="{Binding SelectedFont.Name}"
+                d:Text="Font Name" />
 
             <controls:UXButton
+                x:Name="AddToLibraryButton"
+                x:Load="{x:Bind ViewModel.IsExternalFile}"
                 Grid.Row="1"
                 Grid.Column="2"
                 Height="{StaticResource TitleRowHeight}"
@@ -298,8 +306,7 @@
                 Click="{x:Bind ViewModel.ImportFile}"
                 IsEnabled="{Binding ImportButtonEnabled}"
                 Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
-                Style="{ThemeResource TransparentButton}"
-                Visibility="{x:Bind ViewModel.IsExternalFile}">
+                Style="{ThemeResource TransparentButton}">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -352,6 +359,7 @@
             </AutoSuggestBox>
 
             <ContentPresenter
+                x:Name="RightPresenter"
                 Grid.Row="1"
                 Grid.Column="4"
                 Content="{x:Bind TitleRightContent, Mode=OneWay}" />
@@ -901,18 +909,21 @@
                                 x:Uid="AddButton"
                                 Click="AppBarButton_Click"
                                 Icon="Add"
-                                IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar), Mode=OneWay}" />
+                                IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar), Mode=OneWay}"
+                                d:Label="Add" />
                             <AppBarButton
                                 x:Uid="BtnCopyGlyph"
                                 Grid.Row="1"
                                 Click="{x:Bind ViewModel.CopySequence}"
                                 Icon="Copy"
-                                IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}" />
+                                IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
+                                d:Label="Copy" />
                             <AppBarButton
                                 x:Uid="AppBtnClear"
                                 Grid.Row="2"
                                 Click="{x:Bind ViewModel.ClearSequence}"
-                                IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}">
+                                IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
+                                d:Label="Clear">
                                 <AppBarButton.Icon>
                                     <FontIcon Glyph="&#xED62;" />
                                 </AppBarButton.Icon>
@@ -1046,6 +1057,7 @@
                                         FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
                                         FontSize="{Binding}"
                                         IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
+                                        IsOverwriteCompensationEnabled="True"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}"
                                         Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}" />
                                 </StackPanel>
@@ -1138,7 +1150,8 @@
                                     IsColorFontEnabled="{Binding ShowColorGlyphs}"
                                     IsTextScaleFactorEnabled="False"
                                     Text="{Binding SelectedChar.Char}"
-                                    TextAlignment="Center" />
+                                    TextAlignment="Center"
+                                    d:Text="a" />
                             </Border>
                         </Viewbox>
 
@@ -1173,8 +1186,8 @@
                                     FontStyle="Normal"
                                     FontWeight="Normal"
                                     TextTrimming="CharacterEllipsis">
-                                    <Run Text="{x:Bind ViewModel.SelectedCharVariations.Count, Mode=OneWay}" />
-                                    <Run x:Uid="TypographyVariationsSelectorRun" />
+                                    <Run Text="{x:Bind ViewModel.SelectedCharVariations.Count, Mode=OneWay}" d:Text="6" />
+                                    <Run x:Uid="TypographyVariationsSelectorRun" d:Text="variations" />
                                 </TextBlock>
                             </controls:UXComboBox.PreContent>
                             <ComboBox.ItemTemplate>
@@ -1217,13 +1230,15 @@
                                 FontSize="12"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind ViewModel.GetCharName(ViewModel.SelectedChar), Mode=OneWay}"
-                                TextWrapping="Wrap" />
+                                TextWrapping="Wrap"
+                                d:Text="Latin Small Letter A" />
                             <TextBlock
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}"
-                                TextWrapping="Wrap" />
+                                TextWrapping="Wrap"
+                                d:Text="U+0061" />
                         </StackPanel>
 
                         <!--  Copy / Save / Fit Row  -->
@@ -1245,7 +1260,10 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <controls:UXButton x:Uid="BtnCopyGlyph" Click="{x:Bind TryCopyInternal}">
+                                <controls:UXButton
+                                    x:Uid="BtnCopyGlyph"
+                                    Click="{x:Bind TryCopyInternal}"
+                                    d:Label="Copy">
                                     <FontIcon FontSize="18" Glyph="&#xE16F;" />
                                 </controls:UXButton>
 
@@ -1258,7 +1276,8 @@
                                     <controls:UXButton
                                         x:Name="BtnFit"
                                         x:Uid="BtnFit"
-                                        Click="BtnFit_Click">
+                                        Click="BtnFit_Click"
+                                        d:Label="Fit">
                                         <Grid>
                                             <FontIcon
                                                 x:Name="ZoomGlyph"
@@ -1276,7 +1295,7 @@
                                         </Grid>
                                     </controls:UXButton>
 
-                                    <controls:UXButton x:Uid="BtnSaveGlyph">
+                                    <controls:UXButton x:Uid="BtnSaveGlyph" d:Label="Save">
                                         <FontIcon Glyph="&#xE105;" />
                                         <Button.Flyout>
                                             <MenuFlyout
@@ -1904,6 +1923,21 @@
                     <VisualState.Setters>
                         <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="BackgroundBorder.BackgroundTransition" Value="{ThemeResource RootBackgroundTransition}" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="TitleStates">
+                <VisualState x:Name="HideTitleState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind HideTitle, Mode=OneWay}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="TitleRow.Height" Value="0" />
+                        <Setter Target="TitleRowSpacer.Visibility" Value="Collapsed" />
+                        <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
+                        <Setter Target="SearchBox.Visibility" Value="Visible" />
+                        <Setter Target="SearchBox.Margin" Value="6 -44 6 0" />
+                        <Setter Target="RightPresenter.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

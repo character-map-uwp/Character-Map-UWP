@@ -10,6 +10,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:views="using:CharacterMap.Views"
+    xmlns:vm="using:CharacterMap.ViewModels"
     xmlns:wct="using:Microsoft.Toolkit.Uwp.UI.Controls"
     x:Name="PageRoot"
     Background="{ThemeResource DefaultPageBackgroundBrush}"
@@ -591,15 +592,22 @@
             <Grid x:Name="SplitViewContentRoot" Loading="Grid_Loading">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, Mode=OneWay}" d:Height="32" />
+                    <RowDefinition Height="Auto" d:Height="32" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-
-                <!--  Character Map  -->
-                <views:FontMapView
-                    x:Name="FontMap"
+                <muxc:TabView
+                    x:Name="FontMapContainer"
                     Grid.Row="1"
-                    Font="{x:Bind ViewModel.SelectedFont, Mode=OneWay}">
-                    <views:FontMapView.TitleLeftContent>
+                    Margin="0 0 300 0"
+                    AddTabButtonClick="FontMapContainer_AddTabButtonClick"
+                    TabCloseRequested="FontMapContainer_TabCloseRequested"
+                    TabItemsSource="{x:Bind ViewModel.Fonts}">
+                    <muxc:TabView.TabItemTemplate>
+                        <DataTemplate x:DataType="vm:FontWrapper" x:DefaultBindMode="OneWay">
+                            <muxc:TabViewItem Header="{x:Bind Font.Name}" />
+                        </DataTemplate>
+                    </muxc:TabView.TabItemTemplate>
+                    <muxc:TabView.TabStripHeader>
                         <controls:UXButton
                             x:Name="OpenFontPaneButton"
                             Width="45"
@@ -610,7 +618,16 @@
                             Visibility="Collapsed">
                             <FontIcon Glyph="&#xE700;" />
                         </controls:UXButton>
-                    </views:FontMapView.TitleLeftContent>
+                    </muxc:TabView.TabStripHeader>
+                </muxc:TabView>
+
+                <Border Grid.Row="2" Background="{ThemeResource TabViewItemHeaderBackgroundSelected}" />
+
+                <views:FontMapView
+                    x:Name="FontMap"
+                    Grid.Row="2"
+                    Font="{x:Bind ((vm:FontWrapper)FontMapContainer.SelectedItem).Font, Mode=OneWay}"
+                    HideTitle="True">
                     <views:FontMapView.TitleRightContent>
                         <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
                             <controls:UXButton
@@ -632,7 +649,6 @@
                                     Glyph="&#xE115;" />
                             </controls:UXButton>
                         </Border>
-
                     </views:FontMapView.TitleRightContent>
                 </views:FontMapView>
 
@@ -823,7 +839,7 @@
                         <Setter Target="PageRoot.Background" Value="Transparent" />
                         <Setter Target="PageRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
                         <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                         <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->

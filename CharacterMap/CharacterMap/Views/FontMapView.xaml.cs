@@ -88,6 +88,19 @@ namespace CharacterMap.Views
 
         #endregion
 
+        #region Hide Title
+
+        public bool HideTitle
+        {
+            get { return (bool)GetValue(HideTitleProperty); }
+            set { SetValue(HideTitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty HideTitleProperty =
+            DependencyProperty.Register(nameof(HideTitle), typeof(bool), typeof(FontMapView), new PropertyMetadata(false));
+
+        #endregion
+
         #endregion
 
         public bool IsStandalone { get; set; }

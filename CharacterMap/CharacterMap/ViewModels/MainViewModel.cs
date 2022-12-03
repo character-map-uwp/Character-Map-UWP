@@ -18,9 +18,21 @@ using CommunityToolkit.Mvvm.Messaging;
 using Windows.ApplicationModel.Core;
 using Windows.Storage.Pickers;
 using Windows.System;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace CharacterMap.ViewModels
 {
+    [ObservableObject]
+    public partial class FontWrapper
+    {
+        [ObservableProperty] private InstalledFont _font;
+
+        public FontWrapper(InstalledFont font)
+        {
+            _font = font;
+        }
+    }
+
     public class MainViewModelArgs
     {
         public MainViewModelArgs(IDialogService dialogService, AppSettings settings, FolderContents folder)
@@ -36,7 +48,7 @@ namespace CharacterMap.ViewModels
     }
 
 
-    public class MainViewModel : ViewModelBase
+    public partial class MainViewModel : ViewModelBase
     {
         public event EventHandler FontListCreated;
 
@@ -45,6 +57,9 @@ namespace CharacterMap.ViewModels
         private Exception _startUpException = null;
 
         #region Properties
+
+        [ObservableProperty]
+        private ObservableCollection<FontWrapper> _fonts = new();
 
         public Task InitialLoad { get; }
 

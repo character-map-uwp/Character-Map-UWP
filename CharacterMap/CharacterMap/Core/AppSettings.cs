@@ -159,6 +159,12 @@ namespace CharacterMap.Core
             set => BroadcastSet(value);
         }
 
+        public bool DisableTabs
+        {
+            get => Get(false);
+            set => BroadcastSet(value);
+        }
+
         // This setting has been deprecated.
         // Do not reuse this setting name.
         //public bool ShowDevUtils
