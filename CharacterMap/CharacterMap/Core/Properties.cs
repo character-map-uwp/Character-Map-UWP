@@ -2,6 +2,7 @@
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Provider;
+using CharacterMapCX.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,8 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Markup;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core
 {
@@ -36,7 +39,7 @@ namespace CharacterMap.Core
         }
 
         public static readonly DependencyProperty FilterProperty =
-            DependencyProperty.RegisterAttached("Filter", typeof(BasicFontFilter), typeof(Properties), new PropertyMetadata(null, (d,e) =>
+            DependencyProperty.RegisterAttached("Filter", typeof(BasicFontFilter), typeof(Properties), new PropertyMetadata(null, (d, e) =>
             {
                 if (d is MenuFlyoutItem item && e.NewValue is BasicFontFilter f)
                 {
@@ -62,7 +65,7 @@ namespace CharacterMap.Core
         }
 
         public static readonly DependencyProperty TypographyProperty =
-            DependencyProperty.RegisterAttached("Typography", typeof(TypographyFeatureInfo), typeof(Properties), new PropertyMetadata(null, (d,e) =>
+            DependencyProperty.RegisterAttached("Typography", typeof(TypographyFeatureInfo), typeof(Properties), new PropertyMetadata(null, (d, e) =>
             {
                 if (d is TextBlock t)
                 {
@@ -97,7 +100,7 @@ namespace CharacterMap.Core
                         v.Clip = v.Compositor.CreateInsetClip();
                     else
                         v.Clip = null;
-                    
+
                 }
             }));
 
@@ -199,7 +202,60 @@ namespace CharacterMap.Core
                             CoreInputDeviceTypes.Pen;
                     else
                         c.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Pen;
+                }
+            }));
 
+        #endregion
+
+        #region DirectText Options
+
+        // Applies CharacterRenderingOptions to a DirectText control
+
+        public static CharacterRenderingOptions GetOptions(DependencyObject obj)
+        {
+            return (CharacterRenderingOptions)obj.GetValue(OptionsProperty);
+        }
+
+        /// <summary>
+        /// Applies <see cref="CharacterRenderingOptions"/> to a <see cref="DirectText"/> control
+        /// </summary>
+        public static void SetOptions(DependencyObject obj, CharacterRenderingOptions value)
+        {
+            obj.SetValue(OptionsProperty, value);
+        }
+
+        /// <summary>
+        /// Applies <see cref="CharacterRenderingOptions"/> to a <see cref="DirectText"/> control
+        /// </summary>
+        public static readonly DependencyProperty OptionsProperty =
+            DependencyProperty.RegisterAttached("Options", typeof(CharacterRenderingOptions), typeof(Properties), new PropertyMetadata(null, (s, e) =>
+            {
+                if (s is DirectText d)
+                {
+                    if (e.NewValue is CharacterRenderingOptions o)
+                    {
+                        d.Axis = o.Axis;
+                        d.FallbackFont = Converters.GetFontFallback();
+                        d.FontFace = o.Variant.FontFace;
+                        d.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Variant.Source);
+                        d.FontStretch = o.Variant.FontFace.Stretch;
+                        d.FontStyle = o.Variant.FontFace.Style;
+                        d.FontWeight = o.Variant.FontFace.Weight;
+                        d.IsColorFontEnabled = o.IsColourFontEnabled;
+                        d.Typography = o.DXTypography;
+                    }
+                    else
+                    {
+                        d.ClearValue(DirectText.AxisProperty);
+                        d.ClearValue(DirectText.FallbackFontProperty);
+                        d.ClearValue(DirectText.FontFaceProperty);
+                        d.ClearValue(DirectText.FontFamilyProperty);
+                        d.ClearValue(DirectText.FontStretchProperty);
+                        d.ClearValue(DirectText.FontStyleProperty);
+                        d.ClearValue(DirectText.FontWeightProperty);
+                        d.ClearValue(DirectText.IsColorFontEnabledProperty);
+                        d.ClearValue(DirectText.TypographyProperty);
+                    }
                 }
             }));
 

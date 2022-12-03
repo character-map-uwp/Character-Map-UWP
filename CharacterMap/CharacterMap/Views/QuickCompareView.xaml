@@ -132,14 +132,7 @@
                             x:Name="NativeRender"
                             x:Load="{x:Bind RequiresNativeRender, FallbackValue=False, TargetNullValue=False}"
                             x:Phase="1"
-                            Axis="{x:Bind Axis}"
-                            FallbackFont="{x:Bind core:Converters.GetFontFallback()}"
-                            FontFace="{x:Bind Variant.FontFace}"
-                            FontFamily="{x:Bind Variant.Source, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
-                            FontStretch="{x:Bind Variant.FontFace.Stretch}"
-                            FontStyle="{x:Bind Variant.FontFace.Style}"
-                            FontWeight="{x:Bind Variant.FontFace.Weight}"
-                            IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
+                            core:Properties.Options="{x:Bind}"
                             IsTextWrappingEnabled="True"
                             Typography="{x:Bind DXTypography}" />
                         <TextBlock

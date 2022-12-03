@@ -11,7 +11,7 @@
     <AssemblyName>CharacterMap</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
-	<!-- Do Not Update to Windows 11 SDK -->
+    <!-- Do Not Update to Windows 11 SDK -->
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.20348.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
@@ -152,7 +152,7 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
     </PackageReference>
-	<!-- Do Not Update Microsoft.UI.Xaml -->
+    <!-- Do Not Update Microsoft.UI.Xaml -->
     <PackageReference Include="Microsoft.UI.Xaml">
       <Version>2.7.3</Version>
     </PackageReference>
