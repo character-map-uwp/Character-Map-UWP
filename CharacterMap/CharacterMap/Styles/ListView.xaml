@@ -92,7 +92,7 @@
         <ResourceDictionary x:Key="Dark">
             <StaticResource x:Key="TabViewBackground" ResourceKey="SubtleFillColorTransparentBrush" />
             <StaticResource x:Key="TabViewItemHeaderBackground" ResourceKey="LayerOnMicaBaseAltFillColorTransparentBrush" />
-            <StaticResource x:Key="TabViewItemHeaderBackgroundSelected" ResourceKey="LayerOnMicaBaseAltFillColorSecondaryBrush" />
+            <StaticResource x:Key="TabViewItemHeaderBackgroundSelected" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
             <StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver" ResourceKey="LayerOnMicaBaseAltFillColorSecondaryBrush" />
             <StaticResource x:Key="TabViewItemHeaderBackgroundPressed" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
             <StaticResource x:Key="TabViewItemHeaderBackgroundDisabled" ResourceKey="LayerOnMicaBaseAltFillColorTransparentBrush" />
@@ -319,13 +319,13 @@
                                     <RepositionThemeTransition IsStaggeringEnabled="False" />
                                 </TransitionCollection>
                             </Grid.ChildrenTransitions>
-                            <Border
+                            <!--<Border
                                 Grid.Column="1"
                                 Grid.ColumnSpan="2"
                                 Height="1"
                                 VerticalAlignment="Bottom"
                                 BorderBrush="{ThemeResource TabViewBorderBrush}"
-                                BorderThickness="1" />
+                                BorderThickness="1" />-->
                             <ContentPresenter
                                 x:Name="LeftContentPresenter"
                                 Grid.Column="0"
@@ -334,6 +334,7 @@
                             <primitives:TabViewListView
                                 x:Name="TabListView"
                                 Grid.Column="1"
+                                MaxWidth="{Binding ElementName=TabColumn, Path=MaxWidth}"
                                 AllowDrop="{TemplateBinding AllowDropTabs}"
                                 Background="{x:Null}"
                                 CanDragItems="{TemplateBinding CanDragTabs}"
@@ -386,6 +387,9 @@
                                         </MenuFlyout>
                                     </Button.Flyout>
                                 </Button>
+
+                                <!--  This is needed to stop cropping of the add button  -->
+                                <Border Width="16" />
                             </StackPanel>
                             <ContentPresenter
                                 x:Name="RightContentPresenter"

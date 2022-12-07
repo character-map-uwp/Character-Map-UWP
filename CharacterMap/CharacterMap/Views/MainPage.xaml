@@ -58,7 +58,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="0" />
             </Grid.ColumnDefinitions>
-            <ToggleButton
+            <!--<ToggleButton
                 x:Name="ToggleFullScreenModeButton"
                 x:Uid="ToggleFullScreenModeButton"
                 Grid.Column="1"
@@ -69,7 +69,7 @@
                 Style="{StaticResource IconToggleButtonStyle}"
                 ToolTipService.Placement="Right">
                 <FontIcon FontSize="14" Glyph="&#xE740;" />
-            </ToggleButton>
+            </ToggleButton>-->
 
             <controls:UXButton
                 x:Name="ZuneSettingsButton"
@@ -105,7 +105,7 @@
             <SplitView.Pane>
                 <Grid x:Name="PaneRoot">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, Mode=OneWay}" d:Height="32" />
+                        <RowDefinition Height="0" d:Height="32" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
@@ -114,7 +114,7 @@
                     <Border
                         x:Name="PaneRootBackground"
                         Grid.RowSpan="5"
-                        Background="{ThemeResource DefaultHostBrush}" />
+                        Background="Transparent" />
 
                     <Border
                         x:Name="OverlayPaneRootBackground"
@@ -126,7 +126,8 @@
                     <Grid
                         x:Name="PaneHeaderGrid"
                         Grid.Row="1"
-                        Height="{StaticResource TitleRowHeight}">
+                        Height="{StaticResource TitleRowHeight}"
+                        Margin="0 -1 0 0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
@@ -138,8 +139,11 @@
                             Grid.Column="0"
                             Width="{StaticResource TitleRowHeight}"
                             Height="Auto"
+                            Margin="4 0 0 0"
                             Padding="4"
                             VerticalAlignment="Stretch"
+                            Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
+                            CornerRadius="0 0 4 4"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource MapInfoButtonStyle}"
                             d:Label="Open">
@@ -181,12 +185,14 @@
                             x:Uid="FontListFilter"
                             Grid.Column="1"
                             MinHeight="26"
-                            Margin="0,0,0,0"
+                            Margin="0,0,4,0"
                             Padding="12 0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
+                            Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
+                            CornerRadius="0 0 4 4"
                             Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom"
                             Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
@@ -601,25 +607,29 @@
             <!--  FontMap Grid  -->
             <Grid x:Name="SplitViewContentRoot" Loading="Grid_Loading">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="0" d:Height="0" />
+                    <RowDefinition Height="2" d:Height="0" />
                     <RowDefinition Height="Auto" d:Height="32" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="150" />
+                </Grid.ColumnDefinitions>
 
                 <controls:XamlTitleBar
                     x:Name="TitleBar"
-                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    Grid.ColumnSpan="2"
                     VerticalAlignment="Stretch"
                     IsAutoHeightEnabled="False" />
 
                 <muxc:TabView
                     x:Name="FontsTabBar"
                     Grid.Row="1"
-                    Loaded="FontsTabBar_Loaded"
-                    Margin="0 0 150 0"
-                    core:Properties.InsetClip="0 0 0 0"
+                    Margin="0"
                     AddTabButtonClick="FontMapContainer_AddTabButtonClick"
                     Background="{x:Null}"
+                    Loaded="FontsTabBar_Loaded"
                     SelectedIndex="{x:Bind ViewModel.TabIndex, Mode=TwoWay}"
                     Style="{StaticResource TabViewStyle}"
                     TabCloseRequested="FontMapContainer_TabCloseRequested"
@@ -645,13 +655,19 @@
 
                 <Border
                     Grid.Row="2"
+                    Grid.ColumnSpan="2"
                     Margin="0 -1 0 0"
                     core:Properties.InsetClip="0 1 0 0"
-                    Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}" />
+                    Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
+                    BorderThickness="1 0 0 0"
+                    CornerRadius="8 8 0 0" />
 
                 <views:FontMapView
                     x:Name="FontMap"
                     Grid.Row="2"
+                    Grid.ColumnSpan="2"
+                    Margin="0 4 0 0"
                     Font="{x:Bind ((vm:FontWrapper)FontsTabBar.SelectedItem).Font, Mode=OneWay}"
                     HideTitle="True">
                     <views:FontMapView.TitleRightContent>
@@ -865,7 +881,7 @@
                         <Setter Target="PageRoot.Background" Value="Transparent" />
                         <Setter Target="PageRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
+                        <Setter Target="PaneRootBackground.Background" Value="Transparent" />
                         <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
                         <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->
@@ -873,7 +889,7 @@
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
-                        <Setter Target="ToggleFullScreenModeButton.Foreground" Value="White" />
+                        <!--<Setter Target="ToggleFullScreenModeButton.Foreground" Value="White" />-->
                         <Setter Target="BtnSettings.Width" Value="Auto" />
                         <Setter Target="BtnSettings.Height" Value="Auto" />
                         <Setter Target="FontMap.Margin" Value="0 0 8 0" />
