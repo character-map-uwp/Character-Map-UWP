@@ -13,20 +13,33 @@ namespace CharacterMap.Services
 {
     public class AddToCollectionResult
     {
-        public AddToCollectionResult(bool success, InstalledFont font, UserFontCollection collection)
+        public AddToCollectionResult(bool success, IList<InstalledFont> fonts, UserFontCollection collection)
         {
             Success = success;
-            Font = font;
+            Fonts = fonts;
+            if (fonts is not null && fonts.Count == 1)
+                Font = fonts[0];
             Collection = collection;
         }
 
         public InstalledFont Font { get; }
+        public IList<InstalledFont> Fonts { get; }
         public bool Success { get; }
         public UserFontCollection Collection { get; }
 
+        public string GetTitle()
+        {
+            if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
+                return font.Name;
+            else
+                return $"{Fonts.Count} fonts";
+        }
+
         public string GetMessage()
         {
-            if (Collection.IsSystemSymbolCollection)
+            if (Font is null && Fonts is not null)
+                return $"{Fonts.Count} fonts have been added to {Collection.Name}";
+            else if (Collection.IsSystemSymbolCollection)
                 return Localization.Get("NotificationAddedToCollection", Font.Name, Localization.Get("OptionSymbolFonts/Text"));
             else
                 return Localization.Get("NotificationAddedToCollection", Font.Name, Collection.Name);
@@ -171,15 +184,28 @@ namespace CharacterMap.Services
 
         }
 
-        public async Task<AddToCollectionResult> AddToCollectionAsync(InstalledFont font, UserFontCollection collection)
+        public Task<AddToCollectionResult> AddToCollectionAsync(InstalledFont font, UserFontCollection collection)
         {
-            if (font is null || !collection.Fonts.Contains(font.Name))
-            {
-                if (font is not null)
-                    collection.Fonts.Add(font.Name);
+            return AddToCollectionAsync(new List<InstalledFont> { font }, collection);
+        }
 
+        public async Task<AddToCollectionResult> AddToCollectionAsync(IList<InstalledFont> fonts, UserFontCollection collection)
+        {
+            bool changed = false;
+
+            foreach (var font in fonts)
+            {
+                if (font is null || !collection.Fonts.Contains(font.Name))
+                {
+                    if (font is not null && collection.Fonts.Add(font.Name))
+                        changed = true;
+                }
+            }
+
+            if (changed)
+            {
                 await SaveCollectionAsync(collection);
-                return new AddToCollectionResult(true, font, collection);
+                return new AddToCollectionResult(true, fonts, collection);
             }
 
             return new AddToCollectionResult(false, null, null);
@@ -187,10 +213,18 @@ namespace CharacterMap.Services
 
         public Task RemoveFromCollectionAsync(InstalledFont font, UserFontCollection collection)
         {
-            if (collection.Fonts.Remove(font.Name))
-            {
+            return RemoveFromCollectionAsync(new List<InstalledFont> { font }, collection);
+        }
+
+        public Task RemoveFromCollectionAsync(IList<InstalledFont> fonts, UserFontCollection collection)
+        {
+            bool removed = false;
+            foreach (var font in fonts)
+                if (collection.Fonts.Remove(font.Name))
+                    removed = true;
+
+            if (removed)
                 return SaveCollectionAsync(collection);
-            }
 
             return Task.CompletedTask;
         }

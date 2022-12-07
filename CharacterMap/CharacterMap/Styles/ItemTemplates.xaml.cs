@@ -98,7 +98,7 @@ namespace CharacterMap.Styles
 
                 if (MainPage.MainDispatcher.HasThreadAccess)
                 {
-                    main.Settings.LastSelectedFontName = result.Font.Name;
+                    main.Settings.LastSelectedFontName = result.Fonts.FirstOrDefault()?.Name;
                     main.SelectedCollection = result.Collection;
                 }
                 else
@@ -139,12 +139,12 @@ namespace CharacterMap.Styles
                 {
                     if (!args.IsAdd)
                     {
-                        await collections.AddToCollectionAsync(args.Font, args.Collection);
+                        await collections.AddToCollectionAsync(args.Fonts, args.Collection);
                         WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage {  SourceCollection = args.Collection });
                     }
                     else
                     {
-                        await collections.RemoveFromCollectionAsync(args.Font, args.Collection);
+                        await collections.RemoveFromCollectionAsync(args.Fonts, args.Collection);
                         WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage { SourceCollection = args.Collection });
                     }
                 }

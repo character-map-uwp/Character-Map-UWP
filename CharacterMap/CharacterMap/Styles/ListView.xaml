@@ -341,11 +341,12 @@
                                 ItemTemplate="{TemplateBinding TabItemTemplate}"
                                 ItemTemplateSelector="{TemplateBinding TabItemTemplateSelector}"
                                 ItemsSource="{TemplateBinding TabItemsSource}" />
-                            <Border
+                            <StackPanel
                                 Grid.Column="2"
                                 Padding="{ThemeResource TabViewItemAddButtonContainerPadding}"
                                 VerticalAlignment="Bottom"
                                 Canvas.ZIndex="-1"
+                                Orientation="Horizontal"
                                 Visibility="{Binding IsAddTabButtonVisible, RelativeSource={RelativeSource Mode=TemplatedParent}}">
                                 <Button
                                     x:Name="AddButton"
@@ -357,7 +358,35 @@
                                     HighContrastAdjustment="None"
                                     IsTextScaleFactorEnabled="False"
                                     Style="{ThemeResource TabViewButtonStyle}" />
-                            </Border>
+                                <Button
+                                    x:Name="CollectionButton"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Content="&#xE099;"
+                                    HighContrastAdjustment="None"
+                                    IsTextScaleFactorEnabled="False"
+                                    Style="{ThemeResource TabViewButtonStyle}">
+                                    <Button.Flyout>
+                                        <MenuFlyout Placement="Bottom">
+                                            <MenuFlyoutItem Text="Compare Fonts">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE1D3;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
+                                            <!--<MenuFlyoutItem Text="Create new Collection">
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xE109;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>-->
+                                            <MenuFlyoutSubItem Text="Add to existing Collection">
+                                                <MenuFlyoutSubItem.Icon>
+                                                    <FontIcon Glyph="&#xE1DA;" />
+                                                </MenuFlyoutSubItem.Icon>
+                                            </MenuFlyoutSubItem>
+                                        </MenuFlyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </StackPanel>
                             <ContentPresenter
                                 x:Name="RightContentPresenter"
                                 Grid.Column="3"

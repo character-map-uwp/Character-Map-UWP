@@ -32,6 +32,12 @@ namespace CharacterMap.Models
             FontCache = new();
         }
 
+        public FolderContents(List<InstalledFont> fonts)
+        {
+            FontCache = fonts.Distinct().ToDictionary(f => f.Name);
+            UpdateFontSet();
+        }
+
         public Dictionary<string, InstalledFont> FontCache { get; }
 
         /// <summary>

@@ -615,6 +615,7 @@
                 <muxc:TabView
                     x:Name="FontsTabBar"
                     Grid.Row="1"
+                    Loaded="FontsTabBar_Loaded"
                     Margin="0 0 150 0"
                     core:Properties.InsetClip="0 0 0 0"
                     AddTabButtonClick="FontMapContainer_AddTabButtonClick"

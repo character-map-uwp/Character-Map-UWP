@@ -153,7 +153,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center">
-                <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
+                <Run FontWeight="SemiBold" Text="{x:Bind GetTitle()}" />
                 <Run x:Uid="NotificationFontAddedBody" />
                 <Hyperlink Click="BtnViewCollection_Click">
                     <Run Text="{x:Bind Collection.Name}" />
@@ -178,7 +178,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center">
-                <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
+                <Run FontWeight="SemiBold" Text="{x:Bind GetTitle()}" />
                 <Run x:Uid="NotificationFontRemovedBody" />
                 <Hyperlink>
                     <Run Text="{x:Bind Collection.Name}" />

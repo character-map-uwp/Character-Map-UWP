@@ -334,7 +334,7 @@ namespace CharacterMap.Views
 
                 // 2. Rebuild with the correct collection information
                 MainContextFlyout.Items.Add(new MenuFlyoutSeparator());
-                FlyoutHelper.AddCollectionItems(MainContextFlyout, font);
+                FlyoutHelper.AddCollectionItems(MainContextFlyout, font, null);
                 FlyoutHelper.TryAddRemoveFromCollection(
                     MainContextFlyout, font, ViewModel.SelectedCollection, ViewModel.FontListFilter);
 

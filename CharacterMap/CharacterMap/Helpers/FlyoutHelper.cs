@@ -219,7 +219,7 @@ namespace CharacterMap.Helpers
                     // 3. Add "Add to Collection" button
                     if (isExternalFile is false && args.IsFolderView is false)
                     {
-                        coll = AddCollectionItems(menu, font);
+                        coll = AddCollectionItems(menu, font, null);
                     }
                 }
 
@@ -344,11 +344,14 @@ namespace CharacterMap.Helpers
 
                 async void RemoveFrom_Click(object sender, RoutedEventArgs e)
                 {
-                    if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt
+                    if (sender is FrameworkElement f 
+                        && f.DataContext is InstalledFont fnt
                         && f.Tag is UserFontCollection collection)
                     {
                         await _collections.RemoveFromCollectionAsync(fnt, collection);
-                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new CollectionUpdatedArgs(fnt, collection, false)));
+                        WeakReferenceMessenger.Default.Send(
+                            new AppNotificationMessage(true, 
+                                new CollectionUpdatedArgs(new List<InstalledFont> { fnt }, collection, false)));
                         WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage { SourceCollection = collection });
                     }
                 }
@@ -362,15 +365,15 @@ namespace CharacterMap.Helpers
         /// <param name="menu"></param>
         /// <param name="font"></param>
         /// <returns></returns>
-        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font)
+        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IList<InstalledFont> fonts)
         {
             #region Event Handlers
 
             static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
             {
-                if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
+                if (sender is FrameworkElement f && f.DataContext is IList<InstalledFont> fnts)
                 {
-                    var result = await _collections.AddToCollectionAsync(fnt, _collections.SymbolCollection);
+                    var result = await _collections.AddToCollectionAsync(fnts, _collections.SymbolCollection);
 
                     WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
 
@@ -391,6 +394,9 @@ namespace CharacterMap.Helpers
 
             #endregion
 
+            bool multiMode = font is null && fonts is not null;
+            IList<InstalledFont> items = fonts ?? new List<InstalledFont> { font };
+
             // 1. Add "Add To Collection" item
             MenuFlyoutSubItem coll;
             MenuFlyoutSubItem newColl = new()
@@ -404,25 +410,25 @@ namespace CharacterMap.Helpers
             {
                 Text = Localization.Get("NewCollectionItem/Text"),
                 Icon = new FontIcon { Glyph = "\uE109" },
-                DataContext = font
+                DataContext = items
             };
-            newCollection.Click += CreateCollection_Click;
 
+            newCollection.Click += CreateCollection_Click;
 
             if (newColl.Items != null)
             {
                 newColl.Items.Add(newCollection);
 
                 // 3. Create "Symbol Font" item
-                if (!font.IsSymbolFont)
+                if (font is null || !font.IsSymbolFont)
                 {
                     newColl.Items.Add(new MenuFlyoutSeparator());
 
                     MenuFlyoutItem symb = new()
                     {
                         Text = Localization.Get("OptionSymbolFonts/Text"),
-                        IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name),
-                        DataContext = font
+                        IsEnabled = multiMode || !_collections.SymbolCollection.Fonts.Contains(font.Name),
+                        DataContext = items
                     };
                     symb.Click += AddToSymbolFonts_Click;
                     newColl.Items.Add(symb);
@@ -443,9 +449,9 @@ namespace CharacterMap.Helpers
                             _collections.Items.Select(item => new MenuFlyoutItem
                             {
                                 Tag = item,
-                                DataContext = font,
+                                DataContext = items,
                                 Text = item.Name,
-                                IsEnabled = !item.Fonts.Contains(font.Name)
+                                IsEnabled = multiMode || !item.Fonts.Contains(font.Name)
                             }))
                     {
                         if (m.IsEnabled)
@@ -453,10 +459,10 @@ namespace CharacterMap.Helpers
                             m.Click += async (s, a) =>
                             {
                                 if (s is FrameworkElement f 
-                                    && f.DataContext is InstalledFont fnt
+                                    && f.DataContext is IList<InstalledFont> fnts
                                     && f.Tag is UserFontCollection clct)
                                 {
-                                    AddToCollectionResult result = await _collections.AddToCollectionAsync(fnt, clct);
+                                    AddToCollectionResult result = await _collections.AddToCollectionAsync(fnts, clct);
 
                                     if (result.Success)
                                     {
