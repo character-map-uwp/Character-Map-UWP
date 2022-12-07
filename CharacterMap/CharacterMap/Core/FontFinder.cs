@@ -1,3 +1,8 @@
+using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMapCX;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -6,11 +11,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMapCX;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using Windows.Storage;
 using Windows.Storage.Search;
 using Windows.UI.Text;
@@ -45,6 +45,7 @@ namespace CharacterMap.Core
 
         private static StorageFolder _importFolder                  => ApplicationData.Current.LocalFolder;
 
+        public static Dictionary<string, InstalledFont> FontDictionary      { get; private set; }
         public static IReadOnlyList<InstalledFont> Fonts            { get; private set; }
         public static IReadOnlyList<InstalledFont> ImportedFonts    { get; private set; }
 
@@ -155,7 +156,7 @@ namespace CharacterMap.Core
                 /* Order everything appropriately */
                 Fonts = CreateFontList(resultList);
                 ImportedFonts = CreateFontList(imports);
-
+                FontDictionary = resultList;
 
                 if (Fallback == null)
                     Fallback = interop.CreateEmptyFallback();

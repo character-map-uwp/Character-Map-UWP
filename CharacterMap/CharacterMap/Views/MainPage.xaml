@@ -619,7 +619,7 @@
                     core:Properties.InsetClip="0 0 0 0"
                     AddTabButtonClick="FontMapContainer_AddTabButtonClick"
                     Background="{x:Null}"
-                    SelectedIndex="0"
+                    SelectedIndex="{x:Bind ViewModel.TabIndex, Mode=TwoWay}"
                     Style="{StaticResource TabViewStyle}"
                     TabCloseRequested="FontMapContainer_TabCloseRequested"
                     TabItemsSource="{x:Bind ViewModel.Fonts}">

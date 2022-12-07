@@ -1,65 +1,35 @@
-﻿using System;
+﻿using CharacterMap.Controls;
+using CharacterMap.Core;
+using CharacterMap.Helpers;
+using CharacterMap.Models;
+using CharacterMap.Services;
+using CharacterMap.Views;
+using CharacterMapCX;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.UI.ViewManagement;
-using CharacterMap.Core;
-using System.Collections.Generic;
-using CharacterMap.Helpers;
-using Windows.Storage;
-using CharacterMap.Services;
-using CharacterMap.Models;
-using CharacterMap.Controls;
-using CharacterMapCX;
-using CharacterMap.Views;
-using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using Windows.ApplicationModel.Core;
-using Windows.Storage.Pickers;
-using Windows.System;
-using CommunityToolkit.Mvvm.ComponentModel;
+using Windows.Storage;
 
 namespace CharacterMap.ViewModels
 {
-    [ObservableObject]
-    public partial class FontWrapper
-    {
-        [ObservableProperty] private InstalledFont _font;
-
-        public FontWrapper(InstalledFont font)
-        {
-            _font = font;
-        }
-    }
-
-    public class MainViewModelArgs
-    {
-        public MainViewModelArgs(IDialogService dialogService, AppSettings settings, FolderContents folder)
-        {
-            DialogService = dialogService;
-            Settings = settings;
-            Folder = folder;
-        }
-
-        public IDialogService DialogService { get; }
-        public AppSettings Settings { get; }
-        public FolderContents Folder { get; }
-    }
-
-
     public partial class MainViewModel : ViewModelBase
     {
         public event EventHandler FontListCreated;
 
         private Debouncer _searchDebouncer { get; } = new Debouncer();
 
+        private Debouncer _settingsDebouncer { get; } = new Debouncer();
+
         private Exception _startUpException = null;
 
         #region Properties
-
-        [ObservableProperty]
-        private ObservableCollection<FontWrapper> _fonts = new();
 
         public Task InitialLoad { get; }
 
@@ -71,20 +41,31 @@ namespace CharacterMap.ViewModels
 
         public UserCollectionsService FontCollections { get; }
 
+        public ObservableCollection<FontWrapper> Fonts { get; } = new();
 
-        private BasicFontFilter _fontListFilter = BasicFontFilter.All;
-        public BasicFontFilter FontListFilter
-        {
-            get => _fontListFilter;
-            set { if (Set(ref _fontListFilter, value)) RefreshFontList(); }
-        }
+        public bool IsSecondaryView { get; }
+
+        [ObservableProperty] int _tabIndex = 0;
+        [ObservableProperty] double _progress = 0d;
+        [ObservableProperty] string _titlePrefix;
+        [ObservableProperty] string _fontSearch;
+        [ObservableProperty] string _filterTitle;
+        [ObservableProperty] bool _isLoadingFonts;
+        [ObservableProperty] bool _isSearchResults;
+        [ObservableProperty] bool _isLoadingFontsFailed;
+        [ObservableProperty] bool _hasFonts;
+        [ObservableProperty] bool _isFontSetExpired;
+        [ObservableProperty] bool _isCollectionExportEnabled = true;
+        [ObservableProperty] ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
+        [ObservableProperty] BasicFontFilter _fontListFilter = BasicFontFilter.All;
+        [ObservableProperty] List<InstalledFont> _fontList;
 
         private UserFontCollection _selectedCollection;
         public UserFontCollection SelectedCollection
         {
             get => _selectedCollection;
-            set 
-            { 
+            set
+            {
                 if (value != null && value.IsSystemSymbolCollection)
                 {
                     FontListFilter = BasicFontFilter.SymbolFonts;
@@ -96,48 +77,6 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public double Progress      { get => GetV(0d); set => Set(value); }
-
-        public string TitlePrefix   { get => Get<string>(); set => Set(value); }
-        public string FontSearch    { get => Get<string>(); set => Set(value); }
-        public string FilterTitle   { get => Get<string>(); set => Set(value); }
-
-        public bool IsSecondaryView         { get; }
-        public bool IsLoadingFonts          { get => GetV(false); set => Set(value); }
-        public bool IsSearchResults         { get => GetV(false); set => Set(value); }
-        public bool IsLoadingFontsFailed    { get => GetV(false); set => Set(value); }
-        public bool HasFonts                { get => GetV(false); set => Set(value); }
-        public bool IsFontSetExpired        { get => GetV(false); set => Set(value); }
-
-        private bool _isCollectionExportEnabled = true;
-        public bool IsCollectionExportEnabled
-        {
-            get => _isCollectionExportEnabled;
-            set => Set(ref _isCollectionExportEnabled, value);
-        }
-
-        private List<InstalledFont> _fontList;
-        public List<InstalledFont> FontList
-        {
-            get => _fontList;
-            set
-            {
-                if (_fontList != value)
-                {
-                    _fontList = value;
-                    CreateFontListGroup();
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
-        public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
-        {
-            get => _groupedFontList;
-            set => Set(ref _groupedFontList, value);
-        }
-
         private InstalledFont _selectedFont;
         public InstalledFont SelectedFont
         {
@@ -146,13 +85,9 @@ namespace CharacterMap.ViewModels
             {
                 _selectedFont = value;
                 if (null != _selectedFont)
-                {
                     TitlePrefix = value.Name + " -";
-                    Settings.LastSelectedFontName = value.Name;
-                }
                 else
                     TitlePrefix = string.Empty;
-
                 OnPropertyChanged();
             }
         }
@@ -180,13 +115,39 @@ namespace CharacterMap.ViewModels
 
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             InitialLoad = LoadAsync(true);
+
+            Fonts.CollectionChanged += Fonts_CollectionChanged;
+        }
+
+        private void Fonts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            _settingsDebouncer.Debounce(200, () =>
+            {
+                Settings.LastOpenFonts = Fonts.Select(i => i.Font.Name).ToList();
+                Settings.LastTabIndex = TabIndex;
+                Settings.LastSelectedFontName = SelectedFont.Name;
+            });
         }
 
         protected override void OnPropertyChangeNotified(string propertyName)
         {
-            if (propertyName == nameof(FontSearch))
+            switch (propertyName)
             {
-                _searchDebouncer.Debounce(FontSearch.Length == 0 ? 100 : 500, () => RefreshFontList(SelectedCollection));
+                case nameof(FontList):
+                    CreateFontListGroup();
+                    break;
+                case nameof(FontListFilter):
+                    RefreshFontList();
+                    break;
+                case nameof(TabIndex) when TabIndex > -1:
+                    Settings.LastTabIndex = TabIndex;
+                    break;
+                case nameof(SelectedFont) when SelectedFont is not null:
+                    Settings.LastSelectedFontName = SelectedFont.Name;
+                    break;
+                case nameof(FontSearch):
+                    _searchDebouncer.Debounce(FontSearch.Length == 0 ? 100 : 500, () => RefreshFontList(SelectedCollection));
+                    break;
             }
         }
 
@@ -209,6 +170,8 @@ namespace CharacterMap.ViewModels
                 }
 
                 RefreshFontList();
+                if (isFirstLoad)
+                    RestoreOpenFonts();
             }
             catch (Exception ex)
             {
@@ -296,29 +259,53 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private void RestoreOpenFonts()
+        {
+            if (Settings.LastOpenFonts is IList<String> list && list.Count > 0)
+            {
+                foreach (var item in list.Select(l => FontFinder.FontDictionary[l]).ToList())
+                    Fonts.Add(new (item));
+
+                TabIndex = Settings.LastTabIndex;
+                SelectedFont = FontFinder.FontDictionary[Settings.LastSelectedFontName];
+            }
+        }
+
         private void CreateFontListGroup()
         {
             try
             {
-                // Cache last selected now as setting GroupedFontList can change it.
-                string lastSelected = Settings.LastSelectedFontName;
+                // 1. Cache last selected now as setting GroupedFontList can change it.
+                InstalledFont selected = SelectedFont;
 
+                // 2. Group the font list
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
-                GroupedFontList = new ObservableCollection<AlphaKeyGroup<InstalledFont>>(list);
+                GroupedFontList = new (list);
                 HasFonts = FontList.Count > 0;
 
+                // 3. If empty, close everything
                 if (FontList.Count == 0)
                 {
                     SelectedFont = null;
+                    Fonts.Clear();
                     return;
                 }
 
-                if (!string.IsNullOrEmpty(lastSelected))
+                // 4. Set the correct selected font and remove tabs that are no longer in the list
+                if (selected is not null)
                 {
-                    if (SelectedFont == null || lastSelected != SelectedFont.Name)
+                    // 4.1. Clear tabs
+                    foreach (var font in Fonts.ToList())
                     {
-                        var lastSelectedFont = FontList.FirstOrDefault((i => i.Name == lastSelected));
-                        SelectedFont = lastSelectedFont ?? FontList.FirstOrDefault();
+                        if (FontList.Contains(font.Font) is false)
+                            Fonts.Remove(font);
+                    }
+
+                    // 4.2. Handle selected font
+                    if (SelectedFont == null || selected != SelectedFont)
+                    {
+                        var lastSelectedFont = FontList.Contains(selected);
+                        SelectedFont = FontList.Contains(selected) ? selected : FontList.FirstOrDefault();
                     }
                     else
                     {
@@ -362,6 +349,8 @@ namespace CharacterMap.ViewModels
              * all fonts, so extra 150ms is nothing...
              */
             SelectedFont = FontFinder.DefaultFont;
+            // TODO: REMOVE FROM OPEN TABS
+
             await Task.Delay(150);
 
             bool result = await FontFinder.RemoveFontAsync(font);
@@ -416,33 +405,33 @@ namespace CharacterMap.ViewModels
             if (Folder is not null)
                 _ = Folder.LaunchSourceAsync();
         }
+    }
 
-        //public async void OpenFolder()
-        //{
-        //    var picker = new FolderPicker();
+    /// <summary>
+    /// A wrapper used to allow us to change which font is open in a tab
+    /// </summary>
+    [ObservableObject]
+    public partial class FontWrapper
+    {
+        [ObservableProperty] private InstalledFont _font;
 
-        //    picker.FileTypeFilter.Add("*");
-        //    picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
-        //    var src = await picker.PickSingleFolderAsync();
-        //    if (src  is not null)
-        //    {
-        //        try
-        //        {
-        //            IsLoadingFonts = true;
+        public FontWrapper(InstalledFont font)
+        {
+            _font = font;
+        }
+    }
 
-        //            if (await FontFinder.LoadToTempFolderAsync(src) is FolderContents folder && folder.Fonts.Count > 0)
-        //            {
-        //                await MainPage.CreateWindowAsync(new(
-        //                    Ioc.Default.GetService<IDialogService>(), 
-        //                    Ioc.Default.GetService<AppSettings>(), 
-        //                    folder));
-        //            }
-        //        }
-        //        finally
-        //        {
-        //            IsLoadingFonts = false;
-        //        }
-        //    }
-        //}
+    public class MainViewModelArgs
+    {
+        public MainViewModelArgs(IDialogService dialogService, AppSettings settings, FolderContents folder)
+        {
+            DialogService = dialogService;
+            Settings = settings;
+            Folder = folder;
+        }
+
+        public IDialogService DialogService { get; }
+        public AppSettings Settings { get; }
+        public FolderContents Folder { get; }
     }
 }

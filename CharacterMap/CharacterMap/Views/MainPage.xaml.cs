@@ -28,7 +28,6 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
@@ -100,6 +99,8 @@ namespace CharacterMap.Views
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
         }
 
+        bool _disableMapChange = true;
+
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -122,17 +123,28 @@ namespace CharacterMap.Views
                     if (ViewModel.SelectedFont != null)
                     {
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
-
-                        if (ViewModel.Fonts.Count == 0)
-                        {
-                            ViewModel.Fonts.Add(new(ViewModel.SelectedFont));
-                            FontsTabBar.SelectedIndex = 0;
-                        }
-
-                        ViewModel.Fonts[FontsTabBar.SelectedIndex].Font = ViewModel.SelectedFont;
+                        if (FontsTabBar.SelectedIndex >= 0)
+                            ViewModel.Fonts[FontsTabBar.SelectedIndex].Font = ViewModel.SelectedFont;
 
                         FontMap.Font = ViewModel.SelectedFont;
-                        FontMap.PlayFontChanged();
+
+                        if (_disableMapChange)
+                            _disableMapChange = false;
+                        else
+                            FontMap.PlayFontChanged();
+                    }
+                    break;
+
+                case nameof(ViewModel.TabIndex):
+                    if (ViewModel.TabIndex > -1)
+                    {
+                        if (ViewModel.Fonts[ViewModel.TabIndex].Font is InstalledFont font 
+                            && LstFontFamily.SelectedItem != font)
+                        {
+                            _disableMapChange = true;
+                            LstFontFamily.SelectedItem = font;
+                            StartScrollSelectedIntoView(); // Scrolls font into view
+                        }
                     }
                     break;
 
@@ -262,6 +274,11 @@ namespace CharacterMap.Views
         }
 
         private void ViewModel_FontListCreated(object sender, EventArgs e)
+        {
+            StartScrollSelectedIntoView();
+        }
+
+        void StartScrollSelectedIntoView()
         {
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {

@@ -4,7 +4,9 @@ using CharacterMap.Provider;
 using CharacterMap.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
@@ -159,10 +161,23 @@ namespace CharacterMap.Core
             set => BroadcastSet(value);
         }
 
+        // Currently Unused
         public bool DisableTabs
         {
             get => Get(false);
             set => BroadcastSet(value);
+        }
+
+        public IList<string> LastOpenFonts
+        {
+            get => GetStrings();
+            set => Set(value);
+        }
+
+        public int LastTabIndex
+        {
+            get => Get(0);
+            set => Set(value);
         }
 
         // This setting has been deprecated.
@@ -198,6 +213,12 @@ namespace CharacterMap.Core
             UpdateSettings();
         }
 
+        private bool Set(IList<string> value, [CallerMemberName] string key = null)
+        {
+            string s = string.Join(Environment.NewLine, value);
+            return Set(s, key);
+        }
+
         private bool Set(object value, [CallerMemberName]string key = null)
         {
             if (LocalSettings.Values.TryGetValue(key, out object t) && t != null && t.Equals(value))
@@ -214,6 +235,15 @@ namespace CharacterMap.Core
             if (result)
                 WeakReferenceMessenger.Default.Send(new AppSettingsChangedMessage(key));
             return result;
+        }
+
+        private List<string> GetStrings([CallerMemberName] string key = null)
+        {
+            string data = Get<string>(null, key);
+            if (string.IsNullOrWhiteSpace(data))
+                return new List<string>();
+
+            return data.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
         }
 
         private T Get<T>(T defaultValue, [CallerMemberName]string key = null)
