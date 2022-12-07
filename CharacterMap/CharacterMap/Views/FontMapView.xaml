@@ -262,9 +262,9 @@
                 <ColumnDefinition Width="*" />
                 <!--  Font Import Button (Stand-alone Window)  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Search Box  -->
+                <!--  Search Box & Right Content  -->
                 <ColumnDefinition Width="Auto" />
-                <!--  Right Content  -->
+                <!--    -->
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
@@ -321,48 +321,8 @@
                 </Grid>
             </controls:UXButton>
 
-            <AutoSuggestBox
-                x:Name="SearchBox"
-                x:Uid="SearchBox"
-                x:FieldModifier="public"
-                Grid.Row="1"
-                Grid.Column="3"
-                Width="290"
-                Margin="6 0 6 0"
-                VerticalAlignment="Center"
-                GotFocus="SearchBox_GotFocus"
-                ItemTemplate="{StaticResource SearchResultTemplate}"
-                ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
-                PlaceholderText="#SearchBox"
-                PreviewKeyDown="SearchBox_PreviewKeyDown"
-                QuerySubmitted="SearchBox_QuerySubmitted"
-                RenderTransformOrigin="0.5,0.5"
-                Style="{ThemeResource DefaultThemeAutoSuggestBoxStyle}"
-                SuggestionChosen="SearchBox_SuggestionChosen"
-                Tag="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
-                Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                TextChanged="SearchBox_TextChanged"
-                TextMemberPath="Description"
-                UpdateTextOnSelect="False">
-                <AutoSuggestBox.RenderTransform>
-                    <CompositeTransform />
-                </AutoSuggestBox.RenderTransform>
-                <AutoSuggestBox.QueryIcon>
-                    <FontIcon Glyph="&#xE11A;" />
-                </AutoSuggestBox.QueryIcon>
-                <AutoSuggestBox.KeyboardAccelerators>
-                    <KeyboardAccelerator
-                        Key="F"
-                        Invoked="SearchBox_ShortcutInvoked"
-                        Modifiers="Control" />
-                </AutoSuggestBox.KeyboardAccelerators>
-            </AutoSuggestBox>
 
-            <ContentPresenter
-                x:Name="RightPresenter"
-                Grid.Row="1"
-                Grid.Column="4"
-                Content="{x:Bind TitleRightContent, Mode=OneWay}" />
+
 
         </Grid>
 
@@ -411,6 +371,66 @@
                 Fill="Transparent"
                 Stretch="UniformToFill"
                 StrokeThickness="0" />
+
+            <Grid
+                x:Name="SearchContainer"
+                Grid.ColumnSpan="3"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <AutoSuggestBox
+                    x:Name="SearchBox"
+                    x:Uid="SearchBox"
+                    x:FieldModifier="public"
+                    Width="290"
+                    Margin="6 0 6 0"
+                    VerticalAlignment="Center"
+                    GotFocus="SearchBox_GotFocus"
+                    ItemTemplate="{StaticResource SearchResultTemplate}"
+                    ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                    PlaceholderText="#SearchBox"
+                    PreviewKeyDown="SearchBox_PreviewKeyDown"
+                    QuerySubmitted="SearchBox_QuerySubmitted"
+                    RenderTransformOrigin="0.5,0.5"
+                    Style="{ThemeResource DefaultThemeAutoSuggestBoxStyle}"
+                    SuggestionChosen="SearchBox_SuggestionChosen"
+                    Tag="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
+                    Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextChanged="SearchBox_TextChanged"
+                    TextMemberPath="Description"
+                    UpdateTextOnSelect="False">
+                    <AutoSuggestBox.RenderTransform>
+                        <CompositeTransform />
+                    </AutoSuggestBox.RenderTransform>
+                    <AutoSuggestBox.QueryIcon>
+                        <FontIcon Glyph="&#xE11A;" />
+                    </AutoSuggestBox.QueryIcon>
+                    <AutoSuggestBox.KeyboardAccelerators>
+                        <KeyboardAccelerator
+                            Key="F"
+                            Invoked="SearchBox_ShortcutInvoked"
+                            Modifiers="Control" />
+                    </AutoSuggestBox.KeyboardAccelerators>
+                </AutoSuggestBox>
+
+                <ContentPresenter
+                    x:Name="RightPresenter"
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    Content="{x:Bind TitleRightContent, Mode=OneWay}">
+                    <d:ContentPresenter.Content>
+                        <Border Width="45" Height="45">
+                            <SymbolIcon Symbol="Setting" />
+                        </Border>
+                    </d:ContentPresenter.Content>
+                </ContentPresenter>
+
+            </Grid>
+
 
             <!--  Map Header  -->
             <Grid
@@ -725,14 +745,6 @@
                             <controls:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
                         </Button.Flyout>
                     </controls:UXButton>
-                </toolkit:WrapPanel>
-
-                <StackPanel
-                    Grid.Column="1"
-                    VerticalAlignment="Bottom"
-                    Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
-                    Orientation="Horizontal"
-                    Spacing="8">
 
                     <controls:UXButton
                         x:Name="MoreOptionsButton"
@@ -752,8 +764,7 @@
                         </Button.Flyout>
                         <FontIcon Margin="0,-2,-2,-2" Glyph="&#xE10C;" />
                     </controls:UXButton>
-                </StackPanel>
-
+                </toolkit:WrapPanel>
 
 
                 <!--  Notifications  -->
@@ -1072,7 +1083,8 @@
             <Grid
                 x:Name="SplitterContainer"
                 x:FieldModifier="public"
-                Grid.RowSpan="3"
+                Grid.Row="1"
+                Grid.RowSpan="2"
                 Grid.Column="1"
                 Canvas.ZIndex="1">
 
@@ -1107,7 +1119,8 @@
             <Grid
                 x:Name="PreviewGrid"
                 x:FieldModifier="public"
-                Grid.RowSpan="3"
+                Grid.Row="1"
+                Grid.RowSpan="2"
                 Grid.Column="2"
                 d:Background="Purple">
                 <Grid.RenderTransform>
@@ -1649,6 +1662,7 @@
         <Canvas
             x:Name="PrintCanvas"
             Margin="-10000, -10000, 0, 0"
+            d:Visibility="Collapsed"
             d:IsHidden="True" />
 
         <VisualStateManager.VisualStateGroups>
@@ -1936,8 +1950,8 @@
                         <Setter Target="TitleRowSpacer.Visibility" Value="Collapsed" />
                         <Setter Target="FontTitleBlock.Visibility" Value="Collapsed" />
                         <Setter Target="SearchBox.Visibility" Value="Visible" />
-                        <Setter Target="SearchBox.Margin" Value="6 -44 6 0" />
-                        <Setter Target="RightPresenter.Visibility" Value="Collapsed" />
+                        <Setter Target="SearchContainer.Visibility" Value="Visible" />
+                        <!--<Setter Target="RightPresenter.Visibility" Value="Collapsed" />-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -126,10 +126,10 @@ namespace CharacterMap.Views
                         if (ViewModel.Fonts.Count == 0)
                         {
                             ViewModel.Fonts.Add(new(ViewModel.SelectedFont));
-                            FontMapContainer.SelectedIndex = 0;
+                            FontsTabBar.SelectedIndex = 0;
                         }
 
-                        ViewModel.Fonts[FontMapContainer.SelectedIndex].Font = ViewModel.SelectedFont;
+                        ViewModel.Fonts[FontsTabBar.SelectedIndex].Font = ViewModel.SelectedFont;
 
                         FontMap.Font = ViewModel.SelectedFont;
                         FontMap.PlayFontChanged();
@@ -154,7 +154,7 @@ namespace CharacterMap.Views
         private void FontMapContainer_AddTabButtonClick(TabView sender, object args)
         {
             ViewModel.Fonts.Add(new (ViewModel.SelectedFont));
-            FontMapContainer.SelectedIndex = ViewModel.Fonts.Count - 1;
+            FontsTabBar.SelectedIndex = ViewModel.Fonts.Count - 1;
         }
 
         private void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)

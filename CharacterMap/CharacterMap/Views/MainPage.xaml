@@ -47,47 +47,57 @@
         </Grid.ColumnDefinitions>
 
         <!--  Title Bar Grid  -->
-        <controls:XamlTitleBar
-            x:Name="TitleBar"
+        <Grid
             Grid.ColumnSpan="2"
+            Height="{x:Bind TitleBar.TemplateSettings.Height, Mode=OneWay}"
             VerticalAlignment="Top"
-            Canvas.ZIndex="10">
-            <Grid>
-                <ToggleButton
-                    x:Name="ToggleFullScreenModeButton"
-                    x:Uid="ToggleFullScreenModeButton"
-                    Width="45"
-                    Background="Transparent"
-                    Command="{Binding CommandToggleFullScreen}"
-                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                    Style="{StaticResource IconToggleButtonStyle}"
-                    ToolTipService.Placement="Right">
-                    <FontIcon FontSize="14" Glyph="&#xE740;" />
-                </ToggleButton>
+            Canvas.ZIndex="10"
+            d:Height="32">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.LeftColumnWidth, Mode=OneWay}" d:Width="0" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="0" />
+            </Grid.ColumnDefinitions>
+            <ToggleButton
+                x:Name="ToggleFullScreenModeButton"
+                x:Uid="ToggleFullScreenModeButton"
+                Grid.Column="1"
+                Width="45"
+                Background="Transparent"
+                Command="{Binding CommandToggleFullScreen}"
+                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                Style="{StaticResource IconToggleButtonStyle}"
+                ToolTipService.Placement="Right">
+                <FontIcon FontSize="14" Glyph="&#xE740;" />
+            </ToggleButton>
 
-                <controls:UXButton
-                    x:Name="ZuneSettingsButton"
-                    x:Load="False"
-                    HorizontalAlignment="Right"
-                    Click="BtnSettings_OnClick"
-                    FontSize="9"
-                    Foreground="#8A8D90"
-                    Style="{StaticResource MapInfoButtonStyle}"
-                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
-                    <TextBlock
-                        CharacterSpacing="30"
-                        FontWeight="Bold"
-                        Text="{core:Localizer Key='SettingsHeader/Text', Casing=Upper}" />
-                </controls:UXButton>
+            <controls:UXButton
+                x:Name="ZuneSettingsButton"
+                x:Load="False"
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                Click="BtnSettings_OnClick"
+                FontSize="9"
+                Foreground="#8A8D90"
+                Style="{StaticResource MapInfoButtonStyle}"
+                Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
+                <TextBlock
+                    CharacterSpacing="30"
+                    FontWeight="Bold"
+                    Text="{core:Localizer Key='SettingsHeader/Text', Casing=Upper}" />
+            </controls:UXButton>
 
-            </Grid>
-        </controls:XamlTitleBar>
+        </Grid>
+
+
+
 
         <!--  Main Content  -->
         <SplitView
             x:Name="SplitView"
             Grid.RowSpan="3"
             Grid.ColumnSpan="3"
+            Background="Transparent"
             DisplayMode="Inline"
             IsPaneOpen="True"
             OpenPaneLength="{StaticResource SplitViewPaneWidth}"
@@ -591,15 +601,26 @@
             <!--  FontMap Grid  -->
             <Grid x:Name="SplitViewContentRoot" Loading="Grid_Loading">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, Mode=OneWay}" d:Height="32" />
+                    <RowDefinition Height="0" d:Height="0" />
                     <RowDefinition Height="Auto" d:Height="32" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
-                <muxc:TabView
-                    x:Name="FontMapContainer"
+
+                <controls:XamlTitleBar
+                    x:Name="TitleBar"
                     Grid.Row="1"
-                    Margin="0 0 300 0"
+                    VerticalAlignment="Stretch"
+                    IsAutoHeightEnabled="False" />
+
+                <muxc:TabView
+                    x:Name="FontsTabBar"
+                    Grid.Row="1"
+                    Margin="0 0 150 0"
+                    core:Properties.InsetClip="0 0 0 0"
                     AddTabButtonClick="FontMapContainer_AddTabButtonClick"
+                    Background="{x:Null}"
+                    SelectedIndex="0"
+                    Style="{StaticResource TabViewStyle}"
                     TabCloseRequested="FontMapContainer_TabCloseRequested"
                     TabItemsSource="{x:Bind ViewModel.Fonts}">
                     <muxc:TabView.TabItemTemplate>
@@ -621,12 +642,16 @@
                     </muxc:TabView.TabStripHeader>
                 </muxc:TabView>
 
-                <Border Grid.Row="2" Background="{ThemeResource TabViewItemHeaderBackgroundSelected}" />
+                <Border
+                    Grid.Row="2"
+                    Margin="0 -1 0 0"
+                    core:Properties.InsetClip="0 1 0 0"
+                    Background="{ThemeResource LayerOnMicaBaseAltFillColorSecondaryBrush}" />
 
                 <views:FontMapView
                     x:Name="FontMap"
                     Grid.Row="2"
-                    Font="{x:Bind ((vm:FontWrapper)FontMapContainer.SelectedItem).Font, Mode=OneWay}"
+                    Font="{x:Bind ((vm:FontWrapper)FontsTabBar.SelectedItem).Font, Mode=OneWay}"
                     HideTitle="True">
                     <views:FontMapView.TitleRightContent>
                         <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">

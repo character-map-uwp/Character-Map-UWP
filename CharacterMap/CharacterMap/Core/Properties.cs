@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -282,6 +283,33 @@ namespace CharacterMap.Core
                 {
                     if (e.NewValue is InkToolbarToolButton b)
                         t.ActiveTool = b;
+                }
+            }));
+
+        #endregion
+
+        #region InsetClip
+
+        public static Thickness GetInsetClip(DependencyObject obj)
+        {
+            return (Thickness)obj.GetValue(InsetClipProperty);
+        }
+
+        public static void SetInsetClip(DependencyObject obj, Thickness value)
+        {
+            obj.SetValue(InsetClipProperty, value);
+        }
+
+        public static readonly DependencyProperty InsetClipProperty =
+            DependencyProperty.RegisterAttached("InsetClip", typeof(Thickness), typeof(Properties), new PropertyMetadata(new Thickness(0d), (d,e) => 
+            { 
+                if (d is FrameworkElement f && e.NewValue is Thickness t)
+                {
+                    Visual v = f.GetElementVisual();
+                    if (t.Left > 0 || t.Right > 0 || t.Top > 0 || t.Bottom > 0)
+                        v.Clip = v.Compositor.CreateInsetClip((float)t.Left, (float)t.Top, (float)t.Right, (float)t.Bottom);
+                    else
+                        v.Clip = null;
                 }
             }));
 

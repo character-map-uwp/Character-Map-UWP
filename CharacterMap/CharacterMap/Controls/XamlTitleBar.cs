@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls
 {
-    public class XamlTitleBarTemplateSettings : ViewModelBase
+    public partial class XamlTitleBarTemplateSettings : ViewModelBase
     {
         private GridLength _leftColumnWidth = new GridLength(0);
         public GridLength LeftColumnWidth
@@ -40,6 +40,13 @@ namespace CharacterMap.Controls
             get => _gridHeight;
             internal set => Set(ref _gridHeight, value);
         }
+
+        private double _height = 0d;
+        public double Height
+        {
+            get => _height;
+            internal set => Set(ref _height, value);
+        }
     }
 
     public sealed class XamlTitleBar : ContentControl
@@ -56,11 +63,22 @@ namespace CharacterMap.Controls
         }
 
         public static readonly DependencyProperty IsDragTargetProperty =
-            DependencyProperty.Register("IsDragTarget", typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true, (d,e) =>
+            DependencyProperty.Register(nameof(IsDragTarget), typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true, (d,e) =>
             {
                 if (d is XamlTitleBar bar)
                     bar.UpdateStates();
             }));
+
+
+        public bool IsAutoHeightEnabled
+        {
+            get { return (bool)GetValue(IsAutoHeightEnabledProperty); }
+            set { SetValue(IsAutoHeightEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAutoHeightEnabledProperty =
+            DependencyProperty.Register(nameof(IsAutoHeightEnabled), typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true));
+
 
 
         public XamlTitleBarTemplateSettings TemplateSettings { get; } = new XamlTitleBarTemplateSettings();
@@ -68,9 +86,13 @@ namespace CharacterMap.Controls
         public XamlTitleBar()
         {
             DefaultStyleKey = typeof(XamlTitleBar);
+            Loading += XamlTitleBar_Loading;
             Loaded += XamlTitleBar_Loaded;
             Unloaded += XamlTitleBar_Unloaded;
+        }
 
+        private void XamlTitleBar_Loading(FrameworkElement sender, object args)
+        {
             // 32px is the default height at default text scaling. 
             // We'll use this as a placeholder until we get a real value
             SetHeight(32);
@@ -78,8 +100,11 @@ namespace CharacterMap.Controls
 
         void SetHeight(double d)
         {
-            Height = d;
+            if (IsAutoHeightEnabled)
+                Height = d;
+            
             TemplateSettings.GridHeight = new GridLength(d);
+            TemplateSettings.Height = d;
         }
 
         protected override void OnApplyTemplate()

@@ -12,12 +12,14 @@
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <SolidColorBrush x:Key="DefaultHostBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+            <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="SolidBackgroundFillColorBase">#F3F3F3</Color>
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <SolidColorBrush x:Key="DefaultHostBrush" Color="{ThemeResource SolidBackgroundFillColorBase}" />
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
+            <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -27,7 +29,6 @@
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <BrushTransition x:Key="QuickBrushTransition" Duration="0:0:0.06" />
-    <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource CardBackgroundFillColorDefault}" />
 
     <!--  TEXT STYLES  -->
     <Style x:Key="HeaderStyle" TargetType="TextBlock">
@@ -1925,5 +1926,10 @@
     <!--  SLIDER  -->
 
     <Style x:Key="DefaultThemeSliderStyle" BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider" />
+
+
+
+
+
 
 </ResourceDictionary>

@@ -195,7 +195,7 @@ namespace CharacterMap.Views
                .AddKeyFrame(0, Visibility.Collapsed);
 
             sb.CreateTimeline<DoubleAnimation>(SearchBox, TargetProperty.CompositeTransform.TranslateY)
-                .To(-75)
+                .To(-80)
                 .SetDuration(0.4)
                 .SetEase(new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseIn});
 
@@ -338,8 +338,8 @@ namespace CharacterMap.Views
                 .AddKeyFrame(0, Visibility.Visible);
 
             sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(SearchBox, TargetProperty.CompositeTransform.TranslateY)
-                .AddKeyFrame(0, -75)
-                .AddKeyFrame(startOffset, -75)
+                .AddKeyFrame(0, -80)
+                .AddKeyFrame(startOffset, -80)
                 .AddKeyFrame(startOffset.TotalSeconds + 0.4, 0, new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseOut });
 
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(TypeRampRoot, TargetProperty.Visiblity)
