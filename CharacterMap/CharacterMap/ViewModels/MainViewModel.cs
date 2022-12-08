@@ -449,8 +449,15 @@ namespace CharacterMap.ViewModels
     /// </summary>
     public partial class FontItem : ObservableObject
     {
-        [ObservableProperty] private string _subTitle;
-        [ObservableProperty] private InstalledFont _font;
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(Tooltip))]
+        private string _subTitle;
+
+        [ObservableProperty] 
+        [NotifyPropertyChangedFor(nameof(Tooltip))]
+        private InstalledFont _font;
+
+        public string Tooltip => $"{Font.Name} {_subTitle}";
 
         private FontVariant _selected;
         public FontVariant Selected

@@ -449,6 +449,7 @@
     <Style x:Key="VariantComboBoxStyle" TargetType="controls:UXComboBox">
         <Setter Property="Padding" Value="12,5,0,7" />
         <Setter Property="MinWidth" Value="{ThemeResource ComboBoxThemeMinWidth}" />
+        <Setter Property="MinHeight" Value="40" />
         <Setter Property="Background" Value="{ThemeResource AppBarButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource AppBarButtonForeground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource AppBarButtonBorderBrush}" />
@@ -684,11 +685,11 @@
                                 BorderThickness="{ThemeResource ComboBoxDropdownBorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}">
                                 <ScrollViewer
-                                    FontWeight="Normal"
                                     x:Name="ScrollViewer"
                                     MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
                                     AutomationProperties.AccessibilityView="Raw"
                                     BringIntoViewOnFocusChange="{TemplateBinding ScrollViewer.BringIntoViewOnFocusChange}"
+                                    FontWeight="Normal"
                                     Foreground="{ThemeResource ComboBoxDropDownForeground}"
                                     HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
                                     HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
@@ -880,8 +881,8 @@
 
     <Style x:Key="MapInfoButtonStyle" BasedOn="{StaticResource TransparentButton}" TargetType="controls:UXButton">
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
-        <Setter Property="Height" Value="47" />
-        <Setter Property="MinWidth" Value="47" />
+        <Setter Property="Height" Value="42" />
+        <Setter Property="MinWidth" Value="42" />
     </Style>
 
     <Style x:Key="DefaultThemeAppBarButtonStyle" BasedOn="{StaticResource TransparentButton}" TargetType="controls:UXButton">

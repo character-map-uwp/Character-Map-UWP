@@ -638,15 +638,23 @@
                         <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
                             <muxc:TabViewItem>
                                 <muxc:TabViewItem.Header>
-                                    <TextBlock>
-                                        <Run FontFamily="{x:Bind Font.DefaultVariant.Source}" Text="{x:Bind Font.Name}" />
-                                        <Run />
-                                        <Run
-                                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                            FontSize="11.333"
-                                            Foreground="{ThemeResource TextFillColorTertiary}"
-                                            Text="{Binding SubTitle, Mode=OneWay}" />
-                                    </TextBlock>
+                                    <Grid Background="Transparent" ToolTipService.ToolTip="{x:Bind Tooltip}">
+                                        <TextBlock
+                                            TextLineBounds="Tight"
+                                            Margin="0 0 4 0"
+                                            VerticalAlignment="Center"
+                                            IsHitTestVisible="False"
+                                            TextTrimming="CharacterEllipsis">
+                                            <Run FontFamily="{x:Bind Font.DefaultVariant.Source}" Text="{x:Bind Font.Name}" />
+                                            <Run />
+                                            <Run
+                                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                FontSize="11.333"
+                                                Foreground="{ThemeResource TextFillColorTertiary}"
+                                                Text="{x:Bind SubTitle}" />
+                                        </TextBlock>
+                                    </Grid>
+
                                 </muxc:TabViewItem.Header>
                             </muxc:TabViewItem>
                         </DataTemplate>

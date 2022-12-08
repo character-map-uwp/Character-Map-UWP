@@ -298,7 +298,8 @@
                                 x:Name="Content"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                HighContrastAdjustment="None" />
+                                HighContrastAdjustment="None"
+                                IsTextScaleFactorEnabled="False" />
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>

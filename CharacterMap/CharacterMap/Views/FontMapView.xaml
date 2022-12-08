@@ -460,6 +460,7 @@
                     <controls:UXComboBox
                         x:Name="WeightSelector"
                         MinWidth="160"
+                        Margin="0 -1 0 0"
                         FontSize="12"
                         FontWeight="SemiBold"
                         IsEnabled="{Binding SelectedFont.Font.HasVariants}"
@@ -483,7 +484,11 @@
                         IsHintVisible="True"
                         Style="{ThemeResource MapInfoButtonStyle}"
                         d:Label="Info">
-                        <FontIcon Margin="0,0,-2,0" Glyph="&#xE946;" />
+                        <FontIcon
+                            Margin="0,0,-2,0"
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            Glyph="&#xE946;" />
                         <Button.Flyout>
                             <Flyout win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}" Opened="InfoFlyout_Opened">
                                 <ScrollViewer>
@@ -666,7 +671,10 @@
                         Style="{ThemeResource MapInfoButtonStyle}"
                         Visibility="Collapsed"
                         d:Label="Options">
-                        <FontIcon Margin="0,0,-2,0" Glyph="&#xE8D2;" />
+                        <FontIcon
+                            Margin="0,0,-2,0"
+                            FontSize="18"
+                            Glyph="&#xE8D2;" />
                         <Button.Flyout>
                             <Flyout win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}" Placement="Bottom">
                                 <Grid>
@@ -729,6 +737,7 @@
                         <FontIcon
                             Margin="0,0,-2,0"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="18"
                             Glyph="&#xE13C;" />
                     </controls:UXButton>
 
@@ -743,6 +752,7 @@
                         <FontIcon
                             Margin="0,0,-2,0"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="18"
                             Glyph="&#xE16E;" />
                         <Button.Flyout>
                             <controls:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
@@ -765,7 +775,10 @@
                                 </MenuFlyout.MenuFlyoutPresenterStyle>
                             </MenuFlyout>
                         </Button.Flyout>
-                        <FontIcon Margin="0,-2,-2,-2" Glyph="&#xE10C;" />
+                        <FontIcon
+                            Margin="0,-2,-2,-2"
+                            FontSize="18"
+                            Glyph="&#xE10C;" />
                     </controls:UXButton>
                 </toolkit:WrapPanel>
 

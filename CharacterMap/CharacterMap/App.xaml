@@ -41,6 +41,7 @@
                     <x:Double x:Key="ToggleSwitchThemeMinWidth">0</x:Double>
 
                     <BrushTransition x:Key="RootBackgroundTransition" Duration="0:0:0.25" />
+                    <BrushTransition x:Key="QuickBackgroundTransition" Duration="0:0:0.1" />
                     <TransitionCollection x:Key="NoTransitions" />
                     <TransitionCollection x:Key="RepositionTransitions">
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
