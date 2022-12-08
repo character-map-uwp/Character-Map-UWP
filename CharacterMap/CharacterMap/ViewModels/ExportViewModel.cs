@@ -53,7 +53,7 @@ namespace CharacterMap.ViewModels
 
         public ExportViewModel(FontMapViewModel viewModel)
         {
-            _font       = viewModel.SelectedFont;
+            _font       = viewModel.SelectedFont.Font;
             Categories  = viewModel.SelectedGlyphCategories.ToList(); // Makes a copy of the list
             Font        = viewModel.RenderingOptions.Variant;
             Options     = viewModel.RenderingOptions;

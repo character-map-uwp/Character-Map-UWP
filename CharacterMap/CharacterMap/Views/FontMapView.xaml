@@ -290,9 +290,9 @@
                 VerticalAlignment="Center"
                 Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                 Style="{StaticResource TitleTextStyle}"
-                Text="{Binding SelectedFont.Name, Converter={StaticResource TitleConverter}}"
+                Text="{Binding SelectedFont.Font.Name, Converter={StaticResource TitleConverter}}"
                 TextTrimming="CharacterEllipsis"
-                ToolTipService.ToolTip="{Binding SelectedFont.Name}"
+                ToolTipService.ToolTip="{Binding SelectedFont.Font.Name}"
                 d:Text="Font Name" />
 
             <controls:UXButton
@@ -460,14 +460,17 @@
                     <controls:UXComboBox
                         x:Name="WeightSelector"
                         MinWidth="160"
-                        IsEnabled="{Binding SelectedFont.HasVariants}"
-                        ItemsSource="{Binding SelectedFont.Variants}"
-                        SelectedItem="{Binding SelectedVariant, Mode=TwoWay}"
+                        FontSize="12"
+                        FontWeight="SemiBold"
+                        IsEnabled="{Binding SelectedFont.Font.HasVariants}"
+                        ItemsSource="{Binding SelectedFont.Font.Variants}"
+                        SelectedItem="{Binding SelectedFont.Selected, Mode=TwoWay}"
                         Style="{StaticResource VariantComboBoxStyle}">
                         <controls:UXComboBox.SecondaryContent>
                             <TextBlock
                                 x:Name="SelectorLabel"
                                 FontSize="12"
+                                FontWeight="Normal"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                 Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}" />
                         </controls:UXComboBox.SecondaryContent>
@@ -528,7 +531,7 @@
                                                 <TextBlock
                                                     Grid.Row="0"
                                                     Style="{StaticResource Value}"
-                                                    Text="{Binding SelectedFont.Name}" />
+                                                    Text="{Binding SelectedFont.Font.Name}" />
 
                                                 <TextBlock x:Uid="FontPropFace" Grid.Row="1" />
                                                 <TextBlock
@@ -1662,8 +1665,8 @@
         <Canvas
             x:Name="PrintCanvas"
             Margin="-10000, -10000, 0, 0"
-            d:Visibility="Collapsed"
-            d:IsHidden="True" />
+            d:IsHidden="True"
+            d:Visibility="Collapsed" />
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="LoadingStates">

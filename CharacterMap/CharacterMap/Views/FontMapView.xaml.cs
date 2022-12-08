@@ -60,17 +60,17 @@ namespace CharacterMap.Views
 
         #region Font
 
-        public InstalledFont Font
+        public FontItem Font
         {
-            get => (InstalledFont)GetValue(FontProperty);
+            get => (FontItem)GetValue(FontProperty);
             set => SetValue(FontProperty, value);
         }
 
         public static readonly DependencyProperty FontProperty =
-            DependencyProperty.Register(nameof(Font), typeof(InstalledFont), typeof(FontMapView), new PropertyMetadata(null, (d, e) =>
+            DependencyProperty.Register(nameof(Font), typeof(FontItem), typeof(FontMapView), new PropertyMetadata(null, (d, e) =>
             {
-                if (d is FontMapView f)
-                    f.ViewModel.SelectedFont = e.NewValue as InstalledFont;
+                if (d is FontMapView f && e.NewValue is FontItem item)
+                    f.ViewModel.SelectedFont = item;
             }));
 
         #endregion
@@ -708,11 +708,11 @@ namespace CharacterMap.Views
 
         private void MenuFlyout_Opening(object sender, object e)
         {
-            if (ViewModel.SelectedFont is InstalledFont font)
+            if (ViewModel.SelectedFont is FontItem item)
             {
                 FlyoutHelper.CreateMenu(
                     MoreMenu,
-                    font,
+                    item.Font,
                     ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
                     this.Tag as FrameworkElement,
                     new()
@@ -1090,15 +1090,16 @@ namespace CharacterMap.Views
         {
             void CreateView()
             {
+                FontItem item = new FontItem(font);
+                item.Selected = options?.Variant ?? font.DefaultVariant;
+
                 FontMapView map = new() { 
                     IsStandalone = true, 
-                    ViewModel = { SelectedFont = font, IsExternalFile = sourceFile != null, SourceFile = sourceFile } };
+                    ViewModel = { SelectedFont = item, IsExternalFile = sourceFile != null, SourceFile = sourceFile } };
 
                 // Attempt to apply any custom rendering options from the source view
                 if (options != null && options.Variant != null && font.Variants.Contains(options.Variant))
                 {
-                    map.ViewModel.SelectedVariant = options.Variant;
-                    
                     if (options.DefaultTypography != null)
                         map.ViewModel.SelectedTypography = options.DefaultTypography;
                 }

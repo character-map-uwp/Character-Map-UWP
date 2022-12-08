@@ -19,7 +19,7 @@ namespace CharacterMap.Core
 
         public bool IsSymbolFont { get; private set; }
 
-        public IReadOnlyList<FontVariant> Variants => _variants;
+        public IList<FontVariant> Variants => _variants;
 
         public bool HasVariants => _variants.Count > 1;
 

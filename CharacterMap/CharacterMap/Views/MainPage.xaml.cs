@@ -125,9 +125,10 @@ namespace CharacterMap.Views
                     {
                         LstFontFamily.SelectedItem = ViewModel.SelectedFont;
                         if (FontsTabBar.SelectedIndex >= 0)
-                            ViewModel.Fonts[FontsTabBar.SelectedIndex].Font = ViewModel.SelectedFont;
-
-                        FontMap.Font = ViewModel.SelectedFont;
+                        {
+                            ViewModel.Fonts[FontsTabBar.SelectedIndex].SetFont(ViewModel.SelectedFont);
+                            FontMap.Font = ViewModel.Fonts[FontsTabBar.SelectedIndex];
+                        }
 
                         if (_disableMapChange)
                             _disableMapChange = false;

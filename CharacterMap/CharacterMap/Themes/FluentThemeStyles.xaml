@@ -652,7 +652,7 @@
                                 FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                 FontSize="{TemplateBinding FontSize}"
                                 FontStyle="Normal"
-                                FontWeight="Normal" />
+                                FontWeight="{TemplateBinding FontWeight}" />
                             <ContentPresenter
                                 MinHeight="0"
                                 Content="{TemplateBinding SecondaryContent}"
@@ -684,6 +684,7 @@
                                 BorderThickness="{ThemeResource ComboBoxDropdownBorderThickness}"
                                 CornerRadius="{TemplateBinding CornerRadius}">
                                 <ScrollViewer
+                                    FontWeight="Normal"
                                     x:Name="ScrollViewer"
                                     MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
                                     AutomationProperties.AccessibilityView="Raw"

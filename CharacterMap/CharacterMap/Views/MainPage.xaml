@@ -635,8 +635,20 @@
                     TabCloseRequested="FontMapContainer_TabCloseRequested"
                     TabItemsSource="{x:Bind ViewModel.Fonts}">
                     <muxc:TabView.TabItemTemplate>
-                        <DataTemplate x:DataType="vm:FontWrapper" x:DefaultBindMode="OneWay">
-                            <muxc:TabViewItem Header="{x:Bind Font.Name}" />
+                        <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
+                            <muxc:TabViewItem>
+                                <muxc:TabViewItem.Header>
+                                    <TextBlock>
+                                        <Run FontFamily="{x:Bind Font.DefaultVariant.Source}" Text="{x:Bind Font.Name}" />
+                                        <Run />
+                                        <Run
+                                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                            FontSize="11.333"
+                                            Foreground="{ThemeResource TextFillColorTertiary}"
+                                            Text="{Binding SubTitle, Mode=OneWay}" />
+                                    </TextBlock>
+                                </muxc:TabViewItem.Header>
+                            </muxc:TabViewItem>
                         </DataTemplate>
                     </muxc:TabView.TabItemTemplate>
                     <muxc:TabView.TabStripHeader>
@@ -668,7 +680,7 @@
                     Grid.Row="2"
                     Grid.ColumnSpan="2"
                     Margin="0 4 0 0"
-                    Font="{x:Bind ((vm:FontWrapper)FontsTabBar.SelectedItem).Font, Mode=OneWay}"
+                    Font="{x:Bind ((vm:FontItem)FontsTabBar.SelectedItem), Mode=OneWay}"
                     HideTitle="True">
                     <views:FontMapView.TitleRightContent>
                         <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">

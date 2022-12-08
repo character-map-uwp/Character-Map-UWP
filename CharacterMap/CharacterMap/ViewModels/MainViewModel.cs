@@ -12,6 +12,8 @@ using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
@@ -41,7 +43,7 @@ namespace CharacterMap.ViewModels
 
         public UserCollectionsService FontCollections { get; }
 
-        public ObservableCollection<FontWrapper> Fonts { get; } = new();
+        public ObservableCollection<FontItem> Fonts { get; } = new();
 
         public bool IsSecondaryView { get; }
 
@@ -119,14 +121,45 @@ namespace CharacterMap.ViewModels
             Fonts.CollectionChanged += Fonts_CollectionChanged;
         }
 
-        private void Fonts_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Fonts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            _settingsDebouncer.Debounce(200, () =>
+            // 1. Ensure child items are listened too
+            if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace)
             {
-                Settings.LastOpenFonts = Fonts.Select(i => i.Font.Name).ToList();
-                Settings.LastTabIndex = TabIndex;
-                Settings.LastSelectedFontName = SelectedFont.Name;
-            });
+                foreach (var item in e.OldItems.Cast<FontItem>())
+                    item.PropertyChanged -= Item_PropertyChanged;
+            }
+            else if (e.Action is NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Reset)
+            {
+                foreach (var item in e.NewItems.Cast<FontItem>())
+                {
+                    item.PropertyChanged -= Item_PropertyChanged;
+                    item.PropertyChanged += Item_PropertyChanged;
+                }
+            }
+
+            // 2. Save current open items
+            Save();
+
+            ///
+            /// HELPERS 
+            /// 
+            void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            {
+                // If the selected variant is changed, resave the font list 
+                if (e.PropertyName == nameof(FontItem.Selected))
+                    Save();
+            }
+
+            void Save()
+            {
+                _settingsDebouncer.Debounce(200, () =>
+                {
+                    Settings.LastOpenFonts = Fonts.SelectMany(f => new List<String> { f.Font.Name, f.Font.Variants.IndexOf(f.Selected).ToString() }).ToList();
+                    Settings.LastTabIndex = TabIndex;
+                    Settings.LastSelectedFontName = SelectedFont.Name;
+                });
+            }
         }
 
         protected override void OnPropertyChangeNotified(string propertyName)
@@ -263,8 +296,12 @@ namespace CharacterMap.ViewModels
         {
             if (Settings.LastOpenFonts is IList<String> list && list.Count > 0)
             {
-                foreach (var item in list.Select(l => FontFinder.FontDictionary[l]).ToList())
-                    Fonts.Add(new (item));
+                for (int i = 0; i < list.Count; i++)
+                {
+                    FontItem item = new(FontFinder.FontDictionary[list[i]]);
+                    item.Selected = item.Font.Variants[Convert.ToInt32(list[++i])];
+                    Fonts.Add(item);
+                }
 
                 TabIndex = Settings.LastTabIndex;
                 SelectedFont = FontFinder.FontDictionary[Settings.LastSelectedFontName];
@@ -410,14 +447,50 @@ namespace CharacterMap.ViewModels
     /// <summary>
     /// A wrapper used to allow us to change which font is open in a tab
     /// </summary>
-    [ObservableObject]
-    public partial class FontWrapper
+    public partial class FontItem : ObservableObject
     {
+        [ObservableProperty] private string _subTitle;
         [ObservableProperty] private InstalledFont _font;
 
-        public FontWrapper(InstalledFont font)
+        private FontVariant _selected;
+        public FontVariant Selected
+        {
+            get => _selected;
+            set
+            {
+                if (_selected != value && value is not null)
+                {
+                    _selected = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public FontItem(InstalledFont font)
         {
             _font = font;
+            _selected = font.DefaultVariant;
+        }
+
+        public void SetFont(InstalledFont font)
+        {
+            if (font != Font)
+            {
+                Font = font;
+                Selected = font.DefaultVariant;
+            }
+        }
+
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(Selected))
+            {
+                if (Selected != Font.DefaultVariant)
+                    SubTitle = Selected.PreferredName;
+                else
+                    SubTitle = "";
+            }
         }
     }
 
