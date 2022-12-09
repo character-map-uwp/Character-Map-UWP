@@ -636,24 +636,22 @@
                     TabItemsSource="{x:Bind ViewModel.Fonts}">
                     <muxc:TabView.TabItemTemplate>
                         <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
-                            <muxc:TabViewItem>
+                            <muxc:TabViewItem core:Properties.IsCompact="{x:Bind Compact}" ToolTipService.ToolTip="{x:Bind Tooltip}">
                                 <muxc:TabViewItem.Header>
-                                    <Grid Background="Transparent" ToolTipService.ToolTip="{x:Bind Tooltip}">
-                                        <TextBlock
-                                            TextLineBounds="Tight"
-                                            Margin="0 0 4 0"
-                                            VerticalAlignment="Center"
-                                            IsHitTestVisible="False"
-                                            TextTrimming="CharacterEllipsis">
-                                            <Run FontFamily="{x:Bind Font.DefaultVariant.Source}" Text="{x:Bind Font.Name}" />
-                                            <Run />
-                                            <Run
-                                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                FontSize="11.333"
-                                                Foreground="{ThemeResource TextFillColorTertiary}"
-                                                Text="{x:Bind SubTitle}" />
-                                        </TextBlock>
-                                    </Grid>
+                                    <TextBlock
+                                        Margin="0 0 4 0"
+                                        VerticalAlignment="Center"
+                                        IsHitTestVisible="False"
+                                        TextLineBounds="Tight"
+                                        TextTrimming="CharacterEllipsis">
+                                        <Run FontFamily="{x:Bind Font.DefaultVariant.Source}" Text="{x:Bind Font.Name}" />
+                                        <Run />
+                                        <Run
+                                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                            FontSize="11.333"
+                                            Foreground="{ThemeResource TextFillColorTertiary}"
+                                            Text="{x:Bind SubTitle}" />
+                                    </TextBlock>
 
                                 </muxc:TabViewItem.Header>
                             </muxc:TabViewItem>

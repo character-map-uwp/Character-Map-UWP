@@ -149,6 +149,14 @@ namespace CharacterMap.Views
 
         public void UpdateGridToRampTransition()
         {
+            // 0. Realise items
+            if (CharGrid.ItemsPanelRoot is null)
+            {
+                CharGrid.Measure(CharGrid.DesiredSize);
+                if (CharGrid.ItemsPanelRoot is null)
+                    return;
+            }
+
             // 1.0. Get all the items we'll be animating
             List<FrameworkElement> childs = CharGrid.ItemsPanelRoot.Children
                 .OfType<FrameworkElement>()

@@ -223,6 +223,7 @@ namespace CharacterMap.Views
             {
                 case nameof(ViewModel.SelectedFont):
                     UpdateStates();
+                    UpdateDisplayMode(false);
                     break;
                 case nameof(ViewModel.SelectedVariant):
                     _ = SetCharacterSelectionAsync();
@@ -408,13 +409,15 @@ namespace CharacterMap.Views
         {
             if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
             {
-                UpdateGridToRampTransition();
-                VisualStateManager.GoToState(this, TypeRampState.Name, true);
+                if (animate)
+                    UpdateGridToRampTransition();
+                VisualStateManager.GoToState(this, TypeRampState.Name, animate);
             }
             else
             {
-                UpdateRampToGridTransition();
-                VisualStateManager.GoToState(this, CharacterMapState.Name, true);
+                if (animate)
+                    UpdateRampToGridTransition();
+                VisualStateManager.GoToState(this, CharacterMapState.Name, animate);
             }
 
             if (animate)

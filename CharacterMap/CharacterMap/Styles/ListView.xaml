@@ -372,7 +372,7 @@
                                     Style="{ThemeResource TabViewButtonStyle}">
                                     <Button.Flyout>
                                         <MenuFlyout Placement="Bottom">
-                                            <MenuFlyoutItem Text="Compare Fonts">
+                                            <MenuFlyoutItem Text="Compare active Fonts">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE1D3;" />
                                                 </MenuFlyoutItem.Icon>
@@ -651,6 +651,7 @@
                         AutomationProperties.AccessibilityView="Raw"
                         Background="{TemplateBinding Background}"
                         BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         Content="{TemplateBinding Content}"
@@ -783,14 +784,17 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-        <Setter Property="MinHeight" Value="{ThemeResource TabViewItemMinHeight}" />
+        <Setter Property="MinHeight" Value="32" />
         <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:TabViewItem">
-                    <Grid x:Name="LayoutRoot" Padding="{TemplateBinding Padding}">
+                    <Grid
+                        x:Name="LayoutRoot"
+                        Padding="{TemplateBinding Padding}"
+                        Background="Transparent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition x:Name="LeftColumn" Width="0" />
                             <ColumnDefinition Width="*" />
@@ -1015,11 +1019,12 @@
                                 </VisualStateGroup.Transitions>
                             </VisualStateGroup>
 
-                            <VisualStateGroup x:Name="TabWidthModes">
-                                <VisualState x:Name="StandardWidth" />
-                                <VisualState x:Name="Compact">
+                            <!--  Controlled by AttachedProperty "IsCompact"  -->
+                            <VisualStateGroup x:Name="TabStateModes">
+                                <VisualState x:Name="FullTabState" />
+                                <VisualState x:Name="CollapsedTabState">
                                     <VisualState.Setters>
-                                        <Setter Target="ContentPresenter.Visibility" Value="Collapsed" />
+                                        <Setter Target="ContentPresenterContainer.Visibility" Value="Collapsed" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -1060,7 +1065,8 @@
                             BackgroundTransition="{StaticResource QuickBackgroundTransition}"
                             Control.IsTemplateFocusTarget="True"
                             CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}"
-                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}">
+                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                            ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ToolTipService.ToolTip)}">
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -1073,19 +1079,23 @@
                                 The TabViewItem.Content property will be implictly bound to the Content property of the ContentPresenter.
                                 To prevent this, we explicitly set a default empty content here and update the content in code behind.
                             -->
-                            <ContentPresenter
-                                x:Name="ContentPresenter"
-                                Grid.Column="0"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Content=""
-                                ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                ContentTransitions="{TemplateBinding ContentTransitions}"
-                                FontSize="{ThemeResource TabViewItemHeaderFontSize}"
-                                FontWeight="{TemplateBinding FontWeight}"
-                                Foreground="{ThemeResource TabViewItemHeaderForeground}"
-                                HighContrastAdjustment="None"
-                                OpticalMarginAlignment="TrimSideBearings" />
+                            <Border x:Name="ContentPresenterContainer">
+                                <ContentPresenter
+                                    x:Name="ContentPresenter"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    Content=""
+                                    ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                    ContentTransitions="{TemplateBinding ContentTransitions}"
+                                    FontSize="{ThemeResource TabViewItemHeaderFontSize}"
+                                    FontWeight="{TemplateBinding FontWeight}"
+                                    Foreground="{ThemeResource TabViewItemHeaderForeground}"
+                                    HighContrastAdjustment="None"
+                                    IsHitTestVisible="False"
+                                    OpticalMarginAlignment="TrimSideBearings" />
+                            </Border>
+
 
                             <Button
                                 x:Name="CloseButton"
@@ -1105,6 +1115,7 @@
                             BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
                             BorderThickness="1 1 1 0"
                             CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}"
+                            IsHitTestVisible="False"
                             Visibility="Collapsed" />
 
                         <Path
@@ -1127,7 +1138,7 @@
                             Fill="{ThemeResource TabViewItemHeaderBackgroundSelected}"
                             Visibility="Collapsed" />
 
-                      
+
 
                         <Path
                             x:Name="RightRadiusRenderArc"

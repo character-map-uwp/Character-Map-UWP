@@ -147,7 +147,7 @@ namespace CharacterMap.ViewModels
             void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
             {
                 // If the selected variant is changed, resave the font list 
-                if (e.PropertyName == nameof(FontItem.Selected))
+                if (e.PropertyName is nameof(FontItem.Selected) or nameof(FontItem.DisplayMode))
                     Save();
             }
 
@@ -155,7 +155,12 @@ namespace CharacterMap.ViewModels
             {
                 _settingsDebouncer.Debounce(200, () =>
                 {
-                    Settings.LastOpenFonts = Fonts.SelectMany(f => new List<String> { f.Font.Name, f.Font.Variants.IndexOf(f.Selected).ToString() }).ToList();
+                    Settings.LastOpenFonts = Fonts.SelectMany(f => 
+                        new List<String> { 
+                            f.Font.Name, 
+                            f.Font.Variants.IndexOf(f.Selected).ToString(), 
+                            ((int)f.DisplayMode).ToString() 
+                        }).ToList();
                     Settings.LastTabIndex = TabIndex;
                     Settings.LastSelectedFontName = SelectedFont.Name;
                 });
@@ -300,6 +305,7 @@ namespace CharacterMap.ViewModels
                 {
                     FontItem item = new(FontFinder.FontDictionary[list[i]]);
                     item.Selected = item.Font.Variants[Convert.ToInt32(list[++i])];
+                    item.DisplayMode = (FontDisplayMode)Convert.ToInt32(list[++i]);
                     Fonts.Add(item);
                 }
 
@@ -334,8 +340,9 @@ namespace CharacterMap.ViewModels
                     // 4.1. Clear tabs
                     foreach (var font in Fonts.ToList())
                     {
-                        if (FontList.Contains(font.Font) is false)
-                            Fonts.Remove(font);
+                        font.Compact = FontList.Contains(font.Font) is false;
+                        //if (FontList.Contains(font.Font) is false)
+                            //Fonts.Remove(font);
                     }
 
                     // 4.2. Handle selected font
@@ -386,7 +393,11 @@ namespace CharacterMap.ViewModels
              * all fonts, so extra 150ms is nothing...
              */
             SelectedFont = FontFinder.DefaultFont;
-            // TODO: REMOVE FROM OPEN TABS
+
+            // Remove from open tabs
+            var items = Fonts.Where(f => f.Font == font).ToList();
+            foreach (var item in items)
+                Fonts.Remove(item);
 
             await Task.Delay(150);
 
@@ -456,6 +467,12 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] 
         [NotifyPropertyChangedFor(nameof(Tooltip))]
         private InstalledFont _font;
+
+        [ObservableProperty]
+        private FontDisplayMode _displayMode = FontDisplayMode.CharacterMap;
+
+        [ObservableProperty]
+        private bool _compact;
 
         public string Tooltip => $"{Font.Name} {_subTitle}";
 

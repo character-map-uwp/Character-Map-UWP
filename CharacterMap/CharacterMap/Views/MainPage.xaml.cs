@@ -832,20 +832,25 @@ namespace CharacterMap.Views
                 menu.Opening += Menu_Opening;
             }
 
+            List<InstalledFont> GetActiveFonts()
+            {
+                return ViewModel.Fonts.Where(f => !f.Compact).Select(f => f.Font).Distinct().ToList();
+            }
+
             void Menu_Opening(object sender, object e)
             {
                 if (sender is MenuFlyout menu
                     && menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault() is MenuFlyoutSubItem c)
                 {
                     menu.Items.Remove(c);
-                    FlyoutHelper.AddCollectionItems(menu, null, ViewModel.Fonts.Select(f => f.Font).ToList());
+                    FlyoutHelper.AddCollectionItems(menu, null, GetActiveFonts());
                 }
             }
 
             void Item_Click(object sender, RoutedEventArgs e)
             {
                 _ = QuickCompareView.CreateWindowAsync(
-                        new (false, new (ViewModel.Fonts.Select(w => w.Font).ToList())));
+                        new (false, new(GetActiveFonts())));
             }
         }
 

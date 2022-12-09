@@ -3,6 +3,7 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Provider;
 using CharacterMapCX.Controls;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -314,5 +315,34 @@ namespace CharacterMap.Core
             }));
 
         #endregion
+
+        #region TabViewItem IsCompact
+
+        public static bool GetIsCompact(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsCompactProperty);
+        }
+
+        public static void SetIsCompact(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsCompactProperty, value);
+        }
+
+        public static readonly DependencyProperty IsCompactProperty =
+            DependencyProperty.RegisterAttached("IsCompact", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d,e) =>
+            {
+                if (d is TabViewItem item && e.NewValue is bool b)
+                {
+                    VisualStateManager.GoToState(item, b ? "CollapsedTabState" : "FullTabState", true);
+
+                    if (b)
+                        item.MaxWidth = 60;
+                    else
+                        item.ClearValue(TabViewItem.MaxWidthProperty);
+                }
+            }));
+
+        #endregion
+
     }
 }

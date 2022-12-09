@@ -24,9 +24,9 @@ namespace CharacterMap.ViewModels
 {
     public enum FontDisplayMode
     { 
-        CharacterMap,
-        GlyphMap,
-        TypeRamp
+        CharacterMap = 0,
+        GlyphMap = 1,
+        TypeRamp = 2
     }
 
 
@@ -107,6 +107,9 @@ namespace CharacterMap.ViewModels
 
                 TitlePrefix = value.Font.Name + " -";
                 SelectedVariant = value.Selected;
+
+                if (Set(SelectedFont.DisplayMode, nameof(DisplayMode), false))
+                    UpdateTypography();
             }
             else
                 SelectedVariant = null;
@@ -204,10 +207,18 @@ namespace CharacterMap.ViewModels
 
         protected override void OnPropertyChangeNotified(string propertyName)
         {
-            if (propertyName == nameof(SelectedTypography))
-                SelectedCharTypography = SelectedTypography;
-            else if (propertyName == nameof(SelectedCharTypography))
-                UpdateDevValues();
+            switch (propertyName)
+            {
+                case nameof(SelectedTypography):
+                    SelectedCharTypography = SelectedTypography;
+                    break;
+                case nameof(SelectedCharTypography):
+                    UpdateDevValues();
+                    break;
+                case nameof(DisplayMode) when SelectedFont is not null:
+                    SelectedFont.DisplayMode = DisplayMode;
+                    break;
+            }
         }
 
         private void SelectedFont_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
