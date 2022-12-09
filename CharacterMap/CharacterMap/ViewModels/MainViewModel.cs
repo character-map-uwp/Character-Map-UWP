@@ -16,6 +16,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 
@@ -469,12 +470,15 @@ namespace CharacterMap.ViewModels
         private InstalledFont _font;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(IsTypeRamp))]
         private FontDisplayMode _displayMode = FontDisplayMode.CharacterMap;
 
         [ObservableProperty]
         private bool _compact;
 
         public string Tooltip => $"{Font.Name} {_subTitle}";
+
+        public bool IsTypeRamp => DisplayMode == FontDisplayMode.TypeRamp;
 
         private FontVariant _selected;
         public FontVariant Selected
@@ -494,6 +498,16 @@ namespace CharacterMap.ViewModels
         {
             _font = font;
             _selected = font.DefaultVariant;
+        }
+
+        /// <summary>
+        /// Only for use by VS designer
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public FontItem()
+        {
+            if (DesignMode.DesignModeEnabled is false)
+                throw new InvalidOperationException("Constructor only for use by designer");
         }
 
         public void SetFont(InstalledFont font)

@@ -1024,7 +1024,7 @@
                                 <VisualState x:Name="FullTabState" />
                                 <VisualState x:Name="CollapsedTabState">
                                     <VisualState.Setters>
-                                        <Setter Target="ContentPresenterContainer.Visibility" Value="Collapsed" />
+                                        <Setter Target="ContentPresenter.Opacity" Value="0.4" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -1079,22 +1079,20 @@
                                 The TabViewItem.Content property will be implictly bound to the Content property of the ContentPresenter.
                                 To prevent this, we explicitly set a default empty content here and update the content in code behind.
                             -->
-                            <Border x:Name="ContentPresenterContainer">
-                                <ContentPresenter
-                                    x:Name="ContentPresenter"
-                                    Grid.Column="0"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                    Content=""
-                                    ContentTemplate="{TemplateBinding HeaderTemplate}"
-                                    ContentTransitions="{TemplateBinding ContentTransitions}"
-                                    FontSize="{ThemeResource TabViewItemHeaderFontSize}"
-                                    FontWeight="{TemplateBinding FontWeight}"
-                                    Foreground="{ThemeResource TabViewItemHeaderForeground}"
-                                    HighContrastAdjustment="None"
-                                    IsHitTestVisible="False"
-                                    OpticalMarginAlignment="TrimSideBearings" />
-                            </Border>
+                            <ContentPresenter
+                                x:Name="ContentPresenter"
+                                Grid.Column="0"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content=""
+                                ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                ContentTransitions="{TemplateBinding ContentTransitions}"
+                                FontSize="{ThemeResource TabViewItemHeaderFontSize}"
+                                FontWeight="{TemplateBinding FontWeight}"
+                                Foreground="{ThemeResource TabViewItemHeaderForeground}"
+                                HighContrastAdjustment="None"
+                                IsHitTestVisible="False"
+                                OpticalMarginAlignment="TrimSideBearings" />
 
 
                             <Button
@@ -1137,8 +1135,6 @@
                             Data="M0 4H4V0C4 2.20914 2.20914 4 0 4Z"
                             Fill="{ThemeResource TabViewItemHeaderBackgroundSelected}"
                             Visibility="Collapsed" />
-
-
 
                         <Path
                             x:Name="RightRadiusRenderArc"

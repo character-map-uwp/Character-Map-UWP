@@ -290,6 +290,9 @@ namespace CharacterMap.Views
             if (TypeRampList == null)
                 return;
 
+            if (CharGrid.ItemsPanelRoot is null)
+                CharGrid.Measure(CharGrid.DesiredSize);
+
             // 1. Build base storyboard and assign it as the 
             //    VisualState transition
             Storyboard sb = new Storyboard();

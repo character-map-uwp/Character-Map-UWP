@@ -417,6 +417,9 @@ namespace CharacterMap.Views
             {
                 if (animate)
                     UpdateRampToGridTransition();
+                else if (CharGrid.ItemsPanelRoot is null)
+                    CharGrid.Measure(CharGrid.DesiredSize);
+
                 VisualStateManager.GoToState(this, CharacterMapState.Name, animate);
             }
 
@@ -571,7 +574,7 @@ namespace CharacterMap.Views
                 && await Utils.TryCopyToClipboardAsync(character, ViewModel))
             {
                 BorderFadeInStoryboard.Begin();
-                TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem != TypographyFeatureInfo.None);
+                TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo != TypographyFeatureInfo.None);
             }
         }
 
@@ -605,7 +608,7 @@ namespace CharacterMap.Views
                 Utils.CopyToClipBoard(s.Trim());
                 BorderFadeInStoryboard.Begin();
                 if (!o.SupportsTypography)
-                    TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem != TypographyFeatureInfo.None);
+                    TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo != TypographyFeatureInfo.None);
                 else
                     TxtCopiedVariantMessage.SetVisible(false);
             }
@@ -626,7 +629,7 @@ namespace CharacterMap.Views
 
                 if (CharGrid.Visibility == Visibility.Visible)
                 {
-                    var size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
+                    int size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
                     if (this.ActualWidth < size && this.ActualWidth < 700)
                     {
                         PreviewColumn.Width = new GridLength(Math.Max(0, (int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth)));
@@ -825,7 +828,7 @@ namespace CharacterMap.Views
               && item.CommandParameter is DevValueType type)
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
-                    new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));
+                        new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));
             }
         }
 
@@ -844,7 +847,7 @@ namespace CharacterMap.Views
                 && item.DataContext is Character c)
             {
                 _ = CalligraphyView.CreateWindowAsync(
-                    ViewModel.RenderingOptions, c.Char);
+                        ViewModel.RenderingOptions, c.Char);
             }
         }
 
@@ -960,7 +963,7 @@ namespace CharacterMap.Views
                 TxtPreview.MinWidth = ViewModel.Settings.GridSize;
             }
 
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            RunOnUI(async () =>
             {
                 if (!this.IsLoaded)
                     return;
@@ -1064,7 +1067,7 @@ namespace CharacterMap.Views
 
                     if (TypeRampList != null)
                     {
-                        var items = new List<UIElement> { VariableAxis };
+                        List<UIElement> items = new() { VariableAxis };
                         items.AddRange(TypeRampList.TryGetChildren());
                         CompositionFactory.PlayEntrance(items, (offset * 2) + 34);
                     }

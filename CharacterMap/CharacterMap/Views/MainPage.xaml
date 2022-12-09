@@ -638,21 +638,47 @@
                         <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
                             <muxc:TabViewItem core:Properties.IsCompact="{x:Bind Compact}" ToolTipService.ToolTip="{x:Bind Tooltip}">
                                 <muxc:TabViewItem.Header>
-                                    <TextBlock
-                                        Margin="0 0 4 0"
-                                        VerticalAlignment="Center"
-                                        IsHitTestVisible="False"
-                                        TextLineBounds="Tight"
-                                        TextTrimming="CharacterEllipsis">
-                                        <Run FontFamily="{x:Bind Font.DefaultVariant.Source}" Text="{x:Bind Font.Name}" />
-                                        <Run />
-                                        <Run
-                                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                            FontSize="11.333"
-                                            Foreground="{ThemeResource TextFillColorTertiary}"
-                                            Text="{x:Bind SubTitle}" />
-                                    </TextBlock>
+                                    <Grid ColumnSpacing="8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
 
+                                        <FontIcon
+                                            x:Name="CharMapIcon"
+                                            x:Load="{x:Bind core:Converters.False(IsTypeRamp)}"
+                                            Margin="0 2 0 0"
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="12"
+                                            Glyph="&#xE154;" />
+
+                                        <FontIcon
+                                            x:Name="TypeRampIcon"
+                                            x:Load="{x:Bind IsTypeRamp}"
+                                            Margin="0 2 0 0"
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="11"
+                                            Glyph="&#xEA37;" />
+
+                                        <TextBlock
+                                            x:Name="Text"
+                                            x:Load="{x:Bind core:Converters.False(Compact)}"
+                                            Grid.Column="1"
+                                            Margin="0 0 0 0"
+                                            VerticalAlignment="Center"
+                                            IsHitTestVisible="False"
+                                            IsTextScaleFactorEnabled="False"
+                                            TextLineBounds="Tight"
+                                            TextTrimming="CharacterEllipsis">
+                                            <Run FontFamily="{x:Bind Font.DefaultVariant.Source}" Text="{x:Bind Font.Name}" />
+                                            <Run />
+                                            <Run
+                                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                FontSize="11.333"
+                                                Foreground="{ThemeResource TextFillColorTertiary}"
+                                                Text="{x:Bind SubTitle}" />
+                                        </TextBlock>
+                                    </Grid>
                                 </muxc:TabViewItem.Header>
                             </muxc:TabViewItem>
                         </DataTemplate>

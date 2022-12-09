@@ -197,6 +197,11 @@ namespace CharacterMap.Views
             UpdateLoadingStates();
             
             FontMap.ViewModel.Folder = ViewModel.Folder;
+
+            if (DesignMode)
+            {
+                FontsTabBar.TabItemsSource = new List<FontItem> { new(), new(), new() };
+            }
         }
 
         protected override void OnUnloaded(object sender, RoutedEventArgs e)
