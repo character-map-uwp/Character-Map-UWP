@@ -163,7 +163,12 @@ namespace CharacterMap.ViewModels
                             ((int)f.DisplayMode).ToString() 
                         }).ToList();
                     Settings.LastTabIndex = TabIndex;
-                    Settings.LastSelectedFontName = SelectedFont.Name;
+
+                    if (SelectedFont is not null)
+                        Settings.LastSelectedFontName = SelectedFont.Name;
+                    else if (TabIndex < Fonts.Count)
+                        Settings.LastSelectedFontName = Fonts[TabIndex].Font.Name;
+
                 });
             }
         }
@@ -302,16 +307,76 @@ namespace CharacterMap.ViewModels
         {
             if (Settings.LastOpenFonts is IList<String> list && list.Count > 0)
             {
+                bool removed = false;
+
+                // 1. Parse list of saved fonts
                 for (int i = 0; i < list.Count; i++)
                 {
-                    FontItem item = new(FontFinder.FontDictionary[list[i]]);
-                    item.Selected = item.Font.Variants[Convert.ToInt32(list[++i])];
-                    item.DisplayMode = (FontDisplayMode)Convert.ToInt32(list[++i]);
-                    Fonts.Add(item);
+                    // 1.1. Ensure the saved font hasn't been deleted. If it hasn't, 
+                    //      add it to the list.
+                    if (FontFinder.FontDictionary.TryGetValue(list[i], out InstalledFont font))
+                    {
+                        FontItem item = new(font);
+                        item.Selected = item.Font.Variants[Convert.ToInt32(list[++i])];
+                        item.DisplayMode = (FontDisplayMode)Convert.ToInt32(list[++i]);
+                        Fonts.Add(item);
+                    }
+                    else
+                    {
+                        // Font has probably been uninstalled
+                        ++i; // Skip over saved variant
+                        ++i; // Skip over saved display mode
+
+                        removed = true;
+                    }
                 }
 
-                TabIndex = Settings.LastTabIndex;
-                SelectedFont = FontFinder.FontDictionary[Settings.LastSelectedFontName];
+                // 2. Handle restoring fonts
+                if (Fonts.Count == 0)
+                {
+                    // If no fonts have been restored, either this is a first run, or user has uninstalled
+                    // all the previously open fonts. In this case we use the first font we can find.
+                    if (FontList.FirstOrDefault() is InstalledFont first)
+                    {
+                        Fonts.Add(new(first));
+                        SelectedFont = first;
+                        TabIndex = 0;
+                    }
+                    else
+                    {
+                        // No fonts installed, this app is useless. Explode.
+                        throw new InvalidOperationException("No Fonts found!");
+                    }
+                }
+                else
+                {
+                    // 3. Try to restore SelectedFont & TabIndex.
+                    //    First, check if the SelectedFont still actually exists, as the user may have
+                    //    uninstalled it between application runs.
+                    if (FontFinder.FontDictionary.TryGetValue(Settings.LastSelectedFontName, out InstalledFont last))
+                    {
+                        // 3.1. Restore TabIndex.
+                        //      If a font was removed between runs TabIndex may no longer be valid,
+                        //      so find the first matching font
+                        if (removed)
+                            TabIndex = Fonts.Select(f => f.Font).ToList().IndexOf(last);
+                        else
+                            TabIndex = Settings.LastTabIndex;
+
+                        // 3.2. If TabIndex doesn't match the font, ignore both values and use the first font
+                        if (TabIndex == -1 || Fonts[TabIndex].Font != last)
+                            TabIndex = 0;
+                    }
+                    else
+                    {
+                        // 3.3. The last selected font has been deleted. Use the first one we have.
+                        TabIndex = 0;
+                    }
+
+                    // 4. Restore SelectedFont. This may not longer match LastSelectedFontName if 
+                    //    we found out-of-sync values above.
+                    SelectedFont = Fonts[TabIndex].Font;
+                }
             }
         }
 
@@ -342,8 +407,6 @@ namespace CharacterMap.ViewModels
                     foreach (var font in Fonts.ToList())
                     {
                         font.Compact = FontList.Contains(font.Font) is false;
-                        //if (FontList.Contains(font.Font) is false)
-                            //Fonts.Remove(font);
                     }
 
                     // 4.2. Handle selected font
@@ -359,7 +422,7 @@ namespace CharacterMap.ViewModels
                 }
                 else
                 {
-                    SelectedFont = FontList.FirstOrDefault();
+                    //SelectedFont = FontList.FirstOrDefault();
                 }
 
                 FontListCreated?.Invoke(this, EventArgs.Empty);
@@ -512,7 +575,7 @@ namespace CharacterMap.ViewModels
 
         public void SetFont(InstalledFont font)
         {
-            if (font != Font)
+            if (font != Font && font is not null)
             {
                 Font = font;
                 Selected = font.DefaultVariant;

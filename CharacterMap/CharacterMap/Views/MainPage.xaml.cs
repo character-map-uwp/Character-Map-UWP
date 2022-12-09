@@ -388,7 +388,8 @@ namespace CharacterMap.Views
 
         private void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.FirstOrDefault() is InstalledFont font)
+            if (ViewModel.IsLoadingFonts is false && 
+                e.AddedItems.FirstOrDefault() is InstalledFont font)
             {
                 ViewModel.SelectedFont = font;
             }
