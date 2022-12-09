@@ -123,17 +123,17 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.SelectedFont):
                     if (ViewModel.SelectedFont != null)
                     {
-                        LstFontFamily.SelectedItem = ViewModel.SelectedFont;
-                        if (FontsTabBar.SelectedIndex >= 0)
+                        SetSelectedItem(ViewModel.SelectedFont);
+                        if (FontsTabBar.SelectedIndex >= 0 && !ViewModel.IsCreating)
                         {
                             ViewModel.Fonts[FontsTabBar.SelectedIndex].SetFont(ViewModel.SelectedFont);
                             FontMap.Font = ViewModel.Fonts[FontsTabBar.SelectedIndex];
-                        }
 
-                        if (_disableMapChange)
-                            _disableMapChange = false;
-                        else
-                            FontMap.PlayFontChanged();
+                            if (_disableMapChange)
+                                _disableMapChange = false;
+                            else
+                                FontMap.PlayFontChanged();
+                        }
                     }
                     break;
 
@@ -144,7 +144,7 @@ namespace CharacterMap.Views
                             && LstFontFamily.SelectedItem != font)
                         {
                             _disableMapChange = true;
-                            LstFontFamily.SelectedItem = font;
+                            SetSelectedItem(font);
                             StartScrollSelectedIntoView(); // Scrolls font into view
                         }
                     }
@@ -163,6 +163,14 @@ namespace CharacterMap.Views
                     UpdateLoadingStates();
                     break;
             }
+        }
+
+        void SetSelectedItem(InstalledFont font)
+        {
+            LstFontFamily.SelectedItem = font;
+            // Required for tabs with fonts not in FontList
+            if (LstFontFamily.SelectedItem != font)
+                LstFontFamily.SelectedItem = null;
         }
 
         private void FontMapContainer_AddTabButtonClick(TabView sender, object args)
@@ -290,8 +298,11 @@ namespace CharacterMap.Views
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
                 await Task.Delay(50);
-                LstFontFamily.ScrollIntoView(
-                    LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+                if (LstFontFamily.SelectedItem is not null)
+                {
+                    LstFontFamily.ScrollIntoView(
+                        LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+                }
             });
         }
 

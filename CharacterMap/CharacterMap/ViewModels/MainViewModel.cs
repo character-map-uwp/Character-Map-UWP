@@ -379,18 +379,27 @@ namespace CharacterMap.ViewModels
                 }
             }
         }
-
+        public bool IsCreating { get; private set; }
         private void CreateFontListGroup()
         {
             try
             {
+                IsCreating = true;
+
                 // 1. Cache last selected now as setting GroupedFontList can change it.
-                InstalledFont selected = SelectedFont;
+                //    Use TabIndex as SelectedFont may be inaccurate when inside a filter
+                //    with tabs that aren't inside the current FontList
+                InstalledFont selected = TabIndex > -1 ? Fonts[TabIndex].Font : SelectedFont;
 
                 // 2. Group the font list
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
                 GroupedFontList = new (list);
                 HasFonts = FontList.Count > 0;
+
+                // Hack to fix active tab being replaced when switching to a collection
+                // or filter than doesn't contain the font in the active tab
+                //if (TabIndex > -1)
+                //    Fonts[TabIndex].SetFont(selected);
 
                 // 3. If empty, close everything
                 if (FontList.Count == 0)
@@ -399,6 +408,9 @@ namespace CharacterMap.ViewModels
                     Fonts.Clear();
                     return;
                 }
+
+                if (IsLoadingFonts is false && FontList.Contains(selected) is false)
+                    SelectedFont = null;
 
                 // 4. Set the correct selected font and remove tabs that are no longer in the list
                 if (selected is not null)
@@ -413,7 +425,7 @@ namespace CharacterMap.ViewModels
                     if (SelectedFont == null || selected != SelectedFont)
                     {
                         var lastSelectedFont = FontList.Contains(selected);
-                        SelectedFont = FontList.Contains(selected) ? selected : FontList.FirstOrDefault();
+                        SelectedFont = selected;
                     }
                     else
                     {
@@ -432,6 +444,8 @@ namespace CharacterMap.ViewModels
                 DialogService.ShowMessageBox(
                     e.Message, Localization.Get("LoadingFontListError"));
             }
+
+            IsCreating = false;
         }
 
         internal void TrySetSelectionFromImport(FontImportResult result)
