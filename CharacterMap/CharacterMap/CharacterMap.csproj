@@ -317,6 +317,7 @@
     <Compile Include="ViewModels\CalligraphyViewModel.cs" />
     <Compile Include="ViewModels\CollectionManagementViewModel.cs" />
     <Compile Include="ViewModels\ExportViewModel.cs" />
+    <Compile Include="Models\FontItem.cs" />
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />

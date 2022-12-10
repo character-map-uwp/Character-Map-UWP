@@ -636,7 +636,7 @@
                     TabItemsSource="{x:Bind ViewModel.Fonts}">
                     <muxc:TabView.TabItemTemplate>
                         <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
-                            <muxc:TabViewItem core:Properties.IsCompact="{x:Bind Compact}" ToolTipService.ToolTip="{x:Bind Tooltip}">
+                            <muxc:TabViewItem core:Properties.IsCompact="{x:Bind IsCompact}" ToolTipService.ToolTip="{x:Bind Tooltip}">
                                 <muxc:TabViewItem.Header>
                                     <Grid ColumnSpacing="8">
                                         <Grid.ColumnDefinitions>
@@ -662,7 +662,7 @@
 
                                         <TextBlock
                                             x:Name="Text"
-                                            x:Load="{x:Bind core:Converters.False(Compact)}"
+                                            x:Load="{x:Bind core:Converters.False(IsCompact)}"
                                             Grid.Column="1"
                                             Margin="0 0 0 0"
                                             VerticalAlignment="Center"

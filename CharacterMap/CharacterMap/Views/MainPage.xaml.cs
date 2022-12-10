@@ -397,6 +397,44 @@ namespace CharacterMap.Views
             }
         }
 
+        private void FontsTabBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            // 1. Create the popup Menu
+            if (sender is FrameworkElement f
+                && f.GetDescendantsOfType<Button>().FirstOrDefault(b => b.Name == "CollectionButton") is Button b
+                && b.Flyout is MenuFlyout menu
+                && menu.Items.FirstOrDefault() is MenuFlyoutItem item)
+            {
+                item.Click -= Item_Click;
+                item.Click += Item_Click;
+
+                menu.Opening -= Menu_Opening;
+                menu.Opening += Menu_Opening;
+            }
+
+            List<InstalledFont> GetActiveFonts()
+            {
+                return ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Font).Distinct().ToList();
+            }
+
+            void Menu_Opening(object sender, object e)
+            {
+                if (sender is MenuFlyout menu
+                    && menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault() is MenuFlyoutSubItem c)
+                {
+                    menu.Items.Remove(c);
+                    FlyoutHelper.AddCollectionItems(menu, null, GetActiveFonts());
+                }
+            }
+
+            void Item_Click(object sender, RoutedEventArgs e)
+            {
+                _ = QuickCompareView.CreateWindowAsync(
+                        new(false, new(GetActiveFonts())));
+            }
+        }
+
+
         private void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ViewModel.IsLoadingFonts is false && 
@@ -834,44 +872,6 @@ namespace CharacterMap.Views
             // Animate in Loading items
             CompositionFactory.PlayEntrance(LoadingStack.Children.ToList(), 60);
         }
-
-        private void FontsTabBar_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (sender is FrameworkElement f 
-                && f.GetDescendantsOfType<Button>().FirstOrDefault(b => b.Name == "CollectionButton") is Button b
-                && b.Flyout is MenuFlyout menu
-                && menu.Items.FirstOrDefault() is MenuFlyoutItem item)
-            {
-                item.Click -= Item_Click;
-                item.Click += Item_Click;
-
-                menu.Opening -= Menu_Opening;
-                menu.Opening += Menu_Opening;
-            }
-
-            List<InstalledFont> GetActiveFonts()
-            {
-                return ViewModel.Fonts.Where(f => !f.Compact).Select(f => f.Font).Distinct().ToList();
-            }
-
-            void Menu_Opening(object sender, object e)
-            {
-                if (sender is MenuFlyout menu
-                    && menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault() is MenuFlyoutSubItem c)
-                {
-                    menu.Items.Remove(c);
-                    FlyoutHelper.AddCollectionItems(menu, null, GetActiveFonts());
-                }
-            }
-
-            void Item_Click(object sender, RoutedEventArgs e)
-            {
-                _ = QuickCompareView.CreateWindowAsync(
-                        new (false, new(GetActiveFonts())));
-            }
-        }
-
-        
     }
 
     public partial class MainPage

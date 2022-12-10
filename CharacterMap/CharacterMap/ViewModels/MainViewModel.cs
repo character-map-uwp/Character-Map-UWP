@@ -13,10 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
-using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 
@@ -396,29 +394,24 @@ namespace CharacterMap.ViewModels
                 GroupedFontList = new (list);
                 HasFonts = FontList.Count > 0;
 
-                // Hack to fix active tab being replaced when switching to a collection
-                // or filter than doesn't contain the font in the active tab
-                //if (TabIndex > -1)
-                //    Fonts[TabIndex].SetFont(selected);
-
                 // 3. If empty, close everything
                 if (FontList.Count == 0)
                 {
                     SelectedFont = null;
-                    Fonts.Clear();
                     return;
                 }
 
+                // Clear Font List selection on left pane if needed
                 if (IsLoadingFonts is false && FontList.Contains(selected) is false)
                     SelectedFont = null;
 
                 // 4. Set the correct selected font and remove tabs that are no longer in the list
                 if (selected is not null)
                 {
-                    // 4.1. Clear tabs
+                    // 4.1. Update tab size
                     foreach (var font in Fonts.ToList())
                     {
-                        font.Compact = FontList.Contains(font.Font) is false;
+                        font.IsCompact = FontList.Contains(font.Font) is false;
                     }
 
                     // 4.2. Handle selected font
@@ -530,82 +523,6 @@ namespace CharacterMap.ViewModels
         {
             if (Folder is not null)
                 _ = Folder.LaunchSourceAsync();
-        }
-    }
-
-    /// <summary>
-    /// A wrapper used to allow us to change which font is open in a tab
-    /// </summary>
-    public partial class FontItem : ObservableObject
-    {
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(Tooltip))]
-        private string _subTitle;
-
-        [ObservableProperty] 
-        [NotifyPropertyChangedFor(nameof(Tooltip))]
-        private InstalledFont _font;
-
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsTypeRamp))]
-        private FontDisplayMode _displayMode = FontDisplayMode.CharacterMap;
-
-        [ObservableProperty]
-        private bool _compact;
-
-        public string Tooltip => $"{Font.Name} {_subTitle}";
-
-        public bool IsTypeRamp => DisplayMode == FontDisplayMode.TypeRamp;
-
-        private FontVariant _selected;
-        public FontVariant Selected
-        {
-            get => _selected;
-            set
-            {
-                if (_selected != value && value is not null)
-                {
-                    _selected = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public FontItem(InstalledFont font)
-        {
-            _font = font;
-            _selected = font.DefaultVariant;
-        }
-
-        /// <summary>
-        /// Only for use by VS designer
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
-        public FontItem()
-        {
-            if (DesignMode.DesignModeEnabled is false)
-                throw new InvalidOperationException("Constructor only for use by designer");
-        }
-
-        public void SetFont(InstalledFont font)
-        {
-            if (font != Font && font is not null)
-            {
-                Font = font;
-                Selected = font.DefaultVariant;
-            }
-        }
-
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-            if (e.PropertyName == nameof(Selected))
-            {
-                if (Selected != Font.DefaultVariant)
-                    SubTitle = Selected.PreferredName;
-                else
-                    SubTitle = "";
-            }
         }
     }
 
