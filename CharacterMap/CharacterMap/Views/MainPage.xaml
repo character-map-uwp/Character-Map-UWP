@@ -58,7 +58,8 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="0" />
             </Grid.ColumnDefinitions>
-            <!--<ToggleButton
+
+            <ToggleButton
                 x:Name="ToggleFullScreenModeButton"
                 x:Uid="ToggleFullScreenModeButton"
                 Grid.Column="1"
@@ -69,7 +70,7 @@
                 Style="{StaticResource IconToggleButtonStyle}"
                 ToolTipService.Placement="Right">
                 <FontIcon FontSize="14" Glyph="&#xE740;" />
-            </ToggleButton>-->
+            </ToggleButton>
 
             <controls:UXButton
                 x:Name="ZuneSettingsButton"
@@ -89,23 +90,29 @@
 
         </Grid>
 
-
-
+        <controls:XamlTitleBar
+            x:Name="TitleBar"
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            MinHeight="40"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            IsAutoHeightEnabled="True" />
 
         <!--  Main Content  -->
         <SplitView
             x:Name="SplitView"
             Grid.RowSpan="3"
             Grid.ColumnSpan="3"
-            Background="Transparent"
+            Background="{x:Null}"
             DisplayMode="Inline"
             IsPaneOpen="True"
             OpenPaneLength="{StaticResource SplitViewPaneWidth}"
-            PaneBackground="Transparent">
+            PaneBackground="{x:Null}">
             <SplitView.Pane>
                 <Grid x:Name="PaneRoot">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="0" d:Height="32" />
+                        <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, Mode=OneWay}" d:Height="32" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
@@ -114,12 +121,14 @@
                     <Border
                         x:Name="PaneRootBackground"
                         Grid.RowSpan="5"
-                        Background="Transparent" />
+                        Background="Transparent"
+                        IsHitTestVisible="False" />
 
                     <Border
                         x:Name="OverlayPaneRootBackground"
                         Grid.RowSpan="5"
                         Background="Transparent"
+                        IsHitTestVisible="False"
                         Visibility="Collapsed" />
 
                     <!--  Pane Header Commands  -->
@@ -139,11 +148,8 @@
                             Grid.Column="0"
                             Width="{StaticResource TitleRowHeight}"
                             Height="Auto"
-                            Margin="4 0 0 0"
                             Padding="4"
                             VerticalAlignment="Stretch"
-                            Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
-                            CornerRadius="0 0 4 4"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource MapInfoButtonStyle}"
                             d:Label="Open">
@@ -185,14 +191,11 @@
                             x:Uid="FontListFilter"
                             Grid.Column="1"
                             MinHeight="26"
-                            Margin="0,0,4,0"
                             Padding="12 0"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
-                            Background="{ThemeResource LayerOnMicaBaseAltFillColorTertiaryBrush}"
-                            CornerRadius="0 0 4 4"
                             Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom"
                             Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
@@ -616,12 +619,7 @@
                     <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="150" />
                 </Grid.ColumnDefinitions>
 
-                <controls:XamlTitleBar
-                    x:Name="TitleBar"
-                    Grid.RowSpan="2"
-                    Grid.ColumnSpan="2"
-                    VerticalAlignment="Stretch"
-                    IsAutoHeightEnabled="False" />
+
 
                 <muxc:TabView
                     x:Name="FontsTabBar"

@@ -303,14 +303,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:TabView">
                     <Grid Margin="{TemplateBinding Padding}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <Grid
-                            x:Name="TabContainerGrid"
-                            Background="{TemplateBinding Background}"
-                            XYFocusKeyboardNavigation="Enabled">
+                        <Grid x:Name="TabContainerGrid" XYFocusKeyboardNavigation="Enabled">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition x:Name="LeftContentColumn" Width="Auto" />
                                 <ColumnDefinition x:Name="TabColumn" Width="Auto" />
@@ -399,13 +392,9 @@
                                 Grid.Column="3"
                                 HorizontalAlignment="Stretch"
                                 Content="{TemplateBinding TabStripFooter}"
-                                ContentTemplate="{TemplateBinding TabStripFooterTemplate}" />
+                                ContentTemplate="{TemplateBinding TabStripFooterTemplate}"
+                                IsHitTestVisible="False" />
                         </Grid>
-                        <ContentPresenter
-                            x:Name="TabContentPresenter"
-                            Grid.Row="1"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

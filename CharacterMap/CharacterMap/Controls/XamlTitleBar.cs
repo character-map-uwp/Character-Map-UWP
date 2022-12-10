@@ -2,6 +2,7 @@
 using CharacterMap.Models;
 using CharacterMap.ViewModels;
 using CommunityToolkit.Mvvm.Messaging;
+using System;
 using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
@@ -100,6 +101,8 @@ namespace CharacterMap.Controls
 
         void SetHeight(double d)
         {
+            d = Math.Max(d, MinHeight);
+
             if (IsAutoHeightEnabled)
                 Height = d;
             
