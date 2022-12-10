@@ -419,11 +419,28 @@ namespace CharacterMap.Views
 
             void Menu_Opening(object sender, object e)
             {
-                if (sender is MenuFlyout menu
-                    && menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault() is MenuFlyoutSubItem c)
+                // Build Menu
+                if (sender is MenuFlyout menu)
                 {
-                    menu.Items.Remove(c);
-                    FlyoutHelper.AddCollectionItems(menu, null, GetActiveFonts());
+                    if (ViewModel.Fonts.All(f => f.IsCompact))
+                    {
+                        // If all tabs are collapsed there are no active fonts so these 
+                        // buttons no nothing
+                        foreach (var item in menu.Items)
+                            item.IsEnabled = false;
+                    }
+                    else
+                    {
+                        foreach (var item in menu.Items)
+                            item.IsEnabled = true;
+
+                        if (menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault() is MenuFlyoutSubItem c)
+                        {
+                            // Rebuild the collections menu
+                            menu.Items.Remove(c);
+                            FlyoutHelper.AddCollectionItems(menu, null, GetActiveFonts());
+                        }
+                    }
                 }
             }
 
