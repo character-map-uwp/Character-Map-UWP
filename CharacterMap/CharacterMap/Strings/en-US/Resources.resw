@@ -1196,19 +1196,19 @@ Requires a restart to take effect.</value>
     <value>History</value>
   </data>
   <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Redo (Ctrl + Y)</value>
+    <value>Redo (Ctrl+Y)</value>
   </data>
   <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Remove</value>
   </data>
   <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Save (Ctrl + S)</value>
+    <value>Save (Ctrl+S)</value>
   </data>
   <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Side by side</value>
   </data>
   <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Undo (Ctrl + Z)</value>
+    <value>Undo (Ctrl+Z)</value>
   </data>
   <data name="GuideFontSlider.Header" xml:space="preserve">
     <value>Guide Size</value>
@@ -1221,5 +1221,8 @@ Requires a restart to take effect.</value>
   </data>
   <data name="GuideSizeLabel.Text" xml:space="preserve">
     <value>Guide Size</value>
+  </data>
+  <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Show or Hide Font Pane (Ctrl+L)</value>
   </data>
 </root>

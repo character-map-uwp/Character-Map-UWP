@@ -321,60 +321,10 @@
                 </Grid>
             </controls:UXButton>
 
-
-
-
-        </Grid>
-
-        <!--  Main UI Grid  -->
-        <Grid
-            x:Name="MainUIGrid"
-            Grid.Row="2"
-            Grid.Column="1"
-            Canvas.ZIndex="-1">
-            <Grid.Transform3D>
-                <PerspectiveTransform3D Depth="1000" />
-            </Grid.Transform3D>
-            <Grid.Resources>
-                <Storyboard x:Name="BorderFadeInStoryboard">
-                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity">
-                        <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:0.6" Value="1" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:2" Value="1" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:2.6" Value="0" />
-                    </DoubleAnimationUsingKeyFrames>
-                </Storyboard>
-            </Grid.Resources>
-
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition
-                    x:Name="CharGridColumn"
-                    Width="*"
-                    MinWidth="250" />
-                <ColumnDefinition x:Name="SplitterColumn" Width="Auto" />
-                <ColumnDefinition
-                    x:Name="PreviewColumn"
-                    Width="326"
-                    MinWidth="150" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-
-            <Rectangle
-                x:Name="ShadowTarget"
-                Grid.RowSpan="3"
-                Grid.ColumnSpan="3"
-                Fill="Transparent"
-                Stretch="UniformToFill"
-                StrokeThickness="0" />
-
             <Grid
                 x:Name="SearchContainer"
-                Grid.ColumnSpan="3"
+                Grid.Row="1"
+                Grid.Column="3"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top">
                 <Grid.ColumnDefinitions>
@@ -431,12 +381,61 @@
 
             </Grid>
 
+        </Grid>
+
+        <!--  Main UI Grid  -->
+        <Grid
+            x:Name="MainUIGrid"
+            Grid.Row="2"
+            Grid.Column="1"
+            Canvas.ZIndex="-1">
+            <Grid.Transform3D>
+                <PerspectiveTransform3D Depth="1000" />
+            </Grid.Transform3D>
+            <Grid.Resources>
+                <Storyboard x:Name="BorderFadeInStoryboard">
+                    <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity">
+                        <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:0.6" Value="1" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:2" Value="1" />
+                        <LinearDoubleKeyFrame KeyTime="0:0:2.6" Value="0" />
+                    </DoubleAnimationUsingKeyFrames>
+                </Storyboard>
+            </Grid.Resources>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition
+                    x:Name="CharGridColumn"
+                    Width="*"
+                    MinWidth="250" />
+                <ColumnDefinition x:Name="SplitterColumn" Width="Auto" />
+                <ColumnDefinition
+                    x:Name="PreviewColumn"
+                    Width="326"
+                    MinWidth="150" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+
+            <Rectangle
+                x:Name="ShadowTarget"
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="3"
+                Fill="Transparent"
+                Stretch="UniformToFill"
+                StrokeThickness="0" />
+
+
 
             <!--  Map Header  -->
             <Grid
                 x:Name="CharGridHeader"
                 x:FieldModifier="public"
-                ColumnSpacing="12"
+                ColumnSpacing="0"
                 Margin="12 0 8 12"
                 VerticalAlignment="Top"
                 Canvas.ZIndex="12">
@@ -759,28 +758,31 @@
                         </Button.Flyout>
                     </controls:UXButton>
 
-                    <controls:UXButton
-                        x:Name="MoreOptionsButton"
-                        x:Uid="BtnMoreIcon"
-                        DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
-                        Label="&#x2026;"
-                        Style="{ThemeResource MapInfoButtonStyle}">
-                        <Button.Flyout>
-                            <MenuFlyout
-                                x:Name="MoreMenu"
-                                Opening="MenuFlyout_Opening"
-                                Placement="BottomEdgeAlignedRight">
-                                <MenuFlyout.MenuFlyoutPresenterStyle>
-                                    <Style BasedOn="{StaticResource DefaultFlyoutStyle}" TargetType="MenuFlyoutPresenter" />
-                                </MenuFlyout.MenuFlyoutPresenterStyle>
-                            </MenuFlyout>
-                        </Button.Flyout>
-                        <FontIcon
-                            Margin="0,-2,-2,-2"
-                            FontSize="18"
-                            Glyph="&#xE10C;" />
-                    </controls:UXButton>
                 </toolkit:WrapPanel>
+
+                <controls:UXButton
+                    x:Name="MoreOptionsButton"
+                    x:Uid="BtnMoreIcon"
+                    Grid.Column="1"
+                    VerticalAlignment="Top"
+                    DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
+                    Label="&#x2026;"
+                    Style="{ThemeResource MapInfoButtonStyle}">
+                    <Button.Flyout>
+                        <MenuFlyout
+                            x:Name="MoreMenu"
+                            Opening="MenuFlyout_Opening"
+                            Placement="BottomEdgeAlignedRight">
+                            <MenuFlyout.MenuFlyoutPresenterStyle>
+                                <Style BasedOn="{StaticResource DefaultFlyoutStyle}" TargetType="MenuFlyoutPresenter" />
+                            </MenuFlyout.MenuFlyoutPresenterStyle>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                    <FontIcon
+                        Margin="0,-2,-2,-2"
+                        FontSize="18"
+                        Glyph="&#xE10C;" />
+                </controls:UXButton>
 
 
                 <!--  Notifications  -->
@@ -1099,17 +1101,18 @@
             <Grid
                 x:Name="SplitterContainer"
                 x:FieldModifier="public"
-                Grid.Row="1"
-                Grid.RowSpan="2"
+                Grid.Row="0"
+                Grid.RowSpan="3"
                 Grid.Column="1"
                 Canvas.ZIndex="1">
 
                 <Grid x:Name="SplitterContainerContent" Width="10">
                     <toolkit:GridSplitter
                         x:Name="Splitter"
-                        Width="10"
-                        MinWidth="10"
+                        Width="8"
+                        MinWidth="8"
                         Background="Transparent"
+                        BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
                         CursorBehavior="ChangeOnSplitterHover"
                         GripperCursor="SizeWestEast"
                         GripperForeground="Transparent"
@@ -1135,8 +1138,8 @@
             <Grid
                 x:Name="PreviewGrid"
                 x:FieldModifier="public"
-                Grid.Row="1"
-                Grid.RowSpan="2"
+                Grid.Row="0"
+                Grid.RowSpan="3"
                 Grid.Column="2"
                 d:Background="Purple">
                 <Grid.RenderTransform>

@@ -109,6 +109,7 @@
                 <ControlTemplate TargetType="toolkit:GridSplitter">
                     <Grid
                         x:Name="RootGrid"
+                        CornerRadius="{TemplateBinding CornerRadius}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">

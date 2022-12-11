@@ -12,14 +12,14 @@
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <SolidColorBrush x:Key="DefaultHostBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
-            <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
+            <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="SolidBackgroundFillColorBase">#F3F3F3</Color>
             <SolidColorBrush x:Key="DefaultPageBackgroundBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <SolidColorBrush x:Key="DefaultHostBrush" Color="{ThemeResource SolidBackgroundFillColorBase}" />
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
-            <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
+            <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

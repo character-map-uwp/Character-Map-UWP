@@ -463,7 +463,7 @@ namespace CharacterMap.Views
 
         private void OpenFontPaneButton_Click(object sender, RoutedEventArgs e)
         {
-            SplitView.IsPaneOpen = true;
+            SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
         }
 
         void OnCollectionsUpdated(CollectionsUpdatedMessage msg)

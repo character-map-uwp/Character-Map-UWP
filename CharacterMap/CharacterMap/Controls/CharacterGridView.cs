@@ -286,7 +286,7 @@ namespace CharacterMap.Controls
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void SetGlyphProperties(XamlDirect xamlDirect, IXamlDirectObject o, CharacterGridViewTemplateSettings templateSettings, Character c)
         {
-            if (o == null)
+            if (o == null || templateSettings.FontFace is null)
                 return;
 
             xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, templateSettings.FontFamily);

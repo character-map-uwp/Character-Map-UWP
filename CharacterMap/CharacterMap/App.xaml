@@ -100,6 +100,7 @@
 
                 </ResourceDictionary>
 
+                <ResourceDictionary Source="/Styles/Brushes.xaml" />
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
                 <ResourceDictionary Source="/Styles/CommandBar.xaml" />
                 <ResourceDictionary Source="/Styles/Button.xaml" />

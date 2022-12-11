@@ -210,12 +210,12 @@
                             <VisualStateGroup x:Name="CommonStates">
                                 <VisualState x:Name="Normal">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
+                                        <PointerUpThemeAnimation TargetName="Container" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
+                                        <PointerUpThemeAnimation TargetName="Container" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -223,7 +223,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="Text" />
+                                        <PointerDownThemeAnimation TargetName="Container" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -231,7 +231,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
+                                        <PointerUpThemeAnimation TargetName="Container" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="0.4" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -239,51 +239,56 @@
                                 </VisualState>
                                 <VisualState x:Name="Checked">
                                     <VisualState.Setters>
-                                        <Setter Target="Text.Content">
-                                            <Setter.Value>
-                                                <FontIcon FontSize="14" Glyph="&#xE1D8;" />
-                                            </Setter.Value>
-                                        </Setter>
+                                        <Setter Target="Text.Visibility" Value="Collapsed" />
+                                        <Setter Target="CheckedContent.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
+                                        <PointerUpThemeAnimation TargetName="Container" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPointerOver">
                                     <VisualState.Setters>
                                         <Setter Target="Border.Background" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                        <Setter Target="Text.Content">
-                                            <Setter.Value>
-                                                <FontIcon FontSize="14" Glyph="&#xE1D8;" />
-                                            </Setter.Value>
-                                        </Setter>
+                                        <Setter Target="Text.Visibility" Value="Collapsed" />
+                                        <Setter Target="CheckedContent.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
+                                        <PointerUpThemeAnimation TargetName="Container" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="CheckedPressed">
                                     <VisualState.Setters>
                                         <Setter Target="Border.Background" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
-                                        <Setter Target="Text.Content">
-                                            <Setter.Value>
-                                                <FontIcon FontSize="14" Glyph="&#xE1D8;" />
-                                            </Setter.Value>
-                                        </Setter>
+                                        <Setter Target="Text.Visibility" Value="Collapsed" />
+                                        <Setter Target="CheckedContent.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
+                                        <PointerUpThemeAnimation TargetName="Container" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-                        <ContentPresenter
-                            x:Name="Text"
-                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Content="{TemplateBinding Content}"
-                            Foreground="{TemplateBinding Foreground}" />
+                        <Grid x:Name="Container">
+                            <ContentPresenter
+                                x:Name="Text"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Content}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsTextScaleFactorEnabled="False" />
 
+                            <ContentPresenter
+                                x:Name="CheckedContent"
+                                x:Load="False"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Content="{TemplateBinding Tag}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{TemplateBinding Foreground}"
+                                IsTextScaleFactorEnabled="False"
+                                Visibility="Collapsed" />
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
