@@ -4,6 +4,7 @@ using CharacterMap.Models;
 using CharacterMap.Provider;
 using CharacterMapCX.Controls;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -340,6 +341,85 @@ namespace CharacterMap.Core
                     else
                         item.ClearValue(TabViewItem.MaxWidthProperty);
                 }
+            }));
+
+        #endregion
+
+
+        #region IsTabOpenAnimationEnabled
+
+        private static Dictionary<Compositor, CompositionAnimation> _tabAniCache { get; } = new();
+
+        public static bool GetIsTabOpenAnimationEnabled(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(IsTabOpenAnimationEnabledProperty);
+        }
+
+        public static void SetIsTabOpenAnimationEnabled(DependencyObject obj, bool value)
+        {
+            obj.SetValue(IsTabOpenAnimationEnabledProperty, value);
+        }
+
+        public static readonly DependencyProperty IsTabOpenAnimationEnabledProperty =
+            DependencyProperty.RegisterAttached("IsTabOpenAnimationEnabled", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, e) =>
+            {
+                if (d is TabView tabs && e.NewValue is bool b)
+                {
+                    // We can only configure animation if the TabView template is loaded.
+                    // Check that it is, or wait until it is.
+                    if (tabs.GetFirstDescendantOfType<TabViewListView>() is ListView list)
+                        ConfigureAnimations(tabs, b);
+                    else
+                    {
+                        tabs.Loaded -= Tabs_Loaded;
+                        tabs.Loaded += Tabs_Loaded;
+                    }
+
+                    static void Tabs_Loaded(object sender, RoutedEventArgs e)
+                    {
+                        if (sender is TabView t)
+                            ConfigureAnimations(t, Properties.GetIsTabOpenAnimationEnabled(t));
+                    }
+
+                    static void ConfigureAnimations(TabView view, bool enabled)
+                    {
+                        view.Loaded -= Tabs_Loaded;
+
+                        if (view.GetFirstDescendantOfType<TabViewListView>() is ListView list)
+                        {
+                            list.ContainerContentChanging -= List_ContainerContentChanging;
+                            if (enabled)
+                                list.ContainerContentChanging += List_ContainerContentChanging;
+
+                            void List_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+                            {
+                                // Manually trigger the animation every time the tab content changes
+                                if (args.Item is not null && args.ItemContainer is not null)
+                                {
+                                    // We animate the first child because if we animate the TabItem itself hit-testing
+                                    // will break.
+                                    var child = args.ItemContainer.GetFirstDescendantOfType<FrameworkElement>();
+                                    Visual v = child.EnableCompositionTranslation().GetElementVisual();
+
+                                    // Get the animation from cache
+                                    if (_tabAniCache.TryGetValue(v.Compositor, out CompositionAnimation ani) is false)
+                                    {
+                                        // Animation doesn't exist, create and cache it
+                                        _tabAniCache[v.Compositor] = ani = 
+                                            v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                                                .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                                                .SetDelayTime(0.05)
+                                                .AddKeyFrame(0, 0, 60)
+                                                .AddKeyFrame(1, 0, 0)
+                                                .SetDuration(0.325);
+                                    }
+
+                                    v.StartAnimation(ani);
+                                }
+                            }
+                        }
+                    }
+                } 
             }));
 
         #endregion

@@ -617,7 +617,9 @@ namespace CharacterMap.Views
                 if (ViewModel.Settings.DisableTabs)
                     _ = FontMapView.CreateNewViewForFontAsync(font);
                 else
-                    ViewModel.Fonts.Add(new (font));
+                {
+                    ViewModel.Fonts.Insert(ViewModel.TabIndex + 1, new(font));
+                }
             }
         }
 

@@ -33,8 +33,8 @@ namespace CharacterMap.Helpers
             = new Dictionary<Compositor, ImplicitAnimationCollection>();
 
         private static string CENTRE_EXPRESSION =>
-            $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * 0.5f, " +
-            $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * 0.5f, 0f))";
+            $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * {{0}}f, " +
+            $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * {{1}}f, 0f))";
 
         public const string TRANSLATION = "Translation";
         public const string STARTING_VALUE = "this.StartingValue";
@@ -261,10 +261,10 @@ namespace CharacterMap.Helpers
             return o;
         }
 
-        public static ExpressionAnimation StartCentering(Visual v)
+        public static ExpressionAnimation StartCentering(Visual v, float x = 0.5f, float y = 0.5f)
         {
             var e = v.CreateExpressionAnimation(nameof(Visual.CenterPoint))
-                     .SetExpression(CENTRE_EXPRESSION);
+                     .SetExpression(string.Format(CENTRE_EXPRESSION, x, y));
             v.StartAnimationGroup(e);
             return e;
         }
