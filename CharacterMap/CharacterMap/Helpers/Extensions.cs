@@ -84,6 +84,12 @@ namespace CharacterMap.Helpers
             return tcs.Task;
         }
 
+        public static MenuFlyout AddSeparator(this MenuFlyout menu, bool isVisible = true)
+        {
+            menu.Items.Add(new MenuFlyoutSeparator().SetVisible(isVisible));
+            return menu;
+        }
+
         public static T AddKeyboardAccelerator<T>(this T u, VirtualKey key, VirtualKeyModifiers modifiers) where T : UIElement
         {
             u.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = key, Modifiers = modifiers });

@@ -109,10 +109,10 @@
                 <ControlTemplate TargetType="toolkit:GridSplitter">
                     <Grid
                         x:Name="RootGrid"
-                        CornerRadius="{TemplateBinding CornerRadius}"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="GridSplitterStates">
                                 <VisualState x:Name="Normal" />

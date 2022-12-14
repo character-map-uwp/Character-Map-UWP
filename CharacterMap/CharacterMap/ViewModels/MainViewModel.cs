@@ -441,6 +441,11 @@ namespace CharacterMap.ViewModels
             IsCreating = false;
         }
 
+        public void OpenTab(InstalledFont font)
+        {
+            Fonts.Insert(TabIndex + 1, new(font));
+        }
+
         internal void TrySetSelectionFromImport(FontImportResult result)
         {
             StorageFile file = result.Imported.FirstOrDefault() ?? result.Existing.FirstOrDefault();

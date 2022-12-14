@@ -1225,4 +1225,7 @@ Requires a restart to take effect.</value>
   <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Show or Hide Font Pane (Ctrl+L)</value>
   </data>
+  <data name="OpenInNewTab.Text" xml:space="preserve">
+    <value>Open in New Tab</value>
+  </data>
 </root>
