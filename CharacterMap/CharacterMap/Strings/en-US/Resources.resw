@@ -1228,4 +1228,7 @@ Requires a restart to take effect.</value>
   <data name="OpenInNewTab.Text" xml:space="preserve">
     <value>Open in New Tab</value>
   </data>
+  <data name="OptionScriptKorean.Text" xml:space="preserve">
+    <value>Korean</value>
+  </data>
 </root>

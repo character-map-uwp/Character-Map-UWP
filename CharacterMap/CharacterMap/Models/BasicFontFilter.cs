@@ -124,6 +124,9 @@ namespace CharacterMap.Models
         public static BasicFontFilter ScriptCJKUnifiedIdeographs { get; }
             = ForRange(UnicodeRange.CJKUnifiedIdeographs, Localization.Get("OptionScriptCJKUnifiedIdeographs/Text"));
 
+        public static BasicFontFilter KoreanHangul { get; }
+            = ForRange(UnicodeRange.KoreanHangulSyllables, Localization.Get("OptionScriptKorean/Text"));
+
         public static BasicFontFilter ScriptBasicLatin { get; }
             = ForRange(UnicodeRange.BasicLatinLetters, Localization.Get("OptionScriptBasicLatin/Text"));
 

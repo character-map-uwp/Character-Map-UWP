@@ -21,6 +21,7 @@
         public static UnicodeRange GreekAndCoptic           { get; } = new UnicodeRange(0x0370, 0x03FF);
         public static UnicodeRange Hebrew                   { get; } = new UnicodeRange(0x0590, 0x05FF);
         public static UnicodeRange CJKUnifiedIdeographs     { get; } = new UnicodeRange(0x4E00, 0x9FFF);
+        public static UnicodeRange KoreanHangulSyllables    { get; } = new UnicodeRange(0xAC00, 0xD7AF);
 
 
         public static UnicodeRange Dingbats                 { get; } = new UnicodeRange(0x2700, 0x27BF);

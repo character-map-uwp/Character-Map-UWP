@@ -268,6 +268,7 @@
                                         <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptBasicLatin}" />
                                         <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptThai}" />
                                         <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCJKUnifiedIdeographs}" />
+                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.KoreanHangul}" />
                                     </MenuFlyoutSubItem>
                                     <MenuFlyoutSubItem x:Uid="OptionMoreFilters">
                                         <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ColorFonts}" />
