@@ -9,7 +9,7 @@ using Windows.UI.Text;
 
 namespace CharacterMap.Core
 {
-    public class InstalledFont : IComparable
+    public class InstalledFont : IComparable, IEquatable<InstalledFont>
     {
         private List<FontVariant> _variants;
 
@@ -93,6 +93,38 @@ namespace CharacterMap.Core
                 return Name.CompareTo(f.Name);
 
             return 0;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as InstalledFont);
+        }
+
+        public bool Equals(InstalledFont other)
+        {
+            return other is not null &&
+                   Name == other.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1425556920;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + EqualityComparer<CanvasFontFace>.Default.GetHashCode(FontFace);
+            hashCode = hashCode * -1521134295 + EqualityComparer<IList<FontVariant>>.Default.GetHashCode(Variants);
+            hashCode = hashCode * -1521134295 + HasImportedFiles.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<FontVariant>.Default.GetHashCode(DefaultVariant);
+            return hashCode;
+        }
+
+        public static bool operator ==(InstalledFont left, InstalledFont right)
+        {
+            return EqualityComparer<InstalledFont>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(InstalledFont left, InstalledFont right)
+        {
+            return !(left == right);
         }
     }
 }

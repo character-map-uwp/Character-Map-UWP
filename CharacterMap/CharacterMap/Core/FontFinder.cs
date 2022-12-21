@@ -98,6 +98,7 @@ namespace CharacterMap.Core
 
             return systemFonts;
         }
+
         public static Task LoadFontsAsync(bool clearExisting = true)
         {
             // It's possible to go down this path if the font collection
@@ -152,7 +153,6 @@ namespace CharacterMap.Core
                 foreach (var font in systemFonts.Fonts)
                     AddFont(resultList, font);
                 
-
                 /* Order everything appropriately */
                 Fonts = CreateFontList(resultList);
                 ImportedFonts = CreateFontList(imports);
@@ -407,7 +407,7 @@ namespace CharacterMap.Core
                 {
                     var lines = await FileIO.ReadLinesAsync(file).AsTask().ConfigureAwait(false);
 
-                    var moreFails = new List<string>();
+                    List<string> moreFails = new ();
                     foreach (var line in lines)
                     {
                         if (await TryGetFileAsync(Path.Combine(fontPath, line)).ConfigureAwait(false) is StorageFile deleteFile)

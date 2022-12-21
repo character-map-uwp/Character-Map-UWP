@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,6 +22,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Pickers;
 using Windows.System;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -141,7 +143,7 @@ namespace CharacterMap.Views
                     if (ViewModel.TabIndex > -1)
                     {
                         if (ViewModel.Fonts[ViewModel.TabIndex].Font is InstalledFont font 
-                            && LstFontFamily.SelectedItem != font)
+                            && LstFontFamily.SelectedItem as InstalledFont != font)
                         {
                             _disableMapChange = true;
                             SetSelectedItem(font);
@@ -169,7 +171,7 @@ namespace CharacterMap.Views
         {
             LstFontFamily.SelectedItem = font;
             // Required for tabs with fonts not in FontList
-            if (LstFontFamily.SelectedItem != font)
+            if (LstFontFamily.SelectedItem as InstalledFont != font)
                 LstFontFamily.SelectedItem = null;
         }
 
@@ -181,7 +183,9 @@ namespace CharacterMap.Views
 
         private void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
-            ViewModel.Fonts.RemoveAt(sender.TabItems.IndexOf(args.Item));
+            // We need at least 1 tab open at all times
+            if (ViewModel.Fonts.Count > 1)
+                ViewModel.Fonts.RemoveAt(sender.TabItems.IndexOf(args.Item));
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
@@ -451,7 +455,6 @@ namespace CharacterMap.Views
             }
         }
 
-
         private void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ViewModel.IsLoadingFonts is false && 
@@ -691,7 +694,8 @@ namespace CharacterMap.Views
 
         private void Grid_DragOver(object sender, DragEventArgs e)
         {
-            e.AcceptedOperation = DataPackageOperation.Copy;
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+                e.AcceptedOperation = DataPackageOperation.Copy;
         }
 
         private async void Grid_Drop(object sender, DragEventArgs e)
@@ -707,6 +711,7 @@ namespace CharacterMap.Views
                         if (result.Imported.Count > 0)
                         {
                             ViewModel.RefreshFontList();
+                            ViewModel.RestoreOpenFonts();
                             ViewModel.TrySetSelectionFromImport(result);
                         }
 

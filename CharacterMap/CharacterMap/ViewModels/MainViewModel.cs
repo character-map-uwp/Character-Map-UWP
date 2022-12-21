@@ -128,7 +128,8 @@ namespace CharacterMap.ViewModels
                 foreach (var item in e.OldItems.Cast<FontItem>())
                     item.PropertyChanged -= Item_PropertyChanged;
             }
-            else if (e.Action is NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Reset)
+            else if (e.Action is NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Reset
+                && e.NewItems is not null)
             {
                 foreach (var item in e.NewItems.Cast<FontItem>())
                 {
@@ -208,6 +209,7 @@ namespace CharacterMap.ViewModels
                         FontCollections.LoadCollectionsAsync());
 
                     NativeInterop interop = Utils.GetInterop();
+                    interop.FontSetInvalidated -= FontSetInvalidated;
                     interop.FontSetInvalidated += FontSetInvalidated;
                 }
 
@@ -301,11 +303,12 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private void RestoreOpenFonts()
+        public void RestoreOpenFonts()
         {
             if (Settings.LastOpenFonts is IList<String> list && list.Count > 0)
             {
                 bool removed = false;
+                Fonts.Clear();
 
                 // 1. Parse list of saved fonts
                 for (int i = 0; i < list.Count; i++)
@@ -483,7 +486,9 @@ namespace CharacterMap.ViewModels
                 _ = FontCollections.RemoveFromAllCollectionsAsync(font);
             }
 
+
             RefreshFontList(SelectedCollection);
+            RestoreOpenFonts();
 
             IsLoadingFonts = false;
 
