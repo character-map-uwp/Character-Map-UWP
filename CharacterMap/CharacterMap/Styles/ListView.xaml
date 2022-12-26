@@ -1027,6 +1027,48 @@
                                 </VisualState>
                             </VisualStateGroup>
 
+                            <VisualStateGroup x:Name="CloseTabStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="CloseButtonDisabledState" To="CloseButtonEnabledState">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonContainer" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CloseButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="60" />
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="60" />
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.325" Value="0">
+                                                    <EasingDoubleKeyFrame.EasingFunction>
+                                                        <ExponentialEase Exponent="7" EasingMode="EaseOut" />
+                                                    </EasingDoubleKeyFrame.EasingFunction>
+                                                </EasingDoubleKeyFrame>
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition To="CloseButtonDisabledState" From="CloseButtonEnabledState">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonContainer" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CloseButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="60">
+                                                    <EasingDoubleKeyFrame.EasingFunction>
+                                                        <ExponentialEase Exponent="7" EasingMode="EaseIn" />
+                                                    </EasingDoubleKeyFrame.EasingFunction>
+                                                </EasingDoubleKeyFrame>
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="CloseButtonEnabledState" />
+                                <VisualState x:Name="CloseButtonDisabledState">
+                                    <VisualState.Setters>
+                                        <Setter Target="CloseButtonContainer.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+
                             <VisualStateGroup>
                                 <VisualState x:Name="ForegroundNotSet" />
                                 <VisualState x:Name="ForegroundSet">
@@ -1065,7 +1107,7 @@
                             <!--
                                 If we template bind the ContentPresenter's Content property to the TabViewItem.Header property
                                 we unfortunately run into the following issue if the header is [null] or empty:
-                                The TabViewItem.Content property will be implictly bound to the Content property of the ContentPresenter.
+                                The TabViewItem.Content property will be implicitly bound to the Content property of the ContentPresenter.
                                 To prevent this, we explicitly set a default empty content here and update the content in code behind.
                             -->
                             <ContentPresenter
@@ -1084,14 +1126,19 @@
                                 OpticalMarginAlignment="TrimSideBearings" />
 
 
-                            <Button
-                                x:Name="CloseButton"
-                                Grid.Column="1"
-                                Content="&#xE711;"
-                                HighContrastAdjustment="None"
-                                IsTabStop="False"
-                                IsTextScaleFactorEnabled="False"
-                                Style="{ThemeResource TabViewCloseButtonStyle}" />
+                            <Border x:Name="CloseButtonContainer" Grid.Column="1">
+                                <Button
+                                    x:Name="CloseButton"
+                                    Content="&#xE711;"
+                                    HighContrastAdjustment="None"
+                                    IsTabStop="False"
+                                    IsTextScaleFactorEnabled="False"
+                                    Style="{ThemeResource TabViewCloseButtonStyle}">
+                                    <Button.RenderTransform>
+                                        <CompositeTransform />
+                                    </Button.RenderTransform>
+                                </Button>
+                            </Border>
                         </Grid>
 
                         <Border

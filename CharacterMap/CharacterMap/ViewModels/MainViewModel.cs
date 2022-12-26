@@ -401,6 +401,8 @@ namespace CharacterMap.ViewModels
                 if (FontList.Count == 0)
                 {
                     SelectedFont = null;
+                    foreach (var font in Fonts.ToList())
+                        font.IsCompact = true;
                     return;
                 }
 

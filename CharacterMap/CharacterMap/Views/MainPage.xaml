@@ -656,6 +656,7 @@
                     Margin="0"
                     core:Properties.ClipToBounds="True"
                     core:Properties.IsTabOpenAnimationEnabled="True"
+                    core:Properties.RequireOpenTab="True"
                     AddTabButtonClick="FontMapContainer_AddTabButtonClick"
                     Background="{x:Null}"
                     Loaded="FontsTabBar_Loaded"

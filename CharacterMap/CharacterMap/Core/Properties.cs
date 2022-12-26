@@ -8,8 +8,10 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation.Collections;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -345,7 +347,6 @@ namespace CharacterMap.Core
 
         #endregion
 
-
         #region IsTabOpenAnimationEnabled
 
         private static Dictionary<Compositor, CompositionAnimation> _tabAniCache { get; } = new();
@@ -424,5 +425,46 @@ namespace CharacterMap.Core
 
         #endregion
 
+        #region RequireOpenTab
+
+        public static bool GetRequireOpenTab(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(RequireOpenTabProperty);
+        }
+
+        public static void SetRequireOpenTab(DependencyObject obj, bool value)
+        {
+            obj.SetValue(RequireOpenTabProperty, value);
+        }
+
+        public static readonly DependencyProperty RequireOpenTabProperty =
+            DependencyProperty.RegisterAttached("RequireOpenTab", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d,e) =>
+            {
+                if (d is TabView tabs)
+                {
+                    tabs.TabItemsChanged -= TabItemsChanged;
+                    tabs.TabItemsChanged += TabItemsChanged;
+                }
+
+                static void TabItemsChanged(TabView sender, IVectorChangedEventArgs args)
+                {
+                    // NOTE: These states conflict with TabViews close button mode, but we
+                    //       never change that currently in this app, so we're fine to
+                    //       reuse those states for this property instead.
+                    var items = sender.GetFirstLevelDescendantsOfType<TabViewItem>().ToList();
+                    if (GetRequireOpenTab(sender) && sender.TabItems.Count == 1)
+                    {
+                        foreach (var item in items)
+                            VisualStateManager.GoToState(item, "CloseButtonDisabledState", true);
+                    }
+                    else
+                    {
+                        foreach (var item in items)
+                            VisualStateManager.GoToState(item, "CloseButtonEnabledState", true);
+                    }
+                }
+            }));
+
+        #endregion
     }
 }

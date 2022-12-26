@@ -4,17 +4,13 @@ using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel;
-using System.Collections.ObjectModel;
-using CharacterMapCX;
 
 namespace CharacterMap.ViewModels
 {
