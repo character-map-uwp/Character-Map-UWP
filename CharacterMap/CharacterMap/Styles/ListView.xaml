@@ -1052,7 +1052,7 @@
                                             </ObjectAnimationUsingKeyFrames>
                                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="CloseButton" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                                 <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                                <EasingDoubleKeyFrame KeyTime="0:0:0.2" Value="60">
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.125" Value="60">
                                                     <EasingDoubleKeyFrame.EasingFunction>
                                                         <ExponentialEase Exponent="7" EasingMode="EaseIn" />
                                                     </EasingDoubleKeyFrame.EasingFunction>

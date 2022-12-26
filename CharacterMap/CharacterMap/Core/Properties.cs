@@ -18,6 +18,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
@@ -305,8 +306,8 @@ namespace CharacterMap.Core
         }
 
         public static readonly DependencyProperty InsetClipProperty =
-            DependencyProperty.RegisterAttached("InsetClip", typeof(Thickness), typeof(Properties), new PropertyMetadata(new Thickness(0d), (d,e) => 
-            { 
+            DependencyProperty.RegisterAttached("InsetClip", typeof(Thickness), typeof(Properties), new PropertyMetadata(new Thickness(0d), (d, e) =>
+            {
                 if (d is FrameworkElement f && e.NewValue is Thickness t)
                 {
                     Visual v = f.GetElementVisual();
@@ -332,7 +333,7 @@ namespace CharacterMap.Core
         }
 
         public static readonly DependencyProperty IsCompactProperty =
-            DependencyProperty.RegisterAttached("IsCompact", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d,e) =>
+            DependencyProperty.RegisterAttached("IsCompact", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, e) =>
             {
                 if (d is TabViewItem item && e.NewValue is bool b)
                 {
@@ -406,7 +407,7 @@ namespace CharacterMap.Core
                                     if (_tabAniCache.TryGetValue(v.Compositor, out CompositionAnimation ani) is false)
                                     {
                                         // Animation doesn't exist, create and cache it
-                                        _tabAniCache[v.Compositor] = ani = 
+                                        _tabAniCache[v.Compositor] = ani =
                                             v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
                                                 .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay)
                                                 .SetDelayTime(0.05)
@@ -420,7 +421,7 @@ namespace CharacterMap.Core
                             }
                         }
                     }
-                } 
+                }
             }));
 
         #endregion
@@ -438,7 +439,7 @@ namespace CharacterMap.Core
         }
 
         public static readonly DependencyProperty RequireOpenTabProperty =
-            DependencyProperty.RegisterAttached("RequireOpenTab", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d,e) =>
+            DependencyProperty.RegisterAttached("RequireOpenTab", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, e) =>
             {
                 if (d is TabView tabs)
                 {
@@ -448,9 +449,6 @@ namespace CharacterMap.Core
 
                 static void TabItemsChanged(TabView sender, IVectorChangedEventArgs args)
                 {
-                    // NOTE: These states conflict with TabViews close button mode, but we
-                    //       never change that currently in this app, so we're fine to
-                    //       reuse those states for this property instead.
                     var items = sender.GetFirstLevelDescendantsOfType<TabViewItem>().ToList();
                     if (GetRequireOpenTab(sender) && sender.TabItems.Count == 1)
                     {
@@ -466,5 +464,6 @@ namespace CharacterMap.Core
             }));
 
         #endregion
+
     }
 }

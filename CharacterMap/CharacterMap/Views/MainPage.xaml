@@ -666,7 +666,11 @@
                     TabItemsSource="{x:Bind ViewModel.Fonts}">
                     <muxc:TabView.TabItemTemplate>
                         <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
-                            <muxc:TabViewItem core:Properties.IsCompact="{x:Bind IsCompact}" ToolTipService.ToolTip="{x:Bind Tooltip}">
+                            <muxc:TabViewItem
+                                IsDoubleTapEnabled="True"
+                                DoubleTapped="TabViewItem_DoubleTapped"
+                                core:Properties.IsCompact="{x:Bind IsCompact}"
+                                ToolTipService.ToolTip="{x:Bind Tooltip}">
                                 <muxc:TabViewItem.Header>
                                     <Grid ColumnSpacing="8">
                                         <Grid.ColumnDefinitions>

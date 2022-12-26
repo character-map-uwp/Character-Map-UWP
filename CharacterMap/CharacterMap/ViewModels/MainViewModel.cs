@@ -451,6 +451,17 @@ namespace CharacterMap.ViewModels
             Fonts.Insert(TabIndex + 1, new(font));
         }
 
+        public bool TryCloseTab(int idx)
+        {
+            if (Fonts.Count > 1)
+            {
+                Fonts.RemoveAt(idx);
+                return true;
+            }
+
+            return false;
+        }
+
         internal void TrySetSelectionFromImport(FontImportResult result)
         {
             StorageFile file = result.Imported.FirstOrDefault() ?? result.Existing.FirstOrDefault();

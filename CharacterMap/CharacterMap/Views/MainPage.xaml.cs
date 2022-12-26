@@ -183,9 +183,13 @@ namespace CharacterMap.Views
 
         private void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
         {
-            // We need at least 1 tab open at all times
-            if (ViewModel.Fonts.Count > 1)
-                ViewModel.Fonts.RemoveAt(sender.TabItems.IndexOf(args.Item));
+            ViewModel.TryCloseTab(sender.TabItems.IndexOf(args.Item));
+        }
+
+        private void TabViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is FontItem item)
+                ViewModel.TryCloseTab(FontsTabBar.TabItems.IndexOf(item));
         }
 
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
