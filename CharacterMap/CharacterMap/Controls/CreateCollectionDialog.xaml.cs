@@ -92,11 +92,18 @@ namespace CharacterMap.Controls
             }
             else
             {
-                var collection = await collections.CreateCollectionAsync(TemplateSettings.CollectionTitle);
-                var result = await collections.AddToCollectionAsync(this.DataContext as InstalledFont, collection);
+                AddToCollectionResult result = null;
+                UserFontCollection collection = await collections.CreateCollectionAsync(TemplateSettings.CollectionTitle);
+
+                if (this.DataContext is InstalledFont font)
+                    result = await collections.AddToCollectionAsync(font, collection);
+                else if (this.DataContext is IList<InstalledFont> fonts)
+                    result = await collections.AddToCollectionAsync(fonts, collection);
+                else
+                    throw new InvalidOperationException($"Can't add {this.DataContext.GetType()} to collection");
+
                 Result = result;
                 d.Complete();
-
                 await Task.Yield();
                 if (result.Success)
                     WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
