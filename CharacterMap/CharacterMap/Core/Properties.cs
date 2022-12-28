@@ -485,6 +485,5 @@ namespace CharacterMap.Core
             }));
 
         #endregion
-
     }
 }

@@ -345,8 +345,7 @@ namespace CharacterMap.ViewModels
                     }
                     else
                     {
-                        // No fonts installed, this app is useless. Explode.
-                        throw new InvalidOperationException("No Fonts found!");
+                        // No fonts, do nuffin'
                     }
                 }
                 else
@@ -378,6 +377,13 @@ namespace CharacterMap.ViewModels
                     //    we found out-of-sync values above.
                     SelectedFont = Fonts[TabIndex].Font;
                 }
+            }
+            else if (FontList.FirstOrDefault() is InstalledFont first)
+            {
+                // Fallback to default font - first run
+                Fonts.Add(new(first));
+                SelectedFont = first;
+                TabIndex = 0;
             }
         }
         public bool IsCreating { get; private set; }
