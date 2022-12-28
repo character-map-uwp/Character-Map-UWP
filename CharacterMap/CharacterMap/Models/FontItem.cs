@@ -72,6 +72,11 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        public void NotifyFontChange()
+        {
+            OnPropertyChanged(nameof(Font));
+        }
+
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);

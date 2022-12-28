@@ -468,6 +468,14 @@ namespace CharacterMap.ViewModels
             return false;
         }
 
+        public void NotifyTabs()
+        {
+            // Fires a faux notification for changing the "Font" in a FontItem,
+            // causing the binding used for choosing which font to display to update.
+            foreach (var font in Fonts)
+                font.NotifyFontChange();
+        }
+
         internal void TrySetSelectionFromImport(FontImportResult result)
         {
             StorageFile file = result.Imported.FirstOrDefault() ?? result.Existing.FirstOrDefault();
