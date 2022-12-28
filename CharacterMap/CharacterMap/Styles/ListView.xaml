@@ -431,7 +431,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <ItemsStackPanel Orientation="Horizontal" />
+                    <ItemsStackPanel Orientation="Horizontal" CacheLength="0"  />
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>

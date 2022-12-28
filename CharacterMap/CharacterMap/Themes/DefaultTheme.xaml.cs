@@ -37,19 +37,22 @@ namespace CharacterMap.Themes
                         new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version2 }
                             .Merge("ms-appx:///Styles/ListView.xaml")
                             .Merge("ms-appx:///Themes/SystemThemes.xaml")
-                            .Merge("ms-appx:///Themes/FluentThemeStyles.xaml")
-                            );
+                            .Merge("ms-appx:///Themes/FluentThemeStyles.xaml"));
                     break;
 
                 case 2:
-                    this.MergeMUXC(ControlsResourcesVersion.Version1);
-                    this.Merge("ms-appx:///Themes/SystemThemes.xaml");
-                    this.Merge("ms-appx:///Themes/ClassicThemeStyles.xaml");
+                    //this.MergeMUXC(ControlsResourcesVersion.Version1).Merge(;
+                    this.MergeMUXC(ControlsResourcesVersion.Version1)
+                        .Merge("ms-appx:///Styles/ListView.xaml")
+                        .Merge("ms-appx:///Themes/ZuneThemeStyles.xaml")
+                        .Merge("ms-appx:///Themes/SystemThemes.xaml")
+                        .Merge("ms-appx:///Themes/ClassicThemeStyles.xaml");
                     break;
 
                 case 3:
-                    this.MergeMUXC(ControlsResourcesVersion.Version1);
-                    this.Merge("ms-appx:///Themes/ZuneThemeStyles.xaml");
+                    this.MergeMUXC(ControlsResourcesVersion.Version1)
+                        .Merge("ms-appx:///Styles/ListView.xaml")
+                        .Merge("ms-appx:///Themes/ZuneThemeStyles.xaml");
                     break;
             }
         }

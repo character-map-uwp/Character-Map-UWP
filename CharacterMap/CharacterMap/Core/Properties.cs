@@ -1,16 +1,12 @@
 ﻿using CharacterMap.Controls;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using CharacterMap.Provider;
 using CharacterMapCX.Controls;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -18,7 +14,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
@@ -383,21 +378,42 @@ namespace CharacterMap.Core
                             ConfigureAnimations(t, Properties.GetIsTabOpenAnimationEnabled(t));
                     }
 
+
                     static void ConfigureAnimations(TabView view, bool enabled)
                     {
                         view.Loaded -= Tabs_Loaded;
 
+                        List<WeakReference> _tooAdd = new();
+
                         if (view.GetFirstDescendantOfType<TabViewListView>() is ListView list)
                         {
+                            list.Items.VectorChanged -= Items_VectorChanged;
                             list.ContainerContentChanging -= List_ContainerContentChanging;
+
                             if (enabled)
+                            {
+                                list.Items.VectorChanged += Items_VectorChanged;
                                 list.ContainerContentChanging += List_ContainerContentChanging;
+                            }
+
+                            void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs eargs)
+                            {
+                                // TabView sometimes decides to give new item containers to existing items already 
+                                // in view, and we want to make sure to only animate items that a re new, so make
+                                // a record of them.
+                                if (eargs.CollectionChange == CollectionChange.ItemInserted)
+                                    _tooAdd.Add(new WeakReference(sender[(int)eargs.Index]));
+                            }
 
                             void List_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
                             {
                                 // Manually trigger the animation every time the tab content changes
-                                if (args.Item is not null && args.ItemContainer is not null)
+                                if (args.Item is not null 
+                                    && args.ItemContainer is not null 
+                                    && _tooAdd.FirstOrDefault(r => r.IsAlive && r.Target == args.Item) is WeakReference itemRef)
                                 {
+                                    _tooAdd.Remove(itemRef);
+
                                     // We animate the first child because if we animate the TabItem itself hit-testing
                                     // will break.
                                     var child = args.ItemContainer.GetFirstDescendantOfType<FrameworkElement>();
@@ -418,6 +434,11 @@ namespace CharacterMap.Core
 
                                     v.StartAnimation(ani);
                                 }
+
+                                // Clean up WeakReferences
+                                foreach (var item in _tooAdd.ToList())
+                                    if (item.IsAlive is false)
+                                        _tooAdd.Remove(item);
                             }
                         }
                     }
