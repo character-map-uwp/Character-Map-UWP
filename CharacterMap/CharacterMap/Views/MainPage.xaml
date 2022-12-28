@@ -667,9 +667,9 @@
                     <muxc:TabView.TabItemTemplate>
                         <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
                             <muxc:TabViewItem
-                                IsDoubleTapEnabled="True"
-                                DoubleTapped="TabViewItem_DoubleTapped"
                                 core:Properties.IsCompact="{x:Bind IsCompact}"
+                                DoubleTapped="TabViewItem_DoubleTapped"
+                                IsDoubleTapEnabled="True"
                                 ToolTipService.ToolTip="{x:Bind Tooltip}">
                                 <muxc:TabViewItem.Header>
                                     <Grid ColumnSpacing="8">
@@ -704,7 +704,7 @@
                                             IsTextScaleFactorEnabled="False"
                                             TextLineBounds="Tight"
                                             TextTrimming="CharacterEllipsis">
-                                            <Run FontFamily="{x:Bind Font.DefaultVariant.Source}" Text="{x:Bind Font.Name}" />
+                                            <Run FontFamily="{x:Bind core:Converters.GetPreviewFontSource(Font.DefaultVariant), FallbackValue='Segoe UI', TargetNullValue='Segoe UI'}" Text="{x:Bind Font.Name}" />
                                             <Run />
                                             <Run
                                                 FontFamily="{ThemeResource ContentControlThemeFontFamily}"
