@@ -32,6 +32,29 @@
             x:Name="FontListFlyout"
             MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
             Placement="Bottom" />
+
+        <MenuFlyout
+            x:Name="OpenFontFlyout"
+            MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+            Placement="BottomEdgeAlignedLeft">
+            <MenuFlyoutItem
+                x:Uid="FontFileMenuItem"
+                Click="{x:Bind OpenFont}"
+                d:Text="Font File">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="O" Modifiers="Control" />
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+            <MenuFlyoutItem
+                x:Uid="FontFolderMenuItem"
+                Click="{x:Bind OpenFolder}"
+                d:Text="Font Folder">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="O" Modifiers="Control,Shift" />
+                </MenuFlyoutItem.KeyboardAccelerators>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+
     </Control.Resources>
 
     <Grid
@@ -73,6 +96,50 @@
                     Style="{StaticResource IconToggleButtonStyle}"
                     Tag="&#xE1D8;"
                     ToolTipService.Placement="Right" />
+
+                <controls:UXButton
+                    x:Name="TitleOpenFontButton"
+                    x:Uid="OpenFontButton"
+                    Width="45"
+                    Height="45"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    CornerRadius="0"
+                    Flyout="{StaticResource OpenFontFlyout}"
+                    Foreground="{ThemeResource ButtonForegroundThemeBrush}"
+                    Style="{StaticResource MapInfoButtonStyle}">
+                    <FontIcon
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xED25;"
+                        RenderTransformOrigin="0.5 0.5">
+                        <FontIcon.RenderTransform>
+                            <ScaleTransform ScaleX="-1" ScaleY="1" />
+                        </FontIcon.RenderTransform>
+                    </FontIcon>
+                </controls:UXButton>
+
+                <controls:UXButton
+                    x:Name="TitleCompareFontsButton"
+                    Width="45"
+                    Height="45"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    Click="FontCompareButton_Click"
+                    CornerRadius="0"
+                    Foreground="{ThemeResource ButtonForegroundThemeBrush}"
+                    Style="{StaticResource MapInfoButtonStyle}"
+                    ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
+                    <FontIcon
+                        Margin="0 -1 0 0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xE1D3;" />
+                </controls:UXButton>
 
                 <ToggleButton
                     x:Name="OpenFontPaneButton"
@@ -177,8 +244,10 @@
                             Height="Auto"
                             Padding="4"
                             VerticalAlignment="Stretch"
+                            Flyout="{StaticResource OpenFontFlyout}"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource MapInfoButtonStyle}"
+                            Visibility="Collapsed"
                             d:Label="Open">
                             <FontIcon
                                 Margin="0 -1 0 0"
@@ -191,26 +260,7 @@
                                     <ScaleTransform ScaleX="-1" ScaleY="1" />
                                 </FontIcon.RenderTransform>
                             </FontIcon>
-                            <Button.Flyout>
-                                <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="BottomEdgeAlignedLeft">
-                                    <MenuFlyoutItem
-                                        x:Uid="FontFileMenuItem"
-                                        Click="{x:Bind OpenFont}"
-                                        d:Text="Font File">
-                                        <MenuFlyoutItem.KeyboardAccelerators>
-                                            <KeyboardAccelerator Key="O" Modifiers="Control" />
-                                        </MenuFlyoutItem.KeyboardAccelerators>
-                                    </MenuFlyoutItem>
-                                    <MenuFlyoutItem
-                                        x:Uid="FontFolderMenuItem"
-                                        Click="{x:Bind OpenFolder}"
-                                        d:Text="Font Folder">
-                                        <MenuFlyoutItem.KeyboardAccelerators>
-                                            <KeyboardAccelerator Key="O" Modifiers="Control,Shift" />
-                                        </MenuFlyoutItem.KeyboardAccelerators>
-                                    </MenuFlyoutItem>
-                                </MenuFlyout>
-                            </Button.Flyout>
+
                         </controls:UXButton>
 
                         <controls:UXButton
@@ -318,7 +368,8 @@
                                     Text="{x:Bind ViewModel.Folder.Source.Name, Mode=OneWay, Converter={StaticResource FontSelectorTitleConverter}}"
                                     TextLineBounds="Tight"
                                     TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap" />
+                                    TextWrapping="NoWrap"
+                                    d:Text="All Fonts" />
                                 <Border Opacity="0.5">
                                     <TextBlock
                                         x:Name="InlineLabelCount2"
@@ -330,7 +381,8 @@
                                         Style="{StaticResource StatusBarTextStyle}"
                                         Text="{x:Bind UpdateFontCountLabel(ViewModel.FontList, InlineLabelCount.IsHitTestVisible), Mode=OneWay}"
                                         TextLineBounds="Tight"
-                                        Visibility="{Binding ElementName=InlineLabelCount, Path=Visibility}" />
+                                        Visibility="{Binding ElementName=InlineLabelCount, Path=Visibility}"
+                                        d:Text="123 Font Families" />
                                 </Border>
                             </StackPanel>
                         </controls:UXButton>
@@ -857,7 +909,12 @@
                     <VisualState.Setters>
                         <Setter Target="SplitView.IsPaneOpen" Value="False" />
                         <Setter Target="SplitView.DisplayMode" Value="Overlay" />
-                        <Setter Target="CollapsedTabColumn.Width" Value="90" />
+                        <Setter Target="CollapsedTabColumn.Width" Value="40" />
+                        <Setter Target="FontsTabBar.Margin" Value="0 0 -24 0" />
+                        <Setter Target="OpenFontButton.Visibility" Value="Visible" />
+                        <Setter Target="TitleOpenFontButton.Visibility" Value="Collapsed" />
+                        <Setter Target="ToggleFullScreenModeButton.Visibility" Value="Collapsed" />
+                        <Setter Target="TitleCompareFontsButton.Visibility" Value="Collapsed" />
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
@@ -869,7 +926,12 @@
                     <VisualState.Setters>
                         <Setter Target="SplitView.IsPaneOpen" Value="False" />
                         <Setter Target="SplitView.DisplayMode" Value="Overlay" />
-                        <Setter Target="CollapsedTabColumn.Width" Value="90" />
+                        <Setter Target="CollapsedTabColumn.Width" Value="40" />
+                        <Setter Target="FontsTabBar.Margin" Value="0 0 -12 0" />
+                        <Setter Target="OpenFontButton.Visibility" Value="Visible" />
+                        <Setter Target="TitleOpenFontButton.Visibility" Value="Collapsed" />
+                        <Setter Target="ToggleFullScreenModeButton.Visibility" Value="Collapsed" />
+                        <Setter Target="TitleCompareFontsButton.Visibility" Value="Collapsed" />
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
