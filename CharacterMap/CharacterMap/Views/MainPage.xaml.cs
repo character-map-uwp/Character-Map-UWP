@@ -850,8 +850,7 @@ namespace CharacterMap.Views
             if (msg.Data is AddToCollectionResult result 
                 && result.Success 
                 && result.Collection is not null
-                && result.Collection == ViewModel.SelectedCollection
-                && Dispatcher.HasThreadAccess == false)
+                && result.Collection == ViewModel.SelectedCollection)
             {
                 // If we don't have thread access, it means another window has added an item to
                 // the collection we're currently viewing, and we should refresh our view

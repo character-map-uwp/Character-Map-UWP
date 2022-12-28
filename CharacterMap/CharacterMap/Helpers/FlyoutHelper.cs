@@ -296,7 +296,8 @@ namespace CharacterMap.Helpers
 
         public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, UserFontCollection collection, BasicFontFilter filter)
         {
-            if (collection != null || (filter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
+            if ((collection != null || (filter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
+                && collection.Fonts.Contains(font.Name))
             {
                 menu.Items.Add(new MenuFlyoutSeparator());
 
