@@ -122,24 +122,28 @@ namespace CharacterMap.ViewModels
 
         private void Fonts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            // 1. Ensure child items are listened too
-            if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace)
+            if (IsSecondaryView is false)
             {
-                foreach (var item in e.OldItems.Cast<FontItem>())
-                    item.PropertyChanged -= Item_PropertyChanged;
-            }
-            else if (e.Action is NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Reset
-                && e.NewItems is not null)
-            {
-                foreach (var item in e.NewItems.Cast<FontItem>())
+                // 1. Ensure child items are listened too
+                if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace)
                 {
-                    item.PropertyChanged -= Item_PropertyChanged;
-                    item.PropertyChanged += Item_PropertyChanged;
+                    foreach (var item in e.OldItems.Cast<FontItem>())
+                        item.PropertyChanged -= Item_PropertyChanged;
                 }
-            }
+                else if (e.Action is NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Reset
+                    && e.NewItems is not null)
+                {
+                    foreach (var item in e.NewItems.Cast<FontItem>())
+                    {
+                        item.PropertyChanged -= Item_PropertyChanged;
+                        item.PropertyChanged += Item_PropertyChanged;
+                    }
+                }
 
-            // 2. Save current open items
-            Save();
+                // 2. Save current open items
+                Save();
+            }
+            
 
             ///
             /// HELPERS 
@@ -153,6 +157,9 @@ namespace CharacterMap.ViewModels
 
             void Save()
             {
+                if (IsSecondaryView)
+                    return;
+
                 _settingsDebouncer.Debounce(200, () =>
                 {
                     Settings.LastOpenFonts = Fonts.SelectMany(f => 
@@ -182,10 +189,10 @@ namespace CharacterMap.ViewModels
                 case nameof(FontListFilter):
                     RefreshFontList();
                     break;
-                case nameof(TabIndex) when TabIndex > -1:
+                case nameof(TabIndex) when TabIndex > -1 && IsSecondaryView is false:
                     Settings.LastTabIndex = TabIndex;
                     break;
-                case nameof(SelectedFont) when SelectedFont is not null:
+                case nameof(SelectedFont) when SelectedFont is not null && IsSecondaryView is false:
                     Settings.LastSelectedFontName = SelectedFont.Name;
                     break;
                 case nameof(FontSearch):
@@ -396,7 +403,10 @@ namespace CharacterMap.ViewModels
                 // 1. Cache last selected now as setting GroupedFontList can change it.
                 //    Use TabIndex as SelectedFont may be inaccurate when inside a filter
                 //    with tabs that aren't inside the current FontList
-                InstalledFont selected = TabIndex > -1 ? Fonts[TabIndex].Font : SelectedFont;
+                InstalledFont selected = 
+                    Fonts.Count > 0 
+                            ? (TabIndex > -1 ? Fonts[TabIndex].Font : SelectedFont)
+                            : Fonts.FirstOrDefault()?.Font;
 
                 // 2. Group the font list
                 var list = AlphaKeyGroup<InstalledFont>.CreateGroups(FontList, f => f.Name.Substring(0, 1));
