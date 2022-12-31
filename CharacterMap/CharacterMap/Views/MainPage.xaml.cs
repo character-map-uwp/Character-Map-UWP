@@ -352,14 +352,28 @@ namespace CharacterMap.Views
                 if (AreModalsOpen())
                     FontMap.Visibility = Visibility.Collapsed;
             }
+
+            UpdateModalStates(AreModalsOpen());
         }
 
         void OnModalClosed()
         {
             if (AreModalsOpen())
+            {
                 FontMap.Visibility = Visibility.Collapsed;
+                UpdateModalStates(true);
+            }
             else
+            {
                 FontMap.Visibility = Visibility.Visible;
+                UpdateModalStates(false);
+            }
+        }
+
+        void UpdateModalStates(bool open)
+        {
+            string state = open ? nameof(ModalOpenState) : nameof(NoModalOpenState);
+            VisualStateManager.GoToState(this, state, true);
         }
 
 

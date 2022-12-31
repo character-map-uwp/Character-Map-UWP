@@ -431,7 +431,7 @@
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
-                    <ItemsStackPanel Orientation="Horizontal" CacheLength="0"  />
+                    <ItemsStackPanel CacheLength="0" Orientation="Horizontal" />
                 </ItemsPanelTemplate>
             </Setter.Value>
         </Setter>
@@ -1039,13 +1039,13 @@
                                                 <EasingDoubleKeyFrame KeyTime="0:0:0.05" Value="60" />
                                                 <EasingDoubleKeyFrame KeyTime="0:0:0.325" Value="0">
                                                     <EasingDoubleKeyFrame.EasingFunction>
-                                                        <ExponentialEase Exponent="7" EasingMode="EaseOut" />
+                                                        <ExponentialEase EasingMode="EaseOut" Exponent="7" />
                                                     </EasingDoubleKeyFrame.EasingFunction>
                                                 </EasingDoubleKeyFrame>
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
-                                    <VisualTransition To="CloseButtonDisabledState" From="CloseButtonEnabledState">
+                                    <VisualTransition From="CloseButtonEnabledState" To="CloseButtonDisabledState">
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="CloseButtonContainer" Storyboard.TargetProperty="Visibility">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
@@ -1054,7 +1054,7 @@
                                                 <EasingDoubleKeyFrame KeyTime="0" Value="0" />
                                                 <EasingDoubleKeyFrame KeyTime="0:0:0.125" Value="60">
                                                     <EasingDoubleKeyFrame.EasingFunction>
-                                                        <ExponentialEase Exponent="7" EasingMode="EaseIn" />
+                                                        <ExponentialEase EasingMode="EaseIn" Exponent="7" />
                                                     </EasingDoubleKeyFrame.EasingFunction>
                                                 </EasingDoubleKeyFrame>
                                             </DoubleAnimationUsingKeyFrames>

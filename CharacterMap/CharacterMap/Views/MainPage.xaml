@@ -97,61 +97,67 @@
                     Tag="&#xE1D8;"
                     ToolTipService.Placement="Right" />
 
-                <controls:UXButton
-                    x:Name="TitleOpenFontButton"
-                    x:Uid="OpenFontButton"
-                    Width="45"
-                    Height="45"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    CornerRadius="0"
-                    Flyout="{StaticResource OpenFontFlyout}"
-                    Foreground="{ThemeResource ButtonForegroundThemeBrush}"
-                    Style="{StaticResource MapInfoButtonStyle}">
-                    <FontIcon
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="14"
-                        Glyph="&#xED25;"
-                        RenderTransformOrigin="0.5 0.5">
-                        <FontIcon.RenderTransform>
-                            <ScaleTransform ScaleX="-1" ScaleY="1" />
-                        </FontIcon.RenderTransform>
-                    </FontIcon>
-                </controls:UXButton>
+                <StackPanel x:Name="TitleButtonsPanel" Orientation="Horizontal">
+                    <FrameworkElement.RenderTransform>
+                        <CompositeTransform />
+                    </FrameworkElement.RenderTransform>
+                    <controls:UXButton
+                        x:Name="TitleOpenFontButton"
+                        x:Uid="OpenFontButton"
+                        Width="45"
+                        Height="45"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        CornerRadius="0"
+                        Flyout="{StaticResource OpenFontFlyout}"
+                        Foreground="{ThemeResource ButtonForegroundThemeBrush}"
+                        Style="{StaticResource MapInfoButtonStyle}">
+                        <FontIcon
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="14"
+                            Glyph="&#xED25;"
+                            RenderTransformOrigin="0.5 0.5">
+                            <FontIcon.RenderTransform>
+                                <ScaleTransform ScaleX="-1" ScaleY="1" />
+                            </FontIcon.RenderTransform>
+                        </FontIcon>
+                    </controls:UXButton>
 
-                <controls:UXButton
-                    x:Name="TitleCompareFontsButton"
-                    Width="45"
-                    Height="45"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    Click="FontCompareButton_Click"
-                    CornerRadius="0"
-                    Foreground="{ThemeResource ButtonForegroundThemeBrush}"
-                    Style="{StaticResource MapInfoButtonStyle}"
-                    ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
-                    <FontIcon
-                        Margin="0 -1 0 0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                        FontSize="14"
-                        Glyph="&#xE1D3;" />
-                </controls:UXButton>
+                    <controls:UXButton
+                        x:Name="TitleCompareFontsButton"
+                        Width="45"
+                        Height="45"
+                        Background="Transparent"
+                        BorderBrush="Transparent"
+                        Click="FontCompareButton_Click"
+                        CornerRadius="0"
+                        Foreground="{ThemeResource ButtonForegroundThemeBrush}"
+                        Style="{StaticResource MapInfoButtonStyle}"
+                        ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
+                        <FontIcon
+                            Margin="0 -1 0 0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                            FontSize="14"
+                            Glyph="&#xE1D3;" />
+                    </controls:UXButton>
 
-                <ToggleButton
-                    x:Name="OpenFontPaneButton"
-                    x:Uid="MenuToggle"
-                    Width="45"
-                    Background="Transparent"
-                    Click="OpenFontPaneButton_Click"
-                    Content="&#xE700;"
-                    FontSize="16"
-                    Style="{StaticResource IconToggleButtonStyle}"
-                    Tag="&#xE700;"
-                    Visibility="Collapsed" />
+                    <ToggleButton
+                        x:Name="OpenFontPaneButton"
+                        x:Uid="MenuToggle"
+                        Width="45"
+                        Background="Transparent"
+                        Click="OpenFontPaneButton_Click"
+                        Content="&#xE700;"
+                        FontSize="16"
+                        Style="{StaticResource IconToggleButtonStyle}"
+                        Tag="&#xE700;"
+                        Visibility="Collapsed" />
+                </StackPanel>
+
             </StackPanel>
 
             <controls:UXButton
@@ -955,6 +961,7 @@
                     <VisualState.Setters>
                         <Setter Target="SplitView.Opacity" Value="0" />
                         <Setter Target="SplitView.IsEnabled" Value="False" />
+                        <Setter Target="TitleButtonsPanel.Visibility" Value="Collapsed" />
                         <Setter Target="TitleHidePaneButton.IsEnabled" Value="False" />
                         <Setter Target="TitleShowPaneButton.IsEnabled" Value="False" />
                         <Setter Target="TitleHidePaneButton.Opacity" Value="0" />
@@ -1045,6 +1052,39 @@
                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="OverlayPaneRootBackground.Background" Value="White" />
                         <!--<Setter Target="FontListFilter.Foreground" Value="Black" />-->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="ModalStates">
+                <VisualStateGroup.Transitions>
+                    <VisualTransition From="ModalOpenState" To="NoModalOpenState">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleButtonsPanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="-50" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.5" Value="0">
+                                    <EasingDoubleKeyFrame.EasingFunction>
+                                        <BackEase Amplitude="0.3" EasingMode="EaseOut" />
+                                    </EasingDoubleKeyFrame.EasingFunction>
+                                </EasingDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                    <VisualTransition From="NoModalOpenState" To="ModalOpenState">
+                        <Storyboard>
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="TitleButtonsPanel" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="-50">
+                                    <EasingDoubleKeyFrame.EasingFunction>
+                                        <BackEase Amplitude="0.2" EasingMode="EaseIn" />
+                                    </EasingDoubleKeyFrame.EasingFunction>
+                                </EasingDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualTransition>
+                </VisualStateGroup.Transitions>
+                <VisualState x:Name="NoModalOpenState" />
+                <VisualState x:Name="ModalOpenState">
+                    <VisualState.Setters>
+                        <Setter Target="TitleButtonsPanel.Visibility" Value="Collapsed" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
