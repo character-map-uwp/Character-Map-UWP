@@ -225,6 +225,7 @@
         <Border
             x:Name="BackgroundBorder"
             Grid.RowSpan="5"
+            BackgroundTransition="{StaticResource RootBackgroundTransition}"
             Canvas.ZIndex="-5" />
 
         <controls:XamlTitleBar
@@ -1955,7 +1956,6 @@
                 <VisualState x:Name="StandaloneViewState">
                     <VisualState.Setters>
                         <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
-                        <Setter Target="BackgroundBorder.BackgroundTransition" Value="{ThemeResource RootBackgroundTransition}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

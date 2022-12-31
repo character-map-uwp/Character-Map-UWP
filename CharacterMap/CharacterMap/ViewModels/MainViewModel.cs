@@ -20,7 +20,7 @@ using Windows.Storage;
 
 namespace CharacterMap.ViewModels
 {
-    public partial class MainViewModel : MultiWindowViewModelBase
+    public partial class MainViewModel : ViewModelBase
     {
         public event EventHandler FontListCreated;
 

@@ -15,7 +15,7 @@ namespace CharacterMap.ViewModels
     public partial class MultiWindowViewModelBase : INotifyPropertyChanged
     {
         private object _lock { get; } = new();
-        private Dictionary<SynchronizationContext, PropertyChangedEventHandler> _handlersWithContext { get; } = new();
+        private Dictionary<SynchronizationContext, PropertyChangedEventHandler> _handlerCache { get; } = new();
 
         public event PropertyChangedEventHandler PropertyChanged
         {
@@ -27,13 +27,13 @@ namespace CharacterMap.ViewModels
                 var ctx = SynchronizationContext.Current;
                 lock (_lock)
                 {
-                    if (_handlersWithContext.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
+                    if (_handlerCache.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
                     {
                         eventHandler += value;
-                        _handlersWithContext[ctx] = eventHandler;
+                        _handlerCache[ctx] = eventHandler;
                     }
                     else
-                        _handlersWithContext.Add(ctx, value);
+                        _handlerCache.Add(ctx, value);
                 }
             }
             remove
@@ -44,13 +44,13 @@ namespace CharacterMap.ViewModels
                 var ctx = SynchronizationContext.Current;
                 lock (_lock)
                 {
-                    if (_handlersWithContext.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
+                    if (_handlerCache.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
                     {
                         eventHandler -= value;
                         if (eventHandler != null)
-                            _handlersWithContext[ctx] = eventHandler;
+                            _handlerCache[ctx] = eventHandler;
                         else
-                            _handlersWithContext.Remove(ctx);
+                            _handlerCache.Remove(ctx);
                     }
                 }
             }
@@ -58,21 +58,24 @@ namespace CharacterMap.ViewModels
 
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
-            KeyValuePair<SynchronizationContext, PropertyChangedEventHandler>[] handlersWithContext;
+            KeyValuePair<SynchronizationContext, PropertyChangedEventHandler>[] handlers;
             lock (_lock)
-                handlersWithContext = _handlersWithContext.ToArray();
+                handlers = _handlerCache.ToArray();
 
             PropertyChangedEventArgs eventArgs = new (propertyName);
-            foreach (var handlerWithContext in handlersWithContext)
+            foreach (var handler in handlers)
             {
-                handlerWithContext.Key.Post(o =>
+                void Do()
                 {
-                    handlerWithContext.Value(this, eventArgs);
+                    handler.Value(this, eventArgs);
                     OnPropertyChangeNotified(propertyName);
-                }, null);
-            }
+                }
 
-            OnPropertyChangeNotified(propertyName);
+                if (SynchronizationContext.Current == handler.Key)
+                    Do();
+                else
+                    handler.Key.Send(o => Do(), null);
+            }
         }
 
         /// <summary>

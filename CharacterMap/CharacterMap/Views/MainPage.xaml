@@ -13,7 +13,6 @@
     xmlns:vm="using:CharacterMap.ViewModels"
     xmlns:wct="using:Microsoft.Toolkit.Uwp.UI.Controls"
     x:Name="PageRoot"
-    Background="{ThemeResource DefaultPageBackgroundBrush}"
     DataContext="{x:Bind ViewModel}"
     mc:Ignorable="d">
 
@@ -60,7 +59,8 @@
     <Grid
         x:Name="LayoutRoot"
         AllowDrop="True"
-        Background="Transparent"
+        Background="{ThemeResource DefaultPageBackgroundBrush}"
+        BackgroundTransition="{StaticResource RootBackgroundTransition}"
         DragOver="Grid_DragOver"
         Drop="Grid_Drop"
         KeyDown="LayoutRoot_KeyDown">
@@ -783,6 +783,7 @@
                     Margin="0 -1 0 0"
                     core:Properties.InsetClip="0 1 0 0"
                     Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                    BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
                     BorderThickness="1 0 0 0"
                     CornerRadius="8 8 0 0" />

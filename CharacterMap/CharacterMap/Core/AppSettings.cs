@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -201,7 +202,70 @@ namespace CharacterMap.Core
 
         #region Infrastructure
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        #region Context-aware PropertyChanged
+
+        private object _lock { get; } = new();
+
+        private Dictionary<SynchronizationContext, PropertyChangedEventHandler> _handlerCache { get; } = new();
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add
+            {
+                if (value == null)
+                    return;
+
+                var ctx = SynchronizationContext.Current;
+                lock (_lock)
+                {
+                    if (_handlerCache.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
+                    {
+                        eventHandler += value;
+                        _handlerCache[ctx] = eventHandler;
+                    }
+                    else
+                        _handlerCache.Add(ctx, value);
+                }
+            }
+            remove
+            {
+                if (value == null)
+                    return;
+
+                var ctx = SynchronizationContext.Current;
+                lock (_lock)
+                {
+                    if (_handlerCache.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
+                    {
+                        eventHandler -= value;
+                        if (eventHandler != null)
+                            _handlerCache[ctx] = eventHandler;
+                        else
+                            _handlerCache.Remove(ctx);
+                    }
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            KeyValuePair<SynchronizationContext, PropertyChangedEventHandler>[] handlers;
+            lock (_lock)
+                handlers = _handlerCache.ToArray();
+
+            PropertyChangedEventArgs eventArgs = new(propertyName);
+            foreach (var handler in handlers)
+            {
+                void Do() => handler.Value(this, eventArgs);
+
+                if (SynchronizationContext.Current == handler.Key)
+                    Do();
+                else
+                    handler.Key.Post(o => Do(), null);
+            }
+        }
+
+        #endregion
 
         private Debouncer _gridDebouncer { get; } = new Debouncer();
 
@@ -259,7 +323,7 @@ namespace CharacterMap.Core
 
         protected void NotifyPropertyChanged([CallerMemberName]string propName = "")
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            OnPropertyChanged(propName);
         }
 
         private void DebounceGrid()
