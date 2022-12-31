@@ -594,13 +594,16 @@ namespace CharacterMap.Views
             {
                 _fontListDebouncer.Debounce(16, () =>
                 {
-                    // Need the fonts to update the fonts used to show the names
-                    // in the font list which are only evaluated on creating the 
-                    // ItemTemplate, so make a new list;
-                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                    RunOnUI(() =>
+                    {
+                        // Need the fonts to update the fonts used to show the names
+                        // in the font list which are only evaluated on creating the 
+                        // ItemTemplate, so make a new list;
+                        ViewModel.RefreshFontList(ViewModel.SelectedCollection);
 
-                    // Update tabs font previews
-                    ViewModel.NotifyTabs();
+                        // Update tabs font previews
+                        ViewModel.NotifyTabs();
+                    });
                 });
             }
         }

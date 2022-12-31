@@ -44,7 +44,7 @@ namespace CharacterMap.Models
     public partial class BasicFontFilter
     {
         public static BasicFontFilter All { get; }
-        = new ((f, c) => f, Localization.Get("OptionAllFonts/Text"));
+            = new ((f, c) => f, Localization.Get("OptionAllFonts/Text"));
 
         public static BasicFontFilter SymbolFonts { get; }
             = new ((f, c) => f.Where(v => v.IsSymbolFont || c.SymbolCollection.Fonts.Contains(v.Name)), Localization.Get("OptionSymbolFonts/Text"));

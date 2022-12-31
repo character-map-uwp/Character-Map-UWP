@@ -20,7 +20,7 @@ using Windows.Storage;
 
 namespace CharacterMap.ViewModels
 {
-    public partial class MainViewModel : ViewModelBase
+    public partial class MainViewModel : MultiWindowViewModelBase
     {
         public event EventHandler FontListCreated;
 
@@ -46,20 +46,27 @@ namespace CharacterMap.ViewModels
 
         public bool IsSecondaryView { get; }
 
-        [ObservableProperty] int _tabIndex = 0;
-        [ObservableProperty] double _progress = 0d;
-        [ObservableProperty] string _titlePrefix;
-        [ObservableProperty] string _fontSearch;
-        [ObservableProperty] string _filterTitle;
-        [ObservableProperty] bool _isLoadingFonts;
-        [ObservableProperty] bool _isSearchResults;
-        [ObservableProperty] bool _isLoadingFontsFailed;
-        [ObservableProperty] bool _hasFonts;
-        [ObservableProperty] bool _isFontSetExpired;
-        [ObservableProperty] bool _isCollectionExportEnabled = true;
-        [ObservableProperty] ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
-        [ObservableProperty] BasicFontFilter _fontListFilter = BasicFontFilter.All;
-        [ObservableProperty] List<InstalledFont> _fontList;
+        public int      TabIndex                { get => GetV(0); set => Set(value); }
+        public double   Progress                { get => GetV(0d); set => Set(value); }
+
+        public string   TitlePrefix             { get => Get<String>(); set => Set(value); }
+        public string   FontSearch              { get => Get<String>(); set => Set(value); }
+        public string   FilterTitle             { get => Get<String>(); set => Set(value); }
+        public bool     IsLoadingFonts          { get => GetV(false); set => Set(value); }
+        public bool     IsSearchResults         { get => GetV(false); set => Set(value); }
+        public bool     IsLoadingFontsFailed    { get => GetV(false); set => Set(value); }
+        public bool     HasFonts                { get => GetV(false); set => Set(value); }
+        public bool     IsFontSetExpired        { get => GetV(false); set => Set(value); }
+        public bool     IsCollectionExportEnabled { get => GetV(true); set => Set(value); }
+
+        public BasicFontFilter FontListFilter   { get => GetV(BasicFontFilter.All);  set => Set(value); }
+        public List<InstalledFont> FontList     { get => Get<List<InstalledFont>>(); private set => Set(value); }
+
+        public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
+        {
+            get => Get<ObservableCollection<AlphaKeyGroup<InstalledFont>>>();
+            private set => Set(value);
+        }
 
         private UserFontCollection _selectedCollection;
         public UserFontCollection SelectedCollection
@@ -89,6 +96,7 @@ namespace CharacterMap.ViewModels
                     TitlePrefix = value.Name + " -";
                 else
                     TitlePrefix = string.Empty;
+
                 OnPropertyChanged();
             }
         }
@@ -119,66 +127,6 @@ namespace CharacterMap.ViewModels
 
             Fonts.CollectionChanged += Fonts_CollectionChanged;
         }
-
-        private void Fonts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (IsSecondaryView is false)
-            {
-                // 1. Ensure child items are listened too
-                if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace)
-                {
-                    foreach (var item in e.OldItems.Cast<FontItem>())
-                        item.PropertyChanged -= Item_PropertyChanged;
-                }
-                else if (e.Action is NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Reset
-                    && e.NewItems is not null)
-                {
-                    foreach (var item in e.NewItems.Cast<FontItem>())
-                    {
-                        item.PropertyChanged -= Item_PropertyChanged;
-                        item.PropertyChanged += Item_PropertyChanged;
-                    }
-                }
-
-                // 2. Save current open items
-                Save();
-            }
-            
-
-            ///
-            /// HELPERS 
-            /// 
-            void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-            {
-                // If the selected variant is changed, resave the font list 
-                if (e.PropertyName is nameof(FontItem.Selected) or nameof(FontItem.DisplayMode))
-                    Save();
-            }
-
-            void Save()
-            {
-                if (IsSecondaryView)
-                    return;
-
-                _settingsDebouncer.Debounce(200, () =>
-                {
-                    Settings.LastOpenFonts = Fonts.SelectMany(f => 
-                        new List<String> { 
-                            f.Font.Name, 
-                            f.Font.Variants.IndexOf(f.Selected).ToString(), 
-                            ((int)f.DisplayMode).ToString() 
-                        }).ToList();
-                    Settings.LastTabIndex = TabIndex;
-
-                    if (SelectedFont is not null)
-                        Settings.LastSelectedFontName = SelectedFont.Name;
-                    else if (TabIndex < Fonts.Count)
-                        Settings.LastSelectedFontName = Fonts[TabIndex].Font.Name;
-
-                });
-            }
-        }
-
         protected override void OnPropertyChangeNotified(string propertyName)
         {
             switch (propertyName)
@@ -310,9 +258,73 @@ namespace CharacterMap.ViewModels
             }
         }
 
+        private void Fonts_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // Our primary concern here is saving the Tab list
+            // of opened fonts. We only need to do this for the
+            // primary window.
+            if (IsSecondaryView is false)
+            {
+                // 1. Ensure child items are listened too
+                if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace)
+                {
+                    foreach (var item in e.OldItems.Cast<FontItem>())
+                        item.PropertyChanged -= Item_PropertyChanged;
+                }
+                else if (e.Action is NotifyCollectionChangedAction.Add or NotifyCollectionChangedAction.Reset
+                    && e.NewItems is not null)
+                {
+                    foreach (var item in e.NewItems.Cast<FontItem>())
+                    {
+                        item.PropertyChanged -= Item_PropertyChanged;
+                        item.PropertyChanged += Item_PropertyChanged;
+                    }
+                }
+
+                // 2. Save current open items
+                Save();
+            }
+
+
+            ///
+            /// HELPERS 
+            /// 
+            void Item_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+            {
+                // If the selected variant is changed, resave the font list 
+                if (e.PropertyName is nameof(FontItem.Selected) or nameof(FontItem.DisplayMode))
+                    Save();
+            }
+
+            void Save()
+            {
+                if (IsSecondaryView)
+                    return;
+
+                _settingsDebouncer.Debounce(200, () =>
+                {
+                    Settings.LastOpenFonts = Fonts.SelectMany(f =>
+                        new List<String> {
+                            f.Font.Name,
+                            f.Font.Variants.IndexOf(f.Selected).ToString(),
+                            ((int)f.DisplayMode).ToString()
+                        }).ToList();
+                    Settings.LastTabIndex = TabIndex;
+
+                    if (SelectedFont is not null)
+                        Settings.LastSelectedFontName = SelectedFont.Name;
+                    else if (TabIndex < Fonts.Count)
+                        Settings.LastSelectedFontName = Fonts[TabIndex].Font.Name;
+
+                });
+            }
+        }
+
         public void RestoreOpenFonts()
         {
-            if (Settings.LastOpenFonts is IList<String> list && list.Count > 0)
+            if (IsSecondaryView is false
+                && Settings.LastOpenFonts is IList<String> list 
+                && list.Count > 0)
             {
                 bool removed = false;
                 Fonts.Clear();
@@ -387,7 +399,7 @@ namespace CharacterMap.ViewModels
             }
             else if (FontList.FirstOrDefault() is InstalledFont first)
             {
-                // Fallback to default font - first run
+                // Fallback to first font available
                 Fonts.Add(new(first));
                 SelectedFont = first;
                 TabIndex = 0;
