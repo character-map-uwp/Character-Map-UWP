@@ -69,120 +69,151 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
         <!--  Title Bar Grid  -->
-        <Grid
+        <ContentPresenter
+            x:Name="TitleButtonsPresenter"
+            Grid.Row="1"
             Grid.ColumnSpan="2"
-            Height="{x:Bind TitleBar.TemplateSettings.Height, Mode=OneWay}"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
+            HorizontalContentAlignment="Stretch"
             Canvas.ZIndex="10"
-            d:Height="32">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.LeftColumnWidth, Mode=OneWay}" d:Width="0" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="0" />
-            </Grid.ColumnDefinitions>
+            Foreground="{ThemeResource ButtonForegroundThemeBrush}">
+            <Grid
+                Height="{x:Bind TitleBar.TemplateSettings.Height, Mode=OneWay}"
+                ChildrenTransitions="{StaticResource RepositionTransitions}"
+                d:Height="32">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.LeftColumnWidth, Mode=OneWay}" d:Width="0" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="0" />
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="1" Orientation="Horizontal">
-                <ToggleButton
-                    x:Name="ToggleFullScreenModeButton"
-                    x:Uid="ToggleFullScreenModeButton"
-                    Width="45"
-                    Background="Transparent"
-                    Command="{Binding CommandToggleFullScreen}"
-                    Content="&#xE740;"
-                    FontSize="14"
-                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                    Style="{StaticResource IconToggleButtonStyle}"
-                    Tag="&#xE1D8;"
-                    ToolTipService.Placement="Right" />
-
-                <StackPanel x:Name="TitleButtonsPanel" Orientation="Horizontal">
-                    <FrameworkElement.RenderTransform>
-                        <CompositeTransform />
-                    </FrameworkElement.RenderTransform>
-                    <controls:UXButton
-                        x:Name="TitleOpenFontButton"
-                        x:Uid="OpenFontButton"
-                        Width="45"
-                        Height="45"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        CornerRadius="0"
-                        Flyout="{StaticResource OpenFontFlyout}"
-                        Foreground="{ThemeResource ButtonForegroundThemeBrush}"
-                        Style="{StaticResource MapInfoButtonStyle}">
-                        <FontIcon
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            FontSize="14"
-                            Glyph="&#xED25;"
-                            RenderTransformOrigin="0.5 0.5">
-                            <FontIcon.RenderTransform>
-                                <ScaleTransform ScaleX="-1" ScaleY="1" />
-                            </FontIcon.RenderTransform>
-                        </FontIcon>
-                    </controls:UXButton>
-
-                    <controls:UXButton
-                        x:Name="TitleCompareFontsButton"
-                        Width="45"
-                        Height="45"
-                        Background="Transparent"
-                        BorderBrush="Transparent"
-                        Click="FontCompareButton_Click"
-                        CornerRadius="0"
-                        Foreground="{ThemeResource ButtonForegroundThemeBrush}"
-                        Style="{StaticResource MapInfoButtonStyle}"
-                        ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
-                        <FontIcon
-                            Margin="0 -1 0 0"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            FontSize="14"
-                            Glyph="&#xE1D3;" />
-                    </controls:UXButton>
-
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <ToggleButton
-                        x:Name="OpenFontPaneButton"
-                        x:Uid="MenuToggle"
+                        x:Name="ToggleFullScreenModeButton"
+                        x:Uid="ToggleFullScreenModeButton"
                         Width="45"
                         Background="Transparent"
-                        Click="OpenFontPaneButton_Click"
-                        Content="&#xE700;"
-                        FontSize="16"
+                        Command="{Binding CommandToggleFullScreen}"
+                        Content="&#xE740;"
+                        FontSize="14"
+                        Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
                         Style="{StaticResource IconToggleButtonStyle}"
-                        Tag="&#xE700;"
-                        Visibility="Collapsed" />
+                        Tag="&#xE1D8;"
+                        ToolTipService.Placement="Right" />
+
+                    <StackPanel x:Name="TitleButtonsPanel" Orientation="Horizontal">
+                        <FrameworkElement.RenderTransform>
+                            <CompositeTransform />
+                        </FrameworkElement.RenderTransform>
+                        <controls:UXButton
+                            x:Name="TitleOpenFontButton"
+                            x:Uid="OpenFontButton"
+                            Width="45"
+                            Height="45"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            CornerRadius="0"
+                            Flyout="{StaticResource OpenFontFlyout}"
+                            Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
+                            Style="{StaticResource MapInfoButtonStyle}">
+                            <FontIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="14"
+                                Glyph="&#xED25;"
+                                RenderTransformOrigin="0.5 0.5">
+                                <FontIcon.RenderTransform>
+                                    <ScaleTransform ScaleX="-1" ScaleY="1" />
+                                </FontIcon.RenderTransform>
+                            </FontIcon>
+                        </controls:UXButton>
+
+                        <controls:UXButton
+                            x:Name="TitleCompareFontsButton"
+                            Width="45"
+                            Height="45"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            Click="FontCompareButton_Click"
+                            CornerRadius="0"
+                            Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
+                            Style="{StaticResource MapInfoButtonStyle}"
+                            ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
+                            <FontIcon
+                                Margin="0 -1 0 0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="14"
+                                Glyph="&#xE1D3;" />
+                        </controls:UXButton>
+
+                        <ToggleButton
+                            x:Name="OpenFontPaneButton"
+                            x:Uid="MenuToggle"
+                            Width="45"
+                            Background="Transparent"
+                            Click="OpenFontPaneButton_Click"
+                            Content="&#xE700;"
+                            FontSize="16"
+                            Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
+                            Style="{StaticResource IconToggleButtonStyle}"
+                            Tag="&#xE700;"
+                            Visibility="Collapsed" />
+                    </StackPanel>
+
                 </StackPanel>
 
-            </StackPanel>
+                <controls:UXButton
+                    x:Name="ZuneSettingsButton"
+                    x:Load="False"
+                    Grid.Column="3"
+                    HorizontalAlignment="Right"
+                    Click="BtnSettings_OnClick"
+                    FontSize="9"
+                    Foreground="#8A8D90"
+                    Style="{StaticResource MapInfoButtonStyle}"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
+                    <TextBlock
+                        CharacterSpacing="30"
+                        FontWeight="Bold"
+                        Text="{core:Localizer Key='SettingsHeader/Text', Casing=Upper}" />
+                </controls:UXButton>
 
-            <controls:UXButton
-                x:Name="ZuneSettingsButton"
-                x:Load="False"
-                Grid.Column="2"
-                HorizontalAlignment="Right"
-                Click="BtnSettings_OnClick"
-                FontSize="9"
-                Foreground="#8A8D90"
-                Style="{StaticResource MapInfoButtonStyle}"
-                Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
                 <TextBlock
-                    CharacterSpacing="30"
-                    FontWeight="Bold"
-                    Text="{core:Localizer Key='SettingsHeader/Text', Casing=Upper}" />
-            </controls:UXButton>
+                    x:Name="ClassicTitleTextLabel"
+                    x:Load="False"
+                    Grid.Column="2"
+                    Margin="8 0 0 0"
+                    VerticalAlignment="Center"
+                    FontSize="12"
+                    FontWeight="Normal"
+                    Foreground="{ThemeResource ControlHighlightContrastForegroundBrush}"
+                    IsHitTestVisible="False"
+                    Style="{StaticResource BaseTextStyle}"
+                    Text="Character Map UWP"
+                    TextLineBounds="Tight" />
 
-        </Grid>
+            </Grid>
+
+
+        </ContentPresenter>
 
         <controls:XamlTitleBar
             x:Name="TitleBar"
-            Grid.RowSpan="2"
+            Grid.Row="1"
             Grid.ColumnSpan="2"
-            MinHeight="40"
+            MinHeight="{StaticResource MinTitleBarHeight}"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             IsAutoHeightEnabled="True" />
@@ -190,7 +221,7 @@
         <!--  Main Content  -->
         <SplitView
             x:Name="SplitView"
-            Grid.RowSpan="3"
+            Grid.Row="1"
             Grid.ColumnSpan="3"
             Background="{x:Null}"
             DisplayMode="Inline"
@@ -200,11 +231,16 @@
             <SplitView.Pane>
                 <Grid x:Name="PaneRoot">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="{x:Bind TitleBar.TemplateSettings.GridHeight, Mode=OneWay}" d:Height="32" />
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
+
+                    <Rectangle
+                        x:Name="PaneTitleBarSpacer"
+                        Height="{x:Bind TitleBar.TemplateSettings.Height, Mode=OneWay}"
+                        d:Height="32" />
 
 
                     <Border
@@ -615,14 +651,14 @@
                         Grid.Row="3"
                         Height="32"
                         Background="{x:Bind PaneRoot.Background, Mode=OneWay}">
-
-
                         <controls:LabelButton
                             x:Name="FontCompareButton"
+                            x:Load="False"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Stretch"
                             Click="FontCompareButton_Click"
-                            ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
+                            ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}"
+                            Visibility="Collapsed">
                             <controls:LabelButton.IconContent>
                                 <FontIcon
                                     Width="45"
@@ -707,6 +743,13 @@
                     <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="150" />
                 </Grid.ColumnDefinitions>
 
+                <Rectangle
+                    x:Name="NoTabsTitleBarSpacer"
+                    x:Load="{x:Bind core:Converters.False(helpers:ResourceHelper.SupportsTabs), FallbackValue=False}"
+                    Grid.Row="1"
+                    Height="{x:Bind TitleBar.TemplateSettings.Height, Mode=OneWay}"
+                    Margin="0 0 0 -8" />
+
                 <muxc:TabView
                     x:Name="FontsTabBar"
                     Grid.Row="1"
@@ -721,7 +764,8 @@
                     SelectedIndex="{x:Bind ViewModel.TabIndex, Mode=TwoWay}"
                     Style="{StaticResource TabViewStyle}"
                     TabCloseRequested="FontMapContainer_TabCloseRequested"
-                    TabItemsSource="{x:Bind ViewModel.Fonts}">
+                    TabItemsSource="{x:Bind ViewModel.Fonts}"
+                    Visibility="{x:Bind core:Converters.TrueToVis(helpers:ResourceHelper.SupportsTabs), FallbackValue=Collapsed}">
                     <muxc:TabView.TabItemTemplate>
                         <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
                             <muxc:TabViewItem
@@ -778,6 +822,8 @@
                 </muxc:TabView>
 
                 <Border
+                    x:Name="TabBorder"
+                    x:Load="{x:Bind helpers:ResourceHelper.SupportsTabs, FallbackValue=False}"
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
                     Margin="0 -1 0 0"
@@ -792,10 +838,11 @@
                     x:Name="FontMap"
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
-                    Margin="0 4 0 0"
+                    Padding="0 4 0 0"
+                    core:Properties.ClipToBounds="True"
                     Font="{x:Bind ((vm:FontItem)FontsTabBar.SelectedItem), Mode=OneWay}">
                     <views:FontMapView.TitleRightContent>
-                        <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
+                        <Border Margin="0 4 0 0" Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
                             <controls:UXButton
                                 x:Name="BtnSettings"
                                 Width="45"
@@ -825,7 +872,6 @@
         <views:SettingsView
             x:Name="SettingsView"
             x:Load="False"
-            Grid.Row="0"
             Grid.RowSpan="3"
             Grid.ColumnSpan="10"
             TitleBarHeight="{x:Bind TitleBar.TemplateSettings.GridHeight, Mode=OneWay}"
@@ -864,6 +910,7 @@
         <Border
             x:Name="PrintPresenter"
             x:DeferLoadStrategy="Lazy"
+            Grid.Row="1"
             Grid.RowSpan="3"
             Grid.ColumnSpan="10"
             d:Visibility="Collapsed" />
@@ -872,6 +919,7 @@
         <Grid
             x:Name="NotificationRoot"
             x:Load="False"
+            Grid.Row="1"
             Grid.RowSpan="3"
             Grid.ColumnSpan="10"
             d:Visibility="Collapsed">
@@ -882,6 +930,7 @@
         <Grid
             x:Name="LoadingRoot"
             x:Load="{x:Bind ViewModel.IsLoadingFonts, Mode=OneWay}"
+            Grid.Row="1"
             Grid.RowSpan="20"
             Grid.ColumnSpan="20"
             Background="{Binding Background, ElementName=PageRoot}"
@@ -918,6 +967,7 @@
                         <Setter Target="SplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="CollapsedTabColumn.Width" Value="40" />
                         <Setter Target="FontsTabBar.Margin" Value="0 0 -24 0" />
+                        <Setter Target="FontCompareButton.Visibility" Value="Visible" />
                         <Setter Target="OpenFontButton.Visibility" Value="Visible" />
                         <Setter Target="TitleOpenFontButton.Visibility" Value="Collapsed" />
                         <Setter Target="ToggleFullScreenModeButton.Visibility" Value="Collapsed" />
@@ -935,6 +985,7 @@
                         <Setter Target="SplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="CollapsedTabColumn.Width" Value="40" />
                         <Setter Target="FontsTabBar.Margin" Value="0 0 -12 0" />
+                        <Setter Target="FontCompareButton.Visibility" Value="Visible" />
                         <Setter Target="OpenFontButton.Visibility" Value="Visible" />
                         <Setter Target="TitleOpenFontButton.Visibility" Value="Collapsed" />
                         <Setter Target="ToggleFullScreenModeButton.Visibility" Value="Collapsed" />
@@ -1028,10 +1079,17 @@
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
                         <!--<Setter Target="ToggleFullScreenModeButton.Foreground" Value="White" />-->
+                        <Setter Target="TitleButtonsPresenter.(Grid.Row)" Value="0" />
+                        <Setter Target="TitleBar.(Grid.Row)" Value="0" />
+                        <Setter Target="TitleButtonsPresenter.Foreground" Value="White" />
                         <Setter Target="BtnSettings.Width" Value="Auto" />
                         <Setter Target="BtnSettings.Height" Value="Auto" />
+                        <Setter Target="PaneTitleBarSpacer.MaxHeight" Value="0" />
+                        <Setter Target="NoTabsTitleBarSpacer.MaxHeight" Value="0" />
                         <Setter Target="FontMap.Margin" Value="0 0 8 0" />
-                        <Setter Target="SplitView.Margin" Value="8 0 0 0" />
+                        <Setter Target="SplitView.Margin" Value="0 0 0 0" />
+                        <Setter Target="PaneRoot.Padding" Value="8 0 0 0" />
+                        <Setter Target="ClassicTitleTextLabel.Visibility" Value="Visible" />
                         <Setter Target="InlineLabelCount.Visibility" Value="Collapsed" />
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="OpenFontButton.VerticalAlignment" Value="Center" />

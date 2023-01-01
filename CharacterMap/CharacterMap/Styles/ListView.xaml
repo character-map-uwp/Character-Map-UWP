@@ -783,7 +783,8 @@
                     <Grid
                         x:Name="LayoutRoot"
                         Padding="{TemplateBinding Padding}"
-                        Background="Transparent">
+                        Background="Transparent"
+                        BackgroundTransition="{StaticResource RootBackgroundTransition}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition x:Name="LeftColumn" Width="0" />
                             <ColumnDefinition Width="*" />
@@ -1093,7 +1094,7 @@
                             Grid.Column="1"
                             Padding="{ThemeResource TabViewItemHeaderPadding}"
                             Background="{TemplateBinding Background}"
-                            BackgroundTransition="{StaticResource QuickBackgroundTransition}"
+                            BackgroundTransition="{StaticResource RootBackgroundTransition}"
                             Control.IsTemplateFocusTarget="True"
                             CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource TopCornerRadiusFilterConverter}}"
                             FocusVisualMargin="{TemplateBinding FocusVisualMargin}"

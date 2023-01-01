@@ -24,6 +24,8 @@
     </ResourceDictionary.ThemeDictionaries>
 
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
+    <x:Boolean x:Key="SupportsTabs">True</x:Boolean>
+    <x:Double x:Key="MinTitleBarHeight">40</x:Double>
 
     <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>

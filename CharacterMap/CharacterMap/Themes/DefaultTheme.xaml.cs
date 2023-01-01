@@ -28,6 +28,7 @@ namespace CharacterMap.Themes
             {
                 case 0:
                     this.MergeMUXC(ControlsResourcesVersion.Version1);
+                    this.Merge("ms-appx:///Styles/ListView.xaml");
                     this.Merge("ms-appx:///Themes/SystemThemes.xaml");
                     this.Merge("ms-appx:///Themes/DefaultThemeStyles.xaml");
                     break;

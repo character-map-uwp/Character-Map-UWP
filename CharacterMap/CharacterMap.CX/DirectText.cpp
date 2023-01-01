@@ -44,11 +44,14 @@ DirectText::DirectText()
 	DefaultStyleKey = "CharacterMapCX.Controls.DirectText";
     m_isStale = true;
 
-    auto c = ref new DependencyPropertyChangedCallback(this, &DirectText::OnFontSizeChanged);
+    auto c = ref new DependencyPropertyChangedCallback(this, &DirectText::OnPropChanged);
     this->RegisterPropertyChangedCallback(DirectText::FontSizeProperty, c);
+
+    auto d = ref new DependencyPropertyChangedCallback(this, &DirectText::OnPropChanged);
+    this->RegisterPropertyChangedCallback(DirectText::ForegroundProperty, d);
 }
 
-void DirectText::OnFontSizeChanged(DependencyObject^ d, DependencyProperty^ p)
+void DirectText::OnPropChanged(DependencyObject^ d, DependencyProperty^ p)
 {
     DirectText^ c = (DirectText^)d;
     c->Update();

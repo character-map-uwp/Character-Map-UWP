@@ -266,6 +266,10 @@ namespace CharacterMap.Helpers
             //Window.Current.Content = null;
             //Window.Current.Content = content;
         }
+
+        private static bool? _supportsTabs;
+        public static bool SupportsTabs => _supportsTabs ??= Get<bool>("SupportsTabs");
+        public static bool SupportsShadows() => Get<bool>("SupportsShadows");
     }
 
     public class ThemeHelper

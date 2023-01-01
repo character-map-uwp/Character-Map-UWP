@@ -58,11 +58,10 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="ThemeStatesGroup">
                 <VisualState x:Name="DefaultThemeState" />
-                <VisualState x:Name="FUIThemeState">
-                    <!--<VisualState.Setters>
-                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource FUIBackgroundBrush}" />
-                        <Setter Target="TitleBackground.Background" Value="{ThemeResource FUIBackgroundBrush}" />
-                    </VisualState.Setters>-->
+                <VisualState x:Name="ClassicThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="Presenter.TitleBackgroundBrush" Value="Transparent" />
+                    </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>

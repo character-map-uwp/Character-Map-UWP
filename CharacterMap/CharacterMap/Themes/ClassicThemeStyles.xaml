@@ -39,6 +39,7 @@
 
     <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
+    <x:Boolean x:Key="SupportsTabs">False</x:Boolean>
     <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
 
     <!--  Override system generated accent colors  -->
@@ -177,19 +178,6 @@
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                 Foreground="{TemplateBinding Foreground}" />
-
-                            <TextBlock
-                                x:Name="TitleTextLabel"
-                                Grid.Column="2"
-                                Margin="8 0 0 0"
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                FontWeight="Normal"
-                                Foreground="{ThemeResource ControlHighlightContrastForegroundBrush}"
-                                IsHitTestVisible="False"
-                                Style="{StaticResource BaseTextStyle}"
-                                Text="Character Map UWP"
-                                TextLineBounds="Tight" />
 
                         </Grid>
                     </Grid>
@@ -1089,7 +1077,7 @@
     <Style TargetType="controls:ModalPagePresenter">
         <Setter Property="ContentBackground" Value="{ThemeResource DefaultPageBackgroundBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
-        <Setter Property="TitleBackgroundBrush" Value="{ThemeResource DefaultHostBrush}" />
+        <Setter Property="TitleBackgroundBrush" Value="Transparent" />
         <Setter Property="TitleBarHeight" Value="32" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
@@ -1097,8 +1085,6 @@
                 <ControlTemplate TargetType="controls:ModalPagePresenter">
                     <Grid
                         x:Name="Root"
-                        Background="{TemplateBinding ContentBackground}"
-                        BackgroundTransition="{StaticResource RootBackgroundTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
 
@@ -1108,7 +1094,13 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Border x:Name="TitleBackground" Background="Transparent" />
+                        <Border x:Name="TitleBackground" Background="{TemplateBinding TitleBackgroundBrush}" />
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Background="{TemplateBinding ContentBackground}"
+                            BackgroundTransition="{StaticResource RootBackgroundTransition}" />
 
                         <ContentPresenter
                             x:Name="TitleBarPresenter"

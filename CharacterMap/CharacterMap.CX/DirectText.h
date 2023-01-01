@@ -171,7 +171,7 @@ namespace CharacterMapCX
 			bool m_isStale;
 			bool m_render;
 
-			void OnFontSizeChanged(DependencyObject^ d, DependencyProperty^ p);
+			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);
 
 			static void OnRenderPropertyChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 			{

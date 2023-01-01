@@ -46,27 +46,20 @@ namespace CharacterMap.ViewModels
 
         public bool IsSecondaryView { get; }
 
-        public int      TabIndex                { get => GetV(0); set => Set(value); }
-        public double   Progress                { get => GetV(0d); set => Set(value); }
-
-        public string   TitlePrefix             { get => Get<String>(); set => Set(value); }
-        public string   FontSearch              { get => Get<String>(); set => Set(value); }
-        public string   FilterTitle             { get => Get<String>(); set => Set(value); }
-        public bool     IsLoadingFonts          { get => GetV(false); set => Set(value); }
-        public bool     IsSearchResults         { get => GetV(false); set => Set(value); }
-        public bool     IsLoadingFontsFailed    { get => GetV(false); set => Set(value); }
-        public bool     HasFonts                { get => GetV(false); set => Set(value); }
-        public bool     IsFontSetExpired        { get => GetV(false); set => Set(value); }
-        public bool     IsCollectionExportEnabled { get => GetV(true); set => Set(value); }
-
-        public BasicFontFilter FontListFilter   { get => GetV(BasicFontFilter.All);  set => Set(value); }
-        public List<InstalledFont> FontList     { get => Get<List<InstalledFont>>(); private set => Set(value); }
-
-        public ObservableCollection<AlphaKeyGroup<InstalledFont>> GroupedFontList
-        {
-            get => Get<ObservableCollection<AlphaKeyGroup<InstalledFont>>>();
-            private set => Set(value);
-        }
+        [ObservableProperty] int _tabIndex = 0;
+        [ObservableProperty] double _progress = 0d;
+        [ObservableProperty] string _titlePrefix;
+        [ObservableProperty] string _fontSearch;
+        [ObservableProperty] string _filterTitle;
+        [ObservableProperty] bool _isLoadingFonts;
+        [ObservableProperty] bool _isSearchResults;
+        [ObservableProperty] bool _isLoadingFontsFailed;
+        [ObservableProperty] bool _hasFonts;
+        [ObservableProperty] bool _isFontSetExpired;
+        [ObservableProperty] bool _isCollectionExportEnabled = true;
+        [ObservableProperty] ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
+        [ObservableProperty] BasicFontFilter _fontListFilter = BasicFontFilter.All;
+        [ObservableProperty] List<InstalledFont> _fontList;
 
         private UserFontCollection _selectedCollection;
         public UserFontCollection SelectedCollection

@@ -644,7 +644,7 @@ namespace CharacterMap.Views
                 && sender is ListViewItem f
                 && f.Content is InstalledFont font)
             {
-                if (ViewModel.Settings.DisableTabs)
+                if (ViewModel.Settings.DisableTabs || ResourceHelper.SupportsTabs is false)
                     _ = FontMapView.CreateNewViewForFontAsync(font);
                 else
                 {

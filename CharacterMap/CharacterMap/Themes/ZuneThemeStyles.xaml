@@ -11,10 +11,11 @@
     <x:Boolean x:Key="LowercaseTitles">True</x:Boolean>
     <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
+    <x:Boolean x:Key="SupportsTabs">False</x:Boolean>
     <Duration x:Key="BrushDuration">0:0:0.1</Duration>
     <BrushTransition x:Key="DefaultBrushTransition" Duration="0:0:0.1" />
     <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource SystemChromeMediumColor}" />
-
+    <x:Double x:Key="MinTitleBarHeight">32</x:Double>
 
 
 

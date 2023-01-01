@@ -223,7 +223,8 @@ namespace CharacterMap.Helpers
                     if (!standalone)
                     {
                         // 1.1. Only show "Open in New Tab" if this is Font List context menu
-                        if (showAdvanced is false)
+                        //      and supported by theme
+                        if (showAdvanced is false && ResourceHelper.SupportsTabs)
                             Create("OpenInNewTab/Text", "\uECCD", OpenInNewTab);
 
                         // 1.2. Create "Open in New Window"
