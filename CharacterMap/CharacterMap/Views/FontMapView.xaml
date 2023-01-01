@@ -823,6 +823,7 @@
                     x:FieldModifier="public"
                     EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
                     IsItemClickEnabled="False"
+                    ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
@@ -840,7 +841,7 @@
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <!--  For performance reasons, all bindings are done in C#  -->
-                            <Grid Padding="4" ContextRequested="Grid_ContextRequested">
+                            <Grid Padding="4">
                                 <!--<cxc:DirectText
                                     x:Name="DText"
                                     Margin="0 -2 0 0"

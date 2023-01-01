@@ -783,11 +783,24 @@ namespace CharacterMap.Views
             }
         }
 
+        private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (!args.InRecycleQueue && args.ItemContainer is not null)
+            {
+                args.ItemContainer.ContextRequested -= Grid_ContextRequested;
+                args.ItemContainer.ContextRequested += Grid_ContextRequested;
+            }
+        }
+
         private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            /* Context menu for character grid */
-            args.Handled = true;
-            FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, (FrameworkElement)sender, ViewModel);
+            if (sender is FrameworkElement f 
+                && f.GetDescendantsOfType<Grid>().FirstOrDefault(g => g.Tag is Character) is Grid grid)
+            {
+                /* Context menu for character grid */
+                args.Handled = true;
+                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel);
+            }
         }
 
         private void SavePng_Click(object sender, RoutedEventArgs e)
@@ -1086,7 +1099,6 @@ namespace CharacterMap.Views
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
 
-        
     }
 
 
