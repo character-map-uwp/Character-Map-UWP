@@ -29,7 +29,7 @@ namespace CharacterMap.Helpers
 
         internal static void SetTitle(string name)
         {
-            ApplicationView.GetForCurrentView().Title = name ?? string.Empty;
+            name = ApplicationView.GetForCurrentView().Title = name ?? string.Empty;
             WeakReferenceMessenger.Default.Send(name, "TitleUpdated");
         }
 

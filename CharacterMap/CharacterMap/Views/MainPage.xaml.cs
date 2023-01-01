@@ -126,10 +126,10 @@ namespace CharacterMap.Views
                     if (ViewModel.SelectedFont != null)
                     {
                         SetSelectedItem(ViewModel.SelectedFont);
-                        if (FontsTabBar.SelectedIndex >= 0 && !ViewModel.IsCreating)
+                        if (ViewModel.TabIndex >= 0 && !ViewModel.IsCreating)
                         {
-                            ViewModel.Fonts[FontsTabBar.SelectedIndex].SetFont(ViewModel.SelectedFont);
-                            FontMap.Font = ViewModel.Fonts[FontsTabBar.SelectedIndex];
+                            ViewModel.Fonts[ViewModel.TabIndex].SetFont(ViewModel.SelectedFont);
+                            FontMap.Font = ViewModel.Fonts[ViewModel.TabIndex];
 
                             if (_disableMapChange)
                                 _disableMapChange = false;
@@ -257,7 +257,11 @@ namespace CharacterMap.Views
 
         private void OnColorValuesChanged(UISettings settings, object e)
         {
-            RunOnUI(() => Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme))));
+            RunOnUI(() =>
+            {
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
+                ResourceHelper.AppSettings.UpdateTheme();
+            });
         }
 
         private void UpdateLoadingStates()
@@ -329,13 +333,19 @@ namespace CharacterMap.Views
         private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
             // Zune theme shows settings button early right now, so to avoid
-            // crashing leave early
+            // crashing do nothing until fonts are loaded
             if (ViewModel.IsLoadingFonts)
                 return; 
 
             this.FindName(nameof(SettingsView));
             SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont);
             OnModalOpened();
+        }
+
+        private void FontsTabBar_TabDroppedOutside(TabView sender, TabViewTabDroppedOutsideEventArgs args)
+        {
+            if (args.Item is FontItem font)
+                _ = FontMapView.CreateNewViewForFontAsync(font.Font);
         }
 
         async void OnModalOpened(bool hideFontMap = true)
@@ -460,7 +470,7 @@ namespace CharacterMap.Views
                         {
                             // Rebuild the collections menu
                             menu.Items.Remove(c);
-                            FlyoutHelper.AddCollectionItems(menu, null, GetActiveFonts());
+                            FlyoutHelper.AddCollectionItems(menu, null, GetActiveFonts(), "AddActiveToCollectionItem/Text");
                         }
                     }
                 }
@@ -644,11 +654,16 @@ namespace CharacterMap.Views
                 && sender is ListViewItem f
                 && f.Content is InstalledFont font)
             {
-                if (ViewModel.Settings.DisableTabs || ResourceHelper.SupportsTabs is false)
+                if (ViewModel.Settings.DisableTabs 
+                    || ResourceHelper.SupportsTabs is false
+                    || Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
                     _ = FontMapView.CreateNewViewForFontAsync(font);
                 else
                 {
                     ViewModel.Fonts.Insert(ViewModel.TabIndex + 1, new(font));
+
+                    if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+                        ViewModel.TabIndex += 1;
                 }
             }
         }

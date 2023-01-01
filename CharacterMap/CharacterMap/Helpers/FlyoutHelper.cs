@@ -335,7 +335,7 @@ namespace CharacterMap.Helpers
         /// <param name="menu"></param>
         /// <param name="font"></param>
         /// <returns></returns>
-        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IList<InstalledFont> fonts)
+        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IList<InstalledFont> fonts, string key = null)
         {
             #region Event Handlers
 
@@ -371,7 +371,7 @@ namespace CharacterMap.Helpers
             MenuFlyoutSubItem coll;
             MenuFlyoutSubItem newColl = new()
             {
-                Text = Localization.Get("AddToCollectionFlyout/Text"),
+                Text = Localization.Get( key ?? "AddToCollectionFlyout/Text"),
                 Icon = new FontIcon { Glyph = "\uE71D" }
             };
 

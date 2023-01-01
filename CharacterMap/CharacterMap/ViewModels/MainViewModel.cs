@@ -46,6 +46,7 @@ namespace CharacterMap.ViewModels
 
         public bool IsSecondaryView { get; }
 
+        [NotifyPropertyChangedFor(nameof(CurrentFont))]
         [ObservableProperty] int _tabIndex = 0;
         [ObservableProperty] double _progress = 0d;
         [ObservableProperty] string _titlePrefix;
@@ -60,6 +61,9 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] ObservableCollection<AlphaKeyGroup<InstalledFont>> _groupedFontList;
         [ObservableProperty] BasicFontFilter _fontListFilter = BasicFontFilter.All;
         [ObservableProperty] List<InstalledFont> _fontList;
+
+        public FontItem CurrentFont => Fonts.Count > 0 && TabIndex < Fonts.Count && TabIndex > -1
+            ? Fonts[TabIndex] : null;
 
         private UserFontCollection _selectedCollection;
         public UserFontCollection SelectedCollection
@@ -90,6 +94,7 @@ namespace CharacterMap.ViewModels
                 else
                     TitlePrefix = string.Empty;
 
+                TitleBarHelper.SetTitle(value?.Name);
                 OnPropertyChanged();
             }
         }
@@ -258,6 +263,8 @@ namespace CharacterMap.ViewModels
             // primary window.
             if (IsSecondaryView is false)
             {
+                OnPropertyChanged(nameof(CurrentFont));
+
                 // 1. Ensure child items are listened too
                 if (e.Action is NotifyCollectionChangedAction.Remove or NotifyCollectionChangedAction.Replace)
                 {

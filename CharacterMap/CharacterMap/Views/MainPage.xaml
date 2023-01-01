@@ -13,6 +13,7 @@
     xmlns:vm="using:CharacterMap.ViewModels"
     xmlns:wct="using:Microsoft.Toolkit.Uwp.UI.Controls"
     x:Name="PageRoot"
+    Background="{ThemeResource DefaultPageBackgroundBrush}"
     DataContext="{x:Bind ViewModel}"
     mc:Ignorable="d">
 
@@ -59,8 +60,6 @@
     <Grid
         x:Name="LayoutRoot"
         AllowDrop="True"
-        Background="{ThemeResource DefaultPageBackgroundBrush}"
-        BackgroundTransition="{StaticResource RootBackgroundTransition}"
         DragOver="Grid_DragOver"
         Drop="Grid_Drop"
         KeyDown="LayoutRoot_KeyDown">
@@ -114,9 +113,8 @@
                         <FrameworkElement.RenderTransform>
                             <CompositeTransform />
                         </FrameworkElement.RenderTransform>
-                        <controls:UXButton
+                        <Button
                             x:Name="TitleOpenFontButton"
-                            x:Uid="OpenFontButton"
                             Width="45"
                             Height="45"
                             Background="Transparent"
@@ -124,7 +122,8 @@
                             CornerRadius="0"
                             Flyout="{StaticResource OpenFontFlyout}"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
-                            Style="{StaticResource MapInfoButtonStyle}">
+                            Style="{StaticResource TitleBarButtonStyle}"
+                            ToolTipService.ToolTip="{core:Localizer Key='OpenFontButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip'}">
                             <FontIcon
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -136,9 +135,9 @@
                                     <ScaleTransform ScaleX="-1" ScaleY="1" />
                                 </FontIcon.RenderTransform>
                             </FontIcon>
-                        </controls:UXButton>
+                        </Button>
 
-                        <controls:UXButton
+                        <Button
                             x:Name="TitleCompareFontsButton"
                             Width="45"
                             Height="45"
@@ -147,7 +146,7 @@
                             Click="FontCompareButton_Click"
                             CornerRadius="0"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
-                            Style="{StaticResource MapInfoButtonStyle}"
+                            Style="{StaticResource TitleBarButtonStyle}"
                             ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
                             <FontIcon
                                 Margin="0 -1 0 0"
@@ -156,9 +155,9 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="14"
                                 Glyph="&#xE1D3;" />
-                        </controls:UXButton>
+                        </Button>
 
-                        <ToggleButton
+                        <Button
                             x:Name="OpenFontPaneButton"
                             x:Uid="MenuToggle"
                             Width="45"
@@ -167,7 +166,7 @@
                             Content="&#xE700;"
                             FontSize="16"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
-                            Style="{StaticResource IconToggleButtonStyle}"
+                            Style="{StaticResource TitleBarButtonStyle}"
                             Tag="&#xE700;"
                             Visibility="Collapsed" />
                     </StackPanel>
@@ -216,7 +215,10 @@
             MinHeight="{StaticResource MinTitleBarHeight}"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
-            IsAutoHeightEnabled="True" />
+            AutoUpdateTitle="False"
+            Content="{x:Null}"
+            IsAutoHeightEnabled="True"
+            Tag="{x:Null}" />
 
         <!--  Main Content  -->
         <SplitView
@@ -251,8 +253,9 @@
 
                     <Border
                         x:Name="OverlayPaneRootBackground"
+                        x:Load="False"
                         Grid.RowSpan="5"
-                        Background="Transparent"
+                        Background="{ThemeResource PaneCollapsedBackgroundBrush}"
                         IsHitTestVisible="False"
                         Visibility="Collapsed" />
 
@@ -666,14 +669,6 @@
                                     VerticalAlignment="Center"
                                     FontSize="16"
                                     Glyph="&#xE1D3;" />
-                                <!--<Path
-                                    Width="45"
-                                    Height="12"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Data="F1 M 1.25 17.5 C 0.904948 17.5 0.610352 17.37793 0.366211 17.133789 C 0.12207 16.889648 0 16.595053 0 16.25 L 0 3.75 C 0 3.404949 0.12207 3.110352 0.366211 2.866211 C 0.610352 2.62207 0.904948 2.5 1.25 2.5 L 3.75 2.5 C 4.095052 2.5 4.389648 2.62207 4.633789 2.866211 C 4.87793 3.110352 5 3.404949 5 3.75 L 5 16.25 C 5 16.595053 4.87793 16.889648 4.633789 17.133789 C 4.389648 17.37793 4.095052 17.5 3.75 17.5 Z M 7.5 17.5 C 7.154948 17.5 6.860352 17.37793 6.616211 17.133789 C 6.37207 16.889648 6.25 16.595053 6.25 16.25 L 6.25 3.75 C 6.25 3.404949 6.37207 3.110352 6.616211 2.866211 C 6.860352 2.62207 7.154948 2.5 7.5 2.5 L 10 2.5 C 10.345052 2.5 10.639648 2.62207 10.883789 2.866211 C 11.12793 3.110352 11.25 3.404949 11.25 3.75 L 11.25 16.25 C 11.25 16.595053 11.12793 16.889648 10.883789 17.133789 C 10.639648 17.37793 10.345052 17.5 10 17.5 Z M 1.25 3.75 L 1.25 16.25 L 3.75 16.25 L 3.75 3.75 Z M 7.5 3.75 L 7.5 16.25 L 10 16.25 L 10 3.75 Z M 16.5625 17.490234 C 16.282551 17.490234 16.030273 17.4056 15.805664 17.236328 C 15.581054 17.067059 15.429687 16.845703 15.351562 16.572266 L 12.558594 6.494141 C 12.526041 6.376954 12.509765 6.266277 12.509766 6.162109 C 12.509765 5.888672 12.5944 5.639648 12.763672 5.415039 C 12.932942 5.19043 13.154297 5.035808 13.427734 4.951172 L 15.605469 4.345703 C 15.722656 4.313152 15.833333 4.296876 15.9375 4.296875 C 16.217447 4.296876 16.469727 4.381512 16.694336 4.550781 C 16.918945 4.720053 17.070312 4.941406 17.148438 5.214844 L 19.941406 15.302734 C 19.973957 15.419922 19.990234 15.5306 19.990234 15.634766 C 19.990234 15.908203 19.907227 16.157227 19.741211 16.381836 C 19.575195 16.606445 19.355469 16.757812 19.082031 16.835938 L 17.451172 17.294922 C 17.197266 17.366537 17.008463 17.416992 16.884766 17.446289 C 16.761066 17.475586 16.653645 17.490234 16.5625 17.490234 Z M 13.759766 6.162109 L 16.5625 16.240234 L 18.740234 15.634766 L 15.9375 5.556641 Z "
-                                    Fill="{ThemeResource ApplicationForegroundThemeBrush}"
-                                    Stretch="Uniform" />-->
                             </controls:LabelButton.IconContent>
                             <TextBlock
                                 Margin="0 0 12 0"
@@ -752,6 +747,7 @@
 
                 <muxc:TabView
                     x:Name="FontsTabBar"
+                    x:Load="False"
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="0"
@@ -759,13 +755,17 @@
                     core:Properties.IsTabOpenAnimationEnabled="True"
                     core:Properties.RequireOpenTab="True"
                     AddTabButtonClick="FontMapContainer_AddTabButtonClick"
+                    AllowDropTabs="True"
                     Background="{x:Null}"
+                    CanDragTabs="True"
                     Loaded="FontsTabBar_Loaded"
                     SelectedIndex="{x:Bind ViewModel.TabIndex, Mode=TwoWay}"
                     Style="{StaticResource TabViewStyle}"
                     TabCloseRequested="FontMapContainer_TabCloseRequested"
+                    TabDroppedOutside="FontsTabBar_TabDroppedOutside"
                     TabItemsSource="{x:Bind ViewModel.Fonts}"
-                    Visibility="{x:Bind core:Converters.TrueToVis(helpers:ResourceHelper.SupportsTabs), FallbackValue=Collapsed}">
+                    Visibility="Collapsed"
+                    d:Visibility="Visible">
                     <muxc:TabView.TabItemTemplate>
                         <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
                             <muxc:TabViewItem
@@ -821,13 +821,12 @@
                     </muxc:TabView.TabItemTemplate>
                 </muxc:TabView>
 
+
                 <Border
                     x:Name="TabBorder"
-                    x:Load="{x:Bind helpers:ResourceHelper.SupportsTabs, FallbackValue=False}"
+                    x:Load="False"
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
-                    Margin="0 -1 0 0"
-                    core:Properties.InsetClip="0 1 0 0"
                     Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
@@ -839,10 +838,9 @@
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
                     Padding="0 4 0 0"
-                    core:Properties.ClipToBounds="True"
-                    Font="{x:Bind ((vm:FontItem)FontsTabBar.SelectedItem), Mode=OneWay}">
+                    Font="{x:Bind ViewModel.CurrentFont, Mode=OneWay}">
                     <views:FontMapView.TitleRightContent>
-                        <Border Margin="0 4 0 0" Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
+                        <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
                             <controls:UXButton
                                 x:Name="BtnSettings"
                                 Width="45"
@@ -910,7 +908,6 @@
         <Border
             x:Name="PrintPresenter"
             x:DeferLoadStrategy="Lazy"
-            Grid.Row="1"
             Grid.RowSpan="3"
             Grid.ColumnSpan="10"
             d:Visibility="Collapsed" />
@@ -976,7 +973,6 @@
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource PaneCollapsedBackgroundBrush}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="CollapsedViewState">
@@ -994,7 +990,6 @@
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
                         <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource PaneCollapsedBackgroundBrush}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DefaultViewState">
@@ -1003,8 +998,6 @@
                         <Setter Target="SplitView.DisplayMode" Value="Inline" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
-                        <Setter Target="OverlayPaneRootBackground.Visibility" Value="Collapsed" />
-                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource PaneCollapsedBackgroundBrush}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -1064,21 +1057,22 @@
                 </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="DesignThemeStates">
-                <VisualState x:Name="DefaultThemeState" />
+                <VisualState x:Name="DefaultThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="PaneRootBackground.Background" Value="{ThemeResource DefaultHostBrush}" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
                         <Setter Target="PageRoot.Background" Value="Transparent" />
                         <Setter Target="PageRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
-                        <Setter Target="PaneRootBackground.Background" Value="Transparent" />
                         <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
-                        <!--<Setter Target="LayoutRoot.Background" Value="{ThemeResource FUIBackgroundBrush}" />-->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
-                        <!--<Setter Target="ToggleFullScreenModeButton.Foreground" Value="White" />-->
                         <Setter Target="TitleButtonsPresenter.(Grid.Row)" Value="0" />
                         <Setter Target="TitleBar.(Grid.Row)" Value="0" />
                         <Setter Target="TitleButtonsPresenter.Foreground" Value="White" />
@@ -1144,6 +1138,18 @@
                 <VisualState x:Name="ModalOpenState">
                     <VisualState.Setters>
                         <Setter Target="TitleButtonsPanel.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="TabStates">
+                <VisualState x:Name="TabSupportedState">
+                    <VisualState.StateTriggers>
+                        <StateTrigger IsActive="{x:Bind helpers:ResourceHelper.SupportsTabs}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="FontsTabBar.(core:Properties.ClipToBounds)" Value="True" />
+                        <Setter Target="FontsTabBar.Visibility" Value="Visible" />
+                        <Setter Target="TabBorder.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

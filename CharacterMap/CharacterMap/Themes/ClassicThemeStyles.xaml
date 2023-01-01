@@ -148,6 +148,7 @@
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="Foreground" Value="{ThemeResource ControlHighlightContrastForegroundBrush}" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Tag" Value="Character Map UWP" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:XamlTitleBar">
@@ -178,6 +179,19 @@
                                 ContentTemplateSelector="{TemplateBinding ContentTemplateSelector}"
                                 ContentTransitions="{TemplateBinding ContentTransitions}"
                                 Foreground="{TemplateBinding Foreground}" />
+
+                            <TextBlock
+                                x:Name="TitleTextLabel"
+                                Grid.Column="2"
+                                Margin="8 0 0 0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                FontWeight="Normal"
+                                Foreground="{ThemeResource ControlHighlightContrastForegroundBrush}"
+                                IsHitTestVisible="False"
+                                Style="{StaticResource BaseTextStyle}"
+                                Text="{TemplateBinding Tag}"
+                                TextLineBounds="Tight" />
 
                         </Grid>
                     </Grid>

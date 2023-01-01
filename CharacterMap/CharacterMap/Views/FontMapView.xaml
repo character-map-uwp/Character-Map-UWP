@@ -372,6 +372,7 @@
                     x:Name="RightPresenter"
                     Grid.Row="1"
                     Grid.Column="4"
+                    Margin="0 4 0 0"
                     Content="{x:Bind TitleRightContent, Mode=OneWay}">
                     <d:ContentPresenter.Content>
                         <Border Width="45" Height="45">
@@ -821,9 +822,9 @@
                 <controls:CharacterGridView
                     x:Name="CharGrid"
                     x:FieldModifier="public"
+                    ContainerContentChanging="CharGrid_ContainerContentChanging"
                     EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
                     IsItemClickEnabled="False"
-                    ContainerContentChanging="CharGrid_ContainerContentChanging"
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
@@ -973,6 +974,7 @@
                 Grid.ColumnSpan="3"
                 Margin="0"
                 Canvas.ZIndex="10"
+                Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                 RenderTransformOrigin="0.5,0.5"
                 Visibility="Collapsed"
                 d:Background="Green">
@@ -1115,7 +1117,6 @@
                         Width="8"
                         MinWidth="8"
                         Background="Transparent"
-                        BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
                         CursorBehavior="ChangeOnSplitterHover"
                         GripperCursor="SizeWestEast"
                         GripperForeground="Transparent"
@@ -1959,6 +1960,7 @@
                 <VisualState x:Name="StandaloneViewState">
                     <VisualState.Setters>
                         <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
+                        <Setter Target="SearchContainer.Margin" Value="0 6 0 0" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

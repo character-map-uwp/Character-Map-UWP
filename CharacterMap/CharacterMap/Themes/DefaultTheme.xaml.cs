@@ -26,33 +26,28 @@ namespace CharacterMap.Themes
 
             switch (ResourceHelper.AppSettings.ApplicationDesignTheme)
             {
-                case 0:
+                case 0: // Windows 10
                     this.MergeMUXC(ControlsResourcesVersion.Version1);
-                    this.Merge("ms-appx:///Styles/ListView.xaml");
                     this.Merge("ms-appx:///Themes/SystemThemes.xaml");
                     this.Merge("ms-appx:///Themes/DefaultThemeStyles.xaml");
                     break;
 
-                case 1:
+                case 1: // Windows 11
                     this.Merge(
                         new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version2 }
-                            .Merge("ms-appx:///Styles/ListView.xaml")
+                            .Merge("ms-appx:///Styles/TabViewFluent.xaml")
                             .Merge("ms-appx:///Themes/SystemThemes.xaml")
                             .Merge("ms-appx:///Themes/FluentThemeStyles.xaml"));
                     break;
 
-                case 2:
-                    //this.MergeMUXC(ControlsResourcesVersion.Version1).Merge(;
+                case 2: // Classic Theme
                     this.MergeMUXC(ControlsResourcesVersion.Version1)
-                        .Merge("ms-appx:///Styles/ListView.xaml")
-                        .Merge("ms-appx:///Themes/ZuneThemeStyles.xaml")
                         .Merge("ms-appx:///Themes/SystemThemes.xaml")
                         .Merge("ms-appx:///Themes/ClassicThemeStyles.xaml");
                     break;
 
-                case 3:
+                case 3: // Zune Theme
                     this.MergeMUXC(ControlsResourcesVersion.Version1)
-                        .Merge("ms-appx:///Styles/ListView.xaml")
                         .Merge("ms-appx:///Themes/ZuneThemeStyles.xaml");
                     break;
             }

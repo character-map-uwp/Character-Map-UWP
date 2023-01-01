@@ -36,7 +36,6 @@ namespace CharacterMap.Views
             _presenter = presenter;
             _fontMap = presenter.GetFontMap();
             TitleBarHeight = presenter.GetTitleBarHeight();
-
             ViewModel = new ExportViewModel(_fontMap.ViewModel);
 
             this.InitializeComponent();
@@ -48,16 +47,7 @@ namespace CharacterMap.Views
         {
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
-
-            // Focus the close button to ensure keyboard focus is retained inside the panel
-            //BtnClose.Focus(FocusState.Programmatic);
-
-            ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
-            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
-
             Presenter.SetTitleBar();
-            //TitleBarHelper.SetTranisentTitleBar(TitleBackground);
-
             base.Show();
         }
 
@@ -83,15 +73,6 @@ namespace CharacterMap.Views
             elements.Add(BottomLabel);
             elements.AddRange(BottomButtonOptions.Children);
             CompositionFactory.PlayEntrance(elements, 0, 200);
-        }
-
-        private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-        }
-
-        private void ContentPanel_Loading(FrameworkElement sender, object args)
-        {
-
         }
 
         private void ItemsPanel_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

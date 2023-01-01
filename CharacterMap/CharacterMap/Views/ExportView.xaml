@@ -566,8 +566,7 @@
                 x:Name="ContentPanel"
                 Grid.Row="2"
                 ColumnSpacing="24"
-                CornerRadius="8 8 0 0"
-                Loading="ContentPanel_Loading">
+                CornerRadius="8 8 0 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.8*" />
                     <ColumnDefinition Width="*" />

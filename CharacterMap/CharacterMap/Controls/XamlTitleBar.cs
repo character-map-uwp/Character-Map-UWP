@@ -81,6 +81,17 @@ namespace CharacterMap.Controls
             DependencyProperty.Register(nameof(IsAutoHeightEnabled), typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true));
 
 
+        public bool AutoUpdateTitle
+        {
+            get { return (bool)GetValue(AutoUpdateTitleProperty); }
+            set { SetValue(AutoUpdateTitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty AutoUpdateTitleProperty =
+            DependencyProperty.Register(nameof(AutoUpdateTitle), typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true));
+
+
+
 
         public XamlTitleBarTemplateSettings TemplateSettings { get; } = new XamlTitleBarTemplateSettings();
 
@@ -177,7 +188,7 @@ namespace CharacterMap.Controls
 
         void UpdateTitle()
         {
-            if (this.GetTemplateChild("TitleTextLabel") is TextBlock t)
+            if (AutoUpdateTitle && this.GetTemplateChild("TitleTextLabel") is TextBlock t)
             {
                 string text = TitleBarHelper.GetTitle();
                 if (string.IsNullOrWhiteSpace(text))

@@ -351,7 +351,7 @@ namespace CharacterMap.Core
             }
         }
 
-        private void UpdateTheme()
+        public void UpdateTheme()
         {
             _ = WindowService.RunOnViewsAsync(() =>
             {

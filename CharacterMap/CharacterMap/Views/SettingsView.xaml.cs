@@ -160,7 +160,7 @@ namespace CharacterMap.Views
             ContentScroller.ScrollToVerticalOffset(0);
 #pragma warning restore CS0618
 
-            // 2. Get the fonts used for Font List  & Character Grid previews
+            // 2. Get the fonts used for Font List & Character Grid previews
             // Note: it is legal for both "variant" and "font" to be NULL
             //       when calling, so test both cases.
             bool isSymbol = FontCollections.IsSymbolFont(font);
@@ -187,7 +187,6 @@ namespace CharacterMap.Views
             IsOpen = true;
 
             _navHelper.Activate();
-
         }
 
         public void Hide()
