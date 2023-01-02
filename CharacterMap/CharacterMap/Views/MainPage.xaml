@@ -750,7 +750,7 @@
                     x:Load="False"
                     Grid.Row="1"
                     Grid.Column="1"
-                    Margin="0"
+                    Margin="6 0 0 0"
                     core:Properties.ClipToBounds="True"
                     core:Properties.IsTabOpenAnimationEnabled="True"
                     core:Properties.RequireOpenTab="True"
@@ -821,7 +821,6 @@
                     </muxc:TabView.TabItemTemplate>
                 </muxc:TabView>
 
-
                 <Border
                     x:Name="TabBorder"
                     x:Load="False"
@@ -831,7 +830,7 @@
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
                     BorderThickness="1 0 0 0"
-                    CornerRadius="8 8 0 0" />
+                    CornerRadius="6 6 0 0" />
 
                 <views:FontMapView
                     x:Name="FontMap"
