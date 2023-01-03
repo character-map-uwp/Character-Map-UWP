@@ -22,6 +22,96 @@
 
     <UserControl.Resources>
 
+        <Style x:Key="DraggableItemStyle" TargetType="GridViewItem">
+            <Setter Property="Margin" Value="0 0 12 12" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewItem">
+                        <ListViewItemPresenter
+                            x:Name="Root"
+                            HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                            CheckBoxBrush="{ThemeResource GridViewItemCheckBoxBrush}"
+                            CheckBrush="{ThemeResource GridViewItemCheckBrush}"
+                            CheckMode="{ThemeResource GridViewItemCheckMode}"
+                            ContentMargin="{TemplateBinding Padding}"
+                            ContentTransitions="{TemplateBinding ContentTransitions}"
+                            ContextRequested="ItemContextRequested"
+                            Control.IsTemplateFocusTarget="True"
+                            DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                            DragBackground="{ThemeResource GridViewItemDragBackground}"
+                            DragForeground="{ThemeResource GridViewItemDragForeground}"
+                            DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                            FocusBorderBrush="{ThemeResource GridViewItemFocusBorderBrush}"
+                            FocusSecondaryBorderBrush="{ThemeResource GridViewItemFocusSecondaryBorderBrush}"
+                            FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                            PlaceholderBackground="{ThemeResource GridViewItemPlaceholderBackground}"
+                            PointerOverBackground="Transparent"
+                            PointerOverForeground="{TemplateBinding Foreground}"
+                            PointerPressed="Button_PointerPressed"
+                            PressedBackground="Transparent"
+                            ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}"
+                            SelectedBackground="Transparent"
+                            SelectedForeground="{TemplateBinding Foreground}"
+                            SelectedPointerOverBackground="Transparent"
+                            SelectedPressedBackground="Transparent"
+                            SelectionCheckMarkVisualEnabled="False">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation TargetName="Root" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Selected">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation TargetName="Root" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOver">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation TargetName="Root" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverSelected">
+                                        <Storyboard>
+                                            <PointerUpThemeAnimation TargetName="Root" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PointerOverPressed">
+                                        <Storyboard>
+                                            <PointerDownThemeAnimation TargetName="Root" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="Pressed">
+                                        <Storyboard>
+                                            <PointerDownThemeAnimation TargetName="Root" />
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="PressedSelected">
+                                        <Storyboard>
+                                            <PointerDownThemeAnimation TargetName="Root" />
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+
+                                <VisualStateGroup x:Name="DisabledStates">
+                                    <VisualState x:Name="Enabled" />
+                                    <VisualState x:Name="Disabled" />
+                                </VisualStateGroup>
+
+                            </VisualStateManager.VisualStateGroups>
+                        </ListViewItemPresenter>
+
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <MenuFlyout x:Name="MainContextFlyout" MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}">
             <MenuFlyoutItem
                 x:Uid="OpenInNewWindow"
@@ -139,12 +229,7 @@
                             x:Name="XAMLRender"
                             x:Load="{x:Bind core:Converters.False(RequiresNativeRender), FallbackValue=False, TargetNullValue=False}"
                             x:Phase="1"
-                            core:Properties.Typography="{x:Bind DefaultTypography}"
-                            FontFamily="{x:Bind Variant.DisplaySource, FallbackValue='XamlAutoFontFamily', TargetNullValue='XamlAutoFontFamily'}"
-                            FontStretch="{x:Bind Variant.FontFace.Stretch}"
-                            FontStyle="{x:Bind Variant.FontFace.Style}"
-                            FontWeight="{x:Bind Variant.FontFace.Weight}"
-                            IsColorFontEnabled="{x:Bind IsColourFontEnabled}"
+                            core:Properties.Options="{x:Bind}"
                             MaxLines="5"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="Wrap" />
@@ -427,8 +512,18 @@
                                 Margin="-8 0 0 0"
                                 Padding="8 0 0 0"
                                 ContainerContentChanging="Repeater_ContainerContentChanging"
+                                ItemClick="Repeater_ItemClick"
                                 ItemTemplate="{StaticResource StackTemplate}"
                                 ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
+                                <GridView.ItemContainerTransitions>
+                                    <TransitionCollection>
+                                        <AddDeleteThemeTransition />
+                                        <ContentThemeTransition />
+                                        <ReorderThemeTransition />
+                                        <RepositionThemeTransition IsStaggeringEnabled="False" />
+                                        <EntranceThemeTransition IsStaggeringEnabled="False" />
+                                    </TransitionCollection>
+                                </GridView.ItemContainerTransitions>
                                 <GridView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsWrapGrid
@@ -443,6 +538,8 @@
                                         <Setter Property="Margin" Value="0 0 12 12" />
                                         <Setter Property="VerticalAlignment" Value="Stretch" />
                                         <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                                        <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate TargetType="GridViewItem">
@@ -715,8 +812,13 @@
                 <VisualState x:Name="QuickCompareState">
                     <VisualState.Setters>
                         <Setter Target="FontListFilter.Visibility" Value="Collapsed" />
+                        <Setter Target="Repeater.ItemContainerStyle" Value="{StaticResource DraggableItemStyle}" />
                         <Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplateQuick}" />
-                        <Setter Target="Repeater.IsItemClickEnabled" Value="False" />
+                        <Setter Target="Repeater.IsItemClickEnabled" Value="True" />
+                        <Setter Target="Repeater.CanDragItems" Value="True" />
+                        <Setter Target="Repeater.CanReorderItems" Value="True" />
+                        <Setter Target="Repeater.AllowDrop" Value="True" />
+                        <Setter Target="Repeater.ReorderMode" Value="Enabled" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FontFolderState">

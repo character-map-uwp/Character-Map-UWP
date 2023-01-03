@@ -254,6 +254,15 @@ namespace CharacterMap.Views
             }
         }
 
+        private void Repeater_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (sender is GridView g && e.ClickedItem is CharacterRenderingOptions o && ViewModel.IsQuickCompare)
+            {
+                ContextFlyout.SetItemsDataContext(o);
+                ContextFlyout.ShowAt(g.ContainerFromItem(e.ClickedItem) as FrameworkElement);
+            }
+        }
+
         private void ItemContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
         {
             if (ViewModel.IsQuickCompare && sender is Button b)
@@ -268,7 +277,7 @@ namespace CharacterMap.Views
                     MainContextFlyout.Items.Remove(MainContextFlyout.Items[^1]);
 
                 // 2. Rebuild with the correct collection information
-                MainContextFlyout.Items.Add(new MenuFlyoutSeparator());
+                MainContextFlyout.AddSeparator();
                 FlyoutHelper.AddCollectionItems(MainContextFlyout, font, null);
                 FlyoutHelper.TryAddRemoveFromCollection(
                     MainContextFlyout, font, ViewModel.SelectedCollection, ViewModel.FontListFilter);

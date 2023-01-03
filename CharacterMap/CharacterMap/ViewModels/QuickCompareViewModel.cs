@@ -8,6 +8,7 @@ using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Windows.Input;
 using Windows.ApplicationModel;
@@ -40,7 +41,7 @@ namespace CharacterMap.ViewModels
         
         public InstalledFont SelectedFont   { get => Get<InstalledFont>(); set => Set(value); }
 
-        public List<InstalledFont> FontList { get => Get<List<InstalledFont>>(); set => Set(value); }
+        public ObservableCollection<InstalledFont> FontList { get => Get<ObservableCollection<InstalledFont>>(); set => Set(value); }
 
         private BasicFontFilter _fontListFilter = BasicFontFilter.All;
         public BasicFontFilter FontListFilter
@@ -68,7 +69,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public object ItemsSource => IsQuickCompare ? QuickFonts : FontList;
+        public INotifyCollectionChanged ItemsSource => IsQuickCompare ? QuickFonts : FontList;
 
         public IReadOnlyList<string> TextOptions { get; } = GlyphService.DefaultTextOptions;
 
@@ -167,7 +168,7 @@ namespace CharacterMap.ViewModels
                         fontList = FontListFilter.Query(fontList, FontCollections);
                 }
 
-                FontList = fontList.ToList();
+                FontList = new (fontList);
             }
             catch (Exception e)
             {

@@ -226,7 +226,7 @@ namespace CharacterMap.Core
         }
 
         /// <summary>
-        /// Applies <see cref="CharacterRenderingOptions"/> to a <see cref="DirectText"/> control
+        /// Applies <see cref="CharacterRenderingOptions"/> to a <see cref="DirectText"/> or <see cref="TextBlock"/> control
         /// </summary>
         public static readonly DependencyProperty OptionsProperty =
             DependencyProperty.RegisterAttached("Options", typeof(CharacterRenderingOptions), typeof(Properties), new PropertyMetadata(null, (s, e) =>
@@ -256,6 +256,27 @@ namespace CharacterMap.Core
                         d.ClearValue(DirectText.FontWeightProperty);
                         d.ClearValue(DirectText.IsColorFontEnabledProperty);
                         d.ClearValue(DirectText.TypographyProperty);
+                    }
+                } 
+                else if (s is TextBlock t)
+                {
+                    if (e.NewValue is CharacterRenderingOptions o)
+                    {
+                        t.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Variant.DisplaySource);
+                        t.FontStretch = o.Variant.FontFace.Stretch;
+                        t.FontStyle = o.Variant.FontFace.Style;
+                        t.FontWeight = o.Variant.FontFace.Weight;
+                        t.IsColorFontEnabled = o.IsColourFontEnabled;
+                        SetTypography(t, o.DefaultTypography);
+                    }
+                    else
+                    {
+                        t.ClearValue(Properties.TypographyProperty);
+                        t.ClearValue(TextBlock.FontFamilyProperty);
+                        t.ClearValue(TextBlock.FontStretchProperty);
+                        t.ClearValue(TextBlock.FontStyleProperty);
+                        t.ClearValue(TextBlock.FontWeightProperty);
+                        t.ClearValue(TextBlock.IsColorFontEnabledProperty);
                     }
                 }
             }));
