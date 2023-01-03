@@ -207,6 +207,9 @@
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DirectTextBlock.cs" />
+    <Compile Include="Controls\FilterFlyout.xaml.cs">
+      <DependentUpon>FilterFlyout.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ModalPagePresenter.cs" />
     <Compile Include="Controls\OpenFolderDialog.xaml.cs">
       <DependentUpon>OpenFolderDialog.xaml</DependentUpon>
@@ -451,6 +454,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Controls\CreateCollectionDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Controls\FilterFlyout.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,0 +1,11 @@
+﻿<MenuFlyout
+    x:Class="CharacterMap.Controls.FilterFlyout"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
+    Opening="MenuFlyout_Opening"
+    Placement="BottomEdgeAlignedLeft">
+
+    <!--  Menu created in code-behind due to x:Bind limitations  -->
+
+</MenuFlyout>

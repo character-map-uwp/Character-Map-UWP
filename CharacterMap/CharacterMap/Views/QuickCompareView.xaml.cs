@@ -11,7 +11,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -24,14 +23,6 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views
 {
-    public class ExtendedRepeater : ItemsRepeater
-    { 
-        public void InvalidateLayout()
-        {
-            this.InvalidateViewport();
-        }
-    }
-
     public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPresenter
     {
         public QuickCompareViewModel ViewModel { get; }
@@ -146,65 +137,6 @@ namespace CharacterMap.Views
             UpdateText(ViewModel.Text, Repeater.Realize().ItemsPanelRoot);
             UpdateFontSize(FontSizeSlider.Value, Repeater.Realize().ItemsPanelRoot);
             VisualStateManager.GoToState(this, NormalState.Name, true);
-        }
-
-        private void MenuFlyout_Opening(object sender, object e)
-        {
-            // Handles forming the flyout when opening the main FontFilter 
-            // drop down menu.
-            if (sender is MenuFlyout menu)
-            {
-                // Reset to default menu
-                while (menu.Items.Count > 8)
-                    menu.Items.RemoveAt(8);
-
-                // force menu width to match the source button
-                foreach (var sep in menu.Items.OfType<MenuFlyoutSeparator>())
-                    sep.MinWidth = FontListFilter.ActualWidth;
-
-                // add users collections 
-                if (ViewModel.FontCollections.Items.Count > 0)
-                {
-                    menu.Items.Add(new MenuFlyoutSeparator());
-                    foreach (var item in ViewModel.FontCollections.Items)
-                    {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name };
-                        m.Click += (s, a) =>
-                        {
-                            if (m.DataContext is UserFontCollection u)
-                                ViewModel.SelectedCollection = u;
-                        };
-                        menu.Items.Add(m);
-                    }
-                }
-
-                VariableOption.SetVisible(FontFinder.HasVariableFonts);
-
-                if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
-                {
-                    FontSourceSeperator.Visibility = CloudFontsOption.Visibility = AppxOption.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    FontSourceSeperator.Visibility = Visibility.Visible;
-                    CloudFontsOption.SetVisible(FontFinder.HasRemoteFonts);
-                    AppxOption.SetVisible(FontFinder.HasAppxFonts);
-                }
-
-                static void SetCommand(MenuFlyoutItemBase b, ICommand c)
-                {
-                    if (b is MenuFlyoutSubItem i)
-                    {
-                        foreach (var child in i.Items)
-                            SetCommand(child, c);
-                    }
-                    else if (b is MenuFlyoutItem m)
-                        m.Command = c;
-                }
-
-                foreach (var item in menu.Items)
-                    SetCommand(item, ViewModel.FilterCommand);
-            }
         }
 
         private void Button_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)

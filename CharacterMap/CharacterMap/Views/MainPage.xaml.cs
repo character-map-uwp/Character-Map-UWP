@@ -46,6 +46,8 @@ namespace CharacterMap.Views
 
         private ICommand FilterCommand { get; }
 
+        private ICommand CollectionSelectedCommand { get; }
+
         public MainPage() : this(null) { }
 
         public MainPage(MainViewModelArgs args)
@@ -100,6 +102,13 @@ namespace CharacterMap.Views
             _uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
+            CollectionSelectedCommand = new RelayCommand<object>(e =>
+            {
+                if (!FontsSemanticZoom.IsZoomedInViewActive)
+                    FontsSemanticZoom.IsZoomedInViewActive = true;
+
+                ViewModel.SelectedCollection = e as UserFontCollection;
+            });
         }
 
         bool _disableMapChange = true;
@@ -536,79 +545,6 @@ namespace CharacterMap.Views
                     ViewModel.RefreshFontList();
                 else
                     ViewModel.FontListFilter = filter;
-            }
-        }
-
-        private void MenuFlyout_Opening(object sender, object e)
-        {
-            // Handles forming the flyout when opening the main FontFilter 
-            // drop down menu.
-            if (sender is MenuFlyout menu)
-            {
-                // Reset to default menu
-                while (menu.Items.Count > 8)
-                    menu.Items.RemoveAt(8);
-
-                // force menu width to match the source button
-                foreach (var sep in menu.Items.OfType<MenuFlyoutSeparator>())
-                    sep.MinWidth = FontListFilter.ActualWidth;
-
-                // add users collections 
-                if (ViewModel.FontCollections.Items.Count > 0)
-                {
-                    menu.Items.Add(new MenuFlyoutSeparator());
-                    foreach (var item in ViewModel.FontCollections.Items)
-                    {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, FontSize = 14 };
-                        m.Click += (s, a) =>
-                        {
-                            if (m.DataContext is UserFontCollection u)
-                            {
-                                if (!FontsSemanticZoom.IsZoomedInViewActive)
-                                    FontsSemanticZoom.IsZoomedInViewActive = true;
-
-                                ViewModel.SelectedCollection = u;
-                            }
-                        };
-                        menu.Items.Add(m);
-                    }
-                }
-
-                VariableOption.SetVisible(FontFinder.HasVariableFonts);
-
-                if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
-                {
-                    FontSourceSeperator.Visibility = CloudFontsOption.Visibility = AppxOption.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    FontSourceSeperator.Visibility = Visibility.Visible;
-                    CloudFontsOption.SetVisible(FontFinder.HasRemoteFonts);
-                    AppxOption.SetVisible(FontFinder.HasAppxFonts);
-                }
-
-                static void SetCommand(
-                    MenuFlyoutItemBase b, ICommand c, double fontSize, double height)
-                {
-                    b.FontSize = fontSize;
-                    if (b is not MenuFlyoutSeparator && height > 0)
-                        b.Height = 40;
-
-                    if (b is MenuFlyoutSubItem i)
-                    {
-                        foreach (var child in i.Items)
-                            SetCommand(child, c, fontSize, height);
-                    }
-                    else if (b is MenuFlyoutItem m)
-                    {
-                        m.Command = c;
-                    }
-                }
-
-                var size = ResourceHelper.Get<double>("FontListFlyoutFontSize");
-                var height = ResourceHelper.Get<double>("FontListFlyoutHeight");
-                foreach (var item in menu.Items)
-                    SetCommand(item, FilterCommand, size, height);
             }
         }
 

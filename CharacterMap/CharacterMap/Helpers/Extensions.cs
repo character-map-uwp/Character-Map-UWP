@@ -12,6 +12,7 @@ using System.IO.Compression;
 using Windows.Storage;
 using System.IO;
 using Microsoft.UI.Xaml.Controls;
+using CharacterMap.Models;
 
 namespace CharacterMap.Helpers
 {
@@ -88,6 +89,15 @@ namespace CharacterMap.Helpers
         {
             menu.Items.Add(new MenuFlyoutSeparator().SetVisible(isVisible));
             return menu;
+        }
+
+        public static MenuFlyoutSubItem Add(this MenuFlyoutSubItem item, BasicFontFilter filter)
+        {
+            MenuFlyoutItem i = new();
+            Core.Properties.SetFilter(i, filter);
+
+            item.Items.Add(i);
+            return item;
         }
 
         public static T AddKeyboardAccelerator<T>(this T u, VirtualKey key, VirtualKeyModifiers modifiers) where T : UIElement

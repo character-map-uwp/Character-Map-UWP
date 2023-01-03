@@ -336,42 +336,7 @@
                                 </TextBlock>
 
                                 <Button.Flyout>
-                                    <MenuFlyout
-                                        MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
-                                        Opening="MenuFlyout_Opening"
-                                        Placement="BottomEdgeAlignedLeft">
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.All}" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SerifFonts}" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SansSerifFonts}" />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.SymbolFonts}" />
-                                        <MenuFlyoutSubItem Text="Supported Scripts">
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptArabic}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCyrillic}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptGreekAndCoptic}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptHebrew}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptBasicLatin}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptThai}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ScriptCJKUnifiedIdeographs}" />
-                                        </MenuFlyoutSubItem>
-                                        <MenuFlyoutSubItem x:Uid="OptionMoreFilters">
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ColorFonts}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseDecorativeFonts}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.PanoseScriptFonts}" />
-                                            <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.MonospacedFonts}" />
-                                            <MenuFlyoutItem x:Name="VariableOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.VariableFonts}" />
-                                            <MenuFlyoutSubItem Text="Emoji">
-                                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiAll}" />
-                                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiEmoticons}" />
-                                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiDingbats}" />
-                                                <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.EmojiSymbols}" />
-                                            </MenuFlyoutSubItem>
-                                            <MenuFlyoutSeparator x:Name="FontSourceSeperator" />
-                                            <MenuFlyoutItem x:Name="AppxOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.RemoteFonts}" />
-                                            <MenuFlyoutItem x:Name="CloudFontsOption" core:Properties.Filter="{x:Bind m:BasicFontFilter.AppXFonts}" />
-                                        </MenuFlyoutSubItem>
-                                        <MenuFlyoutSeparator />
-                                        <MenuFlyoutItem core:Properties.Filter="{x:Bind m:BasicFontFilter.ImportedFonts}" />
-                                    </MenuFlyout>
+                                    <controls:FilterFlyout CollectionSelectedCommand="{x:Bind ViewModel.CollectionSelectedCommand}" FilterCommand="{x:Bind ViewModel.FilterCommand}" />
                                 </Button.Flyout>
                             </Button>
 

@@ -1237,4 +1237,10 @@ Requires a restart to take effect.</value>
   <data name="CompareActiveItem.Text" xml:space="preserve">
     <value>Compare active Fonts</value>
   </data>
+  <data name="OptionEmoji.Text" xml:space="preserve">
+    <value>Emoji</value>
+  </data>
+  <data name="OptionSupportedScripts.Text" xml:space="preserve">
+    <value>Supported Scripts</value>
+  </data>
 </root>

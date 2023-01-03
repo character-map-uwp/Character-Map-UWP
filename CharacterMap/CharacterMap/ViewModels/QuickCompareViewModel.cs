@@ -75,6 +75,7 @@ namespace CharacterMap.ViewModels
         public UserCollectionsService FontCollections { get; }
 
         public ICommand FilterCommand { get; }
+        public ICommand CollectionSelectedCommand { get; }
 
         public bool IsQuickCompare { get;  }
 
@@ -93,6 +94,7 @@ namespace CharacterMap.ViewModels
             RefreshFontList();
             FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
+            CollectionSelectedCommand = new RelayCommand<object>(e => SelectedCollection = e as UserFontCollection);
 
             if (_folder is not null)
                 IsFolderMode = true;
