@@ -24,19 +24,10 @@ namespace CharacterMap.Models
 
     public class FolderContents
     {
-        public FolderContents(IStorageItem source, StorageFolder tempFolder)
-        {
-            Source = source;
-            SourceFolder = source as StorageFolder;
-            TempFolder = tempFolder;
-            FontCache = new();
-        }
-
-        public FolderContents(List<InstalledFont> fonts)
-        {
-            FontCache = fonts.Distinct().ToDictionary(f => f.Name);
-            UpdateFontSet();
-        }
+        /// <summary>
+        /// Display contents using QuickCompare rules
+        /// </summary>
+        public bool UseQuickCompare { get; }
 
         public Dictionary<string, InstalledFont> FontCache { get; }
 
@@ -58,6 +49,23 @@ namespace CharacterMap.Models
         public StorageFolder TempFolder { get; }
 
         public IReadOnlyList<InstalledFont> Fonts { get; private set; }
+
+        public IReadOnlyList<FontVariant> Variants { get; private set; }
+
+
+        public FolderContents(IStorageItem source, StorageFolder tempFolder)
+        {
+            Source = source;
+            SourceFolder = source as StorageFolder;
+            TempFolder = tempFolder;
+            FontCache = new();
+        }
+
+        public FolderContents(List<FontVariant> fonts)
+        {
+            UseQuickCompare = true;
+            Variants = fonts;
+        }
 
         public void UpdateFontSet()
         {

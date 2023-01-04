@@ -39,9 +39,10 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
 
-            if (args.IsQuickCompare)
+            if (ViewModel.IsQuickCompare)
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
-            else if (args.IsFolderView)
+
+            if (ViewModel.IsFolderMode)
                 VisualStateManager.GoToState(this, FontFolderState.Name, false);
 
             _navHelper.BackRequested += (s, e) => { ViewModel.SelectedFont = null; };

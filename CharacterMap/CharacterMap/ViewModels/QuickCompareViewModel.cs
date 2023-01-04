@@ -18,6 +18,7 @@ namespace CharacterMap.ViewModels
     public class QuickCompareArgs
     {
         public FolderContents Folder { get; set; }
+
         public bool IsQuickCompare { get; set; }
 
         public bool IsFolderView => Folder is not null;
@@ -86,35 +87,53 @@ namespace CharacterMap.ViewModels
 
         public QuickCompareViewModel(QuickCompareArgs args)
         {
-            IsQuickCompare = args.IsQuickCompare;
+            // N.B: arg.IsQuickCompare denotes the singleton QuickCompare view.
+            //      IsQuickCompare controls the behaviour of this page - they are
+            //      two different things. We can have many windows with IsQuickCompare
+            //      behaviour, but only one can act as the main QuickCompare singleton.
+
+            IsQuickCompare = args.IsQuickCompare || (args.Folder?.UseQuickCompare is bool b && b);
 
             if (DesignMode.DesignModeEnabled)
                 return;
 
-            _folder = args.Folder;
-            RefreshFontList();
-            FontCollections = Ioc.Default.GetService<UserCollectionsService>();
-            FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
-            CollectionSelectedCommand = new RelayCommand<object>(e => SelectedCollection = e as UserFontCollection);
-
-            if (_folder is not null)
-                IsFolderMode = true;
-
             if (IsQuickCompare)
             {
-                QuickFonts = new ObservableCollection<CharacterRenderingOptions>();
-                Register<CharacterRenderingOptions>(m =>
+                if (args.IsQuickCompare)
                 {
-                    // Only add the font variant if it's not already in the list.
-                    // Once we start accepting custom typography this comparison
-                    // will have to change.
-                    if (!QuickFonts.Any(q => m.IsCompareMatch(q)))
-                        QuickFonts.Add(m);
-                }, nameof(QuickCompareViewModel));
+                    QuickFonts = new();
+
+                    // This is the universal quick-compare window
+                    Register<CharacterRenderingOptions>(m =>
+                    {
+                        // Only add the font variant if it's not already in the list.
+                        // Once we start accepting custom typography this comparison
+                        // will have to change.
+                        if (!QuickFonts.Any(q => m.IsCompareMatch(q)))
+                            QuickFonts.Add(m);
+                    }, nameof(QuickCompareViewModel));
+                }
+                else
+                {
+                    QuickFonts = new(args.Folder.Variants.Select(v => CharacterRenderingOptions.CreateDefault(v)));
+                }
+            }
+            else
+            {
+                RefreshFontList();
+                FontCollections = Ioc.Default.GetService<UserCollectionsService>();
+                FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
+                CollectionSelectedCommand = new RelayCommand<object>(e => SelectedCollection = e as UserFontCollection);
+                
+                _folder = args.Folder;
+                if (_folder is not null)
+                    IsFolderMode = true;
             }
 
-            if (IsQuickCompare)
+            if (IsQuickCompare && args.IsQuickCompare)
                 Title = Localization.Get("QuickCompareTitle/Text");
+            else if (IsQuickCompare)
+                Title = Localization.Get("CompareFontFaceTitle/Text");
             else if (IsFolderMode && _folder.Source is not null)
                 Title = _folder.Source.Name;
             else
@@ -131,7 +150,7 @@ namespace CharacterMap.ViewModels
 
         protected override void OnPropertyChangeNotified(string propertyName)
         {
-            if (propertyName == nameof(FontList) || propertyName == nameof(QuickFonts))
+            if (propertyName is nameof(FontList) or nameof(QuickFonts))
                 OnPropertyChanged(nameof(ItemsSource));
         }
 

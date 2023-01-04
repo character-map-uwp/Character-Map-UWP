@@ -353,7 +353,7 @@ namespace CharacterMap.Core
             {
                 if (d is TabViewItem item && e.NewValue is bool b)
                 {
-                    VisualStateManager.GoToState(item, b ? "CollapsedTabState" : "FullTabState", true);
+                    VisualStateManager.GoToState(item, b ? "CollapsedTabState" : "FullTabState", ResourceHelper.AllowAnimation);
 
                     if (b)
                         item.MaxWidth = 60;
@@ -419,6 +419,9 @@ namespace CharacterMap.Core
 
                             void Items_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs eargs)
                             {
+                                if (ResourceHelper.AllowAnimation is false)
+                                    return;
+
                                 // TabView sometimes decides to give new item containers to existing items already 
                                 // in view, and we want to make sure to only animate items that a re new, so make
                                 // a record of them.
@@ -495,12 +498,12 @@ namespace CharacterMap.Core
                     if (GetRequireOpenTab(sender) && sender.TabItems.Count == 1)
                     {
                         foreach (var item in items)
-                            VisualStateManager.GoToState(item, "CloseButtonDisabledState", true);
+                            VisualStateManager.GoToState(item, "CloseButtonDisabledState", ResourceHelper.AllowAnimation);
                     }
                     else
                     {
                         foreach (var item in items)
-                            VisualStateManager.GoToState(item, "CloseButtonEnabledState", true);
+                            VisualStateManager.GoToState(item, "CloseButtonEnabledState", ResourceHelper.AllowAnimation);
                     }
                 }
             }));
