@@ -89,13 +89,10 @@ namespace CharacterMap.Helpers
 
         /* Character Map Specific resources */
 
-        private static List<FrameworkElement> _elements { get; } = new List<FrameworkElement>();
+        private static List<FrameworkElement> _elements { get; } = new();
 
         private static AppSettings _settings;
-        public static AppSettings AppSettings
-        {
-            get => _settings ??= new AppSettings();
-        }
+        public static AppSettings AppSettings => _settings ??= new();
 
         public static ElementTheme GetEffectiveTheme()
         {
@@ -117,6 +114,7 @@ namespace CharacterMap.Helpers
 
         public static Task SetTransparencyAsync(bool enable)
         {
+            // Disable transparency on relevant brushes
             return WindowService.RunOnViewsAsync(() =>
             {
                 if (Get<AcrylicBrush>("DefaultHostBrush") is AcrylicBrush def)
@@ -130,10 +128,15 @@ namespace CharacterMap.Helpers
             });
         }
 
-
+        private static bool? _supportsTabs;
+        public static bool SupportsTabs => _supportsTabs ??= Get<bool>("SupportsTabs");
+        public static bool SupportsShadows() => Get<bool>("SupportsShadows");
+        public static bool AllowAnimation => AppSettings.UseSelectionAnimations && CompositionFactory.UISettings.AnimationsEnabled;
 
 
         /* Dynamic theme-ability */
+
+        #region Dynamic Theming
 
         public static void GoToThemeState(Control control)
         {
@@ -226,7 +229,7 @@ namespace CharacterMap.Helpers
             {
                 // Find source dictionary for current theme
                 var dic = (ResourceDictionary)App.Current.Resources[$"StyleSource{AppSettings.ApplicationDesignTheme + 1}"];
-                
+
                 // Try resolve style from source dictionary
                 TryGetInternal<Style>(dic, styleKey, out Style resolved);
                 if (resolved is not null && resolved != element.Style)
@@ -267,9 +270,8 @@ namespace CharacterMap.Helpers
             //Window.Current.Content = content;
         }
 
-        private static bool? _supportsTabs;
-        public static bool SupportsTabs => _supportsTabs ??= Get<bool>("SupportsTabs");
-        public static bool SupportsShadows() => Get<bool>("SupportsShadows");
+        #endregion
+
     }
 
     public class ThemeHelper
