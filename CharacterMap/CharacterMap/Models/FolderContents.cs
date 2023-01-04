@@ -48,6 +48,8 @@ namespace CharacterMap.Models
         /// </summary>
         public StorageFolder TempFolder { get; }
 
+        public bool IsFamilyCompare { get; set; }
+
         public IReadOnlyList<InstalledFont> Fonts { get; private set; }
 
         public IReadOnlyList<FontVariant> Variants { get; private set; }
@@ -61,7 +63,7 @@ namespace CharacterMap.Models
             FontCache = new();
         }
 
-        public FolderContents(List<FontVariant> fonts)
+        public FolderContents(IReadOnlyList<FontVariant> fonts)
         {
             UseQuickCompare = true;
             Variants = fonts;

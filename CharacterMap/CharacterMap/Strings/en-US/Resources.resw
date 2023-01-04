@@ -1235,7 +1235,7 @@ Requires a restart to take effect.</value>
     <value>Add active to Collection</value>
   </data>
   <data name="CompareActiveItem.Text" xml:space="preserve">
-    <value>Compare active Font Faces</value>
+    <value>Compare active font faces</value>
   </data>
   <data name="OptionEmoji.Text" xml:space="preserve">
     <value>Emoji</value>
@@ -1245,5 +1245,11 @@ Requires a restart to take effect.</value>
   </data>
   <data name="CompareFontFaceTitle.Text" xml:space="preserve">
     <value>Compare Font Faces</value>
+  </data>
+  <data name="CompareFacesCountLabel.Text" xml:space="preserve">
+    <value>Compare {0} font faces</value>
+  </data>
+  <data name="CompareFamilyTitle.Text" xml:space="preserve">
+    <value>Compare {0}</value>
   </data>
 </root>

@@ -741,6 +741,9 @@
                                 DoubleTapped="TabViewItem_DoubleTapped"
                                 IsDoubleTapEnabled="True"
                                 ToolTipService.ToolTip="{x:Bind Tooltip}">
+                                <muxc:TabViewItem.ContextFlyout>
+                                    <MenuFlyout Opening="TabViewItemContext_Opening" />
+                                </muxc:TabViewItem.ContextFlyout>
                                 <muxc:TabViewItem.Header>
                                     <Grid ColumnSpacing="8">
                                         <Grid.ColumnDefinitions>
@@ -805,6 +808,7 @@
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
                     Padding="0 4 0 0"
+                    HorizontalAlignment="Stretch"
                     Font="{x:Bind ViewModel.CurrentFont, Mode=OneWay}">
                     <views:FontMapView.TitleRightContent>
                         <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">

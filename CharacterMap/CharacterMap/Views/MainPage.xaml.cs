@@ -485,9 +485,14 @@ namespace CharacterMap.Views
 
             void Item_Click(object sender, RoutedEventArgs e)
             {
-                _ = QuickCompareView.CreateWindowAsync(
-                        new(false, new(GetActiveVariants())));
+                ShowCompare(GetActiveVariants());
             }
+        }
+
+        void ShowCompare(List<FontVariant> variants)
+        {
+            _ = QuickCompareView.CreateWindowAsync(
+                       new(false, new(variants)));
         }
 
         private void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -622,6 +627,26 @@ namespace CharacterMap.Views
                 args.TryGetPosition(sender, out Point pos);
                 FontListFlyout.ShowAt(sender, pos);
             }
+        }
+
+        private void TabViewItemContext_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout menu && menu.Target is TabViewItem t && t.DataContext is FontItem item)
+            {
+                FlyoutHelper.CreateMenu(
+                    menu,
+                    item.Font,
+                    CharacterRenderingOptions.CreateDefault(item.Selected),
+                    this.Tag as FrameworkElement,
+                    new()
+                    {
+                        ShowAdvanced = true,
+                        Folder = ViewModel.Folder,
+                        IsTabContext = true,
+                        PreviewText = FontMap.ViewModel.Sequence
+                    });
+            }
+
         }
 
         private void OpenFolder()

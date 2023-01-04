@@ -132,6 +132,8 @@ namespace CharacterMap.ViewModels
 
             if (IsQuickCompare && args.IsQuickCompare)
                 Title = Localization.Get("QuickCompareTitle/Text");
+            else if (IsQuickCompare && args.Folder.IsFamilyCompare)
+                Title = string.Format(Localization.Get("CompareFamilyTitle/Text"), QuickFonts.FirstOrDefault()?.Variant.FamilyName);
             else if (IsQuickCompare)
                 Title = Localization.Get("CompareFontFaceTitle/Text");
             else if (IsFolderMode && _folder.Source is not null)

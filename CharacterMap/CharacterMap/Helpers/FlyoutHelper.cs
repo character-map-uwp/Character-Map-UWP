@@ -48,6 +48,11 @@ namespace CharacterMap.Helpers
         /// A stand-alone Window showing a single Font Family
         /// </summary>
         public bool Standalone          { get; set; }
+
+        /// <summary>
+        /// Context menu for font tab headers
+        /// </summary>
+        public bool IsTabContext        { get; set; }
         
         /// <summary>
         /// The font family is from file that is not installed in the system
@@ -95,8 +100,6 @@ namespace CharacterMap.Helpers
         /// <param name="font"></param>
         /// <param name="variant"></param>
         /// <param name="headerContent"></param>
-        /// <param name="standalone"></param>
-        /// <param name="showAdvanced"></param>
         public static void CreateMenu(
             MenuFlyout menu,
             InstalledFont font,
@@ -173,16 +176,24 @@ namespace CharacterMap.Helpers
                 }
             }
 
-            void OpenCompare(object sender, RoutedEventArgs e)
+            //void OpenCompare(object sender, RoutedEventArgs e)
+            //{
+            //    _ = QuickCompareView.CreateWindowAsync(new(false, args.Folder));
+            //}
+
+            void OpenFaceCompare(object sender, RoutedEventArgs e)
             {
-                _ = QuickCompareView.CreateWindowAsync(new(false, args.Folder));
+                if (sender is FrameworkElement f && f.Tag is InstalledFont fnt)
+                {
+                    _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.Variants.ToList()) {  IsFamilyCompare = true }));
+                }
             }
 
             MenuFlyoutItem Create(string key, string icon, RoutedEventHandler handler, VirtualKey accel = VirtualKey.None, bool add = true)
             {
                 MenuFlyoutItem item = new()
                 {
-                    Text = Localization.Get(key),
+                    Text = key.StartsWith("~") ? key.Remove(0,1) : Localization.Get(key),
                     Icon = new FontIcon { Glyph = icon },
                     Tag = font,
                     DataContext = options
@@ -237,7 +248,7 @@ namespace CharacterMap.Helpers
                     if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.FontFace))
                     {
                         Create("ExportFontFileLabel/Text", "\uE792", SaveFont_Click, VirtualKey.S);
-                        if (showAdvanced)
+                        if (showAdvanced && !args.IsTabContext)
                             Create("ExportCharactersLabel/Text", "\uE105", Export_Click, VirtualKey.E);
                     }
 
@@ -262,7 +273,7 @@ namespace CharacterMap.Helpers
                 }
 
                 // 5. Add "Print" Button
-                if (showAdvanced)
+                if (showAdvanced && args.IsTabContext is false)
                 {
                     if (Windows.Graphics.Printing.PrintManager.IsSupported())
                     {
@@ -272,7 +283,10 @@ namespace CharacterMap.Helpers
                 }
 
                 // 6. Add "Delete Font" button
-                if (!standalone && !args.IsFolderView && font.HasImportedFiles)
+                if (!standalone 
+                    && !args.IsFolderView 
+                    && !args.IsTabContext
+                    && font.HasImportedFiles)
                 {
                     menu.AddSeparator();
                     MenuFlyoutItem del = Create("RemoveFontFlyout/Text", "\uE107", DeleteClick);
@@ -281,8 +295,11 @@ namespace CharacterMap.Helpers
                 }
 
                 // 7. Add "Compare Fonts button"
-                menu.AddSeparator();
-                Create("CompareFontsButton/Text", "\uE1D3", OpenCompare, VirtualKey.K);
+                if (font.HasVariants)
+                {
+                    menu.AddSeparator();
+                    Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", "\uE1D3", OpenFaceCompare);
+                }
 
                 // 8. Add "Add to quick compare" button if we're viewing a variant
                 if (args.IsFolderView is false && showAdvanced && isExternalFile is false)
@@ -292,7 +309,6 @@ namespace CharacterMap.Helpers
                 menu.AddSeparator();
                 Create("CalligraphyLabel/Text", "\uEDFB", OpenCalligraphy, VirtualKey.I);
             }
-
         }
 
         public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, UserFontCollection collection, BasicFontFilter filter)
