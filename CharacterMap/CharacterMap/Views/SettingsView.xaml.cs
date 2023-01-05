@@ -83,10 +83,6 @@ namespace CharacterMap.Views
             Register<FontListCreatedMessage>(m => UpdateExport());
 
             GridSize = Settings.GridSize;
-
-
-            CompositionFactory.SetupOverlayPanelAnimation(this);
-
             FontNamingSelection.SelectedIndex = (int)Settings.ExportNamingScheme;
 
             SupportedLanguages = new List<SupportedLanguage>(
@@ -143,11 +139,18 @@ namespace CharacterMap.Views
             if (IsOpen)
                 return;
 
+            if (ResourceHelper.AllowAnimation)
+                CompositionFactory.SetupOverlayPanelAnimation(this);
+            else
+            {
+                this.SetShowAnimation(null);
+                this.SetHideAnimation(null);
+            }
 
             StartShowAnimation();
             this.Visibility = Visibility.Visible;
 
-            if (!CompositionFactory.UISettings.AnimationsEnabled)
+            if (!ResourceHelper.AllowAnimation)
             {
                 this.GetElementVisual().Opacity = 1;
                 this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);
@@ -201,18 +204,12 @@ namespace CharacterMap.Views
 
         private void StartShowAnimation()
         {
-            if (!Settings.UseSelectionAnimations)
+            if (!ResourceHelper.AllowAnimation)
                 return;
 
-            List<UIElement> elements = new List<UIElement> { this, MenuColumn, ContentBorder };
-            //elements.AddRange(LeftPanel.Children);
+            List<UIElement> elements = new() { this, MenuColumn, ContentBorder };
             CompositionFactory.PlayEntrance(elements, 0, 200);
-
             UpdateStyle();
-
-            //elements.Clear();
-            //elements.AddRange(RightPanel.Children);
-            //Composition.PlayEntrance(elements, 0, 200);
         }
 
         protected override void OnUnloaded(object sender, RoutedEventArgs e)
@@ -461,7 +458,7 @@ namespace CharacterMap.Views
                 2 => "Zune",
                 _ => "Default"
             };
-            bool t = VisualStateManager.GoToState(this, $"{key}ThemeState", true);
+            bool t = GoToState($"{key}ThemeState");
         }
 
 

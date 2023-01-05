@@ -232,7 +232,7 @@ namespace CharacterMap.Views
                     UpdateTypography(ViewModel.SelectedTypography);
                     break;
                 case nameof(ViewModel.SelectedChar):
-                    if (ViewModel.Settings.UseSelectionAnimations)
+                    if (ResourceHelper.AllowAnimation)
                     {
                         if (ViewModel.SelectedChar is not null)
                         {
@@ -269,7 +269,7 @@ namespace CharacterMap.Views
                     break;
                 case nameof(ViewModel.Chars):
                     CharGrid.ItemsSource = ViewModel.Chars;
-                    if (ViewModel.Settings.UseSelectionAnimations)
+                    if (ResourceHelper.AllowAnimation)
                         CompositionFactory.PlayEntrance(CharGrid, 166);
                     break;
                 case nameof(ViewModel.DisplayMode):
@@ -392,16 +392,16 @@ namespace CharacterMap.Views
             {
                 if (ViewModel.SelectedProvider != null)
                 {
-                    if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
+                    if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed && ResourceHelper.AllowAnimation)
                         CompositionFactory.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
                     
                     string state = $"Dev{ViewModel.SelectedProvider.Type}State";
 
-                    if (!VisualStateManager.GoToState(this, state, animate))
-                        VisualStateManager.GoToState(this, nameof(DevNoneState), animate);
+                    if (!GoToState(state, animate))
+                        GoToState(nameof(DevNoneState), animate);
                 }
                 else
-                    VisualStateManager.GoToState(this, nameof(DevNoneState), animate);
+                    GoToState(nameof(DevNoneState), animate);
             });
         }
 
@@ -411,7 +411,7 @@ namespace CharacterMap.Views
             {
                 if (animate)
                     UpdateGridToRampTransition();
-                VisualStateManager.GoToState(this, TypeRampState.Name, animate);
+                GoToState(TypeRampState.Name, animate);
             }
             else
             {
@@ -420,7 +420,7 @@ namespace CharacterMap.Views
                 else if (CharGrid.ItemsPanelRoot is null)
                     CharGrid.Measure(CharGrid.DesiredSize);
 
-                VisualStateManager.GoToState(this, CharacterMapState.Name, animate);
+                GoToState(CharacterMapState.Name, animate);
             }
 
             if (animate)
@@ -453,20 +453,15 @@ namespace CharacterMap.Views
         {
             if (this.IsStandalone)
             {
-                VisualStateManager.GoToState(
-                  this,
-                  ViewModel.Settings.UseInstantSearch ? nameof(InstantSearchState) : nameof(ManualSearchState),
-                  true);
+                GoToState(
+                  ViewModel.Settings.UseInstantSearch ? nameof(InstantSearchState) : nameof(ManualSearchState));
             }
         }
 
         private void UpdateStates()
         {
             // Ideally should have been achieved with VisualState setters, buuuuut didn't work for some reason
-            VisualStateManager.GoToState(
-                this, 
-                ViewModel.SelectedFont == null ? NoFontState.Name : HasFontState.Name,
-                true);
+            GoToState(ViewModel.SelectedFont == null ? NoFontState.Name : HasFontState.Name);
         }
 
         private void UpdatePaneAndGridSizing()
@@ -477,10 +472,8 @@ namespace CharacterMap.Views
             else
                 PaneShowTransition.Storyboard = CreateShowPreview(0, false);
 
-            VisualStateManager.GoToState(
-                  this,
-                  ViewModel.Settings.EnablePreviewPane && !_isCompactOverlay ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState),
-                  true);
+            GoToState(
+                  ViewModel.Settings.EnablePreviewPane && !_isCompactOverlay ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState));
 
             // OverlayButton might not be inflated so can't use VisualState
             OverlayButton?.SetVisible(IsStandalone);
@@ -494,7 +487,7 @@ namespace CharacterMap.Views
             else
                 CopyPaneShowingTransition.Storyboard = CreateShowCopyPane();
 
-            VisualStateManager.GoToState(this, state, true);
+            GoToState(state);
         }
 
         private async Task UpdateCompactOverlayAsync()
@@ -509,7 +502,7 @@ namespace CharacterMap.Views
                     pref.ViewSizePreference = ViewSizePreference.Custom;
                     if (await view.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, pref))
                     {
-                        VisualStateManager.GoToState(this, nameof(CompactOverlayState), true);
+                        GoToState(nameof(CompactOverlayState));
                         SearchBox.PlaceholderText = Localization.Get("SearchBoxShorter");
                         _isCompactOverlay = true;
                     }
@@ -519,7 +512,7 @@ namespace CharacterMap.Views
             {
                 if (await view.TryEnterViewModeAsync(ApplicationViewMode.Default))
                 {
-                    VisualStateManager.GoToState(this, nameof(NonCompactState), true);
+                    GoToState(nameof(NonCompactState));
                     SearchBox.PlaceholderText = Localization.Get("SearchBox/PlaceholderText");
                     _isCompactOverlay = false;
                 }

@@ -13,6 +13,7 @@ using System.Runtime.CompilerServices;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Views
@@ -68,6 +69,17 @@ namespace CharacterMap.Views
         protected void RunOnUI(Action a)
         {
             this.RunOnDispatcher(a);
+        }
+
+        /// <summary>
+        /// Transitions this Control to the named VisualState, with transitions controlled by <see cref="ResourceHelper.AllowAnimation"/>
+        /// </summary>
+        /// <param name="state">Name to state to transition too</param>
+        /// <param name="tryAnimate">Attempt to animate. Will be ignored if <see cref="ResourceHelper.AllowAnimation"/> returns false</param>
+        /// <returns>**true** if the control is now in the named state</returns>
+        protected bool GoToState(string state, bool tryAnimate = true)
+        {
+            return VisualStateManager.GoToState(this, state, tryAnimate && ResourceHelper.AllowAnimation);
         }
     }
 }

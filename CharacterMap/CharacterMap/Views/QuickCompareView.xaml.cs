@@ -79,6 +79,9 @@ namespace CharacterMap.Views
         private void AnimateIn()
         {
             this.Opacity = 1;
+            if (ResourceHelper.AllowAnimation is false)
+                return;
+
             int s = 66;
             int o = 110;
 
@@ -102,7 +105,8 @@ namespace CharacterMap.Views
                 if (ViewStates.CurrentState != NormalState)
                     GoToNormalState();
 
-                CompositionFactory.PlayEntrance(Repeater, 0, 80, 0);
+                if (ResourceHelper.AllowAnimation)
+                    CompositionFactory.PlayEntrance(Repeater, 0, 80, 0);
 
                 // ItemsRepeater is a bit rubbish, needs to be nudged back into life.
                 // If we scroll straight to zero, we can often end up with a blank screen
@@ -123,7 +127,7 @@ namespace CharacterMap.Views
                 else
                 {
                     DetailsFontTitle.Text = "";
-                    VisualStateManager.GoToState(this, DetailsState.Name, true);
+                    GoToState(DetailsState.Name);
                 }
             }
             else if (e.PropertyName == nameof(ViewModel.Text))
@@ -137,7 +141,7 @@ namespace CharacterMap.Views
             // Repeater metrics may be out of date. Update.
             UpdateText(ViewModel.Text, Repeater.Realize().ItemsPanelRoot);
             UpdateFontSize(FontSizeSlider.Value, Repeater.Realize().ItemsPanelRoot);
-            VisualStateManager.GoToState(this, NormalState.Name, true);
+            GoToState(NormalState.Name);
         }
 
         private void Button_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -241,10 +245,13 @@ namespace CharacterMap.Views
         {
             if (sender is Button b && b.Content is InstalledFont font && Repeater is ListViewBase list)
             {
-                var item = list.ContainerFromItem(font);
-                var title = item.GetFirstDescendantOfType<TextBlock>();
-                ConnectedAnimationService.GetForCurrentView().DefaultDuration = TimeSpan.FromSeconds(0.7);
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Title", title);
+                if (ResourceHelper.AllowAnimation)
+                {
+                    var item = list.ContainerFromItem(font);
+                    var title = item.GetFirstDescendantOfType<TextBlock>();
+                    ConnectedAnimationService.GetForCurrentView().DefaultDuration = TimeSpan.FromSeconds(0.7);
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Title", title);
+                }
 
                 ViewModel.SelectedFont = font;
             }
@@ -321,18 +328,23 @@ namespace CharacterMap.Views
 
         private void GridView_Click(object sender, RoutedEventArgs e)
         {
-            VisualStateManager.GoToState(this, GridLayoutState.Name, true);
+            GoToState(GridLayoutState.Name);
         }
 
         private void ListView_Click(object sender, RoutedEventArgs e)
         {
-            VisualStateManager.GoToState(this, StackLayoutState.Name, true);
+            GoToState(StackLayoutState.Name);
         }
 
         private  void ViewStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
         {
             if (e.NewState == DetailsState)
             {
+                DetailsFontTitle.Text = ViewModel.SelectedFont.Name;
+
+                if (ResourceHelper.AllowAnimation is false)
+                    return;
+
                 var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("Title");
                 //ani.Configuration = new BasicConnectedAnimationConfiguration();
                 //var c = this.GetElementVisual().Compositor;
@@ -357,7 +369,6 @@ namespace CharacterMap.Views
                 //ani.SetAnimationComponent(ConnectedAnimationComponent.Scale, offset);
                 //ani.SetAnimationComponent(ConnectedAnimationComponent.CrossFade, offset);
 
-                DetailsFontTitle.Text = ViewModel.SelectedFont.Name;
                 ani.TryStart(DetailsTitleContainer);//, new List<UIElement> { DetailsViewContent });
             }
         }
@@ -380,7 +391,7 @@ namespace CharacterMap.Views
                 SetFontSize(g, FontSizeSlider.Value);
             }
 
-            if (ResourceHelper.AppSettings.AllowExpensiveAnimations)
+            if (ResourceHelper.AllowExpensiveAnimation)
             {
                 if (args.InRecycleQueue)
                 {

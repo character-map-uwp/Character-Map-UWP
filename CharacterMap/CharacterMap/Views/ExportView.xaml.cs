@@ -40,7 +40,8 @@ namespace CharacterMap.Views
 
             this.InitializeComponent();
 
-            CompositionFactory.SetupOverlayPanelAnimation(this);
+            if (ResourceHelper.AllowAnimation)
+                CompositionFactory.SetupOverlayPanelAnimation(this);
         }
 
         public override void Show()
@@ -53,7 +54,7 @@ namespace CharacterMap.Views
 
         private void StartShowAnimation()
         {
-            if (!CompositionFactory.UISettings.AnimationsEnabled)
+            if (!ResourceHelper.AllowAnimation)
             {
                 this.GetElementVisual().Opacity = 1;
                 this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);

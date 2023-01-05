@@ -264,11 +264,11 @@ namespace CharacterMap.Views
         {
             if (e.NewSize.Width < 900)
             {
-                VisualStateManager.GoToState(this, nameof(CompactViewState), true);
+                GoToState(nameof(CompactViewState));
             }
             else if (ViewStates.CurrentState == CompactViewState)
             {
-                VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
+                GoToState(nameof(DefaultViewState));
             }
         }
 
@@ -286,16 +286,16 @@ namespace CharacterMap.Views
             TitleBar.TryUpdateMetrics();
 
             if (ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
-                VisualStateManager.GoToState(this, nameof(FontsLoadingState), true);
+                GoToState(nameof(FontsLoadingState));
             else if (ViewModel.IsLoadingFontsFailed)
-                VisualStateManager.GoToState(this, nameof(FontsFailedState), true);
+                GoToState(nameof(FontsFailedState));
             else
             {
-                VisualStateManager.GoToState(this, nameof(FontsLoadedState), false);
-                if (ViewModel.Settings.UseSelectionAnimations)
+                GoToState(nameof(FontsLoadedState), false);
+                if (ResourceHelper.AllowAnimation)
                 {
                     CompositionFactory.StartStartUpAnimation(
-                        new List<FrameworkElement>
+                        new()
                         {
                             OpenFontPaneButton,
                             FontListFilter,
@@ -304,7 +304,7 @@ namespace CharacterMap.Views
                             FontMap.SearchBox,
                             BtnSettings
                         },
-                        new List<UIElement>
+                        new()
                         {
                             FontListSearchBox,
                             FontsSemanticZoom,
@@ -339,11 +339,11 @@ namespace CharacterMap.Views
         {
             if (SplitView.DisplayMode == SplitViewDisplayMode.Inline)
             {
-                VisualStateManager.GoToState(this, nameof(CollapsedViewState), true);
+                GoToState(nameof(CollapsedViewState));
             }
             else
             {
-                VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
+                GoToState(nameof(DefaultViewState));
             }
         }
 
@@ -400,7 +400,7 @@ namespace CharacterMap.Views
         void UpdateModalStates(bool open)
         {
             string state = open ? nameof(ModalOpenState) : nameof(NoModalOpenState);
-            VisualStateManager.GoToState(this, state, true);
+            GoToState(state);
         }
 
 
@@ -499,8 +499,7 @@ namespace CharacterMap.Views
 
         void ShowCompare(List<FontVariant> variants)
         {
-            _ = QuickCompareView.CreateWindowAsync(
-                       new(false, new(variants)));
+            _ = QuickCompareView.CreateWindowAsync(new(false, new(variants)));
         }
 
         private void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -884,8 +883,7 @@ namespace CharacterMap.Views
 
         private void LoadingRoot_Loading(FrameworkElement sender, object args)
         {
-            if (!ViewModel.Settings.UseSelectionAnimations 
-                || !CompositionFactory.UISettings.AnimationsEnabled)
+            if (ResourceHelper.AllowAnimation is false)
                 return;
 
             var v = sender.GetElementVisual();

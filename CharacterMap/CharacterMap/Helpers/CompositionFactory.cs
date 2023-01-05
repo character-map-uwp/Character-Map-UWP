@@ -162,7 +162,7 @@ namespace CharacterMap.Helpers
 
         public static void SetupOverlayPanelAnimation(UIElement e)
         {
-            if (!CompositionFactory.UISettings.AnimationsEnabled)
+            if (!UISettings.AnimationsEnabled)
                 return;
 
             Visual v = e.EnableTranslation(true).GetElementVisual();

@@ -239,6 +239,9 @@ namespace CharacterMap.Views
         private void AnimateIn()
         {
             ContentRoot.Opacity = 1;
+            if (ResourceHelper.AllowAnimation is false)
+                return;
+
             int s = 100;
             int o = 110;
 

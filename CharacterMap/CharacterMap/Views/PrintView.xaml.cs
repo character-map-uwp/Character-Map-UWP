@@ -74,9 +74,9 @@ namespace CharacterMap.Views
                 this.Visibility = Visibility.Collapsed;
 
             this.InitializeComponent();
-            CompositionFactory.SetupOverlayPanelAnimation(this);
 
-            LeakTrackingService.Register(this);
+            if (ResourceHelper.AllowAnimation)
+                CompositionFactory.SetupOverlayPanelAnimation(this);
         }
 
 
@@ -117,7 +117,7 @@ namespace CharacterMap.Views
 
         private void StartShowAnimation()
         {
-            if (!CompositionFactory.UISettings.AnimationsEnabled)
+            if (!ResourceHelper.AllowAnimation)
             {
                 this.GetElementVisual().Opacity = 1;
                 this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);
