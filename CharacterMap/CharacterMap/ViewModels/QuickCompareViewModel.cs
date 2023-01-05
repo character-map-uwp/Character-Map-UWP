@@ -77,6 +77,7 @@ namespace CharacterMap.ViewModels
         public UserCollectionsService FontCollections { get; }
 
         public ICommand FilterCommand { get; }
+
         public ICommand CollectionSelectedCommand { get; }
 
         public bool IsQuickCompare { get;  }

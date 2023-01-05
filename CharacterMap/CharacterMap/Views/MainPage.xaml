@@ -703,7 +703,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="CollapsedTabColumn" Width="0" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay}" d:Width="150" />
+                    <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.RightColumnWidth, Mode=OneWay, FallbackValue=0}" d:Width="150" />
                 </Grid.ColumnDefinitions>
 
                 <Rectangle
@@ -719,7 +719,6 @@
                     Grid.Row="1"
                     Grid.Column="1"
                     Margin="6 0 0 0"
-                    core:Properties.ClipToBounds="True"
                     core:Properties.IsTabOpenAnimationEnabled="True"
                     core:Properties.RequireOpenTab="True"
                     AddTabButtonClick="FontMapContainer_AddTabButtonClick"
@@ -994,7 +993,11 @@
                         <Setter Target="TitleShowPaneButton.Opacity" Value="0" />
                     </VisualState.Setters>
                 </VisualState>
-                <VisualState x:Name="FontsLoadedState" />
+                <VisualState x:Name="FontsLoadedState">
+                    <VisualState.Setters>
+                        <Setter Target="FontMap.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
             <VisualStateGroup x:Name="FontStates">
                 <VisualState x:Name="NoFontsState">

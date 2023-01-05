@@ -65,6 +65,15 @@ namespace CharacterMap.Views
                 ViewModel = new MainViewModel(args);
             }
 
+            if (DesignMode)
+                return;
+
+            // This is requires to fix a bug where characters don't show up
+            // until the grid is resized on themes that don't support tabs.
+            // Not sure *why*, but this works as a fix for now.
+            if (ResourceHelper.SupportsTabs is false)
+                FontMap.Visibility = Visibility.Collapsed;
+
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             Register<CollectionsUpdatedMessage>(OnCollectionsUpdated);
@@ -79,7 +88,7 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                 {
                     PrintView.Show(this);
-                    
+
                     // NB: Printing works by using an off-screen canvas inside
                     //     the FontMapView. OnModelOpened hides this canvas
                     //     preventing printing from working. So in the case of 
@@ -97,7 +106,6 @@ namespace CharacterMap.Views
             });
 
             this.SizeChanged += MainPage_SizeChanged;
-
             _uiSettings = new UISettings();
             _uiSettings.ColorValuesChanged += OnColorValuesChanged;
 
