@@ -840,6 +840,7 @@
                         <Setter Target="BackIcon.Foreground" Value="White" />
                         <Setter Target="BackButton.BorderThickness" Value="0" />
                         <Setter Target="Presenter.HeaderVisibility" Value="Collapsed" />
+                        <Setter Target="Presenter.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">

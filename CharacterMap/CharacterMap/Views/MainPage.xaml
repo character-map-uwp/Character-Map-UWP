@@ -1046,7 +1046,9 @@
                     <VisualState.Setters>
                         <Setter Target="TitleButtonsPresenter.(Grid.Row)" Value="0" />
                         <Setter Target="TitleBar.(Grid.Row)" Value="0" />
+                        <Setter Target="TitleBar.(Canvas.ZIndex)" Value="9" />
                         <Setter Target="TitleButtonsPresenter.Foreground" Value="White" />
+                        <Setter Target="SplitView.(core:Properties.ClipToBounds)" Value="True" />
                         <Setter Target="BtnSettings.Width" Value="Auto" />
                         <Setter Target="BtnSettings.Height" Value="Auto" />
                         <Setter Target="PaneTitleBarSpacer.MaxHeight" Value="0" />

@@ -1099,6 +1099,8 @@
                 <ControlTemplate TargetType="controls:ModalPagePresenter">
                     <Grid
                         x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource RootBackgroundTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
 
