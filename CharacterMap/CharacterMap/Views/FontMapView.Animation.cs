@@ -290,8 +290,8 @@ namespace CharacterMap.Views
             if (TypeRampList == null)
                 return;
 
-            if (CharGrid.ItemsPanelRoot is null)
-                CharGrid.Measure(CharGrid.DesiredSize);
+            //if (CharGrid.ItemsPanelRoot is null)
+            //    CharGrid.Measure(CharGrid.DesiredSize);
 
             // 1. Build base storyboard and assign it as the 
             //    VisualState transition
@@ -299,10 +299,21 @@ namespace CharacterMap.Views
             //sb.Children.Add(GridToTypeBase);
             RampToGridTransition.Storyboard = sb;
 
-            var toChilds = CharGrid.Realize().ItemsPanelRoot.Children
+            var toChilds = CharGrid.Realize(this.ActualWidth, this.ActualHeight).ItemsPanelRoot.Children
                 .OfType<FrameworkElement>()
                 .Where(c => c.IsInViewport(CharGrid))
                 .OrderBy(c => Guid.NewGuid()).ToList();
+
+            if (toChilds.Count == 0)
+            {
+                toChilds = CharGrid.ItemsPanelRoot.Children
+                    .OfType<FrameworkElement>()
+                    .Where(c => c.IsInViewport(this))
+                    .OrderBy(c => Guid.NewGuid()).ToList();
+
+                if (toChilds.Count == 0)
+                    return;
+            }
 
             var childs = GetTypeRampAnimationTargets();
 

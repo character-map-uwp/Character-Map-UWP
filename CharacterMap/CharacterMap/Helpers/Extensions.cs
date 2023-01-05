@@ -120,10 +120,10 @@ namespace CharacterMap.Helpers
             return new List<UIElement> { control };
         }
 
-        public static T Realize<T>(this T list) where T : ItemsControl
+        public static T Realize<T>(this T list, double width = 100, double height = 100) where T : ItemsControl
         {
             if (list.ItemsPanelRoot == null)
-                list.Measure(new (100, 100));
+                list.Measure(new (width, height));
 
             return list;
         }
