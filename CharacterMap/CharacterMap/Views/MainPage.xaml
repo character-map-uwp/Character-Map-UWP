@@ -22,6 +22,53 @@
         <x:Double x:Key="SplitViewPaneWidth">256</x:Double>
         <GridLength x:Key="PaneGridWidth">256</GridLength>
 
+        <MenuFlyout
+            x:Key="MainMenuFlyout"
+            MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
+            Placement="BottomEdgeAlignedLeft">
+            <MenuFlyoutSubItem Text="{core:Localizer Key='OpenFontButton/Label'}">
+                <MenuFlyoutSubItem.Icon>
+                    <FontIcon FontSize="14" Glyph="&#xED25;" />
+                </MenuFlyoutSubItem.Icon>
+                <MenuFlyoutItem
+                    x:Uid="FontFileMenuItem"
+                    Click="{x:Bind OpenFont}"
+                    d:Text="Font File">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="O" Modifiers="Control" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="FontFolderMenuItem"
+                    Click="{x:Bind OpenFolder}"
+                    d:Text="Font Folder">
+                    <MenuFlyoutItem.KeyboardAccelerators>
+                        <KeyboardAccelerator Key="O" Modifiers="Control,Shift" />
+                    </MenuFlyoutItem.KeyboardAccelerators>
+                </MenuFlyoutItem>
+            </MenuFlyoutSubItem>
+
+            <MenuFlyoutItem x:Uid="CompareFontsTitle" Click="FontCompareButton_Click">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="K" Modifiers="Control" />
+                </MenuFlyoutItem.KeyboardAccelerators>
+                <MenuFlyoutItem.Icon>
+                    <FontIcon FontSize="14" Glyph="&#xE1D3;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem Command="{Binding CommandToggleFullScreen}" Text="{core:Localizer Key='ToggleFullScreenModeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip'}">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="F12" />
+                </MenuFlyoutItem.KeyboardAccelerators>
+                <MenuFlyoutItem.Icon>
+                    <FontIcon FontSize="14" Glyph="&#xE740;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+        </MenuFlyout>
+
         <CollectionViewSource
             x:Key="GroupedFontList"
             x:Name="GroupedFontList"
@@ -96,78 +143,27 @@
                 </Grid.ColumnDefinitions>
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <ToggleButton
-                        x:Name="ToggleFullScreenModeButton"
-                        x:Uid="ToggleFullScreenModeButton"
-                        Width="45"
-                        Background="Transparent"
-                        Command="{Binding CommandToggleFullScreen}"
-                        Content="&#xE740;"
-                        FontSize="14"
-                        Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
-                        Style="{StaticResource IconToggleButtonStyle}"
-                        Tag="&#xE1D8;"
-                        ToolTipService.Placement="Right" />
 
                     <StackPanel x:Name="TitleButtonsPanel" Orientation="Horizontal">
                         <FrameworkElement.RenderTransform>
                             <CompositeTransform />
                         </FrameworkElement.RenderTransform>
-                        <Button
-                            x:Name="TitleOpenFontButton"
-                            Width="45"
-                            Height="45"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            CornerRadius="0"
-                            Flyout="{StaticResource OpenFontFlyout}"
-                            Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
-                            Style="{StaticResource TitleBarButtonStyle}"
-                            ToolTipService.ToolTip="{core:Localizer Key='OpenFontButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip'}">
-                            <FontIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="14"
-                                Glyph="&#xED25;"
-                                RenderTransformOrigin="0.5 0.5">
-                                <FontIcon.RenderTransform>
-                                    <ScaleTransform ScaleX="-1" ScaleY="1" />
-                                </FontIcon.RenderTransform>
-                            </FontIcon>
-                        </Button>
 
                         <Button
-                            x:Name="TitleCompareFontsButton"
-                            Width="45"
-                            Height="45"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            Click="FontCompareButton_Click"
-                            CornerRadius="0"
+                            x:Name="MainMenuButton"
+                            x:Uid="MenuButton"
+                            Content="&#xE700;"
+                            Flyout="{StaticResource MainMenuFlyout}"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
-                            Style="{StaticResource TitleBarButtonStyle}"
-                            ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
-                            <FontIcon
-                                Margin="0 -1 0 0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="14"
-                                Glyph="&#xE1D3;" />
-                        </Button>
+                            Style="{StaticResource TitleBarButtonStyle}" />
 
                         <Button
                             x:Name="OpenFontPaneButton"
                             x:Uid="MenuToggle"
-                            Width="45"
-                            Background="Transparent"
                             Click="OpenFontPaneButton_Click"
-                            Content="&#xE700;"
-                            FontSize="16"
+                            Content="&#xE169;"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
                             Style="{StaticResource TitleBarButtonStyle}"
-                            Tag="&#xE700;"
                             Visibility="Collapsed">
                             <Button.KeyboardAccelerators>
                                 <KeyboardAccelerator Key="L" Modifiers="Control" />
@@ -286,30 +282,21 @@
                         </Grid.ColumnDefinitions>
 
                         <controls:UXButton
-                            x:Name="OpenFontButton"
-                            x:Uid="OpenFontButton"
+                            x:Name="SubMenuButton"
                             Grid.Column="0"
                             Width="{StaticResource TitleRowHeight}"
                             Height="Auto"
                             Padding="4"
                             VerticalAlignment="Stretch"
-                            Flyout="{StaticResource OpenFontFlyout}"
+                            Flyout="{StaticResource MainMenuFlyout}"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource MapInfoButtonStyle}"
                             Visibility="Collapsed"
                             d:Label="Open">
                             <FontIcon
-                                Margin="0 -1 0 0"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                Glyph="&#xED25;"
-                                RenderTransformOrigin="0.5 0.5">
-                                <FontIcon.RenderTransform>
-                                    <ScaleTransform ScaleX="-1" ScaleY="1" />
-                                </FontIcon.RenderTransform>
-                            </FontIcon>
-
+                                FontSize="14"
+                                Glyph="&#xE700;" />
                         </controls:UXButton>
 
                         <controls:UXButton
@@ -624,25 +611,23 @@
                         Background="{x:Bind PaneRoot.Background, Mode=OneWay}">
                         <controls:LabelButton
                             x:Name="FontCompareButton"
-                            x:Load="False"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Stretch"
                             Click="FontCompareButton_Click"
-                            ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}"
-                            Visibility="Collapsed">
+                            ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
                             <controls:LabelButton.IconContent>
                                 <FontIcon
                                     Width="45"
                                     MinHeight="12"
                                     VerticalAlignment="Center"
-                                    FontSize="16"
+                                    FontSize="14"
                                     Glyph="&#xE1D3;" />
                             </controls:LabelButton.IconContent>
                             <TextBlock
+                                x:Uid="CompareFontsTitle"
                                 Margin="0 0 12 0"
                                 VerticalAlignment="Center"
-                                FontSize="13.333"
-                                Text="{core:Localizer Key='CompareFontsTitle/Text'}" />
+                                FontSize="13.333" />
                         </controls:LabelButton>
 
                         <!--<AppBarButton
@@ -713,83 +698,87 @@
                     Height="{x:Bind TitleBar.TemplateSettings.Height, Mode=OneWay}"
                     Margin="0 0 0 -8" />
 
-                <muxc:TabView
-                    x:Name="FontsTabBar"
-                    x:Load="False"
+                <Border
+                    x:Name="FontsTabContainer"
                     Grid.Row="1"
                     Grid.Column="1"
-                    Margin="6 0 0 0"
-                    core:Properties.IsTabOpenAnimationEnabled="True"
-                    core:Properties.RequireOpenTab="True"
-                    AddTabButtonClick="FontMapContainer_AddTabButtonClick"
-                    AllowDropTabs="True"
-                    Background="{x:Null}"
-                    CanDragTabs="True"
-                    Loaded="FontsTabBar_Loaded"
-                    SelectedIndex="{x:Bind ViewModel.TabIndex, Mode=TwoWay}"
-                    Style="{StaticResource TabViewStyle}"
-                    TabCloseRequested="FontMapContainer_TabCloseRequested"
-                    TabDroppedOutside="FontsTabBar_TabDroppedOutside"
-                    TabItemsSource="{x:Bind ViewModel.Fonts}"
-                    Visibility="Collapsed"
-                    d:Visibility="Visible">
-                    <muxc:TabView.TabItemTemplate>
-                        <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
-                            <muxc:TabViewItem
-                                core:Properties.IsCompact="{x:Bind IsCompact}"
-                                DoubleTapped="TabViewItem_DoubleTapped"
-                                IsDoubleTapEnabled="True"
-                                ToolTipService.ToolTip="{x:Bind Tooltip}">
-                                <muxc:TabViewItem.ContextFlyout>
-                                    <MenuFlyout Opening="TabViewItemContext_Opening" />
-                                </muxc:TabViewItem.ContextFlyout>
-                                <muxc:TabViewItem.Header>
-                                    <Grid ColumnSpacing="8">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
+                    Margin="6 0 0 0">
+                    <muxc:TabView
+                        x:Name="FontsTabBar"
+                        x:Load="False"
+                        core:Properties.IsTabOpenAnimationEnabled="True"
+                        core:Properties.RequireOpenTab="True"
+                        AddTabButtonClick="FontMapContainer_AddTabButtonClick"
+                        AllowDropTabs="True"
+                        Background="{x:Null}"
+                        CanDragTabs="True"
+                        Loaded="FontsTabBar_Loaded"
+                        SelectedIndex="{x:Bind ViewModel.TabIndex, Mode=TwoWay}"
+                        Style="{StaticResource TabViewStyle}"
+                        TabCloseRequested="FontMapContainer_TabCloseRequested"
+                        TabDroppedOutside="FontsTabBar_TabDroppedOutside"
+                        TabItemsSource="{x:Bind ViewModel.Fonts}"
+                        Visibility="Collapsed"
+                        d:Visibility="Visible">
+                        <muxc:TabView.TabItemTemplate>
+                            <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
+                                <muxc:TabViewItem
+                                    core:Properties.IsCompact="{x:Bind IsCompact}"
+                                    DoubleTapped="TabViewItem_DoubleTapped"
+                                    IsDoubleTapEnabled="True"
+                                    ToolTipService.ToolTip="{x:Bind Tooltip}">
+                                    <muxc:TabViewItem.ContextFlyout>
+                                        <MenuFlyout Opening="TabViewItemContext_Opening" />
+                                    </muxc:TabViewItem.ContextFlyout>
+                                    <muxc:TabViewItem.Header>
+                                        <Grid ColumnSpacing="8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
 
-                                        <FontIcon
-                                            x:Name="CharMapIcon"
-                                            x:Load="{x:Bind core:Converters.False(IsTypeRamp)}"
-                                            Margin="0 2 0 0"
-                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                            FontSize="12"
-                                            Glyph="&#xE154;" />
+                                            <FontIcon
+                                                x:Name="CharMapIcon"
+                                                x:Load="{x:Bind core:Converters.False(IsTypeRamp)}"
+                                                Margin="0 2 0 0"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="12"
+                                                Glyph="&#xE154;" />
 
-                                        <FontIcon
-                                            x:Name="TypeRampIcon"
-                                            x:Load="{x:Bind IsTypeRamp}"
-                                            Margin="0 2 0 0"
-                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                            FontSize="11"
-                                            Glyph="&#xEA37;" />
+                                            <FontIcon
+                                                x:Name="TypeRampIcon"
+                                                x:Load="{x:Bind IsTypeRamp}"
+                                                Margin="0 2 0 0"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="11"
+                                                Glyph="&#xEA37;" />
 
-                                        <TextBlock
-                                            x:Name="Text"
-                                            x:Load="{x:Bind core:Converters.False(IsCompact)}"
-                                            Grid.Column="1"
-                                            Margin="0 0 0 0"
-                                            VerticalAlignment="Center"
-                                            IsHitTestVisible="False"
-                                            IsTextScaleFactorEnabled="False"
-                                            TextLineBounds="Tight"
-                                            TextTrimming="CharacterEllipsis">
-                                            <Run FontFamily="{x:Bind core:Converters.GetPreviewFontSource(Font.DefaultVariant), FallbackValue='Segoe UI', TargetNullValue='Segoe UI'}" Text="{x:Bind Font.Name}" />
-                                            <Run />
-                                            <Run
-                                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                                                FontSize="11.333"
-                                                Foreground="{ThemeResource TextFillColorTertiary}"
-                                                Text="{x:Bind SubTitle}" />
-                                        </TextBlock>
-                                    </Grid>
-                                </muxc:TabViewItem.Header>
-                            </muxc:TabViewItem>
-                        </DataTemplate>
-                    </muxc:TabView.TabItemTemplate>
-                </muxc:TabView>
+                                            <TextBlock
+                                                x:Name="Text"
+                                                x:Load="{x:Bind core:Converters.False(IsCompact)}"
+                                                Grid.Column="1"
+                                                Margin="0 0 0 0"
+                                                VerticalAlignment="Center"
+                                                IsHitTestVisible="False"
+                                                IsTextScaleFactorEnabled="False"
+                                                TextLineBounds="Tight"
+                                                TextTrimming="CharacterEllipsis">
+                                                <Run FontFamily="{x:Bind core:Converters.GetPreviewFontSource(Font.DefaultVariant), FallbackValue='Segoe UI', TargetNullValue='Segoe UI'}" Text="{x:Bind Font.Name}" />
+                                                <Run />
+                                                <Run
+                                                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                    FontSize="11.333"
+                                                    Foreground="{ThemeResource TextFillColorTertiary}"
+                                                    Text="{x:Bind SubTitle}" />
+                                            </TextBlock>
+                                        </Grid>
+                                    </muxc:TabViewItem.Header>
+                                </muxc:TabViewItem>
+                            </DataTemplate>
+                        </muxc:TabView.TabItemTemplate>
+                    </muxc:TabView>
+
+                </Border>
 
                 <Border
                     x:Name="TabBorder"
@@ -933,12 +922,9 @@
                         <Setter Target="SplitView.IsPaneOpen" Value="False" />
                         <Setter Target="SplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="CollapsedTabColumn.Width" Value="40" />
-                        <Setter Target="FontsTabBar.Margin" Value="0 0 -24 0" />
-                        <Setter Target="FontCompareButton.Visibility" Value="Visible" />
-                        <Setter Target="OpenFontButton.Visibility" Value="Visible" />
-                        <Setter Target="TitleOpenFontButton.Visibility" Value="Collapsed" />
-                        <Setter Target="ToggleFullScreenModeButton.Visibility" Value="Collapsed" />
-                        <Setter Target="TitleCompareFontsButton.Visibility" Value="Collapsed" />
+                        <Setter Target="FontsTabContainer.Margin" Value="0 0 -24 0" />
+                        <Setter Target="SubMenuButton.Visibility" Value="Visible" />
+                        <Setter Target="MainMenuButton.Visibility" Value="Collapsed" />
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
@@ -950,12 +936,9 @@
                         <Setter Target="SplitView.IsPaneOpen" Value="False" />
                         <Setter Target="SplitView.DisplayMode" Value="Overlay" />
                         <Setter Target="CollapsedTabColumn.Width" Value="40" />
-                        <Setter Target="FontsTabBar.Margin" Value="0 0 -12 0" />
-                        <Setter Target="FontCompareButton.Visibility" Value="Visible" />
-                        <Setter Target="OpenFontButton.Visibility" Value="Visible" />
-                        <Setter Target="TitleOpenFontButton.Visibility" Value="Collapsed" />
-                        <Setter Target="ToggleFullScreenModeButton.Visibility" Value="Collapsed" />
-                        <Setter Target="TitleCompareFontsButton.Visibility" Value="Collapsed" />
+                        <Setter Target="FontsTabContainer.Margin" Value="0 0 -12 0" />
+                        <Setter Target="MainMenuButton.Visibility" Value="Collapsed" />
+                        <Setter Target="SubMenuButton.Visibility" Value="Visible" />
                         <Setter Target="OpenFontPaneButton.Visibility" Value="Visible" />
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
@@ -1062,7 +1045,7 @@
                         <Setter Target="ClassicTitleTextLabel.Visibility" Value="Visible" />
                         <Setter Target="InlineLabelCount.Visibility" Value="Collapsed" />
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
-                        <Setter Target="OpenFontButton.VerticalAlignment" Value="Center" />
+                        <Setter Target="SubMenuButton.VerticalAlignment" Value="Center" />
                         <Setter Target="FontListFilter.VerticalAlignment" Value="Center" />
                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="CollectionControlItems.VerticalAlignment" Value="Center" />

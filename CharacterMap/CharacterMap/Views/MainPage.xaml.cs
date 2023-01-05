@@ -299,7 +299,7 @@ namespace CharacterMap.Views
                         {
                             OpenFontPaneButton,
                             FontListFilter,
-                            OpenFontButton,
+                            TitleButtonsPanel,
                             FontMap.FontTitleBlock,
                             FontMap.SearchBox,
                             BtnSettings

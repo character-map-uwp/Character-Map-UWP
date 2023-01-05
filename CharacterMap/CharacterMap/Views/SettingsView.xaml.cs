@@ -377,7 +377,8 @@ namespace CharacterMap.Views
             return new List<ChangelogItem>
             {
                 new("Latest Update (Jan 2023)", // Jan 2023
-                    "- Added tabbed interface support to the Windows 11 theme"),
+                    "- Added tabbed interface support to the Windows 11 theme\n" +
+                    "- Added ability to compare all faces in a font family from Font List context menu or the \"...\" menu"),
                 new("2022.3.0.0 (Dec 2022)", // Dec 2022
                     "- Added Calligraphy view to practice drawing characters in the style of the chosen font (Ctrl + I)"),
                 new("2022.2.0.0 (May 2022)", // May 2022

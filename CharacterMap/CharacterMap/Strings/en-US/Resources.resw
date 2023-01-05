@@ -1252,4 +1252,7 @@ Requires a restart to take effect.</value>
   <data name="CompareFamilyTitle.Text" xml:space="preserve">
     <value>Compare {0}</value>
   </data>
+  <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open Menu</value>
+  </data>
 </root>
