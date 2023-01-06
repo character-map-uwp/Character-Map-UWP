@@ -91,6 +91,11 @@ namespace CharacterMap.Helpers
             _ = d.ShowAsync();
         }
 
+        public static void PrintRequested()
+        {
+            WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
+        }
+
 
         /// <summary>
         /// Creates the context menu for the Font List or the "..." button.
@@ -137,7 +142,7 @@ namespace CharacterMap.Helpers
 
             static void Print_Click(object sender, RoutedEventArgs e)
             {
-                WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
+                PrintRequested();
             }
 
             static void Export_Click(object sender, RoutedEventArgs e)

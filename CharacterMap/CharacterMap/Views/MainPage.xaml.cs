@@ -349,13 +349,20 @@ namespace CharacterMap.Views
 
         private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
+            ShowSettings();
+        }
+
+        void ShowAbout() => ShowSettings(8);
+
+        void ShowSettings(int idx = 0)
+        {
             // Zune theme shows settings button early right now, so to avoid
             // crashing do nothing until fonts are loaded
             if (ViewModel.IsLoadingFonts)
-                return; 
+                return;
 
             this.FindName(nameof(SettingsView));
-            SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont);
+            SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont, idx);
             OnModalOpened();
         }
 

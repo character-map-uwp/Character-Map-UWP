@@ -330,14 +330,12 @@ namespace CharacterMap.Views
                         TryCopy();
                         break;
                     case VirtualKey.P:
-                        WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
+                        FlyoutHelper.PrintRequested();
                         break;
-                    case VirtualKey.S:
-                        if (ViewModel.SelectedVariant is FontVariant v)
+                    case VirtualKey.S when ViewModel.SelectedVariant is FontVariant v:
                             ExportManager.RequestExportFontFile(v);
                         break;
-                    case VirtualKey.E:
-                        if (ViewModel.SelectedVariant is FontVariant v1)
+                    case VirtualKey.E when ViewModel.SelectedVariant is FontVariant:
                             WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
                         break;
                     case VirtualKey.Add:
@@ -360,8 +358,7 @@ namespace CharacterMap.Views
                     case VirtualKey.K:
                         _ = QuickCompareView.CreateWindowAsync(new(false));
                         break;
-                    case VirtualKey.Q:
-                        if (ViewModel.SelectedVariant is FontVariant va)
+                    case VirtualKey.Q when ViewModel.SelectedVariant is FontVariant va:
                             _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
                         break;
                     case VirtualKey.I:
@@ -921,17 +918,13 @@ namespace CharacterMap.Views
         private void TryPrint()
         {
             if (this.GetFirstAncestorOfType<MainPage>() is null)
-            {
                 PrintView.Show(this);
-            }
         }
 
         private void TryExport()
         {
             if (this.GetFirstAncestorOfType<MainPage>() is null)
-            {
                 ExportView.Show(this);
-            }
         }
 
 
@@ -1044,14 +1037,12 @@ namespace CharacterMap.Views
         public void PlayFontChanged(bool withHeader = true)
         {
             /* Create the animation that is played upon changing font */
-
-            if (ViewModel.Settings.UseSelectionAnimations)
+            if (ResourceHelper.AllowAnimation)
             {
                 int offset = 0;
                 if (withHeader)
                 {
                     offset = 83;
-                    //Composition.PlayEntrance(FontTitleBlock, 0);
                     CompositionFactory.PlayEntrance(CharGridHeader, 83);
                 }
 

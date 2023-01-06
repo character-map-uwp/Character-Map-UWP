@@ -434,6 +434,7 @@ namespace CharacterMap.Core
                                 // Manually trigger the animation every time the tab content changes
                                 if (args.Item is not null 
                                     && args.ItemContainer is not null 
+                                    && ResourceHelper.AllowAnimation
                                     && _tooAdd.FirstOrDefault(r => r.IsAlive && r.Target == args.Item) is WeakReference itemRef)
                                 {
                                     _tooAdd.Remove(itemRef);
@@ -463,6 +464,12 @@ namespace CharacterMap.Core
                                 foreach (var item in _tooAdd.ToList())
                                     if (item.IsAlive is false)
                                         _tooAdd.Remove(item);
+
+                                // Quick hack to apply GetRequireOpenTab states if only one tab is open by default
+                                if (args.ItemContainer is not null
+                                    && sender.Items.Count == 1
+                                    && GetRequireOpenTab(view))
+                                    VisualStateManager.GoToState(args.ItemContainer, "CloseButtonDisabledState", ResourceHelper.AllowAnimation);
                             }
                         }
                     }

@@ -57,14 +57,37 @@
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
-            <MenuFlyoutSeparator />
-
             <MenuFlyoutItem Command="{Binding CommandToggleFullScreen}" Text="{core:Localizer Key='ToggleFullScreenModeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip'}">
                 <MenuFlyoutItem.KeyboardAccelerators>
                     <KeyboardAccelerator Key="F12" />
                 </MenuFlyoutItem.KeyboardAccelerators>
                 <MenuFlyoutItem.Icon>
                     <FontIcon FontSize="14" Glyph="&#xE740;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem Click="{x:Bind helpers:FlyoutHelper.PrintRequested}" Text="Print">
+                <MenuFlyoutItem.KeyboardAccelerators>
+                    <KeyboardAccelerator Key="P" Modifiers="Control" />
+                </MenuFlyoutItem.KeyboardAccelerators>
+                <MenuFlyoutItem.Icon>
+                    <FontIcon FontSize="14" Glyph="&#xE749;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem Click="BtnSettings_OnClick" Text="Settings">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon FontSize="14" Glyph="&#xE115;" />
+                </MenuFlyoutItem.Icon>
+            </MenuFlyoutItem>
+
+            <MenuFlyoutItem Click="{x:Bind ShowAbout}" Text="About">
+                <MenuFlyoutItem.Icon>
+                    <FontIcon FontSize="14" Glyph="&#xE9CE;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
         </MenuFlyout>
@@ -243,7 +266,6 @@
                         x:Name="PaneTitleBarSpacer"
                         Height="{x:Bind TitleBar.TemplateSettings.Height, Mode=OneWay}"
                         d:Height="32" />
-
 
                     <Border
                         x:Name="PaneRootBackground"
