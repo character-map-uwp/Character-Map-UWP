@@ -1253,4 +1253,20 @@ Requires a restart to take effect.</value>
   <data name="CompareShortLabel" xml:space="preserve">
     <value>Compare</value>
   </data>
+  <data name="AllFontsLabel.Text" xml:space="preserve">
+    <value>All Fonts</value>
+  </data>
+  <data name="ImportLabel.Text" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="PreferredFormatGroup.Text" xml:space="preserve">
+    <value>Preferred Format</value>
+    <comment>Preferred export format</comment>
+  </data>
+  <data name="RemoveLabel.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="UndoLabel" xml:space="preserve">
+    <value>Undo</value>
+  </data>
 </root>

@@ -166,7 +166,7 @@
                 Margin="12 0 0 0"
                 VerticalAlignment="Center"
                 Click="BtnUndo_Click"
-                Content="Undo"
+                Content="{core:Localizer Key='UndoLabel'}"
                 Style="{StaticResource ButtonRevealStyle}"
                 Tag="{x:Bind}" />
         </Grid>
@@ -191,9 +191,10 @@
                 Margin="12 0 0 0"
                 VerticalAlignment="Center"
                 Click="BtnUndo_Click"
-                Content="Undo"
+                Content="{core:Localizer Key='UndoLabel'}"
                 Style="{StaticResource ButtonRevealStyle}"
-                Tag="{x:Bind}" />
+                Tag="{x:Bind}"
+                d:Content="Undo" />
         </Grid>
     </DataTemplate>
 

@@ -130,7 +130,10 @@
             <controls:SettingsPresenter HorizontalContentAlignment="Stretch" ContentPlacement="Bottom">
                 <controls:SettingsPresenter.Title>
                     <Grid>
-                        <TextBlock VerticalAlignment="Center" Text="All Fonts" />
+                        <TextBlock
+                            x:Uid="AllFontsLabel"
+                            VerticalAlignment="Center"
+                            d:Text="All Fonts" />
                         <StackPanel
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"

@@ -68,7 +68,7 @@
 
             <MenuFlyoutSeparator />
 
-            <MenuFlyoutItem Click="{x:Bind helpers:FlyoutHelper.PrintRequested}" Text="Print">
+            <MenuFlyoutItem Click="{x:Bind helpers:FlyoutHelper.PrintRequested}" Text="{core:Localizer Key='BtnPrint/Content'}">
                 <MenuFlyoutItem.KeyboardAccelerators>
                     <KeyboardAccelerator Key="P" Modifiers="Control" />
                 </MenuFlyoutItem.KeyboardAccelerators>
@@ -79,13 +79,19 @@
 
             <MenuFlyoutSeparator />
 
-            <MenuFlyoutItem Click="BtnSettings_OnClick" Text="Settings">
+            <MenuFlyoutItem
+                x:Uid="SettingsHeader"
+                Click="BtnSettings_OnClick"
+                d:Text="Settings">
                 <MenuFlyoutItem.Icon>
                     <FontIcon FontSize="14" Glyph="&#xE115;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
-            <MenuFlyoutItem Click="{x:Bind ShowAbout}" Text="About">
+            <MenuFlyoutItem
+                x:Uid="SettingsAboutLabel"
+                Click="{x:Bind ShowAbout}"
+                d:Text="About">
                 <MenuFlyoutItem.Icon>
                     <FontIcon FontSize="14" Glyph="&#xE9CE;" />
                 </MenuFlyoutItem.Icon>

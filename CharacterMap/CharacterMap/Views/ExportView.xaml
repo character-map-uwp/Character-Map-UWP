@@ -604,7 +604,7 @@
 
                         </cmControls:ContentGroup>
 
-                        <cmControls:ContentGroup Text="Preferred Format" d:Visibility="Collapsed">
+                        <cmControls:ContentGroup x:Uid="PreferredFormatGroup" d:Visibility="Collapsed">
 
                             <TextBlock
                                 x:Uid="ExportGlyphFormatDescription"

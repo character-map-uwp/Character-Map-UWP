@@ -204,7 +204,7 @@
                                 <TextBlock
                                     x:Uid="SettingsUIHeader"
                                     Style="{StaticResource SectionHeaderTextBlockStyle}"
-                                    Text="#UserInterface" />
+                                    d:Text="#UserInterface" />
 
                                 <controls:SettingsPresenter
                                     Title="{core:Localizer Key=SettingsCharGridHeader/Text}"
@@ -630,9 +630,10 @@
 
                                         <StackPanel Spacing="6">
                                             <TextBlock
+                                                x:Uid="ImportLabel"
                                                 Margin="0 16 0 0"
                                                 Style="{StaticResource HeaderStyle}"
-                                                Text="Import" />
+                                                d:Text="Import" />
                                             <Grid
                                                 x:Name="ImportFontsRegion"
                                                 Width="340"
@@ -780,8 +781,8 @@
                                         <TextBlock
                                             x:Uid="Settings_AboutDescription"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="#Settings_AboutDescription"
-                                            TextWrapping="Wrap" />
+                                            TextWrapping="Wrap"
+                                            d:Text="#Settings_AboutDescription" />
 
                                         <StackPanel>
                                             <controls:UXHyperlinkButton Content="GitHub" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP" />

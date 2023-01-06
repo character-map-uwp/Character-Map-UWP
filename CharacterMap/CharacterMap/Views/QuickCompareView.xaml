@@ -124,9 +124,10 @@
             MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
             Placement="Bottom">
             <MenuFlyoutItem
+                x:Uid="RemoveLabel"
                 Click="Remove_Clicked"
                 Icon="Clear"
-                Text="Remove" />
+                d:Text="Remove" />
             <MenuFlyoutItem
                 x:Uid="OpenInNewWindow"
                 Click="OpenWindow_Click"
