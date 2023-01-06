@@ -324,12 +324,13 @@
                         </Grid.RowDefinitions>
 
                         <StackPanel VerticalAlignment="Center" Spacing="8">
-                            <TextBlock
+                            <ContentPresenter
+                                HorizontalAlignment="Stretch"
+                                Content="{TemplateBinding Title}"
                                 FontSize="20"
                                 FontWeight="SemiBold"
                                 Foreground="{ThemeResource DefaultControlForegroundBrush}"
-                                OpticalMarginAlignment="TrimSideBearings"
-                                Text="{TemplateBinding Title}" />
+                                OpticalMarginAlignment="TrimSideBearings" />
                             <TextBlock
                                 x:Name="Description"
                                 x:Load="False"

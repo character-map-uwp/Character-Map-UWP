@@ -99,5 +99,10 @@ namespace CharacterMap.Views
 
             ViewModel.Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
         }
+
+        private string GetCountLabel(int fontCount, int selectedCount)
+        {
+            return string.Format(Localization.Get("FontsSelectedCountLabel"), fontCount, selectedCount);
+        }
     }
 }

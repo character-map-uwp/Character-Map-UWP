@@ -539,7 +539,16 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <TextBlock Style="{StaticResource HeaderStyle}" Text="{TemplateBinding Title}" />
+
+                        <ContentPresenter
+                            Margin="0 20 0 4"
+                            HorizontalAlignment="Stretch"
+                            Content="{TemplateBinding Title}"
+                            FontFamily="{TemplateBinding FontFamily}"
+                            FontSize="{ThemeResource ControlContentThemeFontSize}"
+                            FontWeight="Bold"
+                            OpticalMarginAlignment="TrimSideBearings" />
+
                         <TextBlock
                             x:Name="Description"
                             Grid.Row="1"

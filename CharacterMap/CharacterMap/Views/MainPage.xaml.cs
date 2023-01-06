@@ -590,6 +590,11 @@ namespace CharacterMap.Views
             _ = QuickCompareView.CreateWindowAsync(new(false, ViewModel.Folder));
         }
 
+        private void CollectionCompareButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = QuickCompareView.CreateWindowAsync(new(false) { SelectedCollection = ViewModel.SelectedCollection });
+        }
+
         private void LstFontFamily_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
             args.ItemContainer.PointerPressed -= ItemContainer_PointerPressed;

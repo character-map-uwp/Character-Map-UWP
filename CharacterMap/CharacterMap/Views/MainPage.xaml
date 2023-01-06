@@ -431,16 +431,18 @@
                             Height="48"
                             Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}">
                             <Border x:Name="CollectionControlBackground" Background="{ThemeResource DefaultAcrylicBrush}" />
-                            <StackPanel
+                            <wct:WrapPanel
                                 x:Name="CollectionControlItems"
                                 Padding="0,0"
                                 HorizontalAlignment="Center"
-                                VerticalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                HorizontalSpacing="12"
                                 Orientation="Horizontal"
-                                Spacing="12">
+                                VerticalSpacing="4">
                                 <controls:UXButton
+                                    x:Name="RenameButton"
                                     x:Uid="RenameCollectionButton"
-                                    Height="Auto"
+                                    Height="40"
                                     VerticalAlignment="Stretch"
                                     Click="RenameFontCollection_Click"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
@@ -451,7 +453,7 @@
                                 </controls:UXButton>
                                 <controls:UXButton
                                     x:Uid="DeleteCollectionButton"
-                                    Height="Auto"
+                                    Height="{Binding Height, ElementName=RenameButton}"
                                     VerticalAlignment="Stretch"
                                     Click="DeleteCollection_Click"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
@@ -463,11 +465,12 @@
                                 <controls:UXButton
                                     x:Name="CollectionExportButton"
                                     x:Uid="CollectionExportButton"
-                                    Height="Auto"
+                                    Height="{Binding Height, ElementName=RenameButton}"
                                     VerticalAlignment="Stretch"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     IsEnabled="{x:Bind core:Converters.TrueTrue(ViewModel.HasFonts, ViewModel.IsCollectionExportEnabled), Mode=OneWay}"
                                     Style="{StaticResource MapInfoButtonStyle}"
+                                    ToolTipService.Placement="Bottom"
                                     d:Label="Export">
                                     <Button.Flyout>
                                         <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
@@ -495,7 +498,19 @@
                                     </Grid>
 
                                 </controls:UXButton>
-                            </StackPanel>
+                                <controls:UXButton
+                                    Height="{Binding Height, ElementName=RenameButton}"
+                                    VerticalAlignment="Stretch"
+                                    Click="CollectionCompareButton_Click"
+                                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                                    Label="{core:Localizer Key='CompareShortLabel'}"
+                                    Style="{StaticResource MapInfoButtonStyle}"
+                                    ToolTipService.Placement="Bottom"
+                                    ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}"
+                                    d:Label="Compare Fonts">
+                                    <FontIcon FontSize="16" Glyph="&#xE1D3;" />
+                                </controls:UXButton>
+                            </wct:WrapPanel>
                         </Grid>
 
                         <!--  Font List Refresh Grid  -->
@@ -1069,6 +1084,8 @@
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="SubMenuButton.VerticalAlignment" Value="Center" />
                         <Setter Target="FontListFilter.VerticalAlignment" Value="Center" />
+                        <Setter Target="RenameButton.Height" Value="26" />
+                        <Setter Target="CollectionControlRow.Height" Value="64" />
                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="CollectionControlItems.VerticalAlignment" Value="Center" />
                     </VisualState.Setters>

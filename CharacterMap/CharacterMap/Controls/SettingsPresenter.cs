@@ -26,14 +26,14 @@ namespace CharacterMap.Controls
     {
         #region Dependency Properties 
 
-        public string Title
+        public object Title
         {
-            get { return (string)GetValue(TitleProperty); }
+            get { return (object)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
         }
 
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(SettingsPresenter), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Title), typeof(object), typeof(SettingsPresenter), new PropertyMetadata(null));
 
 
         public string Description

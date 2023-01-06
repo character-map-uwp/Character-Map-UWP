@@ -117,43 +117,49 @@
             </Grid>
         </controls:SettingsPresenter>
 
-
-
-
         <Grid
             Grid.Row="3"
-            ColumnSpacing="8"
-            Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}">
+            ColumnSpacing="24"
+            Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}"
+            d:Visibility="Visible">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" MaxWidth="300" />
-                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <controls:SettingsPresenter Title="All Fonts" ContentPlacement="Bottom">
+            <controls:SettingsPresenter HorizontalContentAlignment="Stretch" ContentPlacement="Bottom">
+                <controls:SettingsPresenter.Title>
+                    <Grid>
+                        <TextBlock VerticalAlignment="Center" Text="All Fonts" />
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <controls:UXButton
+                                Click="{x:Bind AllFontsList.ClearSelection}"
+                                IsEnabled="{x:Bind AllFontsList.HasSelection, Mode=OneWay}"
+                                RelativePanel.AlignRightWithPanel="True"
+                                ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}">
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
+                            </controls:UXButton>
+                            <controls:UXButton
+                                x:Uid="AddTooButton"
+                                Click="{x:Bind ViewModel.AddToCollection}"
+                                IsEnabled="{x:Bind core:Converters.TrueFalse(AllFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}"
+                                IsLabelVisible="True">
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE109;" />
+                            </controls:UXButton>
+                        </StackPanel>
+
+                    </Grid>
+                </controls:SettingsPresenter.Title>
                 <Grid RowSpacing="8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <RelativePanel>
-                        <TextBlock
-                            RelativePanel.AlignLeftWithPanel="True"
-                            RelativePanel.AlignVerticalCenterWithPanel="True"
-                            Style="{StaticResource DescriptionStyle}">
-                            <Run Text="{x:Bind ViewModel.FontList.Count, Mode=OneWay, FallbackValue='0', TargetNullValue='0'}" />
-                            <Run Text="fonts," />
-                            <Run Text="{x:Bind AllFontsList.SelectionCount, Mode=OneWay, FallbackValue='0', TargetNullValue='0'}" />
-                            <Run Text="selected" />
-                        </TextBlock>
-                        <controls:UXButton
-                            Click="{x:Bind AllFontsList.ClearSelection}"
-                            IsEnabled="{x:Bind AllFontsList.HasSelection, Mode=OneWay}"
-                            RelativePanel.AlignRightWithPanel="True"
-                            ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}">
-                            <SymbolIcon Symbol="ClearSelection" />
-                        </controls:UXButton>
-                    </RelativePanel>
+                    <TextBlock Style="{StaticResource DescriptionStyle}" Text="{x:Bind GetCountLabel(ViewModel.FontList.Count, AllFontsList.SelectionCount), Mode=OneWay}" />
                     <controls:ExtendedListView
                         x:Name="AllFontsList"
                         Grid.Row="1"
@@ -166,54 +172,45 @@
                 </Grid>
             </controls:SettingsPresenter>
 
-            <StackPanel
-                Grid.Column="1"
-                VerticalAlignment="Center"
-                Spacing="20">
-                <controls:UXButton
-                    x:Uid="AddTooButton"
-                    Click="{x:Bind ViewModel.AddToCollection}"
-                    IsEnabled="{x:Bind core:Converters.TrueFalse(AllFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}"
-                    IsLabelVisible="True">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE0E3;" />
-                </controls:UXButton>
-
-                <controls:UXButton
-                    x:Uid="RemoveFromButton"
-                    Click="{x:Bind ViewModel.RemoveFromCollection}"
-                    IsEnabled="{x:Bind core:Converters.TrueFalse(CollectionFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}">
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE0E2;" />
-                </controls:UXButton>
-            </StackPanel>
-
             <controls:SettingsPresenter
-                Title="{x:Bind ViewModel.SelectedCollection.Name, Mode=OneWay, FallbackValue='', TargetNullValue=''}"
                 Grid.Column="2"
+                HorizontalContentAlignment="Stretch"
                 ContentPlacement="Bottom">
+                <controls:SettingsPresenter.Title>
+                    <Grid>
+                        <TextBlock VerticalAlignment="Center" Text="{x:Bind ViewModel.SelectedCollection.Name, Mode=OneWay, FallbackValue='', TargetNullValue=''}" />
+                        <StackPanel
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <controls:UXButton
+                                Click="{x:Bind CollectionFontsList.ClearSelection}"
+                                IsEnabled="{x:Bind CollectionFontsList.HasSelection, Mode=OneWay}"
+                                RelativePanel.AlignRightWithPanel="True"
+                                ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}">
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
+                            </controls:UXButton>
+                            <controls:UXButton
+                                x:Uid="RemoveFromButton"
+                                Click="{x:Bind ViewModel.RemoveFromCollection}"
+                                IsEnabled="{x:Bind core:Converters.TrueFalse(CollectionFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}">
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE108;" />
+                            </controls:UXButton>
+                        </StackPanel>
+
+                    </Grid>
+                </controls:SettingsPresenter.Title>
+
                 <Grid RowSpacing="8">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <RelativePanel>
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            RelativePanel.AlignLeftWithPanel="True"
-                            RelativePanel.AlignVerticalCenterWithPanel="True"
-                            Style="{StaticResource DescriptionStyle}">
-                            <Run Text="{x:Bind ViewModel.CollectionFonts.Count, Mode=OneWay, FallbackValue='0', TargetNullValue='0'}" />
-                            <Run Text="{core:Localizer Key=FontsPartialLabel}" />
-                            <Run Text="{x:Bind CollectionFontsList.SelectionCount, Mode=OneWay, FallbackValue='0', TargetNullValue='0'}" />
-                            <Run Text="{core:Localizer Key=SelectedPartialLabel}" />
-                        </TextBlock>
-                        <controls:UXButton
-                            Click="{x:Bind CollectionFontsList.ClearSelection}"
-                            IsEnabled="{x:Bind CollectionFontsList.HasSelection, Mode=OneWay}"
-                            RelativePanel.AlignRightWithPanel="True"
-                            ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}">
-                            <SymbolIcon Symbol="ClearSelection" />
-                        </controls:UXButton>
-                    </RelativePanel>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Style="{StaticResource DescriptionStyle}"
+                        Text="{x:Bind GetCountLabel(ViewModel.CollectionFonts.Count, CollectionFontsList.SelectionCount), Mode=OneWay}" />
 
                     <controls:ExtendedListView
                         x:Name="CollectionFontsList"

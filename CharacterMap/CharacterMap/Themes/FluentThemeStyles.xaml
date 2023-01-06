@@ -148,11 +148,15 @@
                             Margin="0 0 18 0"
                             Visibility="Collapsed" />
 
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <TextBlock
+                        <StackPanel
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Center">
+                            <ContentPresenter
+                                HorizontalAlignment="Stretch"
+                                Content="{TemplateBinding Title}"
                                 FontFamily="{TemplateBinding FontFamily}"
-                                FontSize="14"
-                                Text="{TemplateBinding Title}" />
+                                FontSize="14" />
                             <TextBlock
                                 x:Name="Description"
                                 x:Load="False"

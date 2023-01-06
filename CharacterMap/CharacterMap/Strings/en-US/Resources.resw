@@ -1118,10 +1118,6 @@ Requires a restart to take effect.</value>
   <data name="CreateNewButton.Content" xml:space="preserve">
     <value>Create New</value>
   </data>
-  <data name="FontsPartialLabel" xml:space="preserve">
-    <value>fonts,</value>
-    <comment>{0} fonts, {1} selected</comment>
-  </data>
   <data name="OrLabel.Text" xml:space="preserve">
     <value>or</value>
   </data>
@@ -1130,10 +1126,6 @@ Requires a restart to take effect.</value>
   </data>
   <data name="SelectCollectionLabel" xml:space="preserve">
     <value>Select Collection</value>
-  </data>
-  <data name="SelectedPartialLabel" xml:space="preserve">
-    <value>selected</value>
-    <comment>{0} fonts, {1} selected</comment>
   </data>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
     <value>Collections</value>
@@ -1254,5 +1246,11 @@ Requires a restart to take effect.</value>
   </data>
   <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Open Menu</value>
+  </data>
+  <data name="FontsSelectedCountLabel" xml:space="preserve">
+    <value>{0} fonts, {1} selected</value>
+  </data>
+  <data name="CompareShortLabel" xml:space="preserve">
+    <value>Compare</value>
   </data>
 </root>

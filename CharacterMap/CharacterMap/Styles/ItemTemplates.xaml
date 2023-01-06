@@ -46,7 +46,8 @@
         <Grid
             ColumnSpacing="12"
             Padding="12 4"
-            Background="Transparent">
+            Background="Transparent"
+            ToolTipService.ToolTip="{x:Bind Name}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

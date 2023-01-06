@@ -1,4 +1,5 @@
-﻿using CharacterMap.Core;
+﻿using CharacterMap.Controls;
+using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
@@ -134,7 +135,9 @@ namespace CharacterMap.Views
             });
         }
 
-        public void Show(FontVariant variant, InstalledFont font)
+        int _requested = 0;
+
+        public void Show(FontVariant variant, InstalledFont font, int idx = 0)
         {
             if (IsOpen)
                 return;
@@ -190,6 +193,10 @@ namespace CharacterMap.Views
             IsOpen = true;
 
             _navHelper.Activate();
+
+            _requested = idx;
+            if (IsLoaded)
+                MenuColumn.Children.OfType<MenuButton>().ElementAt(idx).IsChecked = true;
         }
 
         public void Hide()
@@ -221,10 +228,10 @@ namespace CharacterMap.Views
         {
             UpdateStyle();
 
-            ((RadioButton)MenuColumn.Children.First()).IsChecked = true;
+            ((RadioButton)MenuColumn.Children.ElementAt(_requested)).IsChecked = true;
 
             // Set the settings that can't be set with bindings
-            if (_themeSupportsDark)
+            if (_themeSupportsDark && ThemeSystem is not null)
             {
                 switch (Settings.UserRequestedTheme)
                 {

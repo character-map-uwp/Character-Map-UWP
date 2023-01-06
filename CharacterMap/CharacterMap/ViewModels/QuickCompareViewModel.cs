@@ -23,6 +23,8 @@ namespace CharacterMap.ViewModels
 
         public bool IsFolderView => Folder is not null;
 
+        public UserFontCollection SelectedCollection { get; init; }
+
         public QuickCompareArgs(bool isQuickCompare, FolderContents folder = null)
         {
             IsQuickCompare = isQuickCompare;
@@ -102,9 +104,8 @@ namespace CharacterMap.ViewModels
             {
                 if (args.IsQuickCompare)
                 {
-                    QuickFonts = new();
-
                     // This is the universal quick-compare window
+                    QuickFonts = new();
                     Register<CharacterRenderingOptions>(m =>
                     {
                         // Only add the font variant if it's not already in the list.
@@ -116,13 +117,16 @@ namespace CharacterMap.ViewModels
                 }
                 else
                 {
+                    // This is probably the tab bar compare window
                     QuickFonts = new(args.Folder.Variants.Select(v => CharacterRenderingOptions.CreateDefault(v)));
                 }
             }
             else
             {
-                RefreshFontList();
                 FontCollections = Ioc.Default.GetService<UserCollectionsService>();
+                SelectedCollection = args.SelectedCollection;
+                RefreshFontList(SelectedCollection);
+
                 FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
                 CollectionSelectedCommand = new RelayCommand<object>(e => SelectedCollection = e as UserFontCollection);
                 
@@ -131,6 +135,7 @@ namespace CharacterMap.ViewModels
                     IsFolderMode = true;
             }
 
+            // Set Title
             if (IsQuickCompare && args.IsQuickCompare)
                 Title = Localization.Get("QuickCompareTitle/Text");
             else if (IsQuickCompare && args.Folder.IsFamilyCompare)

@@ -961,6 +961,7 @@
 
     <Style x:Key="DefaultSettingsPresenterStyle" TargetType="controls:SettingsPresenter">
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 12 0 0" />
@@ -993,9 +994,13 @@
                         <Border
                             Margin="12 0"
                             Padding="4 0"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             Background="{ThemeResource DefaultPageBackgroundBrush}">
-                            <TextBlock FontSize="{ThemeResource ControlContentThemeFontSize}" Text="{TemplateBinding Title}" />
+                            <ContentPresenter
+                                HorizontalAlignment="Stretch"
+                                Content="{TemplateBinding Title}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{ThemeResource ControlContentThemeFontSize}" />
                         </Border>
 
                         <RelativePanel Grid.Row="1" Margin="16 8 16 16">
