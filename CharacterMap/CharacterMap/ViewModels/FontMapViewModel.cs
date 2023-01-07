@@ -631,7 +631,12 @@ namespace CharacterMap.ViewModels
 
         public void AddCharToSequence(int start, int length, Character c)
         {
-            Sequence = Sequence.Remove(start, length).Insert(start, c.Char);
+            var s = Sequence;
+            start = Math.Min(start, Sequence.Length);
+            if (s.Length > 0)
+                s = s.Remove(start, length);
+                    
+            Sequence = s.Insert(start, c.Char);
         }
 
     }
