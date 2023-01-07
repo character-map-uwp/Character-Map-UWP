@@ -1069,6 +1069,7 @@
                         <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
                         <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
+                        <Setter Target="FontMap.Margin" Value="0 0 2 4" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
