@@ -299,18 +299,20 @@ namespace CharacterMap.Helpers
                         del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
                 }
 
-                // 7. Add "Compare Fonts button"
-                if (font.HasVariants)
-                {
+                // 7. Handle compare options
+                bool qc = args.IsFolderView is false && showAdvanced && isExternalFile is false;
+                if (qc || font.HasVariants)
                     menu.AddSeparator();
-                    Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", "\uE1D3", OpenFaceCompare);
-                }
 
-                // 8. Add "Add to quick compare" button if we're viewing a variant
-                if (args.IsFolderView is false && showAdvanced && isExternalFile is false)
+                // 7.1. Add "Compare Fonts button"
+                if (font.HasVariants)
+                    Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", "\uE1D3", OpenFaceCompare);
+
+                // 7.2. Add "Add to quick compare" button if we're viewing a variant
+                if (qc)
                     Create("AddToQuickCompare/Text", "\uE109", AddToQuickCompare, VirtualKey.Q);
 
-                // 9. Add Calligraphy button
+                // 8. Add Calligraphy button
                 menu.AddSeparator();
                 Create("CalligraphyLabel/Text", "\uEDFB", OpenCalligraphy, VirtualKey.I);
             }

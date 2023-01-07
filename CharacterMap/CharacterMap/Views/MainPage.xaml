@@ -22,6 +22,8 @@
         <x:Double x:Key="SplitViewPaneWidth">256</x:Double>
         <GridLength x:Key="PaneGridWidth">256</GridLength>
 
+        <MenuFlyout x:Key="TabContextMenu" Opening="TabViewItemContext_Opening" />
+
         <MenuFlyout
             x:Key="MainMenuFlyout"
             MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
@@ -767,12 +769,10 @@
                             <DataTemplate x:DataType="vm:FontItem" x:DefaultBindMode="OneWay">
                                 <muxc:TabViewItem
                                     core:Properties.IsCompact="{x:Bind IsCompact}"
+                                    core:Properties.TargetContextFlyout="{StaticResource TabContextMenu}"
                                     DoubleTapped="TabViewItem_DoubleTapped"
                                     IsDoubleTapEnabled="True"
                                     ToolTipService.ToolTip="{x:Bind Tooltip}">
-                                    <muxc:TabViewItem.ContextFlyout>
-                                        <MenuFlyout Opening="TabViewItemContext_Opening" />
-                                    </muxc:TabViewItem.ContextFlyout>
                                     <muxc:TabViewItem.Header>
                                         <Grid ColumnSpacing="8">
                                             <Grid.ColumnDefinitions>

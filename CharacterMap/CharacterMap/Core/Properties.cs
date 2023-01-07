@@ -12,6 +12,7 @@ using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Markup;
@@ -511,6 +512,39 @@ namespace CharacterMap.Core
                     {
                         foreach (var item in items)
                             VisualStateManager.GoToState(item, "CloseButtonEnabledState", ResourceHelper.AllowAnimation);
+                    }
+                }
+            }));
+
+        #endregion
+
+        #region TargetContextFlyout
+
+        public static FlyoutBase GetTargetContextFlyout(DependencyObject obj)
+        {
+            return (FlyoutBase)obj.GetValue(TargetContextFlyoutProperty);
+        }
+
+        public static void SetTargetContextFlyout(DependencyObject obj, FlyoutBase value)
+        {
+            obj.SetValue(TargetContextFlyoutProperty, value);
+        }
+
+        public static readonly DependencyProperty TargetContextFlyoutProperty =
+            DependencyProperty.RegisterAttached("TargetContextFlyout", typeof(FlyoutBase), typeof(Properties), new PropertyMetadata(null, (d, e) =>
+            {
+                if (d is FrameworkElement f)
+                {
+                    f.ContextRequested -= ContextRequested;
+                    f.ContextRequested += ContextRequested;
+                }
+
+                static void ContextRequested(UIElement sender, Windows.UI.Xaml.Input.ContextRequestedEventArgs args)
+                {
+                    if (GetTargetContextFlyout(sender) is FlyoutBase f)
+                    {
+                        args.TryGetPosition(sender, out Windows.Foundation.Point p);
+                        f.ShowAt(sender, new() { Position = p });
                     }
                 }
             }));
