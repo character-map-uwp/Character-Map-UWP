@@ -336,10 +336,18 @@ namespace CharacterMap.ViewModels
                     //      add it to the list.
                     if (FontFinder.FontDictionary.TryGetValue(list[i], out InstalledFont font))
                     {
-                        FontItem item = new(font);
-                        item.Selected = item.Font.Variants[Convert.ToInt32(list[++i])];
-                        item.DisplayMode = (FontDisplayMode)Convert.ToInt32(list[++i]);
-                        Fonts.Add(item);
+                        // 1.2. The selected font face (or another in the family) may have been
+                        //      deleted making the stored index invalid. Make sure the index is
+                        //      still within a valid range.
+                        int faceIdx = Convert.ToInt32(list[++i]);
+                        if ((faceIdx < font.Variants.Count) is false)
+                            faceIdx = font.Variants.IndexOf(font.DefaultVariant);
+
+                        Fonts.Add(new(font)
+                        {
+                            Selected = font.Variants[faceIdx],
+                            DisplayMode = (FontDisplayMode)Convert.ToInt32(list[++i])
+                        });
                     }
                     else
                     {
