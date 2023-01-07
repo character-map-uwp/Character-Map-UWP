@@ -910,19 +910,13 @@
                             Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
                             InputScope="Text"
                             IsColorFontEnabled="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
+                            IsHandwritingViewEnabled="False"
                             IsSpellCheckEnabled="False"
                             IsTextPredictionEnabled="False"
                             IsTextScaleFactorEnabled="False"
                             SelectionHighlightColorWhenNotFocused="{Binding RelativeSource={RelativeSource Mode=Self}, Path=SelectionHighlightColor}"
                             Style="{StaticResource ChromelessTextBoxStyle}"
                             Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-                        <!--<TextBlock
-                        x:Name="CopySequenceText"
-                        Padding="24"
-                        FontFamily="{Binding FontFamily, Mode=OneWay}"
-                        FontSize="48"
-                        TextWrapping="Wrap" />-->
 
                         <Grid Grid.Column="1" Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
                             <Grid.Resources>
