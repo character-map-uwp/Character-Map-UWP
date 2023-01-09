@@ -437,4 +437,26 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="controls:ButtonGroup">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <Grid />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ButtonGroup">
+                    <ItemsPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

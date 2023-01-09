@@ -9,7 +9,6 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,7 +21,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Storage.Pickers;
 using Windows.System;
-using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -230,11 +228,6 @@ namespace CharacterMap.Views
             UpdateLoadingStates();
             
             FontMap.ViewModel.Folder = ViewModel.Folder;
-
-            if (DesignMode)
-            {
-                FontsTabBar.TabItemsSource = new List<FontItem> { new(), new(), new() };
-            }
         }
 
         protected override void OnUnloaded(object sender, RoutedEventArgs e)
@@ -263,13 +256,9 @@ namespace CharacterMap.Views
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (e.NewSize.Width < 900)
-            {
                 GoToState(nameof(CompactViewState));
-            }
             else if (ViewStates.CurrentState == CompactViewState)
-            {
                 GoToState(nameof(DefaultViewState));
-            }
         }
 
         private void OnColorValuesChanged(UISettings settings, object e)
@@ -338,13 +327,15 @@ namespace CharacterMap.Views
         private void TogglePane_Click(object sender, RoutedEventArgs e)
         {
             if (SplitView.DisplayMode == SplitViewDisplayMode.Inline)
-            {
                 GoToState(nameof(CollapsedViewState));
-            }
             else
-            {
                 GoToState(nameof(DefaultViewState));
-            }
+        }
+
+        void ShowPrint()
+        {
+            DismissMenu();
+            FlyoutHelper.PrintRequested();
         }
 
         private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
@@ -360,6 +351,8 @@ namespace CharacterMap.Views
             // crashing do nothing until fonts are loaded
             if (ViewModel.IsLoadingFonts)
                 return;
+
+            DismissMenu();
 
             this.FindName(nameof(SettingsView));
             SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont, idx);
@@ -587,6 +580,8 @@ namespace CharacterMap.Views
 
         private void FontCompareButton_Click(object sender, RoutedEventArgs e)
         {
+            DismissMenu();
+
             _ = QuickCompareView.CreateWindowAsync(new(false, ViewModel.Folder));
         }
 
@@ -670,9 +665,11 @@ namespace CharacterMap.Views
 
         private void OpenFolder()
         {
+            DismissMenu();
             _ = (new OpenFolderDialog()).ShowAsync();
         }
 
+        void DismissMenu() => AppMenuFlyout.Hide();
 
 
 
@@ -747,6 +744,8 @@ namespace CharacterMap.Views
 
         private async void OpenFont()
         {
+            DismissMenu();
+
             var picker = new FileOpenPicker();
             foreach (var format in FontFinder.ImportFormats)
                 picker.FileTypeFilter.Add(format);

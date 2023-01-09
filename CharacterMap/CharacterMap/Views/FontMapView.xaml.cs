@@ -362,8 +362,7 @@ namespace CharacterMap.Views
                             _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
                         break;
                     case VirtualKey.I:
-                        _ = CalligraphyView.CreateWindowAsync(
-                                ViewModel.RenderingOptions, ViewModel.Sequence);
+                        OpenCalligraphy();
                         break;
                     default:
                         return false;
@@ -372,6 +371,7 @@ namespace CharacterMap.Views
 
             return true;
         }
+
 
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
@@ -537,6 +537,12 @@ namespace CharacterMap.Views
 
 
         /* Public surface-area methods */
+
+        public void OpenCalligraphy()
+        {
+            _ = CalligraphyView.CreateWindowAsync(
+                ViewModel.RenderingOptions, ViewModel.Sequence);
+        }
 
         public void SelectCharacter(Character ch)
         {

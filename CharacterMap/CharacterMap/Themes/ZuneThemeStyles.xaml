@@ -16,6 +16,7 @@
     <BrushTransition x:Key="DefaultBrushTransition" Duration="0:0:0.1" />
     <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource SystemChromeMediumColor}" />
     <x:Double x:Key="MinTitleBarHeight">32</x:Double>
+    <CornerRadius x:Key="CardCornerRadius">0</CornerRadius>
 
 
 
@@ -122,6 +123,8 @@
     <SolidColorBrush x:Key="FlyoutPresenterBackground" Color="White" />
     <SolidColorBrush x:Key="FlyoutBorderThemeBrush" Color="#AFAAAC" />
 
+    <!--<StaticResource x:Key="CardStrokeColorDefaultBrush" ResourceKey="ComboBoxBorderBrush" />-->
+
     <SolidColorBrush x:Key="ControlForegroundBrush" Color="#373A3D" />
     <SolidColorBrush x:Key="AltHostBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ComboBoxBorderBrush" Color="#C2C2C2" />
@@ -164,6 +167,11 @@
         <GradientStop Offset="1" Color="#EC1293" />
     </LinearGradientBrush>
 
+
+    <Style TargetType="controls:ButtonGroup">
+        <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
+        <Setter Property="FontWeight" Value="Light" />
+    </Style>
 
 
 
@@ -231,16 +239,6 @@
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="LineStackingStrategy" Value="MaxHeight" />
         <Setter Property="TextLineBounds" Value="Full" />
-    </Style>
-
-    <Style x:Key="FontListFlyoutStyle" TargetType="MenuFlyoutPresenter">
-        <Setter Property="FontSize" Value="{StaticResource FontListFlyoutFontSize}" />
-        <Setter Property="CornerRadius" Value="0" />
-        <Setter Property="Margin" Value="0 -4 0 0" />
-        <Setter Property="FontWeight" Value="SemiBold" />
-        <Setter Property="Background" Value="White" />
-        <Setter Property="Padding" Value="0" />
-        <Setter Property="BorderThickness" Value="1" />
     </Style>
 
 
@@ -1001,7 +999,59 @@
         </Setter>
     </Style>
 
+    <DataTemplate x:Key="LabelButtonContentTemplate">
+        <Grid ColumnSpacing="12" Margin="4 0 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
 
+            <FontIcon
+                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                FontSize="30"
+                Glyph="{Binding Glyph}" />
+
+            <StackPanel
+                Grid.Column="1"
+                Margin="0 -2 0 0"
+                Spacing="0">
+                <TextBlock FontWeight="Light">
+                    <Run FontSize="18" Text="{Binding Title, Converter={StaticResource FontSelectorTitleConverter}}" />
+                    <Run
+                        FontSize="14"
+                        FontWeight="SemiLight"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="{Binding Shortcut, Converter={StaticResource FontSelectorTitleConverter}}" />
+                </TextBlock>
+                <TextBlock
+                    FontSize="11"
+                    FontWeight="SemiBold"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{Binding Description, Converter={StaticResource Upper}}"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="CompactLabelButtonContentTemplate">
+        <StackPanel Spacing="8">
+            <FontIcon
+                HorizontalAlignment="Center"
+                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                FontSize="24"
+                Glyph="{Binding Glyph}" />
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock FontWeight="Light" TextAlignment="Center">
+                    <Run FontSize="14" Text="{Binding Title, Converter={StaticResource FontSelectorTitleConverter}}" />
+                    <Run
+                        FontSize="12"
+                        FontWeight="SemiLight"
+                        Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}"
+                        Text="{Binding Shortcut, Converter={StaticResource FontSelectorTitleConverter}}" />
+                </TextBlock>
+            </StackPanel>
+        </StackPanel>
+    </DataTemplate>
 
 
     <!--  SCROLLING  -->
@@ -3231,16 +3281,26 @@
         <Setter Property="MinHeight" Value="30" />
     </Style>
 
+    <Style x:Key="FontListFlyoutStyle" TargetType="MenuFlyoutPresenter">
+        <Setter Property="FontSize" Value="{StaticResource FontListFlyoutFontSize}" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Margin" Value="0 -4 0 0" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+    </Style>
+
     <Style x:Key="DefaultFlyoutStyle" BasedOn="{StaticResource FontListFlyoutStyle}" TargetType="MenuFlyoutPresenter" />
 
     <Style x:Key="DefaultThemeFlyoutPresenterStyle" TargetType="FlyoutPresenter">
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="FontSize" Value="{StaticResource FontListFlyoutFontSize}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="IsDefaultShadowEnabled" Value="True" />
-        <Setter Property="Background" Value="{ThemeResource FlyoutPresenterBackground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource FlyoutBorderThemeBrush}" />
-        <Setter Property="BorderThickness" Value="{ThemeResource FlyoutBorderThemeThickness}" />
+        <Setter Property="Background" Value="White" />
+        <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="MinWidth" Value="{ThemeResource FlyoutThemeMinWidth}" />
         <Setter Property="MaxWidth" Value="{ThemeResource FlyoutThemeMaxWidth}" />

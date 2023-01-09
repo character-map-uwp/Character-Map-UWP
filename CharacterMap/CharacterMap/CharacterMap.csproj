@@ -195,6 +195,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ButtonGroup.cs" />
     <Compile Include="Controls\CategoryFlyout.xaml.cs">
       <DependentUpon>CategoryFlyout.xaml</DependentUpon>
     </Compile>

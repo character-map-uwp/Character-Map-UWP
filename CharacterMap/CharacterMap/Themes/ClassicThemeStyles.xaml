@@ -384,6 +384,15 @@
         <Setter Property="BorderBrush" Value="{StaticResource ControlHighlightBackgroundBrush}" />
     </Style>
 
+    <Style x:Key="ThemeFlyoutStyle" BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+        <Setter Property="FontSize" Value="{StaticResource ContentControlThemeFontSize}" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="{ThemeResource ControlBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ControlHighlightBackgroundBrush}" />
+    </Style>
+
     <Style x:Key="DefaultFlyoutStyle" BasedOn="{StaticResource FontListFlyoutStyle}" TargetType="MenuFlyoutPresenter">
         <Setter Property="CornerRadius" Value="0" />
     </Style>

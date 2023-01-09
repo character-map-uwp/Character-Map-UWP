@@ -1269,4 +1269,22 @@ Requires a restart to take effect.</value>
   <data name="UndoLabel" xml:space="preserve">
     <value>Undo</value>
   </data>
+  <data name="CalligraphyDescription.Text" xml:space="preserve">
+    <value>Draw characters in the style of the current font</value>
+  </data>
+  <data name="CompareFontsDescription.Text" xml:space="preserve">
+    <value>See and compare all your fonts side-by-side</value>
+  </data>
+  <data name="DoMoreLabel.Text" xml:space="preserve">
+    <value>Do More</value>
+  </data>
+  <data name="FullscreenLabel.Text" xml:space="preserve">
+    <value>Fullscreen</value>
+  </data>
+  <data name="OpenFolderDescription.Text" xml:space="preserve">
+    <value>Open all font files found inside a folder</value>
+  </data>
+  <data name="OpenFontDescription.Text" xml:space="preserve">
+    <value>Open TTF, OTF, OTC, TTC, WOFF or ZIP files</value>
+  </data>
 </root>
