@@ -104,7 +104,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
                         Tag="{x:Bind UserInterfacePanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE771;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -125,7 +125,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
                         Tag="{x:Bind ExportPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE2B4;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE2B4;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -134,7 +134,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
                         Tag="{x:Bind SearchPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE11A;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE11A;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -143,7 +143,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
                         Tag="{x:Bind CollectionPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE71D;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -158,7 +158,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
                         Tag="{x:Bind ChangePanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xEC7A;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -167,7 +167,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
                         Tag="{x:Bind LicensesPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xF571;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF571;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -176,7 +176,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsAboutLabel/Text')}"
                         Tag="{x:Bind AboutPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE946;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 

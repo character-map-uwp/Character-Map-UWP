@@ -95,7 +95,7 @@
                 Click="{x:Bind ShowAbout}"
                 d:Text="About">
                 <MenuFlyoutItem.Icon>
-                    <FontIcon FontSize="14" Glyph="&#xE9CE;" />
+                    <FontIcon FontSize="14" Glyph="&#xE946;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
         </MenuFlyout>
