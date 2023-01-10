@@ -550,5 +550,76 @@ namespace CharacterMap.Core
             }));
 
         #endregion
+
+        #region UseExpandContractAnimation
+
+        public static bool GetUseExpandContractAnimation(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(UseExpandContractAnimationProperty);
+        }
+
+        public static void SetUseExpandContractAnimation(DependencyObject obj, bool value)
+        {
+            obj.SetValue(UseExpandContractAnimationProperty, value);
+        }
+
+        public static readonly DependencyProperty UseExpandContractAnimationProperty =
+            DependencyProperty.RegisterAttached("UseExpandContractAnimation", typeof(bool), typeof(Properties), new PropertyMetadata(null, (d, e) =>
+            {
+                if (d is FlyoutBase f)
+                {
+                    f.Opened -= F_Opened;
+                    f.Opened += F_Opened;
+
+                    if (e.NewValue is bool b)
+                        f.AreOpenCloseAnimationsEnabled = false;
+                }
+
+                static void F_Opened(object sender, object e)
+                {
+                    if ((sender is FlyoutBase flyout 
+                        && flyout.GetPresenter() is FrameworkElement presenter) is false)
+                        return;
+
+                    // 0. Disable animation if turned off
+                    if (GetUseExpandContractAnimation(flyout) is false)
+                    {
+                        presenter.SetHideAnimation(null);
+                        return;
+                    }
+
+                    // 1. Set scale origin
+                    Visual v = presenter.GetElementVisual();
+
+                    if (presenter.RenderTransformOrigin.X != 0 || presenter.RenderTransformOrigin.Y != 0)
+                        CompositionFactory.StartCentering(
+                            v, (float)presenter.RenderTransformOrigin.X, (float)presenter.RenderTransformOrigin.Y);
+
+                    // 2. Create Expand animation and play it
+                    var entranceEase = v.GetCached<CubicBezierEasingFunction>("EntraceEase", 
+                        () => v.Compositor.CreateEntranceEasingFunction());
+                    var popOpen = v.GetCached<KeyFrameAnimation>("UECPopupExpand",
+                        () => v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                                .AddKeyFrame(0.0f, "Vector3(Min(0.01, 20.0 / this.Target.Size.X), Min(0.01, 20.0 / this.Target.Size.Y), 1.0)")
+                                .AddScaleKeyFrame(1, 1, entranceEase)
+                                .SetDuration(0.3));
+
+                    v.StartAnimation(popOpen);
+
+                    // 3. Create Contract animation and schedule it
+                    var ease = v.GetCached<CubicBezierEasingFunction>("ExitEase",
+                        () => v.Compositor.CreateCubicBezierEasingFunction(0.7f, 0.0f, 1.0f, 0.5f));
+
+                    var popClose = v.GetCached<KeyFrameAnimation>("UECPopupContract",
+                        () => v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                                .AddScaleKeyFrame(0, 1)
+                                .AddKeyFrame(1.0f, "Vector3(Min(0.01, 20.0 / this.Target.Size.X), Min(0.01, 20.0 / this.Target.Size.Y), 1.0)", ease)
+                                .SetDuration(0.2));
+
+                    presenter.SetHideAnimation(popClose);
+                }
+            }));
+
+        #endregion
     }
 }

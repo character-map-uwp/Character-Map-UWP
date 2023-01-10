@@ -491,7 +491,10 @@
                             FontSize="18"
                             Glyph="&#xE946;" />
                         <Button.Flyout>
-                            <Flyout win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}" Opened="InfoFlyout_Opened">
+                            <Flyout
+                                core:Properties.UseExpandContractAnimation="True"
+                                win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                Opened="InfoFlyout_Opened">
                                 <ScrollViewer>
                                     <Border MinWidth="300" MaxWidth="400">
                                         <StackPanel Padding="12 24" Spacing="12">
@@ -677,7 +680,10 @@
                             FontSize="18"
                             Glyph="&#xE8D2;" />
                         <Button.Flyout>
-                            <Flyout win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}" Placement="Bottom">
+                            <Flyout
+                                core:Properties.UseExpandContractAnimation="True"
+                                win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                Placement="Bottom">
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
@@ -756,7 +762,10 @@
                             FontSize="18"
                             Glyph="&#xE16E;" />
                         <Button.Flyout>
-                            <controls:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
+                            <controls:CategoryFlyout
+                                core:Properties.UseExpandContractAnimation="True"
+                                AcceptClicked="CategoryFlyout_AcceptClicked"
+                                SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
                         </Button.Flyout>
                     </controls:UXButton>
 

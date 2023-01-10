@@ -3302,6 +3302,7 @@
         <Setter Property="Background" Value="White" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Padding" Value="0" />
+        <Setter Property="RenderTransformOrigin" Value="0.5 0" />
         <Setter Property="MinWidth" Value="{ThemeResource FlyoutThemeMinWidth}" />
         <Setter Property="MaxWidth" Value="{ThemeResource FlyoutThemeMaxWidth}" />
         <Setter Property="MinHeight" Value="{ThemeResource FlyoutThemeMinHeight}" />

@@ -84,6 +84,34 @@ namespace CharacterMap.Helpers
             batch.End();
         }
 
+        private static Dictionary<Compositor, Dictionary<string, CompositionObject>> _objCache { get; } = new();
+
+        public static T GetCached<T>(this Compositor c, string key, Func<T> create) where T : CompositionObject
+        {
+            if (_objCache.TryGetValue(c, out Dictionary<string, CompositionObject> dic) is false)
+                _objCache[c] = dic = new();
+
+            if (dic.TryGetValue(key, out CompositionObject value) is false)
+                dic[key] = value = create();
+
+            return (T)value;
+        }
+
+        /// <summary>
+        /// Gets a cached version of a CompositionObject per compositor
+        /// (Each CoreWindow has it's own compositor). Allows sharing of animations
+        /// without recreating everytime.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="c"></param>
+        /// <param name="key"></param>
+        /// <param name="create"></param>
+        /// <returns></returns>
+        public static T GetCached<T>(this CompositionObject c, string key, Func<T> create) where T : CompositionObject
+        {
+            return GetCached<T>(c.Compositor, key, create);
+        }
+
         #endregion
 
 
@@ -340,6 +368,7 @@ namespace CharacterMap.Helpers
         }
 
         #endregion
+
 
         #region SetDelay
 
@@ -861,6 +890,7 @@ namespace CharacterMap.Helpers
         }
 
         #endregion
+
 
         #region Extras
 

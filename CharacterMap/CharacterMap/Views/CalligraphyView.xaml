@@ -353,7 +353,10 @@
                         CornerRadius="0 4 4 0"
                         Style="{StaticResource SmolButton}">
                         <Button.Flyout>
-                            <Flyout Opening="Flyout_Opening" />
+                            <Flyout
+                                core:Properties.UseExpandContractAnimation="True"
+                                FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                Opening="Flyout_Opening" />
                         </Button.Flyout>
                     </Button>
 

@@ -1270,7 +1270,7 @@ Requires a restart to take effect.</value>
     <value>Undo</value>
   </data>
   <data name="CalligraphyDescription.Text" xml:space="preserve">
-    <value>Draw characters in the style of the current font</value>
+    <value>Practice writing in the style of the current font</value>
   </data>
   <data name="CompareFontsDescription.Text" xml:space="preserve">
     <value>See and compare all your fonts side-by-side</value>

@@ -24,10 +24,13 @@
 
         <MenuFlyout x:Key="TabContextMenu" Opening="TabViewItemContext_Opening" />
 
-
-        <Flyout x:Name="AppMenuFlyout" Placement="BottomEdgeAlignedLeft">
+        <Flyout
+            x:Name="AppMenuFlyout"
+            core:Properties.UseExpandContractAnimation="True"
+            Placement="BottomEdgeAlignedLeft">
             <Flyout.FlyoutPresenterStyle>
                 <Style BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+                    <Setter Property="RenderTransformOrigin" Value="0 0" />
                     <Setter Property="Margin" Value="2 -4 0 0" />
                     <Setter Property="Width" Value="500" />
                     <Setter Property="MaxWidth" Value="500" />
@@ -95,6 +98,8 @@
                                     Glyph="&#xE1D3;"
                                     Shortcut="Ctrl+K" />
                             </Button>
+                        </controls:ButtonGroup>
+                        <controls:ButtonGroup Height="80">
                             <Button Click="{x:Bind FontMap.OpenCalligraphy}">
                                 <controls:ButtonLabel
                                     Title="{core:Localizer Key='CalligraphyLabel/Text'}"

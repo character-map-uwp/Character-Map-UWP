@@ -24,13 +24,16 @@ namespace CharacterMap.Helpers
         public static UISettings UISettings { get; }
 
         private static Dictionary<Compositor, Vector3KeyFrameAnimation> _defaultOffsetAnimations { get; }
-            = new Dictionary<Compositor, Vector3KeyFrameAnimation>();
+            = new ();
 
         private static Dictionary<Compositor, ImplicitAnimationCollection> _defaultRepositionAnimations { get; }
-            = new Dictionary<Compositor, ImplicitAnimationCollection>();
+            = new ();
 
         private static Dictionary<Compositor, ImplicitAnimationCollection> _defaultScaleAnimations { get; }
-            = new Dictionary<Compositor, ImplicitAnimationCollection>();
+            = new ();
+
+
+        
 
         private static string CENTRE_EXPRESSION =>
             $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * {{0}}f, " +
