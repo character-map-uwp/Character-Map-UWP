@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Shapes;
 
 namespace CharacterMap.Core
 {
@@ -367,8 +368,6 @@ namespace CharacterMap.Core
 
         #region IsTabOpenAnimationEnabled
 
-        private static Dictionary<Compositor, CompositionAnimation> _tabAniCache { get; } = new();
-
         public static bool GetIsTabOpenAnimationEnabled(DependencyObject obj)
         {
             return (bool)obj.GetValue(IsTabOpenAnimationEnabledProperty);
@@ -446,19 +445,15 @@ namespace CharacterMap.Core
                                     Visual v = child.EnableCompositionTranslation().GetElementVisual();
 
                                     // Get the animation from cache
-                                    if (_tabAniCache.TryGetValue(v.Compositor, out CompositionAnimation ani) is false)
+                                    v.StartAnimation(v.GetCached("_tbopai", () =>
                                     {
-                                        // Animation doesn't exist, create and cache it
-                                        _tabAniCache[v.Compositor] = ani =
-                                            v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                                                .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay)
-                                                .SetDelayTime(0.05)
-                                                .AddKeyFrame(0, 0, 60)
-                                                .AddKeyFrame(1, 0, 0)
-                                                .SetDuration(0.325);
-                                    }
-
-                                    v.StartAnimation(ani);
+                                        return v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                                                    .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                                                    .SetDelayTime(0.05)
+                                                    .AddKeyFrame(0, 0, 60)
+                                                    .AddKeyFrame(1, 0, 0)
+                                                    .SetDuration(0.325);
+                                    }));
                                 }
 
                                 // Clean up WeakReferences
@@ -571,8 +566,74 @@ namespace CharacterMap.Core
                     f.Opened -= F_Opened;
                     f.Opened += F_Opened;
 
+                    f.Closing -= F_Closing;
+                    f.Closing += F_Closing;
+
                     if (e.NewValue is bool b)
                         f.AreOpenCloseAnimationsEnabled = false;
+                }
+
+                /* 
+                 * N.B: Ideally these animations would be implemented using UIElement.SetShowAnimation(...)
+                 *      and UIElement.SetHideAnimation(...), however this can cause an infinite loop lockup
+                 *      at the kernel level for some reason so we must manually play and control the animations.
+                 *      
+                 *      This also means that calling flyout.Hide() won't play animations =[
+                 */
+
+                static void F_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
+                {
+                    FrameworkElement p = sender.GetPresenter();
+
+                    // 1. Check if we actually need to start an animation
+                    if (p is null
+                        || ResourceHelper.AllowAnimation is false
+                        || (p.Tag is string t && t == "Closed"))
+                        return;
+
+                    args.Cancel = true;
+
+                    // 2. If already closing, let the existing animation finish
+                    if (p.Tag is string tg && tg == "Closing")
+                        return;
+
+                    p.Tag = "Closing";
+
+                    Visual v = p.GetElementVisual();
+
+                    v.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+                        b =>
+                        {
+                            var popClose = v.GetCached("UECPopupContract", () =>
+                            {
+                                var ease = v.GetCached("ExitEase",
+                                    () => v.Compositor.CreateCubicBezierEasingFunction(0.7f, 0.0f, 1.0f, 0.5f));
+
+                                var scale = v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                                                .AddScaleKeyFrame(0, 1)
+                                                .AddKeyFrame(1.0f, "Vector3(Min(0.01, 20.0 / this.Target.Size.X), Min(0.01, 20.0 / this.Target.Size.Y), 1.0)", ease)
+                                                .SetDuration(0.15);
+
+                                var step = v.Compositor.CreateStepEasingFunction();
+                                step.IsFinalStepSingleFrame = true;
+
+                                var op = v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
+                                            .AddKeyFrame(1, 0, step)
+                                            .SetDuration(0.15);
+
+                                return v.Compositor.CreateAnimationGroup(scale, op);
+                            });
+
+                            v.StartAnimation(popClose);
+                        },
+                        b =>
+                        {
+                            if ((string)p.Tag == "Closing")
+                            {
+                                p.Tag = "Closed";
+                                sender.Hide();
+                            }
+                        });
                 }
 
                 static void F_Opened(object sender, object e)
@@ -582,45 +643,51 @@ namespace CharacterMap.Core
                         return;
 
                     Visual v = presenter.GetElementVisual();
+                    presenter.Tag = "Opening";
 
-                    // 0. Disable animation if turned off
+                    // 1. Disable animation if turned off
                     if (GetUseExpandContractAnimation(flyout) is false
                         || ResourceHelper.AllowAnimation is false)
                     {
                         presenter.SetHideAnimation(null);
                         v.Scale = new(1f);
+                        v.Opacity = 1;
+                        presenter.Tag = "Open";
                         return;
                     }
 
-                    // 1. Set scale origin
-                    if (presenter.RenderTransformOrigin.X != 0 || presenter.RenderTransformOrigin.Y != 0)
-                        CompositionFactory.StartCentering(
-                            v, (float)presenter.RenderTransformOrigin.X, (float)presenter.RenderTransformOrigin.Y);
+                    // 2. Set scale origin
+                    if (v.Scale.X == 1) // If animation has played previously scale will not be 1
+                    {
+                        if (presenter.RenderTransformOrigin.X != 0 || presenter.RenderTransformOrigin.Y != 0)
+                        {
+                            CompositionFactory.StartCentering(
+                                v, (float)presenter.RenderTransformOrigin.X, (float)presenter.RenderTransformOrigin.Y);
+                        }
+                    }
 
-                    // 2. Create Expand animation and play it
-                    var entranceEase = v.GetCached<CubicBezierEasingFunction>("EntraceEase", 
-                        () => v.Compositor.CreateEntranceEasingFunction());
-                    var popOpen = v.GetCached<KeyFrameAnimation>("UECPopupExpand",
-                        () => v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                    // 3. Create Expand animation and play it
+                    var popOpen = v.GetCached("UECPopupExpand", () =>
+                    {
+                        var scale = v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
                                 .AddKeyFrame(0.0f, "Vector3(Min(0.01, 20.0 / this.Target.Size.X), Min(0.01, 20.0 / this.Target.Size.Y), 1.0)")
-                                .AddScaleKeyFrame(1, 1, entranceEase)
-                                .SetDuration(0.3));
+                                .AddScaleKeyFrame(1, 1, v.Compositor.GetCachedEntranceEase())
+                                .SetDuration(0.3);
+
+                        var op = v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
+                            .SetDuration(0.1)
+                            .AddKeyFrame(0, 1)
+                            .AddKeyFrame(1, 1);
+
+                        return v.Compositor.CreateAnimationGroup(scale, op);
+
+                    });
 
                     v.StartAnimation(popOpen);
-
-                    // 3. Create Contract animation and schedule it
-                    var ease = v.GetCached<CubicBezierEasingFunction>("ExitEase",
-                        () => v.Compositor.CreateCubicBezierEasingFunction(0.7f, 0.0f, 1.0f, 0.5f));
-
-                    var popClose = v.GetCached<KeyFrameAnimation>("UECPopupContract",
-                        () => v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
-                                .AddScaleKeyFrame(0, 1)
-                                .AddKeyFrame(1.0f, "Vector3(Min(0.01, 20.0 / this.Target.Size.X), Min(0.01, 20.0 / this.Target.Size.Y), 1.0)", ease)
-                                .SetDuration(0.2));
-
-                    presenter.SetHideAnimation(popClose);
                 }
             }));
+
+       
 
         #endregion
     }

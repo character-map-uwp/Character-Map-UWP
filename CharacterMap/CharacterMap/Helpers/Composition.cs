@@ -112,6 +112,12 @@ namespace CharacterMap.Helpers
             return GetCached<T>(c.Compositor, key, create);
         }
 
+        public static CubicBezierEasingFunction GetCachedEntranceEase(this Compositor c)
+        {
+            return c.GetCached<CubicBezierEasingFunction>("EntranceEase", 
+                () => c.CreateEntranceEasingFunction());
+        }
+
         #endregion
 
 

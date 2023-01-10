@@ -60,7 +60,6 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-
             <Button
                 HorizontalAlignment="Stretch"
                 Click="Add_Click"
