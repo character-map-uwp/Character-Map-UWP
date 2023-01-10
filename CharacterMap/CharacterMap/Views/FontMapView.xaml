@@ -234,7 +234,7 @@
             VerticalAlignment="Top"
             Canvas.ZIndex="101"
             d:IsLocked="True">
-            <!-- Temporarily removed as causes instant crash -->
+            <!--  Temporarily removed as causes instant crash  -->
             <!--<StackPanel Orientation="Horizontal">
                 <ToggleButton
                     x:Name="OverlayButton"
@@ -763,10 +763,17 @@
                             FontSize="18"
                             Glyph="&#xE16E;" />
                         <Button.Flyout>
-                            <controls:CategoryFlyout
+                            <Flyout
+                                x:Name="CatFlyout"
                                 core:Properties.UseExpandContractAnimation="True"
-                                AcceptClicked="CategoryFlyout_AcceptClicked"
-                                SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
+                                FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                Opened="{x:Bind CatFlyoutContent.OnOpening}">
+                                <controls:CategoryFlyout
+                                    x:Name="CatFlyoutContent"
+                                    AcceptClicked="CategoryFlyout_AcceptClicked"
+                                    Flyout="{x:Bind CatFlyout}"
+                                    SourceCategories="{x:Bind ViewModel.SelectedGlyphCategories, Mode=OneWay}" />
+                            </Flyout>
                         </Button.Flyout>
                     </controls:UXButton>
 

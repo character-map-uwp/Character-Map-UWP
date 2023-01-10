@@ -577,8 +577,6 @@ namespace CharacterMap.Core
                  * N.B: Ideally these animations would be implemented using UIElement.SetShowAnimation(...)
                  *      and UIElement.SetHideAnimation(...), however this can cause an infinite loop lockup
                  *      at the kernel level for some reason so we must manually play and control the animations.
-                 *      
-                 *      This also means that calling flyout.Hide() won't play animations =[
                  */
 
                 static void F_Closing(FlyoutBase sender, FlyoutBaseClosingEventArgs args)
@@ -619,7 +617,7 @@ namespace CharacterMap.Core
 
                                 var op = v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
                                             .AddKeyFrame(1, 0, step)
-                                            .SetDuration(0.15);
+                                            .SetDuration(0.13);
 
                                 return v.Compositor.CreateAnimationGroup(scale, op);
                             });
@@ -680,7 +678,6 @@ namespace CharacterMap.Core
                             .AddKeyFrame(1, 1);
 
                         return v.Compositor.CreateAnimationGroup(scale, op);
-
                     });
 
                     v.StartAnimation(popOpen);

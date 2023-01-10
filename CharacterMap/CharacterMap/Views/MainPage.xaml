@@ -38,112 +38,112 @@
                 </Style>
             </Flyout.FlyoutPresenterStyle>
 
-            <Grid>
-                <TextBlock
-                    x:Name="MenuShimmy"
-                    FontSize="14"
-                    FontWeight="SemiBold"
-                    Visibility="Collapsed" />
-
-                <StackPanel Padding="16" Spacing="16">
-                    <FrameworkElement.Resources>
-                        <Style x:Key="LabelButtonStyle" BasedOn="{StaticResource DefaultThemeButtonStyle}" TargetType="Button">
-                            <Setter Property="HorizontalAlignment" Value="Stretch" />
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            <Setter Property="VerticalAlignment" Value="Stretch" />
-                            <Setter Property="CornerRadius" Value="0" />
-                            <Setter Property="FontSize" Value="14" />
-                            <Setter Property="Foreground" Value="{ThemeResource AppBarItemPointerOverForegroundThemeBrush}" />
-                            <Setter Property="ContentTemplate" Value="{StaticResource LabelButtonContentTemplate}" />
-                        </Style>
-
-                        <Style BasedOn="{StaticResource LabelButtonStyle}" TargetType="Button" />
-                    </FrameworkElement.Resources>
-
+            <ScrollViewer>
+                <Grid>
                     <TextBlock
-                        FontSize="{Binding FontSize, ElementName=MenuShimmy}"
-                        FontWeight="{Binding FontWeight, ElementName=MenuShimmy}"
-                        Text="{core:Localizer Key='OpenFontButton/Label', ZuneTitle=true}" />
-                    <controls:ButtonGroup
-                        Height="160"
-                        Margin="0 -8 0 0"
-                        Orientation="Vertical">
-                        <Button Click="{x:Bind OpenFont}">
-                            <controls:ButtonLabel
-                                Title="{core:Localizer Key='FontFileMenuItem/Text'}"
-                                Description="{core:Localizer Key='OpenFontDescription/Text'}"
-                                Glyph="&#xE8E5;"
-                                Shortcut="Ctrl+O" />
-                        </Button>
-                        <Button Click="{x:Bind OpenFolder}">
-                            <controls:ButtonLabel
-                                Title="{core:Localizer Key='FontFolderMenuItem/Text'}"
-                                Description="{core:Localizer Key='OpenFolderDescription/Text'}"
-                                Glyph="&#xE838;"
-                                Shortcut="Ctrl+Shift+O" />
-                        </Button>
-                    </controls:ButtonGroup>
+                        x:Name="MenuShimmy"
+                        FontSize="14"
+                        FontWeight="SemiBold"
+                        Visibility="Collapsed" />
 
-                    <TextBlock
-                        FontSize="{Binding FontSize, ElementName=MenuShimmy}"
-                        FontWeight="{Binding FontWeight, ElementName=MenuShimmy}"
-                        Text="{core:Localizer Key='DoMoreLabel/Text', ZuneTitle=true}"
-                        d:Text="Do More" />
-                    <controls:ButtonGroup Margin="0 -8 0 0" Orientation="Vertical">
-                        <controls:ButtonGroup Height="80">
-                            <Button Click="FontCompareButton_Click">
+                    <StackPanel Padding="16" Spacing="16">
+                        <FrameworkElement.Resources>
+                            <Style x:Key="LabelButtonStyle" BasedOn="{StaticResource DefaultThemeButtonStyle}" TargetType="Button">
+                                <Setter Property="HorizontalAlignment" Value="Stretch" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="VerticalAlignment" Value="Stretch" />
+                                <Setter Property="CornerRadius" Value="0" />
+                                <Setter Property="FontSize" Value="14" />
+                                <Setter Property="Foreground" Value="{ThemeResource AppBarItemPointerOverForegroundThemeBrush}" />
+                                <Setter Property="ContentTemplate" Value="{StaticResource LabelButtonContentTemplate}" />
+                            </Style>
+
+                            <Style BasedOn="{StaticResource LabelButtonStyle}" TargetType="Button" />
+                        </FrameworkElement.Resources>
+
+                        <TextBlock
+                            FontSize="{Binding FontSize, ElementName=MenuShimmy}"
+                            FontWeight="{Binding FontWeight, ElementName=MenuShimmy}"
+                            Text="{core:Localizer Key='OpenFontButton/Label', ZuneTitle=true}" />
+                        <controls:ButtonGroup
+                            Height="160"
+                            Margin="0 -8 0 0"
+                            Orientation="Vertical">
+                            <Button Click="{x:Bind OpenFont}">
                                 <controls:ButtonLabel
-                                    Title="{core:Localizer Key='CompareFontsTitle/Text'}"
-                                    Description="{core:Localizer Key='CompareFontsDescription/Text'}"
-                                    Glyph="&#xE1D3;"
-                                    Shortcut="Ctrl+K" />
+                                    Title="{core:Localizer Key='FontFileMenuItem/Text'}"
+                                    Description="{core:Localizer Key='OpenFontDescription/Text'}"
+                                    Glyph="&#xE8E5;"
+                                    Shortcut="Ctrl+O" />
+                            </Button>
+                            <Button Click="{x:Bind OpenFolder}">
+                                <controls:ButtonLabel
+                                    Title="{core:Localizer Key='FontFolderMenuItem/Text'}"
+                                    Description="{core:Localizer Key='OpenFolderDescription/Text'}"
+                                    Glyph="&#xE838;"
+                                    Shortcut="Ctrl+Shift+O" />
                             </Button>
                         </controls:ButtonGroup>
-                        <controls:ButtonGroup Height="80">
-                            <Button Click="{x:Bind FontMap.OpenCalligraphy}">
-                                <controls:ButtonLabel
-                                    Title="{core:Localizer Key='CalligraphyLabel/Text'}"
-                                    Description="{core:Localizer Key='CalligraphyDescription/Text'}"
-                                    Glyph="&#xEDFB;"
-                                    Shortcut="Ctrl+I" />
-                            </Button>
+
+                        <TextBlock
+                            FontSize="{Binding FontSize, ElementName=MenuShimmy}"
+                            FontWeight="{Binding FontWeight, ElementName=MenuShimmy}"
+                            Text="{core:Localizer Key='DoMoreLabel/Text', ZuneTitle=true}"
+                            d:Text="Do More" />
+                        <controls:ButtonGroup Margin="0 -8 0 0" Orientation="Vertical">
+                            <controls:ButtonGroup Height="80">
+                                <Button Click="FontCompareButton_Click">
+                                    <controls:ButtonLabel
+                                        Title="{core:Localizer Key='CompareFontsTitle/Text'}"
+                                        Description="{core:Localizer Key='CompareFontsDescription/Text'}"
+                                        Glyph="&#xE1D3;"
+                                        Shortcut="Ctrl+K" />
+                                </Button>
+                            </controls:ButtonGroup>
+                            <controls:ButtonGroup Height="80">
+                                <Button Click="{x:Bind FontMap.OpenCalligraphy}">
+                                    <controls:ButtonLabel
+                                        Title="{core:Localizer Key='CalligraphyLabel/Text'}"
+                                        Description="{core:Localizer Key='CalligraphyDescription/Text'}"
+                                        Glyph="&#xEDFB;"
+                                        Shortcut="Ctrl+I" />
+                                </Button>
+                            </controls:ButtonGroup>
+                            <controls:ButtonGroup Height="70">
+                                <Control.Resources>
+                                    <Style BasedOn="{StaticResource LabelButtonStyle}" TargetType="Button">
+                                        <Setter Property="FontSize" Value="12" />
+                                        <Setter Property="ContentTemplate" Value="{StaticResource CompactLabelButtonContentTemplate}" />
+                                    </Style>
+                                </Control.Resources>
+
+                                <Button Command="{Binding CommandToggleFullScreen}">
+                                    <controls:ButtonLabel
+                                        Title="{core:Localizer Key='FullscreenLabel/Text'}"
+                                        Glyph="&#xE740;"
+                                        Shortcut="F12" />
+                                </Button>
+
+                                <Button Click="{x:Bind ShowPrint}">
+                                    <controls:ButtonLabel
+                                        Title="{core:Localizer Key='BtnPrint/Content'}"
+                                        Glyph="&#xE749;"
+                                        Shortcut="Ctrl+P" />
+                                </Button>
+
+                                <Button Click="BtnSettings_OnClick">
+                                    <controls:ButtonLabel Title="{core:Localizer Key='SettingsHeader/Text'}" Glyph="&#xE115;" />
+                                </Button>
+
+                                <Button Click="{x:Bind ShowAbout}">
+                                    <controls:ButtonLabel Title="{core:Localizer Key='SettingsAboutLabel/Text'}" Glyph="&#xE946;" />
+                                </Button>
+
+                            </controls:ButtonGroup>
                         </controls:ButtonGroup>
-                        <controls:ButtonGroup Height="70">
-                            <Control.Resources>
-                                <Style BasedOn="{StaticResource LabelButtonStyle}" TargetType="Button">
-                                    <Setter Property="FontSize" Value="12" />
-                                    <Setter Property="ContentTemplate" Value="{StaticResource CompactLabelButtonContentTemplate}" />
-                                </Style>
-                            </Control.Resources>
-
-                            <Button Command="{Binding CommandToggleFullScreen}">
-                                <controls:ButtonLabel
-                                    Title="{core:Localizer Key='FullscreenLabel/Text'}"
-                                    Glyph="&#xE740;"
-                                    Shortcut="F12" />
-                            </Button>
-
-                            <Button Click="{x:Bind ShowPrint}">
-                                <controls:ButtonLabel
-                                    Title="{core:Localizer Key='BtnPrint/Content'}"
-                                    Glyph="&#xE749;"
-                                    Shortcut="Ctrl+P" />
-                            </Button>
-
-                            <Button Click="BtnSettings_OnClick">
-                                <controls:ButtonLabel Title="{core:Localizer Key='SettingsHeader/Text'}" Glyph="&#xE115;" />
-                            </Button>
-
-                            <Button Click="{x:Bind ShowAbout}">
-                                <controls:ButtonLabel Title="{core:Localizer Key='SettingsAboutLabel/Text'}" Glyph="&#xE946;" />
-                            </Button>
-
-                        </controls:ButtonGroup>
-                    </controls:ButtonGroup>
-                </StackPanel>
-
-            </Grid>
-
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
 
         </Flyout>
 

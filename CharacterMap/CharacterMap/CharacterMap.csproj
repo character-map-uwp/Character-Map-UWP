@@ -196,9 +196,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\ButtonGroup.cs" />
-    <Compile Include="Controls\CategoryFlyout.xaml.cs">
-      <DependentUpon>CategoryFlyout.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\CategoryFlyout.cs" />
     <Compile Include="Controls\CharacterGridView.cs" />
     <Compile Include="Controls\CharacterPicker.xaml.cs">
       <DependentUpon>CharacterPicker.xaml</DependentUpon>
@@ -446,10 +444,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\CategoryFlyout.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\CharacterPicker.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

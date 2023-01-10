@@ -2,14 +2,14 @@
     x:Class="CharacterMap.Views.PrintView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:controls1="using:CharacterMap.Controls"
+    xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
@@ -120,7 +120,7 @@
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot">
-        <controls1:ModalPagePresenter
+        <controls:ModalPagePresenter
             x:Name="Presenter"
             Title="{core:Localizer Key=PrintViewTitle/Text}"
             CloseClicked="{x:Bind Hide}"
@@ -153,7 +153,7 @@
                             Margin="20 20 20 120"
                             ChildrenTransitions="{StaticResource RepositionTransitions}">
 
-                            <controls1:ContentGroup x:Uid="PrintDataHeader">
+                            <controls:ContentGroup x:Uid="PrintDataHeader">
                                 <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
                                     <Button.Content>
                                         <StackPanel Orientation="Horizontal">
@@ -168,13 +168,23 @@
                                         </StackPanel>
                                     </Button.Content>
                                     <Button.Flyout>
-                                        <controls1:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
+                                        <Flyout
+                                            x:Name="CatFlyout"
+                                            core:Properties.UseExpandContractAnimation="True"
+                                            FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                            Opened="{x:Bind CatFlyoutContent.OnOpening}">
+                                            <controls:CategoryFlyout
+                                                x:Name="CatFlyoutContent"
+                                                AcceptClicked="CategoryFlyout_AcceptClicked"
+                                                Flyout="{x:Bind CatFlyout}"
+                                                SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
+                                        </Flyout>
                                     </Button.Flyout>
                                 </Button>
                                 <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
-                            </controls1:ContentGroup>
+                            </controls:ContentGroup>
 
-                            <controls1:ContentGroup x:Uid="PrintViewLayoutHeader">
+                            <controls:ContentGroup x:Uid="PrintViewLayoutHeader">
                                 <TextBlock x:Uid="PrintViewCharSize" Style="{StaticResource HeaderStyle}" />
                                 <Slider
                                     HorizontalAlignment="Stretch"
@@ -197,7 +207,7 @@
                                     IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}" />
 
 
-                                <controls:WrapPanel
+                                <toolkit:WrapPanel
                                     Margin="{StaticResource HeaderMargin}"
                                     ChildrenTransitions="{StaticResource RepositionTransitions}"
                                     HorizontalSpacing="24">
@@ -223,17 +233,17 @@
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
-                                </controls:WrapPanel>
+                                </toolkit:WrapPanel>
 
-                            </controls1:ContentGroup>
+                            </controls:ContentGroup>
 
-                            <controls1:ContentGroup x:Uid="PrintViewPageSetupHeader">
+                            <controls:ContentGroup x:Uid="PrintViewPageSetupHeader">
                                 <TextBlock x:Uid="PrintViewPageRange" Style="{StaticResource HeaderStyle}" />
                                 <TextBlock
                                     x:Uid="PrintViewPageRangeDesc"
                                     Margin="0 0 0 8"
                                     Style="{StaticResource BaseTextStyle}" />
-                                <controls:WrapPanel
+                                <toolkit:WrapPanel
                                     ChildrenTransitions="{StaticResource RepositionTransitions}"
                                     HorizontalSpacing="24"
                                     Orientation="Horizontal"
@@ -253,7 +263,7 @@
                                         Minimum="1"
                                         SpinButtonPlacementMode="Inline"
                                         Value="{x:Bind ViewModel.PagesToPrint, Mode=TwoWay}" />
-                                </controls:WrapPanel>
+                                </toolkit:WrapPanel>
 
                                 <TextBlock Style="{StaticResource HintStyle}" Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
 
@@ -300,7 +310,7 @@
                                     <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
                                     <Run Text="px" />
                                 </TextBlock>
-                            </controls1:ContentGroup>
+                            </controls:ContentGroup>
 
                         </StackPanel>
                     </ScrollViewer>
@@ -404,7 +414,7 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-        </controls1:ModalPagePresenter>
+        </controls:ModalPagePresenter>
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup x:Name="ThemeStates">

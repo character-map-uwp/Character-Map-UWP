@@ -597,7 +597,17 @@
                                     </StackPanel>
                                 </Button.Content>
                                 <Button.Flyout>
-                                    <cmControls:CategoryFlyout AcceptClicked="CategoryFlyout_AcceptClicked" SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
+                                    <Flyout
+                                        x:Name="CatFlyout"
+                                        core:Properties.UseExpandContractAnimation="True"
+                                        FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                        Opened="{x:Bind CatFlyoutContent.OnOpening}">
+                                        <cmControls:CategoryFlyout
+                                            x:Name="CatFlyoutContent"
+                                            AcceptClicked="CategoryFlyout_AcceptClicked"
+                                            Flyout="{x:Bind CatFlyout}"
+                                            SourceCategories="{x:Bind ViewModel.Categories, Mode=OneWay}" />
+                                    </Flyout>
                                 </Button.Flyout>
                             </Button>
                             <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />

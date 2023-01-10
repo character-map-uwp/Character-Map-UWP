@@ -459,4 +459,96 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="controls:CategoryFlyout">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CategoryFlyout">
+                    <Grid Margin="0 12">
+                        <Grid.Resources>
+                            <Style x:Key="HeaderStyle" TargetType="TextBlock">
+                                <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="Margin" Value="0 20 0 4" />
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel>
+                            <TextBlock
+                                x:Uid="UnicodeFiltersTitle"
+                                Margin="12 12 0 6"
+                                FontWeight="Bold"
+                                Opacity="0.5" />
+
+                            <Grid>
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <AppBarButton
+                                        Name="AppBtnSelectAll"
+                                        x:Uid="AppBtnSelectAll"
+                                        Style="{StaticResource LabelAppBarButtonStyle}">
+                                        <AppBarButton.Icon>
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE14E;" />
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                    <AppBarButton
+                                        Name="AppBtnClear"
+                                        x:Uid="AppBtnClear"
+                                        Style="{StaticResource LabelAppBarButtonStyle}">
+                                        <AppBarButton.Icon>
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                </StackPanel>
+                                <AppBarButton
+                                    Name="AppBtnReset"
+                                    x:Uid="AppBtnReset"
+                                    HorizontalAlignment="Right"
+                                    Style="{StaticResource LabelAppBarButtonStyle}">
+                                    <AppBarButton.Icon>
+                                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE149;" />
+                                    </AppBarButton.Icon>
+                                </AppBarButton>
+                            </Grid>
+                        </StackPanel>
+
+                        <GridView
+                            x:Name="CategoryList"
+                            Grid.Row="1"
+                            Width="440"
+                            MaxHeight="500"
+                            Padding="12 12 0 48"
+                            SelectionMode="None">
+                            <GridView.ItemContainerTransitions>
+                                <TransitionCollection />
+                            </GridView.ItemContainerTransitions>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        Width="200"
+                                        Content="{Binding DisplayName, Mode=OneTime}"
+                                        IsChecked="{Binding IsSelected, Mode=TwoWay}" />
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+
+                        <Button
+                            Name="BtnApply"
+                            x:Uid="BtnApply"
+                            Grid.Row="2"
+                            Width="200"
+                            Margin="12 12 12 0"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource DefaultThemeButtonStyle}" />
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
