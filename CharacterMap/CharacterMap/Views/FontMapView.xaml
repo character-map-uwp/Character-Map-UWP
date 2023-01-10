@@ -234,7 +234,8 @@
             VerticalAlignment="Top"
             Canvas.ZIndex="101"
             d:IsLocked="True">
-            <StackPanel Orientation="Horizontal">
+            <!-- Temporarily removed as causes instant crash -->
+            <!--<StackPanel Orientation="Horizontal">
                 <ToggleButton
                     x:Name="OverlayButton"
                     x:Uid="CompactOverlayButton"
@@ -244,7 +245,7 @@
                     Style="{StaticResource IconToggleButtonStyle}">
                     <FontIcon FontSize="14" Glyph="&#xE2B4;" />
                 </ToggleButton>
-            </StackPanel>
+            </StackPanel>-->
         </controls:XamlTitleBar>
 
         <!--  Title row  -->

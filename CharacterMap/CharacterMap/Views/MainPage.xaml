@@ -63,7 +63,7 @@
                     <TextBlock
                         FontSize="{Binding FontSize, ElementName=MenuShimmy}"
                         FontWeight="{Binding FontWeight, ElementName=MenuShimmy}"
-                        Text="{core:Localizer Key='OpenFontButton/Label'}" />
+                        Text="{core:Localizer Key='OpenFontButton/Label', ZuneTitle=true}" />
                     <controls:ButtonGroup
                         Height="160"
                         Margin="0 -8 0 0"
@@ -79,15 +79,15 @@
                             <controls:ButtonLabel
                                 Title="{core:Localizer Key='FontFolderMenuItem/Text'}"
                                 Description="{core:Localizer Key='OpenFolderDescription/Text'}"
-                                Glyph="&#xEC50;"
+                                Glyph="&#xE838;"
                                 Shortcut="Ctrl+Shift+O" />
                         </Button>
                     </controls:ButtonGroup>
 
                     <TextBlock
-                        x:Uid="DoMoreLabel"
                         FontSize="{Binding FontSize, ElementName=MenuShimmy}"
                         FontWeight="{Binding FontWeight, ElementName=MenuShimmy}"
+                        Text="{core:Localizer Key='DoMoreLabel/Text', ZuneTitle=true}"
                         d:Text="Do More" />
                     <controls:ButtonGroup Margin="0 -8 0 0" Orientation="Vertical">
                         <controls:ButtonGroup Height="80">

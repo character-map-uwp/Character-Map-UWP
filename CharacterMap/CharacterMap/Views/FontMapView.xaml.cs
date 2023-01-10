@@ -473,7 +473,7 @@ namespace CharacterMap.Views
                   ViewModel.Settings.EnablePreviewPane && !_isCompactOverlay ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState));
 
             // OverlayButton might not be inflated so can't use VisualState
-            OverlayButton?.SetVisible(IsStandalone);
+            //OverlayButton?.SetVisible(IsStandalone);
         }
 
         private void UpdateCopyPane()

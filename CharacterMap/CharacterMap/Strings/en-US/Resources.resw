@@ -1164,10 +1164,10 @@ Requires a restart to take effect.</value>
     <value>font files</value>
   </data>
   <data name="FontFileMenuItem.Text" xml:space="preserve">
-    <value>Font File</value>
+    <value>Open Font File</value>
   </data>
   <data name="FontFolderMenuItem.Text" xml:space="preserve">
-    <value>Font Folder</value>
+    <value>Open Font Folder</value>
   </data>
   <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Add to history</value>

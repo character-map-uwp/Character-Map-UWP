@@ -1014,7 +1014,7 @@
             <StackPanel
                 Grid.Column="1"
                 Margin="0 -2 0 0"
-                Spacing="0">
+                Spacing="2">
                 <TextBlock FontWeight="Light">
                     <Run FontSize="18" Text="{Binding Title, Converter={StaticResource FontSelectorTitleConverter}}" />
                     <Run

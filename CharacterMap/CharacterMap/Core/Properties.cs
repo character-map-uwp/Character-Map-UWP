@@ -581,16 +581,18 @@ namespace CharacterMap.Core
                         && flyout.GetPresenter() is FrameworkElement presenter) is false)
                         return;
 
+                    Visual v = presenter.GetElementVisual();
+
                     // 0. Disable animation if turned off
-                    if (GetUseExpandContractAnimation(flyout) is false)
+                    if (GetUseExpandContractAnimation(flyout) is false
+                        || ResourceHelper.AllowAnimation is false)
                     {
                         presenter.SetHideAnimation(null);
+                        v.Scale = new(1f);
                         return;
                     }
 
                     // 1. Set scale origin
-                    Visual v = presenter.GetElementVisual();
-
                     if (presenter.RenderTransformOrigin.X != 0 || presenter.RenderTransformOrigin.Y != 0)
                         CompositionFactory.StartCentering(
                             v, (float)presenter.RenderTransformOrigin.X, (float)presenter.RenderTransformOrigin.Y);
