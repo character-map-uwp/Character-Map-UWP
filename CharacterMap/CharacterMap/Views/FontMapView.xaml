@@ -290,6 +290,7 @@
                 Grid.Column="1"
                 Margin="24 0 8 0"
                 VerticalAlignment="Center"
+                IsTextSelectionEnabled="True"
                 Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                 Style="{StaticResource TitleTextStyle}"
                 Text="{Binding SelectedFont.Font.Name, Converter={StaticResource TitleConverter}}"

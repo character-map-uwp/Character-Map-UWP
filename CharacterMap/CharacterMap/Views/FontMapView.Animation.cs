@@ -24,6 +24,9 @@ namespace CharacterMap.Views
                 TypeRampList.Measure(CharGrid.DesiredSize);
             }
 
+            if (TypeRampList.ItemsPanelRoot is null)
+                TypeRampList.Measure(CharGrid.DesiredSize);
+
             var items = TypeRampList.ItemsPanelRoot.Children.OfType<FrameworkElement>();
 
             if (VariableAxis.ItemsPanelRoot is not null)

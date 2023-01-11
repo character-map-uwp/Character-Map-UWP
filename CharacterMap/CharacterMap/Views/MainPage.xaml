@@ -965,25 +965,29 @@
                     HorizontalAlignment="Stretch"
                     Font="{x:Bind ViewModel.CurrentFont, Mode=OneWay}">
                     <views:FontMapView.TitleRightContent>
-                        <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
-                            <controls:UXButton
-                                x:Name="BtnSettings"
-                                Width="45"
-                                Height="45"
-                                Margin="-6 0 0 0"
-                                Click="BtnSettings_OnClick"
-                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                Label="{core:Localizer Key='SettingsHeader/Text'}"
-                                Style="{StaticResource MapInfoButtonStyle}">
-                                <ToolTipService.ToolTip>
-                                    <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
-                                </ToolTipService.ToolTip>
-                                <FontIcon
-                                    HorizontalAlignment="Center"
+                        <Border MinHeight="45">
+                            <Border Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
+                                <controls:UXButton
+                                    x:Name="BtnSettings"
+                                    Width="45"
+                                    Height="45"
+                                    Margin="-6 0 0 0"
                                     VerticalAlignment="Center"
-                                    FontSize="16"
-                                    Glyph="&#xE115;" />
-                            </controls:UXButton>
+                                    Click="BtnSettings_OnClick"
+                                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                                    Label="{core:Localizer Key='SettingsHeader/Text'}"
+                                    Style="{StaticResource MapInfoButtonStyle}">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        FontSize="16"
+                                        Glyph="&#xE115;" />
+                                </controls:UXButton>
+                            </Border>
                         </Border>
                     </views:FontMapView.TitleRightContent>
                 </views:FontMapView>
@@ -1202,8 +1206,9 @@
                         <Setter Target="TitleBar.(Canvas.ZIndex)" Value="9" />
                         <Setter Target="TitleButtonsPresenter.Foreground" Value="White" />
                         <Setter Target="SplitView.(core:Properties.ClipToBounds)" Value="True" />
-                        <Setter Target="BtnSettings.Width" Value="Auto" />
                         <Setter Target="BtnSettings.Height" Value="Auto" />
+                        <Setter Target="BtnSettings.Width" Value="Auto" />
+                        <Setter Target="BtnSettings.Margin" Value="0 -4 0 0" />
                         <Setter Target="PaneTitleBarSpacer.MaxHeight" Value="0" />
                         <Setter Target="NoTabsTitleBarSpacer.MaxHeight" Value="0" />
                         <Setter Target="FontMap.Margin" Value="0 0 8 0" />

@@ -349,11 +349,29 @@ namespace CharacterMap.Views
 
                 // 5: Start child animation
                 if (Settings.UseSelectionAnimations)
-                    CompositionFactory.PlayEntrance(panel.Children.OfType<UIElement>().ToList(), 0, 80);
+                    CompositionFactory.PlayEntrance(GetChildren(panel), 0, 80);
 
                 // 6: Show selected panel
                 panel.Visibility = Visibility.Visible;
             }
+        }
+
+        private List<UIElement> GetChildren(Panel p)
+        {
+            List<UIElement> children = new List<UIElement>();
+
+            foreach (var child in p.Children)
+            {
+                if (child is ItemsControl c)
+                {
+                    c.Realize(p.DesiredSize.Width, p.DesiredSize.Height);
+                    children.AddRange(c.ItemsPanelRoot.Children);
+                }
+                else
+                    children.Add(child);
+            }
+
+            return children;
         }
 
         internal async void ExportAsZip()
