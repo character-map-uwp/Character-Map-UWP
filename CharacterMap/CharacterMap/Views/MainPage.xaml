@@ -131,11 +131,17 @@
                                         Shortcut="Ctrl+P" />
                                 </Button>
 
-                                <Button Click="BtnSettings_OnClick">
+                                <Button
+                                    x:Name="AppMenuSettings"
+                                    x:Load="{x:Bind core:Converters.False(ViewModel.IsSecondaryView)}"
+                                    Click="BtnSettings_OnClick">
                                     <controls:ButtonLabel Title="{core:Localizer Key='SettingsHeader/Text'}" Glyph="&#xE115;" />
                                 </Button>
 
-                                <Button Click="{x:Bind ShowAbout}">
+                                <Button
+                                    x:Name="AppMenuAbout"
+                                    x:Load="{x:Bind core:Converters.False(ViewModel.IsSecondaryView)}"
+                                    Click="{x:Bind ShowAbout}">
                                     <controls:ButtonLabel Title="{core:Localizer Key='SettingsAboutLabel/Text'}" Glyph="&#xE946;" />
                                 </Button>
 
@@ -153,7 +159,10 @@
             Placement="BottomEdgeAlignedLeft">
             <MenuFlyoutSubItem Text="{core:Localizer Key='OpenFontButton/Label'}">
                 <MenuFlyoutSubItem.Icon>
-                    <FontIcon FontSize="14" Glyph="&#xED25;" />
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xED25;" />
                 </MenuFlyoutSubItem.Icon>
                 <MenuFlyoutItem
                     x:Uid="FontFileMenuItem"
@@ -178,7 +187,10 @@
                     <KeyboardAccelerator Key="K" Modifiers="Control" />
                 </MenuFlyoutItem.KeyboardAccelerators>
                 <MenuFlyoutItem.Icon>
-                    <FontIcon FontSize="14" Glyph="&#xE1D3;" />
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xE1D3;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
@@ -187,7 +199,10 @@
                     <KeyboardAccelerator Key="F12" />
                 </MenuFlyoutItem.KeyboardAccelerators>
                 <MenuFlyoutItem.Icon>
-                    <FontIcon FontSize="14" Glyph="&#xE740;" />
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xE740;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
@@ -198,27 +213,40 @@
                     <KeyboardAccelerator Key="P" Modifiers="Control" />
                 </MenuFlyoutItem.KeyboardAccelerators>
                 <MenuFlyoutItem.Icon>
-                    <FontIcon FontSize="14" Glyph="&#xE749;" />
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xE749;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
             <MenuFlyoutSeparator />
 
             <MenuFlyoutItem
+                x:Name="CompactAppMenuSettings"
+                x:Load="{x:Bind core:Converters.False(ViewModel.IsSecondaryView)}"
                 x:Uid="SettingsHeader"
                 Click="BtnSettings_OnClick"
                 d:Text="Settings">
                 <MenuFlyoutItem.Icon>
-                    <FontIcon FontSize="14" Glyph="&#xE115;" />
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xE115;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
             <MenuFlyoutItem
+                x:Name="CompactAppMenuAbout"
+                x:Load="{x:Bind core:Converters.False(ViewModel.IsSecondaryView)}"
                 x:Uid="SettingsAboutLabel"
                 Click="{x:Bind ShowAbout}"
                 d:Text="About">
                 <MenuFlyoutItem.Icon>
-                    <FontIcon FontSize="14" Glyph="&#xE946;" />
+                    <FontIcon
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="14"
+                        Glyph="&#xE946;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
         </MenuFlyout>
