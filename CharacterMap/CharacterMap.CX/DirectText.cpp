@@ -174,8 +174,10 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
         else if (IsColorFontEnabled)
             layout->Options = CanvasDrawTextOptions::EnableColorFont;
-        else if (!IsCharacterFitEnabled)
+        else if (!IsCharacterFitEnabled && !IsOverwriteCompensationEnabled)
             layout->Options = CanvasDrawTextOptions::Clip;
+        else
+            layout->Options = CanvasDrawTextOptions::Default;
 
         if (IsCharacterFitEnabled)
         {
@@ -214,10 +216,8 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     // Useful for debugging to see which textboxes are DX
     //args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
 
-    auto t = m_layout->DrawBounds.Top;
-    auto dt = m_layout->LayoutBounds.Top;
-
     auto left = -min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);
+    auto top = -min(m_layout->DrawBounds.Top, m_layout->LayoutBounds.Top);
 
     if (IsCharacterFitEnabled)
     {
@@ -236,18 +236,19 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         }
     }
 
-    if (IsOverwriteCompensationEnabled && m_layout->DrawBounds.Left < 0)
+    if (IsOverwriteCompensationEnabled && (m_layout->DrawBounds.Left < 0 || m_layout->DrawBounds.Top < 0))
     {
         auto b = m_layout->DrawBounds.Left;
-        auto c = m_layout->LayoutBounds.Left;
-        m_canvas->Margin = ThicknessHelper::FromLengths(b, 0, 0, 0);
+        auto t = m_layout->DrawBounds.Top;
+
+        m_canvas->Margin = ThicknessHelper::FromLengths(b, t, 0, 0);
         left -= b;
+        top -= t;
     }
     else
         m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
 
-    //args->DrawingSession->Clear(Windows::UI::Colors::Red);
-    args->DrawingSession->DrawTextLayout(m_layout, float2(left, 0), ((SolidColorBrush^)this->Foreground)->Color);
+    args->DrawingSession->DrawTextLayout(m_layout, float2(left, top), ((SolidColorBrush^)this->Foreground)->Color);
 
     m_render = false;
 }

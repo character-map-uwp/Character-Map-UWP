@@ -501,12 +501,12 @@
                                         <Grid>
                                             <TextBlock
                                                 AutomationProperties.AccessibilityView="Raw"
-                                                FontFamily="Segoe MDL2 Assets"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 Foreground="{x:Bind calligraphyPen.SelectedBrush, Mode=OneWay}"
                                                 Text="&#xF0C7;" />
                                             <TextBlock
                                                 AutomationProperties.AccessibilityView="Raw"
-                                                FontFamily="Segoe MDL2 Assets"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 Text="&#xEDFB;" />
                                         </Grid>
                                     </Border>
