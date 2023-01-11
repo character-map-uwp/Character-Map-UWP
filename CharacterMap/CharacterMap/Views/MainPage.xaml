@@ -2,6 +2,7 @@
     x:Class="CharacterMap.Views.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:av="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -24,6 +25,11 @@
 
         <MenuFlyout x:Key="TabContextMenu" Opening="TabViewItemContext_Opening" />
 
+        <TransitionCollection x:Name="TabTransitions">
+            <ReorderThemeTransition />
+            <RepositionThemeTransition IsStaggeringEnabled="False" />
+        </TransitionCollection>
+
         <Flyout
             x:Name="AppMenuFlyout"
             core:Properties.UseExpandContractAnimation="True"
@@ -32,9 +38,9 @@
                 <Style BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
                     <Setter Property="RenderTransformOrigin" Value="0 0" />
                     <Setter Property="Margin" Value="2 -4 0 0" />
-                    <Setter Property="Width" Value="500" />
-                    <Setter Property="MaxWidth" Value="500" />
-                    <Setter Property="MinWidth" Value="500" />
+                    <Setter Property="Width" Value="470" />
+                    <Setter Property="MaxWidth" Value="470" />
+                    <Setter Property="MinWidth" Value="470" />
                 </Style>
             </Flyout.FlyoutPresenterStyle>
 
@@ -155,6 +161,7 @@
 
         <MenuFlyout
             x:Key="MainMenuFlyout"
+            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
             MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
             Placement="BottomEdgeAlignedLeft">
             <MenuFlyoutSubItem Text="{core:Localizer Key='OpenFontButton/Label'}">
@@ -259,11 +266,13 @@
 
         <MenuFlyout
             x:Name="FontListFlyout"
+            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
             MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
             Placement="Bottom" />
 
         <MenuFlyout
             x:Name="OpenFontFlyout"
+            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
             MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
             Placement="BottomEdgeAlignedLeft">
             <MenuFlyoutItem
@@ -314,7 +323,7 @@
             Foreground="{ThemeResource ButtonForegroundThemeBrush}">
             <Grid
                 Height="{x:Bind TitleBar.TemplateSettings.Height, Mode=OneWay}"
-                ChildrenTransitions="{StaticResource RepositionTransitions}"
+                ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                 d:Height="32">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="{x:Bind TitleBar.TemplateSettings.LeftColumnWidth, Mode=OneWay}" d:Width="0" />
@@ -334,10 +343,32 @@
                         <Button
                             x:Name="MainMenuButton"
                             x:Uid="MenuButton"
-                            Content="&#xE700;"
                             Flyout="{StaticResource AppMenuFlyout}"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
-                            Style="{StaticResource TitleBarButtonStyle}" />
+                            Style="{StaticResource TitleBarButtonStyle}">
+                            <Grid>
+                                <FontIcon
+                                    x:Name="MainMenuIcon"
+                                    x:Load="False"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    FontSize="{Binding ElementName=MainMenuButton, Path=FontSize}"
+                                    Glyph="&#xE700;" />
+                                <muxc:AnimatedIcon
+                                    x:Name="AnimatedMenuIcon"
+                                    x:Load="False"
+                                    Height="16"
+                                    muxc:AnimatedIcon.State="{x:Bind MainMenuButton.(muxc:AnimatedIcon.State), Mode=OneWay}"
+                                    IsHitTestVisible="False">
+                                    <av:AnimatedGlobalNavigationButtonVisualSource />
+                                    <muxc:AnimatedIcon.FallbackIconSource>
+                                        <muxc:FontIconSource
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="{Binding ElementName=MainMenuButton, Path=FontSize}"
+                                            Glyph="&#xE700;" />
+                                    </muxc:AnimatedIcon.FallbackIconSource>
+                                </muxc:AnimatedIcon>
+                            </Grid>
+                        </Button>
 
                         <Button
                             x:Name="OpenFontPaneButton"
@@ -403,12 +434,13 @@
             Tag="{x:Null}" />
 
         <!--  Main Content  -->
-        <SplitView
+        <controls:ExtendedSplitView
             x:Name="SplitView"
             Grid.Row="1"
             Grid.ColumnSpan="3"
             Background="{x:Null}"
             DisplayMode="Inline"
+            EnableAnimation="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
             IsPaneOpen="True"
             OpenPaneLength="{StaticResource SplitViewPaneWidth}"
             PaneBackground="{x:Null}">
@@ -439,17 +471,6 @@
                         Background="{ThemeResource PaneCollapsedBackgroundBrush}"
                         IsHitTestVisible="False"
                         Visibility="Collapsed" />
-
-                    <!--<TextBlock
-                        Margin="58 0 0 0"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        IsHitTestVisible="False"
-                        IsTextScaleFactorEnabled="False"
-                        OpticalMarginAlignment="TrimSideBearings"
-                        Text="Character Map UWP"
-                        TextLineBounds="Tight" />-->
-
 
                     <!--  Pane Header Commands  -->
                     <Grid
@@ -519,7 +540,10 @@
                             </StackPanel>
 
                             <Button.Flyout>
-                                <controls:FilterFlyout CollectionSelectedCommand="{x:Bind CollectionSelectedCommand}" FilterCommand="{x:Bind FilterCommand}" />
+                                <controls:FilterFlyout
+                                    AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                                    CollectionSelectedCommand="{x:Bind CollectionSelectedCommand}"
+                                    FilterCommand="{x:Bind FilterCommand}" />
                             </Button.Flyout>
                         </controls:UXButton>
 
@@ -608,7 +632,7 @@
                                     Style="{StaticResource MapInfoButtonStyle}"
                                     ToolTipService.Placement="Bottom"
                                     d:Label="Rename">
-                                    <FontIcon Glyph="&#xE13E;" />
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE13E;" />
                                 </controls:UXButton>
                                 <controls:UXButton
                                     x:Uid="DeleteCollectionButton"
@@ -619,7 +643,7 @@
                                     Style="{StaticResource MapInfoButtonStyle}"
                                     ToolTipService.Placement="Bottom"
                                     d:Label="Delete">
-                                    <FontIcon Glyph="&#xE107;" />
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE107;" />
                                 </controls:UXButton>
                                 <controls:UXButton
                                     x:Name="CollectionExportButton"
@@ -632,7 +656,10 @@
                                     ToolTipService.Placement="Bottom"
                                     d:Label="Export">
                                     <Button.Flyout>
-                                        <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
+                                        <MenuFlyout
+                                            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                                            MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+                                            Placement="Bottom">
                                             <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
                                             <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportAsFolder}" />
                                             <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
@@ -667,7 +694,10 @@
                                     ToolTipService.Placement="Bottom"
                                     ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}"
                                     d:Label="Compare Fonts">
-                                    <FontIcon FontSize="16" Glyph="&#xE1D3;" />
+                                    <FontIcon
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        FontSize="16"
+                                        Glyph="&#xE1D3;" />
                                 </controls:UXButton>
                             </wct:WrapPanel>
                         </Grid>
@@ -711,7 +741,7 @@
                             x:Uid="FontListSearchBox"
                             Grid.Row="2"
                             Margin="0 6 0 0"
-                            Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                             Text="{Binding FontSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                             TextBoxStyle="{StaticResource FontAutoSuggestBoxTextBoxStyle}" />
 
@@ -720,7 +750,7 @@
                             x:Load="False"
                             Grid.Row="3"
                             core:Properties.ClipToBounds="True"
-                            Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                             Opacity="0.7"
                             Visibility="Collapsed">
                             <TextBlock
@@ -756,16 +786,13 @@
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
+                                        ItemContainerTransitions="{StaticResource NoTransitions}"
                                         ItemTemplate="{StaticResource FontListItemTemplate}"
                                         ItemsSource="{Binding Source={StaticResource GroupedFontList}}"
                                         SelectedValuePath="Name"
                                         SelectionChanged="LstFontFamily_SelectionChanged"
                                         SelectionMode="Single"
                                         ShowsScrollingPlaceholders="False">
-                                        <ListView.ItemContainerTransitions>
-                                            <TransitionCollection />
-                                        </ListView.ItemContainerTransitions>
-
                                         <ListView.GroupStyle>
                                             <GroupStyle
                                                 HeaderContainerStyle="{ThemeResource FontListHeaderItem}"
@@ -816,6 +843,7 @@
                                     Width="45"
                                     MinHeight="12"
                                     VerticalAlignment="Center"
+                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     FontSize="14"
                                     Glyph="&#xE1D3;" />
                             </controls:LabelButton.IconContent>
@@ -902,6 +930,7 @@
                     <muxc:TabView
                         x:Name="FontsTabBar"
                         x:Load="False"
+                        core:Properties.ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                         core:Properties.IsTabOpenAnimationEnabled="True"
                         core:Properties.RequireOpenTab="True"
                         AddTabButtonClick="FontMapContainer_AddTabButtonClick"
@@ -989,7 +1018,6 @@
                     x:Name="FontMap"
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
-                    Padding="0 4 0 0"
                     HorizontalAlignment="Stretch"
                     Font="{x:Bind ViewModel.CurrentFont, Mode=OneWay}">
                     <views:FontMapView.TitleRightContent>
@@ -1008,12 +1036,31 @@
                                     <ToolTipService.ToolTip>
                                         <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
                                     </ToolTipService.ToolTip>
-                                    <FontIcon
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                        FontSize="16"
-                                        Glyph="&#xE115;" />
+                                    <Grid>
+                                        <FontIcon
+                                            x:Name="SettingsButtonIcon"
+                                            x:Load="False"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                            FontSize="16"
+                                            Glyph="&#xE115;" />
+                                        <muxc:AnimatedIcon
+                                            x:Name="SettingsButtonAnimatedIcon"
+                                            x:Load="False"
+                                            Height="18"
+                                            muxc:AnimatedIcon.State="{x:Bind BtnSettings.(muxc:AnimatedIcon.State), Mode=OneWay}"
+                                            IsHitTestVisible="False">
+                                            <av:AnimatedSettingsVisualSource />
+                                            <muxc:AnimatedIcon.FallbackIconSource>
+                                                <muxc:FontIconSource
+                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                    FontSize="16"
+                                                    Glyph="&#xE115;" />
+                                            </muxc:AnimatedIcon.FallbackIconSource>
+                                        </muxc:AnimatedIcon>
+                                    </Grid>
+
                                 </controls:UXButton>
                             </Border>
                         </Border>
@@ -1021,7 +1068,7 @@
                 </views:FontMapView>
 
             </Grid>
-        </SplitView>
+        </controls:ExtendedSplitView>
 
         <!--  Settings  -->
         <views:SettingsView
@@ -1215,20 +1262,29 @@
                 <VisualState x:Name="DefaultThemeState">
                     <VisualState.Setters>
                         <Setter Target="PaneRootBackground.Background" Value="{ThemeResource DefaultHostBrush}" />
+                        <Setter Target="MainMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="SettingsButtonIcon.Visibility" Value="Visible" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
+                        <Setter Target="MainMenuButton.(core:Properties.SupportAnimatedIcon)" Value="True" />
+                        <Setter Target="BtnSettings.(core:Properties.SupportAnimatedIcon)" Value="True" />
+                        <Setter Target="AnimatedMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="SettingsButtonAnimatedIcon.Visibility" Value="Visible" />
                         <Setter Target="PageRoot.Background" Value="Transparent" />
                         <Setter Target="PageRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
                         <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
                         <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
-                        <Setter Target="FontMap.Margin" Value="0 0 2 4" />
+                        <Setter Target="FontMap.Margin" Value="0 0 2 0" />
+                        <Setter Target="FontMap.Padding" Value="0 0 0 4" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
+                        <Setter Target="MainMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="SettingsButtonIcon.Visibility" Value="Visible" />
                         <Setter Target="TitleButtonsPresenter.(Grid.Row)" Value="0" />
                         <Setter Target="TitleBar.(Grid.Row)" Value="0" />
                         <Setter Target="TitleBar.(Canvas.ZIndex)" Value="9" />
@@ -1255,6 +1311,8 @@
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
+                        <Setter Target="MainMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="SettingsButtonIcon.Visibility" Value="Visible" />
                         <Setter Target="BtnSettings.Visibility" Value="Collapsed" />
                         <Setter Target="ZuneSettingsButton.IsHitTestVisible" Value="True" />
                         <Setter Target="MenuShimmy.FontWeight" Value="Light" />

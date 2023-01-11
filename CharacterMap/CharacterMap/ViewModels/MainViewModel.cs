@@ -32,6 +32,8 @@ namespace CharacterMap.ViewModels
 
         #region Properties
 
+        protected override bool TrackAnimation => true;
+
         public Task InitialLoad { get; }
 
         public AppSettings Settings { get; }

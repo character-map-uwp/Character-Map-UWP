@@ -27,14 +27,11 @@
             <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
 
-
         <!--<Style TargetType="RadioButton">
             <Setter Property="MinWidth" Value="200" />
         </Style>-->
 
         <!--<Style BasedOn="{StaticResource DefaultThemeToggleSwitchStyle}" TargetType="ToggleSwitch" />-->
-
-
     </UserControl.Resources>
 
     <Grid x:Name="Root">
@@ -96,7 +93,7 @@
                     x:Name="MenuColumn"
                     Width="256"
                     Margin="0 24 0 0"
-                    ChildrenTransitions="{StaticResource RepositionTransitions}"
+                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                     Style="{StaticResource SettingsMenuStyle}">
 
                     <controls:MenuButton
@@ -185,7 +182,7 @@
                 <Border
                     x:Name="ContentBorder"
                     Grid.Column="1"
-                    Loaded="{x:Bind h:CompositionFactory.SetStandardReposition}">
+                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
                     <!--  RepositionAnimation on the ScrollViewer itself breaks hit testing  -->
                     <ScrollViewer x:Name="ContentScroller">
                         <Grid
@@ -234,7 +231,7 @@
                                     <StackPanel>
                                         <ComboBox
                                             MinWidth="160"
-                                            ItemsSource="{x:Bind Annotations}"
+                                            ItemsSource="{x:Bind ViewModel.Annotations}"
                                             SelectedItem="{x:Bind Settings.GlyphAnnotation, Mode=TwoWay}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
@@ -255,7 +252,7 @@
                                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                 Orientation="Horizontal">
                                                 <StackPanel.BackgroundTransition>
-                                                    <BrushTransition Duration="0:0:0.25" />
+                                                    <BrushTransition x:Name="BackgroundTransition" Duration="0:0:0.25" />
                                                 </StackPanel.BackgroundTransition>
                                                 <GridViewItem>
                                                     <Grid
@@ -427,17 +424,25 @@
 
                             </StackPanel>
 
-                            <StackPanel x:Name="UserInterfaceAdvancedPanel" Visibility="Collapsed">
-                                <StackPanel.ChildrenTransitions>
-                                    <TransitionCollection>
-                                        <RepositionThemeTransition IsStaggeringEnabled="False" />
-                                    </TransitionCollection>
-                                </StackPanel.ChildrenTransitions>
+                            <StackPanel
+                                x:Name="UserInterfaceAdvancedPanel"
+                                ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
+                                Visibility="Collapsed">
 
                                 <TextBlock x:Uid="SettingsAdvancedUILabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSimpleAnimationHeader/Text}" Description="{core:Localizer Key=SettingsSimpleAnimationDescription/Text}">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+                                    <ToggleSwitch
+                                        x:Name="BasicAnimationToggle"
+                                        MinWidth="0"
+                                        IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
+                                    Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}"
+                                    Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}"
+                                    Visibility="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsTransparencyHeader/Text}" Description="{core:Localizer Key=SettingsTransparencyDescription/Text}">
@@ -452,9 +457,7 @@
                                     <win1903:ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}" Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
+
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
@@ -465,9 +468,9 @@
                                         <ComboBox
                                             MinWidth="256"
                                             Margin="0 8 0 0"
-                                            ItemsSource="{x:Bind SupportedLanguages}"
+                                            ItemsSource="{x:Bind ViewModel.SupportedLanguages}"
                                             PlaceholderText="{x:Bind core:Converters.GetLanguageDisplayFromID(Settings.AppLanguage)}"
-                                            SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}" />
+                                            SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, ViewModel.SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}" />
 
                                         <TextBlock
                                             x:Uid="SettingsNeedRestart"
@@ -566,7 +569,7 @@
                                         Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SearchResultsSlider/Header}" Loaded="{x:Bind h:CompositionFactory.SetStandardReposition}">
+                                <controls:SettingsPresenter Title="{core:Localizer Key=SearchResultsSlider/Header}" core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
 
                                     <muxc:NumberBox
                                         x:Uid="SearchResultsSlider"
@@ -598,7 +601,7 @@
 
                                 <controls:UXHyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />
 
-                                <ItemsControl ItemsSource="{x:Bind Changelog}">
+                                <ItemsControl ItemsSource="{x:Bind ViewModel.Changelog}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="views:ChangelogItem">
                                             <controls:SettingsPresenter
@@ -688,7 +691,7 @@
                                                 HorizontalContentAlignment="Left"
                                                 Background="Transparent"
                                                 BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
-                                                IsEnabled="{x:Bind IsCollectionExportEnabled, Mode=OneWay}"
+                                                IsEnabled="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}"
                                                 Style="{StaticResource ButtonRevealStyle}">
                                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                                     <PathIcon
@@ -707,13 +710,16 @@
                                                         MinHeight="20"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
-                                                        IsActive="{x:Bind core:Converters.False(IsCollectionExportEnabled), Mode=OneWay}"
-                                                        Visibility="{x:Bind core:Converters.FalseToVis(IsCollectionExportEnabled), Mode=OneWay}" />
+                                                        IsActive="{x:Bind core:Converters.False(ViewModel.IsCollectionExportEnabled), Mode=OneWay}"
+                                                        Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsCollectionExportEnabled), Mode=OneWay}" />
                                                 </StackPanel>
                                                 <Button.Flyout>
-                                                    <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
-                                                        <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ExportToFolder}" />
-                                                        <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ExportAsZip}" />
+                                                    <MenuFlyout
+                                                        AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                                                        MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+                                                        Placement="Bottom">
+                                                        <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportToFolder}" />
+                                                        <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
                                                     </MenuFlyout>
                                                 </Button.Flyout>
                                             </Button>

@@ -453,9 +453,6 @@ namespace CharacterMap.Controls
             if (this.ItemsPanelRoot == null)
                 return;
 
-            if (!CompositionFactory.UISettings.AnimationsEnabled)
-                return;
-
             foreach (var item in this.ItemsPanelRoot.Children)
             {
                 var v = ElementCompositionPreview.GetElementVisual(item);

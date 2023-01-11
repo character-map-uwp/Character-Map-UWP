@@ -1,7 +1,9 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:av="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:core="using:CharacterMap.Core"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives">
 
@@ -290,25 +292,16 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:TabView">
                     <Grid Margin="{TemplateBinding Padding}">
-                        <Grid x:Name="TabContainerGrid" XYFocusKeyboardNavigation="Enabled">
+                        <Grid
+                            x:Name="TabContainerGrid"
+                            ChildrenTransitions="{Binding Path=(core:Properties.ChildrenTransitions), RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            XYFocusKeyboardNavigation="Enabled">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition x:Name="LeftContentColumn" Width="Auto" />
                                 <ColumnDefinition x:Name="TabColumn" Width="Auto" />
                                 <ColumnDefinition x:Name="AddButtonColumn" Width="Auto" />
                                 <ColumnDefinition x:Name="RightContentColumn" Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Grid.ChildrenTransitions>
-                                <TransitionCollection>
-                                    <RepositionThemeTransition IsStaggeringEnabled="False" />
-                                </TransitionCollection>
-                            </Grid.ChildrenTransitions>
-                            <!--<Border
-                                Grid.Column="1"
-                                Grid.ColumnSpan="2"
-                                Height="1"
-                                VerticalAlignment="Bottom"
-                                BorderBrush="{ThemeResource TabViewBorderBrush}"
-                                BorderThickness="1" />-->
                             <ContentPresenter
                                 x:Name="LeftContentPresenter"
                                 Grid.Column="0"
@@ -346,10 +339,21 @@
                                     x:Name="CollectionButton"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Content="&#xE099;"
+                                    core:Properties.SupportAnimatedIcon="True"
                                     HighContrastAdjustment="None"
                                     IsTextScaleFactorEnabled="False"
                                     Style="{ThemeResource TabViewButtonStyle}">
+                                    <Button.Content>
+                                        <controls:AnimatedIcon Height="14" IsHitTestVisible="False">
+                                            <av:AnimatedChevronDownSmallVisualSource />
+                                            <controls:AnimatedIcon.FallbackIconSource>
+                                                <controls:FontIconSource
+                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                                    FontSize="{Binding ElementName=CollectionButton, Path=FontSize}"
+                                                    Glyph="&#xE099;" />
+                                            </controls:AnimatedIcon.FallbackIconSource>
+                                        </controls:AnimatedIcon>
+                                    </Button.Content>
                                     <Button.Flyout>
                                         <MenuFlyout Placement="Bottom">
                                             <MenuFlyoutItem x:Uid="CompareActiveItem">
@@ -400,16 +404,9 @@
         <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
         <Setter Property="ItemContainerTransitions">
             <Setter.Value>
-                <TransitionCollection>
-                    <AddDeleteThemeTransition />
-                    <ContentThemeTransition />
-                    <ReorderThemeTransition />
-                    <RepositionThemeTransition IsStaggeringEnabled="False" />
-                    <EntranceThemeTransition IsStaggeringEnabled="False" />
-                </TransitionCollection>
+                <TransitionCollection />
             </Setter.Value>
         </Setter>
-
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>

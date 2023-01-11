@@ -580,7 +580,7 @@
                     <StackPanel
                         x:Name="OptionsPanel"
                         Margin="20 20 20 120"
-                        ChildrenTransitions="{StaticResource RepositionTransitions}">
+                        ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}">
 
                         <cmControls:ContentGroup x:Uid="PrintDataHeader" d:Text="{core:Localizer Key=PrintDataHeader/Text}">
                             <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
@@ -630,7 +630,7 @@
                                 <ComboBoxItem Content="SVG" />
                             </ComboBox>
 
-                            <StackPanel Transitions="{StaticResource RepositionTransitions}" Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
+                            <StackPanel Transitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}" Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
                                 <TextBlock
                                     x:Uid="PrintViewCharSize"
                                     Margin="0,16,0,0"
@@ -687,7 +687,7 @@
                     Margin="12 24 12 12"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
+                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />

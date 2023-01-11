@@ -83,8 +83,6 @@
         </Setter>
     </Style>
 
-
-
     <Style x:Key="IconButton" BasedOn="{StaticResource ButtonRevealStyle}" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource ListViewItemRevealBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
@@ -190,7 +188,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style x:Key="IconToggleButtonStyle" BasedOn="{StaticResource TextBlockButtonStyle}" TargetType="ToggleButton">
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />

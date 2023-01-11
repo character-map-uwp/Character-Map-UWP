@@ -167,42 +167,54 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="State">
                                 <VisualState x:Name="Collapsed">
-                                    <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                            <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </DoubleAnimationUsingKeyFrames>
-
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                            <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </DoubleAnimationUsingKeyFrames>
-
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.15" Value="Collapsed" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
                                 </VisualState>
-
                                 <VisualState x:Name="Visible">
-                                    <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                            <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.3" Value="1" />
-                                        </DoubleAnimationUsingKeyFrames>
-
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                            <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                            <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Opacity" Value="1" />
+                                    </VisualState.Setters>
                                 </VisualState>
+
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="*" To="Collapsed">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.15" Value="Collapsed" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="*" To="Visible">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.3" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -256,7 +268,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style TargetType="controls:LabelButton">
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -324,7 +335,6 @@
         </Setter>
 
     </Style>
-
 
     <Style TargetType="controls:ModalPagePresenter">
         <Setter Property="ContentBackground" Value="{ThemeResource DefaultPageBackgroundBrush}" />
@@ -523,10 +533,8 @@
                             Width="440"
                             MaxHeight="500"
                             Padding="12 12 0 48"
+                            ItemContainerTransitions="{StaticResource NoTransitions}"
                             SelectionMode="None">
-                            <GridView.ItemContainerTransitions>
-                                <TransitionCollection />
-                            </GridView.ItemContainerTransitions>
                             <GridView.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox
@@ -547,6 +555,64 @@
                             Style="{StaticResource DefaultThemeButtonStyle}" />
 
                     </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:ExtendedSplitView">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="OpenPaneLength" Value="{ThemeResource SplitViewOpenPaneThemeLength}" />
+        <Setter Property="CompactPaneLength" Value="{ThemeResource SplitViewCompactPaneThemeLength}" />
+        <Setter Property="PaneBackground" Value="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="SplitView">
+                    <Grid Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DisplayModeStates">
+                                <VisualState x:Name="Closed" />
+                                <VisualState x:Name="OpenOverlayLeft">
+                                    <VisualState.Setters>
+                                        <Setter Target="PaneRoot.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="PaneRoot.Visibility" Value="Visible" />
+                                        <Setter Target="LightDismissLayer.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="OpenInlineLeft">
+                                    <VisualState.Setters>
+                                        <Setter Target="PaneRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Content Area  -->
+                        <Grid x:Name="ContentRoot" Grid.Column="1">
+                            <Border Child="{TemplateBinding Content}" />
+                            <Rectangle
+                                x:Name="LightDismissLayer"
+                                x:DeferLoadStrategy="Lazy"
+                                Fill="Transparent"
+                                Visibility="Collapsed" />
+                        </Grid>
+
+                        <!--  Pane Content Area  -->
+                        <Border
+                            x:Name="PaneRoot"
+                            Width="{TemplateBinding OpenPaneLength}"
+                            HorizontalAlignment="Left"
+                            Background="{TemplateBinding PaneBackground}"
+                            Child="{TemplateBinding Pane}"
+                            Visibility="Collapsed" />
+                    </Grid>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

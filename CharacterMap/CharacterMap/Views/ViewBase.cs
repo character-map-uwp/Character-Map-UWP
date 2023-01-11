@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views
 {
@@ -80,6 +81,26 @@ namespace CharacterMap.Views
         protected bool GoToState(string state, bool tryAnimate = true)
         {
             return VisualStateManager.GoToState(this, state, tryAnimate && ResourceHelper.AllowAnimation);
+        }
+
+        protected TransitionCollection GetRepositionCollection(bool b)
+        {
+            return b
+                ? ResourceHelper.Get<TransitionCollection>("RepositionTransitions")
+                : null;
+        }
+
+        /// <summary>
+        /// Returns a local transition collection
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="b"></param>
+        /// <returns></returns>
+        protected TransitionCollection GetTransitions(string key, bool b)
+        {
+            return b
+                ? ResourceHelper.Get<TransitionCollection>(this, key)
+                : ResourceHelper.Get<TransitionCollection>("NoTransitions");
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿using CharacterMap.Helpers;
+﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
@@ -87,6 +89,42 @@ namespace CharacterMap.ViewModels
 
     public abstract class BaseNotifyingModel
     {
+        SynchronizationContext _originalContext { get; }
+
+        /// <summary>
+        /// If true, ViewModel will notify of changes to animation settings
+        /// </summary>
+        protected virtual bool TrackAnimation => false;
+
+        public BaseNotifyingModel()
+        {
+            if (TrackAnimation)
+            {
+                _originalContext = SynchronizationContext.Current;
+                Register<AppSettingsChangedMessage>(m =>
+                {
+                    void Notify(string s)
+                    {
+                        if (SynchronizationContext.Current == _originalContext)
+                            SendPropertyChanged(s);
+                        else
+                            _originalContext.Post(_ => SendPropertyChanged(s), null);
+                    }
+
+                    switch (m.PropertyName)
+                    {
+                        case nameof(AppSettings.UseSelectionAnimations):
+                            Notify(nameof(AllowAnimation));
+                            Notify(nameof(AllowExpensiveAnimation));
+                            break;
+                        case nameof(AppSettings.AllowExpensiveAnimations):
+                            Notify(nameof(AllowExpensiveAnimation));
+                            break;
+                    }
+                });
+            }
+        }
+
         /// <summary>
         /// Private data store that contains all of the properties access through GetProperty 
         /// method.
@@ -175,6 +213,7 @@ namespace CharacterMap.ViewModels
         }
 
         public bool AllowAnimation => ResourceHelper.AllowAnimation;
+        public bool AllowExpensiveAnimation => ResourceHelper.AllowExpensiveAnimation;
     }
 
     [ObservableObject]

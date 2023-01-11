@@ -294,12 +294,11 @@ namespace CharacterMap.Helpers
             v.StartAnimationGroup(g);
         }
 
-        public static void SetStandardReposition(object sender, RoutedEventArgs args)
+        public static void SetStandardReposition(UIElement e)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
 
-            UIElement e = (UIElement)sender;
             Visual v = e.GetElementVisual();
 
             var value = v.GetCached("DefaultOffsetAnimation",
@@ -309,6 +308,11 @@ namespace CharacterMap.Helpers
                                     .SetDuration(DefaultOffsetDuration));
 
             v.SetImplicitAnimation(nameof(Visual.Offset), value);
+        }
+
+        public static void DisableStandardReposition(FrameworkElement f)
+        {
+            f.GetElementVisual().ImplicitAnimations?.Remove(nameof(Visual.Offset));
         }
 
         public static Visual EnableStandardTranslation(Visual v)

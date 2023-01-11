@@ -419,14 +419,17 @@ namespace CharacterMap.Helpers
         #region SetDuration
 
         /// <summary>
-        /// Sets the duration in seconds
+        /// Sets the duration in seconds. If less than 0 the duration is not set.
         /// </summary>
         /// <param name="animation"></param>
         /// <param name="duration">Duration in seconds</param>
         /// <returns></returns>
         public static T SetDuration<T>(this T animation, double duration) where T : KeyFrameAnimation
         {
-            return SetDuration(animation, TimeSpan.FromSeconds(duration));
+            if (duration >= 0)
+                return SetDuration(animation, TimeSpan.FromSeconds(duration));
+            else 
+                return animation;
         }
 
         public static T SetDuration<T>(this T animation, TimeSpan duration) where T : KeyFrameAnimation

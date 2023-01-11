@@ -9,6 +9,7 @@ using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -105,7 +106,12 @@ namespace CharacterMap.Views
 
             this.SizeChanged += MainPage_SizeChanged;
             _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
+
+            if (ViewModel.IsSecondaryView is false)
+            {
+                _uiSettings.ColorValuesChanged += OnColorValuesChanged;
+                _uiSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+            };
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
             CollectionSelectedCommand = new RelayCommand<object>(e =>
@@ -127,8 +133,7 @@ namespace CharacterMap.Views
                     if (ViewModel.IsLoadingFonts)
                         return;
 
-                    if (ViewModel.Settings.UseSelectionAnimations 
-                        && !ViewModel.IsSearchResults)
+                    if (ViewModel.AllowAnimation && !ViewModel.IsSearchResults)
                     {
                         CompositionFactory.PlayEntrance(LstFontFamily, 66, 100);
                         CompositionFactory.PlayEntrance(GroupLabel, 0, 0, 80);
@@ -178,6 +183,10 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.IsLoadingFonts):
                 case nameof(ViewModel.IsLoadingFontsFailed):
                     UpdateLoadingStates();
+                    break;
+
+                case nameof(ViewModel.AllowAnimation):
+                    UpdateAnimation();
                     break;
             }
         }
@@ -237,6 +246,7 @@ namespace CharacterMap.Views
                 // For Secondary Views, cleanup EVERYTHING to allow the view to get
                 // dropped from memory
                 _uiSettings.ColorValuesChanged -= OnColorValuesChanged;
+                _uiSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
                 Messenger.UnregisterAll(this);
                 this.Bindings.StopTracking();
                 ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
@@ -267,6 +277,15 @@ namespace CharacterMap.Views
             {
                 Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
                 ResourceHelper.AppSettings.UpdateTheme();
+            });
+        }
+
+        private void OnAnimationsEnabledChanged(UISettings sender, UISettingsAnimationsEnabledChangedEventArgs args)
+        {
+            RunOnUI(() =>
+            {
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseSelectionAnimations)));
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.AllowExpensiveAnimations)));
             });
         }
 
@@ -303,6 +322,20 @@ namespace CharacterMap.Views
                             FontMap.PreviewGrid
                         });
                 }
+            }
+        }
+
+        private void UpdateAnimation()
+        {
+            // Using Bindings didn't work for this for some reason so 
+            // we're going to direct handle this though code.
+            if (FontsTabBar?.GetFirstDescendantOfType<TabViewListView>()
+                is TabViewListView view)
+            {
+                if (ViewModel.AllowAnimation)
+                    view.ItemContainerTransitions = TabTransitions;
+                else
+                    view.ItemContainerTransitions = GetTransitions("N.A.", false);
             }
         }
 
@@ -448,7 +481,10 @@ namespace CharacterMap.Views
 
         private void FontsTabBar_Loaded(object sender, RoutedEventArgs e)
         {
-            // 1. Create the popup Menu
+            // 1. Ensure animations are correct
+            UpdateAnimation();
+
+            // 2. Create the popup Menu
             if (sender is FrameworkElement f
                 && f.GetDescendantsOfType<Button>().FirstOrDefault(b => b.Name == "CollectionButton") is Button b
                 && b.Flyout is MenuFlyout menu
@@ -647,6 +683,7 @@ namespace CharacterMap.Views
         {
             if (sender is MenuFlyout menu && menu.Target is TabViewItem t && t.DataContext is FontItem item)
             {
+                menu.AreOpenCloseAnimationsEnabled = ViewModel.AllowAnimation;
                 FlyoutHelper.CreateMenu(
                     menu,
                     item.Font,

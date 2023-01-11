@@ -89,7 +89,7 @@ namespace CharacterMap.Core
         public bool UseSelectionAnimations
         {
             get => Get(true);
-            set => Set(value);
+            set => BroadcastSet(value);
         }
 
         public bool EnableShadows

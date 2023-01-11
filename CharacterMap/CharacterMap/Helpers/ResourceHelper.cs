@@ -132,7 +132,7 @@ namespace CharacterMap.Helpers
         public static bool SupportsTabs => _supportsTabs ??= Get<bool>("SupportsTabs");
         public static bool SupportsShadows() => Get<bool>("SupportsShadows");
         public static bool AllowAnimation => AppSettings.UseSelectionAnimations && CompositionFactory.UISettings.AnimationsEnabled;
-        public static bool AllowExpensiveAnimation => AppSettings.AllowExpensiveAnimations && CompositionFactory.UISettings.AnimationsEnabled;
+        public static bool AllowExpensiveAnimation => AllowAnimation && AppSettings.AllowExpensiveAnimations;
 
 
         /* Dynamic theme-ability */

@@ -15,8 +15,10 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Shapes;
 
 namespace CharacterMap.Core
@@ -684,7 +686,121 @@ namespace CharacterMap.Core
                 }
             }));
 
-       
+        #endregion
+
+        #region UseStandardReposition
+
+        public static bool GetUseStandardReposition(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(UseStandardRepositionProperty);
+        }
+
+        public static void SetUseStandardReposition(DependencyObject obj, bool value)
+        {
+            obj.SetValue(UseStandardRepositionProperty, value);
+        }
+
+        public static readonly DependencyProperty UseStandardRepositionProperty =
+            DependencyProperty.RegisterAttached("UseStandardReposition", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, e) =>
+            {
+                if (d is FrameworkElement f && e.NewValue is bool b)
+                {
+                    if (b)
+                        CompositionFactory.SetStandardReposition(f);
+                    else
+                        CompositionFactory.DisableStandardReposition(f);
+                }
+            }));
+
+        #endregion
+
+        #region ItemContainerTransitions
+
+        public static TransitionCollection GetItemContainerTransitions(DependencyObject obj)
+        {
+            return (TransitionCollection)obj.GetValue(ItemContainerTransitionsProperty);
+        }
+
+        public static void SetItemContainerTransitions(DependencyObject obj, TransitionCollection value)
+        {
+            obj.SetValue(ItemContainerTransitionsProperty, value);
+        }
+
+        public static readonly DependencyProperty ItemContainerTransitionsProperty =
+            DependencyProperty.RegisterAttached("ItemContainerTransitions", typeof(TransitionCollection), typeof(Properties), new PropertyMetadata(null));
+
+        #endregion
+
+        #region ChildrenTransitions
+
+        public static TransitionCollection GetChildrenTransitions(DependencyObject obj)
+        {
+            return (TransitionCollection)obj.GetValue(ChildrenTransitionsProperty);
+        }
+
+        public static void SetChildrenTransitions(DependencyObject obj, TransitionCollection value)
+        {
+            obj.SetValue(ChildrenTransitionsProperty, value);
+        }
+
+        public static readonly DependencyProperty ChildrenTransitionsProperty =
+            DependencyProperty.RegisterAttached("ChildrenTransitions", typeof(TransitionCollection), typeof(Properties), new PropertyMetadata(null));
+
+        #endregion
+
+        #region SupportAnimatedIcon
+
+        public static bool GetSupportAnimatedIcon(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(SupportAnimatedIconProperty);
+        }
+
+        public static void SetSupportAnimatedIcon(DependencyObject obj, bool value)
+        {
+            obj.SetValue(SupportAnimatedIconProperty, value);
+        }
+
+        public static readonly DependencyProperty SupportAnimatedIconProperty =
+            DependencyProperty.RegisterAttached("SupportAnimatedIcon", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d,a) =>
+            {
+                if (d is FrameworkElement e)
+                {
+                    AnimatedIcon.SetState(e, "Normal");
+
+                    e.RemoveHandler(UIElement.PointerPressedEvent, (PointerEventHandler)PointerPressed);
+                    e.RemoveHandler(UIElement.PointerReleasedEvent, (PointerEventHandler)PointerReleased);
+
+                    e.PointerPressed -= PointerPressed;
+                    e.PointerReleased -= PointerReleased;
+
+                    e.PointerEntered -= PointerEntered;
+                    e.PointerExited -= PointerReleased;
+
+                    if (a.NewValue is bool b && b)
+                    {
+                        e.AddHandler(FrameworkElement.PointerPressedEvent, new PointerEventHandler(PointerPressed), true);
+                        e.AddHandler(FrameworkElement.PointerReleasedEvent, new PointerEventHandler(PointerReleased), true);
+
+                        e.PointerEntered += PointerEntered;
+                        e.PointerExited += PointerReleased;
+                    }
+                }
+
+                static void PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+                {
+                    AnimatedIcon.SetState((FrameworkElement)sender, "Pressed");
+                }
+
+                static void PointerEntered(object sender, PointerRoutedEventArgs e)
+                {
+                    AnimatedIcon.SetState((FrameworkElement)sender, "PointerOver");
+                }
+
+                static void PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+                {
+                    AnimatedIcon.SetState((FrameworkElement)sender, "Normal");
+                }
+            }));
 
         #endregion
     }

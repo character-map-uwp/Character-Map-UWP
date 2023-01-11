@@ -568,11 +568,11 @@ Requires a restart to take effect.</value>
     <value>Enable shadows</value>
   </data>
   <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
-    <value>Controls the animation for loading the font list, switching fonts and changing characters.
+    <value>Controls most animations inside the application. Turning this off will disable most animations.
 Turning this on has negligible performance impact.</value>
   </data>
   <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
-    <value>Enable simple animations</value>
+    <value>Enable animations</value>
   </data>
   <data name="SettingsThemeHeader.Text" xml:space="preserve">
     <value>Theme</value>

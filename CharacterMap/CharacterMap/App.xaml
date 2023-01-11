@@ -101,9 +101,7 @@
 
                 <ResourceDictionary Source="/Styles/Brushes.xaml" />
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
-                <ResourceDictionary Source="/Styles/CommandBar.xaml" />
                 <ResourceDictionary Source="/Styles/Button.xaml" />
-                <ResourceDictionary Source="/Styles/ListView.xaml" />
                 <ResourceDictionary Source="/Styles/ComboBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

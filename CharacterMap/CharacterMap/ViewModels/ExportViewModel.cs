@@ -19,6 +19,9 @@ namespace CharacterMap.ViewModels
     public class ExportViewModel : ViewModelBase
     {
         #region Properties
+
+        protected override bool TrackAnimation => true;
+
         private InstalledFont _font                     { get; }
         public FontVariant Font                         { get; set; }
 

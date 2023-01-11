@@ -76,8 +76,6 @@
         </Setter>
     </Style>
 
-
-
     <Style x:Key="FontAutoSuggestBoxTextBoxStyle" BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}" TargetType="TextBox">
         <Setter Property="CornerRadius" Value="0" />
         <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
@@ -727,6 +725,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
 </ResourceDictionary>

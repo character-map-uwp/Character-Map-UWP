@@ -206,6 +206,7 @@
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\DirectTextBlock.cs" />
+    <Compile Include="Controls\ExtendedSplitView.cs" />
     <Compile Include="Controls\FilterFlyout.xaml.cs">
       <DependentUpon>FilterFlyout.xaml</DependentUpon>
     </Compile>
@@ -325,6 +326,7 @@
     <Compile Include="Models\PrintLayout.cs" />
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="ViewModels\QuickCompareViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\CalligraphyView.xaml.cs">
       <DependentUpon>CalligraphyView.xaml</DependentUpon>
@@ -480,15 +482,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\CommandBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\ItemTemplates.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\ListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

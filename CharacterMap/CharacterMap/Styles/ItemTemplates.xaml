@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:services="using:CharacterMap.Services"
-    xmlns:viewmodels="using:CharacterMap.ViewModels"
     mc:Ignorable="d">
 
     <DataTemplate x:Key="SearchResultTemplate" x:DataType="services:IGlyphData">

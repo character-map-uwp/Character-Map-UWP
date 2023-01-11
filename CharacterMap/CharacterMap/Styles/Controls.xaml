@@ -2,68 +2,18 @@
     x:Class="CharacterMap.Styles.Controls"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CharacterMap.Controls"
-    xmlns:core="using:CharacterMap.Core">
+    xmlns:controls="using:CharacterMap.Controls">
 
     <x:Double x:Key="ToggleSwitchThemeMinWidth">0</x:Double>
 
-    <Style TargetType="SplitView">
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-        <Setter Property="OpenPaneLength" Value="{ThemeResource SplitViewOpenPaneThemeLength}" />
-        <Setter Property="CompactPaneLength" Value="{ThemeResource SplitViewCompactPaneThemeLength}" />
-        <Setter Property="PaneBackground" Value="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" />
+    <Style x:Key="FontListHeaderItem" TargetType="ListViewHeaderItem">
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Margin" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="SplitView">
-                    <Grid Background="{TemplateBinding Background}">
-                        <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="DisplayModeStates">
-                                <VisualState x:Name="Closed" />
-                                <VisualState x:Name="OpenOverlayLeft">
-                                    <VisualState.Setters>
-                                        <Setter Target="PaneRoot.(Grid.ColumnSpan)" Value="2" />
-                                        <Setter Target="PaneRoot.Visibility" Value="Visible" />
-                                        <Setter Target="LightDismissLayer.Visibility" Value="Visible" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="OpenInlineLeft">
-                                    <VisualState.Setters>
-                                        <Setter Target="PaneRoot.Visibility" Value="Visible" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                            </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
-
-                        <!--  Content Area  -->
-                        <Grid
-                            x:Name="ContentRoot"
-                            Grid.Column="1"
-                            Loaded="ContentRoot_Loaded">
-                            <Border Child="{TemplateBinding Content}" />
-                            <Rectangle
-                                x:Name="LightDismissLayer"
-                                x:DeferLoadStrategy="Lazy"
-                                Fill="Transparent"
-                                Visibility="Collapsed" />
-                        </Grid>
-
-                        <!--  Pane Content Area  -->
-                        <Border
-                            x:Name="PaneRoot"
-                            Width="{TemplateBinding OpenPaneLength}"
-                            HorizontalAlignment="Left"
-                            Background="{TemplateBinding PaneBackground}"
-                            Child="{TemplateBinding Pane}"
-                            Loaded="PaneRoot_Loaded"
-                            Visibility="Collapsed" />
-                    </Grid>
-
+                <ControlTemplate TargetType="ListViewHeaderItem">
+                    <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

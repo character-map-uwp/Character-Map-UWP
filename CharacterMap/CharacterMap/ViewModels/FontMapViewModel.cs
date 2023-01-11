@@ -34,6 +34,8 @@ namespace CharacterMap.ViewModels
     {
         #region Properties
 
+        protected override bool TrackAnimation => true;
+
         private NativeInterop _interop { get; }
 
         private Debouncer _searchDebouncer { get; }

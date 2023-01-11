@@ -22,6 +22,14 @@
 
     <UserControl.Resources>
 
+        <TransitionCollection x:Key="ItemTransitions">
+            <AddDeleteThemeTransition />
+            <ContentThemeTransition />
+            <ReorderThemeTransition />
+            <RepositionThemeTransition IsStaggeringEnabled="False" />
+            <EntranceThemeTransition IsStaggeringEnabled="False" />
+        </TransitionCollection>
+
         <Style x:Key="DraggableItemStyle" TargetType="GridViewItem">
             <Setter Property="Margin" Value="0 0 12 12" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -112,7 +120,10 @@
             </Setter>
         </Style>
 
-        <MenuFlyout x:Name="MainContextFlyout" MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}">
+        <MenuFlyout
+            x:Name="MainContextFlyout"
+            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+            MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}">
             <MenuFlyoutItem
                 x:Uid="OpenInNewWindow"
                 Click="OpenWindow_Click"
@@ -121,6 +132,7 @@
 
         <MenuFlyout
             x:Name="ContextFlyout"
+            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
             MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
             Placement="Bottom">
             <MenuFlyoutItem
@@ -422,7 +434,10 @@
                                 </TextBlock>
 
                                 <Button.Flyout>
-                                    <controls:FilterFlyout CollectionSelectedCommand="{x:Bind ViewModel.CollectionSelectedCommand}" FilterCommand="{x:Bind ViewModel.FilterCommand}" />
+                                    <controls:FilterFlyout
+                                        AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                                        CollectionSelectedCommand="{x:Bind ViewModel.CollectionSelectedCommand}"
+                                        FilterCommand="{x:Bind ViewModel.FilterCommand}" />
                                 </Button.Flyout>
                             </Button>
 
@@ -514,17 +529,9 @@
                                 Padding="8 0 0 0"
                                 ContainerContentChanging="Repeater_ContainerContentChanging"
                                 ItemClick="Repeater_ItemClick"
+                                ItemContainerTransitions="{x:Bind GetTransitions('ItemTransitions', ViewModel.AllowAnimation), Mode=OneWay}"
                                 ItemTemplate="{StaticResource StackTemplate}"
                                 ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
-                                <GridView.ItemContainerTransitions>
-                                    <TransitionCollection>
-                                        <AddDeleteThemeTransition />
-                                        <ContentThemeTransition />
-                                        <ReorderThemeTransition />
-                                        <RepositionThemeTransition IsStaggeringEnabled="False" />
-                                        <EntranceThemeTransition IsStaggeringEnabled="False" />
-                                    </TransitionCollection>
-                                </GridView.ItemContainerTransitions>
                                 <GridView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsWrapGrid

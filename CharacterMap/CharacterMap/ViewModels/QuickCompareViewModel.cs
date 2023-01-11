@@ -36,6 +36,8 @@ namespace CharacterMap.ViewModels
     {
         public static WindowInformation QuickCompareWindow { get; set; }
 
+        protected override bool TrackAnimation => true;
+
         public string Title                 { get => Get<string>(); set => Set(value); }
 
         public string Text                  { get => Get<string>(); set => Set(value); }

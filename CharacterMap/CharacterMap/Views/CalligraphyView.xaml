@@ -444,7 +444,7 @@
                             x:Name="ButtonsPanel"
                             Padding="0 4 0 4"
                             VerticalAlignment="Stretch"
-                            ChildrenTransitions="{StaticResource RepositionTransitions}"
+                            ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                             HorizontalSpacing="4"
                             Orientation="Horizontal"
                             VerticalSpacing="4">
@@ -687,15 +687,9 @@
                         ContainerContentChanging="HistoryList_ContainerContentChanging"
                         IsItemClickEnabled="True"
                         ItemClick="HistoryList_ItemClick"
+                        ItemContainerTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                         ItemsSource="{x:Bind ViewModel.Histories}"
                         SelectionMode="None">
-
-                        <ListView.ItemContainerTransitions>
-                            <TransitionCollection>
-                                <RepositionThemeTransition IsStaggeringEnabled="False" />
-                            </TransitionCollection>
-                        </ListView.ItemContainerTransitions>
-
                         <d:ListView.Items>
                             <viewmodels:CalligraphyHistoryItem />
                             <viewmodels:CalligraphyHistoryItem />

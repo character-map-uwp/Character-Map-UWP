@@ -51,21 +51,21 @@
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <AppBarButton x:Uid="SwitchViewButton" Click="{x:Bind ViewModel.ChangeDisplayMode}">
-                    <FontIcon Glyph="&#xE13C;" />
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE13C;" />
                 </AppBarButton>
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
                     x:Uid="IncreaseSizeButton"
                     Grid.Column="1"
                     Click="{x:Bind ViewModel.IncreaseCharacterSize}">
-                    <FontIcon Glyph="&#xE1C7;" />
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C7;" />
                 </AppBarButton>
                 <AppBarButton
                     x:Name="DecreaseSizeButton"
                     x:Uid="DecreaseSizeButton"
                     Grid.Column="2"
                     Click="{x:Bind ViewModel.DecreaseCharacterSize}">
-                    <FontIcon Glyph="&#xE1C6;" />
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C6;" />
                 </AppBarButton>
                 <AppBarToggleButton
                     x:Name="ToggleCopyPaneButton"
@@ -75,7 +75,7 @@
                     Loaded="ToggleCopyPaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.HideCopyPane}">
                     <AppBarToggleButton.Icon>
-                        <FontIcon Glyph="&#xE75B;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE75B;" />
                     </AppBarToggleButton.Icon>
                 </AppBarToggleButton>
                 <AppBarToggleButton
@@ -86,7 +86,7 @@
                     Loaded="PaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.ShowPane}">
                     <AppBarToggleButton.Icon>
-                        <FontIcon Glyph="&#xE126;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE126;" />
                     </AppBarToggleButton.Icon>
                 </AppBarToggleButton>
             </Grid>
@@ -117,6 +117,7 @@
 
         <MenuFlyout
             x:Name="GridContextFlyout"
+            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
             MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
             Placement="Bottom">
             <MenuFlyoutItem
@@ -290,8 +291,8 @@
                 Grid.Column="1"
                 Margin="24 0 8 0"
                 VerticalAlignment="Center"
+                core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                 IsTextSelectionEnabled="True"
-                Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                 Style="{StaticResource TitleTextStyle}"
                 Text="{Binding SelectedFont.Font.Name, Converter={StaticResource TitleConverter}}"
                 TextTrimming="CharacterEllipsis"
@@ -306,9 +307,9 @@
                 Height="{StaticResource TitleRowHeight}"
                 Padding="12,0"
                 HorizontalAlignment="Right"
+                core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                 Click="{x:Bind ViewModel.ImportFile}"
                 IsEnabled="{Binding ImportButtonEnabled}"
-                Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                 Style="{ThemeResource TransparentButton}">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
@@ -392,6 +393,7 @@
             x:Name="MainUIGrid"
             Grid.Row="2"
             Grid.Column="1"
+            Padding="{Binding ElementName=ViewRoot, Path=Padding}"
             Canvas.ZIndex="-1">
             <Grid.Transform3D>
                 <PerspectiveTransform3D Depth="1000" />
@@ -400,8 +402,14 @@
                 <Storyboard x:Name="BorderFadeInStoryboard">
                     <DoubleAnimationUsingKeyFrames Storyboard.TargetName="BorderCopiedMessage" Storyboard.TargetProperty="Opacity">
                         <LinearDoubleKeyFrame KeyTime="0:0:0" Value="0" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:0.6" Value="1" />
-                        <LinearDoubleKeyFrame KeyTime="0:0:2" Value="1" />
+                        <LinearDoubleKeyFrame
+                            x:Name="CopyShowFrame"
+                            KeyTime="0:0:0.6"
+                            Value="1" />
+                        <LinearDoubleKeyFrame
+                            x:Name="CopyHideFrame"
+                            KeyTime="0:0:2"
+                            Value="1" />
                         <LinearDoubleKeyFrame KeyTime="0:0:2.6" Value="0" />
                     </DoubleAnimationUsingKeyFrames>
                 </Storyboard>
@@ -456,7 +464,7 @@
                     x:Name="OptionsPanel"
                     x:FieldModifier="public"
                     HorizontalAlignment="Stretch"
-                    ChildrenTransitions="{StaticResource RepositionTransitions}"
+                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                     HorizontalSpacing="8"
                     Orientation="Horizontal">
 
@@ -490,6 +498,7 @@
                         <FontIcon
                             Margin="0,0,-2,0"
                             VerticalAlignment="Center"
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                             FontSize="18"
                             Glyph="&#xE946;" />
                         <Button.Flyout>
@@ -679,6 +688,7 @@
                         d:Label="Options">
                         <FontIcon
                             Margin="0,0,-2,0"
+                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                             FontSize="18"
                             Glyph="&#xE8D2;" />
                         <Button.Flyout>
@@ -785,13 +795,14 @@
                     x:Uid="BtnMoreIcon"
                     Grid.Column="1"
                     VerticalAlignment="Top"
+                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                     DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
                     Label="&#x2026;"
-                    Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                     Style="{ThemeResource MapInfoButtonStyle}">
                     <Button.Flyout>
                         <MenuFlyout
                             x:Name="MoreMenu"
+                            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                             Opening="MenuFlyout_Opening"
                             Placement="BottomEdgeAlignedRight">
                             <MenuFlyout.MenuFlyoutPresenterStyle>
@@ -801,6 +812,7 @@
                     </Button.Flyout>
                     <FontIcon
                         Margin="0,-2,-2,-2"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="18"
                         Glyph="&#xE10C;" />
                 </controls:UXButton>
@@ -841,9 +853,10 @@
                     x:Name="CharGrid"
                     x:FieldModifier="public"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
-                    EnableResizeAnimation="{x:Bind ViewModel.Settings.AllowExpensiveAnimations, Mode=OneTime}"
+                    EnableResizeAnimation="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
                     IsItemClickEnabled="False"
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
+                    ItemContainerTransitions="{StaticResource NoTransitions}"
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.FontFace, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
@@ -854,9 +867,6 @@
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
-                    <GridView.ItemContainerTransitions>
-                        <TransitionCollection />
-                    </GridView.ItemContainerTransitions>
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <!--  For performance reasons, all bindings are done in C#  -->
@@ -936,7 +946,7 @@
                             Style="{StaticResource ChromelessTextBoxStyle}"
                             Text="{x:Bind ViewModel.Sequence, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <Grid Grid.Column="1" Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
+                        <Grid Grid.Column="1" core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
                             <Grid.Resources>
                                 <Style BasedOn="{StaticResource LabelAppBarButtonStyle}" TargetType="AppBarButton">
                                     <Setter Property="Padding" Value="12 6" />
@@ -970,7 +980,7 @@
                                 IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
                                 d:Label="Clear">
                                 <AppBarButton.Icon>
-                                    <FontIcon Glyph="&#xED62;" />
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED62;" />
                                 </AppBarButton.Icon>
                             </AppBarButton>
                         </Grid>
@@ -985,8 +995,8 @@
                 Grid.Row="2"
                 Grid.ColumnSpan="3"
                 Margin="0"
+                core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                 Canvas.ZIndex="10"
-                Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                 RenderTransformOrigin="0.5,0.5"
                 Visibility="Collapsed"
                 d:Background="Green">
@@ -1212,6 +1222,7 @@
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Top"
                             VerticalContentAlignment="Center"
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                             BorderThickness="1"
                             ContentOrientation="Vertical"
                             ContentSpacing="0"
@@ -1221,7 +1232,6 @@
                             FontStyle="{Binding SelectedVariant.FontFace.Style}"
                             FontWeight="{Binding SelectedVariant.FontFace.Weight}"
                             ItemsSource="{x:Bind ViewModel.SelectedCharVariations, Mode=OneWay}"
-                            Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
                             SelectedItem="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
                             SelectionChanged="PreviewTypographySelector_SelectionChanged"
                             Style="{StaticResource VariantComboBoxStyle}"
@@ -1273,7 +1283,7 @@
                             Grid.Row="2"
                             Margin="12 0 12 6"
                             VerticalAlignment="Bottom"
-                            Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
                             <TextBlock
                                 FontSize="12"
                                 IsTextSelectionEnabled="True"
@@ -1294,7 +1304,7 @@
                             Grid.Row="3"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom"
-                            Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}">
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
 
                             <StackPanel.Resources>
                                 <Style BasedOn="{StaticResource DevToolsAppBarButtonStyle}" TargetType="controls:UXButton" />
@@ -1348,6 +1358,7 @@
                                         <Button.Flyout>
                                             <MenuFlyout
                                                 x:Name="SaveAsFlyout"
+                                                AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                                 MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                                 Placement="Top">
                                                 <MenuFlyoutItem x:Uid="ExportPNGLabel" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
@@ -1432,6 +1443,7 @@
                                     <Button.Flyout>
                                         <MenuFlyout
                                             x:Name="DevFlyout"
+                                            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                             MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                             Opening="DevFlyout_Opening"
                                             Placement="Top">
@@ -1542,7 +1554,7 @@
                     <StackPanel
                         x:Name="DevUtilsRoot"
                         Grid.Row="1"
-                        Loaded="{x:Bind helpers:CompositionFactory.SetStandardReposition}"
+                        core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                         Visibility="Collapsed">
 
                         <Rectangle
@@ -1591,7 +1603,10 @@
                                                 FontSize="13.333"
                                                 Style="{StaticResource TextBlockButtonStyle}">
                                                 <Button.Flyout>
-                                                    <Flyout x:Name="GeometryFlyout" ScrollViewer.VerticalScrollMode="Disabled">
+                                                    <Flyout
+                                                        x:Name="GeometryFlyout"
+                                                        AreOpenCloseAnimationsEnabled="{Binding ViewModel.AllowAnimation, ElementName=ViewRoot, Mode=OneWay}"
+                                                        ScrollViewer.VerticalScrollMode="Disabled">
                                                         <Grid>
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition Height="Auto" />
