@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:converters="using:CharacterMap.Converters"
+    xmlns:core="using:CharacterMap.Core"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)">
 
     <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
@@ -58,6 +59,7 @@
     <Style x:Key="DevToolsAppBarButtonStyle" BasedOn="{StaticResource DefaultThemeAppBarButtonStyle}" TargetType="controls:UXButton">
         <Setter Property="Height" Value="52" />
         <Setter Property="IsLabelVisible" Value="True" />
+        <Setter Property="core:Properties.ClickAnimation" Value="FluentContentPresenter" />
     </Style>
 
     <Style x:Key="CopyButtonStyle" BasedOn="{StaticResource DefaultThemeAppBarButtonStyle}" TargetType="controls:UXButton">
@@ -82,7 +84,9 @@
         <Setter Property="Padding" Value="10 10 6 10" />
     </Style>
 
-    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource GridViewItemRevealStyle}" TargetType="GridViewItem" />
+    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource GridViewItemRevealStyle}" TargetType="GridViewItem">
+        <Setter Property="core:Properties.PointerOverAnimation" Value="Root" />
+    </Style>
 
     <Style TargetType="GridViewItem">
         <Setter Property="Background" Value="Transparent" />
@@ -179,6 +183,8 @@
     <Style x:Key="QuickCompareContainerStyle" BasedOn="{StaticResource ChromelessButtonStyle}" TargetType="Button" />
 
     <Style x:Key="FontListStyle" TargetType="Border" />
+
+    <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox" />
 
     <DataTemplate x:Key="FontListGroupHeaderTemplate">
         <GridViewItem
@@ -571,13 +577,17 @@
     </Style>
 
     <DataTemplate x:Key="LabelButtonContentTemplate">
-        <Grid ColumnSpacing="12" Margin="4 0 0 0">
+        <Grid
+            Name="ContentRoot"
+            ColumnSpacing="12"
+            Margin="4 0 0 0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
             <FontIcon
+                Name="Icon"
                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                 FontSize="30"
                 Glyph="{Binding Glyph}" />
@@ -602,8 +612,9 @@
     </DataTemplate>
 
     <DataTemplate x:Key="CompactLabelButtonContentTemplate">
-        <StackPanel Spacing="8">
+        <StackPanel Name="ContentRoot" Spacing="8">
             <FontIcon
+                Name="Icon"
                 HorizontalAlignment="Center"
                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                 FontSize="24"

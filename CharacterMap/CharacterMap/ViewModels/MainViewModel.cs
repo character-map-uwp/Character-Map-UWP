@@ -379,6 +379,7 @@ namespace CharacterMap.ViewModels
                 }
                 else
                 {
+                    int tabIndex = -1;
                     // 3. Try to restore SelectedFont & TabIndex.
                     //    First, check if the SelectedFont still actually exists, as the user may have
                     //    uninstalled it between application runs.
@@ -388,19 +389,22 @@ namespace CharacterMap.ViewModels
                         //      If a font was removed between runs TabIndex may no longer be valid,
                         //      so find the first matching font
                         if (removed)
-                            TabIndex = Fonts.Select(f => f.Font).ToList().IndexOf(last);
+                            tabIndex = Fonts.Select(f => f.Font).ToList().IndexOf(last);
                         else
-                            TabIndex = Settings.LastTabIndex;
+                            tabIndex = Settings.LastTabIndex;
 
                         // 3.2. If TabIndex doesn't match the font, ignore both values and use the first font
-                        if (TabIndex == -1 || Fonts[TabIndex].Font != last)
-                            TabIndex = 0;
+                        if (tabIndex == -1 || tabIndex >= Fonts.Count || Fonts[tabIndex].Font != last)
+                            tabIndex = 0;
                     }
                     else
                     {
                         // 3.3. The last selected font has been deleted. Use the first one we have.
-                        TabIndex = 0;
+                        tabIndex = 0;
                     }
+
+                    // 3.4. Set deduced TabIndex safely
+                    TabIndex = Math.Max(0, Math.Min(Fonts.Count - 1, tabIndex));
 
                     // 4. Restore SelectedFont. This may not longer match LastSelectedFontName if 
                     //    we found out-of-sync values above.

@@ -50,46 +50,47 @@ namespace CharacterMap.Controls
             // x:Bind doesn't work here because there's no Loading method on MenuFlyout
             // for the code gen to work, so the flyout needs to be created in code behind.
 
+            Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+            Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+
             Add(BasicFontFilter.All);
             Add(BasicFontFilter.SerifFonts);
             Add(BasicFontFilter.SansSerifFonts);
             Add(BasicFontFilter.SymbolFonts);
 
             AddSub("OptionSupportedScripts/Text")
-                .Add(BasicFontFilter.ScriptArabic)
-                .Add(BasicFontFilter.ScriptCyrillic)
-                .Add(BasicFontFilter.ScriptGreekAndCoptic)
-                .Add(BasicFontFilter.ScriptHebrew)
-                .Add(BasicFontFilter.ScriptBasicLatin)
-                .Add(BasicFontFilter.ScriptThai)
-                .Add(BasicFontFilter.ScriptCJKUnifiedIdeographs)
-                .Add(BasicFontFilter.ScriptKoreanHangul);
+                .Add(BasicFontFilter.ScriptArabic, style)
+                .Add(BasicFontFilter.ScriptCyrillic, style)
+                .Add(BasicFontFilter.ScriptGreekAndCoptic, style)
+                .Add(BasicFontFilter.ScriptHebrew, style)
+                .Add(BasicFontFilter.ScriptBasicLatin, style)
+                .Add(BasicFontFilter.ScriptThai, style)
+                .Add(BasicFontFilter.ScriptCJKUnifiedIdeographs, style)
+                .Add(BasicFontFilter.ScriptKoreanHangul, style);
 
             var ops = AddSub("OptionMoreFilters/Text")
-                .Add(BasicFontFilter.ColorFonts)
-                .Add(BasicFontFilter.PanoseDecorativeFonts)
-                .Add(BasicFontFilter.PanoseScriptFonts)
-                .Add(BasicFontFilter.MonospacedFonts)
-                .Add(BasicFontFilter.VariableFonts);
+                .Add(BasicFontFilter.ColorFonts, style)
+                .Add(BasicFontFilter.PanoseDecorativeFonts, style)
+                .Add(BasicFontFilter.PanoseScriptFonts, style)
+                .Add(BasicFontFilter.MonospacedFonts, style)
+                .Add(BasicFontFilter.VariableFonts, style);
 
             _variableOption = ops.Items.Last();
 
             AddChild(ops, "OptionEmoji/Text")
-                .Add(BasicFontFilter.EmojiAll)
-                .Add(BasicFontFilter.EmojiEmoticons)
-                .Add(BasicFontFilter.EmojiDingbats)
-                .Add(BasicFontFilter.EmojiSymbols);
+                .Add(BasicFontFilter.EmojiAll, style)
+                .Add(BasicFontFilter.EmojiEmoticons, style)
+                .Add(BasicFontFilter.EmojiDingbats, style)
+                .Add(BasicFontFilter.EmojiSymbols, style);
 
             _fontSep = AddSep(ops);
-            _remoteOption = ops.Add(BasicFontFilter.RemoteFonts);
-            _appxOption = ops.Add(BasicFontFilter.AppXFonts);
+            _remoteOption = ops.Add(BasicFontFilter.RemoteFonts, style);
+            _appxOption = ops.Add(BasicFontFilter.AppXFonts, style);
 
             this.AddSeparator();
             Add(BasicFontFilter.ImportedFonts);
 
-
             _defaultCount = Items.Count;
-
 
             #region Helpers
 
@@ -106,24 +107,24 @@ namespace CharacterMap.Controls
                 return s;
             }
 
-            static MenuFlyoutSubItem AddChild(MenuFlyoutSubItem menu, string key)
+            MenuFlyoutSubItem AddChild(MenuFlyoutSubItem menu, string key)
             {
-                MenuFlyoutSubItem item = new() { Text = Localization.Get(key) };
+                MenuFlyoutSubItem item = new() { Text = Localization.Get(key), Style = subStyle };
                 menu.Items.Add(item);
                 return item;
             }
 
             MenuFlyoutSubItem AddSub(string key)
             {
-                MenuFlyoutSubItem item = new() { Text = Localization.Get(key) };
+                MenuFlyoutSubItem item = new() { Text = Localization.Get(key), Style = subStyle };
                 this.Items.Add(item);
                 return item;
             }
 
             MenuFlyoutItem Create(BasicFontFilter filter)
             {
-                MenuFlyoutItem item = new();
-                Core.Properties.SetFilter(item, filter);
+                MenuFlyoutItem item = new() { Style = style };
+                Core.Properties.SetFilter(item.SetAnimation(), filter);
                 return item;
             }
 
@@ -132,7 +133,9 @@ namespace CharacterMap.Controls
 
         private void MenuFlyout_Opening(object sender, object e)
         {
+            this.AreOpenCloseAnimationsEnabled = ResourceHelper.AllowAnimation;
             var collections = Ioc.Default.GetService<UserCollectionsService>().Items;
+            Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
 
             // Reset to default menu
             while (Items.Count > _defaultCount)
@@ -148,7 +151,7 @@ namespace CharacterMap.Controls
                 Items.Add(new MenuFlyoutSeparator());
                 foreach (var item in collections)
                 {
-                    MenuFlyoutItem m = new() { DataContext = item, Text = item.Name };
+                    MenuFlyoutItem m = new() { DataContext = item, Text = item.Name, Style = style };
                     m.Click += (s, a) =>
                     {
                         if (m.DataContext is UserFontCollection u)

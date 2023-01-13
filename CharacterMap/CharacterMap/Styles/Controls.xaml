@@ -2,11 +2,13 @@
     x:Class="CharacterMap.Styles.Controls"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:CharacterMap.Controls">
+    xmlns:controls="using:CharacterMap.Controls"
+    xmlns:core="using:CharacterMap.Core">
 
     <x:Double x:Key="ToggleSwitchThemeMinWidth">0</x:Double>
 
     <Style x:Key="FontListHeaderItem" TargetType="ListViewHeaderItem">
+        <Setter Property="core:Properties.PointerOverAnimation" Value="Text" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Margin" Value="0" />
         <Setter Property="BorderBrush" Value="Transparent" />

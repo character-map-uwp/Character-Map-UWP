@@ -191,31 +191,6 @@ namespace CharacterMap.Views
             }
         }
 
-        void SetSelectedItem(InstalledFont font)
-        {
-            LstFontFamily.SelectedItem = font;
-            // Required for tabs with fonts not in FontList
-            if (LstFontFamily.SelectedItem as InstalledFont != font)
-                LstFontFamily.SelectedItem = null;
-        }
-
-        private void FontMapContainer_AddTabButtonClick(TabView sender, object args)
-        {
-            ViewModel.Fonts.Add(new (ViewModel.SelectedFont));
-            FontsTabBar.SelectedIndex = ViewModel.Fonts.Count - 1;
-        }
-
-        private void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
-        {
-            ViewModel.TryCloseTab(sender.TabItems.IndexOf(args.Item));
-        }
-
-        private void TabViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            if (sender is FrameworkElement f && f.DataContext is FontItem item)
-                ViewModel.TryCloseTab(FontsTabBar.TabItems.IndexOf(item));
-        }
-
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
         {
             switch (msg.PropertyName)
@@ -269,6 +244,11 @@ namespace CharacterMap.Views
                 GoToState(nameof(CompactViewState));
             else if (ViewStates.CurrentState == CompactViewState)
                 GoToState(nameof(DefaultViewState));
+
+            if (ApplicationView.GetForCurrentView().IsFullScreenMode)
+                GoToState(nameof(FullscreenState));
+            else
+                GoToState(nameof(WindowState));
         }
 
         private void OnColorValuesChanged(UISettings settings, object e)
@@ -286,6 +266,7 @@ namespace CharacterMap.Views
             {
                 Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseSelectionAnimations)));
                 Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.AllowExpensiveAnimations)));
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseFluentPointerOverAnimations)));
             });
         }
 
@@ -325,20 +306,6 @@ namespace CharacterMap.Views
             }
         }
 
-        private void UpdateAnimation()
-        {
-            // Using Bindings didn't work for this for some reason so 
-            // we're going to direct handle this though code.
-            if (FontsTabBar?.GetFirstDescendantOfType<TabViewListView>()
-                is TabViewListView view)
-            {
-                if (ViewModel.AllowAnimation)
-                    view.ItemContainerTransitions = TabTransitions;
-                else
-                    view.ItemContainerTransitions = GetTransitions("N.A.", false);
-            }
-        }
-
         private void ViewModel_FontListCreated(object sender, EventArgs e)
         {
             StartScrollSelectedIntoView();
@@ -369,6 +336,31 @@ namespace CharacterMap.Views
         {
             DismissMenu();
             FlyoutHelper.PrintRequested();
+        }
+
+        void SetSelectedItem(InstalledFont font)
+        {
+            LstFontFamily.SelectedItem = font;
+            // Required for tabs with fonts not in FontList
+            if (LstFontFamily.SelectedItem as InstalledFont != font)
+                LstFontFamily.SelectedItem = null;
+        }
+
+        private void FontMapContainer_AddTabButtonClick(TabView sender, object args)
+        {
+            ViewModel.Fonts.Add(new(ViewModel.SelectedFont));
+            FontsTabBar.SelectedIndex = ViewModel.Fonts.Count - 1;
+        }
+
+        private void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+        {
+            ViewModel.TryCloseTab(sender.TabItems.IndexOf(args.Item));
+        }
+
+        private void TabViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is FontItem item)
+                ViewModel.TryCloseTab(FontsTabBar.TabItems.IndexOf(item));
         }
 
         private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
@@ -496,6 +488,10 @@ namespace CharacterMap.Views
                 menu.Opening -= Menu_Opening;
                 menu.Opening += Menu_Opening;
             }
+
+
+
+            /* Helper Methods */
 
             List<InstalledFont> GetActiveFonts() => ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Font).Distinct().ToList();
             List<FontVariant> GetActiveVariants() => ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Selected).Distinct().ToList();
@@ -633,6 +629,14 @@ namespace CharacterMap.Views
 
             args.ItemContainer.ContextRequested -= ItemContainer_ContextRequested;
             args.ItemContainer.ContextRequested += ItemContainer_ContextRequested;
+
+            if (ResourceHelper.SupportFluentAnimation)
+            {
+                Properties.SetClickAnimationOffset(args.ItemContainer, 0.95);
+                Properties.SetClickAnimation(args.ItemContainer, "TemplateContent|Scale");
+                Properties.SetPointerPressedAnimation(args.ItemContainer, "TemplateContent|Scale");
+                Properties.SetPointerOverAnimation(args.ItemContainer, "TemplateContent");
+            }
         }
 
         private void ItemContainer_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -914,7 +918,7 @@ namespace CharacterMap.Views
 
 
 
-        /* Composition */
+        /* Composition & Animation */
 
         private void Grid_Loading(FrameworkElement sender, object args)
         {
@@ -922,6 +926,27 @@ namespace CharacterMap.Views
         }
 
         private void FontListGrid_Loading(FrameworkElement sender, object args)
+        {
+            UpdateCollectionRowAnimation();
+        }
+
+        private void UpdateAnimation()
+        {
+            UpdateCollectionRowAnimation();
+
+            // Using Bindings didn't work for this for some reason so 
+            // we're going to direct handle this though code.
+            if (FontsTabBar?.GetFirstDescendantOfType<TabViewListView>()
+                is TabViewListView view)
+            {
+                if (ResourceHelper.AllowAnimation)
+                    view.ItemContainerTransitions = TabTransitions;
+                else
+                    view.ItemContainerTransitions = GetTransitions("N.A.", false);
+            }
+        }
+
+        void UpdateCollectionRowAnimation()
         {
             CompositionFactory.SetDropInOut(
                 CollectionControlBackground,
@@ -941,7 +966,7 @@ namespace CharacterMap.Views
             int duration = 350;
             var ani = v.Compositor.CreateVector3KeyFrameAnimation();
             ani.Target = nameof(v.Scale);
-            ani.InsertKeyFrame(1, new System.Numerics.Vector3(1.15f, 1.15f, 0));
+            ani.InsertKeyFrame(1, new (1.15f, 1.15f, 0));
             ani.Duration = TimeSpan.FromMilliseconds(duration);
 
             var op = CompositionFactory.CreateFade(v.Compositor, 0, null, duration);
@@ -949,6 +974,8 @@ namespace CharacterMap.Views
 
             // Animate in Loading items
             CompositionFactory.PlayEntrance(LoadingStack.Children.ToList(), 60);
+
+            // TODO : What if TypeRamp view loads first
         }
     }
 

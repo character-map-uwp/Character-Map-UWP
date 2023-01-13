@@ -17,6 +17,7 @@
     <CornerRadius x:Key="CardCornerRadius">2</CornerRadius>
 
     <x:Boolean x:Key="SupportsShadows">True</x:Boolean>
+    <x:Boolean x:Key="SupportsFluentAnimation">False</x:Boolean>
 
     <Style x:Key="BaseTextStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="Normal" />
@@ -66,6 +67,8 @@
     <Style x:Key="DefaultFlyoutStyle" BasedOn="{StaticResource FontListFlyoutStyle}" TargetType="MenuFlyoutPresenter">
         <Setter Property="CornerRadius" Value="8" />
     </Style>
+
+    <Style x:Key="ThemeMenuFlyoutItemStyle" TargetType="MenuFlyoutItem" />
 
 
 
@@ -537,11 +540,20 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="ItemsGroup">
+                                <VisualState x:Name="NoItemsState" />
+                                <VisualState x:Name="HasItemsState">
+                                    <VisualState.Setters>
+                                        <Setter Target="ItemsRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <ContentPresenter
@@ -560,10 +572,29 @@
                             Text="{TemplateBinding Description}"
                             Visibility="Collapsed" />
                         <ContentPresenter Grid.Row="2" Content="{TemplateBinding Content}" />
+
+                        <Border
+                            x:Name="ItemsRoot"
+                            x:Load="False"
+                            Grid.Row="3"
+                            core:Properties.ClipToBounds="True"
+                            Visibility="Collapsed">
+                            <Border
+                                Margin="20 8 0 0"
+                                BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
+                                BorderThickness="1 0 0 0">
+                                <ItemsPresenter Margin="0 -8 0 0" />
+                            </Border>
+                        </Border>
+
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="SubItemSettingsPresenterStyle" BasedOn="{StaticResource DefaultSettingsPresenterStyle}" TargetType="controls:SettingsPresenter">
+        <Setter Property="Margin" Value="20 0 0 0" />
     </Style>
 
 

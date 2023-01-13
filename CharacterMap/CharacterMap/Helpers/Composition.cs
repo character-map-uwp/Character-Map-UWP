@@ -5,7 +5,6 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -16,7 +15,6 @@ namespace CharacterMap.Helpers
     /// <summary>
     /// Helpful extensions methods to enable you to write fluent Composition animations
     /// </summary>
-    [Bindable]
     public static class Composition
     {
         /*
@@ -339,7 +337,7 @@ namespace CharacterMap.Helpers
             return animation;
         }
 
-        private static T SetSafeTarget<T>(this T animation, string target) where T : KeyFrameAnimation
+        private static T SetSafeTarget<T>(this T animation, string target) where T : CompositionAnimation
         {
             if (!String.IsNullOrEmpty(target))
                 animation.Target = target;
@@ -438,21 +436,47 @@ namespace CharacterMap.Helpers
             return animation;
         }
 
-        public static SpringVector3NaturalMotionAnimation SetPeriod(this SpringVector3NaturalMotionAnimation animation, double duration)
-        {
-            return SetPeriod(animation, TimeSpan.FromSeconds(duration));
-        }
+        #endregion
 
-        public static SpringVector3NaturalMotionAnimation SetPeriod(this SpringVector3NaturalMotionAnimation animation, TimeSpan duration)
+
+        #region SetDampingRatio
+
+        public static SpringVector3NaturalMotionAnimation SetDampingRatio(this SpringVector3NaturalMotionAnimation animation, float dampingRatio)
         {
-            animation.Period = duration;
+            animation.DampingRatio = dampingRatio;
             return animation;
         }
 
         #endregion
 
 
-        #region StopBehaviour
+        #region SetPeriod
+
+        public static SpringVector3NaturalMotionAnimation SetPeriod(
+            this SpringVector3NaturalMotionAnimation animation, double duration) 
+        {
+            if (duration >= 0)
+                return SetPeriod(animation, TimeSpan.FromSeconds(duration));
+            else
+                return animation;
+        }
+
+        public static SpringVector3NaturalMotionAnimation SetPeriod(
+            this SpringVector3NaturalMotionAnimation animation, TimeSpan duration)
+        {
+            animation.Period = duration;
+            return animation;
+        }
+
+        public static T SetFinalValue<T>(this T animation, Vector3? value) where T: Vector3NaturalMotionAnimation
+        {
+            animation.FinalValue = value;
+            return animation;
+        }
+
+        #endregion
+
+            #region StopBehaviour
 
         public static T SetStopBehavior<T>(this T animation, AnimationStopBehavior stopBehavior) where T : KeyFrameAnimation
         {
@@ -682,6 +706,12 @@ namespace CharacterMap.Helpers
                 group.Add(animation);
 
             return animation;
+        }
+
+        public static SpringVector3NaturalMotionAnimation CreateSpringVector3Animation(
+            this CompositionObject visual, string targetProperty = null)
+        {
+            return TryAddGroup(visual, visual.Compositor.CreateSpringVector3Animation().SetSafeTarget(targetProperty));
         }
 
         public static ColorKeyFrameAnimation CreateColorKeyFrameAnimation(this CompositionObject visual, string targetProperty = null)
@@ -940,6 +970,6 @@ namespace CharacterMap.Helpers
 
         #endregion
 
-
+      
     }
 }

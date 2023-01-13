@@ -2,7 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="using:CharacterMap.Core"
-    xmlns:helpers="using:CharacterMap.Helpers">
+    xmlns:h="using:CharacterMap.Helpers">
 
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Dark">
@@ -303,15 +303,13 @@
                 <ControlTemplate TargetType="ButtonBase">
                     <Border x:Name="Border" Background="{TemplateBinding Background}">
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
-                                    </Storyboard>
-                                </VisualState>
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                h:FluentAnimation.PointerOver="{Binding ElementName=Text}"
+                                h:FluentAnimation.Pressed="{Binding ElementName=Text}">
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListLowBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -319,7 +317,6 @@
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SystemControlBackgroundListMediumBrush}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -327,7 +324,6 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Border" Storyboard.TargetProperty="Opacity">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="0.4" />
                                         </ObjectAnimationUsingKeyFrames>

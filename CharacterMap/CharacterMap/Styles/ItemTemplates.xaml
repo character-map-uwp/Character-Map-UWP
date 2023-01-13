@@ -44,6 +44,7 @@
 
     <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
         <Grid
+            Name="TemplateContent"
             ColumnSpacing="12"
             Padding="12 4"
             Background="Transparent"

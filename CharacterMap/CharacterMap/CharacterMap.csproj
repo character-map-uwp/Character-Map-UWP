@@ -244,6 +244,8 @@
     <Compile Include="Helpers\Animation.cs" />
     <Compile Include="Helpers\Composition.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
+    <Compile Include="Helpers\CompositionProperty.cs" />
+    <Compile Include="Helpers\FluentAnimation.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
     <Compile Include="Helpers\WoffToOtf.cs" />

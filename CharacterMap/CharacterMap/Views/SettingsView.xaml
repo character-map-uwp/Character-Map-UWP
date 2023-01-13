@@ -19,6 +19,8 @@
 
     <UserControl.Resources>
 
+        <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox" />
+
         <DataTemplate x:Key="BlankTemplate" />
 
         <Style x:Key="SubheaderTextBlockStyle2" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
@@ -436,14 +438,27 @@
                                         x:Name="BasicAnimationToggle"
                                         MinWidth="0"
                                         IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+                                    <controls:SettingsPresenter.Items>
+                                        <controls:SettingsPresenter
+                                            x:Name="FluentAnimationsToggle"
+                                            x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
+                                            x:Uid="SettingsPointerOverAnimation"
+                                            BorderThickness="0 0 0 1"
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations, Mode=TwoWay}" />
+                                        </controls:SettingsPresenter>
+                                        <controls:SettingsPresenter
+                                            x:Name="ExpensiveAnimationToggle"
+                                            x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
+                                            Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}"
+                                            Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}"
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
+                                        </controls:SettingsPresenter>
+                                    </controls:SettingsPresenter.Items>
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter
-                                    Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}"
-                                    Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}"
-                                    Visibility="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
+
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsTransparencyHeader/Text}" Description="{core:Localizer Key=SettingsTransparencyDescription/Text}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.IsTransparencyEnabled, Mode=TwoWay}" />
@@ -551,22 +566,28 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=InstantSearchToggleHeader/Text}" Description="{core:Localizer Key=SettingsCharacterSearchDescription/Text}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
-
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SearchDelaySelector/Header}" Visibility="{x:Bind Settings.UseInstantSearch, Mode=OneWay}">
-                                    <muxc:NumberBox
-                                        x:Uid="SearchDelaySelector"
-                                        Width="200"
-                                        HorizontalAlignment="Left"
-                                        AcceptsExpression="False"
-                                        BorderThickness="1"
-                                        HeaderTemplate="{StaticResource BlankTemplate}"
-                                        LargeChange="50"
-                                        Maximum="2000"
-                                        Minimum="250"
-                                        SmallChange="10"
-                                        SpinButtonPlacementMode="Inline"
-                                        Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
+                                    <controls:SettingsPresenter.Items>
+                                        <controls:SettingsPresenter
+                                            x:Name="SearchDelayItem"
+                                            x:Load="{x:Bind Settings.UseInstantSearch, Mode=OneWay}"
+                                            Title="{core:Localizer Key=SearchDelaySelector/Header}"
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            <muxc:NumberBox
+                                                x:Uid="SearchDelaySelector"
+                                                Width="200"
+                                                HorizontalAlignment="Left"
+                                                AcceptsExpression="False"
+                                                BorderThickness="1"
+                                                FontSize="14"
+                                                HeaderTemplate="{StaticResource BlankTemplate}"
+                                                LargeChange="50"
+                                                Maximum="2000"
+                                                Minimum="250"
+                                                SmallChange="10"
+                                                SpinButtonPlacementMode="Inline"
+                                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
+                                        </controls:SettingsPresenter>
+                                    </controls:SettingsPresenter.Items>
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SearchResultsSlider/Header}" core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
@@ -577,6 +598,7 @@
                                         Width="200"
                                         HorizontalAlignment="Left"
                                         AcceptsExpression="False"
+                                        FontSize="14"
                                         Header="#Search Results"
                                         HeaderTemplate="{StaticResource BlankTemplate}"
                                         LargeChange="10"

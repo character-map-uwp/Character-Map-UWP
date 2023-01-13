@@ -732,13 +732,15 @@ namespace CharacterMap.Views
         {
             if (sender is MenuFlyout menu && menu.Items.Count < 2)
             {
+                Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
                 foreach (var provider in ViewModel.Providers)
                 {
                     MenuFlyoutItem item = new()
                     {
                         Command = ViewModel.ToggleDev,
                         CommandParameter = provider.Type,
-                        Text = provider.DisplayName
+                        Text = provider.DisplayName,
+                        Style = style
                     };
                     menu.Items.Add(item);
                 }
@@ -1088,7 +1090,6 @@ namespace CharacterMap.Views
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
-
     }
 
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -12,6 +13,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
@@ -20,6 +22,8 @@ namespace CharacterMap.Helpers
     public class CompositionFactory : DependencyObject
     {
         public const double DefaultOffsetDuration = 0.325;
+
+        public static bool AnimationEnabled { get; set; }
 
         public static UISettings UISettings { get; }
 
@@ -33,6 +37,33 @@ namespace CharacterMap.Helpers
         public const int DEFAULT_STAGGER_MS = 83;
 
         #region Attached Properties
+
+        public static bool GetEnableBounceScale(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(EnableBounceScaleProperty);
+        }
+
+        public static void SetEnableBounceScale(DependencyObject obj, bool value)
+        {
+            obj.SetValue(EnableBounceScaleProperty, value);
+        }
+
+        public static readonly DependencyProperty EnableBounceScaleProperty =
+            DependencyProperty.RegisterAttached("EnableBounceScale", typeof(bool), typeof(CompositionFactory), new PropertyMetadata(false, (d,e) =>
+            {
+                if (d is FrameworkElement f)
+                {
+                    Visual v = f.GetElementVisual();
+                    if (e.NewValue is bool b && b)
+                    {
+                        CompositionFactory.EnableStandardTranslation(v, 0.15);
+                    }
+                    else
+                    {
+                        v.Properties.SetImplicitAnimation(CompositionFactory.TRANSLATION, null);
+                    }
+                }
+            }));
 
         public static Duration GetOpacityDuration(DependencyObject obj)
         {
@@ -315,16 +346,16 @@ namespace CharacterMap.Helpers
             f.GetElementVisual().ImplicitAnimations?.Remove(nameof(Visual.Offset));
         }
 
-        public static Visual EnableStandardTranslation(Visual v)
+        public static Visual EnableStandardTranslation(Visual v, double? duration = null)
         {
             if (!UISettings.AnimationsEnabled)
                 return v;
 
-            var o = v.GetCached("__ST",
+            var o = v.GetCached($"__ST{(duration.HasValue ? duration.Value : DefaultOffsetDuration)}",
                 () => v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
                        .AddKeyFrame(0, STARTING_VALUE)
                        .AddKeyFrame(1, FINAL_VALUE)
-                       .SetDuration(DefaultOffsetDuration));
+                       .SetDuration(duration ?? DefaultOffsetDuration));
 
             v.Properties.SetImplicitAnimation(CompositionFactory.TRANSLATION, o);
             return v;
@@ -332,8 +363,21 @@ namespace CharacterMap.Helpers
 
         public static void SetDropInOut(FrameworkElement background, IList<FrameworkElement> children, FrameworkElement container = null)
         {
-            if (!UISettings.AnimationsEnabled)
+            if (background is null || children.Count == 0)
                 return;
+
+            if (ResourceHelper.AllowAnimation is false)
+            {
+                background.SetShowAnimation(null);
+                background.SetHideAnimation(null);
+                foreach (var child in children)
+                {
+                    child.SetShowAnimation(null);
+                    child.SetHideAnimation(null);
+                }
+
+                return;
+            }
 
             double delay = 0.15;
 

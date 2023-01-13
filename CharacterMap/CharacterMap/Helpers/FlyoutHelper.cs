@@ -111,6 +111,9 @@ namespace CharacterMap.Helpers
             bool showAdvanced = args.ShowAdvanced;
             bool isExternalFile = args.IsExternalFile;
 
+            Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+            Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+
             #region Handlers 
 
             static void OpenInNewWindow(object s, RoutedEventArgs args)
@@ -194,8 +197,10 @@ namespace CharacterMap.Helpers
                     Text = key.StartsWith("~") ? key.Remove(0,1) : Localization.Get(key),
                     Icon = new FontIcon { Glyph = icon },
                     Tag = font,
-                    DataContext = options
+                    DataContext = options,
+                    Style = style
                 };
+
                 item.Click += handler;
 
                 if (accel != VirtualKey.None)
@@ -204,7 +209,7 @@ namespace CharacterMap.Helpers
                 if (add)
                     menu.Items.Add(item);
 
-                return item;
+                return item.SetAnimation();
             }
 
             #endregion
@@ -254,6 +259,7 @@ namespace CharacterMap.Helpers
                     if (isExternalFile is false && args.IsFolderView is false)
                     {
                         coll = AddCollectionItems(menu, font, null);
+                        coll.Style = subStyle;
                     }
                 }
 
@@ -311,19 +317,38 @@ namespace CharacterMap.Helpers
             }
         }
 
+        public static T SetAnimation<T>(this T item) where T : MenuFlyoutItemBase
+        {
+            if (ResourceHelper.AllowAnimation && ResourceHelper.SupportFluentAnimation)
+            {
+                Properties.SetPointerOverAnimation(item, "IconRoot");
+                Properties.SetClickAnimationOffset(item, 0.95);
+
+                Properties.SetPointerPressedAnimation(item, "ContentRoot|Scale");
+                Properties.SetClickAnimation(item, "ContentRoot|Scale");
+            }
+
+            return item;
+        }
+
         public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, UserFontCollection collection, BasicFontFilter filter)
         {
+            if (collection is null)
+                return;
+
             if ((collection != null || (filter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
                 && collection.Fonts.Contains(font.Name))
             {
                 menu.Items.Add(new MenuFlyoutSeparator());
+                Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
 
                 MenuFlyoutItem removeItem = new()
                 {
                     Text = Localization.Get("RemoveFromCollectionItem/Text"),
                     Icon = new FontIcon { Glyph = "\uE108" },
                     Tag = collection == null && filter == BasicFontFilter.SymbolFonts ? _collections.SymbolCollection : collection,
-                    DataContext = font
+                    DataContext = font,
+                    Style = style
                 };
                 removeItem.Click += RemoveFrom_Click;
                 menu.Items.Add(removeItem);
@@ -382,13 +407,15 @@ namespace CharacterMap.Helpers
 
             bool multiMode = font is null && fonts is not null;
             IList<InstalledFont> items = fonts ?? new List<InstalledFont> { font };
+            Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+            Style substyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
 
             // 1. Add "Add To Collection" item
-            MenuFlyoutSubItem coll;
-            MenuFlyoutSubItem newColl = new()
+            MenuFlyoutSubItem parent = new()
             {
                 Text = Localization.Get( key ?? "AddToCollectionFlyout/Text"),
-                Icon = new FontIcon { Glyph = "\uE71D" }
+                Icon = new FontIcon { Glyph = "\uE71D" },
+                Style = substyle
             };
 
             // 2. Add "New Collection" Item
@@ -396,49 +423,50 @@ namespace CharacterMap.Helpers
             {
                 Text = Localization.Get("NewCollectionItem/Text"),
                 Icon = new FontIcon { Glyph = "\uE109" },
-                DataContext = items
+                DataContext = items,
+                Style = style
             };
 
             newCollection.Click += CreateCollection_Click;
 
-            if (newColl.Items != null)
+            if (parent.Items != null)
             {
-                newColl.Items.Add(newCollection);
+                parent.Items.Add(newCollection.SetAnimation());
 
                 // 3. Create "Symbol Font" item
                 if (font is null || !font.IsSymbolFont)
                 {
-                    newColl.Items.Add(new MenuFlyoutSeparator());
+                    parent.Items.Add(new MenuFlyoutSeparator());
 
                     MenuFlyoutItem symb = new()
                     {
                         Text = Localization.Get("OptionSymbolFonts/Text"),
                         IsEnabled = multiMode || !_collections.SymbolCollection.Fonts.Contains(font.Name),
-                        DataContext = items
+                        DataContext = items,
+                        Style = style
                     };
                     symb.Click += AddToSymbolFonts_Click;
-                    newColl.Items.Add(symb);
+                    parent.Items.Add(symb);
                 }
             }
 
-            coll = newColl;
-            menu.Items.Add(coll);
+            menu.Items.Add(parent);
 
             // 4. Add items for each user Collection
             if (_collections.Items.Count > 0)
             {
-                if (coll.Items != null)
+                if (parent.Items != null)
                 {
-                    coll.Items.Add(new MenuFlyoutSeparator());
-
+                    parent.Items.Add(new MenuFlyoutSeparator());
                     foreach (var m in
                             _collections.Items.Select(item => new MenuFlyoutItem
                             {
                                 Tag = item,
                                 DataContext = items,
                                 Text = item.Name,
+                                Style = style,
                                 IsEnabled = multiMode || !item.Fonts.Contains(font.Name)
-                            }))
+                            }.SetAnimation()))
                     {
                         if (m.IsEnabled)
                         {
@@ -458,12 +486,12 @@ namespace CharacterMap.Helpers
                             };
                         }
 
-                        coll.Items.Add(m);
+                        parent.Items.Add(m);
                     }
                 }
             }
 
-            return coll;
+            return parent;
         }
 
         /// <summary>
@@ -476,9 +504,11 @@ namespace CharacterMap.Helpers
         {
             if (target.Tag is Character c)
             {
+                Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+                Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+
                 // 1. Attach the flyout to the selected grid item and apply the correct context
                 FlyoutBase.SetAttachedFlyout(target, menu);
-                menu.SetItemsDataContext(target.Tag);
 
                 // 2. Analyse the character to know which options we should show in the menu
                 var analysis = viewmodel.GetCharAnalysis(c);
@@ -546,7 +576,7 @@ namespace CharacterMap.Helpers
                             var item = new MenuFlyoutSubItem { Text = p.DisplayName };
                             foreach (var o in p.GetAllOptions())
                             {
-                                var i = new MenuFlyoutItem { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name) };
+                                var i = new MenuFlyoutItem { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = style };
                                 i.Click += CopyItemClick;
                                 Properties.SetDevOption(i, o);
                                 item.Items.Add(i);
@@ -576,25 +606,31 @@ namespace CharacterMap.Helpers
                     add.SetVisible(ResourceHelper.AppSettings.EnableCopyPane);
                 }
 
+                // 7. Set item context
+                menu.SetItemsDataContext(target.Tag, subStyle);
+
                 // 7. Show complete flyout
                 FlyoutBase.ShowAttachedFlyout(target);
             }
         }
 
-        public static void SetItemsDataContext(this MenuFlyout flyout, object dataContext)
+        public static void SetItemsDataContext(this MenuFlyout flyout, object dataContext, Style subStyle = null)
         {
-            static void SetContext(IList<MenuFlyoutItemBase> items, object context)
+            static void SetContext(IList<MenuFlyoutItemBase> items, object context, Style subStyle)
             {
                 foreach (var item in items)
                 {
                     if (item is MenuFlyoutSubItem sub)
-                        SetContext(sub.Items, context);
+                    {
+                        sub.Style = subStyle;
+                        SetContext(sub.Items, context, subStyle);
+                    }
 
                     item.DataContext = context;
                 }
             }
 
-            SetContext(flyout.Items, dataContext);
+            SetContext(flyout.Items, dataContext, subStyle);
         }
     }
 }

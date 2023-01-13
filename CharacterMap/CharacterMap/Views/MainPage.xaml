@@ -7,7 +7,6 @@
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
-    xmlns:m="using:CharacterMap.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:views="using:CharacterMap.Views"
@@ -37,7 +36,7 @@
             <Flyout.FlyoutPresenterStyle>
                 <Style BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
                     <Setter Property="RenderTransformOrigin" Value="0 0" />
-                    <Setter Property="Margin" Value="2 -4 0 0" />
+                    <Setter Property="Margin" Value="0 -4 0 0" />
                     <Setter Property="Width" Value="470" />
                     <Setter Property="MaxWidth" Value="470" />
                     <Setter Property="MinWidth" Value="470" />
@@ -62,6 +61,10 @@
                                 <Setter Property="FontSize" Value="14" />
                                 <Setter Property="Foreground" Value="{ThemeResource AppBarItemPointerOverForegroundThemeBrush}" />
                                 <Setter Property="ContentTemplate" Value="{StaticResource LabelButtonContentTemplate}" />
+                                <Setter Property="core:Properties.PointerOverAnimation" Value="Icon" />
+                                <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentRoot|Scale" />
+                                <Setter Property="core:Properties.ClickAnimation" Value="ContentRoot|Scale" />
+                                <Setter Property="core:Properties.ClickAnimationOffset" Value="0.95" />
                             </Style>
 
                             <Style BasedOn="{StaticResource LabelButtonStyle}" TargetType="Button" />
@@ -125,6 +128,7 @@
 
                                 <Button Command="{Binding CommandToggleFullScreen}">
                                     <controls:ButtonLabel
+                                        x:Name="FullscreenLabel"
                                         Title="{core:Localizer Key='FullscreenLabel/Text'}"
                                         Glyph="&#xE740;"
                                         Shortcut="F12" />
@@ -207,6 +211,7 @@
                 </MenuFlyoutItem.KeyboardAccelerators>
                 <MenuFlyoutItem.Icon>
                     <FontIcon
+                        x:Name="ToggleFullscreenIcon"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
                         Glyph="&#xE740;" />
@@ -269,29 +274,6 @@
             AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
             MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
             Placement="Bottom" />
-
-        <MenuFlyout
-            x:Name="OpenFontFlyout"
-            AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
-            MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
-            Placement="BottomEdgeAlignedLeft">
-            <MenuFlyoutItem
-                x:Uid="FontFileMenuItem"
-                Click="{x:Bind OpenFont}"
-                d:Text="Font File">
-                <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="O" Modifiers="Control" />
-                </MenuFlyoutItem.KeyboardAccelerators>
-            </MenuFlyoutItem>
-            <MenuFlyoutItem
-                x:Uid="FontFolderMenuItem"
-                Click="{x:Bind OpenFolder}"
-                d:Text="Font Folder">
-                <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="O" Modifiers="Control,Shift" />
-                </MenuFlyoutItem.KeyboardAccelerators>
-            </MenuFlyoutItem>
-        </MenuFlyout>
 
     </Control.Resources>
 
@@ -373,6 +355,7 @@
                         <Button
                             x:Name="OpenFontPaneButton"
                             x:Uid="MenuToggle"
+                            core:Properties.ClickAnimation="Text"
                             Click="OpenFontPaneButton_Click"
                             Content="&#xE169;"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
@@ -490,6 +473,8 @@
                             Height="Auto"
                             Padding="4"
                             VerticalAlignment="Stretch"
+                            core:Properties.ClickAnimation="FluentContentPresenter|Scale"
+                            core:Properties.ClickAnimationOffset="0.8"
                             Flyout="{StaticResource MainMenuFlyout}"
                             Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                             Style="{StaticResource MapInfoButtonStyle}"
@@ -511,6 +496,12 @@
                             VerticalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
+                            core:Properties.ClickAnimation="Root|Scale"
+                            core:Properties.ClickAnimationOffset="0.95"
+                            core:Properties.PointerAnimationOffset="2"
+                            core:Properties.PointerOverAnimation="DropDownGlyph"
+                            core:Properties.PointerPressedAnimation="ContentRoot|Scale"
+                            core:Properties.SupportAnimatedIcon="False"
                             Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom"
                             Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
@@ -812,6 +803,7 @@
                                             <DataTemplate>
                                                 <Border Width="64" Height="64">
                                                     <TextBlock
+                                                        x:Name="Text"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
                                                         FontSize="32"
@@ -952,6 +944,7 @@
                                     core:Properties.TargetContextFlyout="{StaticResource TabContextMenu}"
                                     DoubleTapped="TabViewItem_DoubleTapped"
                                     IsDoubleTapEnabled="True"
+                                    Tag="{Binding ElementName=FontsTabBar, Path=DataContext.AllowFluentAnimation}"
                                     ToolTipService.ToolTip="{x:Bind Tooltip}">
                                     <muxc:TabViewItem.Header>
                                         <Grid ColumnSpacing="8">
@@ -977,7 +970,7 @@
                                                 Glyph="&#xEA37;" />
 
                                             <TextBlock
-                                                x:Name="Text"
+                                                x:Name="TitleText"
                                                 x:Load="{x:Bind core:Converters.False(IsCompact)}"
                                                 Grid.Column="1"
                                                 Margin="0 0 0 0"
@@ -1371,6 +1364,16 @@
                         <Setter Target="FontsTabBar.(core:Properties.ClipToBounds)" Value="True" />
                         <Setter Target="FontsTabBar.Visibility" Value="Visible" />
                         <Setter Target="TabBorder.Visibility" Value="Visible" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="WindowStates">
+                <VisualState x:Name="WindowState" />
+                <VisualState x:Name="FullscreenState">
+                    <VisualState.Setters>
+                        <Setter Target="ToggleFullscreenIcon.Glyph" Value="&#xE1D8;" />
+                        <Setter Target="FullscreenLabel.Glyph" Value="&#xE1D8;" />
+                        <Setter Target="FullscreenLabel.Title" Value="Restore" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -91,11 +91,10 @@ namespace CharacterMap.Helpers
             return menu;
         }
 
-        public static MenuFlyoutSubItem Add(this MenuFlyoutSubItem item, BasicFontFilter filter)
+        public static MenuFlyoutSubItem Add(this MenuFlyoutSubItem item, BasicFontFilter filter, Style style = null)
         {
-            MenuFlyoutItem i = new();
+            MenuFlyoutItem i = new() { Style = style };
             Core.Properties.SetFilter(i, filter);
-
             item.Items.Add(i);
             return item;
         }

@@ -133,6 +133,12 @@ namespace CharacterMap.Helpers
         public static bool SupportsShadows() => Get<bool>("SupportsShadows");
         public static bool AllowAnimation => AppSettings.UseSelectionAnimations && CompositionFactory.UISettings.AnimationsEnabled;
         public static bool AllowExpensiveAnimation => AllowAnimation && AppSettings.AllowExpensiveAnimations;
+        public static bool AllowFluentAnimation => AllowAnimation && SupportFluentAnimation && AppSettings.UseFluentPointerOverAnimations;
+
+        private static bool? _supportsFluentAnimation;
+        public static bool SupportFluentAnimation => _supportsFluentAnimation ??= Get<bool>("SupportsFluentAnimation");
+
+        public static bool UsePointerOverAnimations => AppSettings.UseFluentPointerOverAnimations;
 
 
         /* Dynamic theme-ability */

@@ -37,6 +37,7 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <x:Boolean x:Key="SupportsFluentAnimation">False</x:Boolean>
     <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
     <x:Boolean x:Key="SupportsTabs">False</x:Boolean>
@@ -397,7 +398,9 @@
         <Setter Property="CornerRadius" Value="0" />
     </Style>
 
+    <Style x:Key="ThemeMenuFlyoutItemStyle" TargetType="MenuFlyoutItem" />
 
+    <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox" />
 
 
     <!--  BUTTONS  -->
@@ -987,15 +990,24 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="ItemsGroup">
+                                <VisualState x:Name="NoItemsState" />
+                                <VisualState x:Name="HasItemsState">
+                                    <VisualState.Setters>
+                                        <Setter Target="ItemsRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Border
-                            Grid.RowSpan="2"
+                            Grid.RowSpan="3"
                             Margin="4 8 4 4"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" />
@@ -1028,10 +1040,26 @@
                                 RelativePanel.Below="Description" />
                         </RelativePanel>
 
+                        <Border
+                            x:Name="ItemsRoot"
+                            x:Load="False"
+                            Grid.Row="2"
+                            core:Properties.ClipToBounds="True"
+                            Visibility="Collapsed">
+                            <Border>
+                                <ItemsPresenter Margin="0 -8 0 0" />
+                            </Border>
+                        </Border>
+
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="SubItemSettingsPresenterStyle" BasedOn="{StaticResource DefaultSettingsPresenterStyle}" TargetType="controls:SettingsPresenter">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
     </Style>
 
 

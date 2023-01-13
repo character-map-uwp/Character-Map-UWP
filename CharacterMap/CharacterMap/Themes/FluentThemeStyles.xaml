@@ -25,6 +25,7 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <x:Boolean x:Key="SupportsFluentAnimation">True</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
     <x:Boolean x:Key="SupportsTabs">True</x:Boolean>
     <x:Double x:Key="MinTitleBarHeight">40</x:Double>
@@ -94,14 +95,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SettingsPresenter">
-                    <Grid
-                        Padding="{TemplateBinding Padding}"
-                        Background="{TemplateBinding Background}"
-                        BackgroundTransition="{StaticResource QuickBrushTransition}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="{TemplateBinding CornerRadius}">
-
+                    <Grid>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="PlacementGroups">
                                 <VisualState x:Name="RightPlacementState" />
@@ -131,58 +125,101 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="ItemsGroup">
+                                <VisualState x:Name="NoItemsState" />
+                                <VisualState x:Name="HasItemsState">
+                                    <VisualState.Setters>
+                                        <Setter Target="TopCardRoot.CornerRadius" Value="4 4 0 0" />
+                                        <Setter Target="ItemsRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition x:Name="TopRow" Height="*" />
-                            <RowDefinition x:Name="BottomRow" Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
+                        <Grid
+                            x:Name="TopCardRoot"
+                            Padding="{TemplateBinding Padding}"
+                            Background="{TemplateBinding Background}"
+                            BackgroundTransition="{StaticResource QuickBrushTransition}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="TopRow" Height="*" />
+                                <RowDefinition x:Name="BottomRow" Height="Auto" />
+                            </Grid.RowDefinitions>
 
-                        <ContentControl
-                            x:Name="IconPresenter"
-                            x:Load="False"
-                            Width="{TemplateBinding IconSize}"
-                            Height="{TemplateBinding IconSize}"
-                            Margin="0 0 18 0"
-                            Visibility="Collapsed" />
-
-                        <StackPanel
-                            Grid.Column="1"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Center">
-                            <ContentPresenter
-                                HorizontalAlignment="Stretch"
-                                Content="{TemplateBinding Title}"
-                                FontFamily="{TemplateBinding FontFamily}"
-                                FontSize="14" />
-                            <TextBlock
-                                x:Name="Description"
+                            <ContentControl
+                                x:Name="IconPresenter"
                                 x:Load="False"
-                                Margin="0 2 0 0"
-                                FontFamily="{TemplateBinding FontFamily}"
-                                FontSize="13"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{TemplateBinding Description}"
-                                TextWrapping="Wrap"
+                                Width="{TemplateBinding IconSize}"
+                                Height="{TemplateBinding IconSize}"
+                                Margin="0 0 18 0"
                                 Visibility="Collapsed" />
-                        </StackPanel>
 
-                        <ContentPresenter
-                            x:Name="Presenter"
-                            Grid.Column="2"
-                            Margin="18 0 0 0"
-                            Content="{TemplateBinding Content}"
-                            FontFamily="{TemplateBinding FontFamily}" />
+                            <StackPanel
+                                Grid.Column="1"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center">
+                                <ContentPresenter
+                                    HorizontalAlignment="Stretch"
+                                    Content="{TemplateBinding Title}"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="14" />
+                                <TextBlock
+                                    x:Name="Description"
+                                    x:Load="False"
+                                    Margin="0 2 0 0"
+                                    FontFamily="{TemplateBinding FontFamily}"
+                                    FontSize="12.333"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{TemplateBinding Description}"
+                                    TextWrapping="Wrap"
+                                    Visibility="Collapsed" />
+                            </StackPanel>
 
+                            <ContentPresenter
+                                x:Name="Presenter"
+                                Grid.Column="2"
+                                Margin="18 0 0 0"
+                                Content="{TemplateBinding Content}"
+                                FontFamily="{TemplateBinding FontFamily}" />
+                        </Grid>
+
+                        <Border
+                            x:Name="ItemsRoot"
+                            x:Load="False"
+                            Grid.Row="1"
+                            core:Properties.ClipToBounds="True"
+                            Visibility="Collapsed">
+                            <!--  Animate the border below  -->
+                            <Border
+                                Background="{ThemeResource LayerFillColorDefaultBrush}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1 0 1 1"
+                                CornerRadius="0 0 4 4">
+                                <ItemsPresenter Margin="0 4 0 0" />
+                            </Border>
+                        </Border>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="SubItemSettingsPresenterStyle" BasedOn="{StaticResource DefaultSettingsPresenterStyle}" TargetType="controls:SettingsPresenter">
+        <Setter Property="Padding" Value="16 6 16 18" />
+        <Setter Property="BorderThickness" Value="0 0 0 0" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Background" Value="Transparent" />
     </Style>
 
     <Style TargetType="controls:ContentGroup">
@@ -372,6 +409,7 @@
                     BorderThickness="0,0,0,1"
                     Opacity="0.2" />
                 <TextBlock
+                    x:Name="Text"
                     Padding="15,8,15,10"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
@@ -382,7 +420,9 @@
         </controls:UXButton>
     </DataTemplate>
 
-    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem" />
+    <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
+        <Setter Property="core:Properties.PointerOverAnimation" Value="Text" />
+    </Style>
 
     <Style TargetType="toolkit:GridSplitter">
         <Setter Property="IsTabStop" Value="True" />
@@ -430,6 +470,7 @@
 
 
 
+
     <!--  FLYOUT  -->
 
     <x:Double x:Key="FontListFlyoutFontSize">14</x:Double>
@@ -446,6 +487,300 @@
         <Setter Property="CornerRadius" Value="8" />
     </Style>
 
+    <Style x:Key="ThemeMenuFlyoutItemStyle" TargetType="MenuFlyoutItem">
+        <Setter Property="Background" Value="{ThemeResource MenuFlyoutItemBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutItemBackgroundBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutItemBorderThickness}" />
+        <Setter Property="Foreground" Value="{ThemeResource MenuFlyoutItemForeground}" />
+        <Setter Property="Padding" Value="{StaticResource MenuFlyoutItemThemePadding}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentRoot|Scale" />
+        <Setter Property="core:Properties.ClickAnimation" Value="ContentRoot|Scale" />
+        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.95" />
+        <Setter Property="core:Properties.PointerOverAnimation" Value="IconRoot" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuFlyoutItem">
+                    <Border
+                        x:Name="LayoutRoot"
+                        Margin="{StaticResource MenuFlyoutItemMargin}"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundPointerOver}" />
+                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
+                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
+                                        <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundPressed}" />
+                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
+                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
+                                        <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundDisabled}" />
+                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
+                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
+                                        <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckPlaceholderStates">
+                                <VisualState x:Name="NoPlaceholder" />
+                                <VisualState x:Name="CheckPlaceholder">
+                                    <VisualState.Setters>
+                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IconPlaceholder">
+                                    <VisualState.Setters>
+                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckAndIconPlaceholder">
+                                    <VisualState.Setters>
+                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemDoublePlaceholderThemeThickness}" />
+                                        <Setter Target="IconRoot.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <!--  Narrow padding is only applied when flyout was invoked with pen, mouse or keyboard.  -->
+                            <!--  Default padding is applied for all other cases including touch.  -->
+                            <VisualStateGroup x:Name="PaddingSizeStates">
+                                <VisualState x:Name="DefaultPadding" />
+                                <VisualState x:Name="NarrowPadding">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Padding">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MenuFlyoutItemThemePaddingNarrow}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="KeyboardAcceleratorTextVisibility">
+                                <VisualState x:Name="KeyboardAcceleratorTextCollapsed" />
+                                <VisualState x:Name="KeyboardAcceleratorTextVisible">
+                                    <VisualState.Setters>
+                                        <Setter Target="KeyboardAcceleratorTextBlock.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid x:Name="ContentRoot">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Viewbox
+                                x:Name="IconRoot"
+                                Width="16"
+                                Height="16"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed">
+                                <ContentPresenter x:Name="IconContent" Content="{TemplateBinding Icon}" />
+                            </Viewbox>
+                            <TextBlock
+                                x:Name="TextBlock"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}"
+                                TextTrimming="{ThemeResource MenuFlyoutItemTextTrimming}" />
+                            <TextBlock
+                                x:Name="KeyboardAcceleratorTextBlock"
+                                Grid.Column="1"
+                                MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
+                                Margin="24,4,0,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Foreground="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
+                                HorizontalTextAlignment="Right"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
+                                Visibility="Collapsed" />
+                        </Grid>
+
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ThemeMenuFlyoutSubItemStyle" TargetType="MenuFlyoutSubItem">
+        <Setter Property="Background" Value="{ThemeResource MenuFlyoutSubItemBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutSubItemBackgroundBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource MenuFlyoutSubItemBorderThickness}" />
+        <Setter Property="Foreground" Value="{ThemeResource MenuFlyoutSubItemForeground}" />
+        <Setter Property="Padding" Value="{StaticResource MenuFlyoutItemThemePadding}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentRoot|Scale" />
+        <Setter Property="core:Properties.ClickAnimation" Value="ContentRoot|Scale" />
+        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.95" />
+        <Setter Property="core:Properties.PointerOverAnimation" Value="SubItemChevron|X" />
+        <Setter Property="core:Properties.PointerAnimationOffset" Value="4" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="MenuFlyoutSubItem">
+                    <Grid
+                        x:Name="LayoutRoot"
+                        Margin="{StaticResource MenuFlyoutItemMargin}"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutSubItemBackgroundPointerOver}" />
+                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundPointerOver}" />
+                                        <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource MenuFlyoutSubItemChevronPointerOver}" />
+                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutSubItemBackgroundPressed}" />
+                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundPressed}" />
+                                        <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource MenuFlyoutSubItemChevronPressed}" />
+                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundPressed}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="SubMenuOpened">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutSubItemBackgroundSubMenuOpened}" />
+                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+                                        <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource MenuFlyoutSubItemChevronSubMenuOpened}" />
+                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundSubMenuOpened}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutSubItemBackgroundDisabled}" />
+                                        <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundDisabled}" />
+                                        <Setter Target="SubItemChevron.Foreground" Value="{ThemeResource MenuFlyoutSubItemChevronDisabled}" />
+                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutSubItemForegroundDisabled}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="CheckPlaceholderStates">
+                                <VisualState x:Name="NoPlaceholder" />
+                                <VisualState x:Name="CheckPlaceholder">
+                                    <VisualState.Setters>
+                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IconPlaceholder">
+                                    <VisualState.Setters>
+                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="CheckAndIconPlaceholder">
+                                    <VisualState.Setters>
+                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemDoublePlaceholderThemeThickness}" />
+                                        <Setter Target="IconRoot.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
+                                        <Setter Target="IconRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PaddingSizeStates">
+                                <VisualState x:Name="DefaultPadding" />
+                                <VisualState x:Name="NarrowPadding">
+
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Padding">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource MenuFlyoutItemThemePaddingNarrow}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+
+                        </VisualStateManager.VisualStateGroups>
+                        <Grid Name="ContentRoot">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Viewbox
+                                x:Name="IconRoot"
+                                Grid.Column="0"
+                                Width="16"
+                                Height="16"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Visibility="Collapsed">
+                                <ContentPresenter x:Name="IconContent" Content="{TemplateBinding Icon}" />
+                            </Viewbox>
+                            <TextBlock
+                                x:Name="TextBlock"
+                                Grid.Column="0"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}"
+                                TextTrimming="{ThemeResource MenuFlyoutItemTextTrimming}" />
+                            <FontIcon
+                                x:Name="SubItemChevron"
+                                Grid.Column="1"
+                                Margin="{StaticResource MenuFlyoutItemChevronMargin}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="12"
+                                Foreground="{ThemeResource MenuFlyoutSubItemChevron}"
+                                Glyph="&#xE974;"
+                                MirroredWhenRightToLeft="True" />
+                        </Grid>
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style BasedOn="{StaticResource DefaultMenuFlyoutItemStyle}" TargetType="MenuFlyoutItem" />
+
+
+
+
+    <!--  CHECKBOX  -->
+    <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
+        <Setter Property="core:Properties.PointerOverAnimation" Value="ContentPresenter" />
+        <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentPresenter|Scale" />
+        <Setter Property="core:Properties.ClickAnimation" Value="ContentPresenter|Scale" />
+        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.93" />
+    </Style>
+
 
 
 
@@ -453,7 +788,14 @@
 
     <Style x:Key="DefaultThemeComboBoxStyle" BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
         <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="core:Properties.PointerOverAnimation" Value="DropDownGlyph" />
+        <Setter Property="core:Properties.PointerAnimationOffset" Value="2" />
+        <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentPresenter|Scale" />
+        <Setter Property="core:Properties.ClickAnimation" Value="ContentPresenter|Scale" />
+        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.95" />
     </Style>
+
+    <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox" />
 
     <Style x:Key="VariantComboBoxStyle" TargetType="controls:UXComboBox">
         <Setter Property="Padding" Value="12,5,0,7" />
@@ -722,8 +1064,6 @@
     </Style>
 
 
-
-
     <!--  BUTTONS  -->
 
     <Style x:Key="DefaultThemeButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button" />
@@ -744,53 +1084,42 @@
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="FocusVisualMargin" Value="-3" />
+        <Setter Property="helpers:FluentAnimation.UsePointerOver" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:UXButton">
-
                     <Grid
                         x:Name="Root"
                         MinWidth="{TemplateBinding MinWidth}"
                         MaxWidth="{TemplateBinding MaxWidth}"
                         Background="Transparent">
-
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
-                                </VisualState>
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                helpers:FluentAnimation.PointerOver="{Binding ElementName=FluentContentPresenter}"
+                                helpers:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
                                         <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
                                         <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
+                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
                                         <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
+                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
                                         <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}" />
                                         <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}" />
-                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
+                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
                                         <Setter Target="DropDownGlyph.Opacity" Value="0" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentPresenter" />
-                                    </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="HintStates">
@@ -807,8 +1136,8 @@
                                 <VisualState x:Name="LabelHidden" />
                                 <VisualState x:Name="LabelVisible">
                                     <VisualState.Setters>
-                                        <Setter Target="ContentPresenter.Height" Value="32" />
-                                        <Setter Target="ContentPresenter.VerticalAlignment" Value="Top" />
+                                        <Setter Target="FluentContentPresenter.Height" Value="32" />
+                                        <Setter Target="FluentContentPresenter.VerticalAlignment" Value="Top" />
                                         <Setter Target="LabelPresenter.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -838,7 +1167,7 @@
                             </Grid.ColumnDefinitions>
 
                             <ContentPresenter
-                                x:Name="ContentPresenter"
+                                x:Name="FluentContentPresenter"
                                 Padding="{TemplateBinding Padding}"
                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -900,7 +1229,12 @@
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
         <Setter Property="Height" Value="42" />
         <Setter Property="MinWidth" Value="42" />
-        <Setter Property="core:Properties.SupportAnimatedIcon" Value="True" />
+        <Setter Property="helpers:FluentAnimation.UsePointerOver" Value="True" />
+        <!--<Setter Property="core:Properties.PointerOverAnimation" Value="FluentContentPresenter" />
+        <Setter Property="core:Properties.SupportAnimatedIcon" Value="False" />
+        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.9" />
+        <Setter Property="core:Properties.ClickAnimation" Value="Root|Scale" />
+        <Setter Property="core:Properties.PointerPressedAnimation" Value="Root|Scale" />-->
     </Style>
 
     <Style x:Key="DefaultThemeAppBarButtonStyle" BasedOn="{StaticResource TransparentButton}" TargetType="controls:UXButton">
@@ -908,6 +1242,18 @@
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="Width" Value="50" />
         <Setter Property="Padding" Value="0" />
+    </Style>
+
+    <Style x:Key="DevToolsAppBarButtonStyle" BasedOn="{StaticResource DefaultThemeAppBarButtonStyle}" TargetType="controls:UXButton">
+        <Setter Property="Height" Value="52" />
+        <Setter Property="IsLabelVisible" Value="True" />
+        <Setter Property="helpers:FluentAnimation.UsePointerOver" Value="True" />
+    </Style>
+
+    <Style x:Key="CopyButtonStyle" BasedOn="{StaticResource DevToolsAppBarButtonStyle}" TargetType="controls:UXButton">
+        <Setter Property="Height" Value="50" />
+        <Setter Property="Width" Value="50" />
+        <Setter Property="IsLabelVisible" Value="False" />
     </Style>
 
     <Style x:Key="LabelAppBarButtonStyle" TargetType="AppBarButton">
@@ -931,42 +1277,29 @@
                     <Grid x:Name="Root" Background="Transparent">
 
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentRoot" />
-                                    </Storyboard>
-                                </VisualState>
-
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                helpers:FluentAnimation.PointerOver="{Binding ElementName=ContentRoot}"
+                                helpers:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
                                         <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
                                         <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
                                         <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentRoot" />
-                                    </Storyboard>
                                 </VisualState>
-
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
                                         <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
                                         <Setter Target="Content.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation TargetName="ContentRoot" />
-                                    </Storyboard>
                                 </VisualState>
-
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
                                         <Setter Target="Root.Opacity" Value="0.4" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation TargetName="ContentRoot" />
-                                    </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="OverflowNormal" />
                                 <VisualState x:Name="OverflowPointerOver">
@@ -1056,6 +1389,7 @@
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="MinHeight" Value="36" />
+        <Setter Property="helpers:FluentAnimation.UsePointerOver" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:MenuButton">
@@ -1063,47 +1397,35 @@
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
                         BackgroundTransition="{StaticResource QuickBrushTransition}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
                         ToolTipService.ToolTip="{TemplateBinding Content}">
-
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentRoot" />
-                                    </Storyboard>
-                                </VisualState>
-
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                helpers:FluentAnimation.PointerOver="{Binding ElementName=IconPresenter}"
+                                helpers:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                                <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="BorderElement.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+                                        <Setter Target="ContentBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="ContentRoot" />
-                                    </Storyboard>
                                 </VisualState>
-
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
-                                        <Setter Target="BorderElement.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
+                                        <Setter Target="ContentBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="ContentRoot" />
-                                    </Storyboard>
                                 </VisualState>
-
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
                                         <Setter Target="RootGrid.Opacity" Value="0.5" />
                                     </VisualState.Setters>
                                 </VisualState>
-
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="CheckStates">
                                 <VisualState x:Name="Checked">
                                     <VisualState.Setters>
-                                        <!--<Setter Target="ContentPresenter.FontWeight" Value="Bold" />-->
-                                        <!--<Setter Target="ContentPresenter.Foreground" Value="{ThemeResource SystemAccentColor}" />-->
                                         <Setter Target="IconPresenter.Foreground" Value="{ThemeResource ButtonForeground}" />
                                         <Setter Target="SelectionIndicator.Visibility" Value="Visible" />
                                         <Setter Target="RootGrid.Background" Value="#0FFFFFFF" />
@@ -1122,28 +1444,29 @@
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
+                        <Rectangle
+                            x:Name="SelectionIndicator"
+                            x:Load="False"
+                            Width="3"
+                            Height="16"
+                            HorizontalAlignment="Left"
+                            Fill="{ThemeResource SystemAccentColor}"
+                            RadiusX="2"
+                            RadiusY="2"
+                            Visibility="Collapsed" />
+
                         <Border
-                            x:Name="BorderElement"
+                            x:Name="ContentBorder"
                             BackgroundTransition="{StaticResource QuickBrushTransition}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}">
+                            CornerRadius="{TemplateBinding CornerRadius}">
                             <Grid x:Name="ContentRoot">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="36" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <Rectangle
-                                    x:Name="SelectionIndicator"
-                                    Width="3"
-                                    Height="16"
-                                    HorizontalAlignment="Left"
-                                    Fill="{ThemeResource SystemAccentColor}"
-                                    RadiusX="2"
-                                    RadiusY="2"
-                                    Visibility="Collapsed" />
-
                                 <Viewbox
+                                    x:Name="IconBox"
                                     Width="16"
                                     Height="16"
                                     HorizontalAlignment="Center"
@@ -1163,9 +1486,7 @@
                                     ContentTransitions="{TemplateBinding ContentTransitions}" />
                             </Grid>
                         </Border>
-
                     </Grid>
-
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -1946,8 +2267,6 @@
     <!--  SLIDER  -->
 
     <Style x:Key="DefaultThemeSliderStyle" BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider" />
-
-
 
 
 

@@ -225,11 +225,13 @@
                                                     x:Uid="ExportPNGLabel"
                                                     Click="SaveHistoryAsPNG"
                                                     DataContext="{TemplateBinding Content}"
+                                                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                                                     d:Text="As PNG" />
                                                 <MenuFlyoutItem
                                                     x:Uid="ExportSVGLabel"
                                                     Click="SaveHistoryAsSVG"
                                                     DataContext="{TemplateBinding Content}"
+                                                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                                                     d:Text="As SVG" />
                                             </MenuFlyout>
                                         </Button.Flyout>
@@ -258,6 +260,7 @@
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="0,0,0,0" />
             <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+            <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.87" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -269,7 +272,10 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="{TemplateBinding CornerRadius}">
                             <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup
+                                    x:Name="CommonStates"
+                                    h:FluentAnimation.PointerOver="{Binding ElementName=Content}"
+                                    h:FluentAnimation.Pressed="{Binding ElementName=Content}">
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="PointerOver">
                                         <VisualState.Setters>
@@ -490,6 +496,9 @@
                                 TargetInkCanvas="{x:Bind Ink}">
                                 <InkToolbarCustomPenButton
                                     x:Name="calligraphyPen"
+                                    core:Properties.ClickAnimationOffset="0.87"
+                                    core:Properties.PointerOverAnimation="Content"
+                                    core:Properties.PointerPressedAnimation="Content|Scale"
                                     CustomPen="{StaticResource CalligraphyPen}"
                                     MaxStrokeWidth="10"
                                     MinStrokeWidth="3"
@@ -516,9 +525,17 @@
                                 </InkToolbarCustomPenButton>
                                 <InkToolbarBallpointPenButton
                                     x:Name="BallpointPen"
+                                    core:Properties.ClickAnimationOffset="0.87"
+                                    core:Properties.PointerOverAnimation="Content"
+                                    core:Properties.PointerPressedAnimation="Content|Scale"
                                     MaxStrokeWidth="10"
                                     MinStrokeWidth="3" />
-                                <InkToolbarEraserButton IsClearAllVisible="False" IsExtensionGlyphShown="False" />
+                                <InkToolbarEraserButton
+                                    core:Properties.ClickAnimationOffset="0.87"
+                                    core:Properties.PointerOverAnimation="Content"
+                                    core:Properties.PointerPressedAnimation="Content|Scale"
+                                    IsClearAllVisible="False"
+                                    IsExtensionGlyphShown="False" />
                             </InkToolbar>
 
                             <Button
@@ -533,6 +550,7 @@
                                         <MenuFlyoutItem
                                             x:Uid="ClearAllItem"
                                             Click="{x:Bind Reset}"
+                                            Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                                             d:Text="Clear All" />
                                     </MenuFlyout>
                                 </Button.Flyout>
@@ -548,6 +566,9 @@
                                 x:Name="GuideCheck"
                                 x:Uid="GuideToggle"
                                 Margin="0 0 0 4"
+                                core:Properties.ClickAnimation="Content|Scale"
+                                core:Properties.ClickAnimationOffset="0.87"
+                                core:Properties.PointerOverAnimation="Content"
                                 IsChecked="{x:Bind ViewModel.IsOverlayVisible, Mode=TwoWay}"
                                 d:ToolTipService.ToolTip="Show Guide">
                                 <TextBlock
@@ -560,6 +581,9 @@
                                 x:Name="SwapButton"
                                 x:Uid="SideBySideToggle"
                                 Margin="0 0 0 4"
+                                core:Properties.ClickAnimation="Content|Scale"
+                                core:Properties.ClickAnimationOffset="0.87"
+                                core:Properties.PointerOverAnimation="Content"
                                 Click="Button_Click">
                                 <PathIcon
                                     Margin="0 -4 0 0"
@@ -588,10 +612,12 @@
                                         <MenuFlyoutItem
                                             x:Uid="ExportPNGLabel"
                                             Click="SaveAsPNG"
+                                            Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                                             d:Text="As PNG" />
                                         <MenuFlyoutItem
                                             x:Uid="ExportSVGLabel"
                                             Click="SaveAsSVG"
+                                            Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                                             d:Text="As SVG" />
                                     </MenuFlyout>
                                 </Button.Flyout>

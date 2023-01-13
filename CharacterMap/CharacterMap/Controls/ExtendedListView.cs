@@ -28,7 +28,9 @@ namespace CharacterMap.Controls
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            _themer.Update();
+
+            if (this.Style is null)
+                _themer.Update();
         }
     }
 
@@ -102,7 +104,7 @@ namespace CharacterMap.Controls
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            return new ExtendedListViewItem();
+            return new ExtendedListViewItem { Style = this.ItemContainerStyle };
         }
 
         void UpdateSelection()

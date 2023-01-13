@@ -1287,4 +1287,10 @@ Requires a restart to take effect.</value>
   <data name="OpenFontDescription.Text" xml:space="preserve">
     <value>Open TTF, OTF, OTC, TTC, WOFF or ZIP files</value>
   </data>
+  <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
+    <value>Enables subtle bounce animations when the mouse pointer goes over certains buttons.</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
+    <value>Enable pointer over animations</value>
+  </data>
 </root>

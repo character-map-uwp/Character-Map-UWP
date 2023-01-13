@@ -332,23 +332,27 @@ namespace CharacterMap.Views
                 else
                     VisualStateManager.GoToState(this, ContentScrollEnabledState.Name, false);
 
+                panel.Opacity = 0;
+                panel.Visibility = Visibility.Visible;
 
                 // 5: Start child animation
                 if (Settings.UseSelectionAnimations)
-                    CompositionFactory.PlayEntrance(GetChildren(panel), 0, 80);
+                    CompositionFactory.PlayEntrance(GetChildren(panel), 10, 80);
 
                 // 6: Show selected panel
-                panel.Visibility = Visibility.Visible;
+                panel.Opacity = 1;
             }
         }
 
         private List<UIElement> GetChildren(Panel p)
         {
-            List<UIElement> children = new List<UIElement>();
+            List<UIElement> children = new ();
 
             foreach (var child in p.Children)
             {
-                if (child is ItemsControl c)
+                if (child is ItemsControl c
+                    && c is not SettingsPresenter
+                    && c.ItemsPanelRoot is not null)
                 {
                     c.Realize(p.DesiredSize.Width, p.DesiredSize.Height);
                     children.AddRange(c.ItemsPanelRoot.Children);

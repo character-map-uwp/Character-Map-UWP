@@ -19,7 +19,6 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
-using Windows.UI.Xaml.Shapes;
 
 namespace CharacterMap.Core
 {
@@ -770,9 +769,6 @@ namespace CharacterMap.Core
                     e.RemoveHandler(UIElement.PointerPressedEvent, (PointerEventHandler)PointerPressed);
                     e.RemoveHandler(UIElement.PointerReleasedEvent, (PointerEventHandler)PointerReleased);
 
-                    e.PointerPressed -= PointerPressed;
-                    e.PointerReleased -= PointerReleased;
-
                     e.PointerEntered -= PointerEntered;
                     e.PointerExited -= PointerReleased;
 
@@ -801,6 +797,378 @@ namespace CharacterMap.Core
                 static void PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
                 {
                     AnimatedIcon.SetState((FrameworkElement)sender, "Normal");
+                }
+            }));
+
+        #endregion
+
+        #region AttachedStates
+
+        public static bool GetUseAttachedStates(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(UseAttachedStatesProperty);
+        }
+
+        public static void SetUseAttachedStates(DependencyObject obj, bool value)
+        {
+            obj.SetValue(UseAttachedStatesProperty, value);
+        }
+
+        public static readonly DependencyProperty UseAttachedStatesProperty =
+            DependencyProperty.RegisterAttached("UseAttachedStates", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, a) =>
+            {
+                if (d is FrameworkElement e)
+                {
+                    e.RemoveHandler(UIElement.PointerPressedEvent, (PointerEventHandler)PointerPressed);
+                    e.RemoveHandler(UIElement.PointerReleasedEvent, (PointerEventHandler)PointerReleased);
+
+                    e.PointerEntered -= PointerEntered;
+                    e.PointerExited -= PointerExited;
+
+                    if (a.NewValue is bool b && b)
+                    {
+                        e.AddHandler(FrameworkElement.PointerPressedEvent, new PointerEventHandler(PointerPressed), true);
+                        e.AddHandler(FrameworkElement.PointerReleasedEvent, new PointerEventHandler(PointerReleased), true);
+
+                        e.PointerEntered += PointerEntered;
+                        e.PointerExited += PointerExited;
+                    }
+
+                    static bool TryStartState(FrameworkElement e, string key)
+                    {
+                        if (ResourceHelper.Get<Storyboard>(e, key) is Storyboard state)
+                        {
+                            state.Begin();
+                            if (ResourceHelper.AllowAnimation is false)
+                                state.SkipToFill();
+                            return true;
+                        }
+
+                        return false;
+                    }
+
+                    static void PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e && Properties.GetUseAttachedStates(e))
+                            TryStartState(e, "Pressed");
+                    }
+
+                    static void PointerEntered(object sender, PointerRoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e && Properties.GetUseAttachedStates(e))
+                            TryStartState(e, "PointerOver");
+                    }
+
+                    static void PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e && Properties.GetUseAttachedStates(e))
+                            TryStartState(e, "Released");
+                    }
+
+                    static void PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e && Properties.GetUseAttachedStates(e))
+                            TryStartState(e, "Normal");
+                    }
+                }
+            }));
+
+
+
+        public static string GetName(DependencyObject obj)
+        {
+            return (string)obj.GetValue(NameProperty);
+        }
+
+        public static void SetName(DependencyObject obj, string value)
+        {
+            obj.SetValue(NameProperty, value);
+        }
+
+        public static readonly DependencyProperty NameProperty =
+            DependencyProperty.RegisterAttached("Name", typeof(string), typeof(Properties), new PropertyMetadata(null));
+
+
+
+        #endregion
+
+        #region UseClickAnimation
+
+        public static string GetClickAnimation(DependencyObject obj)
+        {
+            return (string)obj.GetValue(ClickAnimationProperty);
+        }
+
+        public static void SetClickAnimation(DependencyObject obj, string value)
+        {
+            obj.SetValue(ClickAnimationProperty, value);
+        }
+
+        public static readonly DependencyProperty ClickAnimationProperty =
+            DependencyProperty.RegisterAttached("ClickAnimation", typeof(string), typeof(Properties), new PropertyMetadata(null, (d,e) =>
+            {
+                if (d is FrameworkElement f)
+                {
+                    // 1. Remove old handlers
+                    if (f is ButtonBase b)
+                        b.Click -= OnClick;
+
+                    f.RemoveHandler(UIElement.PointerReleasedEvent, (PointerEventHandler)Clicky);
+
+                    // 2. Add new handlers
+                    if (e.NewValue is string s && !string.IsNullOrWhiteSpace(s))
+                    {
+                        if (f is ButtonBase bu)
+                            bu.Click += OnClick;
+                        else
+                            f.AddHandler(FrameworkElement.PointerReleasedEvent, new PointerEventHandler(Clicky), true);
+                    }
+
+                    static void Clicky(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e
+                            && ResourceHelper.AllowAnimation
+                            && ResourceHelper.SupportFluentAnimation
+                            && Properties.GetClickAnimation(e) is string s
+                            && !string.IsNullOrWhiteSpace(s))
+                            CompButtonAnimate(e, s, GetClickAnimationOffset(e));
+                    }
+
+                    static void OnClick(object sender, RoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e
+                             && ResourceHelper.AllowAnimation
+                             && ResourceHelper.SupportFluentAnimation
+                             && Properties.GetClickAnimation(e) is string s
+                             && !string.IsNullOrWhiteSpace(s))
+                            CompButtonAnimate(e, s, GetClickAnimationOffset(e));
+                    }
+                }
+            }));
+
+        public static Double GetClickAnimationOffset(DependencyObject obj)
+        {
+            return (Double)obj.GetValue(ClickAnimationOffsetProperty);
+        }
+
+        public static void SetClickAnimationOffset(DependencyObject obj, Double value)
+        {
+            obj.SetValue(ClickAnimationOffsetProperty, value);
+        }
+
+        public static readonly DependencyProperty ClickAnimationOffsetProperty =
+            DependencyProperty.RegisterAttached("ClickAnimationOffset", typeof(Double), typeof(Properties), new PropertyMetadata(-2d));
+
+        #endregion
+
+        #region PointerOverAnimation
+
+        static void CompButtonAnimate(FrameworkElement source, string key, double offset, bool over = false)
+        {
+            var parts = key.Split("|");
+            if (source.GetDescendantsOfType<FrameworkElement>()
+                .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
+            {
+                Storyboard sb = new();
+                var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
+
+                bool hasPressed = string.IsNullOrEmpty(GetPointerPressedAnimation(source)) is false;
+                double duration = hasPressed ? 0.35 : 0.5;
+                if (parts.Length > 1 && parts[1] == "Scale")
+                {
+                    ease.Amplitude = 1;
+
+                    // Create scale animation
+                    var x = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleX);
+                    var y = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleY);
+
+                    if (hasPressed is false)
+                    {
+                        x.AddKeyFrame(0.15, offset);
+                        y.AddKeyFrame(0.15, offset);
+                    }
+
+                    x.AddKeyFrame(duration, 1, ease);
+                    y.AddKeyFrame(duration, 1, ease);
+                }
+                else
+                {
+                    // Create translate animation
+                    string path = parts.Length > 1 && parts[1] == "X"
+                        ? TargetProperty.CompositeTransform.TranslateX
+                        : TargetProperty.CompositeTransform.TranslateY;
+
+                    var t = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, path);
+                    if (over || hasPressed is false)
+                        t.AddKeyFrame(0.15, offset);
+
+                    t.AddKeyFrame(duration, 0, ease);
+                }
+
+                sb.Begin();
+            }
+        }
+
+        public static string GetPointerOverAnimation(DependencyObject obj)
+        {
+            return (string)obj.GetValue(PointerOverAnimationProperty);
+        }
+
+        public static void SetPointerOverAnimation(DependencyObject obj, string value)
+        {
+            obj.SetValue(PointerOverAnimationProperty, value);
+        }
+
+        public static readonly DependencyProperty PointerOverAnimationProperty =
+            DependencyProperty.RegisterAttached("PointerOverAnimation", typeof(string), typeof(Properties), new PropertyMetadata(null, (d, e) =>
+            {
+                if (d is FrameworkElement f)
+                {
+                    // 1. Remove old handlers
+                    f.RemoveHandler(UIElement.PointerEnteredEvent, (PointerEventHandler)PointerOverEntered);
+
+                    // 2. Add new handlers
+                    if (e.NewValue is string s && !string.IsNullOrWhiteSpace(s))
+                        f.AddHandler(FrameworkElement.PointerEnteredEvent, new PointerEventHandler(PointerOverEntered), true);
+
+                    static void PointerOverEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e
+                            && ResourceHelper.AllowAnimation
+                            && ResourceHelper.SupportFluentAnimation
+                            && ResourceHelper.UsePointerOverAnimations
+                            && Properties.GetPointerOverAnimation(e) is string s
+                            && !string.IsNullOrWhiteSpace(s))
+                            CompButtonAnimate(e, s, GetPointerAnimationOffset(e), true);
+                    }
+                }
+            }));
+
+        public static double GetPointerAnimationOffset(DependencyObject obj)
+        {
+            return (double)obj.GetValue(PointerAnimationOffsetProperty);
+        }
+
+        public static void SetPointerAnimationOffset(DependencyObject obj, double value)
+        {
+            obj.SetValue(PointerAnimationOffsetProperty, value);
+        }
+
+        public static readonly DependencyProperty PointerAnimationOffsetProperty =
+            DependencyProperty.RegisterAttached("PointerAnimationOffset", typeof(double), typeof(Properties), new PropertyMetadata(-2d));
+
+        #endregion
+
+        #region PointerPressedAnimation
+
+        public static string GetPointerPressedAnimation(DependencyObject obj)
+        {
+            return (string)obj.GetValue(PointerPressedAnimationProperty);
+        }
+
+        public static void SetPointerPressedAnimation(DependencyObject obj, string value)
+        {
+            obj.SetValue(PointerPressedAnimationProperty, value);
+        }
+
+        public static readonly DependencyProperty PointerPressedAnimationProperty =
+            DependencyProperty.RegisterAttached("PointerPressedAnimation", typeof(string), typeof(Properties), new PropertyMetadata(null, (d, e) =>
+            {
+                if (d is FrameworkElement f)
+                {
+                    // 1. Remove old handlers
+                    f.RemoveHandler(UIElement.PointerPressedEvent, (PointerEventHandler)PointerPressed);
+                    f.RemoveHandler(UIElement.PointerExitedEvent, (PointerEventHandler)PointerExited);
+
+                    // 2. Add new handlers
+                    if (e.NewValue is string s && !string.IsNullOrWhiteSpace(s))
+                    {
+                        f.AddHandler(FrameworkElement.PointerPressedEvent, new PointerEventHandler(PointerPressed), true);
+                        f.AddHandler(FrameworkElement.PointerExitedEvent, new PointerEventHandler(PointerExited), true);
+                    }
+
+                    static void PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e
+                            && ResourceHelper.AllowAnimation
+                            && ResourceHelper.SupportFluentAnimation
+                            && Properties.GetPointerPressedAnimation(e) is string s
+                            && !string.IsNullOrWhiteSpace(s))
+                            DoAnimate(e, s, GetClickAnimationOffset(e));
+                    }
+
+                    static void PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
+                    {
+                        if (sender is FrameworkElement e
+                            && ResourceHelper.AllowAnimation
+                            && ResourceHelper.SupportFluentAnimation
+                            && Properties.GetPointerPressedAnimation(e) is string s
+                            && !string.IsNullOrWhiteSpace(s))
+                            RestoreAnimate(e, s);
+                    }
+
+                    static void RestoreAnimate(FrameworkElement source, string key)
+                    {
+                        var parts = key.Split("|");
+                        if (source.GetDescendantsOfType<FrameworkElement>()
+                            .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
+                        {
+                            double duration = 0.35;
+                            Storyboard sb = new();
+                            var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
+                            if (parts.Length > 1 && parts[1] == "Scale")
+                            {
+                                ease.Amplitude = 1;
+
+                                // Create scale animation
+                                var x = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleX)
+                                    .AddKeyFrame(duration, 1, ease);
+
+                                var y = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleY)
+                                    .AddKeyFrame(duration, 1, ease);
+                            }
+                            else
+                            {
+                                // Create translate animation
+                                var t = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateY)
+                                    .AddKeyFrame(duration, 0, ease);
+                            }
+
+                            sb.Begin();
+                        }
+                    }
+
+                    static void DoAnimate(FrameworkElement source, string key, double offset)
+                    {
+                        var parts = key.Split("|");
+                        if (source.GetDescendantsOfType<FrameworkElement>()
+                            .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
+                        {
+                            Storyboard sb = new();
+                            var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
+                            if (parts.Length > 1 && parts[1] == "Scale")
+                            {
+                                ease.Amplitude = 1;
+
+                                // Create scale animation
+                                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleX)
+                                    .AddKeyFrame(0.15, offset);
+
+                                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleY)
+                                    .AddKeyFrame(0.15, offset);
+                            }
+                            else
+                            {
+                                // Create translate animation
+                                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateY)
+                                    .AddKeyFrame(0.15, offset)
+                                    .AddKeyFrame(0.5, 0, ease);
+                            }
+
+
+                            sb.Begin();
+                        }
+                    }
                 }
             }));
 

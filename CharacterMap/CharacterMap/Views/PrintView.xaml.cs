@@ -85,7 +85,11 @@ namespace CharacterMap.Views
 
             // Initialize common helper class and register for printing
             _printHelper = new PrintHelper(_fontMap, ViewModel);
-            _printHelper.RegisterForPrinting();
+            if (_printHelper.RegisterForPrinting() is false)
+            {
+                Hide();
+                return;
+            }
 
             StartShowAnimation();
 

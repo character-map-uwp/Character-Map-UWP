@@ -86,7 +86,17 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        /// <summary>
+        /// Use basic in-app animation.
+        /// Try to disable all animation if this is off
+        /// </summary>
         public bool UseSelectionAnimations
+        {
+            get => Get(true);
+            set => BroadcastSet(value);
+        }
+
+        public bool UseFluentPointerOverAnimations
         {
             get => Get(true);
             set => BroadcastSet(value);

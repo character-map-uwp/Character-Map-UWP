@@ -1,15 +1,15 @@
 ﻿<views:PopoverViewBase
     x:Class="CharacterMap.Views.PrintView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
-    xmlns:views="using:CharacterMap.Views"
-    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:views="using:CharacterMap.Views"
     Background="Transparent"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
@@ -178,7 +178,10 @@
                                         </Flyout>
                                     </Button.Flyout>
                                 </Button>
-                                <CheckBox x:Uid="ChkBxHideWhitespace" IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}" />
+                                <CheckBox
+                                    x:Uid="ChkBxHideWhitespace"
+                                    IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}"
+                                    Style="{StaticResource DefaultThemeCheckBoxStyle}" />
                             </controls:ContentGroup>
 
                             <controls:ContentGroup x:Uid="PrintViewLayoutHeader">
@@ -201,7 +204,8 @@
                                 <CheckBox
                                     x:Uid="ChkBxShowBorders"
                                     Margin="0 16 0 -12"
-                                    IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}" />
+                                    IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}"
+                                    Style="{StaticResource DefaultThemeCheckBoxStyle}" />
 
 
                                 <toolkit:WrapPanel
@@ -330,7 +334,8 @@
                                 x:Uid="CbShowMargins"
                                 HorizontalAlignment="Center"
                                 IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
-                                IsThreeState="False" />
+                                IsThreeState="False"
+                                Style="{StaticResource DefaultThemeCheckBoxStyle}" />
 
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <TextBlock

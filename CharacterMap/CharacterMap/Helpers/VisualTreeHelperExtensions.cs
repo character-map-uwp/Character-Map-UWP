@@ -355,5 +355,15 @@ namespace Windows.UI.Xaml.Media
                 VisualTreeHelper.GetChild(dependencyObject, 0) as FrameworkElement :
                 null;
         }
+
+        public static VisualStateGroup GetVisualStateGroup(DependencyObject obj, string groupName)
+        {
+            if (GetImplementationRoot(obj) is FrameworkElement f &&
+                VisualStateManager.GetVisualStateGroups(f) is IList<VisualStateGroup> groups)
+                return groups.FirstOrDefault(g => g.Name == groupName);
+
+            return null;
+        }
+
     }
 }

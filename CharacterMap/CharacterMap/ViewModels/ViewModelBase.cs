@@ -116,9 +116,13 @@ namespace CharacterMap.ViewModels
                         case nameof(AppSettings.UseSelectionAnimations):
                             Notify(nameof(AllowAnimation));
                             Notify(nameof(AllowExpensiveAnimation));
+                            Notify(nameof(AllowFluentAnimation));
                             break;
                         case nameof(AppSettings.AllowExpensiveAnimations):
                             Notify(nameof(AllowExpensiveAnimation));
+                            break;
+                        case nameof(AppSettings.UseFluentPointerOverAnimations):
+                            Notify(nameof(AllowFluentAnimation));
                             break;
                     }
                 });
@@ -214,6 +218,7 @@ namespace CharacterMap.ViewModels
 
         public bool AllowAnimation => ResourceHelper.AllowAnimation;
         public bool AllowExpensiveAnimation => ResourceHelper.AllowExpensiveAnimation;
+        public bool AllowFluentAnimation => ResourceHelper.AllowFluentAnimation;
     }
 
     [ObservableObject]
