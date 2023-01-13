@@ -788,12 +788,14 @@ namespace CharacterMap.Core
 
                 static void PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
                 {
-                    AnimatedIcon.SetState((FrameworkElement)sender, "Pressed");
+                    if (ResourceHelper.AllowAnimation)
+                        AnimatedIcon.SetState((FrameworkElement)sender, "Pressed");
                 }
 
                 static void PointerEntered(object sender, PointerRoutedEventArgs e)
                 {
-                    AnimatedIcon.SetState((FrameworkElement)sender, "PointerOver");
+                    if (ResourceHelper.AllowAnimation)
+                        AnimatedIcon.SetState((FrameworkElement)sender, "PointerOver");
                 }
 
                 static void PointerReleased(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
