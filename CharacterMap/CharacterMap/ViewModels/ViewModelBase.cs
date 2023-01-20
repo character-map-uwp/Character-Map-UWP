@@ -1,16 +1,134 @@
-﻿using CharacterMap.Helpers;
+﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Windows.System;
 
 namespace CharacterMap.ViewModels
 {
-    public class ViewModelBase : ObservableObject
+    // Based on https://www.pedrolamas.com/2018/04/19/building-a-multi-window-dispatcher-agnostic-view-model/
+    public partial class MultiWindowViewModelBase : BaseNotifyingModel, INotifyPropertyChanged
     {
+        private object _lock { get; } = new();
+
+        private Dictionary<SynchronizationContext, PropertyChangedEventHandler> _handlerCache { get; } = new();
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add
+            {
+                if (value == null)
+                    return;
+
+                var ctx = SynchronizationContext.Current;
+                lock (_lock)
+                {
+                    if (_handlerCache.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
+                    {
+                        eventHandler += value;
+                        _handlerCache[ctx] = eventHandler;
+                    }
+                    else
+                        _handlerCache.Add(ctx, value);
+                }
+            }
+            remove
+            {
+                if (value == null)
+                    return;
+
+                var ctx = SynchronizationContext.Current;
+                lock (_lock)
+                {
+                    if (_handlerCache.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
+                    {
+                        eventHandler -= value;
+                        if (eventHandler != null)
+                            _handlerCache[ctx] = eventHandler;
+                        else
+                            _handlerCache.Remove(ctx);
+                    }
+                }
+            }
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            KeyValuePair<SynchronizationContext, PropertyChangedEventHandler>[] handlers;
+            lock (_lock)
+                handlers = _handlerCache.ToArray();
+
+            PropertyChangedEventArgs eventArgs = new (propertyName);
+            foreach (var handler in handlers)
+            {
+                void Do()
+                {
+                    handler.Value(this, eventArgs);
+                    OnPropertyChangeNotified(propertyName);
+                }
+
+                if (SynchronizationContext.Current == handler.Key)
+                    Do();
+                else
+                    handler.Key.Send(o => Do(), null);
+            }
+        }
+
+        protected override void SendPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(propertyName);
+        }
+    }
+
+    public abstract class BaseNotifyingModel
+    {
+        SynchronizationContext _originalContext { get; }
+
+        /// <summary>
+        /// If true, ViewModel will notify of changes to animation settings
+        /// </summary>
+        protected virtual bool TrackAnimation => false;
+
+        public BaseNotifyingModel()
+        {
+            if (TrackAnimation)
+            {
+                _originalContext = SynchronizationContext.Current;
+                Register<AppSettingsChangedMessage>(m =>
+                {
+                    void Notify(string s)
+                    {
+                        if (SynchronizationContext.Current == _originalContext)
+                            SendPropertyChanged(s);
+                        else
+                            _originalContext.Post(_ => SendPropertyChanged(s), null);
+                    }
+
+                    switch (m.PropertyName)
+                    {
+                        case nameof(AppSettings.UseSelectionAnimations):
+                            Notify(nameof(AllowAnimation));
+                            Notify(nameof(AllowExpensiveAnimation));
+                            Notify(nameof(AllowFluentAnimation));
+                            break;
+                        case nameof(AppSettings.AllowExpensiveAnimations):
+                            Notify(nameof(AllowExpensiveAnimation));
+                            break;
+                        case nameof(AppSettings.UseFluentPointerOverAnimations):
+                            Notify(nameof(AllowFluentAnimation));
+                            break;
+                    }
+                });
+            }
+        }
+
         /// <summary>
         /// Private data store that contains all of the properties access through GetProperty 
         /// method.
@@ -69,18 +187,22 @@ namespace CharacterMap.ViewModels
             _data[propertyName] = value;
 
             if (notify)
-                this.OnPropertyChanged(propertyName);
+                SendPropertyChanged(propertyName);
             return true;
         }
 
-        public bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
-            => base.SetProperty(ref field, value, propertyName);
 
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        public bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
-            base.OnPropertyChanged(e);
-            OnPropertyChangeNotified(e.PropertyName);
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+
+            field = value;
+            SendPropertyChanged(propertyName);
+            return true;
         }
+
+        protected abstract void SendPropertyChanged(string propertyName);
 
         protected virtual void OnPropertyChangeNotified(string propertyName) { }
 
@@ -94,8 +216,27 @@ namespace CharacterMap.ViewModels
                 Messenger.Register<T>(this, (r, m) => { action(m); });
         }
 
-        public bool AllowAnimation => 
-            ResourceHelper.AppSettings.UseSelectionAnimations 
-            && CompositionFactory.UISettings.AnimationsEnabled;
+        public bool AllowAnimation => ResourceHelper.AllowAnimation;
+        public bool AllowExpensiveAnimation => ResourceHelper.AllowExpensiveAnimation;
+        public bool AllowFluentAnimation => ResourceHelper.AllowFluentAnimation;
+    }
+
+    [ObservableObject]
+    public abstract partial class ViewModelBaseInternal : BaseNotifyingModel
+    {
+    }
+
+    public partial class ViewModelBase : ViewModelBaseInternal
+    {
+        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            OnPropertyChangeNotified(e.PropertyName);
+        }
+
+        protected override void SendPropertyChanged(string propertyName)
+        {
+            OnPropertyChanged(propertyName);
+        }
     }
 }

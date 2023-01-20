@@ -3,7 +3,9 @@ using CharacterMap.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -22,18 +24,18 @@ namespace CharacterMap.Controls
 
 
     [ContentProperty(Name = nameof(Content))]
-    public sealed class SettingsPresenter : Control, IThemeableControl
+    public sealed class SettingsPresenter : ItemsControl, IThemeableControl
     {
         #region Dependency Properties 
 
-        public string Title
+        public object Title
         {
-            get { return (string)GetValue(TitleProperty); }
+            get { return (object)GetValue(TitleProperty); }
             set { SetValue(TitleProperty, value); }
         }
 
         public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register(nameof(Title), typeof(string), typeof(SettingsPresenter), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(Title), typeof(object), typeof(SettingsPresenter), new PropertyMetadata(null));
 
 
         public string Description
@@ -93,9 +95,22 @@ namespace CharacterMap.Controls
                 ((SettingsPresenter)d).UpdatePlacementStates();
             }));
 
+        public bool HasItems
+        {
+            get { return (bool)GetValue(HasItemsProperty); }
+            private set { SetValue(HasItemsProperty, value); }
+        }
+
+        public static readonly DependencyProperty HasItemsProperty =
+            DependencyProperty.Register(nameof(HasItems), typeof(bool), typeof(SettingsPresenter), new PropertyMetadata(false));
+
+
+
         #endregion
 
         private ThemeHelper _themer;
+
+        private FrameworkElement _itemsRoot = null;
 
         public SettingsPresenter()
         {
@@ -104,12 +119,49 @@ namespace CharacterMap.Controls
             _themer = new ThemeHelper(this);
         }
 
+        protected override void OnItemsChanged(object e)
+        {
+            if (e is not null)
+                base.OnItemsChanged(e);
+
+            HasItems = Items.Count > 0;
+
+            if (HasItems)
+            {
+                if (_itemsRoot is null)
+                {
+                    // force x:Load on ItemsPresenter
+                    _itemsRoot = this.GetTemplateChild("ItemsRoot") as FrameworkElement;
+                }
+                
+                VisualStateManager.GoToState(this, "HasItemsState", ResourceHelper.AllowAnimation);
+                if (_itemsRoot is not null 
+                    && e is not null
+                    && ResourceHelper.AllowAnimation
+                    && VisualTreeHelperExtensions.GetImplementationRoot(_itemsRoot) is FrameworkElement target)
+                {
+                    Visual v = target.EnableCompositionTranslation().GetElementVisual();
+                    var ease = v.Compositor.GetCachedEntranceEase();
+                    v.StartAnimation(
+                        v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                            .AddKeyFrame(0, "Vector3(0, -this.Target.Size.Y - 8, 0)")
+                            .AddKeyFrame(1, new Vector3(), ease)
+                            .SetDelay(0.2, AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                            .SetDuration(0.8));
+                }
+            }
+            else
+                VisualStateManager.GoToState(this, "NoItemsState", ResourceHelper.AllowAnimation);
+        }
+
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
             UpdatePlacementStates();
             UpdateIconStates();
             UpdateDescriptionStates();
+
+            OnItemsChanged(null);
             //_themer.Update();
         }
 

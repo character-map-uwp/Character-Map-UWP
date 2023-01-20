@@ -3,7 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:helpers="using:CharacterMap.Helpers">
 
-
     <Style x:Key="RevealComboBoxStyle" TargetType="ComboBox">
         <Setter Property="Padding" Value="12,5,0,7" />
         <Setter Property="MinWidth" Value="{ThemeResource ComboBoxThemeMinWidth}" />
@@ -260,7 +259,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style x:Key="ComboBoxTextBoxStyle" TargetType="TextBox">
         <Setter Property="Template">
@@ -667,6 +665,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-
 </ResourceDictionary>

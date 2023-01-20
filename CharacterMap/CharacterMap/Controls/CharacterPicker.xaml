@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
+    xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="310"
@@ -59,11 +60,10 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-
             <Button
                 HorizontalAlignment="Stretch"
                 Click="Add_Click"
-                Content="Add"
+                Content="{core:Localizer Key='AddButton/Label'}"
                 Style="{StaticResource AccentButtonStyle}"
                 d:Content="Add" />
             <Button

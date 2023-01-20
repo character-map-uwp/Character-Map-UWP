@@ -44,7 +44,7 @@ namespace CharacterMap.Models
     public partial class BasicFontFilter
     {
         public static BasicFontFilter All { get; }
-        = new ((f, c) => f, Localization.Get("OptionAllFonts/Text"));
+            = new ((f, c) => f, Localization.Get("OptionAllFonts/Text"));
 
         public static BasicFontFilter SymbolFonts { get; }
             = new ((f, c) => f.Where(v => v.IsSymbolFont || c.SymbolCollection.Fonts.Contains(v.Name)), Localization.Get("OptionSymbolFonts/Text"));
@@ -124,11 +124,14 @@ namespace CharacterMap.Models
         public static BasicFontFilter ScriptCJKUnifiedIdeographs { get; }
             = ForRange(UnicodeRange.CJKUnifiedIdeographs, Localization.Get("OptionScriptCJKUnifiedIdeographs/Text"));
 
+        public static BasicFontFilter ScriptKoreanHangul { get; }
+            = ForRange(UnicodeRange.KoreanHangulSyllables, Localization.Get("OptionScriptKorean/Text"));
+
         public static BasicFontFilter ScriptBasicLatin { get; }
             = ForRange(UnicodeRange.BasicLatinLetters, Localization.Get("OptionScriptBasicLatin/Text"));
 
 
-        public static List<BasicFontFilter> AllScriptsList { get; } = new List<BasicFontFilter>
+        public static List<BasicFontFilter> AllScriptsList { get; } = new ()
         {
             ScriptArabic,
             ScriptCyrillic,
@@ -136,7 +139,8 @@ namespace CharacterMap.Models
             ScriptHebrew,
             ScriptBasicLatin,
             ScriptThai,
-            ScriptCJKUnifiedIdeographs
+            ScriptCJKUnifiedIdeographs,
+            ScriptKoreanHangul,
         };
     }
 }

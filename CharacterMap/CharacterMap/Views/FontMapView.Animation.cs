@@ -2,11 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views
 {
@@ -25,6 +23,9 @@ namespace CharacterMap.Views
                 VariableAxis.Measure(CharGrid.DesiredSize);
                 TypeRampList.Measure(CharGrid.DesiredSize);
             }
+
+            if (TypeRampList.ItemsPanelRoot is null)
+                TypeRampList.Measure(CharGrid.DesiredSize);
 
             var items = TypeRampList.ItemsPanelRoot.Children.OfType<FrameworkElement>();
 
@@ -51,14 +52,14 @@ namespace CharacterMap.Views
                 .AddKeyFrame(0.075, 0)
                 .AddKeyFrame(0.4, target.RenderSize.Width, KeySplines.CompositionDefault);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(target, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(target, TargetProperty.Visibility)
                 .AddKeyFrame(0.4, Visibility.Collapsed);
 
             sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(splitter, TargetProperty.CompositeTransform.TranslateX)
                 .AddKeyFrame(0.075, 0)
                 .AddKeyFrame(0.4, target.RenderSize.Width + splitter.RenderSize.Width, KeySplines.CompositionDefault);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(splitter, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(splitter, TargetProperty.Visibility)
                 .AddKeyFrame(0.4, Visibility.Collapsed);
 
             return sb;
@@ -85,7 +86,7 @@ namespace CharacterMap.Views
                .If(offset != 0, t => t.AddKeyFrame(offset, target.RenderSize.Width))
                .AddKeyFrame(offset + CompositionFactory.DefaultOffsetDuration, 0, KeySplines.CompositionDefault);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(target, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(target, TargetProperty.Visibility)
                 .If(offset != 0, t => t.AddKeyFrame(0, Visibility.Collapsed))
                 .AddKeyFrame(offset, Visibility.Visible);
 
@@ -97,7 +98,7 @@ namespace CharacterMap.Views
                 .If(offset != 0, t => t.AddKeyFrame(offset, target.RenderSize.Width + splitter.RenderSize.Width))
                 .AddKeyFrame(offset + CompositionFactory.DefaultOffsetDuration, 0, KeySplines.CompositionDefault);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(splitter, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(splitter, TargetProperty.Visibility)
                 .If(offset != 0, t => t.AddKeyFrame(0, Visibility.Collapsed))
                 .AddKeyFrame(offset, Visibility.Visible);
 
@@ -121,7 +122,7 @@ namespace CharacterMap.Views
                 sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateY)
                     .AddKeyFrame(CompositionFactory.DefaultOffsetDuration, CopySequenceRoot.RenderSize.Height, KeySplines.CompositionDefault);
 
-                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(target, TargetProperty.Visiblity)
+                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(target, TargetProperty.Visibility)
                     .AddKeyFrame(0, Visibility.Visible)
                     .AddKeyFrame(CompositionFactory.DefaultOffsetDuration, Visibility.Collapsed);
             }
@@ -142,7 +143,7 @@ namespace CharacterMap.Views
                     .AddKeyFrame(0, CopySequenceRoot.RenderSize.Height)
                     .AddKeyFrame(CompositionFactory.DefaultOffsetDuration, 0, KeySplines.CompositionDefault);
 
-                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CopySequenceRoot, TargetProperty.Visiblity)
+                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CopySequenceRoot, TargetProperty.Visibility)
                     .AddKeyFrame(0, Visibility.Visible);
             }
 
@@ -151,6 +152,14 @@ namespace CharacterMap.Views
 
         public void UpdateGridToRampTransition()
         {
+            // 0. Realise items
+            if (CharGrid.ItemsPanelRoot is null)
+            {
+                CharGrid.Measure(CharGrid.DesiredSize);
+                if (CharGrid.ItemsPanelRoot is null)
+                    return;
+            }
+
             // 1.0. Get all the items we'll be animating
             List<FrameworkElement> childs = CharGrid.ItemsPanelRoot.Children
                 .OfType<FrameworkElement>()
@@ -188,14 +197,14 @@ namespace CharacterMap.Views
             sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(MoreOptionsButton, nameof(MoreOptionsButton.Margin))
                 .AddKeyFrame(0, new Thickness(0, 0, -8, 0));
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SearchBox, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SearchBox, TargetProperty.Visibility)
                 .AddKeyFrame(0, Visibility.Visible);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharacterFilterButton, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharacterFilterButton, TargetProperty.Visibility)
                .AddKeyFrame(0, Visibility.Collapsed);
 
             sb.CreateTimeline<DoubleAnimation>(SearchBox, TargetProperty.CompositeTransform.TranslateY)
-                .To(-75)
+                .To(-80)
                 .SetDuration(0.4)
                 .SetEase(new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseIn});
 
@@ -244,10 +253,10 @@ namespace CharacterMap.Views
             }
 
             // 4. Adjust visibility on CharGrid/TypeRamp in the middle of the animation
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharGridRoot, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharGridRoot, TargetProperty.Visibility)
                 .AddKeyFrame(startOffset.Add(duration.Multiply(0.8)), Visibility.Collapsed);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(TypeRampRoot, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(TypeRampRoot, TargetProperty.Visibility)
                 .AddKeyFrame(0, Visibility.Collapsed)
                 .AddKeyFrame(startOffset, Visibility.Visible);
 
@@ -284,16 +293,30 @@ namespace CharacterMap.Views
             if (TypeRampList == null)
                 return;
 
+            //if (CharGrid.ItemsPanelRoot is null)
+            //    CharGrid.Measure(CharGrid.DesiredSize);
+
             // 1. Build base storyboard and assign it as the 
             //    VisualState transition
             Storyboard sb = new Storyboard();
             //sb.Children.Add(GridToTypeBase);
             RampToGridTransition.Storyboard = sb;
 
-            var toChilds = CharGrid.Realize().ItemsPanelRoot.Children
+            var toChilds = CharGrid.Realize(this.ActualWidth, this.ActualHeight).ItemsPanelRoot.Children
                 .OfType<FrameworkElement>()
                 .Where(c => c.IsInViewport(CharGrid))
                 .OrderBy(c => Guid.NewGuid()).ToList();
+
+            if (toChilds.Count == 0)
+            {
+                toChilds = CharGrid.ItemsPanelRoot.Children
+                    .OfType<FrameworkElement>()
+                    .Where(c => c.IsInViewport(this))
+                    .OrderBy(c => Guid.NewGuid()).ToList();
+
+                if (toChilds.Count == 0)
+                    return;
+            }
 
             var childs = GetTypeRampAnimationTargets();
 
@@ -334,18 +357,18 @@ namespace CharacterMap.Views
                 startOffset = startOffset.Add(staggerTime);
             }
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SearchBox, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(SearchBox, TargetProperty.Visibility)
                 .AddKeyFrame(0, Visibility.Visible);
 
             sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(SearchBox, TargetProperty.CompositeTransform.TranslateY)
-                .AddKeyFrame(0, -75)
-                .AddKeyFrame(startOffset, -75)
+                .AddKeyFrame(0, -80)
+                .AddKeyFrame(startOffset, -80)
                 .AddKeyFrame(startOffset.TotalSeconds + 0.4, 0, new BackEase { Amplitude = 0.8, EasingMode = EasingMode.EaseOut });
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(TypeRampRoot, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(TypeRampRoot, TargetProperty.Visibility)
                 .AddKeyFrame(startOffset.Add(duration.Multiply(0.8)), Visibility.Collapsed);
 
-            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharGridRoot, TargetProperty.Visiblity)
+            sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CharGridRoot, TargetProperty.Visibility)
                 .AddKeyFrame(0, Visibility.Collapsed)
                 .AddKeyFrame(startOffset, Visibility.Visible);
 
@@ -360,7 +383,7 @@ namespace CharacterMap.Views
                 .AddKeyFrame(startOffset, CopySequenceContent.RenderSize.Height)
                 .AddKeyFrame(startOffset.TotalSeconds + CompositionFactory.DefaultOffsetDuration, 0, KeySplines.CompositionDefault);
 
-                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CopySequenceContent, TargetProperty.Visiblity)
+                sb.CreateTimeline<ObjectAnimationUsingKeyFrames>(CopySequenceContent, TargetProperty.Visibility)
                     .AddKeyFrame(0, Visibility.Collapsed)
                     .AddKeyFrame(startOffset, Visibility.Visible);
             }

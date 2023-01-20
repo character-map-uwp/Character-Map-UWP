@@ -33,6 +33,8 @@ namespace CharacterMap.ViewModels
 
     public class PrintViewModel : ViewModelBase
     {
+        protected override bool TrackAnimation => true;
+
         public FontVariant Font { get; set; }
 
         public TypographyFeatureInfo Typography { get; set; }

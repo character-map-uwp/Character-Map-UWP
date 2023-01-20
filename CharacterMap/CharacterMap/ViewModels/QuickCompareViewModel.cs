@@ -4,26 +4,26 @@ using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.Views;
 using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
 using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel;
-using System.Collections.ObjectModel;
-using CharacterMapCX;
 
 namespace CharacterMap.ViewModels
 {
     public class QuickCompareArgs
     {
         public FolderContents Folder { get; set; }
+
         public bool IsQuickCompare { get; set; }
 
         public bool IsFolderView => Folder is not null;
+
+        public UserFontCollection SelectedCollection { get; init; }
 
         public QuickCompareArgs(bool isQuickCompare, FolderContents folder = null)
         {
@@ -36,6 +36,8 @@ namespace CharacterMap.ViewModels
     {
         public static WindowInformation QuickCompareWindow { get; set; }
 
+        protected override bool TrackAnimation => true;
+
         public string Title                 { get => Get<string>(); set => Set(value); }
 
         public string Text                  { get => Get<string>(); set => Set(value); }
@@ -44,7 +46,7 @@ namespace CharacterMap.ViewModels
         
         public InstalledFont SelectedFont   { get => Get<InstalledFont>(); set => Set(value); }
 
-        public List<InstalledFont> FontList { get => Get<List<InstalledFont>>(); set => Set(value); }
+        public ObservableCollection<InstalledFont> FontList { get => Get<ObservableCollection<InstalledFont>>(); set => Set(value); }
 
         private BasicFontFilter _fontListFilter = BasicFontFilter.All;
         public BasicFontFilter FontListFilter
@@ -72,13 +74,15 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public object ItemsSource => IsQuickCompare ? QuickFonts : FontList;
+        public INotifyCollectionChanged ItemsSource => IsQuickCompare ? QuickFonts : FontList;
 
         public IReadOnlyList<string> TextOptions { get; } = GlyphService.DefaultTextOptions;
 
         public UserCollectionsService FontCollections { get; }
 
         public ICommand FilterCommand { get; }
+
+        public ICommand CollectionSelectedCommand { get; }
 
         public bool IsQuickCompare { get;  }
 
@@ -88,35 +92,59 @@ namespace CharacterMap.ViewModels
 
         public QuickCompareViewModel(QuickCompareArgs args)
         {
-            IsQuickCompare = args.IsQuickCompare;
+            // N.B: arg.IsQuickCompare denotes the singleton QuickCompare view.
+            //      IsQuickCompare controls the behaviour of this page - they are
+            //      two different things. We can have many windows with IsQuickCompare
+            //      behaviour, but only one can act as the main QuickCompare singleton.
+
+            IsQuickCompare = args.IsQuickCompare || (args.Folder?.UseQuickCompare is bool b && b);
 
             if (DesignMode.DesignModeEnabled)
                 return;
 
-            _folder = args.Folder;
-            RefreshFontList();
-            FontCollections = Ioc.Default.GetService<UserCollectionsService>();
-            FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
-
-            if (_folder is not null)
-                IsFolderMode = true;
-
             if (IsQuickCompare)
             {
-                QuickFonts = new ObservableCollection<CharacterRenderingOptions>();
-                Register<CharacterRenderingOptions>(m =>
+                if (args.IsQuickCompare)
                 {
-                    // Only add the font variant if it's not already in the list.
-                    // Once we start accepting custom typography this comparison
-                    // will have to change.
-                    if (!QuickFonts.Any(q => m.IsCompareMatch(q)))
-                        QuickFonts.Add(m);
-                }, nameof(QuickCompareViewModel));
+                    // This is the universal quick-compare window
+                    QuickFonts = new();
+                    Register<CharacterRenderingOptions>(m =>
+                    {
+                        // Only add the font variant if it's not already in the list.
+                        // Once we start accepting custom typography this comparison
+                        // will have to change.
+                        if (!QuickFonts.Any(q => m.IsCompareMatch(q)))
+                            QuickFonts.Add(m);
+                    }, nameof(QuickCompareViewModel));
+                }
+                else
+                {
+                    // This is probably the tab bar compare window
+                    QuickFonts = new(args.Folder.Variants.Select(v => CharacterRenderingOptions.CreateDefault(v)));
+                }
+            }
+            else
+            {
+                FontCollections = Ioc.Default.GetService<UserCollectionsService>();
+                SelectedCollection = args.SelectedCollection;
+                RefreshFontList(SelectedCollection);
+
+                FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
+                CollectionSelectedCommand = new RelayCommand<object>(e => SelectedCollection = e as UserFontCollection);
+                
+                _folder = args.Folder;
+                if (_folder is not null)
+                    IsFolderMode = true;
             }
 
-            if (IsQuickCompare)
+            // Set Title
+            if (IsQuickCompare && args.IsQuickCompare)
                 Title = Localization.Get("QuickCompareTitle/Text");
-            else if (IsFolderMode)
+            else if (IsQuickCompare && args.Folder.IsFamilyCompare)
+                Title = string.Format(Localization.Get("CompareFamilyTitle/Text"), QuickFonts.FirstOrDefault()?.Variant.FamilyName);
+            else if (IsQuickCompare)
+                Title = Localization.Get("CompareFontFaceTitle/Text");
+            else if (IsFolderMode && _folder.Source is not null)
                 Title = _folder.Source.Name;
             else
                 Title = Localization.Get("CompareFontsTitle/Text");
@@ -132,7 +160,7 @@ namespace CharacterMap.ViewModels
 
         protected override void OnPropertyChangeNotified(string propertyName)
         {
-            if (propertyName == nameof(FontList) || propertyName == nameof(QuickFonts))
+            if (propertyName is nameof(FontList) or nameof(QuickFonts))
                 OnPropertyChanged(nameof(ItemsSource));
         }
 
@@ -169,7 +197,7 @@ namespace CharacterMap.ViewModels
                         fontList = FontListFilter.Query(fontList, FontCollections);
                 }
 
-                FontList = fontList.ToList();
+                FontList = new (fontList);
             }
             catch (Exception e)
             {

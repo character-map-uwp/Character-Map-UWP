@@ -2,15 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Documents;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls
 {
@@ -23,7 +17,7 @@ namespace CharacterMap.Controls
         }
 
         public static readonly DependencyProperty IconContentProperty =
-            DependencyProperty.Register("IconContent", typeof(object), typeof(LabelButton), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(IconContent), typeof(object), typeof(LabelButton), new PropertyMetadata(null));
 
         static IReadOnlyList<string> _previewStates { get; } = new List<String> { "PointerOver", "Pressed" };
 
@@ -68,8 +62,6 @@ namespace CharacterMap.Controls
             }
         }
 
-
-
         private void Common_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
         {
             if (_previewStates.Contains(e.NewState.Name) &&
@@ -79,7 +71,7 @@ namespace CharacterMap.Controls
                 vis.Clip.StartAnimation(
                     vis.CreateScalarKeyFrameAnimation(nameof(InsetClip.RightInset))
                         .AddKeyFrame(1, 0)
-                        .SetDuration(0.4)
+                        .SetDuration(ResourceHelper.AllowAnimation ? 0.4 : 0.001)
                         .SetParameter("Parent", vis)
                         .SetParameter("Child", _iconPresenter.GetElementVisual()));
             }
@@ -91,7 +83,8 @@ namespace CharacterMap.Controls
                     vis.CreateScalarKeyFrameAnimation(nameof(InsetClip.RightInset))
                         .AddKeyFrame(1, "Parent.Size.X - Child.Size.X")
                         .SetParameter("Parent", this.GetElementVisual())
-                        .SetParameter("Child", _iconPresenter.GetElementVisual()));
+                        .SetParameter("Child", _iconPresenter.GetElementVisual())
+                        .SetDuration(ResourceHelper.AllowAnimation ? -1 : 0.001));
             }
         }
     }

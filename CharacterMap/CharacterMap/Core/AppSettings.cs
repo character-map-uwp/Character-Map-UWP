@@ -4,8 +4,11 @@ using CharacterMap.Provider;
 using CharacterMap.Services;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -83,10 +86,20 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        /// <summary>
+        /// Use basic in-app animation.
+        /// Try to disable all animation if this is off
+        /// </summary>
         public bool UseSelectionAnimations
         {
             get => Get(true);
-            set => Set(value);
+            set => BroadcastSet(value);
+        }
+
+        public bool UseFluentPointerOverAnimations
+        {
+            get => Get(true);
+            set => BroadcastSet(value);
         }
 
         public bool EnableShadows
@@ -159,6 +172,25 @@ namespace CharacterMap.Core
             set => BroadcastSet(value);
         }
 
+        // Currently Unused
+        public bool DisableTabs
+        {
+            get => Get(false);
+            set => BroadcastSet(value);
+        }
+
+        public IList<string> LastOpenFonts
+        {
+            get => GetStrings();
+            set => Set(value);
+        }
+
+        public int LastTabIndex
+        {
+            get => Get(0);
+            set => Set(value);
+        }
+
         // This setting has been deprecated.
         // Do not reuse this setting name.
         //public bool ShowDevUtils
@@ -180,7 +212,70 @@ namespace CharacterMap.Core
 
         #region Infrastructure
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        #region Context-aware PropertyChanged
+
+        private object _lock { get; } = new();
+
+        private Dictionary<SynchronizationContext, PropertyChangedEventHandler> _handlerCache { get; } = new();
+
+        public event PropertyChangedEventHandler PropertyChanged
+        {
+            add
+            {
+                if (value == null)
+                    return;
+
+                var ctx = SynchronizationContext.Current;
+                lock (_lock)
+                {
+                    if (_handlerCache.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
+                    {
+                        eventHandler += value;
+                        _handlerCache[ctx] = eventHandler;
+                    }
+                    else
+                        _handlerCache.Add(ctx, value);
+                }
+            }
+            remove
+            {
+                if (value == null)
+                    return;
+
+                var ctx = SynchronizationContext.Current;
+                lock (_lock)
+                {
+                    if (_handlerCache.TryGetValue(ctx, out PropertyChangedEventHandler eventHandler))
+                    {
+                        eventHandler -= value;
+                        if (eventHandler != null)
+                            _handlerCache[ctx] = eventHandler;
+                        else
+                            _handlerCache.Remove(ctx);
+                    }
+                }
+            }
+        }
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            KeyValuePair<SynchronizationContext, PropertyChangedEventHandler>[] handlers;
+            lock (_lock)
+                handlers = _handlerCache.ToArray();
+
+            PropertyChangedEventArgs eventArgs = new(propertyName);
+            foreach (var handler in handlers)
+            {
+                void Do() => handler.Value(this, eventArgs);
+
+                if (SynchronizationContext.Current == handler.Key)
+                    Do();
+                else
+                    handler.Key.Post(o => Do(), null);
+            }
+        }
+
+        #endregion
 
         private Debouncer _gridDebouncer { get; } = new Debouncer();
 
@@ -190,6 +285,12 @@ namespace CharacterMap.Core
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
             UpdateSettings();
+        }
+
+        private bool Set(IList<string> value, [CallerMemberName] string key = null)
+        {
+            string s = string.Join(Environment.NewLine, value);
+            return Set(s, key);
         }
 
         private bool Set(object value, [CallerMemberName]string key = null)
@@ -210,6 +311,15 @@ namespace CharacterMap.Core
             return result;
         }
 
+        private List<string> GetStrings([CallerMemberName] string key = null)
+        {
+            string data = Get<string>(null, key);
+            if (string.IsNullOrWhiteSpace(data))
+                return new List<string>();
+
+            return data.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).ToList();
+        }
+
         private T Get<T>(T defaultValue, [CallerMemberName]string key = null)
         {
             if (LocalSettings.Values.TryGetValue(key, out object value) && value is T val)
@@ -223,7 +333,7 @@ namespace CharacterMap.Core
 
         protected void NotifyPropertyChanged([CallerMemberName]string propName = "")
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+            OnPropertyChanged(propName);
         }
 
         private void DebounceGrid()
@@ -251,7 +361,7 @@ namespace CharacterMap.Core
             }
         }
 
-        private void UpdateTheme()
+        public void UpdateTheme()
         {
             _ = WindowService.RunOnViewsAsync(() =>
             {

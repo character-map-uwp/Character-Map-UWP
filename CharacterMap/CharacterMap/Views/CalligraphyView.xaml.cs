@@ -167,7 +167,7 @@ namespace CharacterMap.Views
                 if (flyout.Content is CharacterPicker p)
                     p.CharacterSelected -= P_CharacterSelected;
 
-                p = new CharacterPicker(ViewModel.Options);
+                p = new CharacterPicker(flyout, ViewModel.Options);
                 p.CharacterSelected += P_CharacterSelected;
                 flyout.Content = p;
             }
@@ -239,6 +239,9 @@ namespace CharacterMap.Views
         private void AnimateIn()
         {
             ContentRoot.Opacity = 1;
+            if (ResourceHelper.AllowAnimation is false)
+                return;
+
             int s = 100;
             int o = 110;
 

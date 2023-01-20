@@ -5,6 +5,7 @@ using System.Linq;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -12,6 +13,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
@@ -21,20 +23,13 @@ namespace CharacterMap.Helpers
     {
         public const double DefaultOffsetDuration = 0.325;
 
+        public static bool AnimationEnabled { get; set; }
+
         public static UISettings UISettings { get; }
 
-        private static Dictionary<Compositor, Vector3KeyFrameAnimation> _defaultOffsetAnimations { get; }
-            = new Dictionary<Compositor, Vector3KeyFrameAnimation>();
-
-        private static Dictionary<Compositor, ImplicitAnimationCollection> _defaultRepositionAnimations { get; }
-            = new Dictionary<Compositor, ImplicitAnimationCollection>();
-
-        private static Dictionary<Compositor, ImplicitAnimationCollection> _defaultScaleAnimations { get; }
-            = new Dictionary<Compositor, ImplicitAnimationCollection>();
-
         private static string CENTRE_EXPRESSION =>
-            $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * 0.5f, " +
-            $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * 0.5f, 0f))";
+            $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * {{0}}f, " +
+            $"this.Target.{nameof(Visual.Size)}.{nameof(Vector2.Y)} * {{1}}f, 0f))";
 
         public const string TRANSLATION = "Translation";
         public const string STARTING_VALUE = "this.StartingValue";
@@ -42,6 +37,33 @@ namespace CharacterMap.Helpers
         public const int DEFAULT_STAGGER_MS = 83;
 
         #region Attached Properties
+
+        public static bool GetEnableBounceScale(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(EnableBounceScaleProperty);
+        }
+
+        public static void SetEnableBounceScale(DependencyObject obj, bool value)
+        {
+            obj.SetValue(EnableBounceScaleProperty, value);
+        }
+
+        public static readonly DependencyProperty EnableBounceScaleProperty =
+            DependencyProperty.RegisterAttached("EnableBounceScale", typeof(bool), typeof(CompositionFactory), new PropertyMetadata(false, (d,e) =>
+            {
+                if (d is FrameworkElement f)
+                {
+                    Visual v = f.GetElementVisual();
+                    if (e.NewValue is bool b && b)
+                    {
+                        CompositionFactory.EnableStandardTranslation(v, 0.15);
+                    }
+                    else
+                    {
+                        v.Properties.SetImplicitAnimation(CompositionFactory.TRANSLATION, null);
+                    }
+                }
+            }));
 
         public static Duration GetOpacityDuration(DependencyObject obj)
         {
@@ -62,8 +84,6 @@ namespace CharacterMap.Helpers
                 }
             }));
 
-
-
         public static double GetCornerRadius(DependencyObject obj)
         {
             return (double)obj.GetValue(CornerRadiusProperty);
@@ -74,7 +94,6 @@ namespace CharacterMap.Helpers
             obj.SetValue(CornerRadiusProperty, value);
         }
 
-        // Using a DependencyProperty as the backing store for CornerRadius.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty CornerRadiusProperty =
             DependencyProperty.RegisterAttached("CornerRadius", typeof(double), typeof(CompositionFactory), new PropertyMetadata(0d, (d, e) =>
             {
@@ -93,33 +112,29 @@ namespace CharacterMap.Helpers
 
         public static ImplicitAnimationCollection GetRepositionCollection(Compositor c)
         {
-            if (!_defaultRepositionAnimations.TryGetValue(c, out ImplicitAnimationCollection collection))
+            return c.GetCached("RepoColl", () =>
             {
-                var offsetAnimation = c.CreateVector3KeyFrameAnimation();
-                offsetAnimation.InsertExpressionKeyFrame(1f, "this.FinalValue");
-                offsetAnimation.Duration = TimeSpan.FromSeconds(CompositionFactory.DefaultOffsetDuration);
-                offsetAnimation.Target = nameof(Visual.Offset);
-
                 var g = c.CreateAnimationGroup();
-                g.Add(offsetAnimation);
+                g.Add(c.CreateVector3KeyFrameAnimation()
+                            .SetTarget(nameof(Visual.Offset))
+                            .AddKeyFrame(1f, "this.FinalValue")
+                            .SetDuration(CompositionFactory.DefaultOffsetDuration));
 
                 var s = c.CreateImplicitAnimationCollection();
                 s.Add(nameof(Visual.Offset), g);
-                _defaultRepositionAnimations[c] = s;
                 return s;
-            }
-
-            return collection;
+            });
         }
 
         public static ICompositionAnimationBase CreateScaleAnimation(Compositor c)
         {
-            var ani = c.CreateVector3KeyFrameAnimation();
-            ani.InsertExpressionKeyFrame(1f, "this.FinalValue");
-            ani.Duration = TimeSpan.FromSeconds(CompositionFactory.DefaultOffsetDuration);
-            ani.Target = nameof(Visual.Scale);
-
-            return ani;
+            return c.GetCached("ScaleAni", () =>
+            {
+                return c.CreateVector3KeyFrameAnimation()
+                    .AddKeyFrame(1f, "this.FinalValue")
+                    .SetDuration(CompositionFactory.DefaultOffsetDuration)
+                    .SetTarget(nameof(Visual.Scale));
+            });
         }
 
         public static void PokeUIElementZIndex(UIElement e, XamlDirect xamlDirect = null)
@@ -162,17 +177,22 @@ namespace CharacterMap.Helpers
 
         public static void SetupOverlayPanelAnimation(UIElement e)
         {
-            if (!CompositionFactory.UISettings.AnimationsEnabled)
+            if (!UISettings.AnimationsEnabled)
                 return;
 
             Visual v = e.EnableTranslation(true).GetElementVisual();
 
-            var t = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                .AddKeyFrame(1, 0, 200)
-                .SetDuration(0.375);
+            var g = v.GetCached("OPA", () =>
+            {
+                var t = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                        .AddKeyFrame(1, 0, 200)
+                        .SetDuration(0.375);
 
-            var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 200);
-            e.SetHideAnimation(v.Compositor.CreateAnimationGroup(t, o));
+                var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 200);
+                return v.Compositor.CreateAnimationGroup(t, o);
+            });
+
+            e.SetHideAnimation(g);
             e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
         }
 
@@ -205,22 +225,24 @@ namespace CharacterMap.Helpers
 
         public static ICompositionAnimationBase CreateEntranceAnimation(UIElement target, Vector3 from, int delayMs, int durationMs = 1000)
         {
+            string key = $"CEA{from.X}{from.Y}{delayMs}{durationMs}";
             Compositor c = target.EnableTranslation(true).GetElementVisual().Compositor;
 
-            TimeSpan delay = TimeSpan.FromMilliseconds(delayMs);
-            var e = c.CreateEntranceEasingFunction();
+            return c.GetCached(key, () =>
+            {
+                TimeSpan delay = TimeSpan.FromMilliseconds(delayMs);
+                var e = c.GetCachedEntranceEase();
+                var t = c.CreateVector3KeyFrameAnimation()
+                    .SetTarget(TRANSLATION)
+                    .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                    .SetDelayTime(delay)
+                    .AddKeyFrame(0, from)
+                    .AddKeyFrame(1, 0, e)
+                    .SetDuration(TimeSpan.FromMilliseconds(durationMs));
 
-            var t = c.CreateVector3KeyFrameAnimation()
-                .SetTarget(TRANSLATION)
-                .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay)
-                .SetDelayTime(delay)
-                .AddKeyFrame(0, from)
-                .AddKeyFrame(1, 0, e)
-                .SetDuration(TimeSpan.FromMilliseconds(durationMs));
-
-            var o = CreateFade(c, 1, 0, (int)(durationMs * 0.33), delayMs);
-
-            return c.CreateAnimationGroup(t, o);
+                var o = CreateFade(c, 1, 0, (int)(durationMs * 0.33), delayMs);
+                return c.CreateAnimationGroup(t, o);
+            });
         }
 
         public static void SetCornerRadius(UIElement target, float size)
@@ -250,21 +272,29 @@ namespace CharacterMap.Helpers
 
         public static CompositionAnimation CreateFade(Compositor c, float to, float? from, int durationMs, int delayMs = 0)
         {
-            var o = c.CreateScalarKeyFrameAnimation();
-            o.Target = nameof(Visual.Opacity);
-            if (from != null && from.HasValue)
-                o.InsertKeyFrame(0, from.Value);
-            o.InsertKeyFrame(1, to, c.CreateEntranceEasingFunction());
-            o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            o.DelayTime = TimeSpan.FromMilliseconds(delayMs);
-            o.Duration = TimeSpan.FromMilliseconds(durationMs);
-            return o;
+            string key = $"SFade{to}{from}{durationMs}{delayMs}";
+            return c.GetCached(key, () =>
+            {
+                var o = c.CreateScalarKeyFrameAnimation();
+                o.Target = nameof(Visual.Opacity);
+                if (from != null && from.HasValue)
+                    o.InsertKeyFrame(0, from.Value);
+                o.InsertKeyFrame(1, to, c.CreateEntranceEasingFunction());
+                o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+                o.DelayTime = TimeSpan.FromMilliseconds(delayMs);
+                o.Duration = TimeSpan.FromMilliseconds(durationMs);
+                return o;
+            });
         }
 
-        public static ExpressionAnimation StartCentering(Visual v)
+        public static ExpressionAnimation StartCentering(Visual v, float x = 0.5f, float y = 0.5f)
         {
-            var e = v.CreateExpressionAnimation(nameof(Visual.CenterPoint))
-                     .SetExpression(CENTRE_EXPRESSION);
+            v.StopAnimation(nameof(Visual.CenterPoint));
+
+            var e = v.GetCached($"CP{x}{y}",
+                        () => v.CreateExpressionAnimation(nameof(Visual.CenterPoint))
+                                .SetExpression(string.Format(CENTRE_EXPRESSION, x, y)));
+
             v.StartAnimationGroup(e);
             return e;
         }
@@ -295,36 +325,37 @@ namespace CharacterMap.Helpers
             v.StartAnimationGroup(g);
         }
 
-        public static void SetStandardReposition(object sender, RoutedEventArgs args)
+        public static void SetStandardReposition(UIElement e)
         {
             if (!UISettings.AnimationsEnabled)
                 return;
 
-            UIElement e = (UIElement)sender;
             Visual v = e.GetElementVisual();
 
-            if (!_defaultOffsetAnimations.TryGetValue(v.Compositor, out Vector3KeyFrameAnimation value))
-            {
-                var o = v.CreateVector3KeyFrameAnimation(nameof(Visual.Offset))
-                    .AddKeyFrame(0, STARTING_VALUE)
-                    .AddKeyFrame(1, FINAL_VALUE)
-                    .SetDuration(DefaultOffsetDuration);
-                _defaultOffsetAnimations[v.Compositor] = o;
-                value = o;
-            }
+            var value = v.GetCached("DefaultOffsetAnimation",
+                            () => v.CreateVector3KeyFrameAnimation(nameof(Visual.Offset))
+                                    .AddKeyFrame(0, STARTING_VALUE)
+                                    .AddKeyFrame(1, FINAL_VALUE)
+                                    .SetDuration(DefaultOffsetDuration));
 
             v.SetImplicitAnimation(nameof(Visual.Offset), value);
         }
 
-        public static Visual EnableStandardTranslation(Visual v)
+        public static void DisableStandardReposition(FrameworkElement f)
+        {
+            f.GetElementVisual().ImplicitAnimations?.Remove(nameof(Visual.Offset));
+        }
+
+        public static Visual EnableStandardTranslation(Visual v, double? duration = null)
         {
             if (!UISettings.AnimationsEnabled)
                 return v;
 
-            var o = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                   .AddKeyFrame(0, STARTING_VALUE)
-                   .AddKeyFrame(1, FINAL_VALUE)
-                   .SetDuration(DefaultOffsetDuration);
+            var o = v.GetCached($"__ST{(duration.HasValue ? duration.Value : DefaultOffsetDuration)}",
+                () => v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                       .AddKeyFrame(0, STARTING_VALUE)
+                       .AddKeyFrame(1, FINAL_VALUE)
+                       .SetDuration(duration ?? DefaultOffsetDuration));
 
             v.Properties.SetImplicitAnimation(CompositionFactory.TRANSLATION, o);
             return v;
@@ -332,13 +363,26 @@ namespace CharacterMap.Helpers
 
         public static void SetDropInOut(FrameworkElement background, IList<FrameworkElement> children, FrameworkElement container = null)
         {
-            if (!UISettings.AnimationsEnabled)
+            if (background is null || children.Count == 0)
                 return;
+
+            if (ResourceHelper.AllowAnimation is false)
+            {
+                background.SetShowAnimation(null);
+                background.SetHideAnimation(null);
+                foreach (var child in children)
+                {
+                    child.SetShowAnimation(null);
+                    child.SetHideAnimation(null);
+                }
+
+                return;
+            }
 
             double delay = 0.15;
 
             var bv = background.EnableTranslation(true).GetElementVisual();
-            var ease = bv.Compositor.CreateEntranceEasingFunction();
+            var ease = bv.Compositor.GetCachedEntranceEase();
 
             var bt = bv.Compositor.CreateVector3KeyFrameAnimation();
             bt.Target = TRANSLATION;
@@ -437,7 +481,7 @@ namespace CharacterMap.Helpers
 
         public static void SetThemeShadow(UIElement target, float depth, params UIElement[] recievers)
         {
-            if (!Utils.Supports1903 || !ResourceHelper.AppSettings.EnableShadows || ResourceHelper.Get<bool>("SupportsShadows") is false)
+            if (!Utils.Supports1903 || !ResourceHelper.AppSettings.EnableShadows || ResourceHelper.SupportsShadows() is false)
                 return;
 
             // Temporarily, we'll also disable shadows if Windows Animations are disabled
@@ -465,50 +509,52 @@ namespace CharacterMap.Helpers
                 return;
 
             Visual v = target.EnableTranslation(true).GetElementVisual();
+            var t = v.GetCached("_FHSU", () =>
+                v.CreateVector3KeyFrameAnimation(TRANSLATION)
+                    .AddKeyFrame(0, "Vector3(0, this.Target.Size.Y, 0)")
+                    .AddKeyFrame(1, "Vector3(0, 0, 0)")
+                    .SetDuration(DefaultOffsetDuration));
 
-            var t = v.CreateVector3KeyFrameAnimation(TRANSLATION)
-                .AddKeyFrame(0, "Vector3(0, this.Target.Size.Y, 0)")
-                .AddKeyFrame(1, "Vector3(0, 0, 0)")
-                .SetDuration(DefaultOffsetDuration);
             v.StartAnimationGroup(t);
         }
 
         public static Vector3KeyFrameAnimation CreateSlideOut(UIElement e, float x, float y)
         {
-            return e.EnableTranslation(true)
-                    .GetElementVisual()
-                    .CreateVector3KeyFrameAnimation(TRANSLATION)
-                    .AddKeyFrame(0, STARTING_VALUE)
-                    .AddKeyFrame(1, x, y, 0)
-                    .SetDuration(DefaultOffsetDuration);
+            Visual v = e.EnableTranslation(true).GetElementVisual();
+            return v.GetCached("_SLDO",
+                    () => v.CreateVector3KeyFrameAnimation(TRANSLATION)
+                            .AddKeyFrame(0, STARTING_VALUE)
+                            .AddKeyFrame(1, x, y, 0)
+                            .SetDuration(DefaultOffsetDuration));
         }
 
         public static Vector3KeyFrameAnimation CreateSlideOutX(UIElement e)
         {
-            return e.EnableTranslation(true)
-                    .GetElementVisual()
-                    .CreateVector3KeyFrameAnimation(TRANSLATION)
-                    .AddKeyFrame(0, STARTING_VALUE)
-                    .AddKeyFrame(1, "Vector3(this.Target.Size.X, 0, 0)")
-                    .SetDuration(DefaultOffsetDuration);
+            Visual v = e.EnableTranslation(true).GetElementVisual();
+            return v.GetCached("SOX",
+                    () => v.CreateVector3KeyFrameAnimation(TRANSLATION)
+                            .AddKeyFrame(0, STARTING_VALUE)
+                            .AddKeyFrame(1, "Vector3(this.Target.Size.X, 0, 0)")
+                            .SetDuration(DefaultOffsetDuration));
         }
+
         public static Vector3KeyFrameAnimation CreateSlideOutY(UIElement e)
         {
-            return e.EnableTranslation(true)
-                    .GetElementVisual()
-                    .CreateVector3KeyFrameAnimation(TRANSLATION)
-                    .AddKeyFrame(0, STARTING_VALUE)
-                    .AddKeyFrame(1, "Vector3(0, this.Target.Size.Y, 0)")
-                    .SetDuration(DefaultOffsetDuration);
+            Visual v = e.EnableTranslation(true).GetElementVisual();
+            return v.GetCached("SOY",
+                    () => v.CreateVector3KeyFrameAnimation(TRANSLATION)
+                            .AddKeyFrame(0, STARTING_VALUE)
+                            .AddKeyFrame(1, "Vector3(0, this.Target.Size.Y, 0)")
+                            .SetDuration(DefaultOffsetDuration));
         }
 
         public static Vector3KeyFrameAnimation CreateSlideIn(UIElement e)
         {
-            return e.EnableTranslation(true)
-                    .GetElementVisual()
-                    .CreateVector3KeyFrameAnimation(TRANSLATION)
-                    .AddKeyFrame(1, Vector3.Zero)
-                    .SetDuration(DefaultOffsetDuration);
+            Visual v = e.EnableTranslation(true).GetElementVisual();
+            return v.GetCached("_SLDI",
+                    () => v.CreateVector3KeyFrameAnimation(TRANSLATION)
+                            .AddKeyFrame(1, Vector3.Zero)
+                            .SetDuration(DefaultOffsetDuration));
         }
 
 
@@ -523,9 +569,7 @@ namespace CharacterMap.Helpers
         public static void StartCompositionExpoZoomForwardTransition(FrameworkElement outElement, FrameworkElement inElement)
         {
             if (!UISettings.AnimationsEnabled)
-            {
                 return;
-            }
 
             Compositor compositor = ElementCompositionPreview.GetElementVisual(outElement).Compositor;
 
@@ -539,13 +583,11 @@ namespace CharacterMap.Helpers
             TimeSpan inStart = TimeSpan.FromSeconds(0.25);
             TimeSpan inDuration = TimeSpan.FromSeconds(0.6);
 
-            CubicBezierEasingFunction ease = compositor.CreateCubicBezierEasingFunction(
-                new Vector2(0.95f, 0.05f),
-                new Vector2(0.79f, 0.04f));
+            CubicBezierEasingFunction ease = compositor.GetCached("ExpoZoomEase", 
+                () => compositor.CreateCubicBezierEasingFunction(0.95f, 0.05f, 0.79f, 0.04f));
 
-            CubicBezierEasingFunction easeOut = compositor.CreateCubicBezierEasingFunction(
-                new Vector2(0.13f, 1.0f),
-                new Vector2(0.49f, 1.0f));
+            CubicBezierEasingFunction easeOut = compositor.GetCached("ExpoZoomOutEase", 
+                () => compositor.CreateCubicBezierEasingFunction(0.13f, 1.0f, 0.49f, 1.0f));
 
             // OUT ELEMENT
             {

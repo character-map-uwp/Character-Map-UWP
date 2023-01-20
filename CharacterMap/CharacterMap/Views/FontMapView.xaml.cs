@@ -60,17 +60,17 @@ namespace CharacterMap.Views
 
         #region Font
 
-        public InstalledFont Font
+        public FontItem Font
         {
-            get => (InstalledFont)GetValue(FontProperty);
+            get => (FontItem)GetValue(FontProperty);
             set => SetValue(FontProperty, value);
         }
 
         public static readonly DependencyProperty FontProperty =
-            DependencyProperty.Register(nameof(Font), typeof(InstalledFont), typeof(FontMapView), new PropertyMetadata(null, (d, e) =>
+            DependencyProperty.Register(nameof(Font), typeof(FontItem), typeof(FontMapView), new PropertyMetadata(null, (d, e) =>
             {
-                if (d is FontMapView f)
-                    f.ViewModel.SelectedFont = e.NewValue as InstalledFont;
+                if (d is FontMapView f && e.NewValue is FontItem item)
+                    f.ViewModel.SelectedFont = item;
             }));
 
         #endregion
@@ -85,6 +85,19 @@ namespace CharacterMap.Views
 
         public static readonly DependencyProperty ViewModelProperty =
             DependencyProperty.Register(nameof(ViewModel), typeof(FontMapViewModel), typeof(FontMapView), new PropertyMetadata(null));
+
+        #endregion
+
+        #region Hide Title
+
+        public bool HideTitle
+        {
+            get { return (bool)GetValue(HideTitleProperty); }
+            set { SetValue(HideTitleProperty, value); }
+        }
+
+        public static readonly DependencyProperty HideTitleProperty =
+            DependencyProperty.Register(nameof(HideTitle), typeof(bool), typeof(FontMapView), new PropertyMetadata(false));
 
         #endregion
 
@@ -210,6 +223,7 @@ namespace CharacterMap.Views
             {
                 case nameof(ViewModel.SelectedFont):
                     UpdateStates();
+                    UpdateDisplayMode(false);
                     break;
                 case nameof(ViewModel.SelectedVariant):
                     _ = SetCharacterSelectionAsync();
@@ -218,7 +232,7 @@ namespace CharacterMap.Views
                     UpdateTypography(ViewModel.SelectedTypography);
                     break;
                 case nameof(ViewModel.SelectedChar):
-                    if (ViewModel.Settings.UseSelectionAnimations)
+                    if (ResourceHelper.AllowAnimation)
                     {
                         if (ViewModel.SelectedChar is not null)
                         {
@@ -255,7 +269,7 @@ namespace CharacterMap.Views
                     break;
                 case nameof(ViewModel.Chars):
                     CharGrid.ItemsSource = ViewModel.Chars;
-                    if (ViewModel.Settings.UseSelectionAnimations)
+                    if (ResourceHelper.AllowAnimation)
                         CompositionFactory.PlayEntrance(CharGrid, 166);
                     break;
                 case nameof(ViewModel.DisplayMode):
@@ -316,14 +330,12 @@ namespace CharacterMap.Views
                         TryCopy();
                         break;
                     case VirtualKey.P:
-                        WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
+                        FlyoutHelper.PrintRequested();
                         break;
-                    case VirtualKey.S:
-                        if (ViewModel.SelectedVariant is FontVariant v)
+                    case VirtualKey.S when ViewModel.SelectedVariant is FontVariant v:
                             ExportManager.RequestExportFontFile(v);
                         break;
-                    case VirtualKey.E:
-                        if (ViewModel.SelectedVariant is FontVariant v1)
+                    case VirtualKey.E when ViewModel.SelectedVariant is FontVariant:
                             WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
                         break;
                     case VirtualKey.Add:
@@ -346,13 +358,11 @@ namespace CharacterMap.Views
                     case VirtualKey.K:
                         _ = QuickCompareView.CreateWindowAsync(new(false));
                         break;
-                    case VirtualKey.Q:
-                        if (ViewModel.SelectedVariant is FontVariant va)
+                    case VirtualKey.Q when ViewModel.SelectedVariant is FontVariant va:
                             _ = QuickCompareView.AddAsync(ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() });
                         break;
                     case VirtualKey.I:
-                        _ = CalligraphyView.CreateWindowAsync(
-                                ViewModel.RenderingOptions, ViewModel.Sequence);
+                        OpenCalligraphy();
                         break;
                     default:
                         return false;
@@ -361,6 +371,7 @@ namespace CharacterMap.Views
 
             return true;
         }
+
 
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
@@ -378,16 +389,16 @@ namespace CharacterMap.Views
             {
                 if (ViewModel.SelectedProvider != null)
                 {
-                    if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed)
+                    if (animate && DevUtilsRoot.Visibility == Visibility.Collapsed && ResourceHelper.AllowAnimation)
                         CompositionFactory.PlayFullHeightSlideUpEntrance(DevUtilsRoot);
                     
                     string state = $"Dev{ViewModel.SelectedProvider.Type}State";
 
-                    if (!VisualStateManager.GoToState(this, state, animate))
-                        VisualStateManager.GoToState(this, nameof(DevNoneState), animate);
+                    if (!GoToState(state, animate))
+                        GoToState(nameof(DevNoneState), animate);
                 }
                 else
-                    VisualStateManager.GoToState(this, nameof(DevNoneState), animate);
+                    GoToState(nameof(DevNoneState), animate);
             });
         }
 
@@ -395,13 +406,18 @@ namespace CharacterMap.Views
         {
             if (ViewModel.DisplayMode == FontDisplayMode.TypeRamp)
             {
-                UpdateGridToRampTransition();
-                VisualStateManager.GoToState(this, TypeRampState.Name, true);
+                if (animate)
+                    UpdateGridToRampTransition();
+                GoToState(TypeRampState.Name, animate);
             }
             else
             {
-                UpdateRampToGridTransition();
-                VisualStateManager.GoToState(this, CharacterMapState.Name, true);
+                if (animate)
+                    UpdateRampToGridTransition();
+                else if (CharGrid.ItemsPanelRoot is null)
+                    CharGrid.Measure(CharGrid.DesiredSize);
+
+                GoToState(CharacterMapState.Name, animate);
             }
 
             if (animate)
@@ -434,20 +450,15 @@ namespace CharacterMap.Views
         {
             if (this.IsStandalone)
             {
-                VisualStateManager.GoToState(
-                  this,
-                  ViewModel.Settings.UseInstantSearch ? nameof(InstantSearchState) : nameof(ManualSearchState),
-                  true);
+                GoToState(
+                  ViewModel.Settings.UseInstantSearch ? nameof(InstantSearchState) : nameof(ManualSearchState));
             }
         }
 
         private void UpdateStates()
         {
             // Ideally should have been achieved with VisualState setters, buuuuut didn't work for some reason
-            VisualStateManager.GoToState(
-                this, 
-                ViewModel.SelectedFont == null ? NoFontState.Name : HasFontState.Name,
-                true);
+            GoToState(ViewModel.SelectedFont == null ? NoFontState.Name : HasFontState.Name);
         }
 
         private void UpdatePaneAndGridSizing()
@@ -458,13 +469,11 @@ namespace CharacterMap.Views
             else
                 PaneShowTransition.Storyboard = CreateShowPreview(0, false);
 
-            VisualStateManager.GoToState(
-                  this,
-                  ViewModel.Settings.EnablePreviewPane && !_isCompactOverlay ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState),
-                  true);
+            GoToState(
+                  ViewModel.Settings.EnablePreviewPane && !_isCompactOverlay ? nameof(PreviewPaneEnabledState) : nameof(PreviewPaneDisabledState));
 
             // OverlayButton might not be inflated so can't use VisualState
-            OverlayButton?.SetVisible(IsStandalone);
+            //OverlayButton?.SetVisible(IsStandalone);
         }
 
         private void UpdateCopyPane()
@@ -475,7 +484,7 @@ namespace CharacterMap.Views
             else
                 CopyPaneShowingTransition.Storyboard = CreateShowCopyPane();
 
-            VisualStateManager.GoToState(this, state, true);
+            GoToState(state);
         }
 
         private async Task UpdateCompactOverlayAsync()
@@ -490,7 +499,7 @@ namespace CharacterMap.Views
                     pref.ViewSizePreference = ViewSizePreference.Custom;
                     if (await view.TryEnterViewModeAsync(ApplicationViewMode.CompactOverlay, pref))
                     {
-                        VisualStateManager.GoToState(this, nameof(CompactOverlayState), true);
+                        GoToState(nameof(CompactOverlayState));
                         SearchBox.PlaceholderText = Localization.Get("SearchBoxShorter");
                         _isCompactOverlay = true;
                     }
@@ -500,7 +509,7 @@ namespace CharacterMap.Views
             {
                 if (await view.TryEnterViewModeAsync(ApplicationViewMode.Default))
                 {
-                    VisualStateManager.GoToState(this, nameof(NonCompactState), true);
+                    GoToState(nameof(NonCompactState));
                     SearchBox.PlaceholderText = Localization.Get("SearchBox/PlaceholderText");
                     _isCompactOverlay = false;
                 }
@@ -529,6 +538,12 @@ namespace CharacterMap.Views
 
         /* Public surface-area methods */
 
+        public void OpenCalligraphy()
+        {
+            _ = CalligraphyView.CreateWindowAsync(
+                ViewModel.RenderingOptions, ViewModel.Sequence);
+        }
+
         public void SelectCharacter(Character ch)
         {
             if (null != ch)
@@ -555,7 +570,7 @@ namespace CharacterMap.Views
                 && await Utils.TryCopyToClipboardAsync(character, ViewModel))
             {
                 BorderFadeInStoryboard.Begin();
-                TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem != TypographyFeatureInfo.None);
+                TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo != TypographyFeatureInfo.None);
             }
         }
 
@@ -589,7 +604,7 @@ namespace CharacterMap.Views
                 Utils.CopyToClipBoard(s.Trim());
                 BorderFadeInStoryboard.Begin();
                 if (!o.SupportsTypography)
-                    TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem != TypographyFeatureInfo.None);
+                    TxtCopiedVariantMessage.SetVisible(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo != TypographyFeatureInfo.None);
                 else
                     TxtCopiedVariantMessage.SetVisible(false);
             }
@@ -610,7 +625,7 @@ namespace CharacterMap.Views
 
                 if (CharGrid.Visibility == Visibility.Visible)
                 {
-                    var size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
+                    int size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
                     if (this.ActualWidth < size && this.ActualWidth < 700)
                     {
                         PreviewColumn.Width = new GridLength(Math.Max(0, (int)(this.ActualWidth - CharGrid.ActualWidth - Splitter.ActualWidth)));
@@ -695,11 +710,11 @@ namespace CharacterMap.Views
 
         private void MenuFlyout_Opening(object sender, object e)
         {
-            if (ViewModel.SelectedFont is InstalledFont font)
+            if (ViewModel.SelectedFont is FontItem item)
             {
                 FlyoutHelper.CreateMenu(
                     MoreMenu,
-                    font,
+                    item.Font,
                     ViewModel.RenderingOptions with { Axis = ViewModel.VariationAxis.Copy() },
                     this.Tag as FrameworkElement,
                     new()
@@ -717,13 +732,15 @@ namespace CharacterMap.Views
         {
             if (sender is MenuFlyout menu && menu.Items.Count < 2)
             {
+                Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
                 foreach (var provider in ViewModel.Providers)
                 {
                     MenuFlyoutItem item = new()
                     {
                         Command = ViewModel.ToggleDev,
                         CommandParameter = provider.Type,
-                        Text = provider.DisplayName
+                        Text = provider.DisplayName,
+                        Style = style
                     };
                     menu.Items.Add(item);
                 }
@@ -764,11 +781,24 @@ namespace CharacterMap.Views
             }
         }
 
+        private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+        {
+            if (!args.InRecycleQueue && args.ItemContainer is not null)
+            {
+                args.ItemContainer.ContextRequested -= Grid_ContextRequested;
+                args.ItemContainer.ContextRequested += Grid_ContextRequested;
+            }
+        }
+
         private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
         {
-            /* Context menu for character grid */
-            args.Handled = true;
-            FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, (FrameworkElement)sender, ViewModel);
+            if (sender is FrameworkElement f 
+                && f.GetDescendantsOfType<Grid>().FirstOrDefault(g => g.Tag is Character) is Grid grid)
+            {
+                /* Context menu for character grid */
+                args.Handled = true;
+                FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel);
+            }
         }
 
         private void SavePng_Click(object sender, RoutedEventArgs e)
@@ -809,7 +839,7 @@ namespace CharacterMap.Views
               && item.CommandParameter is DevValueType type)
             {
                 _ = ViewModel.RequestCopyToClipboardAsync(
-                    new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));
+                        new CopyToClipboardMessage(type, c, ViewModel.GetCharAnalysis(c)));
             }
         }
 
@@ -828,7 +858,7 @@ namespace CharacterMap.Views
                 && item.DataContext is Character c)
             {
                 _ = CalligraphyView.CreateWindowAsync(
-                    ViewModel.RenderingOptions, c.Char);
+                        ViewModel.RenderingOptions, c.Char);
             }
         }
 
@@ -896,17 +926,13 @@ namespace CharacterMap.Views
         private void TryPrint()
         {
             if (this.GetFirstAncestorOfType<MainPage>() is null)
-            {
                 PrintView.Show(this);
-            }
         }
 
         private void TryExport()
         {
             if (this.GetFirstAncestorOfType<MainPage>() is null)
-            {
                 ExportView.Show(this);
-            }
         }
 
 
@@ -944,7 +970,7 @@ namespace CharacterMap.Views
                 TxtPreview.MinWidth = ViewModel.Settings.GridSize;
             }
 
-            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            RunOnUI(async () =>
             {
                 if (!this.IsLoaded)
                     return;
@@ -1019,14 +1045,12 @@ namespace CharacterMap.Views
         public void PlayFontChanged(bool withHeader = true)
         {
             /* Create the animation that is played upon changing font */
-
-            if (ViewModel.Settings.UseSelectionAnimations)
+            if (ResourceHelper.AllowAnimation)
             {
                 int offset = 0;
                 if (withHeader)
                 {
                     offset = 83;
-                    //Composition.PlayEntrance(FontTitleBlock, 0);
                     CompositionFactory.PlayEntrance(CharGridHeader, 83);
                 }
 
@@ -1048,7 +1072,7 @@ namespace CharacterMap.Views
 
                     if (TypeRampList != null)
                     {
-                        var items = new List<UIElement> { VariableAxis };
+                        List<UIElement> items = new() { VariableAxis };
                         items.AddRange(TypeRampList.TryGetChildren());
                         CompositionFactory.PlayEntrance(items, (offset * 2) + 34);
                     }
@@ -1066,8 +1090,6 @@ namespace CharacterMap.Views
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
-
-        
     }
 
 
@@ -1077,15 +1099,16 @@ namespace CharacterMap.Views
         {
             void CreateView()
             {
+                FontItem item = new FontItem(font);
+                item.Selected = options?.Variant ?? font.DefaultVariant;
+
                 FontMapView map = new() { 
                     IsStandalone = true, 
-                    ViewModel = { SelectedFont = font, IsExternalFile = sourceFile != null, SourceFile = sourceFile } };
+                    ViewModel = { SelectedFont = item, IsExternalFile = sourceFile != null, SourceFile = sourceFile } };
 
                 // Attempt to apply any custom rendering options from the source view
                 if (options != null && options.Variant != null && font.Variants.Contains(options.Variant))
                 {
-                    map.ViewModel.SelectedVariant = options.Variant;
-                    
                     if (options.DefaultTypography != null)
                         map.ViewModel.SelectedTypography = options.DefaultTypography;
                 }

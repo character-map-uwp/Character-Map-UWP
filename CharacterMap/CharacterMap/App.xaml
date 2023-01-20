@@ -41,6 +41,8 @@
                     <x:Double x:Key="ToggleSwitchThemeMinWidth">0</x:Double>
 
                     <BrushTransition x:Key="RootBackgroundTransition" Duration="0:0:0.25" />
+                    <BrushTransition x:Key="QuickBackgroundTransition" Duration="0:0:0.1" />
+
                     <TransitionCollection x:Key="NoTransitions" />
                     <TransitionCollection x:Key="RepositionTransitions">
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
@@ -59,8 +61,6 @@
                         x:Key="ExportBorderBrush"
                         Opacity="0.5"
                         Color="{StaticResource ScrollBarPanningThumbBackgroundColor}" />
-
-
 
                     <AcrylicBrush
                         x:Name="DefaultAcrylicBrush"
@@ -99,10 +99,9 @@
 
                 </ResourceDictionary>
 
+                <ResourceDictionary Source="/Styles/Brushes.xaml" />
                 <ResourceDictionary Source="/Styles/TextBox.xaml" />
-                <ResourceDictionary Source="/Styles/CommandBar.xaml" />
                 <ResourceDictionary Source="/Styles/Button.xaml" />
-                <ResourceDictionary Source="/Styles/ListView.xaml" />
                 <ResourceDictionary Source="/Styles/ComboBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

@@ -26,6 +26,9 @@ namespace CharacterMap.Helpers
         /// <returns>Resource value</returns>
         public static string Get(string key)
         {
+            if (string.IsNullOrWhiteSpace(key))
+                return null;
+
             return _resources.GetString(key);
         }
 

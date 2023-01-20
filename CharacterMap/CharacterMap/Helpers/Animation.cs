@@ -584,7 +584,7 @@ namespace CharacterMap.Helpers
         // UIElement Opacity
         public static String Opacity = "(UIElement.Opacity)";
         // UIElement Visibility
-        public static String Visiblity = "(UIElement.Visibility)";
+        public static String Visibility = "(UIElement.Visibility)";
         // UIElement IsHitTestVisible
         public static String IsHitTestVisible = "(UIElement.IsHitTestVisible)";
         // Grid ColumnSpan

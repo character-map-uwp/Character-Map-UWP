@@ -31,13 +31,16 @@ namespace CharacterMap.Controls
         public static readonly DependencyProperty OptionsProperty =
             DependencyProperty.Register(nameof(Options), typeof(CharacterRenderingOptions), typeof(CharacterPicker), new PropertyMetadata(0));
 
+        private Flyout _parent = null;
+
         public CharacterPicker()
         {
             this.InitializeComponent();
         }
 
-        public CharacterPicker(CharacterRenderingOptions options) : this()
+        public CharacterPicker(Flyout parent, CharacterRenderingOptions options) : this()
         {
+            _parent = parent;
             Options = options;
         }
 
@@ -49,8 +52,11 @@ namespace CharacterMap.Controls
 
         private void Close_Click(object sender, RoutedEventArgs e)
         {
-            if (this.Parent is FlyoutPresenter f && f.Parent is Popup p)
-                p.IsOpen = false;
+            if (_parent is not null)
+            {
+                _parent.Hide();
+                _parent = null;
+            }
         }
     }
 }

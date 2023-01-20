@@ -24,15 +24,17 @@ namespace CharacterMap.ViewModels
 {
     public enum FontDisplayMode
     { 
-        CharacterMap,
-        GlyphMap,
-        TypeRamp
+        CharacterMap = 0,
+        GlyphMap = 1,
+        TypeRamp = 2
     }
 
 
-    public class FontMapViewModel : ViewModelBase
+    public partial class FontMapViewModel : ViewModelBase
     {
         #region Properties
+
+        protected override bool TrackAnimation => true;
 
         private NativeInterop _interop { get; }
 
@@ -54,58 +56,65 @@ namespace CharacterMap.ViewModels
         public RelayCommand<DevProviderType>  ToggleDev                     { get; }
         public DWriteFallbackFont FallbackFont                              => FontFinder.Fallback; // Do *not* use { get;} here
         public int[] RampSizes                                              { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
-
-        internal bool IsLoadingCharacters                                   { get; private set; }
         public bool IsExternalFile                                          { get; set; }
+        internal bool IsLoadingCharacters                                   { get; private set; }
 
-        public bool                                 IsLoading               { get => GetV(false); set => Set(value); }
-        public string                               TitlePrefix             { get => Get<string>(); set => Set(value); }
-        public IReadOnlyList<IGlyphData>            SearchResults           { get => Get<IReadOnlyList<IGlyphData>>(); set => Set(value); }
-        public CharacterRenderingOptions            RenderingOptions        { get => Get<CharacterRenderingOptions>(); set => Set(value); }
-        public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures      { get => Get<IReadOnlyList<TypographyFeatureInfo>> (); set => Set(value); }
-        public IReadOnlyList<Character>             Chars                   { get => Get<IReadOnlyList<Character>> (); set => Set(value); }
-        public IReadOnlyList<DWriteFontAxis>        VariationAxis           { get => Get<IReadOnlyList<DWriteFontAxis>> (); set => Set(value); }
-        public FontFamily                           FontFamily              { get => Get<FontFamily>(); set => Set(value); }
         public TypographyFeatureInfo                SelectedTypography      { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
         public TypographyFeatureInfo                SelectedCharTypography  { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
-        public CanvasTextLayoutAnalysis             SelectedCharAnalysis    { get => Get<CanvasTextLayoutAnalysis>(); set => Set(value); }
-        public List<TypographyFeatureInfo>          SelectedCharVariations  { get => Get<List<TypographyFeatureInfo>>(); set => Set(value); }
         public List<UnicodeCategoryModel>           SelectedGlyphCategories { get => Get<List<UnicodeCategoryModel>>(); private set => Set(value); }
-        public IReadOnlyList<string>                RampOptions             { get => Get<IReadOnlyList<string>>(); set => Set(value); }
-        public IReadOnlyList<DevProviderBase>       Providers               { get => Get<IReadOnlyList<DevProviderBase>>(); set => Set(value); }
 
-        public bool ShowColorGlyphs                                         { get => GetV(true); set => Set(value); }
-        public bool ImportButtonEnabled                                     { get => GetV(true); set => Set(value); }
-        public bool HasFontOptions                                          { get => GetV(false); set => Set(value); }
-        public bool IsSvgChar                                               { get => GetV(false); set => Set(value); }
-        public FolderContents Folder                                        { get => Get<FolderContents>(); set => Set(value); }
-        public bool IsSequenceRootVisible                                   { get => GetV(false); set => Set(value); }
-        public string XamlPath                                              { get => Get<string>(); set => Set(value); }
-        public string Sequence                                              { get => GetV(string.Empty); set => Set(value); }
-        public DevProviderBase SelectedProvider                             { get => Get<DevProviderBase>(); set => Set(value); }
+        [ObservableProperty] CharacterRenderingOptions              _renderingOptions;
+        [ObservableProperty] CanvasTextLayoutAnalysis               _selectedCharAnalysis;
+        [ObservableProperty] List<TypographyFeatureInfo>            _selectedCharVariations;
+        [ObservableProperty] IReadOnlyList<string>                  _rampOptions;
+        [ObservableProperty] IReadOnlyList<Character>               _chars;
+        [ObservableProperty] IReadOnlyList<IGlyphData>              _searchResults;
+        [ObservableProperty] IReadOnlyList<DWriteFontAxis>          _variationAxis;
+        [ObservableProperty] IReadOnlyList<DevProviderBase>         _providers;
+        [ObservableProperty] IReadOnlyList<TypographyFeatureInfo>   _typographyFeatures;
+
+        [ObservableProperty] bool                   _showColorGlyphs        = true;
+        [ObservableProperty] bool                   _importButtonEnabled    = true;
+        [ObservableProperty] bool                   _isLoading;
+        [ObservableProperty] bool                   _hasFontOptions;
+        [ObservableProperty] bool                   _isSvgChar;
+        [ObservableProperty] bool                   _isSequenceRootVisible;
+        [ObservableProperty] string                 _titlePrefix;
+        [ObservableProperty] string                 _xamlPath;
+        [ObservableProperty] string                 _sequence               = string.Empty;
+        [ObservableProperty] FontItem               _selectedFont;
+        [ObservableProperty] FontFamily             _fontFamily;
+        [ObservableProperty] FolderContents         _folder;
+        [ObservableProperty] DevProviderBase        _selectedProvider;
+
         public FontDisplayMode DisplayMode                                  { get => Get<FontDisplayMode>(); set { if (Set(value)) { UpdateTypography(); } } }
         public FontAnalysis SelectedVariantAnalysis                         { get => Get<FontAnalysis>(); set { if (Set(value)) { UpdateVariations(); } } }
-       
-        private InstalledFont _selectedFont;
-        public InstalledFont SelectedFont
+
+        partial void OnSelectedFontChanging(FontItem value)
         {
-            get => _selectedFont;
-            set
+            // Remove property changed listener from old font
+            if (SelectedFont is not null)
+                SelectedFont.PropertyChanged -= SelectedFont_PropertyChanged;
+        }
+
+        partial void OnSelectedFontChanged(FontItem value)
+        {
+            TitleBarHelper.SetTitle(value?.Font?.Name);
+
+            if (SelectedFont is not null)
             {
-                if (value == _selectedFont) return;
-                _selectedFont = value;
-                TitleBarHelper.SetTitle(value?.Name);
-                OnPropertyChanged();
-                if (null != _selectedFont)
-                {
-                    if (value != null) TitlePrefix = value.Name + " -";
-                    SelectedVariant = _selectedFont.DefaultVariant;
-                }
-                else
-                {
-                    SelectedVariant = null;
-                }
+                // Add property changed listener to new font
+                SelectedFont.PropertyChanged -= SelectedFont_PropertyChanged;
+                SelectedFont.PropertyChanged += SelectedFont_PropertyChanged;
+
+                TitlePrefix = value.Font.Name + " -";
+                SelectedVariant = value.Selected;
+
+                if (Set(SelectedFont.DisplayMode, nameof(DisplayMode), false))
+                    UpdateTypography();
             }
+            else
+                SelectedVariant = null;
         }
 
         private FontVariant _selectedVariant;
@@ -125,6 +134,9 @@ namespace CharacterMap.ViewModels
                     SetDefaultChar();
                     SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyFeatureInfo.None;
                     UpdateDevValues();
+
+                    if (value is not null)
+                        SelectedFont.Selected = value;
                 }
             }
         }
@@ -197,10 +209,27 @@ namespace CharacterMap.ViewModels
 
         protected override void OnPropertyChangeNotified(string propertyName)
         {
-            if (propertyName == nameof(SelectedTypography))
-                SelectedCharTypography = SelectedTypography;
-            else if (propertyName == nameof(SelectedCharTypography))
-                UpdateDevValues();
+            switch (propertyName)
+            {
+                case nameof(SelectedTypography):
+                    SelectedCharTypography = SelectedTypography;
+                    break;
+                case nameof(SelectedCharTypography):
+                    UpdateDevValues();
+                    break;
+                case nameof(DisplayMode) when SelectedFont is not null:
+                    SelectedFont.DisplayMode = DisplayMode;
+                    break;
+            }
+        }
+
+        private void SelectedFont_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (sender is FontItem item)
+            {
+                if (e.PropertyName == nameof(FontItem.Selected))
+                    SelectedVariant = item.Selected;
+            }
         }
 
         public void UpdateCategories(IList<UnicodeCategoryModel> value)
@@ -504,7 +533,7 @@ namespace CharacterMap.ViewModels
 
             ExportResult result = await ExportManager.ExportGlyphAsync(
                 new(format, args.Style),
-                SelectedFont,
+                SelectedFont.Font,
                 RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
                 character);
 
@@ -524,7 +553,7 @@ namespace CharacterMap.ViewModels
                     SourceFile = file;
                     IsLoading = false;
 
-                    SelectedFont = font;
+                    SelectedFont = new (font);
                     SetDefaultChar();
                     return true;
                 }
@@ -570,9 +599,9 @@ namespace CharacterMap.ViewModels
 
         public void OpenSelectedFontInWindow()
         {
-            if (SelectedFont is InstalledFont font)
+            if (SelectedFont is FontItem item)
             {
-                _ = FontMapView.CreateNewViewForFontAsync(font);
+                _ = FontMapView.CreateNewViewForFontAsync(item.Font, null, RenderingOptions);
             }
         }
 
@@ -604,7 +633,12 @@ namespace CharacterMap.ViewModels
 
         public void AddCharToSequence(int start, int length, Character c)
         {
-            Sequence = Sequence.Remove(start, length).Insert(start, c.Char);
+            var s = Sequence;
+            start = Math.Min(start, Sequence.Length);
+            if (s.Length > 0)
+                s = s.Remove(start, length);
+                    
+            Sequence = s.Insert(start, c.Char);
         }
 
     }

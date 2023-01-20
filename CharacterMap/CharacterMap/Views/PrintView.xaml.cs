@@ -74,9 +74,9 @@ namespace CharacterMap.Views
                 this.Visibility = Visibility.Collapsed;
 
             this.InitializeComponent();
-            CompositionFactory.SetupOverlayPanelAnimation(this);
 
-            LeakTrackingService.Register(this);
+            if (ResourceHelper.AllowAnimation)
+                CompositionFactory.SetupOverlayPanelAnimation(this);
         }
 
 
@@ -85,7 +85,11 @@ namespace CharacterMap.Views
 
             // Initialize common helper class and register for printing
             _printHelper = new PrintHelper(_fontMap, ViewModel);
-            _printHelper.RegisterForPrinting();
+            if (_printHelper.RegisterForPrinting() is false)
+            {
+                Hide();
+                return;
+            }
 
             StartShowAnimation();
 
@@ -117,7 +121,7 @@ namespace CharacterMap.Views
 
         private void StartShowAnimation()
         {
-            if (!CompositionFactory.UISettings.AnimationsEnabled)
+            if (!ResourceHelper.AllowAnimation)
             {
                 this.GetElementVisual().Opacity = 1;
                 this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);

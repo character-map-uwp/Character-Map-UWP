@@ -286,7 +286,7 @@ namespace CharacterMap.Controls
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static void SetGlyphProperties(XamlDirect xamlDirect, IXamlDirectObject o, CharacterGridViewTemplateSettings templateSettings, Character c)
         {
-            if (o == null)
+            if (o == null || templateSettings.FontFace is null)
                 return;
 
             xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, templateSettings.FontFamily);
@@ -451,9 +451,6 @@ namespace CharacterMap.Controls
         private void UpdateAnimation(bool newValue)
         {
             if (this.ItemsPanelRoot == null)
-                return;
-
-            if (!CompositionFactory.UISettings.AnimationsEnabled)
                 return;
 
             foreach (var item in this.ItemsPanelRoot.Children)

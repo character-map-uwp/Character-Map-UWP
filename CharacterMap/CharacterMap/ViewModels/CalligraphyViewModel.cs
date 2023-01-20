@@ -25,6 +25,8 @@ namespace CharacterMap.ViewModels
 {
     public partial class CalligraphyViewModel : ViewModelBase
     {
+        protected override bool TrackAnimation => true;
+
         [ObservableProperty] private bool _isOverlayVisible = true;
 
         [ObservableProperty] private string _text;

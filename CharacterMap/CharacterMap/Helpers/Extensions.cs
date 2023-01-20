@@ -11,6 +11,8 @@ using Windows.UI.Xaml.Input;
 using System.IO.Compression;
 using Windows.Storage;
 using System.IO;
+using Microsoft.UI.Xaml.Controls;
+using CharacterMap.Models;
 
 namespace CharacterMap.Helpers
 {
@@ -83,6 +85,20 @@ namespace CharacterMap.Helpers
             return tcs.Task;
         }
 
+        public static MenuFlyout AddSeparator(this MenuFlyout menu, bool isVisible = true)
+        {
+            menu.Items.Add(new MenuFlyoutSeparator().SetVisible(isVisible));
+            return menu;
+        }
+
+        public static MenuFlyoutSubItem Add(this MenuFlyoutSubItem item, BasicFontFilter filter, Style style = null)
+        {
+            MenuFlyoutItem i = new() { Style = style };
+            Core.Properties.SetFilter(i, filter);
+            item.Items.Add(i);
+            return item;
+        }
+
         public static T AddKeyboardAccelerator<T>(this T u, VirtualKey key, VirtualKeyModifiers modifiers) where T : UIElement
         {
             u.KeyboardAccelerators.Add(new KeyboardAccelerator { Key = key, Modifiers = modifiers });
@@ -103,12 +119,30 @@ namespace CharacterMap.Helpers
             return new List<UIElement> { control };
         }
 
-        public static T Realize<T>(this T list) where T : ItemsControl
+        public static T Realize<T>(this T list, double width = 100, double height = 100) where T : ItemsControl
         {
             if (list.ItemsPanelRoot == null)
-                list.Measure(new (100, 100));
+                list.Measure(new (width, height));
 
             return list;
+        }
+
+        public static T Merge<T>(this T dictionary, ResourceDictionary d) where T : ResourceDictionary
+        {
+            dictionary.MergedDictionaries.Add(d);
+            return dictionary;
+        }
+
+        public static T MergeMUXC<T>(this T dictionary, ControlsResourcesVersion version) where T : ResourceDictionary
+        {
+            dictionary.MergedDictionaries.Add(new XamlControlsResources {  ControlsResourcesVersion = version });
+            return dictionary;
+        }
+
+        public static T Merge<T>(this T dictionary, string source) where T : ResourceDictionary
+        {
+            dictionary.MergedDictionaries.Add(new () { Source = new Uri(source) });
+            return dictionary;
         }
 
         public static Task<StorageFile> ExtractToFolderAsync(

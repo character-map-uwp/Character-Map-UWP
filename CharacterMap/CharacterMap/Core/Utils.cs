@@ -22,6 +22,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace CharacterMap.Core
 {
@@ -217,6 +218,21 @@ namespace CharacterMap.Core
             }
 
             return r;
+        }
+
+        public static FrameworkElement GetPresenter(this FlyoutBase flyout)
+        {
+            return flyout switch
+            {
+                Flyout f => f.GetPresenter(),
+                MenuFlyout m => m.GetPresenter(),
+                _ => null
+            };
+        }
+
+        public static FlyoutPresenter GetPresenter(this Flyout flyout)
+        {
+            return flyout.Content?.GetFirstAncestorOfType<FlyoutPresenter>();
         }
 
         public static MenuFlyoutPresenter GetPresenter(this MenuFlyout flyout)

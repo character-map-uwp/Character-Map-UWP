@@ -19,6 +19,9 @@ namespace CharacterMap.ViewModels
     public class ExportViewModel : ViewModelBase
     {
         #region Properties
+
+        protected override bool TrackAnimation => true;
+
         private InstalledFont _font                     { get; }
         public FontVariant Font                         { get; set; }
 
@@ -53,7 +56,7 @@ namespace CharacterMap.ViewModels
 
         public ExportViewModel(FontMapViewModel viewModel)
         {
-            _font       = viewModel.SelectedFont;
+            _font       = viewModel.SelectedFont.Font;
             Categories  = viewModel.SelectedGlyphCategories.ToList(); // Makes a copy of the list
             Font        = viewModel.RenderingOptions.Variant;
             Options     = viewModel.RenderingOptions;

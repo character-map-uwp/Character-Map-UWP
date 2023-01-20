@@ -11,11 +11,18 @@ namespace CharacterMap.Core
 
         public CharacterCasing Casing { get; set; } = CharacterCasing.Normal;
 
+        public bool ZuneTitle { get; set; }
+
         protected override object ProvideValue()
         {
             string text = Localization.Get(Key);
 
+            if (ZuneTitle)
+                Casing = ResourceHelper.Get<CharacterCasing>("TitleCasing");
+
             if (Casing != CharacterCasing.Normal)
+            {
+            }
                 text = Casing switch
                 {
                     CharacterCasing.Upper => text.ToUpper(),

@@ -568,11 +568,11 @@ Requires a restart to take effect.</value>
     <value>Enable shadows</value>
   </data>
   <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
-    <value>Controls the animation for loading the font list, switching fonts and changing characters.
+    <value>Controls most animations inside the application. Turning this off will disable most animations.
 Turning this on has negligible performance impact.</value>
   </data>
   <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
-    <value>Enable simple animations</value>
+    <value>Enable animations</value>
   </data>
   <data name="SettingsThemeHeader.Text" xml:space="preserve">
     <value>Theme</value>
@@ -1118,10 +1118,6 @@ Requires a restart to take effect.</value>
   <data name="CreateNewButton.Content" xml:space="preserve">
     <value>Create New</value>
   </data>
-  <data name="FontsPartialLabel" xml:space="preserve">
-    <value>fonts,</value>
-    <comment>{0} fonts, {1} selected</comment>
-  </data>
   <data name="OrLabel.Text" xml:space="preserve">
     <value>or</value>
   </data>
@@ -1130,10 +1126,6 @@ Requires a restart to take effect.</value>
   </data>
   <data name="SelectCollectionLabel" xml:space="preserve">
     <value>Select Collection</value>
-  </data>
-  <data name="SelectedPartialLabel" xml:space="preserve">
-    <value>selected</value>
-    <comment>{0} fonts, {1} selected</comment>
   </data>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
     <value>Collections</value>
@@ -1172,10 +1164,10 @@ Requires a restart to take effect.</value>
     <value>font files</value>
   </data>
   <data name="FontFileMenuItem.Text" xml:space="preserve">
-    <value>Font File</value>
+    <value>Open Font File</value>
   </data>
   <data name="FontFolderMenuItem.Text" xml:space="preserve">
-    <value>Font Folder</value>
+    <value>Open Font Folder</value>
   </data>
   <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Add to history</value>
@@ -1196,19 +1188,19 @@ Requires a restart to take effect.</value>
     <value>History</value>
   </data>
   <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Redo (Ctrl + Y)</value>
+    <value>Redo (Ctrl+Y)</value>
   </data>
   <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Remove</value>
   </data>
   <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Save (Ctrl + S)</value>
+    <value>Save (Ctrl+S)</value>
   </data>
   <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Side by side</value>
   </data>
   <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Undo (Ctrl + Z)</value>
+    <value>Undo (Ctrl+Z)</value>
   </data>
   <data name="GuideFontSlider.Header" xml:space="preserve">
     <value>Guide Size</value>
@@ -1221,5 +1213,84 @@ Requires a restart to take effect.</value>
   </data>
   <data name="GuideSizeLabel.Text" xml:space="preserve">
     <value>Guide Size</value>
+  </data>
+  <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Show or Hide Font Pane (Ctrl+L)</value>
+  </data>
+  <data name="OpenInNewTab.Text" xml:space="preserve">
+    <value>Open in New Tab</value>
+  </data>
+  <data name="OptionScriptKorean.Text" xml:space="preserve">
+    <value>Korean</value>
+  </data>
+  <data name="AddActiveToCollectionItem.Text" xml:space="preserve">
+    <value>Add active to Collection</value>
+  </data>
+  <data name="CompareActiveItem.Text" xml:space="preserve">
+    <value>Compare active font faces</value>
+  </data>
+  <data name="OptionEmoji.Text" xml:space="preserve">
+    <value>Emoji</value>
+  </data>
+  <data name="OptionSupportedScripts.Text" xml:space="preserve">
+    <value>Supported Scripts</value>
+  </data>
+  <data name="CompareFontFaceTitle.Text" xml:space="preserve">
+    <value>Compare Font Faces</value>
+  </data>
+  <data name="CompareFacesCountLabel.Text" xml:space="preserve">
+    <value>Compare {0} font faces</value>
+  </data>
+  <data name="CompareFamilyTitle.Text" xml:space="preserve">
+    <value>Compare {0}</value>
+  </data>
+  <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Open Menu</value>
+  </data>
+  <data name="FontsSelectedCountLabel" xml:space="preserve">
+    <value>{0} fonts, {1} selected</value>
+  </data>
+  <data name="CompareShortLabel" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="AllFontsLabel.Text" xml:space="preserve">
+    <value>All Fonts</value>
+  </data>
+  <data name="ImportLabel.Text" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="PreferredFormatGroup.Text" xml:space="preserve">
+    <value>Preferred Format</value>
+    <comment>Preferred export format</comment>
+  </data>
+  <data name="RemoveLabel.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="UndoLabel" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="CalligraphyDescription.Text" xml:space="preserve">
+    <value>Practice writing in the style of the current font</value>
+  </data>
+  <data name="CompareFontsDescription.Text" xml:space="preserve">
+    <value>See and compare all your fonts side-by-side</value>
+  </data>
+  <data name="DoMoreLabel.Text" xml:space="preserve">
+    <value>Do More</value>
+  </data>
+  <data name="FullscreenLabel.Text" xml:space="preserve">
+    <value>Fullscreen</value>
+  </data>
+  <data name="OpenFolderDescription.Text" xml:space="preserve">
+    <value>Open all font files found inside a folder</value>
+  </data>
+  <data name="OpenFontDescription.Text" xml:space="preserve">
+    <value>Open TTF, OTF, OTC, TTC, WOFF or ZIP files</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
+    <value>Enables subtle bounce animations when the mouse pointer goes over certains buttons.</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
+    <value>Enable pointer over animations</value>
   </data>
 </root>

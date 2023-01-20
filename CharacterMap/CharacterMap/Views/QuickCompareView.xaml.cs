@@ -11,8 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Windows.Foundation;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -23,14 +23,6 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Views
 {
-    public class ExtendedRepeater : ItemsRepeater
-    { 
-        public void InvalidateLayout()
-        {
-            this.InvalidateViewport();
-        }
-    }
-
     public sealed partial class QuickCompareView : ViewBase, IInAppNotificationPresenter
     {
         public QuickCompareViewModel ViewModel { get; }
@@ -47,9 +39,10 @@ namespace CharacterMap.Views
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
 
-            if (args.IsQuickCompare)
+            if (ViewModel.IsQuickCompare)
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
-            else if (args.IsFolderView)
+
+            if (ViewModel.IsFolderMode)
                 VisualStateManager.GoToState(this, FontFolderState.Name, false);
 
             _navHelper.BackRequested += (s, e) => { ViewModel.SelectedFont = null; };
@@ -58,6 +51,8 @@ namespace CharacterMap.Views
                 return;
 
             this.Opacity = 0;
+
+            ApplicationView.GetForCurrentView().SetDesiredBoundsMode(ApplicationViewBoundsMode.UseVisible);
         }
 
         protected override void OnLoaded(object sender, RoutedEventArgs e)
@@ -84,6 +79,9 @@ namespace CharacterMap.Views
         private void AnimateIn()
         {
             this.Opacity = 1;
+            if (ResourceHelper.AllowAnimation is false)
+                return;
+
             int s = 66;
             int o = 110;
 
@@ -107,7 +105,8 @@ namespace CharacterMap.Views
                 if (ViewStates.CurrentState != NormalState)
                     GoToNormalState();
 
-                CompositionFactory.PlayEntrance(Repeater, 0, 80, 0);
+                if (ResourceHelper.AllowAnimation)
+                    CompositionFactory.PlayEntrance(Repeater, 0, 80, 0);
 
                 // ItemsRepeater is a bit rubbish, needs to be nudged back into life.
                 // If we scroll straight to zero, we can often end up with a blank screen
@@ -128,7 +127,7 @@ namespace CharacterMap.Views
                 else
                 {
                     DetailsFontTitle.Text = "";
-                    VisualStateManager.GoToState(this, DetailsState.Name, true);
+                    GoToState(DetailsState.Name);
                 }
             }
             else if (e.PropertyName == nameof(ViewModel.Text))
@@ -142,66 +141,7 @@ namespace CharacterMap.Views
             // Repeater metrics may be out of date. Update.
             UpdateText(ViewModel.Text, Repeater.Realize().ItemsPanelRoot);
             UpdateFontSize(FontSizeSlider.Value, Repeater.Realize().ItemsPanelRoot);
-            VisualStateManager.GoToState(this, NormalState.Name, true);
-        }
-
-        private void MenuFlyout_Opening(object sender, object e)
-        {
-            // Handles forming the flyout when opening the main FontFilter 
-            // drop down menu.
-            if (sender is MenuFlyout menu)
-            {
-                // Reset to default menu
-                while (menu.Items.Count > 8)
-                    menu.Items.RemoveAt(8);
-
-                // force menu width to match the source button
-                foreach (var sep in menu.Items.OfType<MenuFlyoutSeparator>())
-                    sep.MinWidth = FontListFilter.ActualWidth;
-
-                // add users collections 
-                if (ViewModel.FontCollections.Items.Count > 0)
-                {
-                    menu.Items.Add(new MenuFlyoutSeparator());
-                    foreach (var item in ViewModel.FontCollections.Items)
-                    {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name };
-                        m.Click += (s, a) =>
-                        {
-                            if (m.DataContext is UserFontCollection u)
-                                ViewModel.SelectedCollection = u;
-                        };
-                        menu.Items.Add(m);
-                    }
-                }
-
-                VariableOption.SetVisible(FontFinder.HasVariableFonts);
-
-                if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
-                {
-                    FontSourceSeperator.Visibility = CloudFontsOption.Visibility = AppxOption.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    FontSourceSeperator.Visibility = Visibility.Visible;
-                    CloudFontsOption.SetVisible(FontFinder.HasRemoteFonts);
-                    AppxOption.SetVisible(FontFinder.HasAppxFonts);
-                }
-
-                static void SetCommand(MenuFlyoutItemBase b, ICommand c)
-                {
-                    if (b is MenuFlyoutSubItem i)
-                    {
-                        foreach (var child in i.Items)
-                            SetCommand(child, c);
-                    }
-                    else if (b is MenuFlyoutItem m)
-                        m.Command = c;
-                }
-
-                foreach (var item in menu.Items)
-                    SetCommand(item, ViewModel.FilterCommand);
-            }
+            GoToState(NormalState.Name);
         }
 
         private void Button_PointerPressed(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
@@ -305,10 +245,13 @@ namespace CharacterMap.Views
         {
             if (sender is Button b && b.Content is InstalledFont font && Repeater is ListViewBase list)
             {
-                var item = list.ContainerFromItem(font);
-                var title = item.GetFirstDescendantOfType<TextBlock>();
-                ConnectedAnimationService.GetForCurrentView().DefaultDuration = TimeSpan.FromSeconds(0.7);
-                ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Title", title);
+                if (ResourceHelper.AllowAnimation)
+                {
+                    var item = list.ContainerFromItem(font);
+                    var title = item.GetFirstDescendantOfType<TextBlock>();
+                    ConnectedAnimationService.GetForCurrentView().DefaultDuration = TimeSpan.FromSeconds(0.7);
+                    ConnectedAnimationService.GetForCurrentView().PrepareToAnimate("Title", title);
+                }
 
                 ViewModel.SelectedFont = font;
             }
@@ -316,6 +259,15 @@ namespace CharacterMap.Views
             {
                 ContextFlyout.SetItemsDataContext(o);
                 ContextFlyout.ShowAt(bn);
+            }
+        }
+
+        private void Repeater_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            if (sender is GridView g && e.ClickedItem is CharacterRenderingOptions o && ViewModel.IsQuickCompare)
+            {
+                ContextFlyout.SetItemsDataContext(o);
+                ContextFlyout.ShowAt(g.ContainerFromItem(e.ClickedItem) as FrameworkElement);
             }
         }
 
@@ -333,8 +285,8 @@ namespace CharacterMap.Views
                     MainContextFlyout.Items.Remove(MainContextFlyout.Items[^1]);
 
                 // 2. Rebuild with the correct collection information
-                MainContextFlyout.Items.Add(new MenuFlyoutSeparator());
-                FlyoutHelper.AddCollectionItems(MainContextFlyout, font);
+                MainContextFlyout.AddSeparator();
+                FlyoutHelper.AddCollectionItems(MainContextFlyout, font, null);
                 FlyoutHelper.TryAddRemoveFromCollection(
                     MainContextFlyout, font, ViewModel.SelectedCollection, ViewModel.FontListFilter);
 
@@ -376,18 +328,23 @@ namespace CharacterMap.Views
 
         private void GridView_Click(object sender, RoutedEventArgs e)
         {
-            VisualStateManager.GoToState(this, GridLayoutState.Name, true);
+            GoToState(GridLayoutState.Name);
         }
 
         private void ListView_Click(object sender, RoutedEventArgs e)
         {
-            VisualStateManager.GoToState(this, StackLayoutState.Name, true);
+            GoToState(StackLayoutState.Name);
         }
 
         private  void ViewStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
         {
             if (e.NewState == DetailsState)
             {
+                DetailsFontTitle.Text = ViewModel.SelectedFont.Name;
+
+                if (ResourceHelper.AllowAnimation is false)
+                    return;
+
                 var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("Title");
                 //ani.Configuration = new BasicConnectedAnimationConfiguration();
                 //var c = this.GetElementVisual().Compositor;
@@ -412,7 +369,6 @@ namespace CharacterMap.Views
                 //ani.SetAnimationComponent(ConnectedAnimationComponent.Scale, offset);
                 //ani.SetAnimationComponent(ConnectedAnimationComponent.CrossFade, offset);
 
-                DetailsFontTitle.Text = ViewModel.SelectedFont.Name;
                 ani.TryStart(DetailsTitleContainer);//, new List<UIElement> { DetailsViewContent });
             }
         }
@@ -435,7 +391,7 @@ namespace CharacterMap.Views
                 SetFontSize(g, FontSizeSlider.Value);
             }
 
-            if (ResourceHelper.AppSettings.AllowExpensiveAnimations)
+            if (ResourceHelper.AllowExpensiveAnimation)
             {
                 if (args.InRecycleQueue)
                 {

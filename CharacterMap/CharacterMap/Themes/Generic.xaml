@@ -2,6 +2,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
+    xmlns:core="using:CharacterMap.Core"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml">
@@ -111,7 +112,8 @@
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}">
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="GridSplitterStates">
                                 <VisualState x:Name="Normal" />
@@ -166,42 +168,54 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="State">
                                 <VisualState x:Name="Collapsed">
-                                    <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                            <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </DoubleAnimationUsingKeyFrames>
-
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                            <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                        </DoubleAnimationUsingKeyFrames>
-
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
-                                            <DiscreteObjectKeyFrame KeyTime="0:0:0.15" Value="Collapsed" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Visibility" Value="Collapsed" />
+                                    </VisualState.Setters>
                                 </VisualState>
-
                                 <VisualState x:Name="Visible">
-                                    <Storyboard>
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Opacity)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="0" />
-                                            <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.3" Value="1" />
-                                        </DoubleAnimationUsingKeyFrames>
-
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                            <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
-                                            <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.Opacity" Value="1" />
+                                    </VisualState.Setters>
                                 </VisualState>
+
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="*" To="Collapsed">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <SplineDoubleKeyFrame KeySpline="0.7, 0, 1, 0.5" KeyTime="0:0:0.225" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Visibility)">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                                <DiscreteObjectKeyFrame KeyTime="0:0:0.15" Value="Collapsed" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="*" To="Visible">
+                                        <Storyboard>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.Opacity)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.3" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                                                <SplineDoubleKeyFrame KeySpline="0.1, 0.9, 0.2, 1" KeyTime="0:0:0.5" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
@@ -255,7 +269,6 @@
             </Setter.Value>
         </Setter>
     </Style>
-
 
     <Style TargetType="controls:LabelButton">
         <Setter Property="VerticalAlignment" Value="Top" />
@@ -324,7 +337,6 @@
 
     </Style>
 
-
     <Style TargetType="controls:ModalPagePresenter">
         <Setter Property="ContentBackground" Value="{ThemeResource DefaultPageBackgroundBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
@@ -337,6 +349,7 @@
                     <Grid
                         x:Name="Root"
                         Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource RootBackgroundTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
 
@@ -381,6 +394,7 @@
                                 Width="45"
                                 Height="45"
                                 HorizontalAlignment="Right"
+                                h:FluentAnimation.PointerDownScale="0.8"
                                 Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                                 Visibility="{TemplateBinding CloseButtonVisibility}">
                                 <FontIcon Glyph="&#xE10A;" />
@@ -431,6 +445,177 @@
                         <ItemsPresenter />
                         <Border Style="{StaticResource SpacerStyle}" />
                     </StackPanel>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:ButtonGroup">
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <Grid />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ButtonGroup">
+                    <ItemsPresenter />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:CategoryFlyout">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CategoryFlyout">
+                    <Grid Margin="0 12">
+                        <Grid.Resources>
+                            <Style x:Key="HeaderStyle" TargetType="TextBlock">
+                                <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+                                <Setter Property="FontWeight" Value="Bold" />
+                                <Setter Property="Margin" Value="0 20 0 4" />
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <StackPanel>
+                            <TextBlock
+                                x:Uid="UnicodeFiltersTitle"
+                                Margin="12 12 0 6"
+                                FontWeight="Bold"
+                                Opacity="0.5" />
+
+                            <Grid>
+                                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                    <AppBarButton
+                                        Name="AppBtnSelectAll"
+                                        x:Uid="AppBtnSelectAll"
+                                        Style="{StaticResource LabelAppBarButtonStyle}">
+                                        <AppBarButton.Icon>
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE14E;" />
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                    <AppBarButton
+                                        Name="AppBtnClear"
+                                        x:Uid="AppBtnClear"
+                                        Style="{StaticResource LabelAppBarButtonStyle}">
+                                        <AppBarButton.Icon>
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
+                                        </AppBarButton.Icon>
+                                    </AppBarButton>
+                                </StackPanel>
+                                <AppBarButton
+                                    Name="AppBtnReset"
+                                    x:Uid="AppBtnReset"
+                                    HorizontalAlignment="Right"
+                                    Style="{StaticResource LabelAppBarButtonStyle}">
+                                    <AppBarButton.Icon>
+                                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE149;" />
+                                    </AppBarButton.Icon>
+                                </AppBarButton>
+                            </Grid>
+                        </StackPanel>
+
+                        <GridView
+                            x:Name="CategoryList"
+                            Grid.Row="1"
+                            Width="440"
+                            MaxHeight="500"
+                            Padding="12 12 0 48"
+                            ItemContainerTransitions="{StaticResource NoTransitions}"
+                            SelectionMode="None">
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox
+                                        Width="200"
+                                        Content="{Binding DisplayName, Mode=OneTime}"
+                                        IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                        Style="{StaticResource DefaultThemeCheckBoxStyle}" />
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </GridView>
+
+                        <Button
+                            Name="BtnApply"
+                            x:Uid="BtnApply"
+                            Grid.Row="2"
+                            Width="200"
+                            Margin="12 12 12 0"
+                            HorizontalAlignment="Right"
+                            Style="{StaticResource DefaultThemeButtonStyle}" />
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:ExtendedSplitView">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="OpenPaneLength" Value="{ThemeResource SplitViewOpenPaneThemeLength}" />
+        <Setter Property="CompactPaneLength" Value="{ThemeResource SplitViewCompactPaneThemeLength}" />
+        <Setter Property="PaneBackground" Value="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="SplitView">
+                    <Grid Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DisplayModeStates">
+                                <VisualState x:Name="Closed" />
+                                <VisualState x:Name="OpenOverlayLeft">
+                                    <VisualState.Setters>
+                                        <Setter Target="PaneRoot.(Grid.ColumnSpan)" Value="2" />
+                                        <Setter Target="PaneRoot.Visibility" Value="Visible" />
+                                        <Setter Target="LightDismissLayer.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="OpenInlineLeft">
+                                    <VisualState.Setters>
+                                        <Setter Target="PaneRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--  Content Area  -->
+                        <Grid x:Name="ContentRoot" Grid.Column="1">
+                            <Border Child="{TemplateBinding Content}" />
+                            <Rectangle
+                                x:Name="LightDismissLayer"
+                                x:DeferLoadStrategy="Lazy"
+                                Fill="Transparent"
+                                Visibility="Collapsed" />
+                        </Grid>
+
+                        <!--  Pane Content Area  -->
+                        <Border
+                            x:Name="PaneRoot"
+                            Width="{TemplateBinding OpenPaneLength}"
+                            HorizontalAlignment="Left"
+                            Background="{TemplateBinding PaneBackground}"
+                            Child="{TemplateBinding Pane}"
+                            Visibility="Collapsed" />
+                    </Grid>
+
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

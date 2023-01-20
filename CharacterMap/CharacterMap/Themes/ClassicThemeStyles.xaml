@@ -37,8 +37,10 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <x:Boolean x:Key="SupportsFluentAnimation">False</x:Boolean>
     <x:Boolean x:Key="SupportsDarkTheme">False</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
+    <x:Boolean x:Key="SupportsTabs">False</x:Boolean>
     <CharacterCasing x:Key="TitleCasing">Normal</CharacterCasing>
 
     <!--  Override system generated accent colors  -->
@@ -147,6 +149,7 @@
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="Foreground" Value="{ThemeResource ControlHighlightContrastForegroundBrush}" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Tag" Value="Character Map UWP" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:XamlTitleBar">
@@ -188,7 +191,7 @@
                                 Foreground="{ThemeResource ControlHighlightContrastForegroundBrush}"
                                 IsHitTestVisible="False"
                                 Style="{StaticResource BaseTextStyle}"
-                                Text="Character Map UWP"
+                                Text="{TemplateBinding Tag}"
                                 TextLineBounds="Tight" />
 
                         </Grid>
@@ -382,11 +385,22 @@
         <Setter Property="BorderBrush" Value="{StaticResource ControlHighlightBackgroundBrush}" />
     </Style>
 
+    <Style x:Key="ThemeFlyoutStyle" BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+        <Setter Property="FontSize" Value="{StaticResource ContentControlThemeFontSize}" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Background" Value="{ThemeResource ControlBackgroundBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource ControlHighlightBackgroundBrush}" />
+    </Style>
+
     <Style x:Key="DefaultFlyoutStyle" BasedOn="{StaticResource FontListFlyoutStyle}" TargetType="MenuFlyoutPresenter">
         <Setter Property="CornerRadius" Value="0" />
     </Style>
 
+    <Style x:Key="ThemeMenuFlyoutItemStyle" TargetType="MenuFlyoutItem" />
 
+    <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox" />
 
 
     <!--  BUTTONS  -->
@@ -959,6 +973,7 @@
 
     <Style x:Key="DefaultSettingsPresenterStyle" TargetType="controls:SettingsPresenter">
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 12 0 0" />
@@ -975,15 +990,24 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
+                            <VisualStateGroup x:Name="ItemsGroup">
+                                <VisualState x:Name="NoItemsState" />
+                                <VisualState x:Name="HasItemsState">
+                                    <VisualState.Setters>
+                                        <Setter Target="ItemsRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
 
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <Border
-                            Grid.RowSpan="2"
+                            Grid.RowSpan="3"
                             Margin="4 8 4 4"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}" />
@@ -991,9 +1015,13 @@
                         <Border
                             Margin="12 0"
                             Padding="4 0"
-                            HorizontalAlignment="Left"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                             Background="{ThemeResource DefaultPageBackgroundBrush}">
-                            <TextBlock FontSize="{ThemeResource ControlContentThemeFontSize}" Text="{TemplateBinding Title}" />
+                            <ContentPresenter
+                                HorizontalAlignment="Stretch"
+                                Content="{TemplateBinding Title}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{ThemeResource ControlContentThemeFontSize}" />
                         </Border>
 
                         <RelativePanel Grid.Row="1" Margin="16 8 16 16">
@@ -1012,10 +1040,26 @@
                                 RelativePanel.Below="Description" />
                         </RelativePanel>
 
+                        <Border
+                            x:Name="ItemsRoot"
+                            x:Load="False"
+                            Grid.Row="2"
+                            core:Properties.ClipToBounds="True"
+                            Visibility="Collapsed">
+                            <Border>
+                                <ItemsPresenter Margin="0 -8 0 0" />
+                            </Border>
+                        </Border>
+
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+
+    <Style x:Key="SubItemSettingsPresenterStyle" BasedOn="{StaticResource DefaultSettingsPresenterStyle}" TargetType="controls:SettingsPresenter">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="BorderBrush" Value="Transparent" />
     </Style>
 
 
@@ -1089,7 +1133,7 @@
     <Style TargetType="controls:ModalPagePresenter">
         <Setter Property="ContentBackground" Value="{ThemeResource DefaultPageBackgroundBrush}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
-        <Setter Property="TitleBackgroundBrush" Value="{ThemeResource DefaultHostBrush}" />
+        <Setter Property="TitleBackgroundBrush" Value="Transparent" />
         <Setter Property="TitleBarHeight" Value="32" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
@@ -1097,7 +1141,7 @@
                 <ControlTemplate TargetType="controls:ModalPagePresenter">
                     <Grid
                         x:Name="Root"
-                        Background="{TemplateBinding ContentBackground}"
+                        Background="{TemplateBinding Background}"
                         BackgroundTransition="{StaticResource RootBackgroundTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
@@ -1108,7 +1152,13 @@
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
-                        <Border x:Name="TitleBackground" Background="Transparent" />
+                        <Border x:Name="TitleBackground" Background="{TemplateBinding TitleBackgroundBrush}" />
+
+                        <Border
+                            Grid.Row="1"
+                            Grid.RowSpan="2"
+                            Background="{TemplateBinding ContentBackground}"
+                            BackgroundTransition="{StaticResource RootBackgroundTransition}" />
 
                         <ContentPresenter
                             x:Name="TitleBarPresenter"

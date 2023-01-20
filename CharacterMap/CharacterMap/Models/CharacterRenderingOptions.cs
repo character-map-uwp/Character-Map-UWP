@@ -37,11 +37,16 @@ namespace CharacterMap.Models
 
         public static CharacterRenderingOptions CreateDefault(InstalledFont font)
         {
+            return CreateDefault(font.DefaultVariant);
+        }
+
+        public static CharacterRenderingOptions CreateDefault(FontVariant variant)
+        {
             CharacterRenderingOptions options = new(
-                font.DefaultVariant,
-                new List<TypographyFeatureInfo> { TypographyFeatureInfo.None },
+                variant,
+                new() { TypographyFeatureInfo.None },
                 64,
-                null, 
+                null,
                 null);
 
             return options;

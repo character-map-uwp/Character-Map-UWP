@@ -8,6 +8,8 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,6 +29,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
@@ -41,6 +44,8 @@ namespace CharacterMap.Views
         private UISettings _uiSettings { get; }
 
         private ICommand FilterCommand { get; }
+
+        private ICommand CollectionSelectedCommand { get; }
 
         public MainPage() : this(null) { }
 
@@ -59,6 +64,15 @@ namespace CharacterMap.Views
                 ViewModel = new MainViewModel(args);
             }
 
+            if (DesignMode)
+                return;
+
+            // This is requires to fix a bug where characters don't show up
+            // until the grid is resized on themes that don't support tabs.
+            // Not sure *why*, but this works as a fix for now.
+            if (ResourceHelper.SupportsTabs is false)
+                FontMap.Visibility = Visibility.Collapsed;
+
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
 
             Register<CollectionsUpdatedMessage>(OnCollectionsUpdated);
@@ -73,7 +87,7 @@ namespace CharacterMap.Views
                 if (Dispatcher.HasThreadAccess)
                 {
                     PrintView.Show(this);
-                    
+
                     // NB: Printing works by using an off-screen canvas inside
                     //     the FontMapView. OnModelOpened hides this canvas
                     //     preventing printing from working. So in the case of 
@@ -91,12 +105,25 @@ namespace CharacterMap.Views
             });
 
             this.SizeChanged += MainPage_SizeChanged;
-
             _uiSettings = new UISettings();
-            _uiSettings.ColorValuesChanged += OnColorValuesChanged;
+
+            if (ViewModel.IsSecondaryView is false)
+            {
+                _uiSettings.ColorValuesChanged += OnColorValuesChanged;
+                _uiSettings.AnimationsEnabledChanged += OnAnimationsEnabledChanged;
+            };
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
+            CollectionSelectedCommand = new RelayCommand<object>(e =>
+            {
+                if (!FontsSemanticZoom.IsZoomedInViewActive)
+                    FontsSemanticZoom.IsZoomedInViewActive = true;
+
+                ViewModel.SelectedCollection = e as UserFontCollection;
+            });
         }
+
+        bool _disableMapChange = true;
 
         private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -106,8 +133,7 @@ namespace CharacterMap.Views
                     if (ViewModel.IsLoadingFonts)
                         return;
 
-                    if (ViewModel.Settings.UseSelectionAnimations 
-                        && !ViewModel.IsSearchResults)
+                    if (ViewModel.AllowAnimation && !ViewModel.IsSearchResults)
                     {
                         CompositionFactory.PlayEntrance(LstFontFamily, 66, 100);
                         CompositionFactory.PlayEntrance(GroupLabel, 0, 0, 80);
@@ -119,8 +145,30 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.SelectedFont):
                     if (ViewModel.SelectedFont != null)
                     {
-                        LstFontFamily.SelectedItem = ViewModel.SelectedFont;
-                        FontMap.PlayFontChanged();
+                        SetSelectedItem(ViewModel.SelectedFont);
+                        if (ViewModel.TabIndex >= 0 && !ViewModel.IsCreating)
+                        {
+                            ViewModel.Fonts[ViewModel.TabIndex].SetFont(ViewModel.SelectedFont);
+                            FontMap.Font = ViewModel.Fonts[ViewModel.TabIndex];
+
+                            if (_disableMapChange)
+                                _disableMapChange = false;
+                            else
+                                FontMap.PlayFontChanged();
+                        }
+                    }
+                    break;
+
+                case nameof(ViewModel.TabIndex):
+                    if (ViewModel.TabIndex > -1)
+                    {
+                        if (ViewModel.Fonts[ViewModel.TabIndex].Font is InstalledFont font 
+                            && LstFontFamily.SelectedItem as InstalledFont != font)
+                        {
+                            _disableMapChange = true;
+                            SetSelectedItem(font);
+                            StartScrollSelectedIntoView(); // Scrolls font into view
+                        }
                     }
                     break;
 
@@ -135,6 +183,10 @@ namespace CharacterMap.Views
                 case nameof(ViewModel.IsLoadingFonts):
                 case nameof(ViewModel.IsLoadingFontsFailed):
                     UpdateLoadingStates();
+                    break;
+
+                case nameof(ViewModel.AllowAnimation):
+                    UpdateAnimation();
                     break;
             }
         }
@@ -169,6 +221,7 @@ namespace CharacterMap.Views
                 // For Secondary Views, cleanup EVERYTHING to allow the view to get
                 // dropped from memory
                 _uiSettings.ColorValuesChanged -= OnColorValuesChanged;
+                _uiSettings.AnimationsEnabledChanged -= OnAnimationsEnabledChanged;
                 Messenger.UnregisterAll(this);
                 this.Bindings.StopTracking();
                 ViewModel.PropertyChanged -= ViewModel_PropertyChanged;
@@ -188,18 +241,33 @@ namespace CharacterMap.Views
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (e.NewSize.Width < 900)
-            {
-                VisualStateManager.GoToState(this, nameof(CompactViewState), true);
-            }
+                GoToState(nameof(CompactViewState));
             else if (ViewStates.CurrentState == CompactViewState)
-            {
-                VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
-            }
+                GoToState(nameof(DefaultViewState));
+
+            if (ApplicationView.GetForCurrentView().IsFullScreenMode)
+                GoToState(nameof(FullscreenState));
+            else
+                GoToState(nameof(WindowState));
         }
 
         private void OnColorValuesChanged(UISettings settings, object e)
         {
-            RunOnUI(() => Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme))));
+            RunOnUI(() =>
+            {
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UserRequestedTheme)));
+                ResourceHelper.AppSettings.UpdateTheme();
+            });
+        }
+
+        private void OnAnimationsEnabledChanged(UISettings sender, UISettingsAnimationsEnabledChangedEventArgs args)
+        {
+            RunOnUI(() =>
+            {
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseSelectionAnimations)));
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.AllowExpensiveAnimations)));
+                Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseFluentPointerOverAnimations)));
+            });
         }
 
         private void UpdateLoadingStates()
@@ -207,25 +275,25 @@ namespace CharacterMap.Views
             TitleBar.TryUpdateMetrics();
 
             if (ViewModel.IsLoadingFonts && !ViewModel.IsLoadingFontsFailed)
-                VisualStateManager.GoToState(this, nameof(FontsLoadingState), true);
+                GoToState(nameof(FontsLoadingState));
             else if (ViewModel.IsLoadingFontsFailed)
-                VisualStateManager.GoToState(this, nameof(FontsFailedState), true);
+                GoToState(nameof(FontsFailedState));
             else
             {
-                VisualStateManager.GoToState(this, nameof(FontsLoadedState), false);
-                if (ViewModel.Settings.UseSelectionAnimations)
+                GoToState(nameof(FontsLoadedState), false);
+                if (ResourceHelper.AllowAnimation)
                 {
                     CompositionFactory.StartStartUpAnimation(
-                        new List<FrameworkElement>
+                        new()
                         {
                             OpenFontPaneButton,
                             FontListFilter,
-                            OpenFontButton,
+                            TitleButtonsPanel,
                             FontMap.FontTitleBlock,
                             FontMap.SearchBox,
                             BtnSettings
                         },
-                        new List<UIElement>
+                        new()
                         {
                             FontListSearchBox,
                             FontsSemanticZoom,
@@ -240,36 +308,86 @@ namespace CharacterMap.Views
 
         private void ViewModel_FontListCreated(object sender, EventArgs e)
         {
+            StartScrollSelectedIntoView();
+        }
+
+        void StartScrollSelectedIntoView()
+        {
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
                 await Task.Delay(50);
-                LstFontFamily.ScrollIntoView(
-                    LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+                if (LstFontFamily.SelectedItem is not null)
+                {
+                    LstFontFamily.ScrollIntoView(
+                        LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+                }
             });
         }
 
         private void TogglePane_Click(object sender, RoutedEventArgs e)
         {
             if (SplitView.DisplayMode == SplitViewDisplayMode.Inline)
-            {
-                VisualStateManager.GoToState(this, nameof(CollapsedViewState), true);
-            }
+                GoToState(nameof(CollapsedViewState));
             else
-            {
-                VisualStateManager.GoToState(this, nameof(DefaultViewState), true);
-            }
+                GoToState(nameof(DefaultViewState));
+        }
+
+        void ShowPrint()
+        {
+            DismissMenu();
+            FlyoutHelper.PrintRequested();
+        }
+
+        void SetSelectedItem(InstalledFont font)
+        {
+            LstFontFamily.SelectedItem = font;
+            // Required for tabs with fonts not in FontList
+            if (LstFontFamily.SelectedItem as InstalledFont != font)
+                LstFontFamily.SelectedItem = null;
+        }
+
+        private void FontMapContainer_AddTabButtonClick(TabView sender, object args)
+        {
+            ViewModel.Fonts.Add(new(ViewModel.SelectedFont));
+            FontsTabBar.SelectedIndex = ViewModel.Fonts.Count - 1;
+        }
+
+        private void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+        {
+            ViewModel.TryCloseTab(sender.TabItems.IndexOf(args.Item));
+        }
+
+        private void TabViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            if (sender is FrameworkElement f && f.DataContext is FontItem item)
+                ViewModel.TryCloseTab(FontsTabBar.TabItems.IndexOf(item));
         }
 
         private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
         {
+            ShowSettings();
+        }
+
+        void ShowAbout() => ShowSettings(8);
+
+        void ShowSettings(int idx = 0)
+        {
             // Zune theme shows settings button early right now, so to avoid
-            // crashing leave early
+            // crashing do nothing until fonts are loaded
             if (ViewModel.IsLoadingFonts)
-                return; 
+                return;
+
+            DismissMenu();
 
             this.FindName(nameof(SettingsView));
-            SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont);
+            SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont, idx);
             OnModalOpened();
+        }
+
+        private void FontsTabBar_TabDroppedOutside(TabView sender, TabViewTabDroppedOutsideEventArgs args)
+        {
+            if (args.Item is FontItem font)
+                _ = FontMapView.CreateNewViewForFontAsync(font.Font);
         }
 
         async void OnModalOpened(bool hideFontMap = true)
@@ -286,14 +404,28 @@ namespace CharacterMap.Views
                 if (AreModalsOpen())
                     FontMap.Visibility = Visibility.Collapsed;
             }
+
+            UpdateModalStates(AreModalsOpen());
         }
 
         void OnModalClosed()
         {
             if (AreModalsOpen())
+            {
                 FontMap.Visibility = Visibility.Collapsed;
+                UpdateModalStates(true);
+            }
             else
+            {
                 FontMap.Visibility = Visibility.Visible;
+                UpdateModalStates(false);
+            }
+        }
+
+        void UpdateModalStates(bool open)
+        {
+            string state = open ? nameof(ModalOpenState) : nameof(NoModalOpenState);
+            GoToState(state);
         }
 
 
@@ -339,9 +471,73 @@ namespace CharacterMap.Views
             }
         }
 
+        private void FontsTabBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            // 1. Ensure animations are correct
+            UpdateAnimation();
+
+            // 2. Create the popup Menu
+            if (sender is FrameworkElement f
+                && f.GetDescendantsOfType<Button>().FirstOrDefault(b => b.Name == "CollectionButton") is Button b
+                && b.Flyout is MenuFlyout menu
+                && menu.Items.FirstOrDefault() is MenuFlyoutItem item)
+            {
+                item.Click -= Item_Click;
+                item.Click += Item_Click;
+
+                menu.Opening -= Menu_Opening;
+                menu.Opening += Menu_Opening;
+            }
+
+
+
+            /* Helper Methods */
+
+            List<InstalledFont> GetActiveFonts() => ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Font).Distinct().ToList();
+            List<FontVariant> GetActiveVariants() => ViewModel.Fonts.Where(f => !f.IsCompact).Select(f => f.Selected).Distinct().ToList();
+
+            void Menu_Opening(object sender, object e)
+            {
+                // Build Menu
+                if (sender is MenuFlyout menu)
+                {
+                    if (ViewModel.Fonts.All(f => f.IsCompact))
+                    {
+                        // If all tabs are collapsed there are no active fonts so these 
+                        // buttons no nothing
+                        foreach (var item in menu.Items)
+                            item.IsEnabled = false;
+                    }
+                    else
+                    {
+                        foreach (var item in menu.Items)
+                            item.IsEnabled = true;
+
+                        if (menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault() is MenuFlyoutSubItem c)
+                        {
+                            // Rebuild the collections menu
+                            menu.Items.Remove(c);
+                            FlyoutHelper.AddCollectionItems(menu, null, GetActiveFonts(), "AddActiveToCollectionItem/Text");
+                        }
+                    }
+                }
+            }
+
+            void Item_Click(object sender, RoutedEventArgs e)
+            {
+                ShowCompare(GetActiveVariants());
+            }
+        }
+
+        void ShowCompare(List<FontVariant> variants)
+        {
+            _ = QuickCompareView.CreateWindowAsync(new(false, new(variants)));
+        }
+
         private void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.FirstOrDefault() is InstalledFont font)
+            if (ViewModel.IsLoadingFonts is false && 
+                e.AddedItems.FirstOrDefault() is InstalledFont font)
             {
                 ViewModel.SelectedFont = font;
             }
@@ -349,7 +545,7 @@ namespace CharacterMap.Views
 
         private void OpenFontPaneButton_Click(object sender, RoutedEventArgs e)
         {
-            SplitView.IsPaneOpen = true;
+            SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
         }
 
         void OnCollectionsUpdated(CollectionsUpdatedMessage msg)
@@ -394,93 +590,36 @@ namespace CharacterMap.Views
             }
         }
 
-        private void MenuFlyout_Opening(object sender, object e)
-        {
-            // Handles forming the flyout when opening the main FontFilter 
-            // drop down menu.
-            if (sender is MenuFlyout menu)
-            {
-                // Reset to default menu
-                while (menu.Items.Count > 8)
-                    menu.Items.RemoveAt(8);
-
-                // force menu width to match the source button
-                foreach (var sep in menu.Items.OfType<MenuFlyoutSeparator>())
-                    sep.MinWidth = FontListFilter.ActualWidth;
-
-                // add users collections 
-                if (ViewModel.FontCollections.Items.Count > 0)
-                {
-                    menu.Items.Add(new MenuFlyoutSeparator());
-                    foreach (var item in ViewModel.FontCollections.Items)
-                    {
-                        var m = new MenuFlyoutItem { DataContext = item, Text = item.Name, FontSize = 14 };
-                        m.Click += (s, a) =>
-                        {
-                            if (m.DataContext is UserFontCollection u)
-                            {
-                                if (!FontsSemanticZoom.IsZoomedInViewActive)
-                                    FontsSemanticZoom.IsZoomedInViewActive = true;
-
-                                ViewModel.SelectedCollection = u;
-                            }
-                        };
-                        menu.Items.Add(m);
-                    }
-                }
-
-                VariableOption.SetVisible(FontFinder.HasVariableFonts);
-
-                if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
-                {
-                    FontSourceSeperator.Visibility = CloudFontsOption.Visibility = AppxOption.Visibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    FontSourceSeperator.Visibility = Visibility.Visible;
-                    CloudFontsOption.SetVisible(FontFinder.HasRemoteFonts);
-                    AppxOption.SetVisible(FontFinder.HasAppxFonts);
-                }
-
-                static void SetCommand(
-                    MenuFlyoutItemBase b, ICommand c, double fontSize, double height)
-                {
-                    b.FontSize = fontSize;
-                    if (b is not MenuFlyoutSeparator && height > 0)
-                        b.Height = 40;
-
-                    if (b is MenuFlyoutSubItem i)
-                    {
-                        foreach (var child in i.Items)
-                            SetCommand(child, c, fontSize, height);
-                    }
-                    else if (b is MenuFlyoutItem m)
-                    {
-                        m.Command = c;
-                    }
-                }
-
-                var size = ResourceHelper.Get<double>("FontListFlyoutFontSize");
-                var height = ResourceHelper.Get<double>("FontListFlyoutHeight");
-                foreach (var item in menu.Items)
-                    SetCommand(item, FilterCommand, size, height);
-            }
-        }
-
         private void OnFontPreviewUpdated()
         {
             if (ViewModel.InitialLoad.IsCompleted)
             {
                 _fontListDebouncer.Debounce(16, () =>
                 {
-                    ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+                    RunOnUI(() =>
+                    {
+                        // Need the fonts to update the fonts used to show the names
+                        // in the font list which are only evaluated on creating the 
+                        // ItemTemplate, so make a new list;
+                        ViewModel.RefreshFontList(ViewModel.SelectedCollection);
+
+                        // Update tabs font previews
+                        ViewModel.NotifyTabs();
+                    });
                 });
             }
         }
 
         private void FontCompareButton_Click(object sender, RoutedEventArgs e)
         {
+            DismissMenu();
+
             _ = QuickCompareView.CreateWindowAsync(new(false, ViewModel.Folder));
+        }
+
+        private void CollectionCompareButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = QuickCompareView.CreateWindowAsync(new(false) { SelectedCollection = ViewModel.SelectedCollection });
         }
 
         private void LstFontFamily_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -490,6 +629,14 @@ namespace CharacterMap.Views
 
             args.ItemContainer.ContextRequested -= ItemContainer_ContextRequested;
             args.ItemContainer.ContextRequested += ItemContainer_ContextRequested;
+
+            if (ResourceHelper.SupportFluentAnimation)
+            {
+                Properties.SetClickAnimationOffset(args.ItemContainer, 0.95);
+                Properties.SetClickAnimation(args.ItemContainer, "TemplateContent|Scale");
+                Properties.SetPointerPressedAnimation(args.ItemContainer, "TemplateContent|Scale");
+                Properties.SetPointerOverAnimation(args.ItemContainer, "TemplateContent");
+            }
         }
 
         private void ItemContainer_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -500,7 +647,17 @@ namespace CharacterMap.Views
                 && sender is ListViewItem f
                 && f.Content is InstalledFont font)
             {
-                _ = FontMapView.CreateNewViewForFontAsync(font);
+                if (ViewModel.Settings.DisableTabs 
+                    || ResourceHelper.SupportsTabs is false
+                    || Window.Current.CoreWindow.GetKeyState(VirtualKey.Control).HasFlag(CoreVirtualKeyStates.Down))
+                    _ = FontMapView.CreateNewViewForFontAsync(font);
+                else
+                {
+                    ViewModel.Fonts.Insert(ViewModel.TabIndex + 1, new(font));
+
+                    if (Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift).HasFlag(CoreVirtualKeyStates.Down))
+                        ViewModel.TabIndex += 1;
+                }
             }
         }
 
@@ -526,11 +683,34 @@ namespace CharacterMap.Views
             }
         }
 
+        private void TabViewItemContext_Opening(object sender, object e)
+        {
+            if (sender is MenuFlyout menu && menu.Target is TabViewItem t && t.DataContext is FontItem item)
+            {
+                menu.AreOpenCloseAnimationsEnabled = ViewModel.AllowAnimation;
+                FlyoutHelper.CreateMenu(
+                    menu,
+                    item.Font,
+                    CharacterRenderingOptions.CreateDefault(item.Selected),
+                    this.Tag as FrameworkElement,
+                    new()
+                    {
+                        ShowAdvanced = true,
+                        Folder = ViewModel.Folder,
+                        IsTabContext = true,
+                        PreviewText = FontMap.ViewModel.Sequence
+                    });
+            }
+
+        }
+
         private void OpenFolder()
         {
+            DismissMenu();
             _ = (new OpenFolderDialog()).ShowAsync();
         }
 
+        void DismissMenu() => AppMenuFlyout.Hide();
 
 
 
@@ -572,7 +752,8 @@ namespace CharacterMap.Views
 
         private void Grid_DragOver(object sender, DragEventArgs e)
         {
-            e.AcceptedOperation = DataPackageOperation.Copy;
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+                e.AcceptedOperation = DataPackageOperation.Copy;
         }
 
         private async void Grid_Drop(object sender, DragEventArgs e)
@@ -588,6 +769,7 @@ namespace CharacterMap.Views
                         if (result.Imported.Count > 0)
                         {
                             ViewModel.RefreshFontList();
+                            ViewModel.RestoreOpenFonts();
                             ViewModel.TrySetSelectionFromImport(result);
                         }
 
@@ -603,6 +785,8 @@ namespace CharacterMap.Views
 
         private async void OpenFont()
         {
+            DismissMenu();
+
             var picker = new FileOpenPicker();
             foreach (var format in FontFinder.ImportFormats)
                 picker.FileTypeFilter.Add(format);
@@ -722,8 +906,7 @@ namespace CharacterMap.Views
             if (msg.Data is AddToCollectionResult result 
                 && result.Success 
                 && result.Collection is not null
-                && result.Collection == ViewModel.SelectedCollection
-                && Dispatcher.HasThreadAccess == false)
+                && result.Collection == ViewModel.SelectedCollection)
             {
                 // If we don't have thread access, it means another window has added an item to
                 // the collection we're currently viewing, and we should refresh our view
@@ -735,7 +918,7 @@ namespace CharacterMap.Views
 
 
 
-        /* Composition */
+        /* Composition & Animation */
 
         private void Grid_Loading(FrameworkElement sender, object args)
         {
@@ -743,6 +926,27 @@ namespace CharacterMap.Views
         }
 
         private void FontListGrid_Loading(FrameworkElement sender, object args)
+        {
+            UpdateCollectionRowAnimation();
+        }
+
+        private void UpdateAnimation()
+        {
+            UpdateCollectionRowAnimation();
+
+            // Using Bindings didn't work for this for some reason so 
+            // we're going to direct handle this though code.
+            if (FontsTabBar?.GetFirstDescendantOfType<TabViewListView>()
+                is TabViewListView view)
+            {
+                if (ResourceHelper.AllowAnimation)
+                    view.ItemContainerTransitions = TabTransitions;
+                else
+                    view.ItemContainerTransitions = GetTransitions("N.A.", false);
+            }
+        }
+
+        void UpdateCollectionRowAnimation()
         {
             CompositionFactory.SetDropInOut(
                 CollectionControlBackground,
@@ -752,8 +956,7 @@ namespace CharacterMap.Views
 
         private void LoadingRoot_Loading(FrameworkElement sender, object args)
         {
-            if (!ViewModel.Settings.UseSelectionAnimations 
-                || !CompositionFactory.UISettings.AnimationsEnabled)
+            if (ResourceHelper.AllowAnimation is false)
                 return;
 
             var v = sender.GetElementVisual();
@@ -763,7 +966,7 @@ namespace CharacterMap.Views
             int duration = 350;
             var ani = v.Compositor.CreateVector3KeyFrameAnimation();
             ani.Target = nameof(v.Scale);
-            ani.InsertKeyFrame(1, new System.Numerics.Vector3(1.15f, 1.15f, 0));
+            ani.InsertKeyFrame(1, new (1.15f, 1.15f, 0));
             ani.Duration = TimeSpan.FromMilliseconds(duration);
 
             var op = CompositionFactory.CreateFade(v.Compositor, 0, null, duration);
@@ -771,6 +974,8 @@ namespace CharacterMap.Views
 
             // Animate in Loading items
             CompositionFactory.PlayEntrance(LoadingStack.Children.ToList(), 60);
+
+            // TODO : What if TypeRamp view loads first
         }
     }
 

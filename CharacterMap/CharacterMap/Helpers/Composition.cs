@@ -5,7 +5,6 @@ using Windows.UI;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -16,7 +15,6 @@ namespace CharacterMap.Helpers
     /// <summary>
     /// Helpful extensions methods to enable you to write fluent Composition animations
     /// </summary>
-    [Bindable]
     public static class Composition
     {
         /*
@@ -82,6 +80,40 @@ namespace CharacterMap.Helpers
 
             // End Batch
             batch.End();
+        }
+
+        private static Dictionary<Compositor, Dictionary<string, CompositionObject>> _objCache { get; } = new();
+
+        public static T GetCached<T>(this Compositor c, string key, Func<T> create) where T : CompositionObject
+        {
+            if (_objCache.TryGetValue(c, out Dictionary<string, CompositionObject> dic) is false)
+                _objCache[c] = dic = new();
+
+            if (dic.TryGetValue(key, out CompositionObject value) is false)
+                dic[key] = value = create();
+
+            return (T)value;
+        }
+
+        /// <summary>
+        /// Gets a cached version of a CompositionObject per compositor
+        /// (Each CoreWindow has it's own compositor). Allows sharing of animations
+        /// without recreating everytime.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="c"></param>
+        /// <param name="key"></param>
+        /// <param name="create"></param>
+        /// <returns></returns>
+        public static T GetCached<T>(this CompositionObject c, string key, Func<T> create) where T : CompositionObject
+        {
+            return GetCached<T>(c.Compositor, key, create);
+        }
+
+        public static CubicBezierEasingFunction GetCachedEntranceEase(this Compositor c)
+        {
+            return c.GetCached<CubicBezierEasingFunction>("EntranceEase", 
+                () => c.CreateEntranceEasingFunction());
         }
 
         #endregion
@@ -305,7 +337,7 @@ namespace CharacterMap.Helpers
             return animation;
         }
 
-        private static T SetSafeTarget<T>(this T animation, string target) where T : KeyFrameAnimation
+        private static T SetSafeTarget<T>(this T animation, string target) where T : CompositionAnimation
         {
             if (!String.IsNullOrEmpty(target))
                 animation.Target = target;
@@ -340,6 +372,7 @@ namespace CharacterMap.Helpers
         }
 
         #endregion
+
 
         #region SetDelay
 
@@ -384,14 +417,17 @@ namespace CharacterMap.Helpers
         #region SetDuration
 
         /// <summary>
-        /// Sets the duration in seconds
+        /// Sets the duration in seconds. If less than 0 the duration is not set.
         /// </summary>
         /// <param name="animation"></param>
         /// <param name="duration">Duration in seconds</param>
         /// <returns></returns>
         public static T SetDuration<T>(this T animation, double duration) where T : KeyFrameAnimation
         {
-            return SetDuration(animation, TimeSpan.FromSeconds(duration));
+            if (duration >= 0)
+                return SetDuration(animation, TimeSpan.FromSeconds(duration));
+            else 
+                return animation;
         }
 
         public static T SetDuration<T>(this T animation, TimeSpan duration) where T : KeyFrameAnimation
@@ -400,21 +436,47 @@ namespace CharacterMap.Helpers
             return animation;
         }
 
-        public static SpringVector3NaturalMotionAnimation SetPeriod(this SpringVector3NaturalMotionAnimation animation, double duration)
-        {
-            return SetPeriod(animation, TimeSpan.FromSeconds(duration));
-        }
+        #endregion
 
-        public static SpringVector3NaturalMotionAnimation SetPeriod(this SpringVector3NaturalMotionAnimation animation, TimeSpan duration)
+
+        #region SetDampingRatio
+
+        public static SpringVector3NaturalMotionAnimation SetDampingRatio(this SpringVector3NaturalMotionAnimation animation, float dampingRatio)
         {
-            animation.Period = duration;
+            animation.DampingRatio = dampingRatio;
             return animation;
         }
 
         #endregion
 
 
-        #region StopBehaviour
+        #region SetPeriod
+
+        public static SpringVector3NaturalMotionAnimation SetPeriod(
+            this SpringVector3NaturalMotionAnimation animation, double duration) 
+        {
+            if (duration >= 0)
+                return SetPeriod(animation, TimeSpan.FromSeconds(duration));
+            else
+                return animation;
+        }
+
+        public static SpringVector3NaturalMotionAnimation SetPeriod(
+            this SpringVector3NaturalMotionAnimation animation, TimeSpan duration)
+        {
+            animation.Period = duration;
+            return animation;
+        }
+
+        public static T SetFinalValue<T>(this T animation, Vector3? value) where T: Vector3NaturalMotionAnimation
+        {
+            animation.FinalValue = value;
+            return animation;
+        }
+
+        #endregion
+
+            #region StopBehaviour
 
         public static T SetStopBehavior<T>(this T animation, AnimationStopBehavior stopBehavior) where T : KeyFrameAnimation
         {
@@ -646,6 +708,12 @@ namespace CharacterMap.Helpers
             return animation;
         }
 
+        public static SpringVector3NaturalMotionAnimation CreateSpringVector3Animation(
+            this CompositionObject visual, string targetProperty = null)
+        {
+            return TryAddGroup(visual, visual.Compositor.CreateSpringVector3Animation().SetSafeTarget(targetProperty));
+        }
+
         public static ColorKeyFrameAnimation CreateColorKeyFrameAnimation(this CompositionObject visual, string targetProperty = null)
         {
             return TryAddGroup(visual, visual.Compositor.CreateColorKeyFrameAnimation().SetSafeTarget(targetProperty));
@@ -862,6 +930,7 @@ namespace CharacterMap.Helpers
 
         #endregion
 
+
         #region Extras
 
         public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
@@ -901,6 +970,6 @@ namespace CharacterMap.Helpers
 
         #endregion
 
-
+      
     }
 }

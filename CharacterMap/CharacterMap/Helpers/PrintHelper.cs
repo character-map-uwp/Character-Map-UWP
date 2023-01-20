@@ -123,16 +123,26 @@ namespace CharacterMap.Helpers
         /// <summary>
         /// This function registers the app for printing with Windows and sets up the necessary event handlers for the print process.
         /// </summary>
-        public virtual void RegisterForPrinting()
+        public virtual bool RegisterForPrinting()
         {
-            printDocument = new PrintDocument();
-            printDocumentSource = printDocument.DocumentSource;
-            printDocument.Paginate += CreatePrintPreviewPages;
-            printDocument.GetPreviewPage += GetPrintPreviewPage;
-            printDocument.AddPages += AddPrintPages;
+            try
+            {
+                printDocument = new PrintDocument();
+                printDocumentSource = printDocument.DocumentSource;
+                printDocument.Paginate += CreatePrintPreviewPages;
+                printDocument.GetPreviewPage += GetPrintPreviewPage;
+                printDocument.AddPages += AddPrintPages;
 
-            PrintManager printMan = PrintManager.GetForCurrentView();
-            printMan.PrintTaskRequested += PrintTaskRequested;
+                PrintManager printMan = PrintManager.GetForCurrentView();
+                printMan.PrintTaskRequested += PrintTaskRequested;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            
         }
 
         /// <summary>

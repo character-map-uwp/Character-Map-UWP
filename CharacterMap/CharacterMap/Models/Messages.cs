@@ -13,23 +13,42 @@ namespace CharacterMap.Models
 
     public class CollectionUpdatedArgs
     {
-        public InstalledFont Font { get; }
+        public IList<InstalledFont> Fonts { get; }
         public UserFontCollection Collection { get; }
         public bool IsAdd { get; }
 
-        public CollectionUpdatedArgs(InstalledFont font, UserFontCollection collection, bool isAdd)
+        public CollectionUpdatedArgs(IList<InstalledFont> fonts, UserFontCollection collection, bool isAdd)
         {
-            Font = font;
+            Fonts = fonts;
             Collection = collection;
             IsAdd = isAdd;
         }
 
+        public string GetTitle()
+        {
+            if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
+                return font.Name;
+            else
+                return $"{Fonts.Count} fonts";
+        }
+
         public string GetMessage()
         {
-            if (IsAdd)
-                return $"{Font.Name} was added to the \"{Collection.Name}\" collection";
+            if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
+            {
+                if (IsAdd)
+                    return $"{font.Name} was added to the \"{Collection.Name}\" collection";
+                else
+                    return $"{font.Name} was removed from the \"{Collection.Name}\" collection";
+            }
             else
-                return $"{Font.Name} was removed from the \"{Collection.Name}\" collection";
+            {
+                if (IsAdd)
+                    return $"{Fonts.Count} fonts were added to the \"{Collection.Name}\" collection";
+                else
+                    return $"{Fonts.Count} fonts were removed from the \"{Collection.Name}\" collection";
+            }
+            
         }
     }
 

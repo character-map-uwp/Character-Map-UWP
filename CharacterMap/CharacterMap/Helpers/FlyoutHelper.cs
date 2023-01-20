@@ -1,6 +1,5 @@
 ﻿using CharacterMap.Controls;
 using CharacterMap.Core;
-using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Provider;
 using CharacterMap.Services;
@@ -12,17 +11,11 @@ using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.Storage.Pickers;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
 {
@@ -48,6 +41,11 @@ namespace CharacterMap.Helpers
         /// A stand-alone Window showing a single Font Family
         /// </summary>
         public bool Standalone          { get; set; }
+
+        /// <summary>
+        /// Context menu for font tab headers
+        /// </summary>
+        public bool IsTabContext        { get; set; }
         
         /// <summary>
         /// The font family is from file that is not installed in the system
@@ -86,6 +84,11 @@ namespace CharacterMap.Helpers
             _ = d.ShowAsync();
         }
 
+        public static void PrintRequested()
+        {
+            WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
+        }
+
 
         /// <summary>
         /// Creates the context menu for the Font List or the "..." button.
@@ -95,8 +98,6 @@ namespace CharacterMap.Helpers
         /// <param name="font"></param>
         /// <param name="variant"></param>
         /// <param name="headerContent"></param>
-        /// <param name="standalone"></param>
-        /// <param name="showAdvanced"></param>
         public static void CreateMenu(
             MenuFlyout menu,
             InstalledFont font,
@@ -110,6 +111,9 @@ namespace CharacterMap.Helpers
             bool showAdvanced = args.ShowAdvanced;
             bool isExternalFile = args.IsExternalFile;
 
+            Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+            Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+
             #region Handlers 
 
             static void OpenInNewWindow(object s, RoutedEventArgs args)
@@ -118,30 +122,36 @@ namespace CharacterMap.Helpers
                     _ = FontMapView.CreateNewViewForFontAsync(fnt, null, f.DataContext as CharacterRenderingOptions);
             }
 
+            static void OpenInNewTab(object s, RoutedEventArgs args)
+            {
+                if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
+                    Ioc.Default.GetService<MainViewModel>().OpenTab(fnt);
+            }
+
             static void SaveFont_Click(object sender, RoutedEventArgs e)
             {
-                if (sender is MenuFlyoutItem item && item.Tag is FontVariant fnt)
+                if (sender is MenuFlyoutItem item && item.DataContext is CharacterRenderingOptions opts)
                 {
-                    ExportManager.RequestExportFontFile(fnt);
+                    ExportManager.RequestExportFontFile(opts.Variant);
                 }
             }
 
             static void Print_Click(object sender, RoutedEventArgs e)
             {
-                WeakReferenceMessenger.Default.Send(new PrintRequestedMessage());
+                PrintRequested();
             }
 
             static void Export_Click(object sender, RoutedEventArgs e)
             {
                 if (sender is FrameworkElement f &&
-                    f.DataContext is InstalledFont fnt
-                    && f.Tag is CharacterRenderingOptions o)
+                    f.Tag is InstalledFont fnt
+                    && f.DataContext is CharacterRenderingOptions o)
                 {
                     WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
                 }
             }
 
-            static void DeleteMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+            static void DeleteClick(object sender, RoutedEventArgs e)
             {
                 if (sender is MenuFlyoutItem item && item.Tag is InstalledFont fnt)
                 {
@@ -149,18 +159,69 @@ namespace CharacterMap.Helpers
                 }
             }
 
-            #endregion
+            static void AddToQuickCompare(object sender, RoutedEventArgs e)
+            {
+                if (sender is FrameworkElement f
+                    && f.DataContext is CharacterRenderingOptions o)
+                {
+                    _ = QuickCompareView.AddAsync(o);
+                }
+            }
 
+            void OpenCalligraphy(object sender, RoutedEventArgs e)
+            {
+                if (sender is FrameworkElement f
+                    && f.DataContext is CharacterRenderingOptions o)
+                {
+                    _ = CalligraphyView.CreateWindowAsync(o, args?.PreviewText);
+                }
+            }
+
+            //void OpenCompare(object sender, RoutedEventArgs e)
+            //{
+            //    _ = QuickCompareView.CreateWindowAsync(new(false, args.Folder));
+            //}
+
+            void OpenFaceCompare(object sender, RoutedEventArgs e)
+            {
+                if (sender is FrameworkElement f && f.Tag is InstalledFont fnt)
+                {
+                    _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.Variants.ToList()) {  IsFamilyCompare = true }));
+                }
+            }
+
+            MenuFlyoutItem Create(string key, string icon, RoutedEventHandler handler, VirtualKey accel = VirtualKey.None, bool add = true)
+            {
+                MenuFlyoutItem item = new()
+                {
+                    Text = key.StartsWith("~") ? key.Remove(0,1) : Localization.Get(key),
+                    Icon = new FontIcon { Glyph = icon },
+                    Tag = font,
+                    DataContext = options,
+                    Style = style
+                };
+
+                item.Click += handler;
+
+                if (accel != VirtualKey.None)
+                    item.AddKeyboardAccelerator(accel, VirtualKeyModifiers.Control);
+                
+                if (add)
+                    menu.Items.Add(item);
+
+                return item.SetAnimation();
+            }
+
+            #endregion
 
             if (menu.Items != null)
             {
                 menu.Items.Clear();
                 MenuFlyoutSubItem coll;
-
                 {
                     // HORRIBLE Hacks, because MenuFlyoutSubItem never updates it's UI tree after the first
-                    // render, meaning we can't dynamically update items. Instead we need to make an entirely
-                    // new one.
+                    // render meaning we can't dynamically update items. Instead we need to make an entirely
+                    // menu every time it opens.
 
                     if (headerContent != null && headerContent.Parent is MenuFlyoutContentHost host)
                         host.Content = null;
@@ -170,56 +231,35 @@ namespace CharacterMap.Helpers
                         Content = headerContent
                     });
 
-                    menu.Items.Add(new MenuFlyoutSeparator().SetVisible(headerContent != null));
+                    menu.AddSeparator(headerContent != null);
 
-                    // 1. Add "Open in New Window" button
+                    // 1. Add "Open in New Tab/Window" buttons
                     if (!standalone)
                     {
-                        MenuFlyoutItem newWindow = new()
-                        {
-                            Text = Localization.Get("OpenInNewWindow/Text"),
-                            Icon = new FontIcon { Glyph = "\uE17C" },
-                            Tag = font,
-                            DataContext = options
-                        };
-                        newWindow.Click += OpenInNewWindow;
-                        menu.Items.Add(newWindow);
+                        // 1.1. Only show "Open in New Tab" if this is Font List context menu
+                        //      and supported by theme
+                        if (showAdvanced is false && ResourceHelper.SupportsTabs)
+                            Create("OpenInNewTab/Text", "\uECCD", OpenInNewTab);
 
+                        // 1.2. Create "Open in New Window"
+                        MenuFlyoutItem newWindow = Create("OpenInNewWindow/Text", "\uE17C", OpenInNewWindow);
                         if (showAdvanced)
-                        {
                             newWindow.AddKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control);
-                        }
                     }
 
                     // 2. Add Save Font File & Export Font Glyphs options
                     if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.FontFace))
                     {
-                        MenuFlyoutItem saveButton = new MenuFlyoutItem()
-                        {
-                            Text = Localization.Get("ExportFontFileLabel/Text"),
-                            Icon = new FontIcon { Glyph = "\uE792" },
-                            Tag = options.Variant
-                        }.AddKeyboardAccelerator(VirtualKey.S, VirtualKeyModifiers.Control);
-
-                        saveButton.Click += SaveFont_Click;
-                        menu.Items.Add(saveButton);
-
-                        MenuFlyoutItem exportButton = new MenuFlyoutItem()
-                        {
-                            Text = Localization.Get("ExportCharactersLabel/Text"),
-                            Icon = new FontIcon { Glyph = "\uE105" },
-                            Tag = options,
-                            DataContext = font
-                        }.AddKeyboardAccelerator(VirtualKey.E, VirtualKeyModifiers.Control);
-
-                        exportButton.Click += Export_Click;
-                        menu.Items.Add(exportButton);
+                        Create("ExportFontFileLabel/Text", "\uE792", SaveFont_Click, VirtualKey.S);
+                        if (showAdvanced && !args.IsTabContext)
+                            Create("ExportCharactersLabel/Text", "\uE105", Export_Click, VirtualKey.E);
                     }
 
                     // 3. Add "Add to Collection" button
                     if (isExternalFile is false && args.IsFolderView is false)
                     {
-                        coll = AddCollectionItems(menu, font);
+                        coll = AddCollectionItems(menu, font, null);
+                        coll.Style = subStyle;
                     }
                 }
 
@@ -236,119 +276,93 @@ namespace CharacterMap.Helpers
                     TryAddRemoveFromCollection(menu, font, main.SelectedCollection, main.FontListFilter);
                 }
 
-                if (showAdvanced)
+                // 5. Add "Print" Button
+                if (showAdvanced && args.IsTabContext is false)
                 {
                     if (Windows.Graphics.Printing.PrintManager.IsSupported())
                     {
-                        MenuFlyoutItem item = new MenuFlyoutItem
-                        {
-                            Text = Localization.Get("BtnPrint/Content"),
-                            Icon = new FontIcon { Glyph = "\uE749" }
-                        }.AddKeyboardAccelerator(VirtualKey.P, VirtualKeyModifiers.Control);
-
-                        item.Click += Print_Click;
-                        menu.Items.Insert(standalone ? 2 : 3, item);
+                        MenuFlyoutItem print = Create("BtnPrint/Content", "\uE749", Print_Click, VirtualKey.P, false);
+                        menu.Items.Insert(standalone ? 2 : 3, print);
                     }
                 }
 
-                // Add "Delete Font" button
-                if (!standalone && !args.IsFolderView)
+                // 6. Add "Delete Font" button
+                if (!standalone 
+                    && !args.IsFolderView 
+                    && !args.IsTabContext
+                    && font.HasImportedFiles)
                 {
-                    if (font.HasImportedFiles)
-                    {
-                        menu.Items.Add(new MenuFlyoutSeparator());
-
-                        MenuFlyoutItem removeFont = new()
-                        {
-                            Text = Localization.Get("RemoveFontFlyout/Text"),
-                            Icon = new FontIcon { Glyph = "\uE107" },
-                            Tag = font,
-                            DataContext = font
-                        };
-
-                        if (showAdvanced)
-                            removeFont.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
-
-                        removeFont.Click += DeleteMenuFlyoutItem_Click;
-                        menu.Items.Add(removeFont);
-                    }
+                    menu.AddSeparator();
+                    MenuFlyoutItem del = Create("RemoveFontFlyout/Text", "\uE107", DeleteClick);
+                    if (showAdvanced)
+                        del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
                 }
 
-                // Handle Compare options
-                // Add "Compare Fonts button"
-                var qq = new MenuFlyoutItem
-                {
-                    Text = Localization.Get("CompareFontsButton/Text"),
-                    Icon = new FontIcon { Glyph = "\uE1D3" }
-                }.AddKeyboardAccelerator(VirtualKey.K, VirtualKeyModifiers.Control);
+                // 7. Handle compare options
+                bool qc = args.IsFolderView is false && showAdvanced && isExternalFile is false;
+                if (qc || font.HasVariants)
+                    menu.AddSeparator();
 
-                qq.Click += (s, e) =>
-                {
-                    _ = QuickCompareView.CreateWindowAsync(new(false, args.Folder));
-                };
+                // 7.1. Add "Compare Fonts button"
+                if (font.HasVariants)
+                    Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", "\uE1D3", OpenFaceCompare);
 
-                menu.Items.Add(new MenuFlyoutSeparator());
-                menu.Items.Add(qq);
+                // 7.2. Add "Add to quick compare" button if we're viewing a variant
+                if (qc)
+                    Create("AddToQuickCompare/Text", "\uE109", AddToQuickCompare, VirtualKey.Q);
 
-                // Add "Add to quick compare" button if we're viewing a variant
-                if (args.IsFolderView is false && showAdvanced && isExternalFile is false)
-                {
-                    MenuFlyoutItem item = new MenuFlyoutItem
-                    {
-                        Text = Localization.Get("AddToQuickCompare/Text"),
-                        Icon = new FontIcon { Glyph = "\uE109" }
-                    }.AddKeyboardAccelerator(VirtualKey.Q, VirtualKeyModifiers.Control);
+                // 8. Add Calligraphy button
+                menu.AddSeparator();
+                Create("CalligraphyLabel/Text", "\uEDFB", OpenCalligraphy, VirtualKey.I);
+            }
+        }
 
-                    item.Click += (s, e) =>
-                    {
-                        _ = QuickCompareView.AddAsync(options);
-                    };
+        public static T SetAnimation<T>(this T item) where T : MenuFlyoutItemBase
+        {
+            if (ResourceHelper.AllowAnimation && ResourceHelper.SupportFluentAnimation)
+            {
+                Properties.SetPointerOverAnimation(item, "IconRoot");
+                Properties.SetClickAnimationOffset(item, 0.95);
 
-                    menu.Items.Add(item);
-                }
-
-
-                menu.Items.Add(new MenuFlyoutSeparator());
-
-                MenuFlyoutItem cali = new MenuFlyoutItem
-                {
-                    Text = Localization.Get("CalligraphyLabel/Text"),
-                    Icon = new FontIcon { Glyph = "\uEDFB" }
-                }.AddKeyboardAccelerator(VirtualKey.I, VirtualKeyModifiers.Control);
-
-                cali.Click += (s, e) =>
-                {
-                    _ = CalligraphyView.CreateWindowAsync(options, args?.PreviewText);
-                };
-
-                menu.Items.Add(cali);
+                Properties.SetPointerPressedAnimation(item, "ContentRoot|Scale");
+                Properties.SetClickAnimation(item, "ContentRoot|Scale");
             }
 
+            return item;
         }
 
         public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, UserFontCollection collection, BasicFontFilter filter)
         {
-            if (collection != null || (filter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
+            if (collection is null)
+                return;
+
+            if ((collection != null || (filter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
+                && collection.Fonts.Contains(font.Name))
             {
                 menu.Items.Add(new MenuFlyoutSeparator());
+                Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
 
                 MenuFlyoutItem removeItem = new()
                 {
                     Text = Localization.Get("RemoveFromCollectionItem/Text"),
                     Icon = new FontIcon { Glyph = "\uE108" },
                     Tag = collection == null && filter == BasicFontFilter.SymbolFonts ? _collections.SymbolCollection : collection,
-                    DataContext = font
+                    DataContext = font,
+                    Style = style
                 };
                 removeItem.Click += RemoveFrom_Click;
                 menu.Items.Add(removeItem);
 
                 async void RemoveFrom_Click(object sender, RoutedEventArgs e)
                 {
-                    if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt
+                    if (sender is FrameworkElement f 
+                        && f.DataContext is InstalledFont fnt
                         && f.Tag is UserFontCollection collection)
                     {
                         await _collections.RemoveFromCollectionAsync(fnt, collection);
-                        WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new CollectionUpdatedArgs(fnt, collection, false)));
+                        WeakReferenceMessenger.Default.Send(
+                            new AppNotificationMessage(true, 
+                                new CollectionUpdatedArgs(new List<InstalledFont> { fnt }, collection, false)));
                         WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage { SourceCollection = collection });
                     }
                 }
@@ -362,15 +376,15 @@ namespace CharacterMap.Helpers
         /// <param name="menu"></param>
         /// <param name="font"></param>
         /// <returns></returns>
-        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font)
+        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IList<InstalledFont> fonts, string key = null)
         {
             #region Event Handlers
 
             static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
             {
-                if (sender is FrameworkElement f && f.DataContext is InstalledFont fnt)
+                if (sender is FrameworkElement f && f.DataContext is IList<InstalledFont> fnts)
                 {
-                    var result = await _collections.AddToCollectionAsync(fnt, _collections.SymbolCollection);
+                    var result = await _collections.AddToCollectionAsync(fnts, _collections.SymbolCollection);
 
                     WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
 
@@ -391,12 +405,17 @@ namespace CharacterMap.Helpers
 
             #endregion
 
+            bool multiMode = font is null && fonts is not null;
+            IList<InstalledFont> items = fonts ?? new List<InstalledFont> { font };
+            Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+            Style substyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+
             // 1. Add "Add To Collection" item
-            MenuFlyoutSubItem coll;
-            MenuFlyoutSubItem newColl = new()
+            MenuFlyoutSubItem parent = new()
             {
-                Text = Localization.Get("AddToCollectionFlyout/Text"),
-                Icon = new FontIcon { Glyph = "\uE71D" }
+                Text = Localization.Get( key ?? "AddToCollectionFlyout/Text"),
+                Icon = new FontIcon { Glyph = "\uE71D" },
+                Style = substyle
             };
 
             // 2. Add "New Collection" Item
@@ -404,59 +423,60 @@ namespace CharacterMap.Helpers
             {
                 Text = Localization.Get("NewCollectionItem/Text"),
                 Icon = new FontIcon { Glyph = "\uE109" },
-                DataContext = font
+                DataContext = items,
+                Style = style
             };
+
             newCollection.Click += CreateCollection_Click;
 
-
-            if (newColl.Items != null)
+            if (parent.Items != null)
             {
-                newColl.Items.Add(newCollection);
+                parent.Items.Add(newCollection.SetAnimation());
 
                 // 3. Create "Symbol Font" item
-                if (!font.IsSymbolFont)
+                if (font is null || !font.IsSymbolFont)
                 {
-                    newColl.Items.Add(new MenuFlyoutSeparator());
+                    parent.Items.Add(new MenuFlyoutSeparator());
 
                     MenuFlyoutItem symb = new()
                     {
                         Text = Localization.Get("OptionSymbolFonts/Text"),
-                        IsEnabled = !_collections.SymbolCollection.Fonts.Contains(font.Name),
-                        DataContext = font
+                        IsEnabled = multiMode || !_collections.SymbolCollection.Fonts.Contains(font.Name),
+                        DataContext = items,
+                        Style = style
                     };
                     symb.Click += AddToSymbolFonts_Click;
-                    newColl.Items.Add(symb);
+                    parent.Items.Add(symb);
                 }
             }
 
-            coll = newColl;
-            menu.Items.Add(coll);
+            menu.Items.Add(parent);
 
             // 4. Add items for each user Collection
             if (_collections.Items.Count > 0)
             {
-                if (coll.Items != null)
+                if (parent.Items != null)
                 {
-                    coll.Items.Add(new MenuFlyoutSeparator());
-
+                    parent.Items.Add(new MenuFlyoutSeparator());
                     foreach (var m in
                             _collections.Items.Select(item => new MenuFlyoutItem
                             {
                                 Tag = item,
-                                DataContext = font,
+                                DataContext = items,
                                 Text = item.Name,
-                                IsEnabled = !item.Fonts.Contains(font.Name)
-                            }))
+                                Style = style,
+                                IsEnabled = multiMode || !item.Fonts.Contains(font.Name)
+                            }.SetAnimation()))
                     {
                         if (m.IsEnabled)
                         {
                             m.Click += async (s, a) =>
                             {
                                 if (s is FrameworkElement f 
-                                    && f.DataContext is InstalledFont fnt
+                                    && f.DataContext is IList<InstalledFont> fnts
                                     && f.Tag is UserFontCollection clct)
                                 {
-                                    AddToCollectionResult result = await _collections.AddToCollectionAsync(fnt, clct);
+                                    AddToCollectionResult result = await _collections.AddToCollectionAsync(fnts, clct);
 
                                     if (result.Success)
                                     {
@@ -466,12 +486,12 @@ namespace CharacterMap.Helpers
                             };
                         }
 
-                        coll.Items.Add(m);
+                        parent.Items.Add(m);
                     }
                 }
             }
 
-            return coll;
+            return parent;
         }
 
         /// <summary>
@@ -484,9 +504,11 @@ namespace CharacterMap.Helpers
         {
             if (target.Tag is Character c)
             {
+                Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
+                Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
+
                 // 1. Attach the flyout to the selected grid item and apply the correct context
                 FlyoutBase.SetAttachedFlyout(target, menu);
-                menu.SetItemsDataContext(target.Tag);
 
                 // 2. Analyse the character to know which options we should show in the menu
                 var analysis = viewmodel.GetCharAnalysis(c);
@@ -554,7 +576,7 @@ namespace CharacterMap.Helpers
                             var item = new MenuFlyoutSubItem { Text = p.DisplayName };
                             foreach (var o in p.GetAllOptions())
                             {
-                                var i = new MenuFlyoutItem { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name) };
+                                var i = new MenuFlyoutItem { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = style };
                                 i.Click += CopyItemClick;
                                 Properties.SetDevOption(i, o);
                                 item.Items.Add(i);
@@ -584,25 +606,31 @@ namespace CharacterMap.Helpers
                     add.SetVisible(ResourceHelper.AppSettings.EnableCopyPane);
                 }
 
+                // 7. Set item context
+                menu.SetItemsDataContext(target.Tag, subStyle);
+
                 // 7. Show complete flyout
                 FlyoutBase.ShowAttachedFlyout(target);
             }
         }
 
-        public static void SetItemsDataContext(this MenuFlyout flyout, object dataContext)
+        public static void SetItemsDataContext(this MenuFlyout flyout, object dataContext, Style subStyle = null)
         {
-            static void SetContext(IList<MenuFlyoutItemBase> items, object context)
+            static void SetContext(IList<MenuFlyoutItemBase> items, object context, Style subStyle)
             {
                 foreach (var item in items)
                 {
                     if (item is MenuFlyoutSubItem sub)
-                        SetContext(sub.Items, context);
+                    {
+                        sub.Style = subStyle;
+                        SetContext(sub.Items, context, subStyle);
+                    }
 
                     item.DataContext = context;
                 }
             }
 
-            SetContext(flyout.Items, dataContext);
+            SetContext(flyout.Items, dataContext, subStyle);
         }
     }
 }

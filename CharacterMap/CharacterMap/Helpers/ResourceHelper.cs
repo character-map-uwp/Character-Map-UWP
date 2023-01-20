@@ -89,13 +89,10 @@ namespace CharacterMap.Helpers
 
         /* Character Map Specific resources */
 
-        private static List<FrameworkElement> _elements { get; } = new List<FrameworkElement>();
+        private static List<FrameworkElement> _elements { get; } = new();
 
         private static AppSettings _settings;
-        public static AppSettings AppSettings
-        {
-            get => _settings ??= new AppSettings();
-        }
+        public static AppSettings AppSettings => _settings ??= new();
 
         public static ElementTheme GetEffectiveTheme()
         {
@@ -117,6 +114,7 @@ namespace CharacterMap.Helpers
 
         public static Task SetTransparencyAsync(bool enable)
         {
+            // Disable transparency on relevant brushes
             return WindowService.RunOnViewsAsync(() =>
             {
                 if (Get<AcrylicBrush>("DefaultHostBrush") is AcrylicBrush def)
@@ -130,10 +128,22 @@ namespace CharacterMap.Helpers
             });
         }
 
+        private static bool? _supportsTabs;
+        public static bool SupportsTabs => _supportsTabs ??= Get<bool>("SupportsTabs");
+        public static bool SupportsShadows() => Get<bool>("SupportsShadows");
+        public static bool AllowAnimation => AppSettings.UseSelectionAnimations && CompositionFactory.UISettings.AnimationsEnabled;
+        public static bool AllowExpensiveAnimation => AllowAnimation && AppSettings.AllowExpensiveAnimations;
+        public static bool AllowFluentAnimation => AllowAnimation && SupportFluentAnimation && AppSettings.UseFluentPointerOverAnimations;
 
+        private static bool? _supportsFluentAnimation;
+        public static bool SupportFluentAnimation => _supportsFluentAnimation ??= Get<bool>("SupportsFluentAnimation");
+
+        public static bool UsePointerOverAnimations => AppSettings.UseFluentPointerOverAnimations;
 
 
         /* Dynamic theme-ability */
+
+        #region Dynamic Theming
 
         public static void GoToThemeState(Control control)
         {
@@ -226,7 +236,7 @@ namespace CharacterMap.Helpers
             {
                 // Find source dictionary for current theme
                 var dic = (ResourceDictionary)App.Current.Resources[$"StyleSource{AppSettings.ApplicationDesignTheme + 1}"];
-                
+
                 // Try resolve style from source dictionary
                 TryGetInternal<Style>(dic, styleKey, out Style resolved);
                 if (resolved is not null && resolved != element.Style)
@@ -266,6 +276,9 @@ namespace CharacterMap.Helpers
             //Window.Current.Content = null;
             //Window.Current.Content = content;
         }
+
+        #endregion
+
     }
 
     public class ThemeHelper

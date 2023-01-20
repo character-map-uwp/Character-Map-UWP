@@ -1,20 +1,6 @@
 ﻿using CharacterMap.Helpers;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Hosting;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Styles
 {
@@ -25,26 +11,41 @@ namespace CharacterMap.Styles
             this.InitializeComponent();
         }
 
-        private void ContentRoot_Loaded(object sender, RoutedEventArgs e)
+        public static bool GetEnableSlideOut(DependencyObject obj)
         {
-            CompositionFactory.SetStandardReposition(sender, e);
+            return (bool)obj.GetValue(EnableSlideOutProperty);
         }
 
-        private void PaneRoot_Loaded(object sender, RoutedEventArgs e)
+        public static void SetEnableSlideOut(DependencyObject obj, bool value)
         {
-            var f = (UIElement)sender;
-            ElementCompositionPreview.SetIsTranslationEnabled(f, true);
-            Visual v = ElementCompositionPreview.GetElementVisual(f);
-
-            ElementCompositionPreview.SetImplicitHideAnimation(f, CompositionFactory.CreateSlideOut(f, -256, 0));
-
-            var o2 = v.Compositor.CreateVector3KeyFrameAnimation();
-            o2.Target = "Translation";
-            o2.InsertExpressionKeyFrame(0, "this.StartingValue");
-            o2.InsertKeyFrame(1, new System.Numerics.Vector3(0, 0, 0));
-            o2.Duration = TimeSpan.FromSeconds(CompositionFactory.DefaultOffsetDuration);
-
-            ElementCompositionPreview.SetImplicitShowAnimation(f, o2);
+            obj.SetValue(EnableSlideOutProperty, value);
         }
+
+        public static readonly DependencyProperty EnableSlideOutProperty =
+            DependencyProperty.RegisterAttached("EnableSlideOut", typeof(bool), typeof(Controls), new PropertyMetadata(false, (d, e) =>
+        {
+            if (d is FrameworkElement f && e.NewValue is bool b)
+                UpdateSlideOut(f, b);
+
+            static void UpdateSlideOut(FrameworkElement fe, bool enable)
+            {
+                Visual v = fe.EnableCompositionTranslation().GetElementVisual();
+                if (enable && ResourceHelper.AllowAnimation)
+                {
+                    fe.SetHideAnimation(CompositionFactory.CreateSlideOut(fe, -256, 0));
+                    fe.SetShowAnimation(
+                        v.GetCached("_PaneImpShow", () =>
+                            v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                                .AddKeyFrame(0, "this.StartingValue")
+                                .AddKeyFrame(1, 0)
+                                .SetDuration(CompositionFactory.DefaultOffsetDuration)));
+                }
+                else
+                {
+                    fe.SetHideAnimation(null);
+                    fe.SetShowAnimation(null);
+                }
+            }
+        }));
     }
 }

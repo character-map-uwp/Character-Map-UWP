@@ -44,9 +44,11 @@
 
     <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
         <Grid
+            Name="TemplateContent"
             ColumnSpacing="12"
             Padding="12 4"
-            Background="Transparent">
+            Background="Transparent"
+            ToolTipService.ToolTip="{x:Bind Name}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
@@ -153,7 +155,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center">
-                <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
+                <Run FontWeight="SemiBold" Text="{x:Bind GetTitle()}" />
                 <Run x:Uid="NotificationFontAddedBody" />
                 <Hyperlink Click="BtnViewCollection_Click">
                     <Run Text="{x:Bind Collection.Name}" />
@@ -165,7 +167,7 @@
                 Margin="12 0 0 0"
                 VerticalAlignment="Center"
                 Click="BtnUndo_Click"
-                Content="Undo"
+                Content="{core:Localizer Key='UndoLabel'}"
                 Style="{StaticResource ButtonRevealStyle}"
                 Tag="{x:Bind}" />
         </Grid>
@@ -178,7 +180,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBlock VerticalAlignment="Center">
-                <Run FontWeight="SemiBold" Text="{x:Bind Font.Name}" />
+                <Run FontWeight="SemiBold" Text="{x:Bind GetTitle()}" />
                 <Run x:Uid="NotificationFontRemovedBody" />
                 <Hyperlink>
                     <Run Text="{x:Bind Collection.Name}" />
@@ -190,9 +192,10 @@
                 Margin="12 0 0 0"
                 VerticalAlignment="Center"
                 Click="BtnUndo_Click"
-                Content="Undo"
+                Content="{core:Localizer Key='UndoLabel'}"
                 Style="{StaticResource ButtonRevealStyle}"
-                Tag="{x:Bind}" />
+                Tag="{x:Bind}"
+                d:Content="Undo" />
         </Grid>
     </DataTemplate>
 

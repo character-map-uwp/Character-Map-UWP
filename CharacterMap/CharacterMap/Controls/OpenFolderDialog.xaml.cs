@@ -45,7 +45,7 @@ namespace CharacterMap.Controls
             {
                 HasFolder = true;
                 Folder = folder;
-                Contents = folder.Name;
+                Contents = folder.DisplayName;
             }
             else
             {

@@ -19,6 +19,8 @@
 
     <UserControl.Resources>
 
+        <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox" />
+
         <DataTemplate x:Key="BlankTemplate" />
 
         <Style x:Key="SubheaderTextBlockStyle2" BasedOn="{StaticResource SubheaderTextBlockStyle}" TargetType="TextBlock">
@@ -27,14 +29,11 @@
             <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
 
-
         <!--<Style TargetType="RadioButton">
             <Setter Property="MinWidth" Value="200" />
         </Style>-->
 
         <!--<Style BasedOn="{StaticResource DefaultThemeToggleSwitchStyle}" TargetType="ToggleSwitch" />-->
-
-
     </UserControl.Resources>
 
     <Grid x:Name="Root">
@@ -58,11 +57,10 @@
             </VisualStateGroup>
             <VisualStateGroup x:Name="ThemeStatesGroup">
                 <VisualState x:Name="DefaultThemeState" />
-                <VisualState x:Name="FUIThemeState">
-                    <!--<VisualState.Setters>
-                        <Setter Target="BackgroundBorder.Background" Value="{ThemeResource FUIBackgroundBrush}" />
-                        <Setter Target="TitleBackground.Background" Value="{ThemeResource FUIBackgroundBrush}" />
-                    </VisualState.Setters>-->
+                <VisualState x:Name="ClassicThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="Presenter.TitleBackgroundBrush" Value="Transparent" />
+                    </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
@@ -97,7 +95,7 @@
                     x:Name="MenuColumn"
                     Width="256"
                     Margin="0 24 0 0"
-                    ChildrenTransitions="{StaticResource RepositionTransitions}"
+                    ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                     Style="{StaticResource SettingsMenuStyle}">
 
                     <controls:MenuButton
@@ -105,7 +103,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
                         Tag="{x:Bind UserInterfacePanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE771;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -126,7 +124,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
                         Tag="{x:Bind ExportPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE2B4;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE2B4;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -135,7 +133,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
                         Tag="{x:Bind SearchPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE11A;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE11A;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -144,7 +142,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
                         Tag="{x:Bind CollectionPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE71D;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -159,7 +157,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
                         Tag="{x:Bind ChangePanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xEC7A;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -168,7 +166,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
                         Tag="{x:Bind LicensesPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xF571;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF571;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -177,7 +175,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsAboutLabel/Text')}"
                         Tag="{x:Bind AboutPanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon Glyph="&#xE946;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -186,7 +184,7 @@
                 <Border
                     x:Name="ContentBorder"
                     Grid.Column="1"
-                    Loaded="{x:Bind h:CompositionFactory.SetStandardReposition}">
+                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
                     <!--  RepositionAnimation on the ScrollViewer itself breaks hit testing  -->
                     <ScrollViewer x:Name="ContentScroller">
                         <Grid
@@ -205,7 +203,7 @@
                                 <TextBlock
                                     x:Uid="SettingsUIHeader"
                                     Style="{StaticResource SectionHeaderTextBlockStyle}"
-                                    Text="#UserInterface" />
+                                    d:Text="#UserInterface" />
 
                                 <controls:SettingsPresenter
                                     Title="{core:Localizer Key=SettingsCharGridHeader/Text}"
@@ -235,7 +233,7 @@
                                     <StackPanel>
                                         <ComboBox
                                             MinWidth="160"
-                                            ItemsSource="{x:Bind Annotations}"
+                                            ItemsSource="{x:Bind ViewModel.Annotations}"
                                             SelectedItem="{x:Bind Settings.GlyphAnnotation, Mode=TwoWay}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
@@ -256,7 +254,7 @@
                                                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                                                 Orientation="Horizontal">
                                                 <StackPanel.BackgroundTransition>
-                                                    <BrushTransition Duration="0:0:0.25" />
+                                                    <BrushTransition x:Name="BackgroundTransition" Duration="0:0:0.25" />
                                                 </StackPanel.BackgroundTransition>
                                                 <GridViewItem>
                                                     <Grid
@@ -428,18 +426,39 @@
 
                             </StackPanel>
 
-                            <StackPanel x:Name="UserInterfaceAdvancedPanel" Visibility="Collapsed">
-                                <StackPanel.ChildrenTransitions>
-                                    <TransitionCollection>
-                                        <RepositionThemeTransition IsStaggeringEnabled="False" />
-                                    </TransitionCollection>
-                                </StackPanel.ChildrenTransitions>
+                            <StackPanel
+                                x:Name="UserInterfaceAdvancedPanel"
+                                ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
+                                Visibility="Collapsed">
 
                                 <TextBlock x:Uid="SettingsAdvancedUILabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSimpleAnimationHeader/Text}" Description="{core:Localizer Key=SettingsSimpleAnimationDescription/Text}">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+                                    <ToggleSwitch
+                                        x:Name="BasicAnimationToggle"
+                                        MinWidth="0"
+                                        IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+                                    <controls:SettingsPresenter.Items>
+                                        <controls:SettingsPresenter
+                                            x:Name="FluentAnimationsToggle"
+                                            x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
+                                            x:Uid="SettingsPointerOverAnimation"
+                                            BorderThickness="0 0 0 1"
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations, Mode=TwoWay}" />
+                                        </controls:SettingsPresenter>
+                                        <controls:SettingsPresenter
+                                            x:Name="ExpensiveAnimationToggle"
+                                            x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
+                                            Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}"
+                                            Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}"
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
+                                        </controls:SettingsPresenter>
+                                    </controls:SettingsPresenter.Items>
                                 </controls:SettingsPresenter>
+
+
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsTransparencyHeader/Text}" Description="{core:Localizer Key=SettingsTransparencyDescription/Text}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.IsTransparencyEnabled, Mode=TwoWay}" />
@@ -453,9 +472,7 @@
                                     <win1903:ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}" Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
+
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
@@ -466,9 +483,9 @@
                                         <ComboBox
                                             MinWidth="256"
                                             Margin="0 8 0 0"
-                                            ItemsSource="{x:Bind SupportedLanguages}"
+                                            ItemsSource="{x:Bind ViewModel.SupportedLanguages}"
                                             PlaceholderText="{x:Bind core:Converters.GetLanguageDisplayFromID(Settings.AppLanguage)}"
-                                            SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}" />
+                                            SelectedItem="{x:Bind core:Converters.GetSelectedLanguage(Settings.AppLanguage, ViewModel.SupportedLanguages), Mode=TwoWay, BindBack=SelectedLanguageToString}" />
 
                                         <TextBlock
                                             x:Uid="SettingsNeedRestart"
@@ -549,25 +566,31 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=InstantSearchToggleHeader/Text}" Description="{core:Localizer Key=SettingsCharacterSearchDescription/Text}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
+                                    <controls:SettingsPresenter.Items>
+                                        <controls:SettingsPresenter
+                                            x:Name="SearchDelayItem"
+                                            x:Load="{x:Bind Settings.UseInstantSearch, Mode=OneWay}"
+                                            Title="{core:Localizer Key=SearchDelaySelector/Header}"
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            <muxc:NumberBox
+                                                x:Uid="SearchDelaySelector"
+                                                Width="200"
+                                                HorizontalAlignment="Left"
+                                                AcceptsExpression="False"
+                                                BorderThickness="1"
+                                                FontSize="14"
+                                                HeaderTemplate="{StaticResource BlankTemplate}"
+                                                LargeChange="50"
+                                                Maximum="2000"
+                                                Minimum="250"
+                                                SmallChange="10"
+                                                SpinButtonPlacementMode="Inline"
+                                                Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
+                                        </controls:SettingsPresenter>
+                                    </controls:SettingsPresenter.Items>
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SearchDelaySelector/Header}" Visibility="{x:Bind Settings.UseInstantSearch, Mode=OneWay}">
-                                    <muxc:NumberBox
-                                        x:Uid="SearchDelaySelector"
-                                        Width="200"
-                                        HorizontalAlignment="Left"
-                                        AcceptsExpression="False"
-                                        BorderThickness="1"
-                                        HeaderTemplate="{StaticResource BlankTemplate}"
-                                        LargeChange="50"
-                                        Maximum="2000"
-                                        Minimum="250"
-                                        SmallChange="10"
-                                        SpinButtonPlacementMode="Inline"
-                                        Value="{x:Bind Settings.InstantSearchDelay, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
-
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SearchResultsSlider/Header}" Loaded="{x:Bind h:CompositionFactory.SetStandardReposition}">
+                                <controls:SettingsPresenter Title="{core:Localizer Key=SearchResultsSlider/Header}" core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
 
                                     <muxc:NumberBox
                                         x:Uid="SearchResultsSlider"
@@ -575,6 +598,7 @@
                                         Width="200"
                                         HorizontalAlignment="Left"
                                         AcceptsExpression="False"
+                                        FontSize="14"
                                         Header="#Search Results"
                                         HeaderTemplate="{StaticResource BlankTemplate}"
                                         LargeChange="10"
@@ -599,7 +623,7 @@
 
                                 <controls:UXHyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />
 
-                                <ItemsControl ItemsSource="{x:Bind Changelog}">
+                                <ItemsControl ItemsSource="{x:Bind ViewModel.Changelog}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="views:ChangelogItem">
                                             <controls:SettingsPresenter
@@ -631,9 +655,10 @@
 
                                         <StackPanel Spacing="6">
                                             <TextBlock
+                                                x:Uid="ImportLabel"
                                                 Margin="0 16 0 0"
                                                 Style="{StaticResource HeaderStyle}"
-                                                Text="Import" />
+                                                d:Text="Import" />
                                             <Grid
                                                 x:Name="ImportFontsRegion"
                                                 Width="340"
@@ -688,7 +713,7 @@
                                                 HorizontalContentAlignment="Left"
                                                 Background="Transparent"
                                                 BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
-                                                IsEnabled="{x:Bind IsCollectionExportEnabled, Mode=OneWay}"
+                                                IsEnabled="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}"
                                                 Style="{StaticResource ButtonRevealStyle}">
                                                 <StackPanel Orientation="Horizontal" Spacing="12">
                                                     <PathIcon
@@ -707,13 +732,16 @@
                                                         MinHeight="20"
                                                         HorizontalAlignment="Center"
                                                         VerticalAlignment="Center"
-                                                        IsActive="{x:Bind core:Converters.False(IsCollectionExportEnabled), Mode=OneWay}"
-                                                        Visibility="{x:Bind core:Converters.FalseToVis(IsCollectionExportEnabled), Mode=OneWay}" />
+                                                        IsActive="{x:Bind core:Converters.False(ViewModel.IsCollectionExportEnabled), Mode=OneWay}"
+                                                        Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsCollectionExportEnabled), Mode=OneWay}" />
                                                 </StackPanel>
                                                 <Button.Flyout>
-                                                    <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
-                                                        <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ExportToFolder}" />
-                                                        <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ExportAsZip}" />
+                                                    <MenuFlyout
+                                                        AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                                                        MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+                                                        Placement="Bottom">
+                                                        <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportToFolder}" />
+                                                        <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
                                                     </MenuFlyout>
                                                 </Button.Flyout>
                                             </Button>
@@ -781,8 +809,8 @@
                                         <TextBlock
                                             x:Uid="Settings_AboutDescription"
                                             Style="{StaticResource BodyTextBlockStyle}"
-                                            Text="#Settings_AboutDescription"
-                                            TextWrapping="Wrap" />
+                                            TextWrapping="Wrap"
+                                            d:Text="#Settings_AboutDescription" />
 
                                         <StackPanel>
                                             <controls:UXHyperlinkButton Content="GitHub" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP" />

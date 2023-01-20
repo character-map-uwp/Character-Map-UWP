@@ -2,6 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
 
+using CharacterMap.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,6 @@ namespace Microsoft.Toolkit.Uwp.UI.Controls
         public InAppNotification()
         {
             DefaultStyleKey = typeof(InAppNotification);
-
             _dismissTimer.Tick += DismissTimer_Tick;
         }
 
@@ -77,7 +77,7 @@ namespace Microsoft.Toolkit.Uwp.UI.Controls
             if (firstNotification != null)
             {
                 UpdateContent(firstNotification);
-                VisualStateManager.GoToState(this, StateContentVisible, true);
+                VisualStateManager.GoToState(this, StateContentVisible, ResourceHelper.AllowAnimation);
             }
 
             AutomationProperties.SetLabeledBy(this, this.GetFirstDescendantOfType<ContentPresenter>());
@@ -207,7 +207,7 @@ namespace Microsoft.Toolkit.Uwp.UI.Controls
                 return;
             }
 
-            var result = VisualStateManager.GoToState(this, StateContentCollapsed, true);
+            var result = VisualStateManager.GoToState(this, StateContentCollapsed, ResourceHelper.AllowAnimation);
             if (!result)
             {
                 // The state transition cannot be executed.
@@ -288,7 +288,7 @@ namespace Microsoft.Toolkit.Uwp.UI.Controls
             if (shouldDisplayImmediately)
             {
                 Visibility = Visibility.Visible;
-                VisualStateManager.GoToState(this, StateContentVisible, true);
+                VisualStateManager.GoToState(this, StateContentVisible, ResourceHelper.AllowAnimation);
 
                 UpdateContent(notificationOptions);
 

@@ -76,8 +76,6 @@
         </Setter>
     </Style>
 
-
-
     <Style x:Key="FontAutoSuggestBoxTextBoxStyle" BasedOn="{StaticResource AutoSuggestBoxTextBoxStyle}" TargetType="TextBox">
         <Setter Property="CornerRadius" Value="0" />
         <Setter Property="BorderBrush" Value="{ThemeResource ButtonRevealBorderBrush}" />
@@ -686,53 +684,10 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="PlaceholderTextContent" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlPlaceholderForegroundFocused}" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlForegroundFocused}" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentElement" Storyboard.TargetProperty="RequestedTheme">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Light" />
-                                        </ObjectAnimationUsingKeyFrames>-->
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
-                            <VisualStateGroup x:Name="ButtonStates">
-                                <VisualState x:Name="ButtonVisible">
-                                    <VisualState.Setters>
-                                        <Setter Target="DeleteButton.Opacity" Value="1" />
-                                        <Setter Target="DeleteButton.IsEnabled" Value="True" />
-                                    </VisualState.Setters>
-                                </VisualState>
-                                <VisualState x:Name="ButtonCollapsed" />
-                            </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <ContentPresenter
-                            x:Name="HeaderContentPresenter"
-                            x:DeferLoadStrategy="Lazy"
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            Margin="10 0 0 0"
-                            VerticalAlignment="Top"
-                            Content="{TemplateBinding Header}"
-                            ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            FontSize="12"
-                            FontWeight="Normal"
-                            Foreground="{TemplateBinding Foreground}"
-                            Opacity="0.7"
-                            TextWrapping="Wrap"
-                            Visibility="Collapsed" />
                         <ScrollViewer
                             x:Name="ContentElement"
                             Grid.Row="1"
@@ -765,26 +720,9 @@
                                 IsHitTestVisible="False"
                                 IsTabStop="False" />
                         </StackPanel>
-
-                        <Button
-                            x:Name="DeleteButton"
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            MinWidth="34"
-                            VerticalAlignment="Stretch"
-                            AutomationProperties.AccessibilityView="Raw"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="0 2 2 0"
-                            FontSize="{TemplateBinding FontSize}"
-                            IsEnabled="False"
-                            IsTabStop="False"
-                            Opacity="0"
-                            Style="{StaticResource DeleteButtonStyle}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-
-
 </ResourceDictionary>
