@@ -606,14 +606,14 @@ Requires a restart to take effect.</target>
           <target state="new">Enable shadows</target>
         </trans-unit>
         <trans-unit id="SettingsSimpleAnimationDescription.Text" translate="yes" xml:space="preserve">
-          <source>Controls the animation for loading the font list, switching fonts and changing characters.
+          <source>Controls most animations inside the application. Turning this off will disable most animations.
 Turning this on has negligible performance impact.</source>
-          <target state="new">Controls the animation for loading the font list, switching fonts and changing characters.
+          <target state="new">Controls most animations inside the application. Turning this off will disable most animations.
 Turning this on has negligible performance impact.</target>
         </trans-unit>
         <trans-unit id="SettingsSimpleAnimationHeader.Text" translate="yes" xml:space="preserve">
-          <source>Enable simple animations</source>
-          <target state="new">Enable simple animations</target>
+          <source>Enable animations</source>
+          <target state="new">Enable animations</target>
         </trans-unit>
         <trans-unit id="SettingsThemeHeader.Text" translate="yes" xml:space="preserve">
           <source>Theme</source>
@@ -1347,11 +1347,6 @@ Requires a restart to take effect.</target>
           <source>Create New</source>
           <target state="new">Create New</target>
         </trans-unit>
-        <trans-unit id="FontsPartialLabel" translate="yes" xml:space="preserve">
-          <source>fonts,</source>
-          <target state="new">fonts,</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">{0} fonts, {1} selected</note>
-        </trans-unit>
         <trans-unit id="OrLabel.Text" translate="yes" xml:space="preserve">
           <source>or</source>
           <target state="new">or</target>
@@ -1363,11 +1358,6 @@ Requires a restart to take effect.</target>
         <trans-unit id="SelectCollectionLabel" translate="yes" xml:space="preserve">
           <source>Select Collection</source>
           <target state="new">Select Collection</target>
-        </trans-unit>
-        <trans-unit id="SelectedPartialLabel" translate="yes" xml:space="preserve">
-          <source>selected</source>
-          <target state="new">selected</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">{0} fonts, {1} selected</note>
         </trans-unit>
         <trans-unit id="SettingsCollectionsHeader" translate="yes" xml:space="preserve">
           <source>Collections</source>
@@ -1418,12 +1408,12 @@ Requires a restart to take effect.</target>
           <target state="new">font files</target>
         </trans-unit>
         <trans-unit id="FontFileMenuItem.Text" translate="yes" xml:space="preserve">
-          <source>Font File</source>
-          <target state="new">Font File</target>
+          <source>Open Font File</source>
+          <target state="new">Open Font File</target>
         </trans-unit>
         <trans-unit id="FontFolderMenuItem.Text" translate="yes" xml:space="preserve">
-          <source>Font Folder</source>
-          <target state="new">Font Folder</target>
+          <source>Open Font Folder</source>
+          <target state="new">Open Font Folder</target>
         </trans-unit>
         <trans-unit id="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Add to history</source>
@@ -1450,24 +1440,24 @@ Requires a restart to take effect.</target>
           <target state="new">History</target>
         </trans-unit>
         <trans-unit id="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Redo (Ctrl + Y)</source>
-          <target state="new">Redo (Ctrl + Y)</target>
+          <source>Redo (Ctrl+Y)</source>
+          <target state="new">Redo (Ctrl+Y)</target>
         </trans-unit>
         <trans-unit id="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Remove</source>
           <target state="new">Remove</target>
         </trans-unit>
         <trans-unit id="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Save (Ctrl + S)</source>
-          <target state="new">Save (Ctrl + S)</target>
+          <source>Save (Ctrl+S)</source>
+          <target state="new">Save (Ctrl+S)</target>
         </trans-unit>
         <trans-unit id="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Side by side</source>
           <target state="new">Side by side</target>
         </trans-unit>
         <trans-unit id="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Undo (Ctrl + Z)</source>
-          <target state="new">Undo (Ctrl + Z)</target>
+          <source>Undo (Ctrl+Z)</source>
+          <target state="new">Undo (Ctrl+Z)</target>
         </trans-unit>
         <trans-unit id="GuideFontSlider.Header" translate="yes" xml:space="preserve">
           <source>Guide Size</source>
@@ -1484,6 +1474,111 @@ Requires a restart to take effect.</target>
         <trans-unit id="GuideSizeLabel.Text" translate="yes" xml:space="preserve">
           <source>Guide Size</source>
           <target state="new">Guide Size</target>
+        </trans-unit>
+        <trans-unit id="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Show or Hide Font Pane (Ctrl+L)</source>
+          <target state="new">Show or Hide Font Pane (Ctrl+L)</target>
+        </trans-unit>
+        <trans-unit id="OpenInNewTab.Text" translate="yes" xml:space="preserve">
+          <source>Open in New Tab</source>
+          <target state="new">Open in New Tab</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptKorean.Text" translate="yes" xml:space="preserve">
+          <source>Korean</source>
+          <target state="new">Korean</target>
+        </trans-unit>
+        <trans-unit id="AddActiveToCollectionItem.Text" translate="yes" xml:space="preserve">
+          <source>Add active to Collection</source>
+          <target state="new">Add active to Collection</target>
+        </trans-unit>
+        <trans-unit id="CompareActiveItem.Text" translate="yes" xml:space="preserve">
+          <source>Compare active font faces</source>
+          <target state="new">Compare active font faces</target>
+        </trans-unit>
+        <trans-unit id="OptionEmoji.Text" translate="yes" xml:space="preserve">
+          <source>Emoji</source>
+          <target state="new">Emoji</target>
+        </trans-unit>
+        <trans-unit id="OptionSupportedScripts.Text" translate="yes" xml:space="preserve">
+          <source>Supported Scripts</source>
+          <target state="new">Supported Scripts</target>
+        </trans-unit>
+        <trans-unit id="CompareFontFaceTitle.Text" translate="yes" xml:space="preserve">
+          <source>Compare Font Faces</source>
+          <target state="new">Compare Font Faces</target>
+        </trans-unit>
+        <trans-unit id="CompareFacesCountLabel.Text" translate="yes" xml:space="preserve">
+          <source>Compare {0} font faces</source>
+          <target state="new">Compare {0} font faces</target>
+        </trans-unit>
+        <trans-unit id="CompareFamilyTitle.Text" translate="yes" xml:space="preserve">
+          <source>Compare {0}</source>
+          <target state="new">Compare {0}</target>
+        </trans-unit>
+        <trans-unit id="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Open Menu</source>
+          <target state="new">Open Menu</target>
+        </trans-unit>
+        <trans-unit id="FontsSelectedCountLabel" translate="yes" xml:space="preserve">
+          <source>{0} fonts, {1} selected</source>
+          <target state="new">{0} fonts, {1} selected</target>
+        </trans-unit>
+        <trans-unit id="CompareShortLabel" translate="yes" xml:space="preserve">
+          <source>Compare</source>
+          <target state="new">Compare</target>
+        </trans-unit>
+        <trans-unit id="AllFontsLabel.Text" translate="yes" xml:space="preserve">
+          <source>All Fonts</source>
+          <target state="new">All Fonts</target>
+        </trans-unit>
+        <trans-unit id="ImportLabel.Text" translate="yes" xml:space="preserve">
+          <source>Import</source>
+          <target state="new">Import</target>
+        </trans-unit>
+        <trans-unit id="PreferredFormatGroup.Text" translate="yes" xml:space="preserve">
+          <source>Preferred Format</source>
+          <target state="new">Preferred Format</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Preferred export format</note>
+        </trans-unit>
+        <trans-unit id="RemoveLabel.Text" translate="yes" xml:space="preserve">
+          <source>Remove</source>
+          <target state="new">Remove</target>
+        </trans-unit>
+        <trans-unit id="UndoLabel" translate="yes" xml:space="preserve">
+          <source>Undo</source>
+          <target state="new">Undo</target>
+        </trans-unit>
+        <trans-unit id="CalligraphyDescription.Text" translate="yes" xml:space="preserve">
+          <source>Practice writing in the style of the current font</source>
+          <target state="new">Practice writing in the style of the current font</target>
+        </trans-unit>
+        <trans-unit id="CompareFontsDescription.Text" translate="yes" xml:space="preserve">
+          <source>See and compare all your fonts side-by-side</source>
+          <target state="new">See and compare all your fonts side-by-side</target>
+        </trans-unit>
+        <trans-unit id="DoMoreLabel.Text" translate="yes" xml:space="preserve">
+          <source>Do More</source>
+          <target state="new">Do More</target>
+        </trans-unit>
+        <trans-unit id="FullscreenLabel.Text" translate="yes" xml:space="preserve">
+          <source>Fullscreen</source>
+          <target state="new">Fullscreen</target>
+        </trans-unit>
+        <trans-unit id="OpenFolderDescription.Text" translate="yes" xml:space="preserve">
+          <source>Open all font files found inside a folder</source>
+          <target state="new">Open all font files found inside a folder</target>
+        </trans-unit>
+        <trans-unit id="OpenFontDescription.Text" translate="yes" xml:space="preserve">
+          <source>Open TTF, OTF, OTC, TTC, WOFF or ZIP files</source>
+          <target state="new">Open TTF, OTF, OTC, TTC, WOFF or ZIP files</target>
+        </trans-unit>
+        <trans-unit id="SettingsPointerOverAnimation.Description" translate="yes" xml:space="preserve">
+          <source>Enables subtle bounce animations when the mouse pointer goes over certains buttons.</source>
+          <target state="new">Enables subtle bounce animations when the mouse pointer goes over certains buttons.</target>
+        </trans-unit>
+        <trans-unit id="SettingsPointerOverAnimation.Title" translate="yes" xml:space="preserve">
+          <source>Enable pointer over animations</source>
+          <target state="new">Enable pointer over animations</target>
         </trans-unit>
       </group>
     </body>

@@ -1015,10 +1015,6 @@
   <data name="CreateNewButton.Content" xml:space="preserve">
     <value>สร้างรายการสะสมใหม่</value>
   </data>
-  <data name="FontsPartialLabel" xml:space="preserve">
-    <value>ฟ้อนต์. </value>
-    <comment>{0} fonts, {1} selected</comment>
-  </data>
   <data name="OrLabel.Text" xml:space="preserve">
     <value>หรือ</value>
   </data>
@@ -1027,10 +1023,6 @@
   </data>
   <data name="SelectCollectionLabel" xml:space="preserve">
     <value>เลือกรายการสะสม</value>
-  </data>
-  <data name="SelectedPartialLabel" xml:space="preserve">
-    <value>เลือกแล้ว</value>
-    <comment>{0} fonts, {1} selected</comment>
   </data>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
     <value>รายการสะสม</value>
