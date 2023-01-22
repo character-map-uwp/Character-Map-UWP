@@ -1,6 +1,7 @@
 ﻿using CharacterMap.Core;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using System.Text;
@@ -293,7 +294,10 @@ namespace CharacterMap.Helpers
 
             var e = v.GetCached($"CP{x}{y}",
                         () => v.CreateExpressionAnimation(nameof(Visual.CenterPoint))
-                                .SetExpression(string.Format(CENTRE_EXPRESSION, x, y)));
+                                .SetExpression(string.Format(
+                                    CENTRE_EXPRESSION, 
+                                    x.ToString(CultureInfo.InvariantCulture.NumberFormat), 
+                                    y.ToString(CultureInfo.InvariantCulture.NumberFormat))));
 
             v.StartAnimationGroup(e);
             return e;
@@ -495,7 +499,7 @@ namespace CharacterMap.Helpers
 
                 target.Translation = new Vector3(0, 0, depth);
 
-                var shadow = new ThemeShadow();
+                ThemeShadow shadow = new ();
                 target.Shadow = shadow;
                 foreach (var r in recievers)
                     shadow.Receivers.Add(r);
