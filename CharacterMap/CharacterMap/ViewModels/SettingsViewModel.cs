@@ -1,19 +1,26 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using CharacterMap.Views;
+using CharacterMap.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Windows.ApplicationModel.Core;
 using Windows.Globalization;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels
 {
     public partial class SettingsViewModel : ViewModelBase
     {
+        private Random _random { get; } = new Random();
+
         protected override bool TrackAnimation => true;
 
-        public List<GlyphAnnotation> Annotations => new ()
+        public List<GlyphAnnotation> Annotations { get; } = new ()
         {
             GlyphAnnotation.None,
             GlyphAnnotation.UnicodeHex,
@@ -21,13 +28,64 @@ namespace CharacterMap.ViewModels
         };
 
         [ObservableProperty]
+        private FontFamily _previewFontSource;
+
+        [ObservableProperty]
+        private List<InstalledFont> _previewFonts;
+
+        [ObservableProperty]
         private bool _isCollectionExportEnabled = true;
+
+        public bool ThemeHasChanged => Settings.ApplicationDesignTheme != _originalDesign;
 
         private List<ChangelogItem> _changelog;
         public List<ChangelogItem> Changelog => _changelog ??= CreateChangelog();
 
         private List<SupportedLanguage> _supportedLanguages;
         public List<SupportedLanguage> SupportedLanguages => _supportedLanguages ??= GetSupportedLanguages();
+
+
+        private int _originalDesign { get; }
+
+        private AppSettings Settings { get; } = ResourceHelper.AppSettings;
+
+        public SettingsViewModel()
+        {
+            _originalDesign = Settings.ApplicationDesignTheme;
+        }
+
+        public void UpdatePreviews(InstalledFont font, FontVariant variant)
+        {
+            bool isSymbol = Ioc.Default.GetService<UserCollectionsService>().IsSymbolFont(font);
+
+            // 1. Update "A B Y" Character grid previews
+            // Note: it is legal for both "variant" and "font" to be NULL
+            //       when calling, so test both cases.
+            PreviewFontSource = variant != null && !isSymbol 
+                ? new FontFamily(variant.XamlFontSource) 
+                : FontFamily.XamlAutoFontFamily;
+
+            // 2. Update FontList Previews
+            var items = Enumerable.Range(1, 5).Select(i => FontFinder.Fonts[_random.Next(0, FontFinder.Fonts.Count - 1)])
+                                              .OrderBy(f => f.Name)
+                                              .ToList();
+
+            if (font != null && !isSymbol && !items.Contains(font))
+            {
+                items.RemoveAt(0);
+                items.Add(font);
+            }
+
+            PreviewFonts = items.OrderBy(f => f.Name).ToList();
+        }
+
+        public void ResetFontPreview()
+        {
+            // Causes Bindings to re-evaluate so the UI can
+            // regenerate using the correct fonts
+            OnPropertyChanged(nameof(PreviewFonts));
+        }
+
 
         private List<ChangelogItem> CreateChangelog()
         {
@@ -126,6 +184,37 @@ namespace CharacterMap.ViewModels
             IsCollectionExportEnabled = false;
             try { await ExportManager.ExportFontsToFolderAsync(FontFinder.GetImportedVariants()); }
             finally { IsCollectionExportEnabled = true; }
+        }
+
+        internal void SetDesign(int selectedIndex)
+        {
+            Settings.ApplicationDesignTheme = selectedIndex;
+            OnPropertyChanged(nameof(ThemeHasChanged));
+        }
+
+        public void LaunchReview()
+        {
+            _ = SystemInformation.LaunchStoreForReviewAsync();
+        }
+
+        public void Restart()
+        {
+            _ = CoreApplication.RequestRestartAsync(string.Empty);
+        }
+
+        public void SetLightTheme()
+        {
+            Settings.UserRequestedTheme = ElementTheme.Light;
+        }
+
+        public void SetDarkTheme()
+        {
+            Settings.UserRequestedTheme = ElementTheme.Dark;
+        }
+
+        public void SetWindowsTheme()
+        {
+            Settings.UserRequestedTheme = ElementTheme.Default;
         }
     }
 }

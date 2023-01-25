@@ -2,43 +2,21 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
-using Windows.ApplicationModel.Core;
-using Windows.Globalization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views
 {
-    public class ChangelogItem
-    {
-        public ChangelogItem(string header, string content)
-        {
-            Header = header;
-            Content = content;
-        }
-
-        public string Header { get; set; }
-        public string Content { get; set; }
-    }
-
     public sealed partial class SettingsView : ViewBase
     {
-        private Random _random { get; } = new Random();
-
         public AppSettings Settings { get; }
-
-        public UserCollectionsService FontCollections { get; }
 
         public SettingsViewModel ViewModel { get; }
 
@@ -57,8 +35,12 @@ namespace CharacterMap.Views
             DependencyProperty.Register(nameof(GridSize), typeof(int), typeof(SettingsView), new PropertyMetadata(0d));
 
         private bool _themeSupportsShadows = false;
+
         private bool _themeSupportsDark = false;
-        private NavigationHelper _navHelper { get; } = new NavigationHelper();
+
+        private NavigationHelper _navHelper { get; } = new ();
+
+        private int _requested = 0;
 
         public SettingsView()
         {
@@ -69,7 +51,6 @@ namespace CharacterMap.Views
 
             ViewModel = new();
             Settings = ResourceHelper.AppSettings;
-            FontCollections = Ioc.Default.GetService<UserCollectionsService>();
             Register<AppSettingsChangedMessage>(OnAppSettingsUpdated);
             Register<FontListCreatedMessage>(m => UpdateExport());
 
@@ -80,6 +61,55 @@ namespace CharacterMap.Views
             _themeSupportsDark = ResourceHelper.Get<Boolean>("SupportsDarkTheme");
 
             _navHelper.BackRequested += (s, e) => Hide();
+        }
+
+        public void Show(FontVariant variant, InstalledFont font, int idx = 0)
+        {
+            if (IsOpen)
+                return;
+
+            UpdateAnimation();
+            StartShowAnimation();
+            this.Visibility = Visibility.Visible;
+
+            if (!ResourceHelper.AllowAnimation)
+            {
+                this.GetElementVisual().Opacity = 1;
+                this.GetElementVisual().SetTranslation(0,0,0);
+            }
+
+            // 1. Focus the close button to ensure keyboard focus is retained inside the settings panel
+            Presenter.SetDefaultFocus();
+
+            // 2. Reset scroll position
+#pragma warning disable CS0618 // ChangeView doesn't work well when not properly visible
+            ContentScroller.ScrollToVerticalOffset(0);
+#pragma warning restore CS0618
+
+            // 3. Get the fonts used for Font List & Character Grid previews
+            ViewModel.UpdatePreviews(font, variant);
+            
+            // 4. Set correct Developer features language
+            UpdateExport();
+
+            Presenter.SetTitleBar();
+            IsOpen = true;
+            _navHelper.Activate();
+
+            _requested = idx;
+            if (IsLoaded)
+                MenuColumn.Children.OfType<MenuButton>().ElementAt(idx).IsChecked = true;
+        }
+
+        public void Hide()
+        {
+            UpdateAnimation();
+            _navHelper.Deactivate();
+
+            TitleBarHelper.RestoreDefaultTitleBar();
+            IsOpen = false;
+            this.Visibility = Visibility.Collapsed;
+            Messenger.Send(new ModalClosedMessage());
         }
 
         void OnAppSettingsUpdated(AppSettingsChangedMessage msg)
@@ -102,99 +132,9 @@ namespace CharacterMap.Views
                     GridSize = Settings.GridSize;
                     break;
                 case nameof(Settings.ApplicationDesignTheme):
-                    UpdateStyle();
+                    //UpdateStyle();
                     break;
             }
-        }
-
-        int _requested = 0;
-
-        public void Show(FontVariant variant, InstalledFont font, int idx = 0)
-        {
-            if (IsOpen)
-                return;
-
-            UpdateAnimation();
-
-            StartShowAnimation();
-            this.Visibility = Visibility.Visible;
-
-            if (!ResourceHelper.AllowAnimation)
-            {
-                this.GetElementVisual().Opacity = 1;
-                this.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, Vector3.Zero);
-            }
-
-            // 1. Focus the close button to ensure keyboard focus is retained inside the settings panel
-            Presenter.SetDefaultFocus();
-
-#pragma warning disable CS0618 // ChangeView doesn't work well when not properly visible
-            ContentScroller.ScrollToVerticalOffset(0);
-#pragma warning restore CS0618
-
-            // 2. Get the fonts used for Font List & Character Grid previews
-            // Note: it is legal for both "variant" and "font" to be NULL
-            //       when calling, so test both cases.
-            bool isSymbol = FontCollections.IsSymbolFont(font);
-
-            Preview1.FontFamily = Preview2.FontFamily = Preview3.FontFamily 
-                = variant != null && !isSymbol ? new FontFamily(variant.XamlFontSource) : FontFamily.XamlAutoFontFamily;
-
-            var items = Enumerable.Range(1, 5).Select(i => FontFinder.Fonts[_random.Next(0, FontFinder.Fonts.Count - 1)])
-                                              .OrderBy(f => f.Name)
-                                              .ToList();
-
-            if (font != null && !isSymbol && !items.Contains(font))
-            {
-                items.RemoveAt(0);
-                items.Add(font);
-            }
-
-            LstFontFamily.ItemsSource =  items.OrderBy(f => f.Name).ToList();
-            
-            // 3. Set correct Developer features language
-            UpdateExport();
-
-            Presenter.SetTitleBar();
-            IsOpen = true;
-
-            _navHelper.Activate();
-
-            _requested = idx;
-            if (IsLoaded)
-                MenuColumn.Children.OfType<MenuButton>().ElementAt(idx).IsChecked = true;
-        }
-
-        public void Hide()
-        {
-            UpdateAnimation();
-            _navHelper.Deactivate();
-
-            TitleBarHelper.RestoreDefaultTitleBar();
-            IsOpen = false;
-            this.Visibility = Visibility.Collapsed;
-            Messenger.Send(new ModalClosedMessage());
-        }
-
-        private void UpdateAnimation()
-        {
-            if (ResourceHelper.AllowAnimation)
-                CompositionFactory.SetupOverlayPanelAnimation(this);
-            else
-            {
-                this.SetShowAnimation(null);
-                this.SetHideAnimation(null);
-            }
-        }
-
-        private void StartShowAnimation()
-        {
-            if (!ResourceHelper.AllowAnimation)
-                return;
-
-            List<UIElement> elements = new() { this, MenuColumn, ContentBorder };
-            CompositionFactory.PlayEntrance(elements, 0, 200);
-            UpdateStyle();
         }
 
         protected override void OnUnloaded(object sender, RoutedEventArgs e)
@@ -248,31 +188,6 @@ namespace CharacterMap.Views
             });
         }
 
-        private void BtnReview_Click(object sender, RoutedEventArgs e)
-        {
-            _ = SystemInformation.LaunchStoreForReviewAsync();
-        }
-
-        private void BtnRestart_Click(object sender, RoutedEventArgs e)
-        {
-            _ = CoreApplication.RequestRestartAsync(string.Empty);
-        }
-
-        private void ThemeLight_Checked(object sender, RoutedEventArgs e)
-        {
-            Settings.UserRequestedTheme = ElementTheme.Light;
-        }
-
-        private void ThemeDark_Checked(object sender, RoutedEventArgs e)
-        {
-            Settings.UserRequestedTheme = ElementTheme.Dark;
-        }
-
-        private void ThemeSystem_Checked(object sender, RoutedEventArgs e)
-        {
-            Settings.UserRequestedTheme = ElementTheme.Default;
-        }
-
         private void FontNamingSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Settings.ExportNamingScheme = (ExportNamingScheme)((RadioButtons)sender).SelectedIndex;
@@ -281,20 +196,18 @@ namespace CharacterMap.Views
         private void UseSystemFont_Checked(object sender, RoutedEventArgs e)
         {
             Settings.UseFontForPreview = false;
-            ResetFontPreview();
+            ViewModel.ResetFontPreview();
         }
 
         private void UseActualFont_Checked(object sender, RoutedEventArgs e)
         {
             Settings.UseFontForPreview = true;
-            ResetFontPreview();
+            ViewModel.ResetFontPreview();
         }
 
-        private void ResetFontPreview()
+        private void Design_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var items = LstFontFamily.ItemsSource;
-            LstFontFamily.ItemsSource = null;
-            LstFontFamily.ItemsSource = items;
+            ViewModel.SetDesign(((ComboBox)sender).SelectedIndex);
         }
 
         public void SelectedLanguageToString(object selected) => 
@@ -336,7 +249,7 @@ namespace CharacterMap.Views
                 panel.Visibility = Visibility.Visible;
 
                 // 5: Start child animation
-                if (Settings.UseSelectionAnimations)
+                if (ResourceHelper.AllowAnimation)
                     CompositionFactory.PlayEntrance(GetChildren(panel), 10, 80);
 
                 // 6: Show selected panel
@@ -390,17 +303,36 @@ namespace CharacterMap.Views
 
 
 
+        /* ANIMATION */
+
+        private void UpdateAnimation()
+        {
+            if (ResourceHelper.AllowAnimation)
+                CompositionFactory.SetupOverlayPanelAnimation(this);
+            else
+            {
+                this.SetShowAnimation(null);
+                this.SetHideAnimation(null);
+            }
+        }
+
+        private void StartShowAnimation()
+        {
+            if (!ResourceHelper.AllowAnimation)
+                return;
+
+            List<UIElement> elements = new() { this, MenuColumn, ContentBorder };
+            CompositionFactory.PlayEntrance(elements, 0, 200);
+            UpdateStyle();
+        }
+
+
+
         /* CONVERTERS */
 
         Visibility ShowUnicode(GlyphAnnotation annotation)
         {
             return annotation != GlyphAnnotation.None ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-
-        private void Design_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            Settings.ApplicationDesignTheme = ((ComboBox)sender).SelectedIndex;
         }
     }
 }

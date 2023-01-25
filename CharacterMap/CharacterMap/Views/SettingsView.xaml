@@ -103,7 +103,10 @@
                         Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
                         Tag="{x:Bind UserInterfacePanel}">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
+                            <PathIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Data="F1 M 13.125 0.019531 L 6.25 3.457031 L 6.25 6.445313 L 7.5 7.070313 L 7.5 4.853516 L 12.5 7.353516 L 12.5 10.498047 L 13.75 9.873047 L 13.75 7.353516 L 18.75 4.853516 L 18.75 10.498047 L 20 11.123047 L 20 3.457031 Z M 13.125 6.269531 L 8.271484 3.847656 L 10.332031 2.8125 L 14.853516 5.400391 Z M 16.201172 4.736328 L 11.669922 2.148438 L 13.125 1.416016 L 17.978516 3.847656 Z M 11.25 11.123047 L 11.25 10.341797 L 5.625 7.529297 L 0 10.341797 L 0 16.943359 L 5.625 19.765625 L 10 17.578125 L 10 16.171875 L 6.25 18.056641 L 6.25 13.613281 L 10 11.738281 L 10 11.748047 Z M 5 18.056641 L 1.25 16.171875 L 1.25 11.738281 L 5 13.613281 Z M 5.625 12.529297 L 2.021484 10.732422 L 5.625 8.925781 L 9.228516 10.732422 Z M 11.25 12.519531 L 11.25 17.666016 L 15.625 19.853516 L 20 17.666016 L 20 12.519531 L 15.625 10.332031 Z M 15 18.144531 L 12.5 16.894531 L 12.5 13.916016 L 15 15.166016 Z M 18.75 16.894531 L 16.25 18.144531 L 16.25 15.166016 L 18.75 13.916016 Z M 15.625 14.082031 L 13.271484 12.900391 L 15.625 11.728516 L 17.978516 12.900391 Z " />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -112,10 +115,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
                         Tag="{x:Bind UserInterfaceAdvancedPanel}">
                         <controls:MenuButton.Icon>
-                            <PathIcon
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Data="F1 M 13.125 0.019531 L 6.25 3.457031 L 6.25 6.445313 L 7.5 7.070313 L 7.5 4.853516 L 12.5 7.353516 L 12.5 10.498047 L 13.75 9.873047 L 13.75 7.353516 L 18.75 4.853516 L 18.75 10.498047 L 20 11.123047 L 20 3.457031 Z M 13.125 6.269531 L 8.271484 3.847656 L 10.332031 2.8125 L 14.853516 5.400391 Z M 16.201172 4.736328 L 11.669922 2.148438 L 13.125 1.416016 L 17.978516 3.847656 Z M 11.25 11.123047 L 11.25 10.341797 L 5.625 7.529297 L 0 10.341797 L 0 16.943359 L 5.625 19.765625 L 10 17.578125 L 10 16.171875 L 6.25 18.056641 L 6.25 13.613281 L 10 11.738281 L 10 11.748047 Z M 5 18.056641 L 1.25 16.171875 L 1.25 11.738281 L 5 13.613281 Z M 5.625 12.529297 L 2.021484 10.732422 L 5.625 8.925781 L 9.228516 10.732422 Z M 11.25 12.519531 L 11.25 17.666016 L 15.625 19.853516 L 20 17.666016 L 20 12.519531 L 15.625 10.332031 Z M 15 18.144531 L 12.5 16.894531 L 12.5 13.916016 L 15 15.166016 Z M 18.75 16.894531 L 16.25 18.144531 L 16.25 15.166016 L 18.75 13.916016 Z M 15.625 14.082031 L 13.271484 12.900391 L 15.625 11.728516 L 17.978516 12.900391 Z " />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -265,6 +265,7 @@
                                                             x:Name="Preview1"
                                                             Margin="0 -2 0 0"
                                                             Padding="0,0,0,8"
+                                                            FontFamily="{x:Bind ViewModel.PreviewFontSource, Mode=OneWay}"
                                                             FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
                                                             IsTextScaleFactorEnabled="False"
                                                             Text="A"
@@ -285,6 +286,7 @@
                                                             x:Name="Preview2"
                                                             Margin="0 -2 0 0"
                                                             Padding="0,0,0,8"
+                                                            FontFamily="{x:Bind ViewModel.PreviewFontSource, Mode=OneWay}"
                                                             FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
                                                             IsTextScaleFactorEnabled="False"
                                                             Text="b"
@@ -305,6 +307,7 @@
                                                             x:Name="Preview3"
                                                             Margin="0 -2 0 0"
                                                             Padding="0,0,0,8"
+                                                            FontFamily="{x:Bind ViewModel.PreviewFontSource, Mode=OneWay}"
                                                             FontSize="{x:Bind core:Converters.GetFontSize(GridSize), Mode=OneWay}"
                                                             IsTextScaleFactorEnabled="False"
                                                             Text="y"
@@ -356,6 +359,7 @@
                                             IsTabStop="False"
                                             ItemContainerTransitions="{StaticResource NoTransitions}"
                                             ItemTemplate="{StaticResource FontListItemTemplate}"
+                                            ItemsSource="{x:Bind ViewModel.PreviewFonts, Mode=OneWay}"
                                             SelectionMode="None"
                                             ShowsScrollingPlaceholders="False">
                                             <ListView.Resources>
@@ -372,107 +376,6 @@
                                     </StackPanel>
 
                                 </controls:SettingsPresenter>
-
-                                <controls:SettingsPresenter
-                                    x:Name="ColorThemeSettings"
-                                    x:Load="{x:Bind _themeSupportsDark}"
-                                    Title="{core:Localizer Key=SettingsThemeHeader/Text}"
-                                    ContentPlacement="Bottom">
-                                    <StackPanel>
-                                        <controls:UXRadioButton
-                                            x:Name="ThemeLight"
-                                            x:Uid="RbThemeLight"
-                                            Checked="ThemeLight_Checked"
-                                            GroupName="ThemeSelector" />
-                                        <controls:UXRadioButton
-                                            x:Name="ThemeDark"
-                                            x:Uid="RbThemeDark"
-                                            Checked="ThemeDark_Checked"
-                                            GroupName="ThemeSelector" />
-                                        <controls:UXRadioButton
-                                            x:Name="ThemeSystem"
-                                            x:Uid="RbThemeSystem"
-                                            Checked="ThemeSystem_Checked"
-                                            GroupName="ThemeSelector" />
-
-                                        <controls:UXHyperlinkButton
-                                            x:Uid="SettingsWindowsThemeSettings"
-                                            NavigateUri="ms-settings:personalization-colors"
-                                            Style="{StaticResource TextBlockButtonStyle}" />
-                                    </StackPanel>
-                                </controls:SettingsPresenter>
-
-                                <controls:SettingsPresenter x:Uid="SettingsDesignStyle">
-                                    <StackPanel>
-                                        <ComboBox
-                                            MinWidth="256"
-                                            Margin="0 8 0 0"
-                                            SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
-                                            SelectionChanged="Design_SelectionChanged">
-                                            <x:String>Windows 10</x:String>
-                                            <x:String>Windows 11</x:String>
-                                            <x:String>Classic Windows</x:String>
-                                            <x:String>Zune Desktop</x:String>
-                                        </ComboBox>
-                                    </StackPanel>
-                                </controls:SettingsPresenter>
-
-                                <controls:UXButton
-                                    x:Uid="RestartButton"
-                                    Width="200"
-                                    Margin="0 24 0 0"
-                                    HorizontalAlignment="Left"
-                                    Click="BtnRestart_Click" />
-
-                            </StackPanel>
-
-                            <StackPanel
-                                x:Name="UserInterfaceAdvancedPanel"
-                                ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
-                                Visibility="Collapsed">
-
-                                <TextBlock x:Uid="SettingsAdvancedUILabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
-
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSimpleAnimationHeader/Text}" Description="{core:Localizer Key=SettingsSimpleAnimationDescription/Text}">
-                                    <ToggleSwitch
-                                        x:Name="BasicAnimationToggle"
-                                        MinWidth="0"
-                                        IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
-                                    <controls:SettingsPresenter.Items>
-                                        <controls:SettingsPresenter
-                                            x:Name="FluentAnimationsToggle"
-                                            x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
-                                            x:Uid="SettingsPointerOverAnimation"
-                                            BorderThickness="0 0 0 1"
-                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
-                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations, Mode=TwoWay}" />
-                                        </controls:SettingsPresenter>
-                                        <controls:SettingsPresenter
-                                            x:Name="ExpensiveAnimationToggle"
-                                            x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
-                                            Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}"
-                                            Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}"
-                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
-                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
-                                        </controls:SettingsPresenter>
-                                    </controls:SettingsPresenter.Items>
-                                </controls:SettingsPresenter>
-
-
-
-                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsTransparencyHeader/Text}" Description="{core:Localizer Key=SettingsTransparencyDescription/Text}">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.IsTransparencyEnabled, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
-
-                                <controls:SettingsPresenter
-                                    x:Name="ShadowSettings"
-                                    x:Load="{x:Bind _themeSupportsShadows}"
-                                    Title="{core:Localizer Key=SettingsShadowsHeader/Text}"
-                                    Description="{core:Localizer Key=SettingsShadowsDescription/Text}">
-                                    <win1903:ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
-                                </controls:SettingsPresenter>
-
-
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnablePreviewPane, Mode=TwoWay}" />
@@ -500,7 +403,108 @@
                                     Width="200"
                                     Margin="0 24 0 0"
                                     HorizontalAlignment="Left"
-                                    Click="BtnRestart_Click" />
+                                    Click="{x:Bind ViewModel.Restart}" />
+
+                            </StackPanel>
+
+                            <StackPanel
+                                x:Name="UserInterfaceAdvancedPanel"
+                                ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
+                                Visibility="Collapsed">
+
+                                <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Look &amp; Feel" />
+
+                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSimpleAnimationHeader/Text}" Description="{core:Localizer Key=SettingsSimpleAnimationDescription/Text}">
+                                    <ToggleSwitch
+                                        x:Name="BasicAnimationToggle"
+                                        MinWidth="0"
+                                        IsOn="{x:Bind Settings.UseSelectionAnimations, Mode=TwoWay}" />
+                                    <controls:SettingsPresenter.Items>
+                                        <controls:SettingsPresenter
+                                            x:Name="FluentAnimationsToggle"
+                                            x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
+                                            x:Uid="SettingsPointerOverAnimation"
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations, Mode=TwoWay}" />
+                                        </controls:SettingsPresenter>
+                                        <controls:SettingsPresenter
+                                            x:Name="ExpensiveAnimationToggle"
+                                            x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
+                                            Title="{core:Localizer Key=SettingsExpensiveAnimationHeader/Text}"
+                                            Description="{core:Localizer Key=SettingsExpensiveAnimationDescription/Text}"
+                                            Style="{StaticResource SubItemSettingsPresenterStyle}">
+                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.AllowExpensiveAnimations, Mode=TwoWay}" />
+                                        </controls:SettingsPresenter>
+                                    </controls:SettingsPresenter.Items>
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter Title="{core:Localizer Key=SettingsTransparencyHeader/Text}" Description="{core:Localizer Key=SettingsTransparencyDescription/Text}">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.IsTransparencyEnabled, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
+                                    x:Name="ShadowSettings"
+                                    x:Load="{x:Bind _themeSupportsShadows}"
+                                    Title="{core:Localizer Key=SettingsShadowsHeader/Text}"
+                                    Description="{core:Localizer Key=SettingsShadowsDescription/Text}">
+                                    <win1903:ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.EnableShadows, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
+                                    x:Name="ColorThemeSettings"
+                                    x:Load="{x:Bind _themeSupportsDark}"
+                                    Title="{core:Localizer Key=SettingsThemeHeader/Text}"
+                                    ContentPlacement="Bottom">
+                                    <StackPanel>
+                                        <controls:UXRadioButton
+                                            x:Name="ThemeLight"
+                                            x:Uid="RbThemeLight"
+                                            Checked="{x:Bind ViewModel.SetLightTheme}"
+                                            GroupName="ThemeSelector" />
+                                        <controls:UXRadioButton
+                                            x:Name="ThemeDark"
+                                            x:Uid="RbThemeDark"
+                                            Checked="{x:Bind ViewModel.SetDarkTheme}"
+                                            GroupName="ThemeSelector" />
+                                        <controls:UXRadioButton
+                                            x:Name="ThemeSystem"
+                                            x:Uid="RbThemeSystem"
+                                            Checked="{x:Bind ViewModel.SetWindowsTheme}"
+                                            GroupName="ThemeSelector" />
+
+                                        <controls:UXHyperlinkButton
+                                            x:Uid="SettingsWindowsThemeSettings"
+                                            NavigateUri="ms-settings:personalization-colors"
+                                            Style="{StaticResource TextBlockButtonStyle}" />
+                                    </StackPanel>
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter x:Uid="SettingsDesignStyle">
+                                    <StackPanel>
+                                        <ComboBox
+                                            MinWidth="256"
+                                            Margin="0 8 0 0"
+                                            SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
+                                            SelectionChanged="Design_SelectionChanged">
+                                            <x:String>Windows 10</x:String>
+                                            <x:String>Windows 11</x:String>
+                                            <x:String>Classic Windows</x:String>
+                                            <x:String>Zune Desktop</x:String>
+                                        </ComboBox>
+                                    </StackPanel>
+                                    <controls:SettingsPresenter.Items>
+                                        <controls:UXButton
+                                            x:Name="ThemeRestartButton"
+                                            x:Load="{x:Bind ViewModel.ThemeHasChanged, Mode=OneWay}"
+                                            x:Uid="RestartButton"
+                                            Width="200"
+                                            Margin="20 14 0 18"
+                                            HorizontalAlignment="Left"
+                                            Click="{x:Bind ViewModel.Restart}" />
+                                    </controls:SettingsPresenter.Items>
+                                </controls:SettingsPresenter>
+
+
 
                             </StackPanel>
 
@@ -625,7 +629,7 @@
 
                                 <ItemsControl ItemsSource="{x:Bind ViewModel.Changelog}">
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate x:DataType="views:ChangelogItem">
+                                        <DataTemplate x:DataType="models:ChangelogItem">
                                             <controls:SettingsPresenter
                                                 Title="{x:Bind Header}"
                                                 Margin="0 0 0 8"
@@ -822,13 +826,13 @@
                                             x:Uid="BtnRateAndReview"
                                             Width="200"
                                             HorizontalAlignment="Left"
-                                            Click="BtnReview_Click" />
+                                            Click="{x:Bind ViewModel.LaunchReview}" />
                                         <controls:UXButton
                                             x:Name="BtnRestart"
                                             x:Uid="RestartButton"
                                             Width="200"
                                             HorizontalAlignment="Left"
-                                            Click="BtnRestart_Click" />
+                                            Click="{x:Bind ViewModel.Restart}" />
 
                                     </StackPanel>
                                 </controls:SettingsPresenter>

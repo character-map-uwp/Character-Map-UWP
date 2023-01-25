@@ -92,6 +92,24 @@
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 4" />
+        <Setter Property="BottomCornerRadius" Value="0 0 4 4" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="0" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="BorderThickness" Value="0 0 0 1" />
+                    <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}" />
+                    <Setter Property="Padding" Value="16 8 16 8" />
+                    <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </Style>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SettingsPresenter">
@@ -142,6 +160,7 @@
                         <Grid
                             x:Name="TopCardRoot"
                             Padding="{TemplateBinding Padding}"
+                            VerticalAlignment="Center"
                             Background="{TemplateBinding Background}"
                             BackgroundTransition="{StaticResource QuickBrushTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -179,7 +198,7 @@
                                     x:Load="False"
                                     Margin="0 2 0 0"
                                     FontFamily="{TemplateBinding FontFamily}"
-                                    FontSize="12.333"
+                                    FontSize="12.666"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="{TemplateBinding Description}"
                                     TextWrapping="Wrap"
@@ -202,11 +221,10 @@
                             Visibility="Collapsed">
                             <!--  Animate the border below  -->
                             <Border
-                                Background="{ThemeResource LayerFillColorDefaultBrush}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="1 0 1 1"
-                                CornerRadius="0 0 4 4">
-                                <ItemsPresenter Margin="0 4 0 0" />
+                                CornerRadius="{TemplateBinding BottomCornerRadius}">
+                                <ItemsPresenter Margin="0 0 0 -2" />
                             </Border>
                         </Border>
                     </Grid>
@@ -216,9 +234,10 @@
     </Style>
 
     <Style x:Key="SubItemSettingsPresenterStyle" BasedOn="{StaticResource DefaultSettingsPresenterStyle}" TargetType="controls:SettingsPresenter">
-        <Setter Property="Padding" Value="16 6 16 18" />
-        <Setter Property="BorderThickness" Value="0 0 0 0" />
+        <Setter Property="Padding" Value="0 0 0 0" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Margin" Value="0" />
         <Setter Property="Background" Value="Transparent" />
     </Style>
 

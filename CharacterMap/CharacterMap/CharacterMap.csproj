@@ -333,6 +333,7 @@
     <Compile Include="Views\CalligraphyView.xaml.cs">
       <DependentUpon>CalligraphyView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ChangelogItem.cs" />
     <Compile Include="Views\CollectionManagementView.xaml.cs">
       <DependentUpon>CollectionManagementView.xaml</DependentUpon>
     </Compile>

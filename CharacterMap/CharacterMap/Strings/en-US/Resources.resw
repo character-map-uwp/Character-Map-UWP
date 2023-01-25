@@ -578,7 +578,7 @@ Turning this on has negligible performance impact.</value>
     <value>Theme</value>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
-    <value>User Interface</value>
+    <value>Layout</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
@@ -868,7 +868,7 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>About</value>
   </data>
   <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
-    <value>User Interface Advanced</value>
+    <value>Look &amp; Feel</value>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
     <value>Export all imported fonts</value>
