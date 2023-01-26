@@ -339,7 +339,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="RampComboBoxStyle" BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
+    <Style x:Key="RampComboBoxStyle" BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox">
         <Setter Property="CornerRadius" Value="2" />
         <Setter Property="BorderBrush" Value="{ThemeResource ApplicationPressedForegroundThemeBrush}" />
         <Setter Property="Background" Value="{ThemeResource ComboBoxBackground}" />
