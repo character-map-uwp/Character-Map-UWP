@@ -969,30 +969,19 @@ namespace CharacterMap.Core
             if (source.GetDescendantsOfType<FrameworkElement>()
                 .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
             {
-                Storyboard sb = new();
-                var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
-
-                bool hasPressed = string.IsNullOrEmpty(GetPointerPressedAnimation(source)) is false;
-                double duration = hasPressed ? 0.35 : 0.5;
                 if (parts.Length > 1 && parts[1] == "Scale")
                 {
-                    ease.Amplitude = 1;
-
-                    // Create scale animation
-                    var x = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleX);
-                    var y = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleY);
-
-                    if (hasPressed is false)
-                    {
-                        x.AddKeyFrame(0.15, offset);
-                        y.AddKeyFrame(0.15, offset);
-                    }
-
-                    x.AddKeyFrame(duration, 1, ease);
-                    y.AddKeyFrame(duration, 1, ease);
+                    Visual v = target.GetElementVisual();
+                    v.StartAnimation(FluentAnimationHelper.CreatePointerUp(v));
                 }
                 else
                 {
+                    Storyboard sb = new();
+                    var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
+
+                    bool hasPressed = string.IsNullOrEmpty(GetPointerPressedAnimation(source)) is false;
+                    double duration = hasPressed ? 0.35 : 0.5;
+
                     // Create translate animation
                     string path = parts.Length > 1 && parts[1] == "X"
                         ? TargetProperty.CompositeTransform.TranslateX
@@ -1003,9 +992,9 @@ namespace CharacterMap.Core
                         t.AddKeyFrame(0.15, offset);
 
                     t.AddKeyFrame(duration, 0, ease);
-                }
 
-                sb.Begin();
+                    sb.Begin();
+                }
             }
         }
 
@@ -1114,27 +1103,22 @@ namespace CharacterMap.Core
                             .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
                         {
                             double duration = 0.35;
-                            Storyboard sb = new();
-                            var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
+                            
                             if (parts.Length > 1 && parts[1] == "Scale")
                             {
-                                ease.Amplitude = 1;
-
-                                // Create scale animation
-                                var x = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleX)
-                                    .AddKeyFrame(duration, 1, ease);
-
-                                var y = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleY)
-                                    .AddKeyFrame(duration, 1, ease);
+                                Visual v = target.GetElementVisual();
+                                v.StartAnimation(FluentAnimationHelper.CreatePointerUp(v));
                             }
                             else
                             {
+                                Storyboard sb = new();
+                                var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
                                 // Create translate animation
                                 var t = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateY)
                                     .AddKeyFrame(duration, 0, ease);
-                            }
+                                sb.Begin();
 
-                            sb.Begin();
+                            }
                         }
                     }
 
@@ -1144,29 +1128,23 @@ namespace CharacterMap.Core
                         if (source.GetDescendantsOfType<FrameworkElement>()
                             .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
                         {
-                            Storyboard sb = new();
-                            var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
+                            
                             if (parts.Length > 1 && parts[1] == "Scale")
                             {
-                                ease.Amplitude = 1;
-
-                                // Create scale animation
-                                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleX)
-                                    .AddKeyFrame(0.15, offset);
-
-                                sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.ScaleY)
-                                    .AddKeyFrame(0.15, offset);
+                                Visual v = target.GetElementVisual();
+                                v.StartAnimation(FluentAnimationHelper.CreatePointerDown(v, (float)offset));
                             }
                             else
                             {
                                 // Create translate animation
+                                Storyboard sb = new();
+                                var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
                                 sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, TargetProperty.CompositeTransform.TranslateY)
                                     .AddKeyFrame(0.15, offset)
                                     .AddKeyFrame(0.5, 0, ease);
+
+                                sb.Begin();
                             }
-
-
-                            sb.Begin();
                         }
                     }
                 }

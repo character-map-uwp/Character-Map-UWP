@@ -95,7 +95,9 @@ namespace CharacterMap.Views
         {
             string name = ViewModel.SelectedCollection.Name;
             await ViewModel.CollectionService.DeleteCollectionAsync(ViewModel.SelectedCollection);
-            SelectCollection(null);
+            CollectionSelector.SelectedItem = null;
+            CollectionSelector.SelectedIndex = -1;
+            //SelectCollection(null);
 
             ViewModel.Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
         }

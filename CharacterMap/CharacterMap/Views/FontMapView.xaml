@@ -54,8 +54,36 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <AppBarButton x:Uid="SwitchViewButton" Click="{x:Bind ViewModel.ChangeDisplayMode}">
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE13C;" />
+                <AppBarButton
+                    x:Name="MoreSwitchView"
+                    x:Uid="SwitchViewButton"
+                    Click="{x:Bind ViewModel.ChangeDisplayMode}">
+                    <Button.Resources>
+                        <Storyboard x:Key="Released">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MOIcon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="540">
+                                    <EasingDoubleKeyFrame.EasingFunction>
+                                        <CircleEase EasingMode="EaseOut" />
+                                    </EasingDoubleKeyFrame.EasingFunction>
+                                </EasingDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="Pressed">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MOIcon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-20" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </Button.Resources>
+                    <FontIcon
+                        x:Name="MOIcon"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        Glyph="&#xE13C;"
+                        RenderTransformOrigin="0.5 0.5">
+                        <FontIcon.RenderTransform>
+                            <CompositeTransform />
+                        </FontIcon.RenderTransform>
+                    </FontIcon>
                 </AppBarButton>
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
@@ -701,6 +729,7 @@
                         x:Name="FontOptionsButton"
                         x:Uid="FontOptionsButton"
                         VerticalAlignment="Stretch"
+                        helpers:FluentAnimation.PointerOver="DropDownGlyph"
                         IsHintVisible="True"
                         Style="{ThemeResource MapInfoButtonStyle}"
                         Visibility="Collapsed"
@@ -777,6 +806,8 @@
                     <controls:UXButton
                         x:Name="ViewToggleButton"
                         x:Uid="ViewToggleButton"
+                        helpers:FluentAnimation.PointerOver="FluentContentPresenter"
+                        helpers:FluentAnimation.PointerOverOffset="-2"
                         Click="{x:Bind ViewModel.ChangeDisplayMode}"
                         Style="{ThemeResource MapInfoButtonStyle}"
                         ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}"
@@ -841,15 +872,19 @@
 
                 </toolkit:WrapPanel>
 
+                <!--
+                    core:Properties.ClickAnimation="FluentContentPresenter|Scale"
+                    core:Properties.ClickAnimationOffset="0.8"
+                    core:Properties.PointerOverAnimation=""
+                -->
                 <controls:UXButton
                     x:Name="MoreOptionsButton"
                     x:Uid="BtnMoreIcon"
                     Grid.Column="1"
                     VerticalAlignment="Top"
-                    core:Properties.ClickAnimation="FluentContentPresenter|Scale"
-                    core:Properties.ClickAnimationOffset="0.8"
-                    core:Properties.PointerOverAnimation=""
                     core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                    helpers:FluentAnimation.PointerOver="FluentContentPresenter"
+                    helpers:FluentAnimation.PointerOverOffset="-2"
                     DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
                     Label="&#x2026;"
                     Style="{ThemeResource MapInfoButtonStyle}">
@@ -1103,6 +1138,7 @@
                                     Minimum="{x:Bind Minimum}"
                                     SmallChange="0.1"
                                     StepFrequency="0.1"
+                                    Style="{StaticResource DefaultThemeSliderStyle}"
                                     ValueChanged="Slider_ValueChanged"
                                     Value="{x:Bind Value, Mode=TwoWay}">
                                     <Slider.HeaderTemplate>
@@ -2014,6 +2050,7 @@
                         <!--<Setter Target="CopySequenceRoot.CornerRadius" Value="8" />
                         <Setter Target="CopySequenceRoot.Margin" Value="8 0 8 8" />
                         <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
+                        <Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />

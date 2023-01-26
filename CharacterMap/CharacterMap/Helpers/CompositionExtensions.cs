@@ -30,6 +30,16 @@ namespace CharacterMap.Helpers
             return CompositionFactory.EnableStandardTranslation(v);
         }
 
+        /// <summary>
+        /// Returns a cached instance of the LinearEase function
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static CompositionEasingFunction GetLinearEase(this Compositor c)
+        {
+            return c.GetCached("LINEAREASE", () => c.CreateLinearEasingFunction());
+        }
+
         //------------------------------------------------------
         //
         // Expression Animation : SIZE LINKING

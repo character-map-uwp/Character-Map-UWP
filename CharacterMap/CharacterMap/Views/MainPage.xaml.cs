@@ -629,14 +629,6 @@ namespace CharacterMap.Views
 
             args.ItemContainer.ContextRequested -= ItemContainer_ContextRequested;
             args.ItemContainer.ContextRequested += ItemContainer_ContextRequested;
-
-            if (ResourceHelper.SupportFluentAnimation)
-            {
-                Properties.SetClickAnimationOffset(args.ItemContainer, 0.95);
-                Properties.SetClickAnimation(args.ItemContainer, "TemplateContent|Scale");
-                Properties.SetPointerPressedAnimation(args.ItemContainer, "TemplateContent|Scale");
-                Properties.SetPointerOverAnimation(args.ItemContainer, "TemplateContent");
-            }
         }
 
         private void ItemContainer_PointerPressed(object sender, PointerRoutedEventArgs e)

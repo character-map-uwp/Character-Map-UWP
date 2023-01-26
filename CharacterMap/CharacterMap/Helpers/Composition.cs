@@ -86,6 +86,10 @@ namespace CharacterMap.Helpers
 
         public static T GetCached<T>(this Compositor c, string key, Func<T> create) where T : CompositionObject
         {
+#if DEBUG
+            return create();
+#endif
+
             if (_objCache.TryGetValue(c, out Dictionary<string, CompositionObject> dic) is false)
                 _objCache[c] = dic = new();
 
@@ -347,7 +351,6 @@ namespace CharacterMap.Helpers
 
         #endregion
 
-
         #region SetDelayTime
 
         /// <summary>
@@ -439,44 +442,7 @@ namespace CharacterMap.Helpers
         #endregion
 
 
-        #region SetDampingRatio
-
-        public static SpringVector3NaturalMotionAnimation SetDampingRatio(this SpringVector3NaturalMotionAnimation animation, float dampingRatio)
-        {
-            animation.DampingRatio = dampingRatio;
-            return animation;
-        }
-
-        #endregion
-
-
-        #region SetPeriod
-
-        public static SpringVector3NaturalMotionAnimation SetPeriod(
-            this SpringVector3NaturalMotionAnimation animation, double duration) 
-        {
-            if (duration >= 0)
-                return SetPeriod(animation, TimeSpan.FromSeconds(duration));
-            else
-                return animation;
-        }
-
-        public static SpringVector3NaturalMotionAnimation SetPeriod(
-            this SpringVector3NaturalMotionAnimation animation, TimeSpan duration)
-        {
-            animation.Period = duration;
-            return animation;
-        }
-
-        public static T SetFinalValue<T>(this T animation, Vector3? value) where T: Vector3NaturalMotionAnimation
-        {
-            animation.FinalValue = value;
-            return animation;
-        }
-
-        #endregion
-
-            #region StopBehaviour
+        #region StopBehaviour
 
         public static T SetStopBehavior<T>(this T animation, AnimationStopBehavior stopBehavior) where T : KeyFrameAnimation
         {

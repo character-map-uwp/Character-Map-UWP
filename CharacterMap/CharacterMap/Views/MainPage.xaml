@@ -61,10 +61,9 @@
                                 <Setter Property="FontSize" Value="14" />
                                 <Setter Property="Foreground" Value="{ThemeResource AppBarItemPointerOverForegroundThemeBrush}" />
                                 <Setter Property="ContentTemplate" Value="{StaticResource LabelButtonContentTemplate}" />
-                                <Setter Property="core:Properties.PointerOverAnimation" Value="Icon" />
-                                <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentRoot|Scale" />
-                                <Setter Property="core:Properties.ClickAnimation" Value="ContentRoot|Scale" />
-                                <Setter Property="core:Properties.ClickAnimationOffset" Value="0.95" />
+                                <Setter Property="helpers:FluentAnimation.Pressed" Value="ContentRoot" />
+                                <Setter Property="helpers:FluentAnimation.PointerOver" Value="Icon" />
+                                <Setter Property="helpers:FluentAnimation.PointerDownScale" Value="0.95" />
                             </Style>
 
                             <Style BasedOn="{StaticResource LabelButtonStyle}" TargetType="Button" />
@@ -496,11 +495,8 @@
                             VerticalAlignment="Stretch"
                             HorizontalContentAlignment="Left"
                             VerticalContentAlignment="Center"
-                            core:Properties.ClickAnimation="Root|Scale"
-                            core:Properties.ClickAnimationOffset="0.95"
                             core:Properties.PointerAnimationOffset="2"
                             core:Properties.PointerOverAnimation="DropDownGlyph"
-                            core:Properties.PointerPressedAnimation="ContentRoot|Scale"
                             core:Properties.SupportAnimatedIcon="False"
                             Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom"
@@ -613,38 +609,33 @@
                                 HorizontalSpacing="12"
                                 Orientation="Horizontal"
                                 VerticalSpacing="4">
+                                <Panel.Resources>
+                                    <Style BasedOn="{StaticResource MapInfoButtonStyle}" TargetType="controls:UXButton">
+                                        <Setter Property="Height" Value="40" />
+                                        <Setter Property="VerticalAlignment" Value="Stretch" />
+                                        <Setter Property="helpers:FluentAnimation.PointerOver" Value="FluentContentPresenter" />
+                                        <Setter Property="helpers:FluentAnimation.PointerOverOffset" Value="-2" />
+                                        <Setter Property="Foreground" Value="{ThemeResource AppBarItemForegroundThemeBrush}" />
+                                        <Setter Property="ToolTipService.Placement" Value="Bottom" />
+                                    </Style>
+                                </Panel.Resources>
                                 <controls:UXButton
                                     x:Name="RenameButton"
                                     x:Uid="RenameCollectionButton"
-                                    Height="40"
-                                    VerticalAlignment="Stretch"
                                     Click="RenameFontCollection_Click"
-                                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                    Style="{StaticResource MapInfoButtonStyle}"
-                                    ToolTipService.Placement="Bottom"
                                     d:Label="Rename">
                                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE13E;" />
                                 </controls:UXButton>
                                 <controls:UXButton
                                     x:Uid="DeleteCollectionButton"
-                                    Height="{Binding Height, ElementName=RenameButton}"
-                                    VerticalAlignment="Stretch"
                                     Click="DeleteCollection_Click"
-                                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                    Style="{StaticResource MapInfoButtonStyle}"
-                                    ToolTipService.Placement="Bottom"
                                     d:Label="Delete">
                                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE107;" />
                                 </controls:UXButton>
                                 <controls:UXButton
                                     x:Name="CollectionExportButton"
                                     x:Uid="CollectionExportButton"
-                                    Height="{Binding Height, ElementName=RenameButton}"
-                                    VerticalAlignment="Stretch"
-                                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     IsEnabled="{x:Bind core:Converters.TrueTrue(ViewModel.HasFonts, ViewModel.IsCollectionExportEnabled), Mode=OneWay}"
-                                    Style="{StaticResource MapInfoButtonStyle}"
-                                    ToolTipService.Placement="Bottom"
                                     d:Label="Export">
                                     <Button.Flyout>
                                         <MenuFlyout
@@ -676,13 +667,9 @@
 
                                 </controls:UXButton>
                                 <controls:UXButton
-                                    Height="{Binding Height, ElementName=RenameButton}"
-                                    VerticalAlignment="Stretch"
                                     Click="CollectionCompareButton_Click"
-                                    Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
+                                    IsEnabled="{x:Bind ViewModel.HasFonts, Mode=OneWay}"
                                     Label="{core:Localizer Key='CompareShortLabel'}"
-                                    Style="{StaticResource MapInfoButtonStyle}"
-                                    ToolTipService.Placement="Bottom"
                                     ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}"
                                     d:Label="Compare Fonts">
                                     <FontIcon
@@ -949,7 +936,7 @@
                                     <muxc:TabViewItem.Header>
                                         <Grid ColumnSpacing="8">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="12" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
 
@@ -1022,6 +1009,9 @@
                                     Height="45"
                                     Margin="-6 0 0 0"
                                     VerticalAlignment="Center"
+                                    helpers:FluentAnimation.PointerOver="FluentContentPresenter"
+                                    helpers:FluentAnimation.PointerOverOffset="-2"
+                                    helpers:FluentAnimation.UsePointerOver="True"
                                     Click="BtnSettings_OnClick"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     Label="{core:Localizer Key='SettingsHeader/Text'}"
