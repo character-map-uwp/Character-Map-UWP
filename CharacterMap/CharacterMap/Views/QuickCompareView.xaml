@@ -347,6 +347,8 @@
             </Setter>
         </Style>
 
+        <SolidColorBrush x:Key="SomeBrush" core:ThemeResources.BrushColor="CardBackgroundFillColorDefault" />
+
     </UserControl.Resources>
 
     <Grid x:Name="LayoutRoot">
@@ -384,13 +386,21 @@
 
             </controls:ModalPagePresenter.TitleBarContent>
 
-            <Grid>
+            <Grid Background="{ThemeResource SomeBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Click="Set">CardBackgroundFillColorDefault</Button>
+                    <Button Click="Set">ControlFillColorTertiary</Button>
+                    <Button Click="Set">SystemAccentColor</Button>
+                    <Button Click="Set">CardStrokeColorDefault</Button>
+                    <Button Click="Set">SolidBackgroundFillColorBase</Button>
+                </StackPanel>
 
                 <Grid
                     x:Name="ContentPanel"

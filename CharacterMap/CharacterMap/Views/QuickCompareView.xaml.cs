@@ -454,6 +454,12 @@ namespace CharacterMap.Views
 
             InAppNotificationHelper.OnMessage(this, msg);
         }
+
+        private void Set(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button b && b.Content is string s)
+                ThemeResources.SetBrushColor((Brush)this.Resources["SomeBrush"], s);
+        }
     }
 
 

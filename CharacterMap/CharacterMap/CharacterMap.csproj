@@ -240,6 +240,7 @@
     <Compile Include="Core\Localizer.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
+    <Compile Include="Core\ThemeResources.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
     <Compile Include="Helpers\Animation.cs" />
     <Compile Include="Helpers\Composition.cs" />
