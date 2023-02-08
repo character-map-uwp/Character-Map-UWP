@@ -174,7 +174,7 @@ namespace CharacterMap.ViewModels
             };
         }
 
-        private List<SupportedLanguage> GetSupportedLanguages()
+        public static List<SupportedLanguage> GetSupportedLanguages()
         {
             List<SupportedLanguage> list  = new(
                 ApplicationLanguages.ManifestLanguages

@@ -281,7 +281,8 @@
                             <StackPanel
                                 Grid.Column="1"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center">
+                                VerticalAlignment="Center"
+                                Transitions="{StaticResource RepositionTransitions}">
                                 <ContentPresenter
                                     HorizontalAlignment="Stretch"
                                     Content="{TemplateBinding Title}"

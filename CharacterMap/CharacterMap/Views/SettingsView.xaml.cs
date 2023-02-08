@@ -189,7 +189,7 @@ namespace CharacterMap.Views
         }
 
         public void SelectedLanguageToString(object selected) => 
-            Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "en-US";
+            Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "";
 
         private void DeleteRampClick(object sender, RoutedEventArgs e)
         {

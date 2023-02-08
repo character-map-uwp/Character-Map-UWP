@@ -144,7 +144,7 @@ namespace CharacterMap.Core
         /// <param name="selectedLanguage"></param>
         /// <returns>Return Visible if language is changed and not match current app language, otherwise it return Collapsed.</returns>
         public static Visibility CompareLanguageToSetting(string selectedLanguage) =>
-            System.Globalization.CultureInfo.CurrentUICulture.Name == selectedLanguage 
+            ResourceHelper.AppSettings.StartupLanugage == selectedLanguage 
             ? Visibility.Collapsed : Visibility.Visible;
     }
 }
