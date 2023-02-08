@@ -152,6 +152,10 @@ namespace CharacterMap.Views
                 LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
                 LayoutRoot.KeyDown += LayoutRoot_KeyDown;
             }
+            else
+            {
+                VisualStateManager.GoToState(this, nameof(ChildViewState), false);
+            }
         }
 
         protected override void OnLoaded(object sender, RoutedEventArgs e)
@@ -203,6 +207,7 @@ namespace CharacterMap.Views
             LayoutRoot.KeyDown -= LayoutRoot_KeyDown;
 
             Messenger.UnregisterAll(this);
+            ViewModel?.Deactivated();
         }
 
         public void Cleanup()
@@ -745,6 +750,11 @@ namespace CharacterMap.Views
                     menu.Items.Add(item);
                 }
             }
+        }
+
+        private void EditSuggestions_Click(object sender, RoutedEventArgs e)
+        {
+            Messenger.Send(new EditSuggestionsRequested());
         }
 
         private Visibility ShowFilePath(string filePath, bool isImported)

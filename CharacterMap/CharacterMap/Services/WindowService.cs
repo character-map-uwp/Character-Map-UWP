@@ -166,11 +166,8 @@ namespace CharacterMap.Services
 
             if (main && CoreApplication.MainView.CoreWindow.Visible)
             {
-                await ApplicationViewSwitcher.SwitchAsync(
-                    info.View.Id, 
-                    ((WindowInformation)CoreApplication.MainView.Properties[nameof(MainWindow)]).View.Id, 
-                    ApplicationViewSwitchingOptions.ConsolidateViews).AsTask();
-
+                await ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
+                WindowService.MainWindow.CoreView.CoreWindow.Activate();
                 return;
             }
 

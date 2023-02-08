@@ -101,7 +101,6 @@ namespace CharacterMap.Styles
                         main.SelectedCollection = result.Collection;
                     });
                 }
-
             }
         }
 

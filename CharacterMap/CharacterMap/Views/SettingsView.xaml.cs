@@ -66,7 +66,10 @@ namespace CharacterMap.Views
         public void Show(FontVariant variant, InstalledFont font, int idx = 0)
         {
             if (IsOpen)
+            {
+                SetIndex(idx);
                 return;
+            }
 
             UpdateAnimation();
             StartShowAnimation();
@@ -97,8 +100,14 @@ namespace CharacterMap.Views
             _navHelper.Activate();
 
             _requested = idx;
-            if (IsLoaded)
-                MenuColumn.Children.OfType<MenuButton>().ElementAt(idx).IsChecked = true;
+            SetIndex(idx);
+
+            void SetIndex(int i)
+            {
+                if (IsLoaded)
+                    MenuColumn.Children.OfType<MenuButton>().ElementAt(i).IsChecked = true;
+            }
+            
         }
 
         public void Hide()
@@ -213,6 +222,14 @@ namespace CharacterMap.Views
         public void SelectedLanguageToString(object selected) => 
             Settings.AppLanguage = selected is SupportedLanguage s ? s.LanguageID : "en-US";
 
+        private void DeleteRampClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement ele 
+                && ele.DataContext is string s)
+            {
+                ViewModel.RemoveRamp(s);
+            }
+        }
 
         private void MenuItem_Checked(object sender, RoutedEventArgs e)
         {

@@ -1,5 +1,4 @@
 ﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
 using CharacterMap.Models;
 using System;
 using System.Collections.Generic;
@@ -11,39 +10,10 @@ using Windows.Storage;
 
 namespace CharacterMap.Services
 {
-    public class AddToCollectionResult
+    public interface ICollectionProvider
     {
-        public AddToCollectionResult(bool success, IList<InstalledFont> fonts, UserFontCollection collection)
-        {
-            Success = success;
-            Fonts = fonts;
-            if (fonts is not null && fonts.Count == 1)
-                Font = fonts[0];
-            Collection = collection;
-        }
-
-        public InstalledFont Font { get; }
-        public IList<InstalledFont> Fonts { get; }
-        public bool Success { get; }
-        public UserFontCollection Collection { get; }
-
-        public string GetTitle()
-        {
-            if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
-                return font.Name;
-            else
-                return $"{Fonts.Count} fonts";
-        }
-
-        public string GetMessage()
-        {
-            if (Font is null && Fonts is not null)
-                return $"{Fonts.Count} fonts have been added to {Collection.Name}";
-            else if (Collection.IsSystemSymbolCollection)
-                return Localization.Get("NotificationAddedToCollection", Font.Name, Localization.Get("OptionSymbolFonts/Text"));
-            else
-                return Localization.Get("NotificationAddedToCollection", Font.Name, Collection.Name);
-        }
+        Task<List<UserFontCollection>> LoadCollectionsAsync();
+        Task SaveCollectionAsync(UserFontCollection collection);
     }
 
     public class UserCollectionsService
@@ -54,7 +24,8 @@ namespace CharacterMap.Services
             get => _symbolCollection;
             set { value.IsSystemSymbolCollection = true; _symbolCollection = value; }
         }
-        public List<UserFontCollection> Items { get; private set; } = new List<UserFontCollection>();
+
+        public List<UserFontCollection> Items { get; private set; } = new ();
 
         private StorageFolder _collectionsFolder;
 
@@ -65,7 +36,7 @@ namespace CharacterMap.Services
 
         public async Task LoadCollectionsAsync()
         {
-            List<UserFontCollection> collections = new List<UserFontCollection>();
+            List<UserFontCollection> collections = new ();
 
             if (Items.Count > 0)
                 return;
@@ -127,11 +98,6 @@ namespace CharacterMap.Services
             Items.AddRange(collections);
         }
 
-        public bool DoesCollectionExist(string name)
-        {
-            return TryGetCollection(name) != null;
-        }
-
         public UserFontCollection TryGetCollection(string name)
         {
             return Items.FirstOrDefault(i => string.CompareOrdinal(i.Name, name) > 0);
@@ -142,7 +108,7 @@ namespace CharacterMap.Services
             var file = await _collectionsFolder.CreateFileAsync(
                 $"{fileName ?? Guid.NewGuid().ToString()}", CreationCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
 
-            var collection = new UserFontCollection { Name = name, File = file };
+            UserFontCollection collection = new() { Name = name, File = file };
             await SaveCollectionAsync(collection).ConfigureAwait(false);
 
             if (fileName == null)
@@ -249,7 +215,7 @@ namespace CharacterMap.Services
         private async Task<UserFontCollection> LoadCollectionAsync(StorageFile file)
         {
             string name;
-            HashSet<string> items = new HashSet<string>();
+            HashSet<string> items = new ();
 
             using (var stream = await file.OpenStreamForReadAsync().ConfigureAwait(false))
             using (var reader = new StreamReader(stream))
@@ -261,6 +227,15 @@ namespace CharacterMap.Services
 
             return new UserFontCollection { File = file, Fonts = items, Name = name };
         }
+
+
+
+
+        //------------------------------------------------------
+        //
+        // Legacy Format Conversions
+        //
+        //------------------------------------------------------
 
         private async Task<UserFontCollection> ConvertFromLegacyFormatAsync(StorageFile file, StorageFolder folder)
         {

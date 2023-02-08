@@ -30,6 +30,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using static SQLite.SQLite3;
 
 namespace CharacterMap.Views
 {
@@ -58,6 +59,7 @@ namespace CharacterMap.Views
             {
                 ViewModel = Ioc.Default.GetService<MainViewModel>();
                 MainDispatcher = Dispatcher;
+                Register<EditSuggestionsRequested>(m => ShowEditSuggestions());
             }
             else
             {
@@ -368,7 +370,7 @@ namespace CharacterMap.Views
             ShowSettings();
         }
 
-        void ShowAbout() => ShowSettings(8);
+        void ShowAbout() => ShowSettings(9);
 
         void ShowSettings(int idx = 0)
         {
@@ -693,7 +695,15 @@ namespace CharacterMap.Views
                         PreviewText = FontMap.ViewModel.Sequence
                     });
             }
+        }
 
+        public void ShowEditSuggestions()
+        {
+            _ = MainDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                await WindowService.TrySwitchToWindowAsync(WindowService.MainWindow, true);
+                ShowSettings(5);
+            });
         }
 
         private void OpenFolder()
@@ -703,6 +713,7 @@ namespace CharacterMap.Views
         }
 
         void DismissMenu() => AppMenuFlyout.Hide();
+
 
 
 
