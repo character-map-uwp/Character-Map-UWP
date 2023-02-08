@@ -103,13 +103,8 @@ namespace CharacterMap.ViewModels
                 _originalContext = SynchronizationContext.Current;
                 Register<AppSettingsChangedMessage>(m =>
                 {
-                    void Notify(string s)
-                    {
-                        if (SynchronizationContext.Current == _originalContext)
-                            SendPropertyChanged(s);
-                        else
-                            _originalContext.Post(_ => SendPropertyChanged(s), null);
-                    }
+                    void Notify(string s) 
+                        => OnSyncContext(() => SendPropertyChanged(s));
 
                     switch (m.PropertyName)
                     {
@@ -127,6 +122,21 @@ namespace CharacterMap.ViewModels
                     }
                 });
             }
+        }
+
+        /// <summary>
+        /// Runs code on the original <see cref="SynchronizationContext"/> that
+        /// the ViewModel was created on. Useful for updating UI dependent bindings.
+        /// </summary>
+        /// <param name="a"></param>
+        protected void OnSyncContext(Action a)
+        {
+            if (_originalContext is null)
+                a();
+            else if (SynchronizationContext.Current == _originalContext)
+                a();
+            else
+                _originalContext.Post(_ => a(), null);
         }
 
         /// <summary>

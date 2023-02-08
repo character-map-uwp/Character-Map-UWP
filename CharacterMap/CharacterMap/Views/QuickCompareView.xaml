@@ -452,10 +452,19 @@
                                 BorderThickness="0 0 0 1"
                                 CornerRadius="0"
                                 IsEditable="True"
-                                ItemsSource="{x:Bind ViewModel.TextOptions}"
+                                ItemsSource="{x:Bind ViewModel.TextOptions, Mode=OneWay}"
                                 SelectedIndex="0"
                                 Style="{StaticResource RampComboBoxStyle}"
-                                Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.ContextFlyout>
+                                    <MenuFlyout AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
+                                        <MenuFlyoutItem
+                                            Click="{x:Bind ViewModel.ShowEditSuggestions}"
+                                            Icon="Edit"
+                                            Text="Edit Suggestions" />
+                                    </MenuFlyout>
+                                </ComboBox.ContextFlyout>
+                            </ComboBox>
 
                         </Grid>
                         <Grid x:Name="SecondRow">

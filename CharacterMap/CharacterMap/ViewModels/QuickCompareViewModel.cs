@@ -3,8 +3,10 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,11 +34,14 @@ namespace CharacterMap.ViewModels
         }
     }
 
-    public class QuickCompareViewModel : ViewModelBase
+    public partial class QuickCompareViewModel : ViewModelBase
     {
         public static WindowInformation QuickCompareWindow { get; set; }
 
         protected override bool TrackAnimation => true;
+
+        [ObservableProperty]
+        IReadOnlyList<string> _textOptions = null;
 
         public string Title                 { get => Get<string>(); set => Set(value); }
 
@@ -76,7 +81,6 @@ namespace CharacterMap.ViewModels
 
         public INotifyCollectionChanged ItemsSource => IsQuickCompare ? QuickFonts : FontList;
 
-        public IReadOnlyList<string> TextOptions { get; } = GlyphService.DefaultTextOptions;
 
         public UserCollectionsService FontCollections { get; }
 
@@ -137,6 +141,9 @@ namespace CharacterMap.ViewModels
                     IsFolderMode = true;
             }
 
+            UpdateTextOptions();
+            Register<RampOptionsUpdatedMessage>(m => UpdateTextOptions());
+
             // Set Title
             if (IsQuickCompare && args.IsQuickCompare)
                 Title = Localization.Get("QuickCompareTitle/Text");
@@ -162,6 +169,11 @@ namespace CharacterMap.ViewModels
         {
             if (propertyName is nameof(FontList) or nameof(QuickFonts))
                 OnPropertyChanged(nameof(ItemsSource));
+        }
+
+        private void UpdateTextOptions()
+        {
+            OnSyncContext(() => { TextOptions = GlyphService.GetRampOptions(); });
         }
 
         private void OnFilterClick(object e)
@@ -209,6 +221,11 @@ namespace CharacterMap.ViewModels
         {
             if (SelectedFont is not null)
                 _ = FontMapView.CreateNewViewForFontAsync(SelectedFont);
+        }
+
+        public void ShowEditSuggestions()
+        {
+            Messenger.Send(new EditSuggestionsRequested());
         }
     }
 }

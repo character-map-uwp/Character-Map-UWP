@@ -5,9 +5,10 @@ using CharacterMap.Provider;
 using CharacterMap.Services;
 using CharacterMap.Views;
 using CharacterMapCX;
-using Microsoft.Graphics.Canvas.Text;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,6 @@ using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using CommunityToolkit.Mvvm.Messaging;
 
 namespace CharacterMap.ViewModels
 {
@@ -29,6 +29,12 @@ namespace CharacterMap.ViewModels
         TypeRamp = 2
     }
 
+    public partial class RampOption : ObservableObject
+    {
+        public int FontSize { get; set; }
+        [ObservableProperty]
+        CharacterRenderingOptions _option;
+    }
 
     public partial class FontMapViewModel : ViewModelBase
     {
@@ -41,6 +47,9 @@ namespace CharacterMap.ViewModels
         private Debouncer _searchDebouncer { get; }
 
         private ConcurrencyToken.ConcurrencyTokenGenerator _searchTokenFactory { get; }
+
+        private int[] _rampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
+
 
         public AppSettings Settings { get; }
 
@@ -55,13 +64,13 @@ namespace CharacterMap.ViewModels
         public RelayCommand<ExportParameters> CommandSaveSvg                { get; }
         public RelayCommand<DevProviderType>  ToggleDev                     { get; }
         public DWriteFallbackFont FallbackFont                              => FontFinder.Fallback; // Do *not* use { get;} here
-        public int[] RampSizes                                              { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
         public bool IsExternalFile                                          { get; set; }
         internal bool IsLoadingCharacters                                   { get; private set; }
 
         public TypographyFeatureInfo                SelectedTypography      { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
         public TypographyFeatureInfo                SelectedCharTypography  { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
         public List<UnicodeCategoryModel>           SelectedGlyphCategories { get => Get<List<UnicodeCategoryModel>>(); private set => Set(value); }
+        public List<RampOption>                     Ramps                   { get; }
 
         [ObservableProperty] CharacterRenderingOptions              _renderingOptions;
         [ObservableProperty] CanvasTextLayoutAnalysis               _selectedCharAnalysis;
@@ -86,7 +95,6 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] FontFamily             _fontFamily;
         [ObservableProperty] FolderContents         _folder;
         [ObservableProperty] DevProviderBase        _selectedProvider;
-
         public FontDisplayMode DisplayMode                                  { get => Get<FontDisplayMode>(); set { if (Set(value)) { UpdateTypography(); } } }
         public FontAnalysis SelectedVariantAnalysis                         { get => Get<FontAnalysis>(); set { if (Set(value)) { UpdateVariations(); } } }
 
@@ -183,8 +191,6 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        private IReadOnlyList<string> _defaultRampOptions { get; } = GlyphService.DefaultTextOptions;
-
         #endregion
 
 
@@ -200,11 +206,19 @@ namespace CharacterMap.ViewModels
             ToggleDev = new RelayCommand<DevProviderType>(t => SetDev(t));
             SelectedGlyphCategories = Unicode.CreateCategoriesList();
 
+            Ramps = _rampSizes.Select(r => new RampOption { FontSize = r }).ToList();
+
             if (DesignMode.DesignModeEnabled is false)
                 _interop = Utils.GetInterop();
 
             _searchDebouncer = new Debouncer();
             _searchTokenFactory = new ConcurrencyToken.ConcurrencyTokenGenerator();
+            Register<RampOptionsUpdatedMessage>(m => UpdateTextOptions());
+        }
+
+        public void Deactivated()
+        {
+            Messenger.UnregisterAll(this);
         }
 
         protected override void OnPropertyChangeNotified(string propertyName)
@@ -221,6 +235,11 @@ namespace CharacterMap.ViewModels
                     SelectedFont.DisplayMode = DisplayMode;
                     break;
             }
+        }
+
+        private void UpdateTextOptions()
+        {
+            OnSyncContext(() => { RampOptions = GlyphService.GetRampOptions(); });
         }
 
         private void SelectedFont_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -319,12 +338,10 @@ namespace CharacterMap.ViewModels
             if (variant == null)
                 return new List<string>();
 
-            var list = _defaultRampOptions.ToList();
+            var list = GlyphService.GetRampOptions();
             
             if (variant?.TryGetSampleText() is String s)
-            {
                 list.Insert(0, s);
-            }
 
             if (Unicode.ContainsRange(variant, UnicodeRange.Emoticons))
             {
@@ -333,12 +350,13 @@ namespace CharacterMap.ViewModels
                     list.Add(emoji);
             }
 
-            return list.Count == _defaultRampOptions.Count ? _defaultRampOptions : list;
+            return list;
         }
 
         internal void UpdateVariations()
         {
             VariationAxis = SelectedVariantAnalysis?.Axis?.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList() ?? new List<DWriteFontAxis>();
+            UpdateRampOptions();
         }
 
         private void UpdateTypography()
@@ -396,11 +414,10 @@ namespace CharacterMap.ViewModels
             if (typography == null)
                 typography = SelectedTypography;
 
-            CanvasTypography typo = new CanvasTypography();
+            CanvasTypography typo = new ();
             if (typography != null && typography.Feature != CanvasTypographyFeatureName.None)
-            {
                 typo.AddFeature(typography.Feature, 1u);
-            }
+
             return typo;
         }
 
@@ -427,11 +444,23 @@ namespace CharacterMap.ViewModels
                     SelectedCharAnalysis, 
                     VariationAxis);
 
+                UpdateRampOptions();
+
                 Providers = RenderingOptions.GetDevProviders(SelectedChar);
                 SetDev(t);
 
                 XamlPath = $"{SelectedVariant.FileName}#{SelectedVariant.FamilyName}";
             }
+        }
+
+        public void UpdateRampOptions()
+        {
+            if (_renderingOptions is null)
+                return;
+
+            var ops = _renderingOptions with { Axis = _variationAxis };
+            foreach (var ramp in Ramps)
+                ramp.Option = ops;
         }
 
         public void SetDefaultChar()
@@ -534,7 +563,7 @@ namespace CharacterMap.ViewModels
             ExportResult result = await ExportManager.ExportGlyphAsync(
                 new(format, args.Style),
                 SelectedFont.Font,
-                RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo> { args.Typography } },
+                RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo>() { args.Typography } },
                 character);
 
             if (result.State == ExportState.Succeeded)
@@ -579,7 +608,7 @@ namespace CharacterMap.ViewModels
             IsLoading = true;
             try
             {
-                var items = new List<StorageFile> { SourceFile };
+                List<StorageFile> items = new() { SourceFile };
                 if (await FontFinder.ImportFontsAsync(items) is FontImportResult result
                     && (result.Imported.Count > 0 || result.Existing.Count > 0))
                 {

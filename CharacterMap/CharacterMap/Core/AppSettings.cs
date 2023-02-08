@@ -172,6 +172,7 @@ namespace CharacterMap.Core
             set => BroadcastSet(value);
         }
 
+
         // Currently Unused
         public bool DisableTabs
         {
@@ -180,6 +181,12 @@ namespace CharacterMap.Core
         }
 
         public IList<string> LastOpenFonts
+        {
+            get => GetStrings();
+            set => Set(value);
+        }
+
+        public IList<string> CustomRampOptions
         {
             get => GetStrings();
             set => Set(value);

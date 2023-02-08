@@ -11,7 +11,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:services="using:CharacterMap.Services"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     x:Name="ViewRoot"
@@ -130,6 +132,32 @@
     </Control.Tag>
 
     <Control.Resources>
+
+        <MenuFlyout x:Name="SuggestionFlyout" AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
+            <MenuFlyoutItem
+                Click="EditSuggestions_Click"
+                Icon="Edit"
+                Text="Edit Suggestions" />
+        </MenuFlyout>
+
+        <Popup x:Name="CharacterPopup">
+            <Grid Width="300" Height="400">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    x:Name="PopupChar"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="150" />
+
+                <StackPanel Grid.Row="1">
+                    <TextBlock />
+                </StackPanel>
+            </Grid>
+        </Popup>
 
         <Storyboard x:Name="GridToTypeBase">
             <DoubleAnimation
@@ -1109,6 +1137,7 @@
                         core:Properties.PointerOverAnimation="DropDownGlyph"
                         Background="Transparent"
                         BorderThickness="0 0 0 1"
+                        ContextFlyout="{StaticResource SuggestionFlyout}"
                         Header="Preview Text"
                         IsEditable="True"
                         ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
@@ -1180,14 +1209,14 @@
                         FontStretch="{x:Bind ViewModel.SelectedVariant.FontFace.Stretch, Mode=OneWay}"
                         FontStyle="{x:Bind ViewModel.SelectedVariant.FontFace.Style, Mode=OneWay}"
                         FontWeight="{x:Bind ViewModel.SelectedVariant.FontFace.Weight, Mode=OneWay}"
-                        ItemsSource="{x:Bind ViewModel.RampSizes}">
+                        ItemsSource="{x:Bind ViewModel.Ramps, Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Margin="22 10 6 48" Spacing="16" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="viewmodels:RampOption">
                                 <StackPanel Spacing="2">
                                     <TextBlock
                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -1196,16 +1225,20 @@
                                         FontStyle="Normal"
                                         FontWeight="Normal"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                        Text="{Binding}" />
+                                        Text="{x:Bind FontSize}" />
+                                    <TextBlock
+                                        x:Name="Framework"
+                                        x:Load="{x:Bind core:Converters.False(Option.RequiresNativeRender), FallbackValue=False}"
+                                        core:Properties.Options="{x:Bind Option, Mode=OneWay}"
+                                        FontSize="{x:Bind FontSize}"
+                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                     <cxc:DirectText
-                                        Axis="{Binding ElementName=TypeRampRoot, Path=DataContext.VariationAxis}"
-                                        FallbackFont="{Binding ElementName=TypeRampRoot, Path=DataContext.FallbackFont}"
-                                        FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
-                                        FontSize="{Binding}"
-                                        IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
+                                        x:Name="Native"
+                                        x:Load="{x:Bind Option.RequiresNativeRender, FallbackValue=False}"
+                                        core:Properties.Options="{x:Bind Option, Mode=OneWay}"
+                                        FontSize="{x:Bind FontSize}"
                                         IsOverwriteCompensationEnabled="True"
-                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}"
-                                        Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}" />
+                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
