@@ -674,9 +674,10 @@ namespace CharacterMap.Views
 
         internal void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            if (args.SelectedItem is IGlyphData data)
+            if (args.SelectedItem is IGlyphData data
+                && ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == data.UnicodeIndex) is Character c)
             {
-                SelectCharacter(ViewModel.Chars.First(c => c.UnicodeIndex == data.UnicodeIndex));
+                SelectCharacter(c);
             }
         }
 
