@@ -102,7 +102,7 @@ namespace CharacterMap.Core
         public static Task LoadFontsAsync(bool clearExisting = true)
         {
             // It's possible to go down this path if the font collection
-            // was loaded during app pre--launch
+            // was loaded during app pre-launch
             if (clearExisting is false && Fonts is not null)
                 return Task.CompletedTask;
 
@@ -305,17 +305,32 @@ namespace CharacterMap.Core
                                 continue;
                             }
 
-                            /* Avoid Garbage Collection (?) issue preventing immediate file deletion 
-                             * by dropping to C++ */
-                            if (DirectWrite.HasValidFonts(new Uri(GetAppPath(fontFile))))
-                            {
-                                imported.Add(fontFile);
-                            }
-                            else
+                            
+
+                            // Addressing https://github.com/character-map-uwp/Character-Map-UWP/issues/241
+                            async Task HandleInvalidAsync()
                             {
                                 invalid.Add((file, Localization.Get("ImportUnsupportedFontType")));
                                 await fontFile.DeleteAsync(StorageDeleteOption.PermanentDelete);
                             }
+                            try
+                            {
+                                /* Avoid Garbage Collection (?) issue preventing immediate file deletion 
+                                 * by dropping to C++ */    
+                                if (DirectWrite.HasValidFonts(new Uri(GetAppPath(fontFile))))
+                                {
+                                    imported.Add(fontFile);
+                                }
+                                else
+                                {
+                                    await HandleInvalidAsync();
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                await HandleInvalidAsync();
+                            }
+                            
                         }
                         else
                         {
