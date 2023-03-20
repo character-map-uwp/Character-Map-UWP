@@ -625,8 +625,9 @@ L'abilitazione dell'animazione ha un impatto trascurabile sulle prestazioni.</ta
           <target state="translated">Tema</target>
         </trans-unit>
         <trans-unit id="SettingsUIHeader.Text" translate="yes" xml:space="preserve">
-          <source>User Interface</source>
-          <target state="translated">Interfaccia utente</target>
+          <source>Layout</source>
+          <target state="needs-review-translation">Interfaccia utente</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
@@ -1005,8 +1006,9 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
           <target state="translated">About</target>
         </trans-unit>
         <trans-unit id="SettingsAdvancedUILabel.Text" translate="yes" xml:space="preserve">
-          <source>User Interface Advanced</source>
-          <target state="translated">Interfaccia Utente Avanzata</target>
+          <source>Look &amp; Feel</source>
+          <target state="needs-review-translation">Interfaccia Utente Avanzata</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="SettingsFontManagementLabel.Text" translate="yes" xml:space="preserve">
           <source>Font Management</source>
@@ -1581,6 +1583,24 @@ Riavvio necessario.</target>
         <trans-unit id="SettingsPointerOverAnimation.Title" translate="yes" xml:space="preserve">
           <source>Enable pointer over animations</source>
           <target state="new">Enable pointer over animations</target>
+        </trans-unit>
+        <trans-unit id="SettingsCustomSuggestions.Description" translate="yes" xml:space="preserve">
+          <source>Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
+Tap and hold to arrange.</source>
+          <target state="new">Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
+Tap and hold to arrange.</target>
+        </trans-unit>
+        <trans-unit id="SettingsCustomSuggestions.Title" translate="yes" xml:space="preserve">
+          <source>Custom Options</source>
+          <target state="new">Custom Options</target>
+        </trans-unit>
+        <trans-unit id="SettingsSuggestionsHeader.Text" translate="yes" xml:space="preserve">
+          <source>Preview Suggestions</source>
+          <target state="new">Preview Suggestions</target>
+        </trans-unit>
+        <trans-unit id="SettingsSuggestionTextBox.PlaceholderText" translate="yes" xml:space="preserve">
+          <source>Enter your suggestion here</source>
+          <target state="new">Enter your suggestion here</target>
         </trans-unit>
       </group>
     </body>

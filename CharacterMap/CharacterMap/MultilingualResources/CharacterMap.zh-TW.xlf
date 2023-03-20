@@ -624,8 +624,8 @@ Turning this on has negligible performance impact.</target>
           <target state="new">Theme</target>
         </trans-unit>
         <trans-unit id="SettingsUIHeader.Text" translate="yes" xml:space="preserve">
-          <source>User Interface</source>
-          <target state="new">User Interface</target>
+          <source>Layout</source>
+          <target state="new">Layout</target>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
@@ -1008,8 +1008,8 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="new">About</target>
         </trans-unit>
         <trans-unit id="SettingsAdvancedUILabel.Text" translate="yes" xml:space="preserve">
-          <source>User Interface Advanced</source>
-          <target state="new">User Interface Advanced</target>
+          <source>Look &amp; Feel</source>
+          <target state="new">Look &amp; Feel</target>
         </trans-unit>
         <trans-unit id="SettingsFontManagementLabel.Text" translate="yes" xml:space="preserve">
           <source>Font Management</source>
@@ -1583,6 +1583,24 @@ Requires a restart to take effect.</target>
         <trans-unit id="SettingsPointerOverAnimation.Title" translate="yes" xml:space="preserve">
           <source>Enable pointer over animations</source>
           <target state="new">Enable pointer over animations</target>
+        </trans-unit>
+        <trans-unit id="SettingsCustomSuggestions.Description" translate="yes" xml:space="preserve">
+          <source>Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
+Tap and hold to arrange.</source>
+          <target state="new">Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
+Tap and hold to arrange.</target>
+        </trans-unit>
+        <trans-unit id="SettingsCustomSuggestions.Title" translate="yes" xml:space="preserve">
+          <source>Custom Options</source>
+          <target state="new">Custom Options</target>
+        </trans-unit>
+        <trans-unit id="SettingsSuggestionsHeader.Text" translate="yes" xml:space="preserve">
+          <source>Preview Suggestions</source>
+          <target state="new">Preview Suggestions</target>
+        </trans-unit>
+        <trans-unit id="SettingsSuggestionTextBox.PlaceholderText" translate="yes" xml:space="preserve">
+          <source>Enter your suggestion here</source>
+          <target state="new">Enter your suggestion here</target>
         </trans-unit>
       </group>
     </body>
