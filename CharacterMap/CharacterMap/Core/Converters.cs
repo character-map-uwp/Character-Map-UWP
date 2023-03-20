@@ -125,7 +125,18 @@ namespace CharacterMap.Core
             => languages.FirstOrDefault(i => i.LanguageID == selected);
 
         public static string GetLanguageDisplayFromID(string id)
-            => new System.Globalization.CultureInfo(id).DisplayName;
+        {
+            if (string.IsNullOrWhiteSpace(id))
+                return new System.Globalization.CultureInfo("en-us").DisplayName;
+            try
+            {
+                return new System.Globalization.CultureInfo(id).DisplayName;
+            }
+            catch
+            {
+                return new System.Globalization.CultureInfo("en-us").DisplayName;
+            }
+        }
 
         /// <summary>
         /// This converter only use to show "need restart" text block.
@@ -133,7 +144,7 @@ namespace CharacterMap.Core
         /// <param name="selectedLanguage"></param>
         /// <returns>Return Visible if language is changed and not match current app language, otherwise it return Collapsed.</returns>
         public static Visibility CompareLanguageToSetting(string selectedLanguage) =>
-            System.Globalization.CultureInfo.CurrentUICulture.Name == selectedLanguage 
+            ResourceHelper.AppSettings.StartupLanugage == selectedLanguage 
             ? Visibility.Collapsed : Visibility.Visible;
     }
 }

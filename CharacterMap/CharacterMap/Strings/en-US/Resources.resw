@@ -1293,4 +1293,17 @@ Requires a restart to take effect.</value>
   <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
     <value>Enable pointer over animations</value>
   </data>
+  <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
+    <value>Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
+Tap and hold to arrange.</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
+    <value>Custom Options</value>
+  </data>
+  <data name="SettingsSuggestionsHeader.Text" xml:space="preserve">
+    <value>Preview Suggestions</value>
+  </data>
+  <data name="SettingsSuggestionTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter your suggestion here</value>
+  </data>
 </root>

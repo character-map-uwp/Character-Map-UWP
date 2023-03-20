@@ -168,10 +168,6 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\ColourIcon.png" />
     <Content Include="Assets\Data\GlyphData.db" />
-    <PRIResource Include="Strings\pl-PL\Resources.resw" />
-    <PRIResource Include="Strings\ru-RU\Resources.resw" />
-    <PRIResource Include="Strings\fr-FR\Resources.resw" />
-    <PRIResource Include="Strings\de-DE\Resources.resw" />
     <PRIResource Include="Strings\zh-TW\Resources.resw" />
     <PRIResource Include="Strings\zh-CN\Resources.resw" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
@@ -302,6 +298,7 @@
     <Compile Include="Provider\XamarinFormsDevProvider.cs" />
     <Compile Include="Provider\XamlDevProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
+    <Compile Include="Models\AddToCollectionResult.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\LeakTrackingService.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />

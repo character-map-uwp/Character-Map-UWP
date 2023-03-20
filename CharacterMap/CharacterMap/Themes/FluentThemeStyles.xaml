@@ -6,6 +6,7 @@
     xmlns:core="using:CharacterMap.Core"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <ResourceDictionary.ThemeDictionaries>
@@ -134,6 +135,46 @@
         </Setter>
     </Style>
 
+    <Style TargetType="muxc:RadioButtons">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="muxc:RadioButtons">
+                    <Grid
+                        x:Name="ControlRoot"
+                        Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ControlRoot.Opacity" Value="0.4" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <muxc:ItemsRepeater x:Name="InnerRepeater">
+                            <muxc:ItemsRepeater.Layout>
+                                <primitives:ColumnMajorUniformToLargestGridLayout
+                                    ColumnSpacing="{TemplateBinding Tag}"
+                                    RowSpacing="{ThemeResource RadioButtonsRowSpacing}"
+                                    MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                            </muxc:ItemsRepeater.Layout>
+                        </muxc:ItemsRepeater>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="DefaultSettingsPresenterStyle" TargetType="controls:SettingsPresenter">
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Padding" Value="16,14,16,14" />
@@ -240,7 +281,8 @@
                             <StackPanel
                                 Grid.Column="1"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center">
+                                VerticalAlignment="Center"
+                                Transitions="{StaticResource RepositionTransitions}">
                                 <ContentPresenter
                                     HorizontalAlignment="Stretch"
                                     Content="{TemplateBinding Title}"

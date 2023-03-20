@@ -2,6 +2,7 @@
 using CharacterMap.Models;
 using CharacterMap.Provider;
 using CharacterMap.Services;
+using CharacterMap.ViewModels;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace CharacterMap.Core
     {
         public const int MinGridSize = 48;
         public const int MaxGridSize = 192;
+        public string StartupLanugage { get; }
 
         public int SettingsVersion
         {
@@ -144,7 +146,7 @@ namespace CharacterMap.Core
 
         public string AppLanguage
         {
-            get => Get("en-US");
+            get => Get("");
             set => Set(value);
         }
 
@@ -172,6 +174,7 @@ namespace CharacterMap.Core
             set => BroadcastSet(value);
         }
 
+
         // Currently Unused
         public bool DisableTabs
         {
@@ -180,6 +183,12 @@ namespace CharacterMap.Core
         }
 
         public IList<string> LastOpenFonts
+        {
+            get => GetStrings();
+            set => Set(value);
+        }
+
+        public IList<string> CustomRampOptions
         {
             get => GetStrings();
             set => Set(value);
@@ -206,6 +215,31 @@ namespace CharacterMap.Core
         //    get => Get(0);
         //    set => BroadcastSet(value);
         //}
+
+        /// <summary>
+        /// Get the supported UserLanguage, taking into account the actually
+        /// support languages.
+        /// </summary>
+        /// <returns></returns>
+        public string GetUserLanguageID()
+        {
+            if (!string.IsNullOrWhiteSpace(AppLanguage))
+            {
+                if (SettingsViewModel.GetSupportedLanguages()
+                    .FirstOrDefault(id => id.LanguageID == AppLanguage) is SupportedLanguage lang)
+                    return lang.LanguageID;
+                else
+                {
+                    // The chosen language is no longer supported by the app.
+                    // Remove the saved setting value.
+                    LocalSettings.Values.Remove(nameof(AppLanguage));
+                }
+            }
+
+            return null;
+        }
+
+
 
 
         /* INFRASTRUCTURE */
@@ -284,6 +318,7 @@ namespace CharacterMap.Core
         public AppSettings()
         {
             LocalSettings = ApplicationData.Current.LocalSettings;
+            StartupLanugage = AppLanguage;
             UpdateSettings();
         }
 

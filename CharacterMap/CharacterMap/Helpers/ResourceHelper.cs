@@ -141,6 +141,8 @@ namespace CharacterMap.Helpers
         public static bool UsePointerOverAnimations => AppSettings.UseFluentPointerOverAnimations;
 
 
+
+
         /* Dynamic theme-ability */
 
         #region Dynamic Theming

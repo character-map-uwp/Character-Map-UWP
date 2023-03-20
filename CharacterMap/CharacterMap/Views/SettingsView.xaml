@@ -11,6 +11,7 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
+    DataContext="{x:Bind}"
     Loaded="View_Loaded"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
@@ -18,6 +19,8 @@
     d:DesignWidth="1920">
 
     <UserControl.Resources>
+
+        <Style BasedOn="{StaticResource DefaultThemeSliderStyle}" TargetType="Slider" />
 
         <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox" />
 
@@ -29,11 +32,6 @@
             <Setter Property="Margin" Value="0 12 0 4" />
         </Style>
 
-        <!--<Style TargetType="RadioButton">
-            <Setter Property="MinWidth" Value="200" />
-        </Style>-->
-
-        <!--<Style BasedOn="{StaticResource DefaultThemeToggleSwitchStyle}" TargetType="ToggleSwitch" />-->
     </UserControl.Resources>
 
     <Grid x:Name="Root">
@@ -101,7 +99,8 @@
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsUIHeader/Text')}"
-                        Tag="{x:Bind UserInterfacePanel}">
+                        IsChecked="False"
+                        Tag="UserInterfacePanel">
                         <controls:MenuButton.Icon>
                             <PathIcon
                                 HorizontalAlignment="Center"
@@ -113,7 +112,7 @@
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
-                        Tag="{x:Bind UserInterfaceAdvancedPanel}">
+                        Tag="UserInterfaceAdvancedPanel">
                         <controls:MenuButton.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE771;" />
                         </controls:MenuButton.Icon>
@@ -122,7 +121,7 @@
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
-                        Tag="{x:Bind ExportPanel}">
+                        Tag="ExportPanel">
                         <controls:MenuButton.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE2B4;" />
                         </controls:MenuButton.Icon>
@@ -131,7 +130,7 @@
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
-                        Tag="{x:Bind SearchPanel}">
+                        Tag="SearchPanel">
                         <controls:MenuButton.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE11A;" />
                         </controls:MenuButton.Icon>
@@ -140,9 +139,18 @@
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
-                        Tag="{x:Bind CollectionPanel}">
+                        Tag="CollectionPanel">
                         <controls:MenuButton.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
+                        </controls:MenuButton.Icon>
+                    </controls:MenuButton>
+
+                    <controls:MenuButton
+                        Checked="MenuItem_Checked"
+                        Content="{x:Bind h:Localization.Get('SettingsSuggestionsHeader/Text')}"
+                        Tag="RampPanel">
+                        <controls:MenuButton.Icon>
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEA37;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -150,12 +158,12 @@
                         controls:MenuButton.Icon="Font"
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsFontManagementLabel/Text')}"
-                        Tag="{x:Bind FontPanel}" />
+                        Tag="FontPanel" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
-                        Tag="{x:Bind ChangePanel}">
+                        Tag="ChangePanel">
                         <controls:MenuButton.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEC7A;" />
                         </controls:MenuButton.Icon>
@@ -164,7 +172,7 @@
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsLicensesLabel/Text')}"
-                        Tag="{x:Bind LicensesPanel}">
+                        Tag="LicensesPanel">
                         <controls:MenuButton.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF571;" />
                         </controls:MenuButton.Icon>
@@ -173,7 +181,7 @@
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsAboutLabel/Text')}"
-                        Tag="{x:Bind AboutPanel}">
+                        Tag="AboutPanel">
                         <controls:MenuButton.Icon>
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE946;" />
                         </controls:MenuButton.Icon>
@@ -197,8 +205,10 @@
                                 <ColumnDefinition x:Name="SpacerColumn" Width="0.35*" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel x:Name="UserInterfacePanel" Visibility="Collapsed">
-                                <!--#region USER INTERFACE-->
+                            <StackPanel
+                                x:Name="UserInterfacePanel"
+                                x:Load="False"
+                                Visibility="Collapsed">
 
                                 <TextBlock
                                     x:Uid="SettingsUIHeader"
@@ -234,7 +244,7 @@
                                         <ComboBox
                                             MinWidth="160"
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
-                                            SelectedItem="{x:Bind Settings.GlyphAnnotation, Mode=TwoWay}">
+                                            SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
                                             <ComboBox.ItemTemplate>
                                                 <DataTemplate x:DataType="models:GlyphAnnotation">
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
@@ -409,6 +419,7 @@
 
                             <StackPanel
                                 x:Name="UserInterfaceAdvancedPanel"
+                                x:Load="False"
                                 ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                                 Visibility="Collapsed">
 
@@ -508,7 +519,10 @@
 
                             </StackPanel>
 
-                            <StackPanel x:Name="ExportPanel" Visibility="Collapsed">
+                            <StackPanel
+                                x:Name="ExportPanel"
+                                x:Load="False"
+                                Visibility="Collapsed">
 
                                 <TextBlock x:Uid="SettingsExportHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
@@ -539,7 +553,11 @@
                                     Title="{core:Localizer Key=SettingsFontNameExportLabel/Text}"
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsFontNameExportDescription/Text}">
-                                    <muxc:RadioButtons x:Name="FontNamingSelection" SelectionChanged="FontNamingSelection_SelectionChanged">
+                                    <muxc:RadioButtons
+                                        x:Name="FontNamingSelection"
+                                        Background="{x:Null}"
+                                        BorderThickness="0"
+                                        SelectionChanged="FontNamingSelection_SelectionChanged">
                                         <controls:UXRadioButton>
                                             <TextBlock>
                                                 <Run x:Uid="SettingsFontExportSystemLabel" />
@@ -564,7 +582,10 @@
 
                             </StackPanel>
 
-                            <StackPanel x:Name="SearchPanel" Visibility="Collapsed">
+                            <StackPanel
+                                x:Name="SearchPanel"
+                                x:Load="False"
+                                Visibility="Collapsed">
 
                                 <TextBlock x:Uid="SettingsCharacterSearchHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
@@ -617,12 +638,16 @@
 
                             <Grid
                                 x:Name="CollectionPanel"
+                                x:Load="False"
                                 HorizontalAlignment="Stretch"
                                 Visibility="Collapsed">
                                 <views:CollectionManagementView Margin="0 0 0 -80" HorizontalAlignment="Stretch" />
                             </Grid>
 
-                            <StackPanel x:Name="ChangePanel" Visibility="Collapsed">
+                            <StackPanel
+                                x:Name="ChangePanel"
+                                x:Load="False"
+                                Visibility="Collapsed">
                                 <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <controls:UXHyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />
@@ -640,7 +665,10 @@
 
                             </StackPanel>
 
-                            <StackPanel x:Name="FontPanel" Visibility="Collapsed">
+                            <StackPanel
+                                x:Name="FontPanel"
+                                x:Load="False"
+                                Visibility="Collapsed">
 
                                 <TextBlock
                                     x:Uid="SettingsFontManagementLabel"
@@ -756,12 +784,87 @@
 
                             </StackPanel>
 
-                            <StackPanel x:Name="LicensesPanel" Visibility="Collapsed">
-                                <!--<StackPanel.Resources>
-                                    <Style TargetType="HyperlinkButton">
-                                        <Setter Property="Margin" Value="0 -4 0 0" />
-                                    </Style>
-                                </StackPanel.Resources>-->
+                            <StackPanel
+                                x:Name="RampPanel"
+                                x:Load="False"
+                                Spacing="6"
+                                Visibility="Collapsed">
+                                <TextBlock
+                                    x:Uid="SettingsSuggestionsHeader"
+                                    Margin="0 16 0 0"
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}" />
+
+                                <controls:SettingsPresenter x:Uid="SettingsCustomSuggestions" ContentPlacement="Bottom">
+
+                                    <Grid RowSpacing="12" Padding="4">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid ColumnSpacing="8" Padding="4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBox
+                                                x:Uid="SettingsSuggestionTextBox"
+                                                VerticalAlignment="Center"
+                                                AcceptsReturn="False"
+                                                Text="{Binding ViewModel.RampInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <controls:UXButton
+                                                Grid.Column="1"
+                                                Click="{x:Bind ViewModel.AddRamp}"
+                                                Style="{StaticResource MapInfoButtonStyle}">
+                                                <SymbolIcon Symbol="Add" />
+                                            </controls:UXButton>
+                                        </Grid>
+
+                                        <ListView
+                                            Grid.Row="1"
+                                            Margin="-12 0"
+                                            AllowDrop="True"
+                                            CanDragItems="True"
+                                            CanReorderItems="True"
+                                            ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
+                                            SelectionMode="None">
+                                            <ListView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid Padding="4">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="Auto" />
+                                                        </Grid.ColumnDefinitions>
+
+                                                        <TextBlock
+                                                            VerticalAlignment="Center"
+                                                            Text="{Binding}"
+                                                            TextWrapping="Wrap" />
+                                                        <controls:UXButton
+                                                            Grid.Column="1"
+                                                            VerticalAlignment="Center"
+                                                            Click="DeleteRampClick"
+                                                            Style="{StaticResource MapInfoButtonStyle}">
+                                                            <SymbolIcon Symbol="Delete" />
+                                                        </controls:UXButton>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ListView.ItemTemplate>
+                                        </ListView>
+
+                                    </Grid>
+
+
+                                </controls:SettingsPresenter>
+
+                            </StackPanel>
+
+                            <StackPanel
+                                x:Name="LicensesPanel"
+                                x:Load="False"
+                                Visibility="Collapsed">
+
                                 <TextBlock x:Uid="SettingsLicensesLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <TextBlock x:Uid="SettingsLicensesDescriptionLabel" Style="{StaticResource DescriptionStyle}" />
@@ -799,7 +902,10 @@
                                 </controls:SettingsPresenter>
                             </StackPanel>
 
-                            <StackPanel x:Name="AboutPanel" Visibility="Collapsed">
+                            <StackPanel
+                                x:Name="AboutPanel"
+                                x:Load="False"
+                                Visibility="Collapsed">
 
                                 <TextBlock x:Uid="SettingsAboutLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 

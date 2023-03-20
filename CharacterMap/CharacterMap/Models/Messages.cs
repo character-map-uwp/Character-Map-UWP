@@ -81,13 +81,15 @@ namespace CharacterMap.Models
         }
     }
 
-    public class PrintRequestedMessage
-    {
-    }
+    public class PrintRequestedMessage { }
 
-    public class ExportRequestedMessage
-    {
-    }
+    public class ExportRequestedMessage { }
+
+    public class RampOptionsUpdatedMessage { }
+
+    public class EditSuggestionsRequested { }
+
+    public class ToggleCompactOverlayMessage { }
 
     public class AppSettingsChangedMessage
     {
@@ -144,5 +146,4 @@ namespace CharacterMap.Models
         }
     }
 
-    public class ToggleCompactOverlayMessage { }
 }

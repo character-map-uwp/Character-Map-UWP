@@ -4,8 +4,10 @@ using CharacterMap.Models;
 using CharacterMap.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Windows.ApplicationModel.Core;
 using Windows.Globalization;
@@ -27,14 +29,11 @@ namespace CharacterMap.ViewModels
             GlyphAnnotation.UnicodeIndex
         };
 
-        [ObservableProperty]
-        private FontFamily _previewFontSource;
-
-        [ObservableProperty]
-        private List<InstalledFont> _previewFonts;
-
-        [ObservableProperty]
-        private bool _isCollectionExportEnabled = true;
+        [ObservableProperty] string _rampInput;
+        [ObservableProperty] FontFamily _previewFontSource;
+        [ObservableProperty] List<InstalledFont> _previewFonts;
+        [ObservableProperty] bool _isCollectionExportEnabled = true;
+        [ObservableProperty] ObservableCollection<String> _rampOptions = null;
 
         public bool ThemeHasChanged => Settings.ApplicationDesignTheme != _originalDesign;
 
@@ -43,7 +42,6 @@ namespace CharacterMap.ViewModels
 
         private List<SupportedLanguage> _supportedLanguages;
         public List<SupportedLanguage> SupportedLanguages => _supportedLanguages ??= GetSupportedLanguages();
-
 
         private int _originalDesign { get; }
 
@@ -77,15 +75,29 @@ namespace CharacterMap.ViewModels
             }
 
             PreviewFonts = items.OrderBy(f => f.Name).ToList();
+
+            // 3. Update Ramp Options
+            if (RampOptions is not null)
+                RampOptions.CollectionChanged -= RampOptions_CollectionChanged;
+            RampOptions = new(Settings.CustomRampOptions);
+            RampOptions.CollectionChanged += RampOptions_CollectionChanged;
+            RampInput = null;
+        }
+
+        private void RampOptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Settings.CustomRampOptions = RampOptions;
+            Messenger.Send(new RampOptionsUpdatedMessage());
         }
 
         public void ResetFontPreview()
         {
             // Causes Bindings to re-evaluate so the UI can
             // regenerate using the correct fonts
-            OnPropertyChanged(nameof(PreviewFonts));
+            var list = PreviewFonts;
+            PreviewFonts = null;
+            PreviewFonts = list?.ToList();
         }
-
 
         private List<ChangelogItem> CreateChangelog()
         {
@@ -95,7 +107,7 @@ namespace CharacterMap.ViewModels
             // Not really including bug fixes in here, just key features. The main idea
             // is to try and expose features people may not be aware exist inside the
             // application, rather than things like bug-fixes or visual changes.
-            return new List<ChangelogItem>
+            return new()
             {
                 new("Latest Update (Jan 2023)", // Jan 2023
                     "- Added tabbed interface support to the Windows 11 theme\n" +
@@ -162,7 +174,7 @@ namespace CharacterMap.ViewModels
             };
         }
 
-        private List<SupportedLanguage> GetSupportedLanguages()
+        public static List<SupportedLanguage> GetSupportedLanguages()
         {
             List<SupportedLanguage> list  = new(
                 ApplicationLanguages.ManifestLanguages
@@ -215,6 +227,19 @@ namespace CharacterMap.ViewModels
         public void SetWindowsTheme()
         {
             Settings.UserRequestedTheme = ElementTheme.Default;
+        }
+
+        public void AddRamp()
+        {
+            if (!string.IsNullOrWhiteSpace(RampInput))
+                RampOptions.Add(RampInput);
+
+            RampInput = null;
+        }
+
+        public void RemoveRamp(string str)
+        {
+            RampOptions.Remove(str);
         }
     }
 }
