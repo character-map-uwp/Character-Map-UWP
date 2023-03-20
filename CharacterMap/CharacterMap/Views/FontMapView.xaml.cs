@@ -105,7 +105,7 @@ namespace CharacterMap.Views
 
         public bool IsStandalone { get; set; }
 
-        private Debouncer _sizeDebouncer { get; } = new Debouncer();
+        private Debouncer _sizeDebouncer { get; } = new ();
 
         private XamlDirect _xamlDirect { get; }
 

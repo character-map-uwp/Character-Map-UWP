@@ -321,8 +321,9 @@ namespace CharacterMap.Helpers
         {
             if (ResourceHelper.AllowAnimation && ResourceHelper.SupportFluentAnimation)
             {
-                Properties.SetPointerOverAnimation(item, "IconRoot");
+                //Properties.SetPointerOverAnimation(item, "IconRoot");
                 Properties.SetClickAnimationOffset(item, 0.95);
+                FluentAnimation.SetPointerOverAxis(item, Orientation.Horizontal);
 
                 Properties.SetPointerPressedAnimation(item, "ContentRoot|Scale");
                 Properties.SetClickAnimation(item, "ContentRoot|Scale");

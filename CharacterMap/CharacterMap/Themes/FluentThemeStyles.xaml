@@ -79,6 +79,8 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
@@ -119,6 +121,7 @@
                             <VisualStateGroup
                                 x:Name="CommonStates"
                                 h:FluentAnimation.PointerOver="TemplateContent"
+                                h:FluentAnimation.PointerOverAxis="Horizontal"
                                 h:FluentAnimation.Pressed="TemplateContent">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="Selected" />
@@ -536,6 +539,7 @@
 
     <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
         <Setter Property="core:Properties.PointerOverAnimation" Value="Text" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
     </Style>
 
     <Style TargetType="toolkit:GridSplitter">
@@ -612,6 +616,8 @@
         <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutItem">
@@ -626,7 +632,7 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
-                                h:FluentAnimation.PointerOver="{Binding ElementName=IconRoot}"
+                                h:FluentAnimation.PointerOver="{Binding ElementName=TextBlock}"
                                 h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
@@ -752,6 +758,8 @@
         <Setter Property="core:Properties.PointerOverAnimation" Value="SubItemChevron|X" />
         <Setter Property="core:Properties.PointerAnimationOffset" Value="4" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutSubItem">
@@ -765,7 +773,9 @@
                         CornerRadius="{TemplateBinding CornerRadius}">
 
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates" h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                            <VisualStateGroup x:Name="CommonStates"
+                                              h:FluentAnimation.PointerOver="{Binding ElementName=TextBlock}"
+                                              h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
 
                                 <VisualState x:Name="PointerOver">
@@ -1498,6 +1508,8 @@
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="MinHeight" Value="36" />
         <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:MenuButton">
@@ -1512,7 +1524,7 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
-                                h:FluentAnimation.PointerOver="{Binding ElementName=IconPresenter}"
+                                h:FluentAnimation.PointerOver="{Binding ElementName=ContentPresenter}"
                                 h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">

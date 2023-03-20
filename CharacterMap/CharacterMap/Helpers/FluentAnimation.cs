@@ -55,7 +55,8 @@ namespace CharacterMap.Helpers
             {
                 Visual visual = target.EnableCompositionTranslation().GetElementVisual();
                 float offset = (float)FluentAnimation.GetPointerOverOffset(e.Control);
-                PlayPointerOver(visual, offset);
+                Orientation axis = FluentAnimation.GetPointerOverAxis(e.Control);
+                PlayPointerOver(visual, offset, axis);
             }
 
             // 2. Handle "PressedDown"
@@ -103,7 +104,7 @@ namespace CharacterMap.Helpers
             });
         }
 
-        public static void PlayPointerOver(Visual v, float offset)
+        public static void PlayPointerOver(Visual v, float offset, Orientation axis = Orientation.Vertical)
         {
             // A Vector3Animation and a NaturalMotionAnimation can't be contained in 
             // the same CompositionAnimationGroup without breaking each other, so we
@@ -111,10 +112,12 @@ namespace CharacterMap.Helpers
             v.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
                 b =>
                 {
-                    v.StartAnimation(v.Compositor.GetCached($"__FAPO{offset}", () =>
+                    float x = axis == Orientation.Vertical ? 0 : offset;
+                    float y = axis == Orientation.Vertical ? offset : 0;
+                    v.StartAnimation(v.Compositor.GetCached($"__FAPO{offset}-{axis}", () =>
                     {
                         return v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                            .AddKeyFrame(1, 0, offset, 0, v.Compositor.GetLinearEase())
+                            .AddKeyFrame(1, x, y, 0, v.Compositor.GetLinearEase())
                             .SetDuration(0.15);
                     }));
                 },
@@ -131,7 +134,6 @@ namespace CharacterMap.Helpers
         }
 
         #endregion
-
 
         #region Targets
 
@@ -395,6 +397,23 @@ namespace CharacterMap.Helpers
 
         public static readonly DependencyProperty UsePointerOverProperty =
             DependencyProperty.RegisterAttached("UsePointerOver", typeof(bool), typeof(FluentAnimation), new PropertyMetadata(true));
+
+        #endregion
+
+        #region PointerOverAxis
+
+        public static Orientation GetPointerOverAxis(DependencyObject obj)
+        {
+            return (Orientation)obj.GetValue(PointerOverAxisProperty);
+        }
+
+        public static void SetPointerOverAxis(DependencyObject obj, Orientation value)
+        {
+            obj.SetValue(PointerOverAxisProperty, value);
+        }
+
+        public static readonly DependencyProperty PointerOverAxisProperty =
+            DependencyProperty.RegisterAttached("PointerOverAxis", typeof(Orientation), typeof(FluentAnimation), new PropertyMetadata(Orientation.Vertical));
 
         #endregion
     }
