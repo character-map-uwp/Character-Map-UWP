@@ -130,7 +130,7 @@ namespace CharacterMap.Core
         {
             if (Characters == null)
             {
-                var characters = new List<Character>();
+                List<Character> characters = new ();
                 foreach (var range in FontFace.UnicodeRanges)
                 {
                     CharacterHash += range.First;

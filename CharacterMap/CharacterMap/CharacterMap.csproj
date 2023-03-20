@@ -50,7 +50,7 @@
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
@@ -73,7 +73,7 @@
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <PlatformTarget>ARM</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
@@ -97,7 +97,7 @@
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <PlatformTarget>ARM64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
@@ -120,7 +120,7 @@
     <DefineConstants>TRACE;NETFX_CORE;WINDOWS_UWP</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <PlatformTarget>x64</PlatformTarget>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <ErrorReport>prompt</ErrorReport>
@@ -168,10 +168,6 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\ColourIcon.png" />
     <Content Include="Assets\Data\GlyphData.db" />
-    <PRIResource Include="Strings\pl-PL\Resources.resw" />
-    <PRIResource Include="Strings\ru-RU\Resources.resw" />
-    <PRIResource Include="Strings\fr-FR\Resources.resw" />
-    <PRIResource Include="Strings\de-DE\Resources.resw" />
     <PRIResource Include="Strings\zh-TW\Resources.resw" />
     <PRIResource Include="Strings\zh-CN\Resources.resw" />
     <PRIResource Include="Strings\en-US\Resources.resw" />
@@ -245,6 +241,7 @@
     <Compile Include="Helpers\Composition.cs" />
     <Compile Include="Helpers\CompositionExtensions.cs" />
     <Compile Include="Helpers\CompositionProperty.cs" />
+    <Compile Include="Helpers\CompositionNaturalMotion.cs" />
     <Compile Include="Helpers\FluentAnimation.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
@@ -301,6 +298,7 @@
     <Compile Include="Provider\XamarinFormsDevProvider.cs" />
     <Compile Include="Provider\XamlDevProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
+    <Compile Include="Models\AddToCollectionResult.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\LeakTrackingService.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />
@@ -333,6 +331,7 @@
     <Compile Include="Views\CalligraphyView.xaml.cs">
       <DependentUpon>CalligraphyView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\ChangelogItem.cs" />
     <Compile Include="Views\CollectionManagementView.xaml.cs">
       <DependentUpon>CollectionManagementView.xaml</DependentUpon>
     </Compile>

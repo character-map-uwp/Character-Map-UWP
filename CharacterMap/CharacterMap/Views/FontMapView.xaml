@@ -11,7 +11,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:services="using:CharacterMap.Services"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     x:Name="ViewRoot"
@@ -54,8 +56,36 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <AppBarButton x:Uid="SwitchViewButton" Click="{x:Bind ViewModel.ChangeDisplayMode}">
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE13C;" />
+                <AppBarButton
+                    x:Name="MoreSwitchView"
+                    x:Uid="SwitchViewButton"
+                    Click="{x:Bind ViewModel.ChangeDisplayMode}">
+                    <Button.Resources>
+                        <Storyboard x:Key="Released">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MOIcon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.4" Value="540">
+                                    <EasingDoubleKeyFrame.EasingFunction>
+                                        <CircleEase EasingMode="EaseOut" />
+                                    </EasingDoubleKeyFrame.EasingFunction>
+                                </EasingDoubleKeyFrame>
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Key="Pressed">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="MOIcon" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.Rotation)">
+                                <EasingDoubleKeyFrame KeyTime="0" Value="0" />
+                                <EasingDoubleKeyFrame KeyTime="0:0:0.1" Value="-20" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </Button.Resources>
+                    <FontIcon
+                        x:Name="MOIcon"
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        Glyph="&#xE13C;"
+                        RenderTransformOrigin="0.5 0.5">
+                        <FontIcon.RenderTransform>
+                            <CompositeTransform />
+                        </FontIcon.RenderTransform>
+                    </FontIcon>
                 </AppBarButton>
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
@@ -102,6 +132,32 @@
     </Control.Tag>
 
     <Control.Resources>
+
+        <MenuFlyout x:Name="SuggestionFlyout" AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
+            <MenuFlyoutItem
+                Click="EditSuggestions_Click"
+                Icon="Edit"
+                Text="Edit Suggestions" />
+        </MenuFlyout>
+
+        <Popup x:Name="CharacterPopup">
+            <Grid Width="300" Height="400">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    x:Name="PopupChar"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="150" />
+
+                <StackPanel Grid.Row="1">
+                    <TextBlock />
+                </StackPanel>
+            </Grid>
+        </Popup>
 
         <Storyboard x:Name="GridToTypeBase">
             <DoubleAnimation
@@ -505,6 +561,16 @@
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                 Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}" />
                         </controls:UXComboBox.SecondaryContent>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="core:FontVariant">
+                                <TextBlock
+                                    FontFamily="{Binding Source}"
+                                    FontStretch="{x:Bind FontFace.Stretch}"
+                                    FontStyle="{x:Bind FontFace.Style}"
+                                    FontWeight="{x:Bind FontFace.Weight}"
+                                    Text="{x:Bind PreferredName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </controls:UXComboBox>
 
                     <controls:UXButton
@@ -701,6 +767,7 @@
                         x:Name="FontOptionsButton"
                         x:Uid="FontOptionsButton"
                         VerticalAlignment="Stretch"
+                        helpers:FluentAnimation.PointerOver="DropDownGlyph"
                         IsHintVisible="True"
                         Style="{ThemeResource MapInfoButtonStyle}"
                         Visibility="Collapsed"
@@ -777,6 +844,8 @@
                     <controls:UXButton
                         x:Name="ViewToggleButton"
                         x:Uid="ViewToggleButton"
+                        helpers:FluentAnimation.PointerOver="FluentContentPresenter"
+                        helpers:FluentAnimation.PointerOverOffset="-2"
                         Click="{x:Bind ViewModel.ChangeDisplayMode}"
                         Style="{ThemeResource MapInfoButtonStyle}"
                         ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}"
@@ -841,15 +910,19 @@
 
                 </toolkit:WrapPanel>
 
+                <!--
+                    core:Properties.ClickAnimation="FluentContentPresenter|Scale"
+                    core:Properties.ClickAnimationOffset="0.8"
+                    core:Properties.PointerOverAnimation=""
+                -->
                 <controls:UXButton
                     x:Name="MoreOptionsButton"
                     x:Uid="BtnMoreIcon"
                     Grid.Column="1"
                     VerticalAlignment="Top"
-                    core:Properties.ClickAnimation="FluentContentPresenter|Scale"
-                    core:Properties.ClickAnimationOffset="0.8"
-                    core:Properties.PointerOverAnimation=""
                     core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                    helpers:FluentAnimation.PointerOver="FluentContentPresenter"
+                    helpers:FluentAnimation.PointerOverOffset="-2"
                     DataContext="{x:Bind ViewModel.SelectedFont, Mode=OneWay}"
                     Label="&#x2026;"
                     Style="{ThemeResource MapInfoButtonStyle}">
@@ -1074,6 +1147,7 @@
                         core:Properties.PointerOverAnimation="DropDownGlyph"
                         Background="Transparent"
                         BorderThickness="0 0 0 1"
+                        ContextFlyout="{StaticResource SuggestionFlyout}"
                         Header="Preview Text"
                         IsEditable="True"
                         ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
@@ -1103,6 +1177,7 @@
                                     Minimum="{x:Bind Minimum}"
                                     SmallChange="0.1"
                                     StepFrequency="0.1"
+                                    Style="{StaticResource DefaultThemeSliderStyle}"
                                     ValueChanged="Slider_ValueChanged"
                                     Value="{x:Bind Value, Mode=TwoWay}">
                                     <Slider.HeaderTemplate>
@@ -1144,14 +1219,14 @@
                         FontStretch="{x:Bind ViewModel.SelectedVariant.FontFace.Stretch, Mode=OneWay}"
                         FontStyle="{x:Bind ViewModel.SelectedVariant.FontFace.Style, Mode=OneWay}"
                         FontWeight="{x:Bind ViewModel.SelectedVariant.FontFace.Weight, Mode=OneWay}"
-                        ItemsSource="{x:Bind ViewModel.RampSizes}">
+                        ItemsSource="{x:Bind ViewModel.Ramps, Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Margin="22 10 6 48" Spacing="16" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="viewmodels:RampOption">
                                 <StackPanel Spacing="2">
                                     <TextBlock
                                         FontFamily="{StaticResource ContentControlThemeFontFamily}"
@@ -1160,16 +1235,20 @@
                                         FontStyle="Normal"
                                         FontWeight="Normal"
                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                        Text="{Binding}" />
+                                        Text="{x:Bind FontSize}" />
+                                    <TextBlock
+                                        x:Name="Framework"
+                                        x:Load="{x:Bind core:Converters.False(Option.RequiresNativeRender), FallbackValue=False}"
+                                        core:Properties.Options="{x:Bind Option, Mode=OneWay}"
+                                        FontSize="{x:Bind FontSize}"
+                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                     <cxc:DirectText
-                                        Axis="{Binding ElementName=TypeRampRoot, Path=DataContext.VariationAxis}"
-                                        FallbackFont="{Binding ElementName=TypeRampRoot, Path=DataContext.FallbackFont}"
-                                        FontFace="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedVariant.FontFace}"
-                                        FontSize="{Binding}"
-                                        IsColorFontEnabled="{Binding ElementName=TypeRampRoot, Path=DataContext.ShowColorGlyphs}"
+                                        x:Name="Native"
+                                        x:Load="{x:Bind Option.RequiresNativeRender, FallbackValue=False}"
+                                        core:Properties.Options="{x:Bind Option, Mode=OneWay}"
+                                        FontSize="{x:Bind FontSize}"
                                         IsOverwriteCompensationEnabled="True"
-                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}"
-                                        Typography="{Binding ElementName=TypeRampRoot, Path=DataContext.SelectedTypography}" />
+                                        Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                 </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -2014,6 +2093,7 @@
                         <!--<Setter Target="CopySequenceRoot.CornerRadius" Value="8" />
                         <Setter Target="CopySequenceRoot.Margin" Value="8 0 8 8" />
                         <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
+                        <Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />

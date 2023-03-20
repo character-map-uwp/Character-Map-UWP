@@ -177,6 +177,7 @@
 
             <controls:SettingsPresenter
                 Grid.Column="2"
+                VerticalAlignment="Top"
                 HorizontalContentAlignment="Stretch"
                 ContentPlacement="Bottom">
                 <controls:SettingsPresenter.Title>

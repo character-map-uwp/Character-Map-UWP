@@ -4,8 +4,9 @@
     xmlns:av="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
-    xmlns:helpers="using:CharacterMap.Helpers"
+    xmlns:h="using:CharacterMap.Helpers"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls">
 
     <ResourceDictionary.ThemeDictionaries>
@@ -78,7 +79,103 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                    <ListViewItemPresenter
+                        x:Name="Presenter"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        CheckBoxBrush="{ThemeResource ListViewItemCheckBoxBrush}"
+                        CheckBrush="{ThemeResource ListViewItemCheckBrush}"
+                        CheckMode="{ThemeResource ListViewItemCheckMode}"
+                        ContentMargin="{TemplateBinding Padding}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        Control.IsTemplateFocusTarget="True"
+                        CornerRadius="4"
+                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                        DragBackground="{ThemeResource ListViewItemDragBackground}"
+                        DragForeground="{ThemeResource ListViewItemDragForeground}"
+                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                        FocusBorderBrush="{ThemeResource ListViewItemFocusBorderBrush}"
+                        FocusSecondaryBorderBrush="{ThemeResource ListViewItemFocusSecondaryBorderBrush}"
+                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                        FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                        FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                        FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                        FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                        PlaceholderBackground="{ThemeResource ListViewItemPlaceholderBackground}"
+                        PointerOverBackground="{ThemeResource ListViewItemBackgroundPointerOver}"
+                        PointerOverForeground="{ThemeResource ListViewItemForegroundPointerOver}"
+                        PressedBackground="{ThemeResource ListViewItemBackgroundPressed}"
+                        ReorderHintOffset="{ThemeResource ListViewItemReorderHintThemeOffset}"
+                        SelectedBackground="{ThemeResource ListViewItemBackgroundSelected}"
+                        SelectedForeground="{ThemeResource ListViewItemForegroundSelected}"
+                        SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
+                        SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
+                        SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                h:FluentAnimation.PointerOver="TemplateContent"
+                                h:FluentAnimation.PointerOverAxis="Horizontal"
+                                h:FluentAnimation.Pressed="TemplateContent">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Selected" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="PointerOverSelected" />
+                                <VisualState x:Name="PointerOverPressed" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="PressedSelected" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ListViewItemPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="muxc:RadioButtons">
+        <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="muxc:RadioButtons">
+                    <Grid
+                        x:Name="ControlRoot"
+                        Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource QuickBackgroundTransition}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Disabled">
+                                    <VisualState.Setters>
+                                        <Setter Target="ControlRoot.Opacity" Value="0.4" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <muxc:ItemsRepeater x:Name="InnerRepeater">
+                            <muxc:ItemsRepeater.Layout>
+                                <primitives:ColumnMajorUniformToLargestGridLayout
+                                    ColumnSpacing="{TemplateBinding Tag}"
+                                    RowSpacing="{ThemeResource RadioButtonsRowSpacing}"
+                                    MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                            </muxc:ItemsRepeater.Layout>
+                        </muxc:ItemsRepeater>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style x:Key="DefaultSettingsPresenterStyle" TargetType="controls:SettingsPresenter">
@@ -92,6 +189,24 @@
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 4" />
+        <Setter Property="BottomCornerRadius" Value="0 0 4 4" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Spacing="0" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ContentPresenter">
+                    <Setter Property="BorderThickness" Value="0 0 0 1" />
+                    <Setter Property="Background" Value="{ThemeResource LayerFillColorDefaultBrush}" />
+                    <Setter Property="Padding" Value="16 8 16 8" />
+                    <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                </Style>
+            </Setter.Value>
+        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:SettingsPresenter">
@@ -142,6 +257,7 @@
                         <Grid
                             x:Name="TopCardRoot"
                             Padding="{TemplateBinding Padding}"
+                            VerticalAlignment="Center"
                             Background="{TemplateBinding Background}"
                             BackgroundTransition="{StaticResource QuickBrushTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -168,7 +284,8 @@
                             <StackPanel
                                 Grid.Column="1"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center">
+                                VerticalAlignment="Center"
+                                Transitions="{StaticResource RepositionTransitions}">
                                 <ContentPresenter
                                     HorizontalAlignment="Stretch"
                                     Content="{TemplateBinding Title}"
@@ -179,7 +296,7 @@
                                     x:Load="False"
                                     Margin="0 2 0 0"
                                     FontFamily="{TemplateBinding FontFamily}"
-                                    FontSize="12.333"
+                                    FontSize="12.666"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="{TemplateBinding Description}"
                                     TextWrapping="Wrap"
@@ -202,11 +319,10 @@
                             Visibility="Collapsed">
                             <!--  Animate the border below  -->
                             <Border
-                                Background="{ThemeResource LayerFillColorDefaultBrush}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="1 0 1 1"
-                                CornerRadius="0 0 4 4">
-                                <ItemsPresenter Margin="0 4 0 0" />
+                                CornerRadius="{TemplateBinding BottomCornerRadius}">
+                                <ItemsPresenter Margin="0 0 0 -2" />
                             </Border>
                         </Border>
                     </Grid>
@@ -216,9 +332,10 @@
     </Style>
 
     <Style x:Key="SubItemSettingsPresenterStyle" BasedOn="{StaticResource DefaultSettingsPresenterStyle}" TargetType="controls:SettingsPresenter">
-        <Setter Property="Padding" Value="16 6 16 18" />
-        <Setter Property="BorderThickness" Value="0 0 0 0" />
+        <Setter Property="Padding" Value="0 0 0 0" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Margin" Value="0" />
         <Setter Property="Background" Value="Transparent" />
     </Style>
 
@@ -422,6 +539,7 @@
 
     <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem">
         <Setter Property="core:Properties.PointerOverAnimation" Value="Text" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
     </Style>
 
     <Style TargetType="toolkit:GridSplitter">
@@ -483,9 +601,7 @@
         <Setter Property="BorderThickness" Value="1" />
     </Style>
 
-    <Style x:Key="DefaultFlyoutStyle" BasedOn="{StaticResource FontListFlyoutStyle}" TargetType="MenuFlyoutPresenter">
-        <Setter Property="CornerRadius" Value="8" />
-    </Style>
+    <Style x:Key="DefaultFlyoutStyle" BasedOn="{StaticResource FontListFlyoutStyle}" TargetType="MenuFlyoutPresenter" />
 
     <Style x:Key="ThemeMenuFlyoutItemStyle" TargetType="MenuFlyoutItem">
         <Setter Property="Background" Value="{ThemeResource MenuFlyoutItemBackground}" />
@@ -499,10 +615,9 @@
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentRoot|Scale" />
-        <Setter Property="core:Properties.ClickAnimation" Value="ContentRoot|Scale" />
-        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.95" />
-        <Setter Property="core:Properties.PointerOverAnimation" Value="IconRoot" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutItem">
@@ -515,7 +630,10 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                h:FluentAnimation.PointerOver="{Binding ElementName=TextBlock}"
+                                h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
@@ -637,11 +755,11 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentRoot|Scale" />
-        <Setter Property="core:Properties.ClickAnimation" Value="ContentRoot|Scale" />
-        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.95" />
         <Setter Property="core:Properties.PointerOverAnimation" Value="SubItemChevron|X" />
         <Setter Property="core:Properties.PointerAnimationOffset" Value="4" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutSubItem">
@@ -655,7 +773,9 @@
                         CornerRadius="{TemplateBinding CornerRadius}">
 
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
+                            <VisualStateGroup x:Name="CommonStates"
+                                              h:FluentAnimation.PointerOver="{Binding ElementName=TextBlock}"
+                                              h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
 
                                 <VisualState x:Name="PointerOver">
@@ -779,6 +899,9 @@
         <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentPresenter|Scale" />
         <Setter Property="core:Properties.ClickAnimation" Value="ContentPresenter|Scale" />
         <Setter Property="core:Properties.ClickAnimationOffset" Value="0.93" />
+        <!--<Setter Property="h:FluentAnimation.PointerOver" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.93" />-->
     </Style>
 
 
@@ -788,11 +911,10 @@
 
     <Style x:Key="DefaultThemeComboBoxStyle" BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
         <Setter Property="CornerRadius" Value="4" />
-        <Setter Property="core:Properties.PointerOverAnimation" Value="DropDownGlyph" />
-        <Setter Property="core:Properties.PointerAnimationOffset" Value="2" />
-        <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentPresenter|Scale" />
-        <Setter Property="core:Properties.ClickAnimation" Value="ContentPresenter|Scale" />
-        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.95" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="DropDownGlyph" />
+        <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
     </Style>
 
     <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox" />
@@ -816,6 +938,7 @@
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
@@ -845,18 +968,12 @@
                                 </DoubleAnimationUsingKeyFrames>
                             </Storyboard>
                         </Grid.Resources>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" MinHeight="0" />
-                        </Grid.RowDefinitions>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="36" />
-                        </Grid.ColumnDefinitions>
 
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates">
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                h:FluentAnimation.PointerOver="{Binding ElementName=DropDownGlyph}"
+                                h:FluentAnimation.Pressed="{Binding ElementName=PresentationRoot}">
                                 <VisualState x:Name="Normal" />
 
                                 <VisualState x:Name="PointerOver">
@@ -957,7 +1074,6 @@
 
                         <Border
                             x:Name="Background"
-                            Grid.Row="1"
                             Grid.ColumnSpan="2"
                             Margin="2"
                             VerticalAlignment="Stretch"
@@ -974,7 +1090,6 @@
 
                         <Border
                             x:Name="HighlightBackground"
-                            Grid.Row="1"
                             Grid.ColumnSpan="2"
                             Margin="2"
                             Background="{ThemeResource ComboBoxBackgroundUnfocused}"
@@ -982,49 +1097,55 @@
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Opacity="0" />
 
-                        <ContentPresenter
-                            x:Name="ContentPresenter"
-                            Grid.Row="1"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Visibility="Collapsed" />
+                        <Grid x:Name="PresentationRoot">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="36" />
+                            </Grid.ColumnDefinitions>
 
-                        <StackPanel
-                            Grid.Row="1"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                             <ContentPresenter
-                                MinHeight="0"
-                                Content="{TemplateBinding PreContent}"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
-                            <ContentPresenter
-                                Content="{TemplateBinding SelectedItem}"
-                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
-                                FontSize="{TemplateBinding FontSize}"
-                                FontStyle="Normal"
-                                FontWeight="{TemplateBinding FontWeight}" />
-                            <ContentPresenter
-                                MinHeight="0"
-                                Content="{TemplateBinding SecondaryContent}"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}" />
-                        </StackPanel>
+                                x:Name="ContentPresenter"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Visibility="Collapsed" />
 
-                        <FontIcon
-                            x:Name="DropDownGlyph"
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            Margin="0,10,10,10"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
-                            helpers:CompositionFactory.OpacityDuration="0:0:0.1"
-                            AutomationProperties.AccessibilityView="Raw"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                            FontSize="12"
-                            Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
-                            IsHitTestVisible="False" />
+                            <StackPanel
+                                x:Name="VariantRoot"
+                                Margin="{TemplateBinding Padding}"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <ContentPresenter
+                                    MinHeight="0"
+                                    Content="{TemplateBinding PreContent}"
+                                    Foreground="{ThemeResource TextControlPlaceholderForeground}" />
+                                <ContentPresenter
+                                    Content="{TemplateBinding SelectedItem}"
+                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                    FontSize="{TemplateBinding FontSize}"
+                                    FontStyle="Normal"
+                                    FontWeight="{TemplateBinding FontWeight}" />
+                                <ContentPresenter
+                                    MinHeight="0"
+                                    Content="{TemplateBinding SecondaryContent}"
+                                    Foreground="{ThemeResource TextControlPlaceholderForeground}" />
+                            </StackPanel>
+
+                            <FontIcon
+                                x:Name="DropDownGlyph"
+                                Grid.Column="1"
+                                Margin="0,10,10,10"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                h:CompositionFactory.OpacityDuration="0:0:0.1"
+                                AutomationProperties.AccessibilityView="Raw"
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="12"
+                                Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
+                                Glyph="&#xE0E5;"
+                                IsHitTestVisible="False" />
+
+                        </Grid>
 
                         <Popup x:Name="Popup">
                             <Border
@@ -1066,7 +1187,9 @@
 
     <!--  BUTTONS  -->
 
-    <Style x:Key="DefaultThemeButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button" />
+    <Style x:Key="DefaultThemeButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+        <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
+    </Style>
 
     <Style BasedOn="{StaticResource DefaultThemeButtonStyle}" TargetType="controls:UXButton" />
 
@@ -1084,7 +1207,7 @@
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="FocusVisualMargin" Value="-3" />
-        <Setter Property="helpers:FluentAnimation.UsePointerOver" Value="False" />
+        <Setter Property="h:FluentAnimation.UsePointerOver" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:UXButton">
@@ -1096,8 +1219,8 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
-                                helpers:FluentAnimation.PointerOver="{Binding ElementName=FluentContentPresenter}"
-                                helpers:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                                h:FluentAnimation.PointerOver="{Binding ElementName=FluentContentPresenter}"
+                                h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
@@ -1115,10 +1238,7 @@
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
                                     <VisualState.Setters>
-                                        <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundDisabled}" />
-                                        <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushDisabled}" />
-                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundDisabled}" />
-                                        <Setter Target="DropDownGlyph.Opacity" Value="0" />
+                                        <Setter Target="Root.Opacity" Value="0.4" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
@@ -1196,7 +1316,7 @@
                                 Margin="0,10,10,10"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Center"
-                                helpers:CompositionFactory.OpacityDuration="0:0:0.1"
+                                h:CompositionFactory.OpacityDuration="0:0:0.1"
                                 AutomationProperties.AccessibilityView="Raw"
                                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                                 IsHitTestVisible="False"
@@ -1229,12 +1349,10 @@
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
         <Setter Property="Height" Value="42" />
         <Setter Property="MinWidth" Value="42" />
-        <Setter Property="helpers:FluentAnimation.UsePointerOver" Value="True" />
-        <!--<Setter Property="core:Properties.PointerOverAnimation" Value="FluentContentPresenter" />
-        <Setter Property="core:Properties.SupportAnimatedIcon" Value="False" />
-        <Setter Property="core:Properties.ClickAnimationOffset" Value="0.9" />
-        <Setter Property="core:Properties.ClickAnimation" Value="Root|Scale" />
-        <Setter Property="core:Properties.PointerPressedAnimation" Value="Root|Scale" />-->
+        <Setter Property="h:FluentAnimation.PointerOver" Value="DropDownGlyph" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.9" />
+        <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
     </Style>
 
     <Style x:Key="DefaultThemeAppBarButtonStyle" BasedOn="{StaticResource TransparentButton}" TargetType="controls:UXButton">
@@ -1247,7 +1365,7 @@
     <Style x:Key="DevToolsAppBarButtonStyle" BasedOn="{StaticResource DefaultThemeAppBarButtonStyle}" TargetType="controls:UXButton">
         <Setter Property="Height" Value="52" />
         <Setter Property="IsLabelVisible" Value="True" />
-        <Setter Property="helpers:FluentAnimation.UsePointerOver" Value="True" />
+        <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
     </Style>
 
     <Style x:Key="CopyButtonStyle" BasedOn="{StaticResource DevToolsAppBarButtonStyle}" TargetType="controls:UXButton">
@@ -1279,8 +1397,8 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
-                                helpers:FluentAnimation.PointerOver="{Binding ElementName=ContentRoot}"
-                                helpers:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                                h:FluentAnimation.PointerOver="{Binding ElementName=ContentRoot}"
+                                h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
@@ -1389,7 +1507,9 @@
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="MinHeight" Value="36" />
-        <Setter Property="helpers:FluentAnimation.UsePointerOver" Value="True" />
+        <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:MenuButton">
@@ -1404,8 +1524,8 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
-                                helpers:FluentAnimation.PointerOver="{Binding ElementName=IconPresenter}"
-                                helpers:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                                h:FluentAnimation.PointerOver="{Binding ElementName=ContentPresenter}"
+                                h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
@@ -2266,7 +2386,9 @@
 
     <!--  SLIDER  -->
 
-    <Style x:Key="DefaultThemeSliderStyle" BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider" />
+    <Style x:Key="DefaultThemeSliderStyle" BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider">
+        <Setter Property="h:FluentAnimation.PointerOver" Value="HorizontalThumb" />
+    </Style>
 
 
 

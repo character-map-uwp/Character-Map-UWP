@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Xml.Linq;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -83,6 +84,7 @@ namespace CharacterMap.Controls
         public static readonly DependencyProperty IconSizeProperty =
             DependencyProperty.Register(nameof(IconSize), typeof(double), typeof(SettingsPresenter), new PropertyMetadata(24d));
 
+
         public ContentPlacement ContentPlacement
         {
             get { return (ContentPlacement)GetValue(ContentPlacementProperty); }
@@ -95,6 +97,7 @@ namespace CharacterMap.Controls
                 ((SettingsPresenter)d).UpdatePlacementStates();
             }));
 
+
         public bool HasItems
         {
             get { return (bool)GetValue(HasItemsProperty); }
@@ -105,6 +108,14 @@ namespace CharacterMap.Controls
             DependencyProperty.Register(nameof(HasItems), typeof(bool), typeof(SettingsPresenter), new PropertyMetadata(false));
 
 
+        public CornerRadius BottomCornerRadius
+        {
+            get { return (CornerRadius)GetValue(BottomCornerRadiusProperty); }
+            set { SetValue(BottomCornerRadiusProperty, value); }
+        }
+
+        public static readonly DependencyProperty BottomCornerRadiusProperty =
+            DependencyProperty.Register(nameof(BottomCornerRadius), typeof(CornerRadius), typeof(SettingsPresenter), new PropertyMetadata(new CornerRadius()));
 
         #endregion
 
@@ -117,6 +128,17 @@ namespace CharacterMap.Controls
             Properties.SetStyleKey(this, "DefaultSettingsPresenterStyle");
             this.DefaultStyleKey = typeof(SettingsPresenter);
             _themer = new ThemeHelper(this);
+        }
+
+        protected override bool IsItemItsOwnContainerOverride(object item)
+        {
+            return false;
+        }
+
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.PrepareContainerForItemOverride(element, item);
+            UpdateCornerRadius();
         }
 
         protected override void OnItemsChanged(object e)
@@ -133,9 +155,9 @@ namespace CharacterMap.Controls
                     // force x:Load on ItemsPresenter
                     _itemsRoot = this.GetTemplateChild("ItemsRoot") as FrameworkElement;
                 }
-                
+
                 VisualStateManager.GoToState(this, "HasItemsState", ResourceHelper.AllowAnimation);
-                if (_itemsRoot is not null 
+                if (_itemsRoot is not null
                     && e is not null
                     && ResourceHelper.AllowAnimation
                     && VisualTreeHelperExtensions.GetImplementationRoot(_itemsRoot) is FrameworkElement target)
@@ -146,12 +168,31 @@ namespace CharacterMap.Controls
                         v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
                             .AddKeyFrame(0, "Vector3(0, -this.Target.Size.Y - 8, 0)")
                             .AddKeyFrame(1, new Vector3(), ease)
-                            .SetDelay(0.2, AnimationDelayBehavior.SetInitialValueBeforeDelay)
-                            .SetDuration(0.8));
+                            .SetDelay(0, AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                            .SetDuration(0.4));
                 }
+
+                UpdateCornerRadius();
             }
             else
                 VisualStateManager.GoToState(this, "NoItemsState", ResourceHelper.AllowAnimation);
+        }
+
+        private void UpdateCornerRadius()
+        {
+            if (this.ItemsPanelRoot is null)
+                return;
+
+            foreach (var item in this.ItemsPanelRoot.Children)
+            {
+                if (item is ContentPresenter f)
+                {
+                    if (f.Content == this.Items.Last())
+                        f.CornerRadius = this.BottomCornerRadius;
+                    else
+                        f.CornerRadius = new CornerRadius();
+                }
+            }
         }
 
         protected override void OnApplyTemplate()

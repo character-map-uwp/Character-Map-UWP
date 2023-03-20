@@ -356,10 +356,10 @@ namespace Windows.UI.Xaml.Media
                 null;
         }
 
-        public static VisualStateGroup GetVisualStateGroup(DependencyObject obj, string groupName)
+        public static VisualStateGroup GetVisualStateGroup(this Control control, string groupName)
         {
-            if (GetImplementationRoot(obj) is FrameworkElement f &&
-                VisualStateManager.GetVisualStateGroups(f) is IList<VisualStateGroup> groups)
+            if (GetImplementationRoot(control) is FrameworkElement f 
+                && VisualStateManager.GetVisualStateGroups(f) is IList<VisualStateGroup> groups)
                 return groups.FirstOrDefault(g => g.Name == groupName);
 
             return null;

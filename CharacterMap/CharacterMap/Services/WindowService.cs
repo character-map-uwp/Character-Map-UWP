@@ -153,6 +153,25 @@ namespace CharacterMap.Services
             });
         }
 
+        public static async Task ReactivateMainAsync()
+        {
+            if (!CoreApplication.MainView.Dispatcher.HasThreadAccess)
+            {
+                // Awaiter here is screwed without a *PROPER* dispatcher awaiter
+                await CoreApplication.MainView.Dispatcher.ExecuteAsync(
+                    () => ReactivateMainAsync());
+
+                await Task.Delay(250);
+                return;
+            }
+
+            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
+            await Task.Delay(100); 
+            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
+            await Task.Delay(100); 
+            WindowService.MainWindow.CoreView.CoreWindow.Activate();
+        }
+
         public static async Task TrySwitchToWindowAsync(WindowInformation info, bool main)
         {
             if (main && !CoreApplication.MainView.Dispatcher.HasThreadAccess)
@@ -167,8 +186,8 @@ namespace CharacterMap.Services
             if (main && CoreApplication.MainView.CoreWindow.Visible)
             {
                 await ApplicationViewSwitcher.SwitchAsync(
-                    info.View.Id, 
-                    ((WindowInformation)CoreApplication.MainView.Properties[nameof(MainWindow)]).View.Id, 
+                    info.View.Id,
+                    ((WindowInformation)CoreApplication.MainView.Properties[nameof(MainWindow)]).View.Id,
                     ApplicationViewSwitchingOptions.ConsolidateViews).AsTask();
 
                 return;

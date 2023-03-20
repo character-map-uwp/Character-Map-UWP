@@ -104,7 +104,7 @@ namespace CharacterMap.Services
         }
 
         // todo : refactor into classes with description + writing direction
-        public static IReadOnlyList<string> DefaultTextOptions { get; } = new List<string>
+        private static IReadOnlyList<string> DefaultTextOptions { get; } = new List<string>
         {
             "The quick brown dog jumps over a lazy fox. 1234567890",
             Localization.Get("CultureSpecificPangram/Text"),
@@ -121,6 +121,13 @@ namespace CharacterMap.Services
             "視野無限廣，窗外有藍天", // Chinese (Traditional)
             "いろはにほへと ちりぬるを わかよたれそ つねならむ うゐのおくやま けふこえて あさきゆめみし ゑひもせす（ん）" // Japanese
         };
+
+        public static List<string> GetRampOptions()
+        {
+            List<string> ops = new(DefaultTextOptions);
+            ops.AddRange(ResourceHelper.AppSettings.CustomRampOptions);
+            return ops;
+        }
 
         //public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
         //    Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)

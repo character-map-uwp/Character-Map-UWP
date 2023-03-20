@@ -1,33 +1,103 @@
 ﻿using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
-using CharacterMap.Views;
+using CharacterMap.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.DependencyInjection;
+using CommunityToolkit.Mvvm.Messaging;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Windows.ApplicationModel.Core;
 using Windows.Globalization;
+using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels
 {
     public partial class SettingsViewModel : ViewModelBase
     {
+        private Random _random { get; } = new Random();
+
         protected override bool TrackAnimation => true;
 
-        public List<GlyphAnnotation> Annotations => new ()
+        public List<GlyphAnnotation> Annotations { get; } = new ()
         {
             GlyphAnnotation.None,
             GlyphAnnotation.UnicodeHex,
             GlyphAnnotation.UnicodeIndex
         };
 
-        [ObservableProperty]
-        private bool _isCollectionExportEnabled = true;
+        [ObservableProperty] string _rampInput;
+        [ObservableProperty] FontFamily _previewFontSource;
+        [ObservableProperty] List<InstalledFont> _previewFonts;
+        [ObservableProperty] bool _isCollectionExportEnabled = true;
+        [ObservableProperty] ObservableCollection<String> _rampOptions = null;
+
+        public bool ThemeHasChanged => Settings.ApplicationDesignTheme != _originalDesign;
 
         private List<ChangelogItem> _changelog;
         public List<ChangelogItem> Changelog => _changelog ??= CreateChangelog();
 
         private List<SupportedLanguage> _supportedLanguages;
         public List<SupportedLanguage> SupportedLanguages => _supportedLanguages ??= GetSupportedLanguages();
+
+        private int _originalDesign { get; }
+
+        private AppSettings Settings { get; } = ResourceHelper.AppSettings;
+
+        public SettingsViewModel()
+        {
+            _originalDesign = Settings.ApplicationDesignTheme;
+        }
+
+        public void UpdatePreviews(InstalledFont font, FontVariant variant)
+        {
+            bool isSymbol = Ioc.Default.GetService<UserCollectionsService>().IsSymbolFont(font);
+
+            // 1. Update "A B Y" Character grid previews
+            // Note: it is legal for both "variant" and "font" to be NULL
+            //       when calling, so test both cases.
+            PreviewFontSource = variant != null && !isSymbol 
+                ? new FontFamily(variant.XamlFontSource) 
+                : FontFamily.XamlAutoFontFamily;
+
+            // 2. Update FontList Previews
+            var items = Enumerable.Range(1, 5).Select(i => FontFinder.Fonts[_random.Next(0, FontFinder.Fonts.Count - 1)])
+                                              .OrderBy(f => f.Name)
+                                              .ToList();
+
+            if (font != null && !isSymbol && !items.Contains(font))
+            {
+                items.RemoveAt(0);
+                items.Add(font);
+            }
+
+            PreviewFonts = items.OrderBy(f => f.Name).ToList();
+
+            // 3. Update Ramp Options
+            if (RampOptions is not null)
+                RampOptions.CollectionChanged -= RampOptions_CollectionChanged;
+            RampOptions = new(Settings.CustomRampOptions);
+            RampOptions.CollectionChanged += RampOptions_CollectionChanged;
+            RampInput = null;
+        }
+
+        private void RampOptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Settings.CustomRampOptions = RampOptions;
+            Messenger.Send(new RampOptionsUpdatedMessage());
+        }
+
+        public void ResetFontPreview()
+        {
+            // Causes Bindings to re-evaluate so the UI can
+            // regenerate using the correct fonts
+            var list = PreviewFonts;
+            PreviewFonts = null;
+            PreviewFonts = list?.ToList();
+        }
 
         private List<ChangelogItem> CreateChangelog()
         {
@@ -37,9 +107,11 @@ namespace CharacterMap.ViewModels
             // Not really including bug fixes in here, just key features. The main idea
             // is to try and expose features people may not be aware exist inside the
             // application, rather than things like bug-fixes or visual changes.
-            return new List<ChangelogItem>
+            return new()
             {
-                new("Latest Update (Jan 2023)", // Jan 2023
+                new("Latest Update (Mar 2023)", // March 2023
+                    "- Add ability to add default preview strings for Type Ramp view and Compare window through the context menu on the suggestion box or inside Settings view"),
+                new("2023.1.2.0 (Jan 2023)", // Jan 2023
                     "- Added tabbed interface support to the Windows 11 theme\n" +
                     "- Added ability to compare all faces in a font family from Font List context menu or the \"...\" menu"),
                 new("2022.3.0.0 (Dec 2022)", // Dec 2022
@@ -104,7 +176,7 @@ namespace CharacterMap.ViewModels
             };
         }
 
-        private List<SupportedLanguage> GetSupportedLanguages()
+        public static List<SupportedLanguage> GetSupportedLanguages()
         {
             List<SupportedLanguage> list  = new(
                 ApplicationLanguages.ManifestLanguages
@@ -126,6 +198,50 @@ namespace CharacterMap.ViewModels
             IsCollectionExportEnabled = false;
             try { await ExportManager.ExportFontsToFolderAsync(FontFinder.GetImportedVariants()); }
             finally { IsCollectionExportEnabled = true; }
+        }
+
+        internal void SetDesign(int selectedIndex)
+        {
+            Settings.ApplicationDesignTheme = selectedIndex;
+            OnPropertyChanged(nameof(ThemeHasChanged));
+        }
+
+        public void LaunchReview()
+        {
+            _ = SystemInformation.LaunchStoreForReviewAsync();
+        }
+
+        public void Restart()
+        {
+            _ = CoreApplication.RequestRestartAsync(string.Empty);
+        }
+
+        public void SetLightTheme()
+        {
+            Settings.UserRequestedTheme = ElementTheme.Light;
+        }
+
+        public void SetDarkTheme()
+        {
+            Settings.UserRequestedTheme = ElementTheme.Dark;
+        }
+
+        public void SetWindowsTheme()
+        {
+            Settings.UserRequestedTheme = ElementTheme.Default;
+        }
+
+        public void AddRamp()
+        {
+            if (!string.IsNullOrWhiteSpace(RampInput))
+                RampOptions.Add(RampInput);
+
+            RampInput = null;
+        }
+
+        public void RemoveRamp(string str)
+        {
+            RampOptions.Remove(str);
         }
     }
 }

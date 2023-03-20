@@ -67,7 +67,7 @@
                             RenderTransformOrigin="0.5,0.5">
 
                             <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup x:Name="CommonStates" h:FluentAnimation.Pressed="{Binding ElementName=ContentPresenter}">
                                     <VisualStateGroup.Transitions>
                                         <VisualTransition From="Normal" To="PointerOver">
                                             <Storyboard>

@@ -10,6 +10,7 @@
     xmlns:m="using:CharacterMap.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
@@ -276,7 +277,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                             <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
+                                <VisualStateGroup x:Name="CommonStates" helpers:FluentAnimation.PointerOver="{Binding ElementName=ContentPresenter}">
                                     <VisualState x:Name="Normal">
                                         <Storyboard>
                                             <PointerUpThemeAnimation Storyboard.TargetName="ContentPresenter" />
@@ -451,10 +452,19 @@
                                 BorderThickness="0 0 0 1"
                                 CornerRadius="0"
                                 IsEditable="True"
-                                ItemsSource="{x:Bind ViewModel.TextOptions}"
+                                ItemsSource="{x:Bind ViewModel.TextOptions, Mode=OneWay}"
                                 SelectedIndex="0"
                                 Style="{StaticResource RampComboBoxStyle}"
-                                Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBox.ContextFlyout>
+                                    <MenuFlyout AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
+                                        <MenuFlyoutItem
+                                            Click="{x:Bind ViewModel.ShowEditSuggestions}"
+                                            Icon="Edit"
+                                            Text="Edit Suggestions" />
+                                    </MenuFlyout>
+                                </ComboBox.ContextFlyout>
+                            </ComboBox>
 
                         </Grid>
                         <Grid x:Name="SecondRow">
@@ -466,7 +476,10 @@
                                 <ColumnDefinition Width="30" />
                             </Grid.ColumnDefinitions>
 
-                            <StackPanel Margin="-8 -2 0 0" Orientation="Horizontal">
+                            <muxc:RadioButtons
+                                x:Name="RadioButtons"
+                                Margin="-8 -2 0 0"
+                                MaxColumns="2">
                                 <RadioButton
                                     x:Uid="LayoutGridToggle"
                                     Click="GridView_Click"
@@ -476,7 +489,7 @@
                                 <RadioButton x:Uid="LayoutListToggle" Click="ListView_Click">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
                                 </RadioButton>
-                            </StackPanel>
+                            </muxc:RadioButtons>
 
                             <TextBlock
                                 Grid.Column="2"
@@ -495,6 +508,7 @@
                                 CornerRadius="0"
                                 Maximum="64"
                                 Minimum="10"
+                                Style="{StaticResource DefaultThemeSliderStyle}"
                                 ValueChanged="FontSizeSlider_ValueChanged"
                                 Value="40" />
 
@@ -839,6 +853,7 @@
                 <VisualState x:Name="DefaultThemeState" />
                 <VisualState x:Name="FUIThemeState">
                     <VisualState.Setters>
+                        <Setter Target="RadioButtons.Margin" Value="-2 -2 0 0" />
                         <Setter Target="Presenter.Background" Value="Transparent" />
                         <Setter Target="Presenter.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                     </VisualState.Setters>

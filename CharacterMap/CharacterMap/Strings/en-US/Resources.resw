@@ -578,7 +578,7 @@ Turning this on has negligible performance impact.</value>
     <value>Theme</value>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
-    <value>User Interface</value>
+    <value>Layout</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
@@ -868,7 +868,7 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>About</value>
   </data>
   <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
-    <value>User Interface Advanced</value>
+    <value>Look &amp; Feel</value>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
     <value>Export all imported fonts</value>
@@ -1292,5 +1292,18 @@ Requires a restart to take effect.</value>
   </data>
   <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
     <value>Enable pointer over animations</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
+    <value>Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
+Tap and hold to arrange.</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
+    <value>Custom Options</value>
+  </data>
+  <data name="SettingsSuggestionsHeader.Text" xml:space="preserve">
+    <value>Preview Suggestions</value>
+  </data>
+  <data name="SettingsSuggestionTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter your suggestion here</value>
   </data>
 </root>
