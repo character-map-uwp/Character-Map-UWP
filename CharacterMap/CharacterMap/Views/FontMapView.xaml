@@ -561,6 +561,16 @@
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                 Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}" />
                         </controls:UXComboBox.SecondaryContent>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="core:FontVariant">
+                                <TextBlock
+                                    FontFamily="{x:Bind XamlFontSource}"
+                                    FontStretch="{x:Bind FontFace.Stretch}"
+                                    FontStyle="{x:Bind FontFace.Style}"
+                                    FontWeight="{x:Bind FontFace.Weight}"
+                                    Text="{x:Bind PreferredName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
                     </controls:UXComboBox>
 
                     <controls:UXButton
