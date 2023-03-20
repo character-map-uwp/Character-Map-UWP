@@ -109,7 +109,9 @@ namespace CharacterMap.ViewModels
             // application, rather than things like bug-fixes or visual changes.
             return new()
             {
-                new("Latest Update (Jan 2023)", // Jan 2023
+                new("Latest Update (Mar 2023)", // March 2023
+                    "- Add ability to add default preview strings for Type Ramp view and Compare window through the context menu on the suggestion box or inside Settings view"),
+                new("2023.1.2.0 (Jan 2023)", // Jan 2023
                     "- Added tabbed interface support to the Windows 11 theme\n" +
                     "- Added ability to compare all faces in a font family from Font List context menu or the \"...\" menu"),
                 new("2022.3.0.0 (Dec 2022)", // Dec 2022

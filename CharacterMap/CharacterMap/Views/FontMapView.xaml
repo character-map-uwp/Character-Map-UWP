@@ -564,7 +564,7 @@
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="core:FontVariant">
                                 <TextBlock
-                                    FontFamily="{x:Bind XamlFontSource}"
+                                    FontFamily="{Binding Source}"
                                     FontStretch="{x:Bind FontFace.Stretch}"
                                     FontStyle="{x:Bind FontFace.Style}"
                                     FontWeight="{x:Bind FontFace.Weight}"
