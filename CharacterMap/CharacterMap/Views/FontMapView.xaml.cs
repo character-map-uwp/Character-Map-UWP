@@ -524,7 +524,7 @@ namespace CharacterMap.Views
             if (variant == null)
                 return string.Empty;
 
-            string s = Localization.Get("StatusBarCharacterCount", variant.Characters.Count);
+            string s = Localization.Get("StatusBarCharacterCount", variant.GetCharacters().Count);
 
             // Hack for Zune Theme.
             if (!keepCasing)
