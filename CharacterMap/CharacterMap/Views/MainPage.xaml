@@ -130,7 +130,7 @@
                                         x:Name="FullscreenLabel"
                                         Title="{core:Localizer Key='FullscreenLabel/Text'}"
                                         Glyph="&#xE740;"
-                                        Shortcut="F12" />
+                                        Shortcut="F11" />
                                 </Button>
 
                                 <Button Click="{x:Bind ShowPrint}">
@@ -206,7 +206,7 @@
 
             <MenuFlyoutItem Command="{Binding CommandToggleFullScreen}" Text="{core:Localizer Key='ToggleFullScreenModeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip'}">
                 <MenuFlyoutItem.KeyboardAccelerators>
-                    <KeyboardAccelerator Key="F12" />
+                    <KeyboardAccelerator Key="F11" />
                 </MenuFlyoutItem.KeyboardAccelerators>
                 <MenuFlyoutItem.Icon>
                     <FontIcon
