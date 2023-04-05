@@ -39,6 +39,8 @@ namespace CharacterMap.Controls
         private MenuFlyoutItemBase _appxOption = null;
         private MenuFlyoutSeparator _fontSep = null;
 
+        private MenuFlyoutSubItem _ops = null;
+
         public FilterFlyout()
         {
             this.InitializeComponent();
@@ -68,24 +70,27 @@ namespace CharacterMap.Controls
                 .Add(BasicFontFilter.ScriptCJKUnifiedIdeographs, style)
                 .Add(BasicFontFilter.ScriptKoreanHangul, style);
 
-            var ops = AddSub("OptionMoreFilters/Text")
+            _ops = AddSub("OptionMoreFilters/Text")
                 .Add(BasicFontFilter.ColorFonts, style)
                 .Add(BasicFontFilter.PanoseDecorativeFonts, style)
                 .Add(BasicFontFilter.PanoseScriptFonts, style)
                 .Add(BasicFontFilter.MonospacedFonts, style)
                 .Add(BasicFontFilter.VariableFonts, style);
 
-            _variableOption = ops.Items.Last();
+            _variableOption = _ops.Items.Last();
 
-            AddChild(ops, "OptionEmoji/Text")
+            AddChild(_ops, "OptionEmoji/Text")
                 .Add(BasicFontFilter.EmojiAll, style)
                 .Add(BasicFontFilter.EmojiEmoticons, style)
                 .Add(BasicFontFilter.EmojiDingbats, style)
                 .Add(BasicFontFilter.EmojiSymbols, style);
 
-            _fontSep = AddSep(ops);
-            _remoteOption = ops.Add(BasicFontFilter.RemoteFonts, style);
-            _appxOption = ops.Add(BasicFontFilter.AppXFonts, style);
+            _fontSep = AddSep(_ops);
+            _remoteOption = Create(BasicFontFilter.RemoteFonts);
+            _appxOption = Create(BasicFontFilter.AppXFonts);
+
+            _ops.Items.Add(_remoteOption);
+            _ops.Items.Add(_appxOption);
 
             this.AddSeparator();
             Add(BasicFontFilter.ImportedFonts);
@@ -102,7 +107,7 @@ namespace CharacterMap.Controls
 
             static MenuFlyoutSeparator AddSep(MenuFlyoutSubItem menu)
             {
-                var s = new MenuFlyoutSeparator();
+                MenuFlyoutSeparator s = new ();
                 menu.Items.Add(s);
                 return s;
             }
@@ -163,7 +168,7 @@ namespace CharacterMap.Controls
 
             _variableOption.SetVisible(FontFinder.HasVariableFonts);
 
-            if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts && !FontFinder.HasVariableFonts)
+            if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
             {
                 _fontSep.Visibility = _remoteOption.Visibility = _appxOption.Visibility = Visibility.Collapsed;
             }
