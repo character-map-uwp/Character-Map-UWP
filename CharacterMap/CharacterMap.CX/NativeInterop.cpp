@@ -7,6 +7,7 @@
 #include "PathData.h"
 #include "Windows.h"
 #include <concurrent_vector.h>
+#include <robuffer.h>
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
@@ -262,4 +263,57 @@ CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(CanvasTextLayout
 
 	ana = nullptr;
 	return analysis;
+}
+
+byte* GetPointerToPixelData(IBuffer^ pixelBuffer, unsigned int* length)
+{
+	if (length != nullptr)
+	{
+		*length = pixelBuffer->Length;
+	}
+	// Query the IBufferByteAccess interface.  
+	Microsoft::WRL::ComPtr<IBufferByteAccess> bufferByteAccess;
+	reinterpret_cast<IInspectable*>(pixelBuffer)->QueryInterface(IID_PPV_ARGS(&bufferByteAccess));
+
+	// Retrieve the buffer data.  
+	byte* pixels = nullptr;
+	bufferByteAccess->Buffer(&pixels);
+	return pixels;
+}
+
+IAsyncOperation<bool>^ NativeInterop::UnpackWOFF2Async(IBuffer^ buffer, IOutputStream^ stream)
+{
+	return create_async([&]
+		{
+			// 1. Unpack the WOFF2 data
+			unsigned int length;
+			auto bytes = GetPointerToPixelData(buffer, &length);
+			ComPtr<IDWriteFactory7> factory = m_fontManager->GetIsolatedFactory();
+			IDWriteFontFileStream* fileStream;
+			auto result = factory->UnpackFontFile(DWRITE_CONTAINER_TYPE_WOFF2, bytes, length, &fileStream);
+
+			if (result == S_OK)
+			{
+				uint64 fileSize = 0;
+				fileStream->GetFileSize(&fileSize);
+
+				// 2. Copy back to byte array
+				void* context;
+				const void* fragment;
+				fileStream->ReadFileFragment(&fragment, 0, fileSize, &context);
+				auto b = (byte*)fragment;
+
+				// 3. Write the byte array to stream.
+				DataWriter^ w = ref new DataWriter(stream);
+				w->WriteBytes(Platform::ArrayReference<BYTE>(b, fileSize));
+
+				return create_task(w->StoreAsync()).then([w, fileStream, context](bool result)
+					{
+						fileStream->ReleaseFileFragment(context);
+						delete w;
+						return task_from_result(result);
+					}, task_continuation_context::use_arbitrary());
+			}
+			return task_from_result(false);
+		});
 }

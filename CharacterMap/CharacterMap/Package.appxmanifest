@@ -34,6 +34,7 @@
               <uap:FileType>.ttc</uap:FileType>
               <uap:FileType>.otc</uap:FileType>-->
               <uap:FileType>.woff</uap:FileType>
+              <uap:FileType>.woff2</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Character Map UWP</uap:DisplayName>
             <uap:InfoTip>Preview Font</uap:InfoTip>

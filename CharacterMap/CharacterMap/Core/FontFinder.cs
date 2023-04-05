@@ -63,7 +63,7 @@ namespace CharacterMap.Core
 
         public static HashSet<string> ImportFormats                 { get; } = new ()
         {
-            ".ttf", ".otf", ".otc", ".ttc", ".woff", ".zip"//, ".woff2"
+            ".ttf", ".otf", ".otc", ".ttc", ".woff", ".zip", ".woff2"
         };
 
         public static async Task<DWriteFontSet> InitialiseAsync()
@@ -475,25 +475,21 @@ namespace CharacterMap.Core
         {
             await InitialiseAsync().ConfigureAwait(false);
 
+            // 1. Convert Woff or Woff2 to OTF
             var convert = await FontConverter.TryConvertAsync(file);
             if (convert.Result != ConversionStatus.OK)
                 return null;
-
             file = convert.File;
 
+            // 2. Copy to temp storage
             var folder = await _importFolder.CreateFolderAsync(TEMP, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
             var localFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
 
-            var resultList = new Dictionary<string, InstalledFont>();
-
-            var interop = Ioc.Default.GetService<NativeInterop>();
-            var fontSet = interop.GetFonts(localFile);
-
-            //var fontSet = DirectWrite.GetFonts(new Uri(GetAppPath(localFile)));
+            // 3. Load fonts from file
+            Dictionary<string, InstalledFont> resultList = new ();
+            DWriteFontSet fontSet = Utils.GetInterop().GetFonts(localFile);
             foreach (var font in fontSet.Fonts)
-            {
                 AddFont(resultList, font, localFile);
-            }
 
             GC.Collect();
             return resultList.Count > 0 ? resultList.First().Value : null;

@@ -57,6 +57,8 @@ namespace CharacterMapCX
 
 		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<StorageFile^>^ files);
 
+		IAsyncOperation<bool>^ UnpackWOFF2Async(IBuffer^ buffer, IOutputStream^ stream);
+
 	private:
 
 		IAsyncAction^ ListenForFontSetExpirationAsync();
