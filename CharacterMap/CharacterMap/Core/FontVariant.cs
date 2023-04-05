@@ -51,7 +51,7 @@ namespace CharacterMap.Core
 
         public bool HasXamlTypographyFeatures => XamlTypographyFeatures.Count > 0;
 
-        public CanvasFontFace FontFace { get; private set; }
+        public CanvasFontFace FontFace => _face.FontFace;
 
         public string PreferredName { get; private set; }
 
@@ -90,9 +90,11 @@ namespace CharacterMap.Core
         public string XamlFontSource =>
             (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 
-        public FontVariant(CanvasFontFace face, StorageFile file, DWriteProperties dwProps)
+        private DWriteFontFace _face { get; }
+
+        public FontVariant(DWriteFontFace face, StorageFile file, DWriteProperties dwProps)
         {
-            FontFace = face;
+            _face = face;
             FamilyName = dwProps.FamilyName;
 
             if (file != null)
@@ -112,7 +114,7 @@ namespace CharacterMap.Core
 
             DirectWriteProperties = dwProps;
             PreferredName = name;
-            Panose = PanoseParser.Parse(face);
+            Panose = PanoseParser.Parse(face.Properties);
         }
 
         public string GetProviderName()
@@ -247,7 +249,7 @@ namespace CharacterMap.Core
         public void Dispose()
         {
             FontFace.Dispose();
-            FontFace = null;
+            //FontFace = null;
         }
 
         public override string ToString()
@@ -261,7 +263,7 @@ namespace CharacterMap.Core
     {
         public static FontVariant CreateDefault(CanvasFontFace face)
         {
-            return new FontVariant(face, null, DWriteProperties.CreateDefault())
+            return new FontVariant(null, null, DWriteProperties.CreateDefault())
             {
                 PreferredName = "",
                 Characters = new List<Character>

@@ -25,6 +25,12 @@
     </ClCompile>
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
+    <ClCompile Include="DWriteFontSet.cpp">
+      <Filter>DWrite</Filter>
+    </ClCompile>
+    <ClCompile Include="DWriteFontFamily.cpp">
+      <Filter>DWrite</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -106,6 +112,10 @@
     <ClInclude Include="LifeSpanTracker.h" />
     <ClInclude Include="ErrorHandling.h" />
     <ClInclude Include="LockUtils.h" />
+    <ClInclude Include="DWriteFontFamily.h">
+      <Filter>DWrite</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml" />

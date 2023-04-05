@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CharacterMap.Models;
+using CharacterMapCX;
 
 namespace CharacterMap.Core
 {
@@ -32,9 +33,12 @@ namespace CharacterMap.Core
 
     public static class PanoseParser
     {
-        public static Panose Parse(CanvasFontFace fontFace)
+        public static Panose Parse(DWriteProperties props)
         {
-            byte[] panose = fontFace.Panose;
+            byte[] panose = props.Panose;
+
+            if (panose is null)
+                return new Panose(PanoseFamily.Any, SerifStyle.Any);
 
             // The contents of the Panose byte array depends on the value of the first byte. 
             // See https://docs.microsoft.com/en-us/windows/win32/api/dwrite_1/ns-dwrite_1-dwrite_panose 

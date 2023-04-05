@@ -267,135 +267,47 @@ IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(ComPtr<
 	return items->GetView();
 }
 
-DWriteFontSet^ DirectWrite::GetFonts(Uri^ uri)
+DWriteFontSet^ DirectWrite::GetFonts(Uri^ uri, ComPtr<IDWriteFactory7> fac)
 {
 	CanvasFontSet^ set = ref new CanvasFontSet(uri);
 	ComPtr<IDWriteFontSet3> fontSet = GetWrappedResource<IDWriteFontSet3>(set);
-	return GetFonts(fontSet);
+
+	ComPtr<IDWriteFontCollection1> f1;
+	ComPtr<IDWriteFontCollection3> f3;
+	fac->CreateFontCollectionFromFontSet(fontSet.Get(), &f1);
+
+	f1.As<IDWriteFontCollection3>(&f3);
+
+	return GetFonts(f3);
 }
 
-IVectorView<DWriteFontSet^>^ DirectWrite::GetFonts(IVectorView<Uri^>^ uris)
+IVectorView<DWriteFontSet^>^ DirectWrite::GetFonts(IVectorView<Uri^>^ uris, ComPtr<IDWriteFactory7> fac)
 {
 	Vector<DWriteFontSet^>^ fontSets = ref new Vector<DWriteFontSet^>();
 
 	for (Uri^ uri : uris)
 	{
-		fontSets->Append(GetFonts(uri));
+		fontSets->Append(GetFonts(uri, fac));
 	}
 
 	return fontSets->GetView();
 }
 
-
-DWriteFontSet^ DirectWrite::GetFonts(ComPtr<IDWriteFontSet3> fontSet)
+DWriteFontSet^ DirectWrite::GetFonts(ComPtr<IDWriteFontCollection3> fontSet)
 {
-	auto vec = ref new Vector<DWriteFontFace^>();
-	auto fontCount = fontSet->GetFontCount();
+	auto vec = ref new Vector<DWriteFontFamily^>();
+	auto familyCount = fontSet->GetFontFamilyCount();
 
-	wchar_t localeName[LOCALE_NAME_MAX_LENGTH];
-	int ls = GetUserDefaultLocaleName(localeName, LOCALE_NAME_MAX_LENGTH);
-
-	int appxCount = 0;
-	int cloudCount = 0;
-	int variableCount = 0;
-
-	for (uint32_t i = 0; i < fontCount; ++i)
+	for (uint32_t i = 0; i < familyCount; ++i)
 	{
-		ComPtr<IDWriteFontFaceReference1> fontResource;
-		ThrowIfFailed(fontSet->GetFontFaceReference(i, &fontResource));
+		ComPtr<IDWriteFontFamily2> family;
+		fontSet->GetFontFamily(i, &family);
 
-		if (fontResource->GetLocality() == DWRITE_LOCALITY::DWRITE_LOCALITY_LOCAL)
-		{
-			auto properties = GetDWriteProperties(fontSet, i, fontResource, ls, localeName);
-
-			// Some cloud providers, like Microsoft Office, can cause issues with the underlying
-			// DirectWrite system when they are open. This can cause us to be unable to create
-			// a IDWriteFontFace3 from certain fonts, also leading us to not be able to get the
-			// properties. Nothing we can do except *don't* crash.
-			if (properties != nullptr)
-			{
-				auto canvasFontFace = GetOrCreate<CanvasFontFace>(fontResource.Get());
-				auto fontface = ref new DWriteFontFace(canvasFontFace, properties);
-
-				if (properties->Source == DWriteFontSource::AppxPackage)
-					appxCount++;
-				else if (properties->Source == DWriteFontSource::RemoteFontProvider)
-					cloudCount++;
-				
-				if (properties->HasVariations)
-					variableCount++;
-
-				vec->Append(fontface);
-			}
-		}
+		if (family != nullptr)
+			vec->Append(ref new DWriteFontFamily(family));
 	}
 
-	return ref new DWriteFontSet(vec->GetView(), appxCount, cloudCount, variableCount);
-}
-
-DWriteProperties^ DirectWrite::GetDWriteProperties(
-	ComPtr<IDWriteFontSet3>fontSet,
-	UINT index,
-	ComPtr<IDWriteFontFaceReference1> faceRef,
-	int ls,
-	wchar_t* locale)
-{
-	// 1. Get Font Source
-	DWriteFontSource fontSource = static_cast<DWriteFontSource>(fontSet->GetFontSourceType(index));
-
-	// The following is known to fail if Microsoft Office with cloud fonts
-	// is currently running on the users system. 
-	ComPtr<IDWriteFontFace3> f3;
-	if (faceRef->CreateFontFace(&f3) == S_OK)
-	{
-		ComPtr<IDWriteFontFace5> face;
-		f3.As(&face);
-
-		// 2. Attempt to get FAMILY locale index
-		String^ family = nullptr;
-		ComPtr<IDWriteLocalizedStrings> names;
-		if (SUCCEEDED(face->GetFamilyNames(&names)))
-			family = GetLocaleString(names, ls, locale);
-
-		// 3. Attempt to get FACE locale index
-		String^ fname = nullptr;
-		names = nullptr;
-		if (SUCCEEDED(face->GetFaceNames(&names)))
-			fname = GetLocaleString(names, ls, locale);
-
-		return ref new DWriteProperties(fontSource, nullptr, family, fname, face->IsColorFont(), face->HasVariations());
-	};
-
-	return nullptr;
-}
-
-DWriteProperties^ DirectWrite::GetDWriteProperties(CanvasFontSet^ fontSet, UINT index)
-{
-	// 1. Get Font Source
-	ComPtr<IDWriteFontSet3> set = GetWrappedResource<IDWriteFontSet3>(fontSet);
-	DWriteFontSource fontSource = static_cast<DWriteFontSource>(set->GetFontSourceType(index));
-
-	auto fontFace = fontSet->Fonts->GetAt(index);
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-	ComPtr<IDWriteFontFace3> f3;
-	ComPtr<IDWriteFontFace5> face;
-	faceRef->CreateFontFace(&f3);
-	f3.As(&face);
-
-	// 2. Get Font Provider Name
-	Platform::String^ sourceName = nullptr;
-	/*if (fontSource == DWriteFontSource::AppxPackage || fontSource == DWriteFontSource::RemoteFontProvider)
-	{
-		UINT length = set->GetFontSourceNameLength(index);
-		if (length > 0)
-		{
-			WCHAR* buffer = new (std::nothrow) WCHAR(length + 1);
-			if (set->GetFontSourceName(index, buffer, length + 1) == S_OK)
-				sourceName = ref new Platform::String(buffer);
-		}
-	}*/
-
-	return ref new DWriteProperties(fontSource, sourceName, nullptr, nullptr, face->IsColorFont(), face->HasVariations());
+	return ref new DWriteFontSet(vec->GetView());
 }
 
 String^ DirectWrite::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale)

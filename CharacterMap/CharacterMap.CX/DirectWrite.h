@@ -54,9 +54,7 @@ namespace CharacterMapCX
 		/// </summary>
 		static IAsyncOperation<bool>^ WriteToStreamAsync(CanvasFontFace^ fontFace, IOutputStream^ stream);
 
-		static __inline DWriteFontSet^ GetFonts(Uri^ uri);
 
-		static IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
 
 		/// <summary>
 		/// Attempts to get the source filename of a font. Will return NULL for cloud fonts.
@@ -76,12 +74,13 @@ namespace CharacterMapCX
 
 		static IMapView<UINT32, UINT32>^ GetSupportedTypography(ComPtr<IDWriteFontFaceReference> faceRef);
 
-		static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
+		//static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
 
-		static __inline DWriteProperties^ GetDWriteProperties(ComPtr<IDWriteFontSet3> fontSet, UINT index, ComPtr<IDWriteFontFaceReference1> faceRef, int ls, wchar_t* locale);
+		static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontCollection3> fontSet);
 
-		static __inline DWriteProperties^ GetDWriteProperties(CanvasFontSet^ fontSet, UINT index);
+		static __inline DWriteFontSet^ GetFonts(Uri^ uri, ComPtr<IDWriteFactory7> fac);
 
+		static IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris, ComPtr<IDWriteFactory7> fac);
 
 	private:
 		DirectWrite() { };

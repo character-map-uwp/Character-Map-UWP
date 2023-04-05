@@ -299,6 +299,7 @@
     <Compile Include="Provider\XamlDevProvider.cs" />
     <Compile Include="Services\ActivationService.cs" />
     <Compile Include="Models\AddToCollectionResult.cs" />
+    <Compile Include="Services\FontCacheService.cs" />
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\LeakTrackingService.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />

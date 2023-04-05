@@ -27,7 +27,7 @@ NativeInterop::NativeInterop(CanvasDevice^ device)
 	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
 
 	D2D1CreateFactory(
-		D2D1_FACTORY_TYPE_SINGLE_THREADED,
+		D2D1_FACTORY_TYPE_MULTI_THREADED,
 		__uuidof(ID2D1Factory5),
 		&options,
 		&m_d2dFactory
@@ -35,7 +35,7 @@ NativeInterop::NativeInterop(CanvasDevice^ device)
 
 	ComPtr<ID2D1Device1> d2ddevice = GetWrappedResource<ID2D1Device1>(device);
 	d2ddevice->CreateDeviceContext(
-		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+		D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,
 		&m_d2dContext);
 
 	m_fontManager = new CustomFontManager(m_dwriteFactory);
@@ -56,6 +56,17 @@ IAsyncAction^ NativeInterop::ListenForFontSetExpirationAsync()
 		});
 }
 
+DWriteFontSet^ NativeInterop::GetFonts(Uri^ uri)
+{
+	return DirectWrite::GetFonts(uri, m_dwriteFactory);
+}
+
+IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<Uri^>^ uris)
+{
+	return DirectWrite::GetFonts(uris, m_dwriteFactory);
+}
+
+
 DWriteFontSet^ NativeInterop::GetSystemFonts()
 {
 	if (m_isFontSetStale)
@@ -67,12 +78,24 @@ DWriteFontSet^ NativeInterop::GetSystemFonts()
 	if (m_systemFontSet == nullptr || m_appFontSet == nullptr)
 	{
 		ComPtr<IDWriteFontSet2> fontSet;
+		ComPtr<IDWriteFontCollection3> fontCollection;
+
+		m_dwriteFactory->GetSystemFontCollection(true, DWRITE_FONT_FAMILY_MODEL_WEIGHT_STRETCH_STYLE, &fontCollection);
+
 		ThrowIfFailed(m_dwriteFactory->GetSystemFontSet(true, &fontSet));
+
+		/*ComPtr<IDWriteFontFamily1> family;
+		fontCollection->GetFontFamily(1, &family);
+		ComPtr<IDWriteFont3> fnt;
+		family->GetFont(0, &fnt);
+		fnt->*/
+
 
 		ComPtr<IDWriteFontSet3> fontSet3;
 		ThrowIfFailed(fontSet.As(&fontSet3));
 		m_systemFontSet = fontSet3;
-		m_appFontSet = DirectWrite::GetFonts(fontSet3);
+		//m_appFontSet = DirectWrite::GetFonts(fontSet3);
+        m_appFontSet = DirectWrite::GetFonts(fontCollection);
 		m_isFontSetStale = false;
 
 		// We listen for the expiration event on a background thread
@@ -98,17 +121,8 @@ IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<StorageFile^>^ 
 DWriteFontSet^ NativeInterop::GetFonts(StorageFile^ file)
 {
 	auto collection = m_fontManager->GetFontCollectionFromFile(file);
-
-	ComPtr<IDWriteFontSet1> fontSet1;
-	collection->GetFontSet(&fontSet1);
-
-	ComPtr<IDWriteFontSet3> fontSet3;
-	fontSet1.As<IDWriteFontSet3>(&fontSet3);
-
-	return DirectWrite::GetFonts(fontSet3);
-	/*CanvasFontSet^ set = ref new CanvasFontSet(uri);
-	ComPtr<IDWriteFontSet3> fontSet = GetWrappedResource<IDWriteFontSet3>(set);
-	return GetFonts(fontSet);*/
+	DWriteFontSet^ set = DirectWrite::GetFonts(collection);
+	return set;
 }
 
 DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()

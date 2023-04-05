@@ -1,7 +1,6 @@
 using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMapCX;
-using CommunityToolkit.Mvvm.DependencyInjection;
 using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
@@ -66,26 +65,30 @@ namespace CharacterMap.Core
             ".ttf", ".otf", ".otc", ".ttc", ".woff", ".zip", ".woff2"
         };
 
+
+
         public static async Task<DWriteFontSet> InitialiseAsync()
         {
             await _initSemaphore.WaitAsync().ConfigureAwait(false);
+          
+            NativeInterop interop = Utils.GetInterop();
+            DWriteFontSet systemFonts = interop.GetSystemFonts();
 
-            var interop = Ioc.Default.GetService<NativeInterop>();
-            var systemFonts = interop.GetSystemFonts();
+            Parallel.ForEach(systemFonts.Families, new ParallelOptions { MaxDegreeOfParallelism = 50 }, l =>
+            {
+                l.Inflate();
+            });
+            systemFonts.Update();
 
             try
             {
                 if (DefaultFont == null)
                 {
-                    await Task.WhenAll(
-                        CleanUpTempFolderAsync(),
-                        CleanUpPendingDeletesAsync()).ConfigureAwait(false);
-
-                    var segoe = systemFonts.Fonts.FirstOrDefault(
-                           f => f.FontFace.FamilyNames.Values.Contains("Segoe UI")
-                        && f.FontFace.Weight.Weight == FontWeights.Normal.Weight
-                        && f.FontFace.Stretch == FontStretch.Normal
-                        && f.FontFace.Style == FontStyle.Normal);
+                    DWriteFontFace segoe = systemFonts.Fonts.FirstOrDefault(
+                           f => f.Properties.FamilyName == "Segoe UI"
+                                && f.Properties.Weight.Weight == FontWeights.Normal.Weight
+                                && f.Properties.Stretch == FontStretch.Normal
+                                && f.Properties.Style == FontStyle.Normal);
 
                     if (segoe != null)
                         DefaultFont = InstalledFont.CreateDefault(segoe);
@@ -114,20 +117,45 @@ namespace CharacterMap.Core
                 UpdateMeta(null);
 
                 await _loadSemaphore.WaitAsync().ConfigureAwait(false);
-                var interop = Ioc.Default.GetService<NativeInterop>();
+                NativeInterop interop = Utils.GetInterop();
+
+                Stopwatch s = new Stopwatch();
+                s.Start();
 
                 // Load SystemFonts and imported fonts in parallel
+
+                // 1.1. Load imported fonts
                 IReadOnlyList<StorageFile> files = null;
                 Task<List<DWriteFontSet>> setsTask = Task.Run(async () =>
                 {
                     files = await _importFolder.GetFilesAsync();
-                    return interop.GetFonts(files).ToList();
+                    var sets = interop.GetFonts(files).ToList();
+                    foreach (var set in sets)
+                    {
+                        foreach (var fam in set.Families)
+                            fam.Inflate();
+
+                        set.Update();
+                    }
+
+                    return sets;
                 });
+
+                // 1.2. Load installed fonts
                 Task<DWriteFontSet> init = InitialiseAsync();
-                await Task.WhenAll(init, setsTask);
+
+                // 1.3. Perform cleanup
+                Task delete = DefaultFont == null ? Task.WhenAll(
+                        CleanUpTempFolderAsync(),
+                        CleanUpPendingDeletesAsync()) : Task.CompletedTask;
+
+                await Task.WhenAll(init, delete, setsTask);
+
+                s.Stop();
+                var elasped = s.Elapsed;
 
                 // Load in System Fonts
-                var systemFonts = init.Result;
+                DWriteFontSet systemFonts = init.Result;
                 Dictionary<string, InstalledFont> resultList = new (systemFonts.Fonts.Count);
                 UpdateMeta(systemFonts);
 
@@ -271,14 +299,11 @@ namespace CharacterMap.Core
                     }
 
                     // For WOFF files we can attempt to convert the file to OTF before loading
-                    var src = file;
+                    StorageFile src = file;
                     var convertResult = await FontConverter.TryConvertAsync(file);
                     if (convertResult.Result is not ConversionStatus.OK)
                     {
-                        if (convertResult.Result == ConversionStatus.UnsupportedWOFF2)
-                            invalid.Add((src, Localization.Get("ImportWOFF2NotSupported")));
-                        else
-                            invalid.Add((src, Localization.Get("ImportFailedWoff")));
+                        invalid.Add((src, Localization.Get("ImportFailedWoff")));
                         continue;
                     }
                     else

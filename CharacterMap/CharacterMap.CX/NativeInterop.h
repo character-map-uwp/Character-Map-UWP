@@ -59,6 +59,10 @@ namespace CharacterMapCX
 
 		IAsyncOperation<bool>^ UnpackWOFF2Async(IBuffer^ buffer, IOutputStream^ stream);
 
+		DWriteFontSet^ GetFonts(Uri^ uri);
+
+		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
+
 	private:
 
 		IAsyncAction^ ListenForFontSetExpirationAsync();

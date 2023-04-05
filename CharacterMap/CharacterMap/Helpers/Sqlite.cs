@@ -327,9 +327,10 @@ namespace SQLite
         /// by providing better concurrency and better disk IO performance than the normal
         /// jounral mode. You only need to call this function once in the lifetime of the database.
         /// </summary>
-        public void EnableWriteAheadLogging()
+        public SQLiteConnection EnableWriteAheadLogging()
         {
             ExecuteScalar<string>("PRAGMA journal_mode=WAL");
+            return this;
         }
 
         /// <summary>

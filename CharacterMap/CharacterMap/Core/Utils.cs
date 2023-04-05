@@ -261,16 +261,16 @@ namespace CharacterMap.Core
             return $"{package.DisplayName} - {version.Major}.{version.Minor}.{version.Build}.{version.Revision} ({architecture})";
         }
 
-        public static string GetVariantDescription(CanvasFontFace fontFace)
+        public static string GetVariantDescription(DWriteFontFace fontFace)
         {
             StringBuilder s = new StringBuilder();
-            s.Append(GetWeightName(fontFace.Weight));
+            s.Append(GetWeightName(fontFace.Properties.Weight));
 
-            if (fontFace.Style != FontStyle.Normal)
-                s.AppendFormat(", {0}", fontFace.Style);
+            if (fontFace.Properties.Style != FontStyle.Normal)
+                s.AppendFormat(", {0}", fontFace.Properties.Style);
 
-            if (fontFace.Stretch != FontStretch.Normal)
-                s.AppendFormat(", {0}", fontFace.Stretch);
+            if (fontFace.Properties.Stretch != FontStretch.Normal)
+                s.AppendFormat(", {0}", fontFace.Properties.Stretch);
 
             return s.ToString();
         }

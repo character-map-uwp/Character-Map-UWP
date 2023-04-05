@@ -163,7 +163,7 @@ namespace CharacterMap.Controls
 
             _variableOption.SetVisible(FontFinder.HasVariableFonts);
 
-            if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts)
+            if (!FontFinder.HasAppxFonts && !FontFinder.HasRemoteFonts && !FontFinder.HasVariableFonts)
             {
                 _fontSep.Visibility = _remoteOption.Visibility = _appxOption.Visibility = Visibility.Collapsed;
             }

@@ -23,7 +23,12 @@ namespace CharacterMapCX
 
 		property CanvasFontFace^ FontFace
 		{
-			CanvasFontFace^ get() { return m_fontFace; }
+			CanvasFontFace^ get() { 
+
+				if (m_fontFace == nullptr)
+					Realize();
+				return m_fontFace; 
+			}
 		}
 
 		property DWriteProperties^ Properties
@@ -31,13 +36,33 @@ namespace CharacterMapCX
 			DWriteProperties^ get() { return m_dwProperties; }
 		}
 
-
 	internal:
-		DWriteFontFace(CanvasFontFace^ fontFace, DWriteProperties^ properties)
+		DWriteFontFace(ComPtr<IDWriteFont3> font, DWriteProperties^ properties)
 		{
-			m_fontFace = fontFace;
+			m_font = font;
 			m_dwProperties = properties;
 		};
+
+		void Realize()
+		{
+			ComPtr<IDWriteFontFaceReference> ref;
+			ThrowIfFailed(m_font->GetFontFaceReference(&ref));
+			m_fontFace = GetOrCreate<CanvasFontFace>(ref.Get());
+		}
+
+		/*DWriteFontFace(ComPtr<IDWriteFontFaceReference1> fontResource, DWriteProperties^ properties)
+		{
+			m_fontResource = fontResource;
+			m_dwProperties = properties;
+		};*/
+
+		void SetProperties(DWriteProperties^ props)
+		{
+			m_dwProperties = props;
+		}
+
+		ComPtr<IDWriteFont3> m_font = nullptr;
+		ComPtr<IDWriteFontFaceReference1> m_fontResource = nullptr;
 
 	private:
 		inline DWriteFontFace() { }

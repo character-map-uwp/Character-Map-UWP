@@ -281,6 +281,7 @@
     <ClInclude Include="DWriteFontAxisAttribute.h" />
     <ClInclude Include="DWriteFontAxisRange.h" />
     <ClInclude Include="DWriteFontFace.h" />
+    <ClInclude Include="DWriteFontFamily.h" />
     <ClInclude Include="DWriteFontSet.h" />
     <ClInclude Include="DWriteFontSource.h" />
     <ClInclude Include="DWriteKnownFontAxisValues.h" />
@@ -301,6 +302,7 @@
     <ClInclude Include="PostTableReader.h" />
     <ClInclude Include="SbixTableReader.h" />
     <ClInclude Include="Singleton.h" />
+    <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVGGeometrySink.h" />
     <ClInclude Include="SvgTableReader.h" />
     <ClInclude Include="TableReader.h" />
@@ -313,6 +315,8 @@
     <ClCompile Include="CustomFontManager.cpp" />
     <ClCompile Include="DirectText.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
+    <ClCompile Include="DWriteFontFamily.cpp" />
+    <ClCompile Include="DWriteFontSet.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
