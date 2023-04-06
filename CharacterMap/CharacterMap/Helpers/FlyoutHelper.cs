@@ -248,7 +248,7 @@ namespace CharacterMap.Helpers
                     }
 
                     // 2. Add Save Font File & Export Font Glyphs options
-                    if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.FontFace))
+                    if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.Face))
                     {
                         Create("ExportFontFileLabel/Text", "\uE792", SaveFont_Click, VirtualKey.S);
                         if (showAdvanced && !args.IsTabContext)
@@ -337,7 +337,7 @@ namespace CharacterMap.Helpers
             if (collection is null)
                 return;
 
-            if ((collection != null || (filter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
+            if ((collection != null || (filter == BasicFontFilter.SymbolFonts && !font.IsSymbolFont))
                 && collection.Fonts.Contains(font.Name))
             {
                 menu.Items.Add(new MenuFlyoutSeparator());

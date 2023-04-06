@@ -40,9 +40,9 @@ namespace CharacterMapCX
 
 		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
 
-		IVectorView<PathData^>^ GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
+		IVectorView<PathData^>^ GetPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
 
-		Platform::String^ GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie);
+		Platform::String^ GetPathData(DWriteFontFace^ fontFace, UINT16 glyphIndicie);
 
 		/// <summary>
 		/// Returns an SVG-Path syntax compatible representation of the Canvas Text Geometry.

@@ -53,7 +53,7 @@ namespace CharacterMap.Models
             = new ((f, c) => f.Where(v => v.HasImportedFiles), Localization.Get("OptionImportedFonts/Text"));
 
         public static BasicFontFilter MonospacedFonts { get; }
-            = new ((f, c) => f.Where(v => v.DefaultVariant.FontFace.IsMonospaced), Localization.Get("OptionMonospacedFonts/Text"));
+            = new ((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsMonospacedFont), Localization.Get("OptionMonospacedFonts/Text"));
 
         public static BasicFontFilter SerifFonts { get; }
             = new ((f, c) => f.Where(v => v.DefaultVariant.Panose.IsSerifStyle), Localization.Get("OptionSerifFonts/Text"));

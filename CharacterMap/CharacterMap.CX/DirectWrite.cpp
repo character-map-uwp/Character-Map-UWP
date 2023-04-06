@@ -106,9 +106,9 @@ String^ DirectWrite::GetFeatureTag(UINT32 value)
 	return GetOpenTypeFeatureTag(value);
 }
 
-IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(CanvasFontFace^ canvasFontFace)
+IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(DWriteFontFace^ canvasFontFace)
 {
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFontFace);
+	ComPtr<IDWriteFontFaceReference> faceRef = canvasFontFace->GetReference();
 	return GetSupportedTypography(faceRef);
 }
 
@@ -150,9 +150,9 @@ IMapView<UINT32, UINT32>^ DirectWrite::GetSupportedTypography(ComPtr<IDWriteFont
 	return map;
 }
 
-IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(CanvasFontFace^ canvasFontFace)
+IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(DWriteFontFace^ canvasFontFace)
 {
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFontFace);
+	ComPtr<IDWriteFontFaceReference> faceRef = canvasFontFace->GetReference();
 	return GetAxis(faceRef);
 }
 
@@ -212,9 +212,9 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 	return items->GetView();
 }
 
-IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(CanvasFontFace^ canvasFontFace)
+IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(DWriteFontFace^ face)
 {
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(canvasFontFace);
+	ComPtr<IDWriteFontFaceReference> faceRef = face->GetReference();
 	return GetNamedAxisValues(faceRef);
 }
 
@@ -343,13 +343,12 @@ String^ DirectWrite::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, in
 	return ref new String(name);
 }
 
-
-Platform::String^ DirectWrite::GetFileName(CanvasFontFace^ fontFace)
+Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
 {
 	Platform::String^ name = nullptr;
 
-	// 1. Acquire the underlying FontLoader used to create the CanvasFontFace
-	ComPtr<IDWriteFontFaceReference> fontFaceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
+	// 1. Acquire the underlying FontLoader used to create the font face
+	ComPtr<IDWriteFontFaceReference> fontFaceRef = fontFace->GetReference();
 	ComPtr<IDWriteFontFile> file;
 	ComPtr<IDWriteFontFileLoader> loader;
 	ComPtr<IDWriteLocalFontFileLoader> localLoader;
@@ -427,19 +426,33 @@ bool DirectWrite::HasValidFonts(Uri^ uri)
 	return valid;
 }
 
-bool DirectWrite::IsFontLocal(CanvasFontFace^ fontFace)
+bool DirectWrite::IsFontLocal(DWriteFontFace^ fontFace)
 {
-	ComPtr<IDWriteFontFaceReference> fontFaceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
 	ComPtr<IDWriteFontFile> file;
 	ComPtr<IDWriteFontFileLoader> loader;
 	const void* refKey = nullptr;
 	uint32 size = 0;
 
-	return (fontFaceRef->GetFontFile(&file) == S_OK
+	return (fontFace->GetReference()->GetFontFile(&file) == S_OK
 		&& file->GetLoader(&loader) == S_OK
 		&& file->GetReferenceKey(&refKey, &size) == S_OK
 		&& IsLocalFont(loader, refKey, size));
 }
+
+
+//bool DirectWrite::IsFontLocal(CanvasFontFace^ fontFace)
+//{
+//	ComPtr<IDWriteFontFaceReference> fontFaceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
+//	ComPtr<IDWriteFontFile> file;
+//	ComPtr<IDWriteFontFileLoader> loader;
+//	const void* refKey = nullptr;
+//	uint32 size = 0;
+//
+//	return (fontFaceRef->GetFontFile(&file) == S_OK
+//		&& file->GetLoader(&loader) == S_OK
+//		&& file->GetReferenceKey(&refKey, &size) == S_OK
+//		&& IsLocalFont(loader, refKey, size));
+//}
 
 
 bool DirectWrite::IsLocalFont(ComPtr<IDWriteFontFileLoader> loader, const void* refKey, uint32 size)
@@ -455,12 +468,12 @@ bool DirectWrite::IsLocalFont(ComPtr<IDWriteFontFileLoader> loader, const void* 
 	return true;
 }
 
-IAsyncOperation<bool>^ DirectWrite::WriteToStreamAsync(CanvasFontFace^ fontFace, IOutputStream^ stream)
+IAsyncOperation<bool>^ DirectWrite::WriteToStreamAsync(DWriteFontFace^ fontFace, IOutputStream^ stream)
 {
 	return create_async([&]
 		{
 			// 1. Acquire the underlying FontLoader used to create the CanvasFontFace
-			ComPtr<IDWriteFontFaceReference> fontFaceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
+			ComPtr<IDWriteFontFaceReference> fontFaceRef = fontFace->GetReference();
 			ComPtr<IDWriteFontFile> file;
 			ComPtr<IDWriteFontFileLoader> loader;
 			ComPtr<IDWriteRemoteFontFileLoader> remoteLoader;
@@ -501,13 +514,10 @@ IAsyncOperation<bool>^ DirectWrite::WriteToStreamAsync(CanvasFontFace^ fontFace,
 		});
 }
 
-IBuffer^ DirectWrite::GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format)
+IBuffer^ DirectWrite::GetImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format)
 {
 	// 1. Get font reference
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-	ComPtr<IDWriteFontFace3> face;
-	faceRef->CreateFontFace(&face);
-
+	ComPtr<IDWriteFontFace3> face = fontFace->GetFontFace();
 	ComPtr<IDWriteFontFace5> face5;
 	face.As(&face5);
 

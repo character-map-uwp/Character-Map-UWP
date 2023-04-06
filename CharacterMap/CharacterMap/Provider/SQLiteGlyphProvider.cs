@@ -153,7 +153,7 @@ namespace CharacterMap.Provider
                 // 1. Decide if hex or FTS4 search
                 // 1.1. If hex, search the main table (UnicodeIndex column is indexed)
                 GlyphDescription hexResult = null;
-                bool ambiguous = !variant.FontFace.IsSymbolFont && IsAmbiguousQuery(query);
+                bool ambiguous = !variant.DirectWriteProperties.IsSymbolFont && IsAmbiguousQuery(query);
                 if (Utils.TryParseHexString(query, out int hex))
                 {
                     // 1.2. To be more efficient, first check if the font actually contains the UnicodeIndex.

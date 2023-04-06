@@ -104,7 +104,7 @@ namespace CharacterMap.Core
             }
 
             if (_settings.UseFontForPreview
-                && !variant.FontFace.IsSymbolFont
+                && !variant.DirectWriteProperties.IsSymbolFont
                 && !_userCollections.SymbolCollection.Fonts.Contains(variant.FamilyName))
                 return new FontFamily(variant.Source);
 

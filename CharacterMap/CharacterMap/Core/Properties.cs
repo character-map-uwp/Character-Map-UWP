@@ -240,11 +240,11 @@ namespace CharacterMap.Core
                     {
                         d.Axis = o.Axis;
                         d.FallbackFont = Converters.GetFontFallback();
-                        d.FontFace = o.Variant.FontFace;
+                        d.FontFace = o.Variant.Face;
                         d.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Variant.Source);
-                        d.FontStretch = o.Variant.FontFace.Stretch;
-                        d.FontStyle = o.Variant.FontFace.Style;
-                        d.FontWeight = o.Variant.FontFace.Weight;
+                        d.FontStretch = o.Variant.DirectWriteProperties.Stretch;
+                        d.FontStyle = o.Variant.DirectWriteProperties.Style;
+                        d.FontWeight = o.Variant.DirectWriteProperties.Weight;
                         d.IsColorFontEnabled = o.IsColourFontEnabled;
                         d.Typography = o.DXTypography;
                     }
@@ -266,9 +266,9 @@ namespace CharacterMap.Core
                     if (e.NewValue is CharacterRenderingOptions o)
                     {
                         t.FontFamily = (FontFamily)XamlBindingHelper.ConvertValue(typeof(FontFamily), o.Variant.DisplaySource);
-                        t.FontStretch = o.Variant.FontFace.Stretch;
-                        t.FontStyle = o.Variant.FontFace.Style;
-                        t.FontWeight = o.Variant.FontFace.Weight;
+                        t.FontStretch = o.Variant.DirectWriteProperties.Stretch;
+                        t.FontStyle = o.Variant.DirectWriteProperties.Style;
+                        t.FontWeight = o.Variant.DirectWriteProperties.Weight;
                         t.IsColorFontEnabled = o.IsColourFontEnabled;
                         SetTypography(t, o.DefaultTypography);
                     }

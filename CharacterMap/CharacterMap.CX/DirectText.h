@@ -7,6 +7,7 @@
 #include "ITypographyInfo.h"
 #include <DWriteFontAxis.h>
 #include "DWriteFallbackFont.h"
+#include "DWriteFontFace.h"
 
 
 using namespace Platform;
@@ -133,10 +134,10 @@ namespace CharacterMapCX
 				void set(IVectorView<DWriteFontAxis^>^ value) { SetValue(AxisProperty, value); }
 			}
 
-			property CanvasFontFace^ FontFace
+			property DWriteFontFace^ FontFace
 			{
-				CanvasFontFace^ get() { return (CanvasFontFace^)GetValue(FontFaceProperty); }
-				void set(CanvasFontFace^ value) { SetValue(FontFaceProperty, value); }
+				DWriteFontFace^ get() { return (DWriteFontFace^)GetValue(FontFaceProperty); }
+				void set(DWriteFontFace^ value) { SetValue(FontFaceProperty, value); }
 			}
 
 			property ITypographyInfo^ Typography
@@ -242,7 +243,7 @@ namespace CharacterMapCX
 			if (_FontFaceProperty == nullptr)
 			{
 				_FontFaceProperty = DependencyProperty::Register(
-					"FontFace", Microsoft::Graphics::Canvas::Text::CanvasFontFace::typeid, DirectText::typeid, meta);
+					"FontFace", DWriteFontFace::typeid, DirectText::typeid, meta);
 			}
 
 			if (_TypographyProperty == nullptr)

@@ -77,24 +77,16 @@ DWriteFontSet^ NativeInterop::GetSystemFonts()
 
 	if (m_systemFontSet == nullptr || m_appFontSet == nullptr)
 	{
-		ComPtr<IDWriteFontSet2> fontSet;
+		ComPtr<IDWriteFontSet1> fontSet;
 		ComPtr<IDWriteFontCollection3> fontCollection;
 
-		m_dwriteFactory->GetSystemFontCollection(true, DWRITE_FONT_FAMILY_MODEL_WEIGHT_STRETCH_STYLE, &fontCollection);
-
-		ThrowIfFailed(m_dwriteFactory->GetSystemFontSet(true, &fontSet));
-
-		/*ComPtr<IDWriteFontFamily1> family;
-		fontCollection->GetFontFamily(1, &family);
-		ComPtr<IDWriteFont3> fnt;
-		family->GetFont(0, &fnt);
-		fnt->*/
-
+		ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(true, DWRITE_FONT_FAMILY_MODEL_WEIGHT_STRETCH_STYLE, &fontCollection));
+		ThrowIfFailed(fontCollection->GetFontSet(&fontSet));
 
 		ComPtr<IDWriteFontSet3> fontSet3;
 		ThrowIfFailed(fontSet.As(&fontSet3));
 		m_systemFontSet = fontSet3;
-		//m_appFontSet = DirectWrite::GetFonts(fontSet3);
+
         m_appFontSet = DirectWrite::GetFonts(fontCollection);
 		m_isFontSetStale = false;
 
@@ -136,11 +128,9 @@ DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()
 	return ref new DWriteFallbackFont(fallback);
 }
 
-Platform::String^ NativeInterop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie)
+Platform::String^ NativeInterop::GetPathData(DWriteFontFace^ fontFace, UINT16 glyphIndicie)
 {
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-	ComPtr<IDWriteFontFace3> face;
-	faceRef->CreateFontFace(&face);
+	ComPtr<IDWriteFontFace3> face = fontFace->GetFontFace();
 
 	uint16 indicies[1];
 	indicies[0] = glyphIndicie;
@@ -170,12 +160,9 @@ Platform::String^ NativeInterop::GetPathData(CanvasFontFace^ fontFace, UINT16 gl
 	return sink->GetPathData();
 }
 
-IVectorView<PathData^>^ NativeInterop::GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies)
+IVectorView<PathData^>^ NativeInterop::GetPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies)
 {
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-	ComPtr<IDWriteFontFace3> face;
-	faceRef->CreateFontFace(&face);
-
+	ComPtr<IDWriteFontFace3> face = fontFace->GetFontFace();
 	Vector<PathData^>^ paths = ref new Vector<PathData^>();
 
 	for (int i = 0; i < glyphIndicies->Length; i++)

@@ -23,7 +23,7 @@
             IsItemClickEnabled="False"
             ItemAnnotation="None"
             ItemContainerTransitions="{StaticResource NoTransitions}"
-            ItemFontFace="{x:Bind Options.Variant.FontFace}"
+            ItemFontFace="{x:Bind Options.Variant.Face}"
             ItemFontFamily="{x:Bind Options.Variant.Source}"
             ItemSize="40"
             ItemTypography="{x:Bind Options.DXTypography}"

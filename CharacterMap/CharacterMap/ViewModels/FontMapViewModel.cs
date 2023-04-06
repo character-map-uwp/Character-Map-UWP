@@ -395,9 +395,9 @@ namespace CharacterMap.ViewModels
             {
                 FontSize = (float)Core.Converters.GetFontSize(Settings.GridSize),
                 FontFamily = SelectedVariant.Source,
-                FontStretch = SelectedVariant.FontFace.Stretch,
-                FontWeight = SelectedVariant.FontFace.Weight,
-                FontStyle = SelectedVariant.FontFace.Style,
+                FontStretch = SelectedVariant.DirectWriteProperties.Stretch,
+                FontWeight = SelectedVariant.DirectWriteProperties.Weight,
+                FontStyle = SelectedVariant.DirectWriteProperties.Style,
                 HorizontalAlignment = CanvasHorizontalAlignment.Left,
             }, Settings.GridSize, Settings.GridSize);
 
@@ -470,7 +470,7 @@ namespace CharacterMap.ViewModels
 
             if (Chars.FirstOrDefault(i => i.UnicodeIndex == Settings.LastSelectedCharIndex)
                 is Character lastSelectedChar
-                && SelectedVariant.FontFace.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
+                && SelectedVariant.Face.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
             {
                 SelectedChar = lastSelectedChar;
             }
