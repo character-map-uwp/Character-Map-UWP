@@ -49,6 +49,20 @@ namespace CharacterMapCX
 		{
 			DWRITE_PANOSE* pan = new DWRITE_PANOSE();
 			m_font->GetPanose(pan);
+
+			bool valid = false;
+			for (int i = 0; i < 10; i++)
+			{
+				if (pan->values[i] > 0)
+				{
+					valid = true;
+					break;
+				}
+			}
+
+			if (valid == false)
+				return nullptr;
+
 			return Platform::ArrayReference<UINT8>(reinterpret_cast<UINT8*>(pan), 10);
 		}}
 

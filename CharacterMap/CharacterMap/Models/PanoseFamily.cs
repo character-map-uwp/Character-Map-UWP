@@ -9,11 +9,11 @@
         /// <summary>
         /// No fit typeface classification.
         /// </summary>
-        NoFit = 1,
+        No_Fit = 1,
         /// <summary>
         /// Text display typeface classification.
         /// </summary>
-        TextDisplay = 2,
+        Text_Display = 2,
         /// <summary>
         /// Script (or hand written) typeface classification.
         /// </summary>
@@ -37,7 +37,7 @@
     /// Appearance of the serifs.
     /// Present for families: 2-text
     /// </summary>
-    enum PanoseSerifStyle
+    public enum PanoseSerifStyle
     {
         ANY = 0,
         NO_FIT = 1,

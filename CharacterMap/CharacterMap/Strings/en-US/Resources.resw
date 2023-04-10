@@ -1285,7 +1285,7 @@ Requires a restart to take effect.</value>
     <value>Open all font files found inside a folder</value>
   </data>
   <data name="OpenFontDescription.Text" xml:space="preserve">
-    <value>Open TTF, OTF, OTC, TTC, WOFF or ZIP files</value>
+    <value>Open TTF, OTF, OTC, TTC, WOFF, WOFF2 or ZIP files</value>
   </data>
   <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
     <value>Enables subtle bounce animations when the mouse pointer goes over certains buttons.</value>
@@ -1305,5 +1305,8 @@ Tap and hold to arrange.</value>
   </data>
   <data name="SettingsSuggestionTextBox.PlaceholderText" xml:space="preserve">
     <value>Enter your suggestion here</value>
+  </data>
+  <data name="FontPropPanoseTitle.Text" xml:space="preserve">
+    <value>PANOSE Values</value>
   </data>
 </root>
