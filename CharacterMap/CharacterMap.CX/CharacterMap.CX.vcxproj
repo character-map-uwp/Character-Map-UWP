@@ -316,7 +316,6 @@
     <ClCompile Include="DirectText.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DWriteFontFamily.cpp" />
-    <ClCompile Include="DWriteFontSet.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -41,7 +41,6 @@ namespace CharacterMapCX
 		{
 			int appxCount = 0;
 			int cloudCount = 0;
-			int variableCount = 0;
 
 			auto fonts = ref new Vector<DWriteFontFace^>();
 
@@ -54,8 +53,8 @@ namespace CharacterMapCX
 					if (font->Properties->Source == DWriteFontSource::AppxPackage)
 						m_appxCount++;
 
-					if (font->Properties->HasVariations)
-						m_varCount = m_varCount + 1;
+					/*if (font->Properties->HasVariations)
+						m_varCount = m_varCount + 1;*/
 				}
 			}
 
@@ -90,6 +89,6 @@ namespace CharacterMapCX
 		IVectorView<DWriteFontFamily^>^ m_families = nullptr;
 		int m_appxCount = 0;
 		int m_cloudCount = 0;
-		int m_varCount = 0;
+		int m_varCount = 1;
 	};
 }

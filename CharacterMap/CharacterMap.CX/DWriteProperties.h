@@ -28,8 +28,6 @@ namespace CharacterMapCX
 
 		property bool IsSymbolFont	{ bool get() { return m_isSymbolFont; } }
 
-		property bool HasVariations { bool get() { return m_hasVariations; } }
-
 		property String^ FamilyName { String^ get() { return m_familyName; } }
 
 		property String^ FaceName	{ String^ get() { return m_faceName; } }
@@ -39,6 +37,24 @@ namespace CharacterMapCX
 		property FontStyle Style { FontStyle get() { return m_style; } }
 
 		property FontStretch Stretch { FontStretch get() { return m_stretch; } }
+
+		property bool HasVariations 
+		{ 
+			bool get() 
+			{ 
+				if (!m_loadedVariations)
+				{
+					ComPtr<IDWriteFontFace3> f3;
+					ComPtr<IDWriteFontFace5> face;
+					m_font->CreateFontFace(&f3);
+					f3.As<IDWriteFontFace5>(&face);
+					m_hasVariations = face->HasVariations();
+					m_loadedVariations = true;
+				}
+
+				return m_hasVariations; 
+			}
+		}
 
 		/// <summary>
 		/// Source of the file
@@ -92,12 +108,6 @@ namespace CharacterMapCX
 			m_remoteSource = remoteSource;
 			m_familyName = familyName;
 			m_faceName = faceName;
-
-			ComPtr<IDWriteFontFace3> f3;
-			ComPtr<IDWriteFontFace5> face;
-			font->CreateFontFace(&f3);
-			f3.As<IDWriteFontFace5>(&face);
-			m_hasVariations = face->HasVariations();
 		}
 
 		DWriteProperties(DWriteFontSource source, String^ remoteSource, String^ familyName, String^ faceName, bool isColor, bool hasVariations)
@@ -118,6 +128,8 @@ namespace CharacterMapCX
 		FontWeight m_weight;
 		FontStyle m_style = FontStyle::Normal;
 		FontStretch m_stretch = FontStretch::Normal;
+
+		bool m_loadedVariations = false;
 
 		bool m_hasVariations = false;
 		bool m_isColorFont = false;

@@ -123,7 +123,6 @@ namespace CharacterMap.Core
                 s.Start();
 
                 // Load SystemFonts and imported fonts in parallel
-
                 // 1.1. Load imported fonts
                 IReadOnlyList<StorageFile> files = null;
                 Task<List<DWriteFontSet>> setsTask = Task.Run(async () =>
@@ -150,9 +149,6 @@ namespace CharacterMap.Core
                         CleanUpPendingDeletesAsync()) : Task.CompletedTask;
 
                 await Task.WhenAll(init, delete, setsTask);
-
-                s.Stop();
-                var elasped = s.Elapsed;
 
                 // Load in System Fonts
                 DWriteFontSet systemFonts = init.Result;
@@ -188,6 +184,9 @@ namespace CharacterMap.Core
 
                 if (Fallback == null)
                     Fallback = interop.CreateEmptyFallback();
+
+                s.Stop();
+                var elasped = s.Elapsed;
 
                 _loadSemaphore.Release();
 

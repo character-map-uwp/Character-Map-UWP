@@ -25,9 +25,6 @@
     </ClCompile>
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
-    <ClCompile Include="DWriteFontSet.cpp">
-      <Filter>DWrite</Filter>
-    </ClCompile>
     <ClCompile Include="DWriteFontFamily.cpp">
       <Filter>DWrite</Filter>
     </ClCompile>
