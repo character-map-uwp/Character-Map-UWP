@@ -1213,13 +1213,13 @@
                                         Text="{x:Bind FontSize}" />
                                     <TextBlock
                                         x:Name="Framework"
-                                        x:Load="{x:Bind core:Converters.False(Option.RequiresNativeRender), FallbackValue=False}"
+                                        x:Load="{x:Bind core:Converters.False(Option.RequiresNativeRender), FallbackValue=False, Mode=OneWay}"
                                         core:Properties.Options="{x:Bind Option, Mode=OneWay}"
                                         FontSize="{x:Bind FontSize}"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                     <cxc:DirectText
                                         x:Name="Native"
-                                        x:Load="{x:Bind Option.RequiresNativeRender, FallbackValue=False}"
+                                        x:Load="{x:Bind Option.RequiresNativeRender, FallbackValue=False, Mode=OneWay}"
                                         core:Properties.Options="{x:Bind Option, Mode=OneWay}"
                                         FontSize="{x:Bind FontSize}"
                                         IsOverwriteCompensationEnabled="True"
