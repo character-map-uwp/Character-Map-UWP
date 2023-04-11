@@ -512,7 +512,7 @@ namespace CharacterMap.Core
 
             // 3. Load fonts from file
             Dictionary<string, InstalledFont> resultList = new ();
-            DWriteFontSet fontSet = Utils.GetInterop().GetFonts(localFile);
+            DWriteFontSet fontSet = Utils.GetInterop().GetFonts(localFile).Inflate();
             foreach (var font in fontSet.Fonts)
                 AddFont(resultList, font, localFile);
 

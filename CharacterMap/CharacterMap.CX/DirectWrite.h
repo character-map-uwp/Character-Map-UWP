@@ -83,6 +83,8 @@ namespace CharacterMapCX
 
 		static IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris, ComPtr<IDWriteFactory7> fac);
 
+		static IAsyncOperation<bool>^ SaveFontStreamAsync(ComPtr<IDWriteFontFileStream> fileStream, IOutputStream^ stream);
+
 	private:
 		DirectWrite() { };
 

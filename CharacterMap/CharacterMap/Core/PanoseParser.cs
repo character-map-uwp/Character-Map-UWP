@@ -22,7 +22,7 @@ namespace CharacterMap.Core
 
         public bool IsSansSerifStyle { get; }
         public bool IsSerifStyle { get; }
-        public SerifStyle Style { get; }
+        public PanoseSerifStyle Style { get; }
         public PanoseFamily Family { get; }
 
         public bool HasPanose { get; }
@@ -31,17 +31,17 @@ namespace CharacterMap.Core
         public IReadOnlyDictionary<string, string> GetValues()
             => _values ??= SetValues(_props.Panose);
 
-        public Panose(PanoseFamily family, SerifStyle style, DWriteProperties props, bool hasPanose = true)
+        public Panose(PanoseFamily family, PanoseSerifStyle style, DWriteProperties props, bool hasPanose = true)
         {
             _props = props;
 
             HasPanose = hasPanose;
             Family = family;
             Style = style;
-            IsSansSerifStyle = Style >= SerifStyle.NormalSans;
+            IsSansSerifStyle = Style >= PanoseSerifStyle.NORMAL_SANS;
             IsSerifStyle = 
-                Style != SerifStyle.Any 
-                && Style != SerifStyle.NoFit
+                Style != PanoseSerifStyle.ANY 
+                && Style != PanoseSerifStyle.NO_FIT
                 && Family != PanoseFamily.No_Fit
                 && Family != PanoseFamily.Script
                 && Family != PanoseFamily.Decorative
@@ -150,7 +150,7 @@ namespace CharacterMap.Core
             byte[] panose = props.Panose;
 
             if (panose is null)
-                return new Panose(PanoseFamily.Any, SerifStyle.Any, props, false);
+                return new Panose(PanoseFamily.Any, PanoseSerifStyle.ANY, props, false);
 
             // The contents of the Panose byte array depends on the value of the first byte. 
             // See https://docs.microsoft.com/en-us/windows/win32/api/dwrite_1/ns-dwrite_1-dwrite_panose 
@@ -158,9 +158,9 @@ namespace CharacterMap.Core
             PanoseFamily family = (PanoseFamily)panose[0];
 
             // Only fonts in TextDisplay family will identify their serif style
-            SerifStyle style = SerifStyle.Any;
+            PanoseSerifStyle style = PanoseSerifStyle.ANY;
             if (family == PanoseFamily.Text_Display)
-                style = (SerifStyle)panose[1];
+                style = (PanoseSerifStyle)panose[1];
 
             // Warning - not all fonts store correct values for Panose information. 
             // If expanding PanoseParser in the future to read all values, direct casting

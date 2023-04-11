@@ -28,6 +28,15 @@ namespace CharacterMapCX
 
 		property int VariableFontCount { int get() { return m_varCount; } }
 
+		DWriteFontSet^ Inflate()
+		{
+			for each (auto family in m_families)
+				family->Inflate();
+
+			this->Update();
+			return this;
+		}
+
 		void Update()
 		{
 			int appxCount = 0;

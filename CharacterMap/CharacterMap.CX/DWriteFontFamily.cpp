@@ -21,7 +21,6 @@ void DWriteFontFamily::Inflate()
 		familyName = DirectWrite::GetLocaleString(names, ls, localeName);
 
 	auto fonts = ref new Vector<DWriteFontFace^>();
-
 	auto fontCount = m_family->GetFontCount();
 	for (uint32_t j = 0; j < fontCount; ++j)
 	{

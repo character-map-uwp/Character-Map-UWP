@@ -130,7 +130,7 @@ namespace CharacterMap.Core
 
         public GlyphAnnotation GlyphAnnotation
         {
-            get => (GlyphAnnotation)Get((int)GlyphAnnotation.UnicodeHex);
+            get => (GlyphAnnotation)Get((int)GlyphAnnotation.None);
             set => BroadcastSet((int)value);
         }
 

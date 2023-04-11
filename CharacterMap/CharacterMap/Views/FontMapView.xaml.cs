@@ -919,6 +919,14 @@ namespace CharacterMap.Views
             UpdateTypography(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo, true);
         }
 
+        private void InfoFlyout_Opening(object sender, object e)
+        {
+#pragma warning disable CS0618 // ChangeView doesn't actually work
+            // Reset flyout scroll position
+            InfoScroller.ScrollToVerticalOffset(0);
+#pragma warning restore CS0618
+        }
+
 
 
 

@@ -773,9 +773,10 @@
                         CornerRadius="{TemplateBinding CornerRadius}">
 
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup x:Name="CommonStates"
-                                              h:FluentAnimation.PointerOver="{Binding ElementName=TextBlock}"
-                                              h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                h:FluentAnimation.PointerOver="{Binding ElementName=TextBlock}"
+                                h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
 
                                 <VisualState x:Name="PointerOver">
@@ -895,7 +896,8 @@
 
     <!--  CHECKBOX  -->
     <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
-        <Setter Property="core:Properties.PointerOverAnimation" Value="ContentPresenter" />
+        <Setter Property="core:Properties.PointerOverAnimation" Value="ContentPresenter|X" />
+        <Setter Property="core:Properties.PointerAnimationOffset" Value="2" />
         <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentPresenter|Scale" />
         <Setter Property="core:Properties.ClickAnimation" Value="ContentPresenter|Scale" />
         <Setter Property="core:Properties.ClickAnimationOffset" Value="0.93" />
@@ -1389,6 +1391,8 @@
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="AllowFocusOnInteraction" Value="False" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="AppBarButton">
@@ -1397,7 +1401,7 @@
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
-                                h:FluentAnimation.PointerOver="{Binding ElementName=ContentRoot}"
+                                h:FluentAnimation.PointerOver="{Binding ElementName=LabelPresenter}"
                                 h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
                                 <VisualState x:Name="PointerOver">
@@ -1479,6 +1483,7 @@
                                 Foreground="{TemplateBinding Foreground}" />
 
                             <TextBlock
+                                x:Name="LabelPresenter"
                                 Margin="12 0 0 0"
                                 VerticalAlignment="Center"
                                 FontSize="12"

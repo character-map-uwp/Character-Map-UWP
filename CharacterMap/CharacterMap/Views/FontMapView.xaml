@@ -590,8 +590,9 @@
                             <Flyout
                                 core:Properties.UseExpandContractAnimation="True"
                                 win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                Opening="InfoFlyout_Opening"
                                 Opened="InfoFlyout_Opened">
-                                <ScrollViewer>
+                                <ScrollViewer x:Name="InfoScroller">
                                     <Border MinWidth="300" MaxWidth="400">
                                         <StackPanel Padding="12 24" Spacing="12">
                                             <Panel.Resources>
@@ -662,6 +663,7 @@
 
                                                 <TextBlock
                                                     Grid.ColumnSpan="2"
+                                                    Grid.Column="0"
                                                     Margin="0,-4,0,0"
                                                     Style="{StaticResource Value}"
                                                     Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"

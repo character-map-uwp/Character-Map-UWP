@@ -269,7 +269,6 @@
     <Compile Include="Core\InstalledFont.cs" />
     <Compile Include="Models\PanoseFamily.cs" />
     <Compile Include="Core\PanoseParser.cs" />
-    <Compile Include="Models\SerifStyle.cs" />
     <Compile Include="Core\TypographyAnalyzer.cs" />
     <Compile Include="Core\TypographyBehavior.cs" />
     <Compile Include="Models\SupportedLanguage.cs" />

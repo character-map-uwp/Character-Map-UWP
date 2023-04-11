@@ -173,13 +173,13 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 	auto fontaxisCount = face->GetFontAxisValueCount();
 
 	DWRITE_FONT_AXIS_RANGE* ranges = new (std::nothrow) DWRITE_FONT_AXIS_RANGE[axisCount];
-	resource->GetFontAxisRanges(ranges, axisCount);
+	ThrowIfFailed(resource->GetFontAxisRanges(ranges, axisCount));
 
 	DWRITE_FONT_AXIS_VALUE* defaults = new (std::nothrow) DWRITE_FONT_AXIS_VALUE[axisCount];
-	resource->GetDefaultFontAxisValues(defaults, axisCount);
+	ThrowIfFailed(resource->GetDefaultFontAxisValues(defaults, axisCount));
 
 	DWRITE_FONT_AXIS_VALUE* values = new (std::nothrow) DWRITE_FONT_AXIS_VALUE[fontaxisCount];
-	face->GetFontAxisValues(values, fontaxisCount);
+	ThrowIfFailed(face->GetFontAxisValues(values, fontaxisCount));
 
 	// 3. Create list
 	Vector<DWriteFontAxis^>^ items = ref new Vector<DWriteFontAxis^>();
@@ -256,6 +256,7 @@ IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(ComPtr<
 
 				strings->GetString(0, buffer, lgt);
 				name = ref new String(buffer);
+				delete[] buffer;
 
 				instances->Append(ref new DWriteNamedFontAxisValue(range, GetFeatureTag(range.axisTag), name));
 			}
@@ -340,7 +341,9 @@ String^ DirectWrite::GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, in
 	if (SUCCEEDED(hr))
 		hr = strings->GetString(fidx, name, length + 1);
 
-	return ref new String(name);
+	auto str = ref new String(name);
+	delete[] name;
+	return str;
 }
 
 Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
@@ -367,6 +370,8 @@ Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
 			wchar_t* namebuffer = new (std::nothrow) wchar_t[filePathLength + 1];
 			if (localLoader->GetFilePathFromKey(refKey, keySize, namebuffer, filePathLength + 1) == S_OK)
 				name = ref new Platform::String(namebuffer);
+
+			delete[] namebuffer;
 		}
 	}
 
@@ -439,22 +444,6 @@ bool DirectWrite::IsFontLocal(DWriteFontFace^ fontFace)
 		&& IsLocalFont(loader, refKey, size));
 }
 
-
-//bool DirectWrite::IsFontLocal(CanvasFontFace^ fontFace)
-//{
-//	ComPtr<IDWriteFontFaceReference> fontFaceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-//	ComPtr<IDWriteFontFile> file;
-//	ComPtr<IDWriteFontFileLoader> loader;
-//	const void* refKey = nullptr;
-//	uint32 size = 0;
-//
-//	return (fontFaceRef->GetFontFile(&file) == S_OK
-//		&& file->GetLoader(&loader) == S_OK
-//		&& file->GetReferenceKey(&refKey, &size) == S_OK
-//		&& IsLocalFont(loader, refKey, size));
-//}
-
-
 bool DirectWrite::IsLocalFont(ComPtr<IDWriteFontFileLoader> loader, const void* refKey, uint32 size)
 {
 	ComPtr<IDWriteRemoteFontFileLoader> remoteLoader;
@@ -468,50 +457,54 @@ bool DirectWrite::IsLocalFont(ComPtr<IDWriteFontFileLoader> loader, const void* 
 	return true;
 }
 
-IAsyncOperation<bool>^ DirectWrite::WriteToStreamAsync(DWriteFontFace^ fontFace, IOutputStream^ stream)
+IAsyncOperation<bool>^ DirectWrite::SaveFontStreamAsync(ComPtr<IDWriteFontFileStream> fileStream, IOutputStream^ stream)
 {
 	return create_async([&]
 		{
-			// 1. Acquire the underlying FontLoader used to create the CanvasFontFace
-			ComPtr<IDWriteFontFaceReference> fontFaceRef = fontFace->GetReference();
-			ComPtr<IDWriteFontFile> file;
-			ComPtr<IDWriteFontFileLoader> loader;
-			ComPtr<IDWriteRemoteFontFileLoader> remoteLoader;
-			ComPtr<IDWriteFontFileStream> fileStream;
+			uint64 fileSize = 0;
+			fileStream->GetFileSize(&fileSize);
 
-			const void* refKey = nullptr;
-			uint32 size = 0;
+			// 1. Copy stream to byte array
+			void* context;
+			const void* fragment;
+			fileStream->ReadFileFragment(&fragment, 0, fileSize, &context);
+			auto b = (byte*)fragment;
 
-			if (fontFaceRef->GetFontFile(&file) == S_OK
-				&& file->GetLoader(&loader) == S_OK
-				&& file->GetReferenceKey(&refKey, &size) == S_OK
-				&& IsLocalFont(loader, refKey, size)
-				&& loader->CreateStreamFromKey(refKey, size, &fileStream) == S_OK)
-			{
-				uint64 fileSize = 0;
-				fileStream->GetFileSize(&fileSize);
+			// 2. Write the byte array to stream.
+			DataWriter^ w = ref new DataWriter(stream);
+			w->WriteBytes(Platform::ArrayReference<BYTE>(b, fileSize));
 
-				// 2. Read the source file into memory
-				// TODO: We don't really want to load the entire file into memory.
-				//       Perhaps we can use a rolling buffer?
-				void* context;
-				const void* fragment;
-				fileStream->ReadFileFragment(&fragment, 0, fileSize, &context);
-				auto b = (byte*)fragment;
-
-				// 3. Write the memory to stream.
-				DataWriter^ w = ref new DataWriter(stream);
-				w->WriteBytes(Platform::ArrayReference<BYTE>(b, fileSize));
-
-				return create_task(w->StoreAsync()).then([w, fileStream, context](bool result)
-					{
-						fileStream->ReleaseFileFragment(context);
-						delete w;
-						return task_from_result(result);
-					}, task_continuation_context::use_arbitrary());
-			}
-			return task_from_result(false);
+			return create_task(w->StoreAsync()).then([w, fileStream, context](bool result)
+				{
+					fileStream->ReleaseFileFragment(context);
+					delete w;
+					return task_from_result(result);
+				}, task_continuation_context::use_arbitrary());
 		});
+}
+
+IAsyncOperation<bool>^ DirectWrite::WriteToStreamAsync(DWriteFontFace^ fontFace, IOutputStream^ stream)
+{
+	// 1. Acquire the underlying FontLoader used to create the CanvasFontFace
+	ComPtr<IDWriteFontFaceReference> fontFaceRef = fontFace->GetReference();
+	ComPtr<IDWriteFontFile> file;
+	ComPtr<IDWriteFontFileLoader> loader;
+	ComPtr<IDWriteRemoteFontFileLoader> remoteLoader;
+	ComPtr<IDWriteFontFileStream> fileStream;
+
+	const void* refKey = nullptr;
+	uint32 size = 0;
+
+	if (fontFaceRef->GetFontFile(&file) == S_OK
+		&& file->GetLoader(&loader) == S_OK
+		&& file->GetReferenceKey(&refKey, &size) == S_OK
+		&& IsLocalFont(loader, refKey, size)
+		&& loader->CreateStreamFromKey(refKey, size, &fileStream) == S_OK)
+	{
+		return SaveFontStreamAsync(fileStream, stream);
+	}
+
+	return create_async([] { return task_from_result(false); });
 }
 
 IBuffer^ DirectWrite::GetImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format)
@@ -526,7 +519,7 @@ IBuffer^ DirectWrite::GetImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixels
 	auto arr = new UINT[1];
 	arr[0] = unicodeIndex;
 	auto hr3 = face5->GetGlyphIndices(arr, 1, &idx);
-	delete arr;
+	delete[] arr;
 
 	// 3. Get the actual image data
 	DWRITE_GLYPH_IMAGE_DATA data;
