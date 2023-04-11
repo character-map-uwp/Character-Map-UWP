@@ -200,6 +200,13 @@ namespace CharacterMap.Views
             }
         }
 
+        private void SearchSwitchSettingsPresenter_Loaded(object sender, RoutedEventArgs e)
+        {
+            // Fix bug with x:Load
+            if (Settings.UseInstantSearch)
+                this.FindName(nameof(SearchDelayItem));
+        }
+
         private void MenuItem_Checked(object sender, RoutedEventArgs e)
         {
             Panel GetPanel(RadioButton button)

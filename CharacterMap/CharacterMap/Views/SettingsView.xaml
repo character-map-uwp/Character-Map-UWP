@@ -589,8 +589,8 @@
 
                                 <TextBlock x:Uid="SettingsCharacterSearchHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=InstantSearchToggleHeader/Text}" Description="{core:Localizer Key=SettingsCharacterSearchDescription/Text}">
-                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
+                                <controls:SettingsPresenter Title="{core:Localizer Key=InstantSearchToggleHeader/Text}" Description="{core:Localizer Key=SettingsCharacterSearchDescription/Text}" Loaded="SearchSwitchSettingsPresenter_Loaded">
+                                    <ToggleSwitch x:Name="SearchSwitch" MinWidth="0" IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
                                     <controls:SettingsPresenter.Items>
                                         <controls:SettingsPresenter
                                             x:Name="SearchDelayItem"
