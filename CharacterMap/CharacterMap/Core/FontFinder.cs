@@ -215,7 +215,7 @@ namespace CharacterMap.Core
 
             HasRemoteFonts = HasRemoteFonts || set.CloudFontCount > 0;
             HasAppxFonts = HasAppxFonts || set.AppxFontCount > 0;
-            HasVariableFonts = HasVariableFonts || set.VariableFontCount > 0;
+            HasVariableFonts = true;
         }
 
         internal static List<FontVariant> GetImportedVariants()

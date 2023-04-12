@@ -54,6 +54,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] string _titlePrefix;
         [ObservableProperty] string _fontSearch;
         [ObservableProperty] string _filterTitle;
+        [ObservableProperty] bool _canFilter = true;
         [ObservableProperty] bool _isLoadingFonts;
         [ObservableProperty] bool _isSearchResults;
         [ObservableProperty] bool _isLoadingFontsFailed;
@@ -217,8 +218,10 @@ namespace CharacterMap.ViewModels
             IsLoadingFonts = false;
         }
 
-        public void RefreshFontList(UserFontCollection collection = null)
+        public async void RefreshFontList(UserFontCollection collection = null)
         {
+            if (CanFilter == false) 
+                return;
             try
             {
                 IEnumerable<InstalledFont> fontList = Folder?.Fonts ?? FontFinder.Fonts;
@@ -236,7 +239,16 @@ namespace CharacterMap.ViewModels
                     if (FontListFilter == BasicFontFilter.ImportedFonts)
                         fontList = FontFinder.ImportedFonts;
                     else
-                        fontList = FontListFilter.Query(fontList, FontCollections);
+                    {
+                        if (FontListFilter.RequiresAsync)
+                        {
+                            CanFilter = false;
+                            fontList = await Task.Run(() => FontListFilter.Query(fontList, FontCollections));
+                            FontListFilter.RequiresAsync = false;
+                        }
+                        else
+                            fontList = FontListFilter.Query(fontList, FontCollections);
+                    }
                 }
 
                 if (!string.IsNullOrWhiteSpace(FontSearch))
@@ -255,6 +267,10 @@ namespace CharacterMap.ViewModels
             {
                 DialogService.ShowMessageBox(
                     e.Message, Localization.Get("LoadingFontListError"));
+            }
+            finally
+            {
+                CanFilter = true;
             }
         }
 

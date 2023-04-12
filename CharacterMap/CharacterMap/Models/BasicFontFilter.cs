@@ -16,6 +16,14 @@ namespace CharacterMap.Models
         public string DisplayTitle { get; }
         public string FilterTitle { get; }
 
+        /// <summary>
+        /// Slower devices (like ARM devices) can lock up and be terminated by Windows when 
+        /// filtering large font sets with expensive filters, like checking if a font has
+        /// variable font axis (which requires creating an IDWriteFontFace for every font).
+        /// This helps enable a quick workaround for these filters.
+        /// </summary>
+        public bool RequiresAsync { get; set; }
+
         public static BasicFontFilter ForRange(UnicodeRange range, string displayTitle)
         {
             return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => Unicode.ContainsRange(v, range))), displayTitle);
@@ -26,11 +34,12 @@ namespace CharacterMap.Models
             return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => Unicode.SupportsScript(v, range))), displayTitle);
         }
 
-        public BasicFontFilter(Func<IEnumerable<InstalledFont>, UserCollectionsService, IEnumerable<InstalledFont>> query, string displayTitle)
+        public BasicFontFilter(Func<IEnumerable<InstalledFont>, UserCollectionsService, IEnumerable<InstalledFont>> query, string displayTitle, bool requiresAsync = false)
         {
             Query = query;
             DisplayTitle = displayTitle;
             FilterTitle = displayTitle;
+            RequiresAsync = requiresAsync;
         }
 
         public BasicFontFilter(Func<IEnumerable<InstalledFont>, UserCollectionsService, IEnumerable<InstalledFont>> query, string displayTitle, string filterTitle)
@@ -77,7 +86,7 @@ namespace CharacterMap.Models
             = new ((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.IsColorFont), Localization.Get("OptionColorFonts/Text"));
 
         public static BasicFontFilter VariableFonts { get; }
-            = new ((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.HasVariations), Localization.Get("OptionVariableFonts/Text"));
+            = new ((f, c) => f.Where(v => v.DefaultVariant.DirectWriteProperties.HasVariations), Localization.Get("OptionVariableFonts/Text"), true);
 
 
 

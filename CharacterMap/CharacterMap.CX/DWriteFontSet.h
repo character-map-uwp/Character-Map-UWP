@@ -49,12 +49,8 @@ namespace CharacterMapCX
 				for each (auto font in family->m_fonts)
 				{
 					fonts->Append(font);
-
 					if (font->Properties->Source == DWriteFontSource::AppxPackage)
 						m_appxCount++;
-
-					/*if (font->Properties->HasVariations)
-						m_varCount = m_varCount + 1;*/
 				}
 			}
 
