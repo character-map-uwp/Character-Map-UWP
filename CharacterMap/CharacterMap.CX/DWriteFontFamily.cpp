@@ -12,6 +12,9 @@ using namespace concurrency;
 
 void DWriteFontFamily::Inflate()
 {
+	if (m_fonts != nullptr)
+		return;
+
 	wchar_t localeName[LOCALE_NAME_MAX_LENGTH];
 	int ls = GetUserDefaultLocaleName(localeName, LOCALE_NAME_MAX_LENGTH);
 

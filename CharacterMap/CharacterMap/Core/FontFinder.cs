@@ -129,14 +129,6 @@ namespace CharacterMap.Core
                 {
                     files = await _importFolder.GetFilesAsync();
                     var sets = interop.GetFonts(files).ToList();
-                    foreach (var set in sets)
-                    {
-                        foreach (var fam in set.Families)
-                            fam.Inflate();
-
-                        set.Update();
-                    }
-
                     return sets;
                 });
 
@@ -594,7 +586,7 @@ namespace CharacterMap.Core
                     StorageFile file = results[i];
                     DWriteFontSet set = dwSets[i];
 
-                    foreach (DWriteFontFace font in set.Fonts)
+                    foreach (DWriteFontFace font in set.Inflate().Fonts)
                         AddFont(contents.FontCache, font, file);
                 }
 

@@ -129,6 +129,10 @@ namespace CharacterMap.ViewModels
             }
             else
             {
+                _folder = args.Folder;
+                if (_folder is not null)
+                    IsFolderMode = true;
+
                 FontCollections = Ioc.Default.GetService<UserCollectionsService>();
                 SelectedCollection = args.SelectedCollection;
                 RefreshFontList(SelectedCollection);
@@ -136,9 +140,7 @@ namespace CharacterMap.ViewModels
                 FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
                 CollectionSelectedCommand = new RelayCommand<object>(e => SelectedCollection = e as UserFontCollection);
                 
-                _folder = args.Folder;
-                if (_folder is not null)
-                    IsFolderMode = true;
+                
             }
 
             UpdateTextOptions();
