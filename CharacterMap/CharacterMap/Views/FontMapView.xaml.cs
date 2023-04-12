@@ -560,6 +560,9 @@ namespace CharacterMap.Views
 
         public void TryCopy()
         {
+            if (FocusManager.GetFocusedElement() is TextBox or TextBlock)
+                return;
+
             //if (CharGrid.SelectedItem is Character character &&
             //    (TxtSymbolIcon == null || !TxtSymbolIcon.SelectedText.Any()) &&
             //    !TxtFontIcon.SelectedText.Any() &&
