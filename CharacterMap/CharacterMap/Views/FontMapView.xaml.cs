@@ -377,7 +377,6 @@ namespace CharacterMap.Views
             return true;
         }
 
-
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.F11)

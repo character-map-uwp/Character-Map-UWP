@@ -46,6 +46,12 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public bool HasSQLiteCollections
+        {
+            get => Get(false);
+            set => Set(value);
+        }
+
         public bool FitCharacter
         {
             get => Get(false);
@@ -78,7 +84,7 @@ namespace CharacterMap.Core
 
         public int MaxSearchResult
         {
-            get => Get(26);
+            get => Get(31, "MSR");
             set => Set(value);
         }
 
@@ -146,7 +152,7 @@ namespace CharacterMap.Core
 
         public string AppLanguage
         {
-            get => Get("");
+            get => Get("", "AppLang2");
             set => Set(value);
         }
 

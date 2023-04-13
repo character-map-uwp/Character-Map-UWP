@@ -10,6 +10,7 @@ using CharacterMap.ViewModels;
 using Windows.ApplicationModel.Core;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CharacterMap.Helpers;
+using SQLite;
 
 namespace CharacterMap
 {
@@ -33,10 +34,19 @@ namespace CharacterMap
             this.InitializeComponent();
 
             this.UnhandledException += OnUnhandledException;
+            this.Suspending += App_Suspending;
             _activationService = new Lazy<ActivationService>(CreateActivationService);
             Current = this;
 
             DirectText.RegisterDependencyProperties();
+            SQLitePCL.raw.SetProvider(SQLiteConnection.Provider);
+        }
+
+        private async void App_Suspending(object sender, Windows.ApplicationModel.SuspendingEventArgs e)
+        {
+            var d = e.SuspendingOperation.GetDeferral();
+            await Ioc.Default.GetService<UserCollectionsService>().FlushAsync();
+            d.Complete();
         }
 
         private void RegisterExceptionHandlingSynchronizationContext()
