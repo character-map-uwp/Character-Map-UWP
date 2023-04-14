@@ -128,22 +128,20 @@ namespace CharacterMap.Services
             return AddToCollectionAsync(new List<InstalledFont> { font }, collection);
         }
 
-        public async Task<AddToCollectionResult> AddToCollectionAsync(IList<InstalledFont> fonts, UserFontCollection collection)
+        public async Task<AddToCollectionResult> AddToCollectionAsync(IList<InstalledFont> fonts, UserFontCollection collection, Action onChanged = null)
         {
             bool changed = false;
 
             foreach (var font in fonts)
             {
-                if (font is null || !collection.Fonts.Contains(font.Name))
-                {
-                    if (font is not null && collection.Fonts.Add(font.Name))
-                        changed = true;
-                }
+                if (font is not null && collection.Fonts.Add(font.Name))
+                    changed = true;
             }
 
             if (changed)
             {
                 await SaveCollectionAsync(collection);
+                onChanged?.Invoke();
                 return new AddToCollectionResult(true, fonts, collection);
             }
 
