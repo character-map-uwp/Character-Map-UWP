@@ -40,9 +40,9 @@ namespace CharacterMapCX
 
 		CanvasTextLayoutAnalysis^ AnalyzeCharacterLayout(CanvasTextLayout^ layout);
 
-		IVectorView<PathData^>^ GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
+		IVectorView<PathData^>^ GetPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies);
 
-		Platform::String^ GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie);
+		Platform::String^ GetPathData(DWriteFontFace^ fontFace, UINT16 glyphIndicie);
 
 		/// <summary>
 		/// Returns an SVG-Path syntax compatible representation of the Canvas Text Geometry.
@@ -56,6 +56,12 @@ namespace CharacterMapCX
 		__inline DWriteFontSet^ GetFonts(StorageFile^ files);
 
 		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<StorageFile^>^ files);
+
+		IAsyncOperation<bool>^ UnpackWOFF2Async(IBuffer^ buffer, IOutputStream^ stream);
+
+		DWriteFontSet^ GetFonts(Uri^ uri);
+
+		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
 
 	private:
 

@@ -7,8 +7,6 @@
 #include "PostTableReader.h"
 //#include "CmapTableReader.h"
 
-using namespace Microsoft::Graphics::Canvas;
-using namespace Microsoft::Graphics::Canvas::Text;
 using namespace Microsoft::WRL;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -72,9 +70,9 @@ namespace CharacterMapCX
 
 		FontAnalysis() { }
 
-		FontAnalysis(CanvasFontFace^ fontFace)
+		FontAnalysis(DWriteFontFace^ fontFace)
 		{
-			auto ref = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
+			ComPtr<IDWriteFontFaceReference> ref = fontFace->GetReference();
 			AnalyseTables(ref);
 			GetFileProperties(ref);
 		}

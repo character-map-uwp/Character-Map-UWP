@@ -378,9 +378,9 @@ namespace CharacterMap.ViewModels
         {
             if (SelectedChar == null)
             {
-                SelectedCharAnalysis = new CanvasTextLayoutAnalysis();
+                SelectedCharAnalysis = new ();
                 IsSvgChar = false;
-                SelectedCharVariations = new List<TypographyFeatureInfo>();
+                SelectedCharVariations = new ();
                 return;
             }
 
@@ -391,13 +391,13 @@ namespace CharacterMap.ViewModels
 
         internal CanvasTextLayoutAnalysis GetCharAnalysis(Character c)
         {
-            using CanvasTextLayout layout = new CanvasTextLayout(Utils.CanvasDevice, $"{c.Char}", new CanvasTextFormat
+            using CanvasTextLayout layout = new (Utils.CanvasDevice, $"{c.Char}", new()
             {
                 FontSize = (float)Core.Converters.GetFontSize(Settings.GridSize),
                 FontFamily = SelectedVariant.Source,
-                FontStretch = SelectedVariant.FontFace.Stretch,
-                FontWeight = SelectedVariant.FontFace.Weight,
-                FontStyle = SelectedVariant.FontFace.Style,
+                FontStretch = SelectedVariant.DirectWriteProperties.Stretch,
+                FontWeight = SelectedVariant.DirectWriteProperties.Weight,
+                FontStyle = SelectedVariant.DirectWriteProperties.Style,
                 HorizontalAlignment = CanvasHorizontalAlignment.Left,
             }, Settings.GridSize, Settings.GridSize);
 
@@ -470,7 +470,7 @@ namespace CharacterMap.ViewModels
 
             if (Chars.FirstOrDefault(i => i.UnicodeIndex == Settings.LastSelectedCharIndex)
                 is Character lastSelectedChar
-                && SelectedVariant.FontFace.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
+                && SelectedVariant.Face.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
             {
                 SelectedChar = lastSelectedChar;
             }
@@ -577,7 +577,7 @@ namespace CharacterMap.ViewModels
             try
             {
                 if (args.Files.FirstOrDefault() is StorageFile file
-                    && await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
+                    && await FontFinder.LoadFromFileAsync(file) is { } font)
                 {
                     SourceFile = file;
                     IsLoading = false;
@@ -609,7 +609,7 @@ namespace CharacterMap.ViewModels
             try
             {
                 List<StorageFile> items = new() { SourceFile };
-                if (await FontFinder.ImportFontsAsync(items) is FontImportResult result
+                if (await FontFinder.ImportFontsAsync(items) is { } result
                     && (result.Imported.Count > 0 || result.Existing.Count > 0))
                 {
                     await WindowService.ActivateMainWindowAsync();

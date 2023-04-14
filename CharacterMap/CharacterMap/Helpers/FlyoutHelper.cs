@@ -55,6 +55,8 @@ namespace CharacterMap.Helpers
         public bool IsExternalFile      { get; set; }
 
         public string PreviewText { get; set; }
+
+        public Action AddToCollectionCommand { get; set; }
     }
 
 
@@ -248,7 +250,7 @@ namespace CharacterMap.Helpers
                     }
 
                     // 2. Add Save Font File & Export Font Glyphs options
-                    if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.FontFace))
+                    if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.Face))
                     {
                         Create("ExportFontFileLabel/Text", "\uE792", SaveFont_Click, VirtualKey.S);
                         if (showAdvanced && !args.IsTabContext)
@@ -258,7 +260,7 @@ namespace CharacterMap.Helpers
                     // 3. Add "Add to Collection" button
                     if (isExternalFile is false && args.IsFolderView is false)
                     {
-                        coll = AddCollectionItems(menu, font, null);
+                        coll = AddCollectionItems(menu, font, null, args: args);
                         coll.Style = subStyle;
                     }
                 }
@@ -337,7 +339,7 @@ namespace CharacterMap.Helpers
             if (collection is null)
                 return;
 
-            if ((collection != null || (filter == BasicFontFilter.SymbolFonts && !font.FontFace.IsSymbolFont))
+            if ((collection != null || (filter == BasicFontFilter.SymbolFonts && !font.IsSymbolFont))
                 && collection.Fonts.Contains(font.Name))
             {
                 menu.Items.Add(new MenuFlyoutSeparator());
@@ -377,7 +379,7 @@ namespace CharacterMap.Helpers
         /// <param name="menu"></param>
         /// <param name="font"></param>
         /// <returns></returns>
-        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IList<InstalledFont> fonts, string key = null)
+        public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IList<InstalledFont> fonts, string key = null, FlyoutArgs args = null)
         {
             #region Event Handlers
 
@@ -385,12 +387,16 @@ namespace CharacterMap.Helpers
             {
                 if (sender is FrameworkElement f && f.DataContext is IList<InstalledFont> fnts)
                 {
-                    var result = await _collections.AddToCollectionAsync(fnts, _collections.SymbolCollection);
+                    var result = await _collections.AddToCollectionAsync(
+                        fnts, 
+                        _collections.SymbolCollection,
+                        f.Tag as Action);
 
                     WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
-
                     if (result.Success)
+                    {
                         WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
+                    }
                 }
             }
 
@@ -444,7 +450,8 @@ namespace CharacterMap.Helpers
                         Text = Localization.Get("OptionSymbolFonts/Text"),
                         IsEnabled = multiMode || !_collections.SymbolCollection.Fonts.Contains(font.Name),
                         DataContext = items,
-                        Style = style
+                        Style = style,
+                        Tag = args?.AddToCollectionCommand
                     };
                     symb.Click += AddToSymbolFonts_Click;
                     parent.Items.Add(symb);

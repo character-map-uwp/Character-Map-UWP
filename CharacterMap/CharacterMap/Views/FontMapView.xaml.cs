@@ -377,7 +377,6 @@ namespace CharacterMap.Views
             return true;
         }
 
-
         private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (e.Key == VirtualKey.F11)
@@ -560,6 +559,9 @@ namespace CharacterMap.Views
 
         public void TryCopy()
         {
+            if (FocusManager.GetFocusedElement() is TextBox or TextBlock)
+                return;
+
             //if (CharGrid.SelectedItem is Character character &&
             //    (TxtSymbolIcon == null || !TxtSymbolIcon.SelectedText.Any()) &&
             //    !TxtFontIcon.SelectedText.Any() &&
@@ -917,6 +919,14 @@ namespace CharacterMap.Views
         private void PreviewTypographySelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             UpdateTypography(PreviewTypographySelector.SelectedItem as TypographyFeatureInfo, true);
+        }
+
+        private void InfoFlyout_Opening(object sender, object e)
+        {
+#pragma warning disable CS0618 // ChangeView doesn't actually work
+            // Reset flyout scroll position
+            InfoScroller.ScrollToVerticalOffset(0);
+#pragma warning restore CS0618
         }
 
 

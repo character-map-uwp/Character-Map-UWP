@@ -3,6 +3,7 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMapCX;
 using CharacterMapCX.Controls;
 using Microsoft.Graphics.Canvas.Text;
 using System;
@@ -20,7 +21,7 @@ namespace CharacterMap.Controls
     internal class CharacterGridViewTemplateSettings
     {
         public FontFamily FontFamily { get; set; }
-        public CanvasFontFace FontFace { get; set; }
+        public DWriteFontFace FontFace { get; set; }
         public TypographyFeatureInfo Typography { get; set;}
         public bool ShowColorGlyphs { get; set; }
         public double Size { get; set; }
@@ -69,16 +70,16 @@ namespace CharacterMap.Controls
 
         #region ItemFontFace
 
-        public CanvasFontFace ItemFontFace
+        public DWriteFontFace ItemFontFace
         {
-            get { return (CanvasFontFace)GetValue(ItemFontFaceProperty); }
+            get { return (DWriteFontFace)GetValue(ItemFontFaceProperty); }
             set { SetValue(ItemFontFaceProperty, value); }
         }
 
         public static readonly DependencyProperty ItemFontFaceProperty =
-            DependencyProperty.Register(nameof(ItemFontFace), typeof(CanvasFontFace), typeof(CharacterGridView), new PropertyMetadata(null, (d, e) =>
+            DependencyProperty.Register(nameof(ItemFontFace), typeof(DWriteFontFace), typeof(CharacterGridView), new PropertyMetadata(null, (d, e) =>
             {
-                ((CharacterGridView)d)._templateSettings.FontFace = (CanvasFontFace)e.NewValue;
+                ((CharacterGridView)d)._templateSettings.FontFace = (DWriteFontFace)e.NewValue;
             }));
 
         #endregion
@@ -290,9 +291,9 @@ namespace CharacterMap.Controls
                 return;
 
             xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontFamily, templateSettings.FontFamily);
-            xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStretch, (uint)templateSettings.FontFace.Stretch);
-            xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStyle, (uint)templateSettings.FontFace.Style);
-            xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontWeight, templateSettings.FontFace.Weight);
+            xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStretch, (uint)templateSettings.FontFace.Properties.Stretch);
+            xamlDirect.SetEnumProperty(o, XamlPropertyIndex.TextBlock_FontStyle, (uint)templateSettings.FontFace.Properties.Style);
+            xamlDirect.SetObjectProperty(o, XamlPropertyIndex.TextBlock_FontWeight, templateSettings.FontFace.Properties.Weight);
             xamlDirect.SetBooleanProperty(o, XamlPropertyIndex.TextBlock_IsColorFontEnabled, templateSettings.ShowColorGlyphs);
             xamlDirect.SetDoubleProperty(o, XamlPropertyIndex.TextBlock_FontSize, templateSettings.Size / 2d);
 
@@ -309,9 +310,9 @@ namespace CharacterMap.Controls
 
             o.FontFamily = templateSettings.FontFamily;
             o.FontFace = templateSettings.FontFace;
-            o.FontStretch = templateSettings.FontFace.Stretch;
-            o.FontStyle = templateSettings.FontFace.Style;
-            o.FontWeight = templateSettings.FontFace.Weight;
+            o.FontStretch = templateSettings.FontFace.Properties.Stretch;
+            o.FontStyle = templateSettings.FontFace.Properties.Style;
+            o.FontWeight = templateSettings.FontFace.Properties.Weight;
             o.IsColorFontEnabled = templateSettings.ShowColorGlyphs;
             o.FontSize = templateSettings.Size / 2d;
             o.Typography = templateSettings.Typography;

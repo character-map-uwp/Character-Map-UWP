@@ -7,6 +7,7 @@
 #include "PathData.h"
 #include "Windows.h"
 #include <concurrent_vector.h>
+#include <robuffer.h>
 
 using namespace Microsoft::WRL;
 using namespace CharacterMapCX;
@@ -26,7 +27,7 @@ NativeInterop::NativeInterop(CanvasDevice^ device)
 	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
 
 	D2D1CreateFactory(
-		D2D1_FACTORY_TYPE_SINGLE_THREADED,
+		D2D1_FACTORY_TYPE_MULTI_THREADED,
 		__uuidof(ID2D1Factory5),
 		&options,
 		&m_d2dFactory
@@ -34,7 +35,7 @@ NativeInterop::NativeInterop(CanvasDevice^ device)
 
 	ComPtr<ID2D1Device1> d2ddevice = GetWrappedResource<ID2D1Device1>(device);
 	d2ddevice->CreateDeviceContext(
-		D2D1_DEVICE_CONTEXT_OPTIONS_NONE,
+		D2D1_DEVICE_CONTEXT_OPTIONS_ENABLE_MULTITHREADED_OPTIMIZATIONS,
 		&m_d2dContext);
 
 	m_fontManager = new CustomFontManager(m_dwriteFactory);
@@ -55,6 +56,17 @@ IAsyncAction^ NativeInterop::ListenForFontSetExpirationAsync()
 		});
 }
 
+DWriteFontSet^ NativeInterop::GetFonts(Uri^ uri)
+{
+	return DirectWrite::GetFonts(uri, m_dwriteFactory);
+}
+
+IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<Uri^>^ uris)
+{
+	return DirectWrite::GetFonts(uris, m_dwriteFactory);
+}
+
+
 DWriteFontSet^ NativeInterop::GetSystemFonts()
 {
 	if (m_isFontSetStale)
@@ -65,13 +77,17 @@ DWriteFontSet^ NativeInterop::GetSystemFonts()
 
 	if (m_systemFontSet == nullptr || m_appFontSet == nullptr)
 	{
-		ComPtr<IDWriteFontSet2> fontSet;
-		ThrowIfFailed(m_dwriteFactory->GetSystemFontSet(true, &fontSet));
+		ComPtr<IDWriteFontSet1> fontSet;
+		ComPtr<IDWriteFontCollection3> fontCollection;
+
+		ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(true, DWRITE_FONT_FAMILY_MODEL_WEIGHT_STRETCH_STYLE, &fontCollection));
+		ThrowIfFailed(fontCollection->GetFontSet(&fontSet));
 
 		ComPtr<IDWriteFontSet3> fontSet3;
 		ThrowIfFailed(fontSet.As(&fontSet3));
 		m_systemFontSet = fontSet3;
-		m_appFontSet = DirectWrite::GetFonts(fontSet3);
+
+        m_appFontSet = DirectWrite::GetFonts(fontCollection);
 		m_isFontSetStale = false;
 
 		// We listen for the expiration event on a background thread
@@ -97,17 +113,8 @@ IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<StorageFile^>^ 
 DWriteFontSet^ NativeInterop::GetFonts(StorageFile^ file)
 {
 	auto collection = m_fontManager->GetFontCollectionFromFile(file);
-
-	ComPtr<IDWriteFontSet1> fontSet1;
-	collection->GetFontSet(&fontSet1);
-
-	ComPtr<IDWriteFontSet3> fontSet3;
-	fontSet1.As<IDWriteFontSet3>(&fontSet3);
-
-	return DirectWrite::GetFonts(fontSet3);
-	/*CanvasFontSet^ set = ref new CanvasFontSet(uri);
-	ComPtr<IDWriteFontSet3> fontSet = GetWrappedResource<IDWriteFontSet3>(set);
-	return GetFonts(fontSet);*/
+	DWriteFontSet^ set = DirectWrite::GetFonts(collection)->Inflate();
+	return set;
 }
 
 DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()
@@ -121,11 +128,9 @@ DWriteFallbackFont^ NativeInterop::CreateEmptyFallback()
 	return ref new DWriteFallbackFont(fallback);
 }
 
-Platform::String^ NativeInterop::GetPathData(CanvasFontFace^ fontFace, UINT16 glyphIndicie)
+Platform::String^ NativeInterop::GetPathData(DWriteFontFace^ fontFace, UINT16 glyphIndicie)
 {
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-	ComPtr<IDWriteFontFace3> face;
-	faceRef->CreateFontFace(&face);
+	ComPtr<IDWriteFontFace3> face = fontFace->GetFontFace();
 
 	uint16 indicies[1];
 	indicies[0] = glyphIndicie;
@@ -152,15 +157,13 @@ Platform::String^ NativeInterop::GetPathData(CanvasFontFace^ fontFace, UINT16 gl
 	geom->Stream(sink.Get());
 	sink->Close();
 
+	delete[] indicies;
 	return sink->GetPathData();
 }
 
-IVectorView<PathData^>^ NativeInterop::GetPathDatas(CanvasFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies)
+IVectorView<PathData^>^ NativeInterop::GetPathDatas(DWriteFontFace^ fontFace, const Platform::Array<UINT16>^ glyphIndicies)
 {
-	ComPtr<IDWriteFontFaceReference> faceRef = GetWrappedResource<IDWriteFontFaceReference>(fontFace);
-	ComPtr<IDWriteFontFace3> face;
-	faceRef->CreateFontFace(&face);
-
+	ComPtr<IDWriteFontFace3> face = fontFace->GetFontFace();
 	Vector<PathData^>^ paths = ref new Vector<PathData^>();
 
 	for (int i = 0; i < glyphIndicies->Length; i++)
@@ -209,6 +212,7 @@ IVectorView<PathData^>^ NativeInterop::GetPathDatas(CanvasFontFace^ fontFace, co
 
 		sink->Close();
 
+		delete[] indicies;
 		sink = nullptr;
 		geometrySink = nullptr;
 		geom = nullptr;
@@ -262,4 +266,37 @@ CanvasTextLayoutAnalysis^ NativeInterop::AnalyzeCharacterLayout(CanvasTextLayout
 
 	ana = nullptr;
 	return analysis;
+}
+
+byte* GetPointerToPixelData(IBuffer^ pixelBuffer, unsigned int* length)
+{
+	if (length != nullptr)
+	{
+		*length = pixelBuffer->Length;
+	}
+	// Query the IBufferByteAccess interface.  
+	Microsoft::WRL::ComPtr<IBufferByteAccess> bufferByteAccess;
+	reinterpret_cast<IInspectable*>(pixelBuffer)->QueryInterface(IID_PPV_ARGS(&bufferByteAccess));
+
+	// Retrieve the buffer data.  
+	byte* pixels = nullptr;
+	bufferByteAccess->Buffer(&pixels);
+	return pixels;
+}
+
+
+
+IAsyncOperation<bool>^ NativeInterop::UnpackWOFF2Async(IBuffer^ buffer, IOutputStream^ stream)
+{
+	// 1. Unpack the WOFF2 data
+	unsigned int length;
+	auto bytes = GetPointerToPixelData(buffer, &length);
+	ComPtr<IDWriteFactory7> factory = m_fontManager->GetIsolatedFactory();
+	ComPtr<IDWriteFontFileStream> fileStream;
+	auto result = factory->UnpackFontFile(DWRITE_CONTAINER_TYPE_WOFF2, bytes, length, &fileStream);
+
+	if (result != S_OK)
+		return create_async([] { return task_from_result(false); });
+	else
+		return DirectWrite::SaveFontStreamAsync(fileStream, stream);
 }

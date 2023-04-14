@@ -7,6 +7,7 @@
 #include <collection.h>
 #include "DWriteFontSet.h"
 #include "DWriteFontAxis.h"
+#include "DWriteFontFace.h"
 #include "DWriteKnownFontAxisValues.h"
 
 using namespace Microsoft::Graphics::Canvas::Text;
@@ -24,9 +25,9 @@ namespace CharacterMapCX
 	{
 	public:
 
-		static IVectorView<DWriteFontAxis^>^ GetAxis(CanvasFontFace^ canvasFontFace);
+		static IVectorView<DWriteFontAxis^>^ GetAxis(DWriteFontFace^ canvasFontFace);
 
-		static IVectorView<DWriteKnownFontAxisValues^>^ GetNamedAxisValues(CanvasFontFace^ canvasFontFace);
+		static IVectorView<DWriteKnownFontAxisValues^>^ GetNamedAxisValues(DWriteFontFace^ canvasFontFace);
 
 		static String^ GetFeatureTag(UINT32 value);
 
@@ -37,7 +38,7 @@ namespace CharacterMapCX
 		/// <summary>
 		/// Get a buffer representing an SVG or Bitmap image glyph. SVG glyphs may be compressed.
 		/// </summary>
-		static IBuffer^ GetImageDataBuffer(CanvasFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format);
+		static IBuffer^ GetImageDataBuffer(DWriteFontFace^ fontFace, UINT32 pixelsPerEm, UINT unicodeIndex, GlyphImageFormat format);
 
 		/// <summary>
 		/// Verifies if a font file actually contains a font(s) usable by the system.
@@ -47,23 +48,21 @@ namespace CharacterMapCX
 		/// <summary>
 		/// Verifies if a font is actually completely on a users system. Some cloud fonts may only be partially downloaded.
 		/// </summary>
-		static bool IsFontLocal(CanvasFontFace^ fontFace);
+		static bool IsFontLocal(DWriteFontFace^ fontFace);
 
 		/// <summary>
 		/// Writes the underlying source file of a FontFace to a stream. 
 		/// </summary>
-		static IAsyncOperation<bool>^ WriteToStreamAsync(CanvasFontFace^ fontFace, IOutputStream^ stream);
+		static IAsyncOperation<bool>^ WriteToStreamAsync(DWriteFontFace^ fontFace, IOutputStream^ stream);
 
-		static __inline DWriteFontSet^ GetFonts(Uri^ uri);
-
-		static IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
+		//static Platform::String^ GetFileName(CanvasFontFace^ fontFace);
 
 		/// <summary>
 		/// Attempts to get the source filename of a font. Will return NULL for cloud fonts.
 		/// </summary>
-		static Platform::String^ GetFileName(CanvasFontFace^ fontFace);
+		static Platform::String^ GetFileName(DWriteFontFace^ fontFace);
 
-		static IMapView<UINT32, UINT32>^ GetSupportedTypography(CanvasFontFace^ fontFace);
+		static IMapView<UINT32, UINT32>^ GetSupportedTypography(DWriteFontFace^ fontFace);
 
 	internal:
 		static __inline String^ GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale);
@@ -76,12 +75,15 @@ namespace CharacterMapCX
 
 		static IMapView<UINT32, UINT32>^ GetSupportedTypography(ComPtr<IDWriteFontFaceReference> faceRef);
 
-		static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
+		//static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
 
-		static __inline DWriteProperties^ GetDWriteProperties(ComPtr<IDWriteFontSet3> fontSet, UINT index, ComPtr<IDWriteFontFaceReference1> faceRef, int ls, wchar_t* locale);
+		static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontCollection3> fontSet);
 
-		static __inline DWriteProperties^ GetDWriteProperties(CanvasFontSet^ fontSet, UINT index);
+		static __inline DWriteFontSet^ GetFonts(Uri^ uri, ComPtr<IDWriteFactory7> fac);
 
+		static IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris, ComPtr<IDWriteFactory7> fac);
+
+		static IAsyncOperation<bool>^ SaveFontStreamAsync(ComPtr<IDWriteFontFileStream> fileStream, IOutputStream^ stream);
 
 	private:
 		DirectWrite() { };

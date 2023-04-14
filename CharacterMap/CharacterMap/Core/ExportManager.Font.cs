@@ -23,7 +23,7 @@ namespace CharacterMap.Core
         {
             var scheme = ResourceHelper.AppSettings.ExportNamingScheme;
 
-            if (DirectWrite.IsFontLocal(variant.FontFace))
+            if (DirectWrite.IsFontLocal(variant.Face))
             {
                 string filePath = GetFileName(variant, scheme);
                 string name = Path.GetFileNameWithoutExtension(filePath);
@@ -66,12 +66,12 @@ namespace CharacterMap.Core
                     using ZipArchive z = new(i, ZipArchiveMode.Create);
                     foreach (var font in fonts)
                     {
-                        if (DirectWrite.IsFontLocal(font.FontFace))
+                        if (DirectWrite.IsFontLocal(font.Face))
                         {
                             string fileName = GetFileName(font, scheme);
                             ZipArchiveEntry entry = z.CreateEntry(fileName);
                             using IOutputStream s = entry.Open().AsOutputStream();
-                            await DirectWrite.WriteToStreamAsync(font.FontFace, s);
+                            await DirectWrite.WriteToStreamAsync(font.Face, s);
                         }
                     }
 
@@ -98,7 +98,7 @@ namespace CharacterMap.Core
 
                     foreach (var font in fonts)
                     {
-                        if (DirectWrite.IsFontLocal(font.FontFace))
+                        if (DirectWrite.IsFontLocal(font.Face))
                         {
                             string fileName = GetFileName(font, scheme);
                             StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
@@ -119,7 +119,7 @@ namespace CharacterMap.Core
                 s.Size = 0;
 
                 using IOutputStream o = s.GetOutputStreamAt(0);
-                await DirectWrite.WriteToStreamAsync(font.FontFace, o).AsTask().ConfigureAwait(false);
+                await DirectWrite.WriteToStreamAsync(font.Face, o).AsTask().ConfigureAwait(false);
                 await s.FlushAsync(); // using statements force synchronous flushes
                 return true;
             }
@@ -133,7 +133,7 @@ namespace CharacterMap.Core
             string fileName = null;
             string ext = ".ttf";
 
-            var src = DirectWrite.GetFileName(font.FontFace);
+            var src = DirectWrite.GetFileName(font.Face);
             if (!string.IsNullOrWhiteSpace(src))
             {
                 var strsrc = Path.GetExtension(src);

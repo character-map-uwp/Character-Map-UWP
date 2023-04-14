@@ -33,6 +33,14 @@ namespace CharacterMap.Helpers
             return axis.Select(a => a.WithValue(a.AxisDefault)).ToList();
         }
 
+        public static List<List<T>> Split<T>(this IReadOnlyCollection<T> source, int length)
+        {
+            return Enumerable
+                .Range(0, (source.Count + length - 1) / length)
+                .Select(n => source.Skip(n * length).Take(length).ToList())
+                .ToList();
+        }
+
         public static void AddSorted<T>(this IList<T> list, T item, IComparer<T> comparer = null)
         {
             if (comparer == null)

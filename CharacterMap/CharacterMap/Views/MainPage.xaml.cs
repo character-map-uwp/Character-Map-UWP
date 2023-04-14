@@ -48,6 +48,8 @@ namespace CharacterMap.Views
 
         private ICommand CollectionSelectedCommand { get; }
 
+        private object _blockRefreshScroll = null;
+
         public MainPage() : this(null) { }
 
         public MainPage(MainViewModelArgs args)
@@ -315,13 +317,19 @@ namespace CharacterMap.Views
 
         void StartScrollSelectedIntoView()
         {
+            object target = _blockRefreshScroll;
+            _blockRefreshScroll = null;
+
             _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
                 await Task.Delay(50);
-                if (LstFontFamily.SelectedItem is not null)
+                if (target is null)
+                    target = LstFontFamily.SelectedItem;
+
+                if (target is not null)
                 {
                     LstFontFamily.ScrollIntoView(
-                        LstFontFamily.SelectedItem, ScrollIntoViewAlignment.Leading);
+                        target, ScrollIntoViewAlignment.Leading);
                 }
             });
         }
@@ -670,6 +678,7 @@ namespace CharacterMap.Views
                         new () { 
                             Folder = ViewModel.Folder, 
                             PreviewText = FontMap.ViewModel.Sequence,
+                            AddToCollectionCommand = () => { _blockRefreshScroll = font; }
                         });
 
                 args.TryGetPosition(sender, out Point pos);

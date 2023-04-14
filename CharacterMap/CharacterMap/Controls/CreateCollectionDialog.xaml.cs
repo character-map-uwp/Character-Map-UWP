@@ -99,13 +99,11 @@ namespace CharacterMap.Controls
                     result = await collections.AddToCollectionAsync(font, collection);
                 else if (this.DataContext is IList<InstalledFont> fonts)
                     result = await collections.AddToCollectionAsync(fonts, collection);
-                else
-                    throw new InvalidOperationException($"Can't add {this.DataContext.GetType()} to collection");
 
                 Result = result;
                 d.Complete();
                 await Task.Yield();
-                if (result.Success)
+                if (result is not null && result.Success)
                     WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
 
             }

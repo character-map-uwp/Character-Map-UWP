@@ -166,7 +166,7 @@ namespace CharacterMap.Core
                 // Try to find the bounding box of all glyph layers combined
                 foreach (var thing in options.Analysis.Indicies)
                 {
-                    var path = interop.GetPathDatas(options.Variant.FontFace, thing.ToArray()).First();
+                    var path = interop.GetPathDatas(options.Variant.Face, thing.ToArray()).First();
                     paths.Add(path.Path);
 
                     if (!path.Bounds.IsEmpty)
@@ -205,7 +205,7 @@ namespace CharacterMap.Core
             if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
             {
                 string str = null;
-                IBuffer b = GetGlyphBuffer(options.Variant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Svg);
+                IBuffer b = GetGlyphBuffer(options.Variant.Face, selectedChar.UnicodeIndex, GlyphImageFormat.Svg);
 
                 // If the SVG glyph is compressed we need to decompress it
                 if (b.Length > 2 && b.GetByte(0) == 31 && b.GetByte(1) == 139)
@@ -412,7 +412,7 @@ namespace CharacterMap.Core
                     //        Find a test PNG font with typography
                     if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
                     {
-                        IBuffer buffer = GetGlyphBuffer(options.Variant.FontFace, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
+                        IBuffer buffer = GetGlyphBuffer(options.Variant.Face, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
                         await FileIO.WriteBufferAsync(file, buffer);
                     }
                     else
@@ -460,13 +460,13 @@ namespace CharacterMap.Core
             ExportStyle style,
             float canvasSize)
         {
-            var layout = new CanvasTextLayout(Utils.CanvasDevice, $"{character}", new()
+            CanvasTextLayout layout = new (Utils.CanvasDevice, $"{character}", new()
             {
                 FontSize = options.FontSize,
                 FontFamily = options.Variant.Source,
-                FontStretch = options.Variant.FontFace.Stretch,
-                FontWeight = options.Variant.FontFace.Weight,
-                FontStyle = options.Variant.FontFace.Style,
+                FontStretch = options.Variant.DirectWriteProperties.Stretch,
+                FontWeight = options.Variant.DirectWriteProperties.Weight,
+                FontStyle = options.Variant.DirectWriteProperties.Style,
                 HorizontalAlignment = CanvasHorizontalAlignment.Center,
                 Options = style == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
             }, canvasSize, canvasSize);
@@ -478,7 +478,7 @@ namespace CharacterMap.Core
 
             return layout;
         }
-        private static IBuffer GetGlyphBuffer(CanvasFontFace fontface, uint unicodeIndex, GlyphImageFormat format)
+        private static IBuffer GetGlyphBuffer(DWriteFontFace fontface, uint unicodeIndex, GlyphImageFormat format)
         {
             return DirectWrite.GetImageDataBuffer(fontface, 1024, unicodeIndex, format);
         }

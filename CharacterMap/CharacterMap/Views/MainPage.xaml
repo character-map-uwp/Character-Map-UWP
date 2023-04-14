@@ -498,6 +498,7 @@
                             core:Properties.PointerAnimationOffset="2"
                             core:Properties.PointerOverAnimation="DropDownGlyph"
                             core:Properties.SupportAnimatedIcon="False"
+                            IsEnabled="{x:Bind ViewModel.CanFilter, Mode=OneWay}"
                             Style="{StaticResource TransparentHintButton}"
                             ToolTipService.Placement="Bottom"
                             Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsSecondaryView)}">
@@ -720,6 +721,7 @@
                             Grid.Row="2"
                             Margin="0 6 0 0"
                             core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                            IsEnabled="{x:Bind ViewModel.CanFilter, Mode=OneWay}"
                             Text="{Binding FontSearch, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                             TextBoxStyle="{StaticResource FontAutoSuggestBoxTextBoxStyle}" />
 

@@ -732,7 +732,7 @@
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
-                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedVariant.FontFace}"
+                            ItemFontFace="{x:Bind _fontMap.ViewModel.SelectedVariant.Face}"
                             ItemFontFamily="{x:Bind _fontMap.ViewModel.FontFamily}"
                             ItemSize="{x:Bind _fontMap.CharGrid.ItemSize}"
                             ItemTemplate="{x:Bind _fontMap.CharGrid.ItemTemplate}"

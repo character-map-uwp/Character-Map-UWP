@@ -253,8 +253,20 @@ namespace CharacterMap.Services
             if (MainWindow != null)
                 t.Add(MainWindow.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask());
 
-            t.AddRange(_childWindows.Select(w => w.Value.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask()));
+            List<Task> tasks = new();
+            foreach (var window in _childWindows.ToList())
+            {
+                try
+                {
+                    tasks.Add(window.Value.CoreView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, a).AsTask());
+                }
+                catch (Exception ex)
+                { 
+                    _childWindows.Remove(window.Key);
+                }
+            }
 
+            t.AddRange(tasks);
             return Task.WhenAll(t);
         }
     }

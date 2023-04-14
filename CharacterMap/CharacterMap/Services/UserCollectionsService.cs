@@ -1,7 +1,10 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Provider;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,8 +15,15 @@ namespace CharacterMap.Services
 {
     public interface ICollectionProvider
     {
+        Task  StoreMigrationAsync(List<UserFontCollection> collections);
+        /// <summary>
+        /// Returns an ordered List of collection
+        /// </summary>
+        /// <returns></returns>
         Task<List<UserFontCollection>> LoadCollectionsAsync();
         Task SaveCollectionAsync(UserFontCollection collection);
+        Task<bool> DeleteCollectionAsync(UserFontCollection collection);
+        Task FlushAsync();
     }
 
     public class UserCollectionsService
@@ -27,72 +37,47 @@ namespace CharacterMap.Services
 
         public List<UserFontCollection> Items { get; private set; } = new ();
 
-        private StorageFolder _collectionsFolder;
+        private ICollectionProvider _provider { get; }
+
+        public UserCollectionsService()
+        {
+            _provider = new SQLiteCollectionProvider();
+        }
 
         public bool IsSymbolFont(InstalledFont font)
         {
             return font != null && (font.IsSymbolFont || SymbolCollection.Fonts.Contains(font.Name));
         }
 
+        public Task FlushAsync()
+        {
+            return _provider.FlushAsync();
+        }
+
         public async Task LoadCollectionsAsync()
         {
-            List<UserFontCollection> collections = new ();
-
             if (Items.Count > 0)
                 return;
 
+            if (ResourceHelper.AppSettings.HasSQLiteCollections is false)
+                await UpgradeToSQLiteAsync().ConfigureAwait(false);
+
+            List<UserFontCollection> collections = new();
+
             await Task.Run(async () =>
             {
-                var folder = _collectionsFolder = await GetCollectionsFolderAsync().AsTask().ConfigureAwait(false);
-                var files = await folder.GetFilesAsync().AsTask().ConfigureAwait(false);
-
-                var tasks = files.Select(file =>
+                var cols = await _provider.LoadCollectionsAsync().ConfigureAwait(false);
+                foreach (var c in cols)
                 {
-                    return Task.Run(async () =>
-                    {
-                        try
-                        {
-                            UserFontCollection collection;
-                            if (file.FileType == ".json")
-                                collection = await ConvertFromLegacyFormatAsync(file, folder).ConfigureAwait(false);
-                            else
-                                collection = await LoadCollectionAsync(file).ConfigureAwait(false);
-
-                            return collection;
-                        }
-                        catch
-                        {
-                            // Possibly corrupted. What to do? Delete file?
-                            return null;
-                        }
-                    });
-                }).ToList();
-
-                await Task.WhenAll(tasks).ConfigureAwait(false);
-
-                foreach (var task in tasks)
-                {
-                    if (task.Result is UserFontCollection collection)
-                    {
-                        if (collection.File.DisplayName != "Symbol")
-                        {
-                            collections.Add(collection);
-                        }
-                        else
-                        {
-                            SymbolCollection = collection;
-                        }
-                    }
+                    if (c.Name == "Symbol")
+                        SymbolCollection = c;
+                    else
+                        collections.Add(c);
                 }
 
                 if (SymbolCollection == null)
-                {
-                    SymbolCollection = await CreateCollectionAsync("Symbol", "Symbol").ConfigureAwait(false);
-                }
-
-                collections = collections.OrderBy(c => c.Name).ToList();
+                    SymbolCollection = await CreateCollectionAsync("Symbol", true).ConfigureAwait(false);
             });
-
 
             Items.Clear();
             Items.AddRange(collections);
@@ -103,15 +88,15 @@ namespace CharacterMap.Services
             return Items.FirstOrDefault(i => string.CompareOrdinal(i.Name, name) > 0);
         }
 
-        public async Task<UserFontCollection> CreateCollectionAsync(string name, string fileName = null)
+        public async Task<UserFontCollection> CreateCollectionAsync(string name, bool symbol = false)
         {
-            var file = await _collectionsFolder.CreateFileAsync(
-                $"{fileName ?? Guid.NewGuid().ToString()}", CreationCollisionOption.GenerateUniqueName).AsTask().ConfigureAwait(false);
+            if (!symbol && name == "Symbol")
+                name = "My Symbols";
 
-            UserFontCollection collection = new() { Name = name, File = file };
+            UserFontCollection collection = new() { Name = name };
             await SaveCollectionAsync(collection).ConfigureAwait(false);
 
-            if (fileName == null)
+            if (!symbol)
             {
                 Items.Add(collection);
                 Items = Items.OrderBy(i => i.Name).ToList();
@@ -122,8 +107,8 @@ namespace CharacterMap.Services
 
         public async Task DeleteCollectionAsync(UserFontCollection collection)
         {
-            await collection.File.DeleteAsync().AsTask().ConfigureAwait(false);
-            Items.Remove(collection);
+            if (await _provider.DeleteCollectionAsync(collection))
+                Items.Remove(collection);
         }
 
         public async Task RenameCollectionAsync(string name, UserFontCollection collection)
@@ -135,19 +120,7 @@ namespace CharacterMap.Services
 
         public Task SaveCollectionAsync(UserFontCollection collection)
         {
-            return Task.Run(async () =>
-            {
-                using var stream = await collection.File.OpenStreamForWriteAsync().ConfigureAwait(false);
-                using var reader = new StreamWriter(stream);
-                stream.SetLength(0);
-                reader.Write(collection.Name);
-                foreach (var item in collection.Fonts)
-                {
-                    reader.WriteLine();
-                    reader.Write(item);
-                }
-            });
-
+            return _provider.SaveCollectionAsync(collection);
         }
 
         public Task<AddToCollectionResult> AddToCollectionAsync(InstalledFont font, UserFontCollection collection)
@@ -155,22 +128,20 @@ namespace CharacterMap.Services
             return AddToCollectionAsync(new List<InstalledFont> { font }, collection);
         }
 
-        public async Task<AddToCollectionResult> AddToCollectionAsync(IList<InstalledFont> fonts, UserFontCollection collection)
+        public async Task<AddToCollectionResult> AddToCollectionAsync(IList<InstalledFont> fonts, UserFontCollection collection, Action onChanged = null)
         {
             bool changed = false;
 
             foreach (var font in fonts)
             {
-                if (font is null || !collection.Fonts.Contains(font.Name))
-                {
-                    if (font is not null && collection.Fonts.Add(font.Name))
-                        changed = true;
-                }
+                if (font is not null && collection.Fonts.Add(font.Name))
+                    changed = true;
             }
 
             if (changed)
             {
                 await SaveCollectionAsync(collection);
+                onChanged?.Invoke();
                 return new AddToCollectionResult(true, fonts, collection);
             }
 
@@ -207,12 +178,23 @@ namespace CharacterMap.Services
             }
         }
 
+
+
+
+        //------------------------------------------------------
+        //
+        // Legacy Format Conversions
+        //
+        //------------------------------------------------------
+
+        [Obsolete]
         private IAsyncOperation<StorageFolder> GetCollectionsFolderAsync()
         {
             return ApplicationData.Current.LocalCacheFolder.CreateFolderAsync("Collections", CreationCollisionOption.OpenIfExists);
         }
 
-        private async Task<UserFontCollection> LoadCollectionAsync(StorageFile file)
+        [Obsolete]
+        private async Task<UserFontCollection> LoadFileCollectionAsync(StorageFile file)
         {
             string name;
             HashSet<string> items = new ();
@@ -225,17 +207,57 @@ namespace CharacterMap.Services
                     items.Add(reader.ReadLine());
             }
 
-            return new UserFontCollection { File = file, Fonts = items, Name = name };
+            return new UserFontCollection { Fonts = items, Name = name };
         }
 
+        private async Task UpgradeToSQLiteAsync()
+        {
+            List<UserFontCollection> collections = new();
 
+            // 1. Load Existing collections
+            await Task.Run(async () =>
+            {
+                var folder = await GetCollectionsFolderAsync().AsTask().ConfigureAwait(false);
+                var files = await folder.GetFilesAsync().AsTask().ConfigureAwait(false);
 
+                if (files.Any())
+                {
+                    var tasks = files.Select(file =>
+                    {
+                        return Task.Run(async () =>
+                        {
+                            try
+                            {
+                                UserFontCollection collection;
+                                if (file.FileType == ".json")
+                                    collection = await ConvertFromLegacyFormatAsync(file, folder).ConfigureAwait(false);
+                                else
+                                    collection = await LoadFileCollectionAsync(file).ConfigureAwait(false);
 
-        //------------------------------------------------------
-        //
-        // Legacy Format Conversions
-        //
-        //------------------------------------------------------
+                                return collection;
+                            }
+                            catch
+                            {
+                                // Possibly corrupted. What to do? Delete file?
+                                return null;
+                            }
+                            finally
+                            {
+                                await file.DeleteAsync(StorageDeleteOption.PermanentDelete).AsTask().ConfigureAwait(false);
+                            }
+                        });
+                    }).ToList();
+
+                    await Task.WhenAll(tasks).ConfigureAwait(false);
+
+                    collections = tasks.Select(t => t.Result).Where(t => t != null).OrderBy(c => c.Name).ToList();
+                }
+
+                await _provider.StoreMigrationAsync(collections);
+            });
+
+            
+        }
 
         private async Task<UserFontCollection> ConvertFromLegacyFormatAsync(StorageFile file, StorageFolder folder)
         {
@@ -281,9 +303,8 @@ namespace CharacterMap.Services
                 }
             }
 
-            var collection = new UserFontCollection { File = file, Fonts = items, Name = name };
+            var collection = new UserFontCollection { Fonts = items, Name = name };
             var newFile = await folder.CreateFileAsync(file.DisplayName, CreationCollisionOption.OpenIfExists).AsTask().ConfigureAwait(false);
-            collection.File = newFile;
             await SaveCollectionAsync(collection).ConfigureAwait(false);
             await file.DeleteAsync().AsTask().ConfigureAwait(false);
             return collection;

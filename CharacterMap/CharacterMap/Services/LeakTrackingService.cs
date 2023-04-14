@@ -43,6 +43,7 @@ namespace CharacterMap.Services
 
         static void TryActivate()
         {
+            return;
             if (_isActive)
                 return;
 

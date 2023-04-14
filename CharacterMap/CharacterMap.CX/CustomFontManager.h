@@ -40,11 +40,10 @@ namespace CharacterMapCX {
     
     public:
         CustomFontManager(ComPtr<IDWriteFactory7> sharedFactory);
-    
         ComPtr<IDWriteFontCollection3> GetFontCollectionFromFile(StorageFile^ file);
+        ComPtr<IDWriteFactory7> const& GetIsolatedFactory();
     
     private:
-        ComPtr<IDWriteFactory7> const& GetIsolatedFactory();
     
         __inline ComPtr<IDWriteFontCollection3> GetFontCollectionFromPath(Platform::String^ path);
     };

@@ -15,7 +15,7 @@ namespace CharacterMap.Core
     public partial class FontVariant : IDisposable
     {
         /* Using a character cache avoids a lot of unnecessary allocations */
-        private static Dictionary<int, Character> _characters { get; } = new Dictionary<int, Character>();
+        private static Dictionary<int, Character> _characters { get; } = new ();
 
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
@@ -51,7 +51,7 @@ namespace CharacterMap.Core
 
         public bool HasXamlTypographyFeatures => XamlTypographyFeatures.Count > 0;
 
-        public CanvasFontFace FontFace { get; private set; }
+        public CanvasFontFace FontFace => Face.FontFace;
 
         public string PreferredName { get; private set; }
 
@@ -65,9 +65,10 @@ namespace CharacterMap.Core
 
         public string FamilyName { get; }
 
-        public CanvasUnicodeRange[] UnicodeRanges => FontFace.UnicodeRanges;
+        public CanvasUnicodeRange[] UnicodeRanges => Face.GetUnicodeRanges();
 
-        public Panose Panose { get; }
+        private Panose _panose = null;
+        public Panose Panose => _panose ??= PanoseParser.Parse(Face.Properties);
 
         public DWriteProperties DirectWriteProperties { get; }
 
@@ -90,9 +91,12 @@ namespace CharacterMap.Core
         public string XamlFontSource =>
             (IsImported ? $"/Assets/Fonts/{FileName}#{FamilyName}" : Source);
 
-        public FontVariant(CanvasFontFace face, StorageFile file, DWriteProperties dwProps)
+        public DWriteFontFace Face { get; }
+
+        public FontVariant(DWriteFontFace face, StorageFile file)
         {
-            FontFace = face;
+            DWriteProperties dwProps = face.Properties;
+            Face = face;
             FamilyName = dwProps.FamilyName;
 
             if (file != null)
@@ -112,7 +116,6 @@ namespace CharacterMap.Core
 
             DirectWriteProperties = dwProps;
             PreferredName = name;
-            Panose = PanoseParser.Parse(face);
         }
 
         public string GetProviderName()
@@ -131,7 +134,7 @@ namespace CharacterMap.Core
             if (Characters == null)
             {
                 List<Character> characters = new ();
-                foreach (var range in FontFace.UnicodeRanges)
+                foreach (var range in UnicodeRanges)
                 {
                     CharacterHash += range.First;
                     CharacterHash += range.Last;
@@ -156,8 +159,7 @@ namespace CharacterMap.Core
 
         public int GetGlyphIndex(Character c)
         {
-            int[] results = FontFace.GetGlyphIndices(new uint[] { c.UnicodeIndex });
-            return results[0];
+            return Face.GetGlyphIndice(c.UnicodeIndex);
         }
 
         public uint[] GetGlyphUnicodeIndexes()
@@ -172,7 +174,7 @@ namespace CharacterMap.Core
 
         public string TryGetSampleText()
         {
-            return GetInfoKey(FontFace, CanvasFontInformation.SampleText).Value;
+            return GetInfoKey(Face, CanvasFontInformation.SampleText).Value;
         }
 
         private void LoadTypographyFeatures()
@@ -205,14 +207,14 @@ namespace CharacterMap.Core
             //    return KeyValuePair.Create(name, infos.First().Value);
             //}
 
-            return INFORMATIONS.Select(i => GetInfoKey(FontFace, i)).Where(s => s.Key != null).ToList();
+            return INFORMATIONS.Select(i => GetInfoKey(Face, i)).Where(s => s.Key != null).ToList();
         }
 
-        private static KeyValuePair<string, string> GetInfoKey(CanvasFontFace fontFace, CanvasFontInformation info)
+        private static KeyValuePair<string, string> GetInfoKey(DWriteFontFace fontFace, CanvasFontInformation info)
         {
             var infos = fontFace.GetInformationalStrings(info);
             if (infos.Count == 0)
-                return new KeyValuePair<string, string>();
+                return new();
 
             var name = info.Humanise();
             var dic = infos.ToDictionary(k => k.Key, k => k.Value);
@@ -246,8 +248,8 @@ namespace CharacterMap.Core
 
         public void Dispose()
         {
-            FontFace.Dispose();
-            FontFace = null;
+            FontFace?.Dispose();
+            //FontFace = null;
         }
 
         public override string ToString()
@@ -259,9 +261,9 @@ namespace CharacterMap.Core
 
     public partial class FontVariant
     {
-        public static FontVariant CreateDefault(CanvasFontFace face)
+        public static FontVariant CreateDefault(DWriteFontFace face)
         {
-            return new FontVariant(face, null, DWriteProperties.CreateDefault())
+            return new FontVariant(face, null)
             {
                 PreferredName = "",
                 Characters = new List<Character>

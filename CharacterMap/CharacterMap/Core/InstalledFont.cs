@@ -15,9 +15,7 @@ namespace CharacterMap.Core
 
         public string Name { get; }
 
-        public CanvasFontFace FontFace { get; private set; }
-
-        public bool IsSymbolFont { get; private set; }
+        public bool IsSymbolFont => _variants[0].DirectWriteProperties.IsSymbolFont;
 
         public IList<FontVariant> Variants => _variants;
 
@@ -28,13 +26,11 @@ namespace CharacterMap.Core
         private InstalledFont(string name)
         {
             Name = name;
-            _variants = new List<FontVariant>();
+            _variants = new ();
         }
 
         public InstalledFont(string name, DWriteFontFace face, StorageFile file = null) : this(name)
         {
-            IsSymbolFont = face.FontFace.IsSymbolFont;
-            FontFace = face.FontFace;
             AddVariant(face, file);
         }
 
@@ -42,38 +38,35 @@ namespace CharacterMap.Core
         {
             get
             {
-                return Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal && v.FontFace.Stretch == FontStretch.Normal) 
-                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Style == FontStyle.Normal)
-                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight && v.FontFace.Stretch == FontStretch.Normal)
-                    ?? Variants.FirstOrDefault(v => v.FontFace.Weight.Weight == FontWeights.Normal.Weight)
+                return Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal && v.DirectWriteProperties.Stretch == FontStretch.Normal) 
+                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal)
+                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Stretch == FontStretch.Normal)
+                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight)
                     ?? Variants[0];
             }
         }
 
         public void AddVariant(DWriteFontFace fontFace, StorageFile file = null)
         {
-            _variants.Add(new FontVariant(fontFace.FontFace, file, fontFace.Properties));
-
+            _variants.Add(new (fontFace, file));
             if (file != null)
                 HasImportedFiles = true;
         }
 
         public void SortVariants()
         {
-            _variants = _variants.OrderBy(v => v.FontFace.Weight.Weight).ToList();
+            _variants = _variants.OrderBy(v => v.DirectWriteProperties.Weight.Weight).ToList();
         }
 
         public void PrepareForDelete()
         {
-            FontFace = null;
+            //FontFace = null;
         }
 
         public InstalledFont Clone()
         {
             return new InstalledFont(this.Name)
             {
-                FontFace = this.FontFace,
-                IsSymbolFont = this.IsSymbolFont,
                 _variants = this._variants.ToList(),
                 HasImportedFiles = this.HasImportedFiles
             };
@@ -82,8 +75,7 @@ namespace CharacterMap.Core
         public static InstalledFont CreateDefault(DWriteFontFace face)
         {
             var font = new InstalledFont("");
-            font.FontFace = face.FontFace;
-            font._variants.Add(FontVariant.CreateDefault(face.FontFace));
+            font._variants.Add(FontVariant.CreateDefault(face));
             return font;
         }
 
@@ -110,7 +102,6 @@ namespace CharacterMap.Core
         {
             int hashCode = -1425556920;
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<CanvasFontFace>.Default.GetHashCode(FontFace);
             hashCode = hashCode * -1521134295 + EqualityComparer<IList<FontVariant>>.Default.GetHashCode(Variants);
             hashCode = hashCode * -1521134295 + HasImportedFiles.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<FontVariant>.Default.GetHashCode(DefaultVariant);

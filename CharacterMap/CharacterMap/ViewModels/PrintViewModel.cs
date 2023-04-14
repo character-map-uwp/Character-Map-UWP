@@ -152,7 +152,7 @@ namespace CharacterMap.ViewModels
                 Annotation = GlyphAnnotation.None,
                 Typography = Typography,
                 FontFamily = FontFamily,
-                FontFace = Font.FontFace
+                FontFace = Font.Face
             };
         }
 

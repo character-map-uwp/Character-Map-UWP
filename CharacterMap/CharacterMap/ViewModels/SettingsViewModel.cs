@@ -109,7 +109,10 @@ namespace CharacterMap.ViewModels
             // application, rather than things like bug-fixes or visual changes.
             return new()
             {
-                new("Latest Update (Mar 2023)", // March 2023
+                new("Latest Update (April 2023)", // April 2023
+                    "- Added ability to open and import WOFF2 fonts (WOFF2 fonts are converted to OTF during import)\n" +
+                    "- Added font PANOSE information to Font Properties flyout"),
+                new("2023.2.4.0 (Mar 2023)", // March 2023
                     "- Add ability to add default preview strings for Type Ramp view and Compare window through the context menu on the suggestion box or inside Settings view"),
                 new("2023.1.2.0 (Jan 2023)", // Jan 2023
                     "- Added tabbed interface support to the Windows 11 theme\n" +

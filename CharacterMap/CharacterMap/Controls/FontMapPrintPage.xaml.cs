@@ -81,7 +81,7 @@ namespace CharacterMap.Controls
                 this.FindName(nameof(GridLayout));
                 ItemsPanel.ItemTemplate = _gridTemplate;
                 ItemsPanel.EnableResizeAnimation = false;
-                ItemsPanel.ItemFontFace = PrintModel.Font.FontFace;
+                ItemsPanel.ItemFontFace = PrintModel.Font.Face;
                 ItemsPanel.ItemFontFamily = PrintModel.FontFamily;
                 ItemsPanel.ItemTypography = PrintModel.Typography;
                 ItemsPanel.ShowColorGlyphs = PrintModel.ShowColorGlyphs;

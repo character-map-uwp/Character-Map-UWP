@@ -51,6 +51,8 @@ using Sqlite3DatabaseHandle = SQLitePCL.sqlite3;
 using Sqlite3BackupHandle = SQLitePCL.sqlite3_backup;
 using Sqlite3Statement = SQLitePCL.sqlite3_stmt;
 using Sqlite3 = SQLitePCL.raw;
+using CharacterMap.Models;
+using SQLitePCL;
 #else
 using Sqlite3DatabaseHandle = System.IntPtr;
 using Sqlite3BackupHandle = System.IntPtr;
@@ -168,6 +170,8 @@ namespace SQLite
     [Preserve(AllMembers = true)]
     public partial class SQLiteConnection : IDisposable
     {
+        public static ISQLite3Provider Provider { get; } = new SQLitePCL.SQLite3Provider_winsqlite3();
+
         private bool _open;
         private TimeSpan _busyTimeout;
         readonly static Dictionary<string, TableMapping> _mappings = new Dictionary<string, TableMapping>();
@@ -327,9 +331,22 @@ namespace SQLite
         /// by providing better concurrency and better disk IO performance than the normal
         /// jounral mode. You only need to call this function once in the lifetime of the database.
         /// </summary>
-        public void EnableWriteAheadLogging()
+        public SQLiteConnection EnableWriteAheadLogging()
         {
             ExecuteScalar<string>("PRAGMA journal_mode=WAL");
+            return this;
+        }
+
+        public SQLiteConnection SetSynchronousNormal()
+        {
+            ExecuteScalar<string>("PRAGMA synchronous = normal");
+            return this;
+        }
+
+        public SQLiteConnection Vacuum()
+        {
+            Execute("PRAGMA vacuum");
+            return this;
         }
 
         /// <summary>
@@ -2904,6 +2921,29 @@ namespace SQLite
             _conn = conn;
             _bindings = new List<Binding>();
             CommandText = "";
+        }
+
+        /// <summary>
+        /// Query for <see cref="SQLiteFontCollection"/>s  without using reflection
+        /// so we don't require any .NET Native metadata to be included
+        /// </summary>
+        /// <returns></returns>
+        public List<SQLiteFontCollection> AsCollections()
+        {
+            List<SQLiteFontCollection> results = new();
+            var stmt = Prepare();
+
+            while (SQLite3.Step(stmt) == SQLite3.Result.Row)
+            {
+                results.Add(new() 
+                { 
+                    Id = SQLite3.ColumnInt(stmt, 0),
+                    Name = SQLite3.ColumnString(stmt, 1), 
+                    Fonts = SQLite3.ColumnString(stmt, 2)
+                });
+            }
+
+            return results;
         }
 
         public int ExecuteNonQuery()

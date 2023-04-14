@@ -9,6 +9,7 @@
 
 #include "pch.h"
 #include "CustomFontManager.h"
+#include <robuffer.h>
 
 using namespace CharacterMapCX;
 

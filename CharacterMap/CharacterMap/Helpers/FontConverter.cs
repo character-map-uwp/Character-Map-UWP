@@ -7,6 +7,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using WoffToOtf;
 
 namespace CharacterMap.Helpers
@@ -18,7 +19,10 @@ namespace CharacterMap.Helpers
         public static async Task<(StorageFile File, ConversionStatus Result)> TryConvertAsync(
             StorageFile file, StorageFolder targetFolder = null)
         {
-            if (file.FileType.ToLower().EndsWith("woff"))
+            bool isWoff = file.FileType.ToLower().EndsWith("woff");
+            bool isWoff2 = file.FileType.ToLower().EndsWith("woff2");
+
+            if (isWoff || isWoff2)
             {
                 StorageFolder folder = targetFolder ?? ApplicationData.Current.TemporaryFolder;
                 string name = Path.GetFileNameWithoutExtension(file.DisplayName);
@@ -27,7 +31,10 @@ namespace CharacterMap.Helpers
                     name += $"-{_random.Next(1000,100000)}";
 
                 StorageFile newFile = await folder.CreateFileAsync($"{name}.otf", CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
-                ConversionStatus result = await TryConvertWoffToOtfAsync(file, newFile).ConfigureAwait(false);
+                ConversionStatus result = 
+                    isWoff ? await TryConvertWoffToOtfAsync(file, newFile).ConfigureAwait(false)
+                    : await TryConvertToWoff2Async(file, newFile).ConfigureAwait(false);
+
                 if (result == ConversionStatus.OK)
                 {
                     if (DirectWrite.HasValidFonts(GetAppUri(newFile)))
@@ -42,10 +49,32 @@ namespace CharacterMap.Helpers
                 }
             }
 
-            if (file.FileType.ToLower().EndsWith("woff2"))
-                return (default, ConversionStatus.UnsupportedWOFF2);
-
             return (file, ConversionStatus.OK);
+        }
+
+        public static async Task<ConversionStatus> TryConvertToWoff2Async(StorageFile file, StorageFile newFile)
+        {
+            try
+            {
+                IBuffer buffer = null;
+                using (var stream = await file.OpenReadAsync())
+                using (DataReader reader = new DataReader(stream))
+                {
+                    await reader.LoadAsync((uint)stream.Size);
+                    buffer = reader.ReadBuffer(reader.UnconsumedBufferLength);
+                }
+
+                using (var os = await newFile.OpenAsync(FileAccessMode.ReadWrite))
+                {
+                    await Utils.GetInterop().UnpackWOFF2Async(buffer, os);
+                }
+
+                return ConversionStatus.OK;
+            }
+            catch (Exception ex)
+            {
+                return ConversionStatus.UnspecifiedError;
+            }
         }
 
         static Uri GetAppUri(StorageFile file)
