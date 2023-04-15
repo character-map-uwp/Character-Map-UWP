@@ -1569,8 +1569,8 @@ Requires a restart to take effect.</target>
           <target state="new">Open all font files found inside a folder</target>
         </trans-unit>
         <trans-unit id="OpenFontDescription.Text" translate="yes" xml:space="preserve">
-          <source>Open TTF, OTF, OTC, TTC, WOFF or ZIP files</source>
-          <target state="new">Open TTF, OTF, OTC, TTC, WOFF or ZIP files</target>
+          <source>Open TTF, OTF, OTC, TTC, WOFF, WOFF2 or ZIP files</source>
+          <target state="new">Open TTF, OTF, OTC, TTC, WOFF, WOFF2 or ZIP files</target>
         </trans-unit>
         <trans-unit id="SettingsPointerOverAnimation.Description" translate="yes" xml:space="preserve">
           <source>Enables subtle bounce animations when the mouse pointer goes over certains buttons.</source>
@@ -1597,6 +1597,10 @@ Tap and hold to arrange.</target>
         <trans-unit id="SettingsSuggestionTextBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter your suggestion here</source>
           <target state="new">Enter your suggestion here</target>
+        </trans-unit>
+        <trans-unit id="FontPropPanoseTitle.Text" translate="yes" xml:space="preserve">
+          <source>PANOSE Values</source>
+          <target state="new">PANOSE Values</target>
         </trans-unit>
       </group>
     </body>
