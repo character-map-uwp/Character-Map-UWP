@@ -30,7 +30,6 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using static SQLite.SQLite3;
 
 namespace CharacterMap.Views
 {

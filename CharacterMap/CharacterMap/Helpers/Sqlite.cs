@@ -53,6 +53,7 @@ using Sqlite3Statement = SQLitePCL.sqlite3_stmt;
 using Sqlite3 = SQLitePCL.raw;
 using CharacterMap.Models;
 using SQLitePCL;
+using CharacterMap.Services;
 #else
 using Sqlite3DatabaseHandle = System.IntPtr;
 using Sqlite3BackupHandle = System.IntPtr;
@@ -78,15 +79,14 @@ namespace SQLite
         }
     }
 
+
+
     public class NotNullConstraintViolationException : SQLiteException
     {
+#if DEBUG
         public IEnumerable<TableMapping.Column> Columns { get; protected set; }
 
-        protected NotNullConstraintViolationException(SQLite3.Result r, string message)
-            : this(r, message, null, null)
-        {
-
-        }
+      
 
         protected NotNullConstraintViolationException(SQLite3.Result r, string message, TableMapping mapping, object obj)
             : base(r, message)
@@ -98,12 +98,6 @@ namespace SQLite
                                select c;
             }
         }
-
-        public static new NotNullConstraintViolationException New(SQLite3.Result r, string message)
-        {
-            return new NotNullConstraintViolationException(r, message);
-        }
-
         public static NotNullConstraintViolationException New(SQLite3.Result r, string message, TableMapping mapping, object obj)
         {
             return new NotNullConstraintViolationException(r, message, mapping, obj);
@@ -113,7 +107,20 @@ namespace SQLite
         {
             return new NotNullConstraintViolationException(exception.Result, exception.Message, mapping, obj);
         }
+#endif
+        protected NotNullConstraintViolationException(SQLite3.Result r, string message)
+          : base(r, message)
+        {
+
+        }
+
+        public static new NotNullConstraintViolationException New(SQLite3.Result r, string message)
+        {
+            return new NotNullConstraintViolationException(r, message);
+        }
+
     }
+
 
     [Flags]
     public enum SQLiteOpenFlags
@@ -167,14 +174,18 @@ namespace SQLite
     /// <summary>
     /// An open connection to a SQLite database.
     /// </summary>
+#if DEBUG
     [Preserve(AllMembers = true)]
+#endif
     public partial class SQLiteConnection : IDisposable
     {
         public static ISQLite3Provider Provider { get; } = new SQLitePCL.SQLite3Provider_winsqlite3();
 
         private bool _open;
         private TimeSpan _busyTimeout;
+#if DEBUG
         readonly static Dictionary<string, TableMapping> _mappings = new Dictionary<string, TableMapping>();
+#endif
         private System.Diagnostics.Stopwatch _sw;
         private long _elapsedMilliseconds = 0;
 
@@ -333,13 +344,13 @@ namespace SQLite
         /// </summary>
         public SQLiteConnection EnableWriteAheadLogging()
         {
-            ExecuteScalar<string>("PRAGMA journal_mode=WAL");
+            ExecuteScalarStr("PRAGMA journal_mode=WAL");
             return this;
         }
 
         public SQLiteConnection SetSynchronousNormal()
         {
-            ExecuteScalar<string>("PRAGMA synchronous = normal");
+            ExecuteScalarStr("PRAGMA synchronous = normal");
             return this;
         }
 
@@ -347,6 +358,72 @@ namespace SQLite
         {
             Execute("PRAGMA vacuum");
             return this;
+        }
+
+        public List<IGlyphData> GetGlyphData(string table, string sql, string query)
+        {
+            var cmd = this.CreateCommand(sql, query);
+            var stmt = cmd.Prepare();
+
+            int columnDesc = 2; // table = "UnicodeGlyphData" ? 3 : 2;
+
+            List<IGlyphData> data = new();
+            while (SQLite3.Step(stmt) == SQLite3.Result.Row)
+            {
+                data.Add(new GlyphDescription()
+                { 
+                     UnicodeIndex = SQLite3.ColumnInt(stmt, 0),
+                     UnicodeHex = SQLite3.ColumnString(stmt, 1),
+                     Description = SQLite3.ColumnString(stmt, columnDesc)
+                });
+            }
+
+            return data;
+        }
+
+        public AdobeGlyphListMapping GetGlyphListMapping(string name)
+        {
+            var cmd = this.CreateCommand("SELECT * FROM AdobeGlyphListMapping WHERE S = ? LIMIT 1", name);
+            var stmt = cmd.Prepare();
+
+            try
+            {
+                if (SQLite3.Step(stmt) == SQLite3.Result.Row)
+                {
+                    return new AdobeGlyphListMapping
+                    {
+                        UnicodeIndex = SQLite3.ColumnInt(stmt, 0),
+                        UnicodeIndex2 = SQLite3.ColumnInt(stmt, 1),
+                        UnicodeIndex3 = SQLite3.ColumnInt(stmt, 2),
+                        UnicodeIndex4 = SQLite3.ColumnInt(stmt, 3),
+                    };
+                }
+            }
+            finally
+            {
+                SQLite3.Finalize(stmt);
+            }
+
+            return null;
+        }
+
+
+        public string GetUnicodeDescription(int index, string table = "UnicodeGlyphData")
+        {
+            var cmd = this.CreateCommand($"SELECT Description FROM \"{table}\" WHERE Ix = ?", index);
+            var stmt = cmd.Prepare();
+
+            try
+            {
+                if (SQLite3.Step(stmt) == SQLite3.Result.Row)
+                    return SQLite3.ColumnString(stmt, 0);
+            }
+            finally
+            {
+                SQLite3.Finalize(stmt);
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -431,6 +508,24 @@ namespace SQLite
             }
         }
 
+
+
+        private struct IndexedColumn
+        {
+            public int Order;
+            public string ColumnName;
+        }
+
+        private struct IndexInfo
+        {
+            public string IndexName;
+            public string TableName;
+            public bool Unique;
+            public List<IndexedColumn> Columns;
+        }
+
+#if DEBUG
+
         /// <summary>
         /// Returns the mappings from types to tables that the connection
         /// currently understands.
@@ -495,20 +590,6 @@ namespace SQLite
         public TableMapping GetMapping<T>(CreateFlags createFlags = CreateFlags.None)
         {
             return GetMapping(typeof(T), createFlags);
-        }
-
-        private struct IndexedColumn
-        {
-            public int Order;
-            public string ColumnName;
-        }
-
-        private struct IndexInfo
-        {
-            public string IndexName;
-            public string TableName;
-            public bool Unique;
-            public List<IndexedColumn> Columns;
         }
 
         /// <summary>
@@ -730,6 +811,8 @@ namespace SQLite
             return result;
         }
 
+#endif
+
         /// <summary>
         /// Creates an index for the specified table and columns.
         /// </summary>
@@ -777,6 +860,8 @@ namespace SQLite
         {
             return CreateIndex(tableName + "_" + string.Join("_", columnNames), tableName, columnNames, unique);
         }
+
+#if DEBUG
 
         /// <summary>
         /// Creates an index for the specified object property.
@@ -870,6 +955,8 @@ namespace SQLite
             }
         }
 
+#endif
+
         /// <summary>
         /// Creates a new SQLiteCommand. Can be overridden to provide a sub-class.
         /// </summary>
@@ -948,6 +1035,50 @@ namespace SQLite
 
             return r;
         }
+
+        /// <summary>
+        /// Creates a SQLiteCommand given the command text (SQL) with arguments. Place a '?'
+        /// in the command text for each of the arguments and then executes that command.
+        /// Use this method when return primitive values.
+        /// You can set the Trace or TimeExecution properties of the connection
+        /// to profile execution.
+        /// </summary>
+        /// <param name="query">
+        /// The fully escaped SQL.
+        /// </param>
+        /// <param name="args">
+        /// Arguments to substitute for the occurences of '?' in the query.
+        /// </param>
+        /// <returns>
+        /// The number of rows modified in the database as a result of this execution.
+        /// </returns>
+        public string ExecuteScalarStr(string query, params object[] args)
+        {
+            var cmd = CreateCommand(query, args);
+
+            if (TimeExecution)
+            {
+                if (_sw == null)
+                {
+                    _sw = new Stopwatch();
+                }
+                _sw.Reset();
+                _sw.Start();
+            }
+
+            var r = cmd.ExecuteScalarStr();
+
+            if (TimeExecution)
+            {
+                _sw.Stop();
+                _elapsedMilliseconds += _sw.ElapsedMilliseconds;
+                Tracer?.Invoke(string.Format("Finished in {0} ms ({1:0.0} s total)", _sw.ElapsedMilliseconds, _elapsedMilliseconds / 1000.0));
+            }
+
+            return r;
+        }
+
+#if DEBUG
 
         /// <summary>
         /// Creates a SQLiteCommand given the command text (SQL) with arguments. Place a '?'
@@ -1252,6 +1383,8 @@ namespace SQLite
             return Query(map, query, args).FirstOrDefault();
         }
 
+#endif
+
         /// <summary>
         /// Whether <see cref="BeginTransaction"/> has been called and the database is waiting for a <see cref="Commit"/>.
         /// </summary>
@@ -1525,6 +1658,8 @@ namespace SQLite
                 throw;
             }
         }
+
+#if DEBUG
 
         /// <summary>
         /// Inserts all specified objects.
@@ -2107,6 +2242,8 @@ namespace SQLite
             return count;
         }
 
+#endif
+
         /// <summary>
         /// Backup the entire database to the specified path.
         /// </summary>
@@ -2175,6 +2312,7 @@ namespace SQLite
                 {
                     if (disposing)
                     {
+#if DEBUG
                         lock (_insertCommandMap)
                         {
                             foreach (var sqlInsertCommand in _insertCommandMap.Values)
@@ -2183,6 +2321,7 @@ namespace SQLite
                             }
                             _insertCommandMap.Clear();
                         }
+#endif
 
                         var r = useClose2 ? SQLite3.Close2(Handle) : SQLite3.Close(Handle);
                         if (r != SQLite3.Result.OK)
@@ -2204,6 +2343,8 @@ namespace SQLite
             }
         }
 
+#if DEBUG
+
         void OnTableChanged(TableMapping table, NotifyTableChangedAction action)
         {
             var ev = TableChanged;
@@ -2212,8 +2353,12 @@ namespace SQLite
         }
 
         public event EventHandler<NotifyTableChangedEventArgs> TableChanged;
+
+#endif
     }
 
+
+#if DEBUG
     public class NotifyTableChangedEventArgs : EventArgs
     {
         public TableMapping Table { get; private set; }
@@ -2232,6 +2377,8 @@ namespace SQLite
         Update,
         Delete,
     }
+
+#endif
 
     /// <summary>
     /// Represents a parsed connection string.
@@ -2358,6 +2505,8 @@ namespace SQLite
             DatabasePath = databasePath;
         }
     }
+
+#if DEBUG
 
     [AttributeUsage(AttributeTargets.Class)]
     public class TableAttribute : Attribute
@@ -2909,6 +3058,8 @@ namespace SQLite
         }
     }
 
+#endif
+
     public partial class SQLiteCommand
     {
         SQLiteConnection _conn;
@@ -2977,6 +3128,8 @@ namespace SQLite
 
             throw SQLiteException.New(r, r.ToString());
         }
+
+#if DEBUG
 
         public IEnumerable<T> ExecuteDeferredQuery<T>()
         {
@@ -3047,6 +3200,7 @@ namespace SQLite
             }
         }
 
+
         public T ExecuteScalar<T>()
         {
             if (_conn.Trace)
@@ -3065,6 +3219,41 @@ namespace SQLite
                 {
                     var colType = SQLite3.ColumnType(stmt, 0);
                     val = (T)ReadCol(stmt, 0, colType, typeof(T));
+                }
+                else if (r == SQLite3.Result.Done)
+                {
+                }
+                else
+                {
+                    throw SQLiteException.New(r, SQLite3.GetErrmsg(_conn.Handle));
+                }
+            }
+            finally
+            {
+                Finalize(stmt);
+            }
+
+            return val;
+        }
+#endif
+
+    public string ExecuteScalarStr()
+        {
+            if (_conn.Trace)
+            {
+                _conn.Tracer?.Invoke("Executing Query: " + this);
+            }
+
+            string val = null;
+
+            var stmt = Prepare();
+
+            try
+            {
+                var r = SQLite3.Step(stmt);
+                if (r == SQLite3.Result.Row)
+                {
+                    val = SQLite3.ColumnString(stmt, 0);
                 }
                 else if (r == SQLite3.Result.Done)
                 {
@@ -3109,7 +3298,7 @@ namespace SQLite
             return string.Join(Environment.NewLine, parts);
         }
 
-        Sqlite3Statement Prepare()
+        public Sqlite3Statement Prepare()
         {
             var stmt = SQLite3.Prepare2(_conn.Handle, CommandText);
             BindAll(stmt);
@@ -3216,6 +3405,7 @@ namespace SQLite
                 }
                 else
                 {
+#if DEBUG
                     // Now we could possibly get an enum, retrieve cached info
                     var valueType = value.GetType();
                     var enumInfo = EnumCache.GetInfo(valueType);
@@ -3228,8 +3418,9 @@ namespace SQLite
                             SQLite3.BindInt(stmt, index, enumIntValue);
                     }
                     else
+#endif
                     {
-                        throw new NotSupportedException("Cannot store type: " + Orm.GetType(value));
+                        throw new NotSupportedException("Cannot store type: " + value.GetType());
                     }
                 }
             }
@@ -3470,6 +3661,8 @@ namespace SQLite
             Dispose(false);
         }
     }
+
+#if DEBUG
 
     public enum CreateTableResult
     {
@@ -4220,6 +4413,8 @@ namespace SQLite
         }
     }
 
+#endif
+
     public static class SQLite3
     {
         public enum Result : int
@@ -4713,10 +4908,10 @@ namespace SQLite
 			return (Result)Sqlite3.sqlite3_backup_step (backup, numPages);
 		}
 
-		public static Result BackupFinish (Sqlite3BackupHandle backup)
-		{
-			return (Result)Sqlite3.sqlite3_backup_finish (backup);
-		}
+        public static Result BackupFinish(Sqlite3BackupHandle backup)
+        {
+            return (Result)Sqlite3.sqlite3_backup_finish(backup);
+        }
 #endif
 
         public enum ColType : int

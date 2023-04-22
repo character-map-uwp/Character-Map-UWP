@@ -11,19 +11,27 @@ namespace CharacterMap.Services
 {
     public interface IGlyphData
     {
+#if DEBUG
         [Column("Ix")]
+#endif
         int UnicodeIndex { get; }
+#if DEBUG
         [Column("Hx")]
+#endif
         string UnicodeHex { get; }
         string Description { get; }
     }
 
     public class GlyphDescription : IGlyphData
     {
+#if DEBUG
         [PrimaryKey, Column("Ix")]
+#endif
         public int UnicodeIndex { get; set; }
 
+#if DEBUG
         [Indexed, MaxLength(5), Column("Hx")]
+#endif
         public string UnicodeHex { get; set; }
 
         public string Description { get; set; }
