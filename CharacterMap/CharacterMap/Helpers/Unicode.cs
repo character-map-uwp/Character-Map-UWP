@@ -4,8 +4,6 @@ using CharacterMap.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Data.Text;
 
 namespace CharacterMap.Helpers
@@ -23,10 +21,10 @@ namespace CharacterMap.Helpers
         {
             UnicodeGeneralCategory category = UnicodeCharacters.GetGeneralCategory(c);
 
-            return category == UnicodeGeneralCategory.Control
-                || category == UnicodeGeneralCategory.SpaceSeparator
-                || category == UnicodeGeneralCategory.LineSeparator
-                || category == UnicodeGeneralCategory.ParagraphSeparator;
+            return category is UnicodeGeneralCategory.Control
+                or UnicodeGeneralCategory.SpaceSeparator
+                or UnicodeGeneralCategory.LineSeparator
+                or UnicodeGeneralCategory.ParagraphSeparator;
         }
 
         public static bool IsInCategory(uint c, UnicodeGeneralCategory cat)
@@ -63,6 +61,17 @@ namespace CharacterMap.Helpers
         public static List<UnicodeCategoryModel> CreateCategoriesList(IList<UnicodeCategoryModel> source = null)
         {
             var list = Enum.GetValues(typeof(UnicodeGeneralCategory)).OfType<UnicodeGeneralCategory>().Select(e => new UnicodeCategoryModel(e)).ToList();
+
+            if (source != null)
+                for (int i = 0; i < list.Count; i++)
+                    list[i].IsSelected = source[i].IsSelected;
+
+            return list;
+        }
+
+        public static List<UnicodeRangeModel> CreateRangesList(IList<UnicodeRangeModel> source = null)
+        {
+            var list = UnicodeRanges.All.Select(e => new UnicodeRangeModel(e)).ToList();
 
             if (source != null)
                 for (int i = 0; i < list.Count; i++)

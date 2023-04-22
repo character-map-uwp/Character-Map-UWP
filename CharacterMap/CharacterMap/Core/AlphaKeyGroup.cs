@@ -1,3 +1,4 @@
+using CharacterMap.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,24 +8,23 @@ using Windows.Globalization.Collation;
 
 namespace CharacterMap.Core
 {
-    public class AlphaKeyCollection<T> : ObservableCollection<AlphaKeyGroup<T>>
+    public class UnicodeRangeGroup : List<Character>, IGrouping<string, Character>
     {
-        public AlphaKeyCollection() { }
-        public AlphaKeyCollection(List<AlphaKeyGroup<T>> items) : base(items) { }
-        public AlphaKeyCollection(IEnumerable<AlphaKeyGroup<T>> items) : base(items) { }
+        public string Key { get; private set; }
 
-        public bool TryRemove(T item)
+        public UnicodeRangeGroup(string key, IEnumerable<Character> items) : base(items)
         {
-            foreach (var i in Items)
-                if (i.Remove(item))
-                {
-                    if (i.Count == 0)
-                        this.Remove(i);
+            Key = key;
+        }
 
-                    return true;
-                }
+        public static ObservableCollection<UnicodeRangeGroup> CreateGroups(IEnumerable<Character> items)
+        {
+            return new(items.GroupBy(i => i.Range?.Name ?? "Misc", c => c).Select(g=> new UnicodeRangeGroup(g.Key, g)));
+        }
 
-            return false;
+        public override string ToString()
+        {
+            return Key;
         }
     }
 

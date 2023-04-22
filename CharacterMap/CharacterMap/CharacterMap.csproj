@@ -329,6 +329,8 @@
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="ViewModels\QuickCompareViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Models\UnicodeRangeModel.cs" />
+    <Compile Include="Models\UnicodeCategoryModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\CalligraphyView.xaml.cs">
       <DependentUpon>CalligraphyView.xaml</DependentUpon>

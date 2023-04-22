@@ -1,0 +1,17 @@
+﻿using CharacterMap.Models;
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace CharacterMap.Models
+{
+    public partial class UnicodeRangeModel : ObservableObject
+    {
+        public NamedUnicodeRange Range { get; }
+
+        [ObservableProperty] bool _isSelected = true;
+
+        public UnicodeRangeModel(NamedUnicodeRange range)
+        {
+            Range = range;
+        }
+    }
+}

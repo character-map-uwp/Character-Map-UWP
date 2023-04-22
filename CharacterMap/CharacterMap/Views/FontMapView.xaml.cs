@@ -273,7 +273,7 @@ namespace CharacterMap.Views
                     UpdateTypography(ViewModel.SelectedTypography);
                     break;
                 case nameof(ViewModel.Chars):
-                    CharGrid.ItemsSource = ViewModel.Chars;
+                    //CharGrid.ItemsSource = ViewModel.Chars;
                     if (ResourceHelper.AllowAnimation)
                         CompositionFactory.PlayEntrance(CharGrid, 166);
                     break;
@@ -885,7 +885,7 @@ namespace CharacterMap.Views
             ((AppBarToggleButton)sender).IsChecked = ResourceHelper.AppSettings.EnableCopyPane;
         }
 
-        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)
+        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeRangeModel> e)
         {
             ViewModel.UpdateCategories(e);
         }

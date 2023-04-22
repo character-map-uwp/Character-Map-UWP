@@ -5,32 +5,11 @@ using CharacterMap.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Windows.Data.Text;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels
 {
-    public class UnicodeCategoryModel : ViewModelBase
-    {
-        public UnicodeGeneralCategory Category { get; }
-
-        private bool _isSelected = true;
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set => Set(ref _isSelected, value);
-        }
-
-        public string DisplayName { get; }
-
-        public UnicodeCategoryModel(UnicodeGeneralCategory category)
-        {
-            Category = category;
-            DisplayName = category.Humanise();
-        }
-    }
-
     public class PrintViewModel : ViewModelBase
     {
         protected override bool TrackAnimation => true;
@@ -120,8 +99,8 @@ namespace CharacterMap.ViewModels
         }
         public IReadOnlyList<Character> Characters { get; set; }
 
-        private IList<UnicodeCategoryModel> _categories;
-        public IList<UnicodeCategoryModel> Categories
+        private IList<UnicodeRangeModel> _categories;
+        public IList<UnicodeRangeModel> Categories
         {
             get => _categories;
             private set => Set(ref _categories, value);
@@ -156,7 +135,7 @@ namespace CharacterMap.ViewModels
             };
         }
 
-        public void UpdateCategories(IList<UnicodeCategoryModel> value)
+        public void UpdateCategories(IList<UnicodeRangeModel> value)
         {
             _categories = value;
             UpdateCharacters();
@@ -178,19 +157,19 @@ namespace CharacterMap.ViewModels
                 chars = Font.Characters.Where(c => !Unicode.IsWhiteSpaceOrControl(c.UnicodeIndex));
 
             foreach (var cat in Categories.Where(c => !c.IsSelected))
-                chars = chars.Where(c => !Unicode.IsInCategory(c.UnicodeIndex, cat.Category));
+                chars = chars.Where(c => c.Range != cat.Range);
 
             Characters = chars.ToList();
         }
 
         private PrintViewModel()
         {
-            Categories = Unicode.CreateCategoriesList();
+            Categories = Unicode.CreateRangesList();
         }
 
         public static PrintViewModel Create(FontMapViewModel viewModel)
         {
-            var model = new PrintViewModel
+            PrintViewModel model = new() 
             {
                 ShowColorGlyphs = viewModel.ShowColorGlyphs,
                 Typography = viewModel.SelectedTypography,

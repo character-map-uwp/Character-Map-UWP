@@ -81,7 +81,7 @@
     <FontFamily x:Key="LightFontFamily">XamlAutoFontFamily</FontFamily>
 
     <Style x:Key="CharacterMapStyle" TargetType="GridView">
-        <Setter Property="Padding" Value="10 10 6 10" />
+        <Setter Property="Padding" Value="10 -20 6 10" />
     </Style>
 
     <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource GridViewItemRevealStyle}" TargetType="GridViewItem">

@@ -537,11 +537,17 @@
                             Padding="12 12 0 48"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
                             SelectionMode="None">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid Orientation="Horizontal"
+                                                   CacheLength="0" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
                             <GridView.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox
                                         Width="200"
-                                        Content="{Binding DisplayName, Mode=OneTime}"
+                                        Content="{Binding Range.Name, Mode=OneTime}"
                                         IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                         Style="{StaticResource DefaultThemeCheckBoxStyle}" />
                                 </DataTemplate>

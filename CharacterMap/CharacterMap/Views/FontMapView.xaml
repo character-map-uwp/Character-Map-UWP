@@ -133,6 +133,12 @@
 
     <Control.Resources>
 
+        <CollectionViewSource
+            x:Key="CharacterSource"
+            x:Name="CharacterSource"
+            IsSourceGrouped="True"
+            Source="{Binding ViewModel.GroupedChars, ElementName=ViewRoot, Mode=OneWay}" />
+
         <MenuFlyout x:Name="SuggestionFlyout" AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
             <MenuFlyoutItem
                 Click="EditSuggestions_Click"
@@ -590,8 +596,8 @@
                             <Flyout
                                 core:Properties.UseExpandContractAnimation="True"
                                 win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
-                                Opening="InfoFlyout_Opening"
-                                Opened="InfoFlyout_Opened">
+                                Opened="InfoFlyout_Opened"
+                                Opening="InfoFlyout_Opening">
                                 <ScrollViewer x:Name="InfoScroller">
                                     <Border MinWidth="300" MaxWidth="400">
                                         <StackPanel Padding="12 24" Spacing="12">
@@ -662,8 +668,8 @@
                                                     Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
 
                                                 <TextBlock
-                                                    Grid.ColumnSpan="2"
                                                     Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
                                                     Margin="0,-4,0,0"
                                                     Style="{StaticResource Value}"
                                                     Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
@@ -965,12 +971,42 @@
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.Face, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
-                    ItemsSource="{Binding Chars, Mode=OneWay}"
+                    ItemsSource="{Binding Source={StaticResource CharacterSource}}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid AreStickyGroupHeadersEnabled="True" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.GroupStyle>
+                        <GroupStyle HidesIfEmpty="True">
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="GridViewHeaderItem">
+                                    <Setter Property="Padding" Value="12 20 0 12" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="MinHeight" Value="0" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewHeaderItem">
+                                                <ContentPresenter
+                                                    Margin="{TemplateBinding Padding}"
+                                                    Content="{TemplateBinding Content}"
+                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Opacity="0.6" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                        </GroupStyle>
+                    </GridView.GroupStyle>
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <!--  For performance reasons, all bindings are done in C#  -->

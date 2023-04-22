@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -69,7 +70,7 @@ namespace CharacterMap.ViewModels
 
         public TypographyFeatureInfo                SelectedTypography      { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
         public TypographyFeatureInfo                SelectedCharTypography  { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
-        public List<UnicodeCategoryModel>           SelectedGlyphCategories { get => Get<List<UnicodeCategoryModel>>(); private set => Set(value); }
+        public List<UnicodeRangeModel>              SelectedGlyphCategories { get => Get<List<UnicodeRangeModel>>(); private set => Set(value); }
         public List<RampOption>                     Ramps                   { get; }
 
         [ObservableProperty] CharacterRenderingOptions              _renderingOptions;
@@ -81,6 +82,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] IReadOnlyList<DWriteFontAxis>          _variationAxis;
         [ObservableProperty] IReadOnlyList<DevProviderBase>         _providers;
         [ObservableProperty] IReadOnlyList<TypographyFeatureInfo>   _typographyFeatures;
+        [ObservableProperty] ObservableCollection<UnicodeRangeGroup>       _groupedChars;
 
         [ObservableProperty] bool                   _showColorGlyphs        = true;
         [ObservableProperty] bool                   _importButtonEnabled    = true;
@@ -204,7 +206,7 @@ namespace CharacterMap.ViewModels
             CommandSavePng = new RelayCommand<ExportParameters>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<ExportParameters>(async (b) => await SaveSvgAsync(b));
             ToggleDev = new RelayCommand<DevProviderType>(t => SetDev(t));
-            SelectedGlyphCategories = Unicode.CreateCategoriesList();
+            SelectedGlyphCategories = Unicode.CreateRangesList();
 
             Ramps = _rampSizes.Select(r => new RampOption { FontSize = r }).ToList();
 
@@ -251,7 +253,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public void UpdateCategories(IList<UnicodeCategoryModel> value)
+        public void UpdateCategories(IList<UnicodeRangeModel> value)
         {
             SelectedGlyphCategories = value.ToList();
             UpdateCharacters();
@@ -263,28 +265,30 @@ namespace CharacterMap.ViewModels
             {
                 // Fast path : all characters;
                 Chars = SelectedVariant?.GetCharacters();
+                GroupedChars = UnicodeRangeGroup.CreateGroups(Chars);
             }
             else
             {
                 // Filter characters
                 var chars = SelectedVariant?.GetCharacters().AsEnumerable();
-                foreach (var cat in SelectedGlyphCategories.Where(c => !c.IsSelected))
-                    chars = chars.Where(c => !Unicode.IsInCategory(c.UnicodeIndex, cat.Category));
+                foreach (var range in SelectedGlyphCategories.Where(c => !c.IsSelected))
+                    chars = chars.Where(c => !range.Range.Contains(c.UnicodeIndex));
 
                 // Only change the character source if we actually need too
                 var items = chars.ToList();
                 if (items.Count != Chars.Count)
-                    Chars = items;
+                    GroupedChars = UnicodeRangeGroup.CreateGroups(items);
                 else
                 {
                     for (int i = 0; i<items.Count; i++)
                         if (items[i] != Chars[i])
                         {
-                            Chars = items;
+                            GroupedChars = UnicodeRangeGroup.CreateGroups(items);
                             break;
                         }
                 }
             }
+
         }
 
         private void LoadVariant(FontVariant variant)
@@ -292,7 +296,7 @@ namespace CharacterMap.ViewModels
             try
             {
                 IsLoadingCharacters = true;
-                SelectedGlyphCategories = Unicode.CreateCategoriesList();
+                SelectedGlyphCategories = Unicode.CreateRangesList();
                 UpdateCharacters();
                 if (variant != null)
                 {
