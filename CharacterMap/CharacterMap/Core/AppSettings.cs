@@ -85,7 +85,7 @@ namespace CharacterMap.Core
         public int MaxSearchResult
         {
             get => Get(31, "MSR");
-            set => Set(value);
+            set => Set(value, "MSR");
         }
 
         public double LastColumnWidth
@@ -153,7 +153,7 @@ namespace CharacterMap.Core
         public string AppLanguage
         {
             get => Get("", "AppLang2");
-            set => Set(value);
+            set => Set(value, "AppLang2");
         }
 
         public ExportNamingScheme ExportNamingScheme
