@@ -71,11 +71,9 @@ namespace CharacterMap.Helpers
 
         public static List<UnicodeRangeModel> CreateRangesList(IList<UnicodeRangeModel> source = null)
         {
-            var list = UnicodeRanges.All.Select(e => new UnicodeRangeModel(e)).ToList();
-
-            if (source != null)
-                for (int i = 0; i < list.Count; i++)
-                    list[i].IsSelected = source[i].IsSelected;
+            List<UnicodeRangeModel> list = source is null
+                ? UnicodeRanges.All.Select(e => new UnicodeRangeModel(e)).ToList()
+                : source.Select(s => s.Clone()).ToList();
 
             return list;
         }

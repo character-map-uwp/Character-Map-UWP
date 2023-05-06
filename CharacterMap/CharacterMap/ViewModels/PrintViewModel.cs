@@ -162,10 +162,7 @@ namespace CharacterMap.ViewModels
             Characters = chars.ToList();
         }
 
-        private PrintViewModel()
-        {
-            Categories = Unicode.CreateRangesList();
-        }
+        private PrintViewModel() { }
 
         public static PrintViewModel Create(FontMapViewModel viewModel)
         {
@@ -175,7 +172,8 @@ namespace CharacterMap.ViewModels
                 Typography = viewModel.SelectedTypography,
                 FontFamily = viewModel.FontFamily,
                 Font = viewModel.SelectedVariant,
-                Annotation = viewModel.Settings.GlyphAnnotation
+                Annotation = viewModel.Settings.GlyphAnnotation,
+                Categories = viewModel.SelectedGlyphCategories.Select(c => c.Clone()).ToList()
             };
 
             model.UpdateCharacters();

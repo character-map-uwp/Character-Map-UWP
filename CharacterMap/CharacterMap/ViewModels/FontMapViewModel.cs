@@ -288,7 +288,6 @@ namespace CharacterMap.ViewModels
                         }
                 }
             }
-
         }
 
         private void LoadVariant(FontVariant variant)
@@ -296,7 +295,13 @@ namespace CharacterMap.ViewModels
             try
             {
                 IsLoadingCharacters = true;
-                SelectedGlyphCategories = Unicode.CreateRangesList();
+
+                var ranges = SelectedVariant.GetRanges();
+                SelectedGlyphCategories = UnicodeRanges.All
+                    .Where(r => ranges.Any(g => g.Name == r.Name))
+                    .Select(r => new UnicodeRangeModel(r))
+                    .ToList();
+
                 UpdateCharacters();
                 if (variant != null)
                 {
@@ -305,6 +310,9 @@ namespace CharacterMap.ViewModels
                     SelectedVariantAnalysis = analysis;
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
+
+                    // Update Unicode Categories
+                    
                 }
                 else
                 {

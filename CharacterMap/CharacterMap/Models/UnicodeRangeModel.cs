@@ -13,5 +13,7 @@ namespace CharacterMap.Models
         {
             Range = range;
         }
+
+        public UnicodeRangeModel Clone() => new (Range) { IsSelected = _isSelected };
     }
 }

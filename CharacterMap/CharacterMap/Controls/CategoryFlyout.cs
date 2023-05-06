@@ -80,7 +80,7 @@ namespace CharacterMap.Controls
 
         public void OnOpening()
         {
-            if (_categoryList.ItemsSource is List<UnicodeRangeModel> list
+            if (_categoryList.ItemsSource is IReadOnlyList<UnicodeRangeModel> list
                 && SourceCategories == _listSrc)
             {
                 //foreach (var item in list)

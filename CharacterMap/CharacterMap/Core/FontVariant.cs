@@ -17,6 +17,7 @@ namespace CharacterMap.Core
         /* Using a character cache avoids a lot of unnecessary allocations */
         private static Dictionary<int, Character> _characters { get; } = new ();
 
+        private IReadOnlyList<NamedUnicodeRange> _ranges = null;
         private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
@@ -127,6 +128,12 @@ namespace CharacterMap.Core
                 return Localization.Get("InstallTypeImported");
 
             return Localization.Get($"DWriteSource{DirectWriteProperties.Source}");
+        }
+
+        public IReadOnlyList<NamedUnicodeRange> GetRanges()
+        {
+            return _ranges ??=
+                GetCharacters().GroupBy(c => c.Range).Select(g => g.Key).ToList();
         }
 
         public IReadOnlyList<Character> GetCharacters()

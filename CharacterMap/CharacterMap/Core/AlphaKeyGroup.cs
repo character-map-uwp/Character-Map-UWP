@@ -8,23 +8,25 @@ using Windows.Globalization.Collation;
 
 namespace CharacterMap.Core
 {
-    public class UnicodeRangeGroup : List<Character>, IGrouping<string, Character>
+    public class UnicodeRangeGroup : List<Character>, IGrouping<NamedUnicodeRange, Character>
     {
-        public string Key { get; private set; }
+        public NamedUnicodeRange Key { get; private set; }
 
-        public UnicodeRangeGroup(string key, IEnumerable<Character> items) : base(items)
+        public UnicodeRangeGroup(NamedUnicodeRange key, IEnumerable<Character> items) : base(items)
         {
             Key = key;
         }
 
         public static ObservableCollection<UnicodeRangeGroup> CreateGroups(IEnumerable<Character> items)
         {
-            return new(items.GroupBy(i => i.Range?.Name ?? "Misc", c => c).Select(g=> new UnicodeRangeGroup(g.Key, g)));
+            return new(items
+                .GroupBy(i => i.Range ?? throw new InvalidOperationException(), c => c)
+                .Select(g=> new UnicodeRangeGroup(g.Key, g)));
         }
 
         public override string ToString()
         {
-            return Key;
+            return Key.Name;
         }
     }
 

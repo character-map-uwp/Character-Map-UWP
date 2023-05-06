@@ -986,7 +986,7 @@
                         <GroupStyle HidesIfEmpty="True">
                             <GroupStyle.HeaderContainerStyle>
                                 <Style TargetType="GridViewHeaderItem">
-                                    <Setter Property="Padding" Value="12 20 0 12" />
+                                    <Setter Property="Padding" Value="14 20 0 12" />
                                     <Setter Property="Margin" Value="0" />
                                     <Setter Property="MinHeight" Value="0" />
                                     <Setter Property="BorderBrush" Value="Transparent" />
