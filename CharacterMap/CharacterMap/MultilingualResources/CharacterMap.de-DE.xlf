@@ -36,7 +36,7 @@
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Color glyphs</source>
-          <target state="translated">Gylphen einfärben</target>
+          <target state="translated">Glyphen einfärben</target>
         </trans-unit>
         <trans-unit id="FontDisplayHeader.Text" translate="yes" xml:space="preserve">
           <source>Font Display Options</source>
