@@ -261,6 +261,7 @@ namespace CharacterMap.ViewModels
 
         private void UpdateCharacters()
         {
+            int last = Settings.LastSelectedCharIndex;
             if (!SelectedGlyphCategories.Any(c => !c.IsSelected))
             {
                 // Fast path : all characters;
@@ -277,17 +278,23 @@ namespace CharacterMap.ViewModels
                 // Only change the character source if we actually need too
                 var items = chars.ToList();
                 if (items.Count != Chars.Count)
+                {
+                    Chars = items;
                     GroupedChars = UnicodeRangeGroup.CreateGroups(items);
+                }
                 else
                 {
                     for (int i = 0; i<items.Count; i++)
                         if (items[i] != Chars[i])
                         {
+                            Chars = items;
                             GroupedChars = UnicodeRangeGroup.CreateGroups(items);
                             break;
                         }
                 }
             }
+
+            SetDefaultChar(last);
         }
 
         private void LoadVariant(FontVariant variant)
@@ -475,12 +482,15 @@ namespace CharacterMap.ViewModels
                 ramp.Option = ops;
         }
 
-        public void SetDefaultChar()
+        public void SetDefaultChar(int idx = -1)
         {
             if (Chars == null)
                 return;
 
-            if (Chars.FirstOrDefault(i => i.UnicodeIndex == Settings.LastSelectedCharIndex)
+            if (idx < 0)
+                idx = Settings.LastSelectedCharIndex; 
+
+            if (Chars.FirstOrDefault(i => i.UnicodeIndex == idx)
                 is Character lastSelectedChar
                 && SelectedVariant.Face.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
             {

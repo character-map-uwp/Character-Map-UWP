@@ -52,6 +52,12 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public bool GroupCharacters
+        {
+            get => Get(true);
+            set => BroadcastSet(value);
+        }
+
         public bool FitCharacter
         {
             get => Get(false);

@@ -539,8 +539,7 @@
                             SelectionMode="None">
                             <GridView.ItemsPanel>
                                 <ItemsPanelTemplate>
-                                    <ItemsWrapGrid Orientation="Horizontal"
-                                                   CacheLength="0" />
+                                    <ItemsWrapGrid CacheLength="0" Orientation="Horizontal" />
                                 </ItemsPanelTemplate>
                             </GridView.ItemsPanel>
                             <GridView.ItemTemplate>

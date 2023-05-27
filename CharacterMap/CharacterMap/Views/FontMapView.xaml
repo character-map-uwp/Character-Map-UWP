@@ -56,7 +56,7 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <AppBarButton
+                <!--<AppBarButton
                     x:Name="MoreSwitchView"
                     x:Uid="SwitchViewButton"
                     Click="{x:Bind ViewModel.ChangeDisplayMode}">
@@ -86,7 +86,12 @@
                             <CompositeTransform />
                         </FontIcon.RenderTransform>
                     </FontIcon>
-                </AppBarButton>
+                </AppBarButton>-->
+                <AppBarToggleButton x:Uid="CharacterGroupingToggle" IsChecked="{x:Bind ViewModel.Settings.GroupCharacters, Mode=TwoWay}">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF168;" />
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
                     x:Uid="IncreaseSizeButton"
@@ -132,6 +137,12 @@
     </Control.Tag>
 
     <Control.Resources>
+
+        <Binding
+            x:Key="CharBinding"
+            ElementName="ViewRoot"
+            Mode="OneWay"
+            Path="ViewModel.Chars" />
 
         <CollectionViewSource
             x:Key="CharacterSource"
@@ -2106,7 +2117,7 @@
                         <!--<Setter Target="CopySequenceRoot.CornerRadius" Value="8" />
                         <Setter Target="CopySequenceRoot.Margin" Value="8 0 8 8" />
                         <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
-                        <Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />
+                        <!--<Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />-->
                         <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />
@@ -2153,6 +2164,18 @@
                         <Setter Target="SearchBox.Visibility" Value="Visible" />
                         <Setter Target="SearchContainer.Visibility" Value="Visible" />
                         <!--<Setter Target="RightPresenter.Visibility" Value="Collapsed" />-->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="CharacterMapStates">
+                <VisualState x:Name="GroupListState">
+                    <VisualState.Setters>
+                        <Setter Target="CharGrid.Padding" Value="10 -20 6 10" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FlatListState">
+                    <VisualState.Setters>
+                        <Setter Target="CharGrid.ItemsSource" Value="{StaticResource CharBinding}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

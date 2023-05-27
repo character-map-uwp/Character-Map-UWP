@@ -251,7 +251,7 @@
     <!--  GRIDVIEW  -->
 
     <Style x:Key="CharacterMapStyle" TargetType="GridView">
-        <Setter Property="Margin" Value="10 10 0 10" />
+        <Setter Property="Margin" Value="10 10 6 10" />
         <Setter Property="Padding" Value="0 0 -1 -1" />
         <Setter Property="Background" Value="{ThemeResource ControlBackgroundBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ControlBorderBrush}" />

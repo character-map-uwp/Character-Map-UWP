@@ -21,6 +21,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -262,7 +263,7 @@ namespace CharacterMap.Views
                             }
                             catch
                             {
-                                // Nu Hair Dont care
+                                // Nu Hair Don't care
                             }
                         }
 
@@ -273,7 +274,8 @@ namespace CharacterMap.Views
                     UpdateTypography(ViewModel.SelectedTypography);
                     break;
                 case nameof(ViewModel.Chars):
-                    //CharGrid.ItemsSource = ViewModel.Chars;
+                    UpdateItemsSource();
+
                     if (ResourceHelper.AllowAnimation)
                         CompositionFactory.PlayEntrance(CharGrid, 166);
                     break;
@@ -286,6 +288,17 @@ namespace CharacterMap.Views
             }
         }
 
+        private void UpdateItemsSource()
+        {
+            var item = CharGrid.SelectedItem;
+            if (ViewModel.Settings.GroupCharacters)
+                VisualStateManager.GoToState(this, GroupListState.Name, false);
+            else
+                VisualStateManager.GoToState(this, FlatListState.Name, false);
+
+            CharGrid.SelectedItem = item;
+        }
+
         private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
         {
             RunOnUI(() =>
@@ -294,6 +307,9 @@ namespace CharacterMap.Views
                 {
                     case nameof(AppSettings.AllowExpensiveAnimations):
                         CharGrid.EnableResizeAnimation = ViewModel.Settings.AllowExpensiveAnimations;
+                        break;
+                    case nameof(AppSettings.GroupCharacters):
+                        UpdateItemsSource();
                         break;
                     case nameof(AppSettings.GlyphAnnotation):
                         CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
