@@ -207,6 +207,90 @@
                 CommandParameter="{x:Bind models:DevValueType.Char}"
                 Icon="Copy"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+
+            <MenuFlyoutSubItem
+                x:Uid="CopyAsImageItem"
+                Icon="Copy"
+                d:Text="Copy as image">
+                <MenuFlyoutItem
+                    x:Uid="CopyAsPngItem"
+                    KeyboardAcceleratorTextOverride="Ctrl+Alt+C"
+                    Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
+                    d:Text="Copy as PNG" />
+                <MenuFlyoutItem
+                    x:Uid="ColoredGlyphLabel"
+                    Click="SavePng_Click"
+                    CommandParameter="{x:Bind ViewModel.GlyphColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind SavePNGColouredItem.Visibility, Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <IconSourceElement IconSource="{StaticResource ColourSource}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="BlackFill"
+                    Click="SavePng_Click"
+                    CommandParameter="{x:Bind ViewModel.BlackColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="WhiteFill"
+                    Click="SavePng_Click"
+                    CommandParameter="{x:Bind ViewModel.WhiteColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Foreground="White" Glyph="&#xE002;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="CopyAsSvgItem"
+                    KeyboardAcceleratorTextOverride="Ctrl+Shift+C"
+                    Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
+                    Visibility="{x:Bind ViewModel.SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
+                    d:Text="Copy as SVG" />
+                <MenuFlyoutItem
+                    x:Uid="ColoredGlyphLabel"
+                    Click="SaveSvg_Click"
+                    CommandParameter="{x:Bind ViewModel.GlyphColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedCharAnalysis.HasColorGlyphs, ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <IconSourceElement IconSource="{StaticResource ColourSource}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="BlackFill"
+                    Click="SaveSvg_Click"
+                    CommandParameter="{x:Bind ViewModel.BlackColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="WhiteFill"
+                    Click="SaveSvg_Click"
+                    CommandParameter="{x:Bind ViewModel.WhiteColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Foreground="White" Glyph="&#xE002;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+            </MenuFlyoutSubItem>
+
             <MenuFlyoutItem
                 x:Name="AddSelectionButton"
                 x:Uid="AddSelectionItem"
@@ -230,6 +314,7 @@
                 x:Uid="ExportPNGLabel"
                 Icon="Save">
                 <MenuFlyoutItem
+                    x:Name="SavePNGColouredItem"
                     x:Uid="ColoredGlyphLabel"
                     Click="SavePng_Click"
                     CommandParameter="{x:Bind ViewModel.GlyphColor}"
@@ -262,6 +347,7 @@
                 x:Uid="ExportSVGLabel"
                 Icon="Save">
                 <MenuFlyoutItem
+                    x:Name="SaveSVGColouredItem"
                     x:Uid="ColoredGlyphLabel"
                     Click="SaveSvg_Click"
                     CommandParameter="{x:Bind ViewModel.GlyphColor}"
@@ -2175,7 +2261,7 @@
                 </VisualState>
                 <VisualState x:Name="FlatListState">
                     <VisualState.Setters>
-                        <Setter Target="CharGrid.ItemsSource" Value="{StaticResource CharBinding}" />
+                        <!--<Setter Target="CharGrid.ItemsSource" Value="{StaticResource CharBinding}" />-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

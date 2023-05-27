@@ -23,12 +23,16 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.Storage.Streams;
+using System.IO;
+using Windows.System;
+using Windows.UI.Core;
 
 namespace CharacterMap.Core
 {
     public class Pool<T> where T : new()
     {
-        Queue<T> _pool { get; } = new Queue<T>();
+        Queue<T> _pool { get; } = new ();
 
         public T Request()
         {
@@ -67,6 +71,12 @@ namespace CharacterMap.Core
                 view.TryEnterFullScreenMode();
         }
 
+        public static bool IsKeyDown(VirtualKey key)
+        {
+            var state = CoreWindow.GetForCurrentThread().GetKeyState(key);
+            return (state & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down;
+        }
+
         public static Color GetAccentColor()
         {
             if (ApiInformation.IsTypePresent("Windows.UI.ViewManagement.StatusBar"))
@@ -78,12 +88,33 @@ namespace CharacterMap.Core
 
         public static void CopyToClipBoard(string str)
         {
-            var dp = new DataPackage
-            {
-                RequestedOperation = DataPackageOperation.Copy,
-            };
+            DataPackage dp = new() { RequestedOperation = DataPackageOperation.Copy };
             dp.SetText(str);
             Clipboard.SetContent(dp);
+        }
+
+        public static async Task<bool> TryCopyToClipboardAsync(CopyToClipboardMessage msg, FontMapViewModel viewModel)
+        {
+            string c = @$"\u{msg.RequestedItem.UnicodeIndex}?";
+
+            if (msg.DataType == CopyDataType.Text)
+            {
+                return await TryCopyToClipboardInternalAsync(msg.RequestedItem.Char, c, viewModel);
+            }
+            else if (msg.DataType == CopyDataType.SVG)
+            {
+                ExportOptions ops = new(ExportFormat.Svg, msg.Style);
+                var svg = ExportManager.GetSVG(msg.Style, ops.PreferredColor, viewModel.RenderingOptions, msg.RequestedItem);
+                return await TryCopyToClipboardInternalAsync(svg, c, viewModel, msg.DataType);
+            }
+            else if (msg.DataType == CopyDataType.PNG)
+            {
+                ExportOptions ops = new(ExportFormat.Png, msg.Style);
+                IRandomAccessStream data = await ExportManager.GetGlyphPNGStreamAsync(ops, viewModel.RenderingOptions, msg.RequestedItem);
+                return await TryCopyToClipboardInternalAsync(null, c, viewModel, msg.DataType, data);
+            }
+            else
+                return false;
         }
 
         public static Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
@@ -98,19 +129,25 @@ namespace CharacterMap.Core
             return TryCopyToClipboardInternalAsync(s, c, viewModel);
         }
 
-        public static async Task<bool> TryCopyToClipboardInternalAsync(string rawString, string formattedString, FontMapViewModel viewModel)
+        public static async Task<bool> TryCopyToClipboardInternalAsync(string rawString, string formattedString, FontMapViewModel viewModel, CopyDataType type = CopyDataType.Text, IRandomAccessStream data = null)
         {
             // Internal helper method to set clipboard
-            static void TrySetClipboard(string raw, string formatted, FontMapViewModel v)
+            static void TrySetClipboard(string raw, string formatted, FontMapViewModel v, CopyDataType copyType, IRandomAccessStream stream = null)
             {
-                DataPackage dp = new DataPackage
+                DataPackage dp = new () {  RequestedOperation = DataPackageOperation.Copy };
+
+                if (raw != null)
+                    dp.SetText(raw);
+
+                if (copyType == CopyDataType.SVG)
+                    AddSVGToPackage(raw, dp);
+                else if (copyType == CopyDataType.PNG)
                 {
-                    RequestedOperation = DataPackageOperation.Copy,
-                };
-
-                dp.SetText(raw);
-
-                if (!v.SelectedVariant.IsImported)
+                    dp.SetBitmap(RandomAccessStreamReference.CreateFromStream(stream));
+                    dp.SetData("image/png", stream);
+                    dp.SetData("PNG", stream);
+                }
+                else if (!v.SelectedVariant.IsImported)
                 {
                     // We can allow users to also copy the glyph with the font meta-data included,
                     // so when they paste into a supported program like Microsoft Word or 
@@ -143,7 +180,7 @@ namespace CharacterMap.Core
             {
                 try
                 {
-                    TrySetClipboard(rawString, formattedString, viewModel);
+                    TrySetClipboard(rawString, formattedString, viewModel, type, data);
                     return true;
                 }
                 catch (Exception ex) when (i < 4)
@@ -154,6 +191,15 @@ namespace CharacterMap.Core
             }
 
             return false;
+        }
+
+        private static void AddSVGToPackage(string raw, DataPackage dp)
+        {
+            InMemoryRandomAccessStream svgData = new();
+            StreamWriter writer = new(svgData.AsStream(), Encoding.UTF8, 1024, true);
+            writer.Write(raw);
+            writer.Flush();
+            dp.SetData("image/svg+xml", svgData);
         }
 
         public static bool TryParseHexString(string hexNumber, out int hex)

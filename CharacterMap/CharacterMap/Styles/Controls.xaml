@@ -23,35 +23,53 @@
 
     <Style x:Key="MenuFlyoutItemReadOnlyHeaderStyle" TargetType="MenuFlyoutItem">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource MenuFlyoutSeparatorThemeBrush}" />
         <Setter Property="BorderThickness" Value="0 0 0 1" />
-        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseMediumLowBrush}" />
-        <Setter Property="Padding" Value="10 12 10 8" />
+        <Setter Property="Foreground" Value="{ThemeResource MenuFlyoutSeparatorThemeBrush}" />
+        <Setter Property="Padding" Value="10 12 10 4" />
         <Setter Property="FontSize" Value="13.333" />
         <Setter Property="Margin" Value="0" />
+        <Setter Property="MinWidth" Value="0" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="IsEnabled" Value="False" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-        <Setter Property="KeyboardAcceleratorPlacementMode" Value="Hidden" />
+        <Setter Property="KeyboardAcceleratorPlacementMode" Value="Auto" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutItem">
                     <Border
                         x:Name="LayoutRoot"
+                        Margin="0 0 0 4"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                        <TextBlock
-                            x:Name="TextBlock"
-                            Margin="{TemplateBinding Padding}"
-                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                            Foreground="{TemplateBinding Foreground}"
-                            Text="{TemplateBinding Text}"
-                            TextTrimming="Clip" />
+                        <Grid Margin="{TemplateBinding Padding}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock
+                                x:Name="TextBlock"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{TemplateBinding Text}"
+                                TextTrimming="Clip" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                MinWidth="0"
+                                Margin="12,2,0,0"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                AutomationProperties.AccessibilityView="Raw"
+                                Foreground="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="{TemplateBinding KeyboardAcceleratorTextOverride}" />
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

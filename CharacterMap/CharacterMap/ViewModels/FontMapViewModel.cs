@@ -41,6 +41,8 @@ namespace CharacterMap.ViewModels
     {
         #region Properties
 
+        private bool _blockChar = false;
+
         protected override bool TrackAnimation => true;
 
         private NativeInterop _interop { get; }
@@ -138,10 +140,11 @@ namespace CharacterMap.ViewModels
                     Chars = null;
                     _selectedVariant = value;
                     FontFamily = value == null ? null : new FontFamily(value.Source);
+                    int idx = Settings.LastSelectedCharIndex;
                     LoadVariant(value);
                     OnPropertyChanged();
                     UpdateTypography();
-                    SetDefaultChar();
+                    SetDefaultChar(idx);
                     SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyFeatureInfo.None;
                     UpdateDevValues();
 
@@ -168,12 +171,10 @@ namespace CharacterMap.ViewModels
             get => _selectedChar;
             set
             {
-                if (_selectedChar == value) return;
+                if (_selectedChar == value || _blockChar) return;
                 _selectedChar = value;
-                if (null != value)
-                {
+                if (value is not null)
                     Settings.LastSelectedCharIndex = (int)value.UnicodeIndex;
-                }
                 OnPropertyChanged();
                 UpdateCharAnalysis();
                 UpdateDevValues();
@@ -262,6 +263,7 @@ namespace CharacterMap.ViewModels
         private void UpdateCharacters()
         {
             int last = Settings.LastSelectedCharIndex;
+            _blockChar = true;
             if (!SelectedGlyphCategories.Any(c => !c.IsSelected))
             {
                 // Fast path : all characters;
@@ -487,6 +489,7 @@ namespace CharacterMap.ViewModels
             if (Chars == null)
                 return;
 
+            bool set = idx >= 0;
             if (idx < 0)
                 idx = Settings.LastSelectedCharIndex; 
 
@@ -501,6 +504,9 @@ namespace CharacterMap.ViewModels
                 SelectedChar = Chars?.FirstOrDefault(
                     c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
             }
+
+            if (set)
+                _blockChar = false;
         }
 
         public void ChangeDisplayMode()
@@ -663,16 +669,24 @@ namespace CharacterMap.ViewModels
 
         public async Task RequestCopyToClipboardAsync(CopyToClipboardMessage message)
         {
-            if (message.CopyType == DevValueType.Char)
-                await Utils.TryCopyToClipboardAsync(message.RequestedItem, this);
+            if (message.CopyType is  DevValueType.Char
+                && await Utils.TryCopyToClipboardAsync(message, this))
+            {
+                string key = message.DataType switch
+                {
+                    CopyDataType.SVG => "NotificationCopiedSVG",
+                    CopyDataType.PNG => "NotificationCopiedPNG",
+                    _ => "NotificationCopied"
+                };
 
-            Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+                Messenger.Send(new AppNotificationMessage(true, Localization.Get(key), 2500));
+            }
         }
 
         public async void CopySequence()
         {
             if (await Utils.TryCopyToClipboardAsync(Sequence, this))
-                Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+                Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2500));
         }
         public void ClearSequence() => Sequence = string.Empty;
         public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);

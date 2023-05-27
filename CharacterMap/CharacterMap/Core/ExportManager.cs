@@ -383,65 +383,30 @@ namespace CharacterMap.Core
         {
             try
             {
-                // 0. First we should check if we should actually render this
-                float size = style.PreferredSize > 0 ? (float)style.PreferredSize : (float)settings.PngSize;
-                var r = settings.PngSize / 2;
-
-                var textColor = style.PreferredColor;
-
-                using CanvasTextLayout layout =
-                    CreateLayout(
-                        options with { FontSize = size },
-                        selectedChar,
-                        style.PreferredStyle,
-                        size);
-
-                var db = layout.DrawBounds;
-
-                if (style.SkipEmptyGlyphs && db.Height == 0 && db.Width == 0)
-                    return new ExportResult(ExportState.Skipped, null);
-
-                // 1. Get the file we will save the image to.
-                if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder)
-                    is StorageFile file)
+                IRandomAccessStream stream = null;
+                try
                 {
-                    using var typography = options.CreateCanvasTypography();
+                    // 1. Try to get the glyph data
+                    stream = await GetGlyphPNGStreamAsync(style, options, selectedChar);
+                    if (stream is null)
+                        return new ExportResult(ExportState.Skipped, null);
 
-                    // If the glyph is actually a PNG file inside the font we should export it directly.
-                    // TODO : We're not actually exporting with typography options here.
-                    //        Find a test PNG font with typography
-                    if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
+                    // 2. Get the file we will save the image to.
+                    if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder)
+                        is StorageFile file)
                     {
-                        IBuffer buffer = GetGlyphBuffer(options.Variant.Face, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
-                        await FileIO.WriteBufferAsync(file, buffer);
-                    }
-                    else
-                    {
-                        var device = Utils.CanvasDevice;
-                        var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
-
-                        using var renderTarget = new CanvasRenderTarget(device, size, size, localDpi);
-                        using (var ds = renderTarget.CreateDrawingSession())
-                        {
-                            ds.Clear(Colors.Transparent);
-                            
-                            double scale = Math.Min(1, Math.Min(size / db.Width, size / db.Height));
-                            var x = -db.Left + ((size - (db.Width * scale)) / 2d);
-                            var y = -db.Top + ((size - (db.Height * scale)) / 2d);
-
-                            ds.Transform =
-                                Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
-                                * Matrix3x2.CreateScale(new Vector2((float)scale));
-
-                            ds.DrawTextLayout(layout, new Vector2(0), textColor);
-                        }
-
-                        using var fileStream = await file.OpenAsync(FileAccessMode.ReadWrite);
-                        fileStream.Size = 0;
-                        await renderTarget.SaveAsync(fileStream, CanvasBitmapFileFormat.Png, 1f);
+                        // 3. Write to the file
+                        using var fileStream = await file.OpenStreamForWriteAsync();
+                        fileStream.SetLength(0);
+                        await stream.AsStreamForRead().CopyToAsync(fileStream);
                         await fileStream.FlushAsync();
+
+                        return new ExportResult(ExportState.Succeeded, file);
                     }
-                    return new ExportResult(ExportState.Succeeded, file);
+                }
+                finally
+                {
+                    stream?.Dispose();
                 }
             }
             catch (Exception ex)
@@ -452,6 +417,64 @@ namespace CharacterMap.Core
             }
 
             return ExportResult.CreatedFailed();
+        }
+
+        public static async Task<IRandomAccessStream> GetGlyphPNGStreamAsync(ExportOptions style, CharacterRenderingOptions options, Character selectedChar)
+        {
+            // 1. First we should check if we should actually render this
+            float size = style.PreferredSize > 0 ? (float)style.PreferredSize : (float)ResourceHelper.AppSettings.PngSize;
+            var r = ResourceHelper.AppSettings.PngSize / 2;
+
+            var textColor = style.PreferredColor;
+
+            using CanvasTextLayout layout =
+                CreateLayout(
+                    options with { FontSize = size },
+                    selectedChar,
+                    style.PreferredStyle,
+                    size);
+
+            var db = layout.DrawBounds;
+
+            if (style.SkipEmptyGlyphs && db.Height == 0 && db.Width == 0)
+                return null;
+
+            IRandomAccessStream stream = null;
+            // If the glyph is actually a PNG file inside the font we should export it directly.
+            // TODO : We're not actually exporting with typography options here.
+            //        Find a test PNG font with typography
+            if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
+            {
+                IBuffer buffer = GetGlyphBuffer(options.Variant.Face, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
+                stream = buffer.AsStream().AsRandomAccessStream();
+            }
+            else
+            {
+                var device = Utils.CanvasDevice;
+                var localDpi = 96; //Windows.Graphics.Display.DisplayInformation.GetForCurrentView().LogicalDpi;
+
+                using var renderTarget = new CanvasRenderTarget(device, size, size, localDpi);
+                using (var ds = renderTarget.CreateDrawingSession())
+                {
+                    ds.Clear(Colors.Transparent);
+
+                    double scale = Math.Min(1, Math.Min(size / db.Width, size / db.Height));
+                    var x = -db.Left + ((size - (db.Width * scale)) / 2d);
+                    var y = -db.Top + ((size - (db.Height * scale)) / 2d);
+
+                    ds.Transform =
+                        Matrix3x2.CreateTranslation(new Vector2((float)x, (float)y))
+                        * Matrix3x2.CreateScale(new Vector2((float)scale));
+
+                    ds.DrawTextLayout(layout, new (0), textColor);
+                }
+
+                stream = new InMemoryRandomAccessStream();
+                await renderTarget.SaveAsync(stream, CanvasBitmapFileFormat.Png);
+            }
+
+            stream.Seek(0);
+            return stream;
         }
 
         private static CanvasTextLayout CreateLayout(

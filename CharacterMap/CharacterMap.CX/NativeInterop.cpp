@@ -157,7 +157,7 @@ Platform::String^ NativeInterop::GetPathData(DWriteFontFace^ fontFace, UINT16 gl
 	geom->Stream(sink.Get());
 	sink->Close();
 
-	delete[] indicies;
+	//delete[] indicies;
 	return sink->GetPathData();
 }
 
@@ -212,7 +212,7 @@ IVectorView<PathData^>^ NativeInterop::GetPathDatas(DWriteFontFace^ fontFace, co
 
 		sink->Close();
 
-		delete[] indicies;
+		//delete[] indicies;
 		sink = nullptr;
 		geometrySink = nullptr;
 		geom = nullptr;
