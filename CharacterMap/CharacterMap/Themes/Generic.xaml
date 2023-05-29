@@ -140,11 +140,11 @@
     </Style>
 
     <Style TargetType="toolkit:InAppNotification">
-        <Setter Property="Background" Value="{ThemeResource SystemControlChromeMediumLowAcrylicElementMediumBrush}" />
+        <Setter Property="Background" Value="{ThemeResource SystemAccentColorDark1}" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource SystemControlForegroundBaseLowBrush}" />
         <Setter Property="Visibility" Value="Collapsed" />
-        <Setter Property="BorderThickness" Value="2" />
+        <Setter Property="BorderThickness" Value="0" />
         <Setter Property="MinHeight" Value="55" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
@@ -159,8 +159,8 @@
         <Setter Property="AutomationProperties.LiveSetting" Value="Assertive" />
         <Setter Property="HorizontalAlignment" Value="Center" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
-        <Setter Property="VerticalOffset" Value="200" />
-        <Setter Property="Margin" Value="24 16" />
+        <Setter Property="VerticalOffset" Value="40" />
+        <Setter Property="Margin" Value="24 24" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="toolkit:InAppNotification">
@@ -228,6 +228,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="8"
+                            MinHeight="{TemplateBinding MinHeight}"
                             RenderTransformOrigin="{TemplateBinding RenderTransformOrigin}"
                             Visibility="{TemplateBinding Visibility}">
 
@@ -253,8 +254,14 @@
                                 Grid.Column="1"
                                 Width="40"
                                 Height="40"
+                                MinHeight="40"
+                                MaxHeight="40"
+                                Margin="0"
+                                Padding="0"
+                                VerticalAlignment="Center"
                                 AutomationProperties.Name="Dismiss"
-                                CornerRadius="4">
+                                CornerRadius="4"
+                                LabelPosition="Collapsed">
                                 <Button.RenderTransform>
                                     <TranslateTransform x:Name="DismissButtonTransform" X="18" />
                                 </Button.RenderTransform>
@@ -537,11 +544,16 @@
                             Padding="12 12 0 48"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
                             SelectionMode="None">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid CacheLength="0" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
                             <GridView.ItemTemplate>
                                 <DataTemplate>
                                     <CheckBox
                                         Width="200"
-                                        Content="{Binding DisplayName, Mode=OneTime}"
+                                        Content="{Binding Range.Name, Mode=OneTime}"
                                         IsChecked="{Binding IsSelected, Mode=TwoWay}"
                                         Style="{StaticResource DefaultThemeCheckBoxStyle}" />
                                 </DataTemplate>

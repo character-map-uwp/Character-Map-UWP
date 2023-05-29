@@ -20,6 +20,9 @@ namespace CharacterMap.Models
 
         public string UnicodeString => "U+" + UnicodeIndex.ToString("x4").ToUpper();
 
+        private NamedUnicodeRange _range;
+        public NamedUnicodeRange Range => _range ??= (UnicodeRanges.All.FirstOrDefault(r => r.Contains(UnicodeIndex)) ?? UnicodeRanges.Misc);
+
         public override string ToString()
         {
             return Char;

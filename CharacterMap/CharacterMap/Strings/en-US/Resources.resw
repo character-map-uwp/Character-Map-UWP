@@ -1309,4 +1309,31 @@ Tap and hold to arrange.</value>
   <data name="FontPropPanoseTitle.Text" xml:space="preserve">
     <value>PANOSE Values</value>
   </data>
+  <data name="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Group Characters by Unicode Range (Ctrl+G)</value>
+  </data>
+  <data name="PixelUnits.Text" xml:space="preserve">
+    <value>px</value>
+  </data>
+  <data name="SettingsCharGrouping.Description" xml:space="preserve">
+    <value>If enabled, characters are grouped by Unicode range in the character map, otherwise all characters are shown in a single ungrouped list.</value>
+  </data>
+  <data name="SettingsCharGrouping.Title" xml:space="preserve">
+    <value>Character Grouping</value>
+  </data>
+  <data name="CopyAsImageItem.Text" xml:space="preserve">
+    <value>Copy as image</value>
+  </data>
+  <data name="CopyAsPngItem.Text" xml:space="preserve">
+    <value>Copy as PNG</value>
+  </data>
+  <data name="CopyAsSvgItem.Text" xml:space="preserve">
+    <value>Copy as SVG</value>
+  </data>
+  <data name="NotificationCopiedPNG" xml:space="preserve">
+    <value>Copied as PNG</value>
+  </data>
+  <data name="NotificationCopiedSVG" xml:space="preserve">
+    <value>Copied as SVG</value>
+  </data>
 </root>

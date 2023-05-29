@@ -57,7 +57,7 @@ namespace CharacterMap.Views
 
         public static void Show(IPopoverPresenter presenter)
         {
-            var view = new PrintView(presenter);
+            PrintView view = new (presenter);
             view.TitleBarHeight = presenter.GetTitleBarHeight();
             presenter.GetPresenter().Child = view;
             view.Show();
@@ -246,7 +246,7 @@ namespace CharacterMap.Views
             _sizeDebouncer.Debounce(350, UpdateDisplay);
         }
 
-        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)
+        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeRangeModel> e)
         {
             ViewModel.UpdateCategories(e);
         }

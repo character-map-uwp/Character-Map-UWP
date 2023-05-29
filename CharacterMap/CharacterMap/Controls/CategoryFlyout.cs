@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace CharacterMap.Controls
 {
     public sealed class CategoryFlyout : Control
     {
-        public event EventHandler<IList<UnicodeCategoryModel>> AcceptClicked;
+        public event EventHandler<IList<UnicodeRangeModel>> AcceptClicked;
 
         public object SourceCategories
         {
@@ -79,7 +80,7 @@ namespace CharacterMap.Controls
 
         public void OnOpening()
         {
-            if (_categoryList.ItemsSource is List<UnicodeCategoryModel> list
+            if (_categoryList.ItemsSource is IReadOnlyList<UnicodeRangeModel> list
                 && SourceCategories == _listSrc)
             {
                 //foreach (var item in list)
@@ -88,30 +89,30 @@ namespace CharacterMap.Controls
             else
             {
                 _listSrc = SourceCategories;
-                _categoryList.ItemsSource = Unicode.CreateCategoriesList(SourceCategories as List<UnicodeCategoryModel>);
+                _categoryList.ItemsSource = Unicode.CreateRangesList(SourceCategories as List<UnicodeRangeModel>);
             }
         }
 
         private void FilterAccept_Click(object sender, RoutedEventArgs e)
         {
-            AcceptClicked?.Invoke(this, (List<UnicodeCategoryModel>)_categoryList.ItemsSource);
+            AcceptClicked?.Invoke(this, (List<UnicodeRangeModel>)_categoryList.ItemsSource);
             Flyout?.Hide();
         }
 
         private void FilterRefresh_Click(object sender, RoutedEventArgs e)
         {
-            _categoryList.ItemsSource = Unicode.CreateCategoriesList(SourceCategories as List<UnicodeCategoryModel>);
+            _categoryList.ItemsSource = Unicode.CreateRangesList(SourceCategories as List<UnicodeRangeModel>);
         }
 
         private void FilterSelectAll_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var item in ((List<UnicodeCategoryModel>)_categoryList.ItemsSource))
+            foreach (var item in ((List<UnicodeRangeModel>)_categoryList.ItemsSource))
                 item.IsSelected = true;
         }
 
         private void FilterClear_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var item in ((List<UnicodeCategoryModel>)_categoryList.ItemsSource))
+            foreach (var item in ((List<UnicodeRangeModel>)_categoryList.ItemsSource))
                 item.IsSelected = false;
         }
     }

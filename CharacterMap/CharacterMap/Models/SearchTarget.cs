@@ -58,7 +58,7 @@ namespace CharacterMap.Models
                 SQLiteGlyphProvider.WINGDINGS3_SEARCH_TABLE,
                 v => v.FamilyName == "Wingdings 3");
 
-        public static List<SearchTarget> KnownTargets { get; } = new List<SearchTarget>()
+        public static List<SearchTarget> KnownTargets { get; } = new ()
         {
             FontAwesomeTarget,
             WebdingsTarget,

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
@@ -164,6 +165,7 @@ namespace CharacterMap.Views
             List<FrameworkElement> childs = CharGrid.ItemsPanelRoot.Children
                 .OfType<FrameworkElement>()
                 .Where(c => c.IsInViewport(CharGrid))
+                .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
                 .OrderBy(c => Guid.NewGuid()).ToList();
 
             List<FrameworkElement> toChilds = GetTypeRampAnimationTargets();
@@ -305,6 +307,7 @@ namespace CharacterMap.Views
             var toChilds = CharGrid.Realize(this.ActualWidth, this.ActualHeight).ItemsPanelRoot.Children
                 .OfType<FrameworkElement>()
                 .Where(c => c.IsInViewport(CharGrid))
+                .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
                 .OrderBy(c => Guid.NewGuid()).ToList();
 
             if (toChilds.Count == 0)
@@ -312,6 +315,7 @@ namespace CharacterMap.Views
                 toChilds = CharGrid.ItemsPanelRoot.Children
                     .OfType<FrameworkElement>()
                     .Where(c => c.IsInViewport(this))
+                    .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
                     .OrderBy(c => Guid.NewGuid()).ToList();
 
                 if (toChilds.Count == 0)

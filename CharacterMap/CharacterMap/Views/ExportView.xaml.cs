@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMap.ViewModels;
 using System;
@@ -94,7 +95,7 @@ namespace CharacterMap.Views
             }
         }
 
-        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)
+        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeRangeModel> e)
         {
             ViewModel.UpdateCategories(e);
         }

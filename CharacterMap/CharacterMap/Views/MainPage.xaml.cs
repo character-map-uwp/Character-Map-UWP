@@ -30,7 +30,6 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using static SQLite.SQLite3;
 
 namespace CharacterMap.Views
 {
@@ -449,13 +448,7 @@ namespace CharacterMap.Views
         {
             if (e.Key == VirtualKey.F11)
                 Utils.ToggleFullScreenMode();
-
-            // If ALT key is held down, ignore
-            if (e.KeyStatus.IsMenuKeyDown)
-                return;
-
-            var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
-            if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
+            else if (Utils.IsKeyDown(VirtualKey.Control))
             {
                 // Check to see if any basic modals are open first
                 if (AreModalsOpen())
@@ -463,6 +456,10 @@ namespace CharacterMap.Views
 
                 if (!FontMap.HandleInput(e))
                 {
+                    // If ALT key is held down, ignore
+                    if (e.KeyStatus.IsMenuKeyDown)
+                        return;
+
                     switch (e.Key)
                     {
                         case VirtualKey.N:

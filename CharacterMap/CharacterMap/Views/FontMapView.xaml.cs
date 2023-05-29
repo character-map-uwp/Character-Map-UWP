@@ -21,6 +21,7 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
@@ -187,6 +188,7 @@ namespace CharacterMap.Views
             UpdateCharacterFit();
             UpdatePaneAndGridSizing();
             UpdateCopyPane();
+            UpdateItemsSource();
 
             PreviewColumn.Width = new GridLength(ViewModel.Settings.LastColumnWidth);
             _previewColumnToken = PreviewColumn.RegisterPropertyChangedCallback(ColumnDefinition.WidthProperty, (d, r) =>
@@ -262,7 +264,7 @@ namespace CharacterMap.Views
                             }
                             catch
                             {
-                                // Nu Hair Dont care
+                                // Nu Hair Don't care
                             }
                         }
 
@@ -273,7 +275,8 @@ namespace CharacterMap.Views
                     UpdateTypography(ViewModel.SelectedTypography);
                     break;
                 case nameof(ViewModel.Chars):
-                    CharGrid.ItemsSource = ViewModel.Chars;
+                    UpdateItemsSource();
+
                     if (ResourceHelper.AllowAnimation)
                         CompositionFactory.PlayEntrance(CharGrid, 166);
                     break;
@@ -294,6 +297,9 @@ namespace CharacterMap.Views
                 {
                     case nameof(AppSettings.AllowExpensiveAnimations):
                         CharGrid.EnableResizeAnimation = ViewModel.Settings.AllowExpensiveAnimations;
+                        break;
+                    case nameof(AppSettings.GroupCharacters):
+                        UpdateItemsSource();
                         break;
                     case nameof(AppSettings.GlyphAnnotation):
                         CharGrid.ItemAnnotation = ViewModel.Settings.GlyphAnnotation;
@@ -320,19 +326,35 @@ namespace CharacterMap.Views
             });
         }
 
+
+
         public bool HandleInput(KeyRoutedEventArgs e)
         {
             // If ALT key is held down, ignore
             if (e.KeyStatus.IsMenuKeyDown)
+            {
+                // Special case for copy as PNG
+                if (Utils.IsKeyDown(VirtualKey.Control) && e.Key == VirtualKey.C)
+                {
+                    TryCopy(CopyDataType.PNG);
+                    return true;
+                }
                 return false;
+            }
 
-            var ctrlState = CoreWindow.GetForCurrentThread().GetKeyState(VirtualKey.Control);
-            if ((ctrlState & CoreVirtualKeyStates.Down) == CoreVirtualKeyStates.Down)
+            if (Utils.IsKeyDown(VirtualKey.Control))
             {
                 switch (e.Key)
                 {
+                    case VirtualKey.C when Utils.IsKeyDown(VirtualKey.Shift):
+                        if (ViewModel.SelectedCharAnalysis.IsFullVectorBased)
+                            TryCopy(CopyDataType.SVG);
+                        break;
                     case VirtualKey.C:
                         TryCopy();
+                        break;
+                    case VirtualKey.G:
+                        ViewModel.Settings.GroupCharacters = !ViewModel.Settings.GroupCharacters;
                         break;
                     case VirtualKey.P:
                         FlyoutHelper.PrintRequested();
@@ -341,7 +363,7 @@ namespace CharacterMap.Views
                             ExportManager.RequestExportFontFile(v);
                         break;
                     case VirtualKey.E when ViewModel.SelectedVariant is FontVariant:
-                            WeakReferenceMessenger.Default.Send(new ExportRequestedMessage());
+                            Messenger.Send(new ExportRequestedMessage());
                         break;
                     case VirtualKey.Add:
                     case (VirtualKey)187:
@@ -383,6 +405,34 @@ namespace CharacterMap.Views
                 Utils.ToggleFullScreenMode();
             else
                 HandleInput(e);
+        }
+
+        private void UpdateItemsSource()
+        {
+            if (ViewModel.Chars == null)
+                return;
+
+            var item = CharGrid.SelectedItem;
+
+            if (ViewModel.Settings.GroupCharacters)
+            {
+                CharGrid.SetBinding(GridView.ItemsSourceProperty, new Binding()
+                {
+                    Source = CharacterSource
+                });
+                VisualStateManager.GoToState(this, GroupListState.Name, false);
+            }
+            else
+            {
+                CharGrid.ItemsSource = ViewModel.Chars;
+                VisualStateManager.GoToState(this, FlatListState.Name, false);
+            }
+
+            _ = Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                if (item is not null)
+                    CharGrid.SelectedItem = item;
+            });
         }
 
         private void UpdateDevUtils(bool animate = true)
@@ -557,15 +607,27 @@ namespace CharacterMap.Views
             }
         }
 
-        public void TryCopy()
+        public void TryCopy(CopyDataType type = CopyDataType.Text)
         {
             if (FocusManager.GetFocusedElement() is TextBox or TextBlock)
                 return;
 
-            //if (CharGrid.SelectedItem is Character character &&
-            //    (TxtSymbolIcon == null || !TxtSymbolIcon.SelectedText.Any()) &&
-            //    !TxtFontIcon.SelectedText.Any() &&
-            //    !TxtXamlCode.SelectedText.Any())
+            if (type != CopyDataType.Text)
+            {
+                ExportStyle style = ExportStyle.Black;
+                Character c = ViewModel.SelectedChar;
+                if (ViewModel.GetCharAnalysis(c).HasColorGlyphs
+                    && ViewModel.ShowColorGlyphs)
+                    style = ExportStyle.ColorGlyph;
+
+                _ = ViewModel.RequestCopyToClipboardAsync(
+                        new CopyToClipboardMessage(
+                            DevValueType.Char, 
+                            c, 
+                            ViewModel.GetCharAnalysis(c), type)
+                        { Style = style });
+            }
+            else
             {
                 TryCopyInternal();
             }
@@ -821,11 +883,21 @@ namespace CharacterMap.Views
                 && item.DataContext is Character c
                 && item.CommandParameter is ExportStyle style)
             {
-                _ = ViewModel.SavePngAsync(new ExportParameters
+                if (item.Tag is null)
                 {
-                    Style = style,
-                    Typography = ViewModel.SelectedTypography
-                }, c);
+                    _ = ViewModel.SavePngAsync(new ()
+                    {
+                        Style = style,
+                        Typography = ViewModel.SelectedTypography
+                    }, c);
+                }
+                else
+                {
+                    _ = ViewModel.RequestCopyToClipboardAsync(
+                        new CopyToClipboardMessage(
+                            DevValueType.Char, c, ViewModel.GetCharAnalysis(c), CopyDataType.PNG)
+                                { Style = style });
+                }
             }
         }
 
@@ -836,11 +908,20 @@ namespace CharacterMap.Views
                 && item.DataContext is Character c
                 && item.CommandParameter is ExportStyle style)
             {
-                _ = ViewModel.SaveSvgAsync(new ExportParameters
+                if (item.Tag is null)
                 {
-                    Style = style,
-                    Typography = ViewModel.SelectedTypography
-                }, c);
+                    _ = ViewModel.SaveSvgAsync(new ()
+                    {
+                        Style = style,
+                        Typography = ViewModel.SelectedTypography
+                    }, c);
+                }
+               else
+                {
+                    _ = ViewModel.RequestCopyToClipboardAsync(
+                        new CopyToClipboardMessage(
+                            DevValueType.Char, c, ViewModel.GetCharAnalysis(c), CopyDataType.SVG) { Style = style }) ;
+                }    
             }
         }
 
@@ -885,7 +966,7 @@ namespace CharacterMap.Views
             ((AppBarToggleButton)sender).IsChecked = ResourceHelper.AppSettings.EnableCopyPane;
         }
 
-        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeCategoryModel> e)
+        private void CategoryFlyout_AcceptClicked(object sender, IList<UnicodeRangeModel> e)
         {
             ViewModel.UpdateCategories(e);
         }

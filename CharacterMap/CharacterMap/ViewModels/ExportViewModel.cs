@@ -28,11 +28,11 @@ namespace CharacterMap.ViewModels
         public CharacterRenderingOptions Options        { get; set; }
 
         public IReadOnlyList<Character> Characters      { get => GetV<IReadOnlyList<Character>>(); private set => Set(value); }
-        public IList<UnicodeCategoryModel> Categories   { get => GetV<IList<UnicodeCategoryModel>>(); private set => Set(value); }
+        public IList<UnicodeRangeModel> Categories      { get => GetV<IList<UnicodeRangeModel>>(); private set => Set(value); }
 
         public bool HideWhitespace          { get => GetV(true); set => Set(value); }
         public bool SkipBlankGlyphs         { get => GetV(true); set => Set(value); }
-        public double GlyphSize { get => GetV(0d); set => Set(value); }
+        public double GlyphSize             { get => GetV(0d); set => Set(value); }
         public Color GlyphColor             { get => GetV(Colors.White); set => Set(value); }
         public bool ExportColor             { get => GetV(true); set => Set(value); }
         public bool IsWhiteChecked          { get => GetV(false); set => Set(value); }
@@ -119,13 +119,14 @@ namespace CharacterMap.ViewModels
             var chars = Font.Characters.AsEnumerable();
             if (HideWhitespace)
                 chars = Font.Characters.Where(c => !Unicode.IsWhiteSpaceOrControl(c.UnicodeIndex));
+            
             foreach (var cat in Categories.Where(c => !c.IsSelected))
-                chars = chars.Where(c => !Unicode.IsInCategory(c.UnicodeIndex, cat.Category));
+                chars = chars.Where(c => c.Range != cat.Range);
 
             Characters = chars.ToList();
         }
 
-        public void UpdateCategories(IList<UnicodeCategoryModel> value)
+        public void UpdateCategories(IList<UnicodeRangeModel> value)
         {
             Set(value, nameof(Categories), false);
             UpdateCharacters();

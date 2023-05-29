@@ -8,6 +8,49 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Helpers
 {
+    public class CommonStatesHelper : DependencyObject
+    {
+        public event EventHandler<VisualStateChangedEventArgs> StateChanging;
+        public event EventHandler<VisualStateChangedEventArgs> StateChanged;
+
+        VisualStateGroup _group = null;
+
+        public void Attach(Control element)
+        {
+            DetachGroup();
+            if (element is null)
+                return;
+
+            FluentAnimation.TryHook(element, (v, o) =>
+            {
+                _group = v;
+                v.CurrentStateChanging += V_CurrentStateChanging;
+                v.CurrentStateChanged += V_CurrentStateChanged;
+            }, element);
+        }
+
+        private void V_CurrentStateChanged(object sender, VisualStateChangedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("CHANGED");
+            StateChanged?.Invoke(sender, e);
+        }
+
+        private void V_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"CHANGING  from {e.OldState?.Name} to {e.NewState?.Name}");
+            StateChanging?.Invoke(sender, e);
+        }
+
+        void DetachGroup()
+        {
+            if (_group != null)
+            {
+                _group.CurrentStateChanging -= V_CurrentStateChanging;
+                _group.CurrentStateChanged -= V_CurrentStateChanged;
+            }
+        }
+    }
+
     public class FluentAnimationHelper
     {
         private readonly VisualStateGroup _group;
@@ -41,7 +84,7 @@ namespace CharacterMap.Helpers
             _lastState = e.NewState;
 
 #if DEBUG
-            System.Diagnostics.Debug.WriteLine($"From {e.OldState?.Name} to {e.NewState.Name}");
+            //System.Diagnostics.Debug.WriteLine($"From {e.OldState?.Name} to {e.NewState.Name}");
 #endif
 
             // 1. Handle "PointerOver"
@@ -245,7 +288,7 @@ namespace CharacterMap.Helpers
         /// <summary>
         /// Passes down values from a Control to it's internal templated VisualStateGroup
         /// </summary>
-        static void TryHook(Control c, Action<VisualStateGroup, object> prop, object value)
+        public static void TryHook(Control c, Action<VisualStateGroup, object> prop, object value)
         {
             if (ResourceHelper.SupportFluentAnimation is false)
                 return;
@@ -414,6 +457,30 @@ namespace CharacterMap.Helpers
 
         public static readonly DependencyProperty PointerOverAxisProperty =
             DependencyProperty.RegisterAttached("PointerOverAxis", typeof(Orientation), typeof(FluentAnimation), new PropertyMetadata(Orientation.Vertical));
+
+        #endregion
+
+        #region StateHelper
+
+        public static CommonStatesHelper GetStateHelper(DependencyObject obj)
+        {
+            return (CommonStatesHelper)obj.GetValue(StateHelperProperty);
+        }
+
+        public static void SetStateHelper(DependencyObject obj, CommonStatesHelper value)
+        {
+            obj.SetValue(StateHelperProperty, value);
+        }
+
+        public static readonly DependencyProperty StateHelperProperty =
+            DependencyProperty.RegisterAttached("StateHelper", typeof(CommonStatesHelper), typeof(Control), new PropertyMetadata(null, (d,e) =>
+            {
+                if (d is Control c)
+                {
+                    if (e.NewValue is CommonStatesHelper vsh)
+                        vsh.Attach(c);
+                }
+            }));
 
         #endregion
     }

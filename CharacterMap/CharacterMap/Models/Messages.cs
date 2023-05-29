@@ -124,12 +124,22 @@ namespace CharacterMap.Models
         UnicodeValue,
     }
 
+    public enum CopyDataType
+    {
+        Text,
+        PNG,
+        SVG
+    }
+
 
     public class CopyToClipboardMessage
     {
         public DevValueType CopyType { get; }
+        public CopyDataType DataType { get; }
         public Character RequestedItem { get; }
         public CanvasTextLayoutAnalysis Analysis { get; }
+
+        public ExportStyle Style { get; set; }
 
         public CopyToClipboardMessage(Character c)
         {
@@ -138,11 +148,12 @@ namespace CharacterMap.Models
             Analysis = null;
         }
 
-        public CopyToClipboardMessage(DevValueType type, Character requested, CanvasTextLayoutAnalysis ca)
+        public CopyToClipboardMessage(DevValueType type, Character requested, CanvasTextLayoutAnalysis ca, CopyDataType dataType = CopyDataType.Text)
         {
             CopyType = type;
             RequestedItem = requested;
             Analysis = ca;
+            DataType = dataType;
         }
     }
 

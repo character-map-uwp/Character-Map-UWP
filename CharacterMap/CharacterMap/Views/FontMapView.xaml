@@ -56,7 +56,7 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <AppBarButton
+                <!--<AppBarButton
                     x:Name="MoreSwitchView"
                     x:Uid="SwitchViewButton"
                     Click="{x:Bind ViewModel.ChangeDisplayMode}">
@@ -86,7 +86,12 @@
                             <CompositeTransform />
                         </FontIcon.RenderTransform>
                     </FontIcon>
-                </AppBarButton>
+                </AppBarButton>-->
+                <AppBarToggleButton x:Uid="CharacterGroupingToggle" IsChecked="{x:Bind ViewModel.Settings.GroupCharacters, Mode=TwoWay}">
+                    <AppBarToggleButton.Icon>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF168;" />
+                    </AppBarToggleButton.Icon>
+                </AppBarToggleButton>
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
                     x:Uid="IncreaseSizeButton"
@@ -132,6 +137,18 @@
     </Control.Tag>
 
     <Control.Resources>
+
+        <Binding
+            x:Key="CharBinding"
+            ElementName="ViewRoot"
+            Mode="OneWay"
+            Path="ViewModel.Chars" />
+
+        <CollectionViewSource
+            x:Key="CharacterSource"
+            x:Name="CharacterSource"
+            IsSourceGrouped="True"
+            Source="{Binding ViewModel.GroupedChars, ElementName=ViewRoot, Mode=OneWay}" />
 
         <MenuFlyout x:Name="SuggestionFlyout" AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
             <MenuFlyoutItem
@@ -190,6 +207,90 @@
                 CommandParameter="{x:Bind models:DevValueType.Char}"
                 Icon="Copy"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+
+            <MenuFlyoutSubItem
+                x:Uid="CopyAsImageItem"
+                Icon="Copy"
+                d:Text="Copy as image">
+                <MenuFlyoutItem
+                    x:Uid="CopyAsPngItem"
+                    KeyboardAcceleratorTextOverride="Ctrl+Alt+C"
+                    Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
+                    d:Text="Copy as PNG" />
+                <MenuFlyoutItem
+                    x:Uid="ColoredGlyphLabel"
+                    Click="SavePng_Click"
+                    CommandParameter="{x:Bind ViewModel.GlyphColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind SavePNGColouredItem.Visibility, Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <IconSourceElement IconSource="{StaticResource ColourSource}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="BlackFill"
+                    Click="SavePng_Click"
+                    CommandParameter="{x:Bind ViewModel.BlackColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="WhiteFill"
+                    Click="SavePng_Click"
+                    CommandParameter="{x:Bind ViewModel.WhiteColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Foreground="White" Glyph="&#xE002;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="CopyAsSvgItem"
+                    KeyboardAcceleratorTextOverride="Ctrl+Shift+C"
+                    Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
+                    Visibility="{x:Bind ViewModel.SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}"
+                    d:Text="Copy as SVG" />
+                <MenuFlyoutItem
+                    x:Uid="ColoredGlyphLabel"
+                    Click="SaveSvg_Click"
+                    CommandParameter="{x:Bind ViewModel.GlyphColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedCharAnalysis.HasColorGlyphs, ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <IconSourceElement IconSource="{StaticResource ColourSource}" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="BlackFill"
+                    Click="SaveSvg_Click"
+                    CommandParameter="{x:Bind ViewModel.BlackColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+                <MenuFlyoutItem
+                    x:Uid="WhiteFill"
+                    Click="SaveSvg_Click"
+                    CommandParameter="{x:Bind ViewModel.WhiteColor}"
+                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                    Tag="Copy"
+                    Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
+                    <MenuFlyoutItem.Icon>
+                        <FontIcon Foreground="White" Glyph="&#xE002;" />
+                    </MenuFlyoutItem.Icon>
+                </MenuFlyoutItem>
+            </MenuFlyoutSubItem>
+
             <MenuFlyoutItem
                 x:Name="AddSelectionButton"
                 x:Uid="AddSelectionItem"
@@ -213,6 +314,7 @@
                 x:Uid="ExportPNGLabel"
                 Icon="Save">
                 <MenuFlyoutItem
+                    x:Name="SavePNGColouredItem"
                     x:Uid="ColoredGlyphLabel"
                     Click="SavePng_Click"
                     CommandParameter="{x:Bind ViewModel.GlyphColor}"
@@ -245,6 +347,7 @@
                 x:Uid="ExportSVGLabel"
                 Icon="Save">
                 <MenuFlyoutItem
+                    x:Name="SaveSVGColouredItem"
                     x:Uid="ColoredGlyphLabel"
                     Click="SaveSvg_Click"
                     CommandParameter="{x:Bind ViewModel.GlyphColor}"
@@ -590,8 +693,8 @@
                             <Flyout
                                 core:Properties.UseExpandContractAnimation="True"
                                 win1903:FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
-                                Opening="InfoFlyout_Opening"
-                                Opened="InfoFlyout_Opened">
+                                Opened="InfoFlyout_Opened"
+                                Opening="InfoFlyout_Opening">
                                 <ScrollViewer x:Name="InfoScroller">
                                     <Border MinWidth="300" MaxWidth="400">
                                         <StackPanel Padding="12 24" Spacing="12">
@@ -662,8 +765,8 @@
                                                     Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
 
                                                 <TextBlock
-                                                    Grid.ColumnSpan="2"
                                                     Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
                                                     Margin="0,-4,0,0"
                                                     Style="{StaticResource Value}"
                                                     Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
@@ -965,12 +1068,42 @@
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.Face, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
-                    ItemsSource="{Binding Chars, Mode=OneWay}"
+                    ItemsSource="{Binding Source={StaticResource CharacterSource}}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid AreStickyGroupHeadersEnabled="True" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                    <GridView.GroupStyle>
+                        <GroupStyle HidesIfEmpty="True">
+                            <GroupStyle.HeaderContainerStyle>
+                                <Style TargetType="GridViewHeaderItem">
+                                    <Setter Property="Padding" Value="14 20 0 12" />
+                                    <Setter Property="Margin" Value="0" />
+                                    <Setter Property="MinHeight" Value="0" />
+                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="GridViewHeaderItem">
+                                                <ContentPresenter
+                                                    Margin="{TemplateBinding Padding}"
+                                                    Content="{TemplateBinding Content}"
+                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                    FontSize="12"
+                                                    FontWeight="SemiBold"
+                                                    Opacity="0.6" />
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </GroupStyle.HeaderContainerStyle>
+                        </GroupStyle>
+                    </GridView.GroupStyle>
                     <GridView.ItemTemplate>
                         <DataTemplate>
                             <!--  For performance reasons, all bindings are done in C#  -->
@@ -2070,7 +2203,7 @@
                         <!--<Setter Target="CopySequenceRoot.CornerRadius" Value="8" />
                         <Setter Target="CopySequenceRoot.Margin" Value="8 0 8 8" />
                         <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
-                        <Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />
+                        <!--<Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />-->
                         <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
                         <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="True" />
                         <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />
@@ -2117,6 +2250,18 @@
                         <Setter Target="SearchBox.Visibility" Value="Visible" />
                         <Setter Target="SearchContainer.Visibility" Value="Visible" />
                         <!--<Setter Target="RightPresenter.Visibility" Value="Collapsed" />-->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup x:Name="CharacterMapStates">
+                <VisualState x:Name="GroupListState">
+                    <VisualState.Setters>
+                        <Setter Target="CharGrid.Padding" Value="10 -20 6 10" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="FlatListState">
+                    <VisualState.Setters>
+                        <!--<Setter Target="CharGrid.ItemsSource" Value="{StaticResource CharBinding}" />-->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

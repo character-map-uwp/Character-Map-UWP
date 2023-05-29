@@ -157,7 +157,7 @@
             <TextBlock VerticalAlignment="Center">
                 <Run FontWeight="SemiBold" Text="{x:Bind GetTitle()}" />
                 <Run x:Uid="NotificationFontAddedBody" />
-                <Hyperlink Click="BtnViewCollection_Click">
+                <Hyperlink Click="BtnViewCollection_Click" Foreground="{StaticResource SystemAccentColorLight3}">
                     <Run Text="{x:Bind Collection.Name}" />
                 </Hyperlink>
             </TextBlock>

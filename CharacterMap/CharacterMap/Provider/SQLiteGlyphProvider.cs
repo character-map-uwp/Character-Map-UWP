@@ -52,17 +52,15 @@ namespace CharacterMap.Provider
             if (!postscriptName.Contains(" "))
             {
                 // We perform only very naive AGFLN mappings here. We only identify the basic cases.
-                var map = _connection.GetMapping(typeof(AdobeGlyphListMapping));
-                var items = _connection.Query(map, $"SELECT * FROM AdobeGlyphListMapping WHERE S = ? LIMIT 1", postscriptName);
-                if (items.FirstOrDefault() is AdobeGlyphListMapping m)
+                if (_connection.GetGlyphListMapping(postscriptName) is { } mapping)
                 {
-                    var desc = _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == m.UnicodeIndex)?.Description;
-                    if (m.UnicodeIndex2 > 0)
-                        desc += " " + _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == m.UnicodeIndex2)?.Description;
-                    if (m.UnicodeIndex3 > 0)
-                        desc += " " + _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == m.UnicodeIndex3)?.Description;
-                    if (m.UnicodeIndex4 > 0)
-                        desc += " " + _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == m.UnicodeIndex4)?.Description;
+                    var desc = _connection.GetUnicodeDescription(mapping.UnicodeIndex);
+                    if (mapping.UnicodeIndex2 > 0)
+                        desc += " " + _connection.GetUnicodeDescription(mapping.UnicodeIndex2);
+                    if (mapping.UnicodeIndex3 > 0)
+                        desc += " " + _connection.GetUnicodeDescription(mapping.UnicodeIndex3);
+                    if (mapping.UnicodeIndex4 > 0)
+                        desc += " " + _connection.GetUnicodeDescription(mapping.UnicodeIndex4);
 
                     if (!string.IsNullOrWhiteSpace(desc))
                         return desc;
@@ -79,7 +77,7 @@ namespace CharacterMap.Provider
             // MDL2 has it's own special logic
             if (FontFinder.IsMDL2(variant))
             {
-                desc = _connection.Get<MDL2Glyph>(g => g.UnicodeIndex == unicodeIndex)?.Description;
+                desc = _connection.GetUnicodeDescription(unicodeIndex, nameof(MDL2Glyph));
                 if (string.IsNullOrWhiteSpace(desc) && Enum.IsDefined(typeof(Symbol), unicodeIndex))
                     return ((Symbol)unicodeIndex).Humanise();
                 return desc;
@@ -90,17 +88,14 @@ namespace CharacterMap.Provider
             {
                 if (target.IsTarget(variant))
                 {
-                    var map = _connection.GetMapping(target.TargetType);
-                    var items = _connection.Query(map, $"SELECT * FROM {target.SearchTable} WHERE Ix = ? LIMIT 1", unicodeIndex);
-                    desc = (items.FirstOrDefault() as GlyphDescription)?.Description;
-
+                    desc = _connection.GetUnicodeDescription(unicodeIndex, target.SearchTable);
                     break;
                 }
             }
 
             // Otherwise get a fallback value
             if (string.IsNullOrEmpty(desc))
-                desc = _connection.Get<UnicodeGlyphData>(u => u.UnicodeIndex == unicodeIndex)?.Description;
+                desc = _connection.GetUnicodeDescription(unicodeIndex);
 
             return desc;
         }
@@ -162,11 +157,11 @@ namespace CharacterMap.Provider
                         if (hex >= range.First && hex <= range.Last)
                         {
                             string hexsql = $"SELECT * FROM {table} WHERE Ix == {hex} LIMIT 1";
-                            var hexresults = _connection.Query<GlyphDescription>(hexsql, query)?.Cast<IGlyphData>()?.ToList();
+                            var hexresults = _connection.GetGlyphData(table, hexsql, query);
                             if (hexresults == null || hexresults.Count == 0)
                             {
                                 var label = hex.ToString("x4");
-                                hexresults = new List<IGlyphData>()
+                                hexresults = new ()
                                 {
                                     new GlyphDescription
                                     {
@@ -186,7 +181,6 @@ namespace CharacterMap.Provider
                                 hexResult = hexresults.Cast<GlyphDescription>().FirstOrDefault();
                                 break;
                             }
-                                
                         }
                     }
 
@@ -200,7 +194,7 @@ namespace CharacterMap.Provider
                 }
 
                 // 2. If we're performing SQL, create the base query filter
-                StringBuilder sb = new StringBuilder();
+                StringBuilder sb = new ();
                 bool next = false;
 
                 /// Note: SQLite only supports expression trees up to 1000 items, so we need to limit the range
@@ -228,7 +222,7 @@ namespace CharacterMap.Provider
                     return list;
                 }
 
-                List<IGlyphData> results = new List<IGlyphData>();
+                List<IGlyphData> results = new ();
 
                 // 3. If the font has a local search map, we should do a text search inside that
                 if (variant.SearchMap != null)
@@ -251,19 +245,16 @@ namespace CharacterMap.Provider
                 string extra = string.Empty;
                 if (limit != SEARCH_LIMIT)
                 {
-                    
                     extra = string.Format(" AND Ix NOT IN ({0})", string.Join(", ", results.Select(r => r.UnicodeIndex)));
                 }
 
                 // 3.3. Execute!
                 string sql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
-                results.AddRange(_connection.Query<GlyphDescription>(sql, $"{query}*")?.Cast<IGlyphData>());
+                results.AddRange(_connection.GetGlyphData(table, sql, $"{query}*"));
 
                 // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
                 if (results != null && results.Count == SEARCH_LIMIT)
-                {
                     return InsertHex(results);
-                }
 
                 // 5. Perform a partial search on non-FTS table. Only search for what we need.
                 //    This means limit the amount of results, and exclude anything we've already matched.
@@ -277,7 +268,7 @@ namespace CharacterMap.Provider
 
                 // 6. Execute on the non FTS tables
                 string sql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE ? LIMIT {limit}";
-                var results2 = _connection.Query<GlyphDescription>(sql2, $"%{query}%")?.Cast<IGlyphData>()?.ToList();
+                var results2 = _connection.GetGlyphData(table, sql2, $"%{query}%");
 
                 if (results != null)
                 {

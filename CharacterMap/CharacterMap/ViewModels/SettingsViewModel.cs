@@ -109,7 +109,12 @@ namespace CharacterMap.ViewModels
             // application, rather than things like bug-fixes or visual changes.
             return new()
             {
-                new("Latest Update (April 2023)", // April 2023
+                new("Latest Update (June 2023)", // April 2023
+                    "- Added ability to group characters by Unicode Range on character map (Ctrl + G)\n" +
+                    "- Added ability to Copy as SVG (Ctrl + Shift + C)\n" +
+                    "- Added ability to Copy as PNG (Ctrl + Alt + C)\n" +
+                    "- Character filtering is now by Unicode Range"),
+                new("2023.3.0.0 (Apr 2023)", // April 2023
                     "- Added ability to open and import WOFF2 fonts (WOFF2 fonts are converted to OTF during import)\n" +
                     "- Added font PANOSE information to Font Properties flyout"),
                 new("2023.2.4.0 (Mar 2023)", // March 2023

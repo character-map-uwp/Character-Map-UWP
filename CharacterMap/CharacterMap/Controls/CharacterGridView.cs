@@ -341,7 +341,7 @@ namespace CharacterMap.Controls
             if (ItemsSource == null || ItemsPanelRoot == null)
                 return;
 
-            foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
+            foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
             {
                 if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
                 {
@@ -357,7 +357,7 @@ namespace CharacterMap.Controls
             if (ItemsSource == null || ItemsPanelRoot == null)
                 return;
 
-            foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
+            foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
             {
 #if DX
 {
@@ -385,7 +385,7 @@ namespace CharacterMap.Controls
             if (ItemsSource == null || ItemsPanelRoot == null)
                 return;
 
-            foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
+            foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
             {
                 if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
                 {
@@ -416,7 +416,7 @@ namespace CharacterMap.Controls
             if (this.Items.Count == 0 || ItemsPanelRoot == null)
                 return;
 
-            foreach (GridViewItem item in ItemsPanelRoot.Children.Cast<GridViewItem>())
+            foreach (GridViewItem item in ItemsPanelRoot.Children.OfType<GridViewItem>())
             {
                 if (_xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot) is IXamlDirectObject root)
                 {

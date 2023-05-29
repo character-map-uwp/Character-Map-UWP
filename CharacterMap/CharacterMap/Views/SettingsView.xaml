@@ -216,6 +216,13 @@
                                     d:Text="#UserInterface" />
 
                                 <controls:SettingsPresenter
+                                    x:Uid="SettingsCharGrouping"
+                                    d:Description="If enabled, characters are grouped by Unicode range in the character map, otherwise all characters are shown in a single ungrouped list."
+                                    d:Title="Character Grouping">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.GroupCharacters, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
                                     Title="{core:Localizer Key=SettingsCharGridHeader/Text}"
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsCharGridDescription/Text}">
@@ -231,7 +238,7 @@
                                             Value="{x:Bind GetGridSize(GridSize), Mode=TwoWay, BindBack=UpdateGridSize}" />
                                         <TextBlock Style="{StaticResource BodyTextBlockStyle}">
                                             <Run Text="{x:Bind GridSize, Mode=OneWay}" />
-                                            <Run Text="px" />
+                                            <Run x:Uid="PixelUnits" d:Text="px" />
                                         </TextBlock>
                                     </StackPanel>
                                 </controls:SettingsPresenter>
@@ -423,7 +430,10 @@
                                 ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                                 Visibility="Collapsed">
 
-                                <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Look &amp; Feel" />
+                                <TextBlock
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    Text="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
+                                    d:Text="Look &amp; Feel" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSimpleAnimationHeader/Text}" Description="{core:Localizer Key=SettingsSimpleAnimationDescription/Text}">
                                     <ToggleSwitch
@@ -589,8 +599,14 @@
 
                                 <TextBlock x:Uid="SettingsCharacterSearchHeader" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
-                                <controls:SettingsPresenter Title="{core:Localizer Key=InstantSearchToggleHeader/Text}" Description="{core:Localizer Key=SettingsCharacterSearchDescription/Text}" Loaded="SearchSwitchSettingsPresenter_Loaded">
-                                    <ToggleSwitch x:Name="SearchSwitch" MinWidth="0" IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
+                                <controls:SettingsPresenter
+                                    Title="{core:Localizer Key=InstantSearchToggleHeader/Text}"
+                                    Description="{core:Localizer Key=SettingsCharacterSearchDescription/Text}"
+                                    Loaded="SearchSwitchSettingsPresenter_Loaded">
+                                    <ToggleSwitch
+                                        x:Name="SearchSwitch"
+                                        MinWidth="0"
+                                        IsOn="{x:Bind Settings.UseInstantSearch, Mode=TwoWay}" />
                                     <controls:SettingsPresenter.Items>
                                         <controls:SettingsPresenter
                                             x:Name="SearchDelayItem"
@@ -627,7 +643,7 @@
                                         Header="#Search Results"
                                         HeaderTemplate="{StaticResource BlankTemplate}"
                                         LargeChange="10"
-                                        Maximum="100"
+                                        Maximum="250"
                                         Minimum="5"
                                         SmallChange="5"
                                         SpinButtonPlacementMode="Inline"

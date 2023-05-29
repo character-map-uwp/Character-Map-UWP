@@ -102,12 +102,12 @@ namespace CharacterMap.Provider
             }
         }
 
-        private Task VacuumAsync() => Task.Run(() => _conn.Vacuum());
+        private Task VacuumAsync() => Task.Run(() => _conn?.Vacuum());
 
         /// <summary>
         /// Commits the WAL-journal
         /// </summary>
-        private void Checkpoint() => _conn.ExecuteScalar<string>("PRAGMA wal_checkpoint(TRUNCATE)");
+        private void Checkpoint() => _conn?.ExecuteScalarStr("PRAGMA wal_checkpoint(TRUNCATE)");
 
         public Task FlushAsync()
         {

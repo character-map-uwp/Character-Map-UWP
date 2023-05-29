@@ -901,7 +901,7 @@ namespace CharacterMap.Helpers
 
         public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
         {
-            return c.CreateCubicBezierEasingFunction(new Vector2(.1f, .9f), new Vector2(.2f, 1));
+            return c.CreateCubicBezierEasingFunction(new (.1f, .9f), new (.2f, 1));
         }
 
         public static CompositionAnimationGroup CreateAnimationGroup(this Compositor c, params CompositionAnimation[] animations)

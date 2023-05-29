@@ -11,6 +11,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
@@ -39,6 +40,8 @@ namespace CharacterMap.ViewModels
     public partial class FontMapViewModel : ViewModelBase
     {
         #region Properties
+
+        private bool _blockChar = false;
 
         protected override bool TrackAnimation => true;
 
@@ -69,7 +72,7 @@ namespace CharacterMap.ViewModels
 
         public TypographyFeatureInfo                SelectedTypography      { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
         public TypographyFeatureInfo                SelectedCharTypography  { get => GetV(TypographyFeatureInfo.None); set => Set(value ?? TypographyFeatureInfo.None); }
-        public List<UnicodeCategoryModel>           SelectedGlyphCategories { get => Get<List<UnicodeCategoryModel>>(); private set => Set(value); }
+        public List<UnicodeRangeModel>              SelectedGlyphCategories { get => Get<List<UnicodeRangeModel>>(); private set => Set(value); }
         public List<RampOption>                     Ramps                   { get; }
 
         [ObservableProperty] CharacterRenderingOptions              _renderingOptions;
@@ -81,6 +84,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] IReadOnlyList<DWriteFontAxis>          _variationAxis;
         [ObservableProperty] IReadOnlyList<DevProviderBase>         _providers;
         [ObservableProperty] IReadOnlyList<TypographyFeatureInfo>   _typographyFeatures;
+        [ObservableProperty] ObservableCollection<UnicodeRangeGroup>       _groupedChars;
 
         [ObservableProperty] bool                   _showColorGlyphs        = true;
         [ObservableProperty] bool                   _importButtonEnabled    = true;
@@ -136,10 +140,11 @@ namespace CharacterMap.ViewModels
                     Chars = null;
                     _selectedVariant = value;
                     FontFamily = value == null ? null : new FontFamily(value.Source);
+                    int idx = Settings.LastSelectedCharIndex;
                     LoadVariant(value);
                     OnPropertyChanged();
                     UpdateTypography();
-                    SetDefaultChar();
+                    SetDefaultChar(idx);
                     SelectedTypography = TypographyFeatures.FirstOrDefault() ?? TypographyFeatureInfo.None;
                     UpdateDevValues();
 
@@ -166,12 +171,10 @@ namespace CharacterMap.ViewModels
             get => _selectedChar;
             set
             {
-                if (_selectedChar == value) return;
+                if (_selectedChar == value || _blockChar) return;
                 _selectedChar = value;
-                if (null != value)
-                {
+                if (value is not null)
                     Settings.LastSelectedCharIndex = (int)value.UnicodeIndex;
-                }
                 OnPropertyChanged();
                 UpdateCharAnalysis();
                 UpdateDevValues();
@@ -204,7 +207,7 @@ namespace CharacterMap.ViewModels
             CommandSavePng = new RelayCommand<ExportParameters>(async (b) => await SavePngAsync(b));
             CommandSaveSvg = new RelayCommand<ExportParameters>(async (b) => await SaveSvgAsync(b));
             ToggleDev = new RelayCommand<DevProviderType>(t => SetDev(t));
-            SelectedGlyphCategories = Unicode.CreateCategoriesList();
+            SelectedGlyphCategories = Unicode.CreateRangesList();
 
             Ramps = _rampSizes.Select(r => new RampOption { FontSize = r }).ToList();
 
@@ -251,7 +254,7 @@ namespace CharacterMap.ViewModels
             }
         }
 
-        public void UpdateCategories(IList<UnicodeCategoryModel> value)
+        public void UpdateCategories(IList<UnicodeRangeModel> value)
         {
             SelectedGlyphCategories = value.ToList();
             UpdateCharacters();
@@ -259,32 +262,41 @@ namespace CharacterMap.ViewModels
 
         private void UpdateCharacters()
         {
+            int last = Settings.LastSelectedCharIndex;
+            _blockChar = true;
             if (!SelectedGlyphCategories.Any(c => !c.IsSelected))
             {
                 // Fast path : all characters;
                 Chars = SelectedVariant?.GetCharacters();
+                GroupedChars = UnicodeRangeGroup.CreateGroups(Chars);
             }
             else
             {
                 // Filter characters
                 var chars = SelectedVariant?.GetCharacters().AsEnumerable();
-                foreach (var cat in SelectedGlyphCategories.Where(c => !c.IsSelected))
-                    chars = chars.Where(c => !Unicode.IsInCategory(c.UnicodeIndex, cat.Category));
+                foreach (var range in SelectedGlyphCategories.Where(c => !c.IsSelected))
+                    chars = chars.Where(c => !range.Range.Contains(c.UnicodeIndex));
 
                 // Only change the character source if we actually need too
                 var items = chars.ToList();
                 if (items.Count != Chars.Count)
+                {
                     Chars = items;
+                    GroupedChars = UnicodeRangeGroup.CreateGroups(items);
+                }
                 else
                 {
                     for (int i = 0; i<items.Count; i++)
                         if (items[i] != Chars[i])
                         {
                             Chars = items;
+                            GroupedChars = UnicodeRangeGroup.CreateGroups(items);
                             break;
                         }
                 }
             }
+
+            SetDefaultChar(last);
         }
 
         private void LoadVariant(FontVariant variant)
@@ -292,7 +304,13 @@ namespace CharacterMap.ViewModels
             try
             {
                 IsLoadingCharacters = true;
-                SelectedGlyphCategories = Unicode.CreateCategoriesList();
+
+                var ranges = SelectedVariant.GetRanges();
+                SelectedGlyphCategories = UnicodeRanges.All
+                    .Where(r => ranges.Any(g => g.Name == r.Name))
+                    .Select(r => new UnicodeRangeModel(r))
+                    .ToList();
+
                 UpdateCharacters();
                 if (variant != null)
                 {
@@ -301,6 +319,9 @@ namespace CharacterMap.ViewModels
                     SelectedVariantAnalysis = analysis;
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
+
+                    // Update Unicode Categories
+                    
                 }
                 else
                 {
@@ -463,12 +484,16 @@ namespace CharacterMap.ViewModels
                 ramp.Option = ops;
         }
 
-        public void SetDefaultChar()
+        public void SetDefaultChar(int idx = -1)
         {
             if (Chars == null)
                 return;
 
-            if (Chars.FirstOrDefault(i => i.UnicodeIndex == Settings.LastSelectedCharIndex)
+            bool set = idx >= 0;
+            if (idx < 0)
+                idx = Settings.LastSelectedCharIndex; 
+
+            if (Chars.FirstOrDefault(i => i.UnicodeIndex == idx)
                 is Character lastSelectedChar
                 && SelectedVariant.Face.HasCharacter((uint)lastSelectedChar.UnicodeIndex))
             {
@@ -479,6 +504,9 @@ namespace CharacterMap.ViewModels
                 SelectedChar = Chars?.FirstOrDefault(
                     c => !Windows.Data.Text.UnicodeCharacters.IsWhitespace((uint)c.UnicodeIndex)) ?? Chars.FirstOrDefault();
             }
+
+            if (set)
+                _blockChar = false;
         }
 
         public void ChangeDisplayMode()
@@ -641,16 +669,24 @@ namespace CharacterMap.ViewModels
 
         public async Task RequestCopyToClipboardAsync(CopyToClipboardMessage message)
         {
-            if (message.CopyType == DevValueType.Char)
-                await Utils.TryCopyToClipboardAsync(message.RequestedItem, this);
+            if (message.CopyType is  DevValueType.Char
+                && await Utils.TryCopyToClipboardAsync(message, this))
+            {
+                string key = message.DataType switch
+                {
+                    CopyDataType.SVG => "NotificationCopiedSVG",
+                    CopyDataType.PNG => "NotificationCopiedPNG",
+                    _ => "NotificationCopied"
+                };
 
-            Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+                Messenger.Send(new AppNotificationMessage(true, Localization.Get(key), 2500));
+            }
         }
 
         public async void CopySequence()
         {
             if (await Utils.TryCopyToClipboardAsync(Sequence, this))
-                Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2000));
+                Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCopied"), 2500));
         }
         public void ClearSequence() => Sequence = string.Empty;
         public void IncreaseCharacterSize() => Settings.ChangeGridSize(4);
