@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="de-DE" original="CHARACTERMAP/STRINGS/EN-US/RESOURCES.RESW" tool-id="MultilingualAppToolkit" product-name="n/a" product-version="n/a" build-num="n/a">
     <header>
@@ -12,7 +12,7 @@
         </trans-unit>
         <trans-unit id="AppName" translate="yes" xml:space="preserve">
           <source>Character Map UWP</source>
-          <target state="translated">Zeichentabelle</target>
+          <target state="translated">Zeichentabelle UWP</target>
         </trans-unit>
         <trans-unit id="BlackFill.Text" translate="yes" xml:space="preserve">
           <source>Black Fill</source>
@@ -867,7 +867,8 @@ Erwäge, die Details über diesen Fehler bei GitHub mitzuteilen, damit wir dir b
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="translated">Speichern unter</target>
+          <target state="translated">Speichern</target>
+          <note from="MultilingualEditor" annotates="source" priority="4">Should be as short as possible</note>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Save As</source>
@@ -1150,11 +1151,12 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
         </trans-unit>
         <trans-unit id="ToggleDevDefaultLabel" translate="yes" xml:space="preserve">
           <source>Tools</source>
-          <target state="translated">Werkzeuge</target>
+          <target state="translated">Tools</target>
         </trans-unit>
         <trans-unit id="BtnFit.Label" translate="yes" xml:space="preserve">
           <source>Fit</source>
-          <target state="translated">Einpassen</target>
+          <target state="translated">Passen</target>
+          <note from="MultilingualEditor" annotates="source" priority="4">Should be as short as possible</note>
         </trans-unit>
         <trans-unit id="TxtCopiedVariantMessage.Text" translate="yes" xml:space="preserve">
           <source>Glyph variations cannot be copied.
@@ -1176,7 +1178,7 @@ Standardvarianten kopiert.</target>
         </trans-unit>
         <trans-unit id="BtnToggleDev.Label" translate="yes" xml:space="preserve">
           <source>Tools</source>
-          <target state="translated">Werkzeuge</target>
+          <target state="translated">Tools</target>
         </trans-unit>
         <trans-unit id="DevPopupHeader.Text" translate="yes" xml:space="preserve">
           <source>Show Developer Tools</source>
@@ -1600,6 +1602,42 @@ Tippen und halten zum umsortieren.</target>
         <trans-unit id="FontPropPanoseTitle.Text" translate="yes" xml:space="preserve">
           <source>PANOSE Values</source>
           <target state="translated">PANOSE-Werte</target>
+        </trans-unit>
+        <trans-unit id="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Group Characters by Unicode Range (Ctrl+G)</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Gruppieren von Zeichen nach Unicode-Bereich (Strg+G)</target>
+        </trans-unit>
+        <trans-unit id="PixelUnits.Text" translate="yes" xml:space="preserve">
+          <source>px</source>
+          <target state="needs-review-translation">px</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharGrouping.Description" translate="yes" xml:space="preserve">
+          <source>If enabled, characters are grouped by Unicode range in the character map, otherwise all characters are shown in a single ungrouped list.</source>
+          <target state="translated">Wenn diese Option aktiviert ist, werden Zeichen nach Unicode-Bereich in der Zeichentabelle gruppiert, andernfalls werden alle Zeichen in einer einzigen nicht gruppierten Liste angezeigt.</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharGrouping.Title" translate="yes" xml:space="preserve">
+          <source>Character Grouping</source>
+          <target state="translated">Gruppierung von Zeichen</target>
+        </trans-unit>
+        <trans-unit id="CopyAsImageItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as image</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als Bild kopieren</target>
+        </trans-unit>
+        <trans-unit id="CopyAsPngItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as PNG</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als PNG kopieren</target>
+        </trans-unit>
+        <trans-unit id="CopyAsSvgItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as SVG</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als SVG kopieren</target>
+        </trans-unit>
+        <trans-unit id="NotificationCopiedPNG" translate="yes" xml:space="preserve">
+          <source>Copied as PNG</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als PNG kopiert</target>
+        </trans-unit>
+        <trans-unit id="NotificationCopiedSVG" translate="yes" xml:space="preserve">
+          <source>Copied as SVG</source>
+          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als SVG kopiert</target>
         </trans-unit>
       </group>
     </body>

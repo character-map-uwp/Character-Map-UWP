@@ -430,7 +430,10 @@
                                 ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                                 Visibility="Collapsed">
 
-                                <TextBlock Style="{StaticResource SectionHeaderTextBlockStyle}" Text="Look &amp; Feel" />
+                                <TextBlock
+                                    Style="{StaticResource SectionHeaderTextBlockStyle}"
+                                    Text="{x:Bind h:Localization.Get('SettingsAdvancedUILabel/Text')}"
+                                    d:Text="Look &amp; Feel" />
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSimpleAnimationHeader/Text}" Description="{core:Localizer Key=SettingsSimpleAnimationDescription/Text}">
                                     <ToggleSwitch

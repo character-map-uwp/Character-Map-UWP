@@ -1615,6 +1615,42 @@ Tap and hold to arrange.</target>
           <source>PANOSE Values</source>
           <target state="new">PANOSE Values</target>
         </trans-unit>
+        <trans-unit id="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Group Characters by Unicode Range (Ctrl+G)</source>
+          <target state="new">Group Characters by Unicode Range (Ctrl+G)</target>
+        </trans-unit>
+        <trans-unit id="PixelUnits.Text" translate="yes" xml:space="preserve">
+          <source>px</source>
+          <target state="new">px</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharGrouping.Description" translate="yes" xml:space="preserve">
+          <source>If enabled, characters are grouped by Unicode range in the character map, otherwise all characters are shown in a single ungrouped list.</source>
+          <target state="new">If enabled, characters are grouped by Unicode range in the character map, otherwise all characters are shown in a single ungrouped list.</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharGrouping.Title" translate="yes" xml:space="preserve">
+          <source>Character Grouping</source>
+          <target state="new">Character Grouping</target>
+        </trans-unit>
+        <trans-unit id="CopyAsImageItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as image</source>
+          <target state="new">Copy as image</target>
+        </trans-unit>
+        <trans-unit id="CopyAsPngItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as PNG</source>
+          <target state="new">Copy as PNG</target>
+        </trans-unit>
+        <trans-unit id="CopyAsSvgItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as SVG</source>
+          <target state="new">Copy as SVG</target>
+        </trans-unit>
+        <trans-unit id="NotificationCopiedPNG" translate="yes" xml:space="preserve">
+          <source>Copied as PNG</source>
+          <target state="new">Copied as PNG</target>
+        </trans-unit>
+        <trans-unit id="NotificationCopiedSVG" translate="yes" xml:space="preserve">
+          <source>Copied as SVG</source>
+          <target state="new">Copied as SVG</target>
+        </trans-unit>
       </group>
     </body>
   </file>
