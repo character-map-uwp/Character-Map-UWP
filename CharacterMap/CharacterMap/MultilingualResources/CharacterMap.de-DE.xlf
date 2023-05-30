@@ -1601,7 +1601,7 @@ Tippen und halten zum umsortieren.</target>
           <source>PANOSE Values</source>
           <target state="translated">PANOSE-Werte</target>
         </trans-unit>
-				<trans-unit id="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+	<trans-unit id="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Group Characters by Unicode Range (Ctrl+G)</source>
           <target state="translated">Gruppieren von Zeichen nach Unicode-Bereich (Strg+G)</target>
         </trans-unit>
