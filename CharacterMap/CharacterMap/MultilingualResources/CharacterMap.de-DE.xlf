@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xliff:document:1.2 xliff-core-1.2-transitional.xsd">
   <file datatype="xml" source-language="en-US" target-language="de-DE" original="CHARACTERMAP/STRINGS/EN-US/RESOURCES.RESW" tool-id="MultilingualAppToolkit" product-name="n/a" product-version="n/a" build-num="n/a">
     <header>
@@ -20,7 +20,7 @@
         </trans-unit>
         <trans-unit id="BtnCopy.Text" translate="yes" xml:space="preserve">
           <source>Copy as text</source>
-          <target state="translated">Kopie (nur Charakter)</target>
+          <target state="translated">Kopie (nur Zeichen)</target>
         </trans-unit>
         <trans-unit id="BtnSelect.Content" translate="yes" xml:space="preserve">
           <source>Select</source>
@@ -48,11 +48,11 @@
         </trans-unit>
         <trans-unit id="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Font Face Properties</source>
-          <target state="translated">Schriftart-Eigenschaften</target>
+          <target state="translated">Schriftbild-Eigenschaften</target>
         </trans-unit>
         <trans-unit id="FontPropFace.Text" translate="yes" xml:space="preserve">
           <source>Face Name</source>
-          <target state="translated">Schriftart-Name</target>
+          <target state="translated">Schriftartname</target>
         </trans-unit>
         <trans-unit id="FontPropFamily.Text" translate="yes" xml:space="preserve">
           <source>Family Name</source>
@@ -64,7 +64,7 @@
         </trans-unit>
         <trans-unit id="FontPropStretch.Text" translate="yes" xml:space="preserve">
           <source>Stretch</source>
-          <target state="translated">Dehnen</target>
+          <target state="translated">Dehnung</target>
         </trans-unit>
         <trans-unit id="FontPropStyle.Text" translate="yes" xml:space="preserve">
           <source>Style</source>
@@ -76,7 +76,7 @@
         </trans-unit>
         <trans-unit id="FontPropTitle.Text" translate="yes" xml:space="preserve">
           <source>Font Face Properties</source>
-          <target state="translated">Schriftart-Eigenschaften</target>
+          <target state="translated">Schriftbild-Eigenschaften</target>
         </trans-unit>
         <trans-unit id="FontPropType.Text" translate="yes" xml:space="preserve">
           <source>Type</source>
@@ -306,11 +306,11 @@
         </trans-unit>
         <trans-unit id="InstantSearchToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Instant search disabled</source>
-          <target state="translated">Sofortsuche deaktiviert</target>
+          <target state="translated">Schnellsuche deaktiviert</target>
         </trans-unit>
         <trans-unit id="InstantSearchToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Instant search enabled</source>
-          <target state="translated">Sofortsuche aktiviert</target>
+          <target state="translated">Schnellsuche aktiviert</target>
         </trans-unit>
         <trans-unit id="SearchResultsSlider.Header" translate="yes" xml:space="preserve">
           <source>Maximum search results</source>
@@ -374,7 +374,7 @@
         </trans-unit>
         <trans-unit id="StatusBarFontCount" translate="yes" xml:space="preserve">
           <source>{0} Font Families</source>
-          <target state="translated">{0} Schriftartfamilien</target>
+          <target state="translated">{0} Schriftfamilien</target>
         </trans-unit>
         <trans-unit id="FontPropFileSize.Text" translate="yes" xml:space="preserve">
           <source>File Size</source>
@@ -390,7 +390,7 @@
         </trans-unit>
         <trans-unit id="SearchDelaySelector.Header" translate="yes" xml:space="preserve">
           <source>Delay before search (ms)</source>
-          <target state="translated">Verzögerung vor Suche (ms)</target>
+          <target state="translated">Verzögerung der Suche (ms)</target>
         </trans-unit>
         <trans-unit id="InstantSearchToggleHeader.Text" translate="yes" xml:space="preserve">
           <source>Instant Search</source>
@@ -414,7 +414,7 @@
         </trans-unit>
         <trans-unit id="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Hide font pane (Ctrl+L)</source>
-          <target state="translated">Schriftarten-Pane ausblenden (Strg+L)</target>
+          <target state="translated">Schriftarten-Leiste ausblenden (Strg+L)</target>
         </trans-unit>
         <trans-unit id="NotificationImportFailed" translate="yes" xml:space="preserve">
           <source>Import Failed</source>
@@ -430,7 +430,7 @@
         </trans-unit>
         <trans-unit id="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Show font pane (Ctrl+L)</source>
-          <target state="translated">Schriftarten-Pane anzeigen (Strg+L)</target>
+          <target state="translated">Schriftarten-Leiste anzeigen (Strg+L)</target>
         </trans-unit>
         <trans-unit id="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>More</source>
@@ -510,7 +510,7 @@
         </trans-unit>
         <trans-unit id="SettingsCharacterSearchDescription.Text" translate="yes" xml:space="preserve">
           <source>Toggle instant search. If disabled, you can start a search by using the enter key or pressing the search icon.</source>
-          <target state="translated">Sofortsuche umschalten. Wenn deaktiviert, kannst du die Suche mit Hilfe der EingabeTaste oder einem Klick auf das Suchsymbol starten.</target>
+          <target state="translated">Schnellsuche umschalten. Wenn deaktiviert, kannst du die Suche mit Hilfe der EingabeTaste oder einem Klick auf das Suchsymbol starten.</target>
         </trans-unit>
         <trans-unit id="SettingsCharacterSearchHeader.Text" translate="yes" xml:space="preserve">
           <source>Character Search</source>
@@ -582,7 +582,7 @@ Benötigt einen Neustart, um wirksam zu werden.</target>
         </trans-unit>
         <trans-unit id="SettingsLanguageHeader.Text" translate="yes" xml:space="preserve">
           <source>Language override</source>
-          <target state="translated">Sprachenüberschreibung</target>
+          <target state="translated">Sprache</target>
         </trans-unit>
         <trans-unit id="SettingsPNGExportDescription.Text" translate="yes" xml:space="preserve">
           <source>The size in pixels of exported PNG images.</source>
@@ -645,7 +645,7 @@ Das Anschalten hat einen vernachlässigbaren Einfluss auf die Leistung.</target>
         </trans-unit>
         <trans-unit id="AppBtnClear.Label" translate="yes" xml:space="preserve">
           <source>Clear</source>
-          <target state="translated">Leeren</target>
+          <target state="translated">Alle abwählen</target>
         </trans-unit>
         <trans-unit id="AppBtnReset.Label" translate="yes" xml:space="preserve">
           <source>Reset</source>
@@ -787,7 +787,7 @@ Du kannst den Seitenbereich im "Seiten-Einrichtung"-Bereich anpassen.</target>
         </trans-unit>
         <trans-unit id="SettingsWindowsThemeSettings.Content" translate="yes" xml:space="preserve">
           <source>Windows theme settings</source>
-          <target state="translated">Systemthema</target>
+          <target state="translated">Systemthema-Einstellungen</target>
         </trans-unit>
         <trans-unit id="SettingsCharLabel.Text" translate="yes" xml:space="preserve">
           <source>Character Label</source>
@@ -867,8 +867,7 @@ Erwäge, die Details über diesen Fehler bei GitHub mitzuteilen, damit wir dir b
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.Label" translate="yes" xml:space="preserve">
           <source>Save As</source>
-          <target state="translated">Speichern</target>
-          <note from="MultilingualEditor" annotates="source" priority="4">Should be as short as possible</note>
+          <target state="translated">Speichern unter</target>
         </trans-unit>
         <trans-unit id="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Save As</source>
@@ -989,7 +988,7 @@ Erwäge, die Details über diesen Fehler bei GitHub mitzuteilen, damit wir dir b
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
           <source>Switch to Type Ramp view (Ctrl+T)</source>
-          <target state="translated">Zur Typen-Rampenansicht wechseln (Strg+T)</target>
+          <target state="translated">Zur Rampenansicht wechseln (Strg+T)</target>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter or choose text from the dropdown</source>
@@ -1050,12 +1049,12 @@ System will return the name of the font file Windows uses in uppercase.
 Optimized will create a smart name based on Font Family and Font Name.</source>
           <target state="translated">Wähle, wie Schriftarten beim Export benannt werden sollen.
 
-Das System wird den Namen der von Windows genutzten Schriftart in Großbuchstaben zurückgeben.
-Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem Schriftartnamen erstellen.</target>
+'System' wird den Namen der von Windows genutzten Schriftart in Großbuchstaben zurückgeben.
+'Optimiert' wird einen intelligenten Namen basierend auf der Schriftfamilie und dem Schriftartnamen erstellen.</target>
         </trans-unit>
         <trans-unit id="SettingsFontNameExportLabel.Text" translate="yes" xml:space="preserve">
           <source>Font File Export Naming</source>
-          <target state="translated">Schriftart-Datei-Export-Namensgebung</target>
+          <target state="translated">Schriftart-Dateiexport-Namensgebung</target>
         </trans-unit>
         <trans-unit id="SettingsImportedFontsLabel.Text" translate="yes" xml:space="preserve">
           <source>Imported Fonts</source>
@@ -1071,7 +1070,7 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
           <source>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</source>
-          <target state="translated">Diese Schriftart hat variable Funktionen. Um sie zu erforschen, nutze den obigen Schaltknopf zum Wechsel in die Typen-Rampenansicht.</target>
+          <target state="translated">Diese Schriftart hat variable Funktionen. Um sie zu erforschen, nutze den obigen Schaltknopf zum Wechsel in die Rampenansicht.</target>
         </trans-unit>
         <trans-unit id="BtnReset.Content" translate="yes" xml:space="preserve">
           <source>Reset</source>
@@ -1079,11 +1078,11 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
         </trans-unit>
         <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
           <source>Shows or hides the preview pane on the right of the screen. If turned off, many functions can still be accessed by right clicking or touch holding on a character inside the character grid.</source>
-          <target state="translated">Zeigt oder versteckt die Vorschau-Pane auf der rechten Bildschirmseite. Wenn abgeschaltet, können viele Funktionen per Rechtsklick oder Touch-Druck auf ein Zeichen im Zeichenraster trotzdem erreicht werden.</target>
+          <target state="translated">Zeigt oder versteckt die Vorschauleiste auf der rechten Bildschirmseite. Wenn abgeschaltet, können viele Funktionen per Rechtsklick oder Touch-Druck auf ein Zeichen im Zeichenraster trotzdem erreicht werden.</target>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneHeader.Text" translate="yes" xml:space="preserve">
           <source>Preview Pane Display</source>
-          <target state="translated">Vorschau-Pane-Anzeige</target>
+          <target state="translated">Vorschauleiste-Anzeige</target>
         </trans-unit>
         <trans-unit id="CopyFontIconCode.Text" translate="yes" xml:space="preserve">
           <source>Copy FontIcon Code</source>
@@ -1107,11 +1106,11 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
         </trans-unit>
         <trans-unit id="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Decrease Character Size (Ctrl+-)</source>
-          <target state="translated">Zeichengröße verkleinern (Strg+-)</target>
+          <target state="translated">Zeichen verkleinern (Strg+-)</target>
         </trans-unit>
         <trans-unit id="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Increase Character Size (Ctrl++)</source>
-          <target state="translated">Zeichengröße vergrößern (Strg++)</target>
+          <target state="translated">Zeichen vergrößern (Strg++)</target>
         </trans-unit>
         <trans-unit id="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Switch View (Ctrl+T)</source>
@@ -1119,7 +1118,7 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
         </trans-unit>
         <trans-unit id="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Preview Pane (Ctrl+R)</source>
-          <target state="translated">Vorschau-Pane umschalten (Strg+R)</target>
+          <target state="translated">Vorschauleiste umschalten (Strg+R)</target>
         </trans-unit>
         <trans-unit id="NotificationCopied" translate="yes" xml:space="preserve">
           <source>Copied</source>
@@ -1127,7 +1126,7 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
         </trans-unit>
         <trans-unit id="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Toggle Copy Pane (Ctrl+B)</source>
-          <target state="translated">Kopier-Pane umschalten (Strg+B)</target>
+          <target state="translated">Kopierleiste umschalten (Strg+B)</target>
         </trans-unit>
         <trans-unit id="AddButton.Label" translate="yes" xml:space="preserve">
           <source>Add</source>
@@ -1151,12 +1150,11 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
         </trans-unit>
         <trans-unit id="ToggleDevDefaultLabel" translate="yes" xml:space="preserve">
           <source>Tools</source>
-          <target state="translated">Tools</target>
+          <target state="translated">Werkzeuge</target>
         </trans-unit>
         <trans-unit id="BtnFit.Label" translate="yes" xml:space="preserve">
           <source>Fit</source>
-          <target state="translated">Passen</target>
-          <note from="MultilingualEditor" annotates="source" priority="4">Should be as short as possible</note>
+          <target state="translated">Einpassen</target>
         </trans-unit>
         <trans-unit id="TxtCopiedVariantMessage.Text" translate="yes" xml:space="preserve">
           <source>Glyph variations cannot be copied.
@@ -1174,11 +1172,11 @@ Standardvarianten kopiert.</target>
         </trans-unit>
         <trans-unit id="FontListSearchBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Find a font family</source>
-          <target state="translated">Einen Schriftarten-Familie finden</target>
+          <target state="translated">Eine Schriftfamilie finden</target>
         </trans-unit>
         <trans-unit id="BtnToggleDev.Label" translate="yes" xml:space="preserve">
           <source>Tools</source>
-          <target state="translated">Tools</target>
+          <target state="translated">Werkzeuge</target>
         </trans-unit>
         <trans-unit id="DevPopupHeader.Text" translate="yes" xml:space="preserve">
           <source>Show Developer Tools</source>
@@ -1478,7 +1476,7 @@ Benötigt einen Neustart, um wirksam zu werden.</target>
         </trans-unit>
         <trans-unit id="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Show or Hide Font Pane (Ctrl+L)</source>
-          <target state="translated">Schriftart-Pane anzeigen oder ausblenden (Strg+L)</target>
+          <target state="translated">Schriftarten-Leiste anzeigen oder ausblenden (Strg+L)</target>
         </trans-unit>
         <trans-unit id="OpenInNewTab.Text" translate="yes" xml:space="preserve">
           <source>Open in New Tab</source>
@@ -1494,7 +1492,7 @@ Benötigt einen Neustart, um wirksam zu werden.</target>
         </trans-unit>
         <trans-unit id="CompareActiveItem.Text" translate="yes" xml:space="preserve">
           <source>Compare active font faces</source>
-          <target state="translated">Aktiven Schriftarten vergleichen</target>
+          <target state="translated">Aktive Schriftbilder vergleichen</target>
         </trans-unit>
         <trans-unit id="OptionEmoji.Text" translate="yes" xml:space="preserve">
           <source>Emoji</source>
@@ -1506,11 +1504,11 @@ Benötigt einen Neustart, um wirksam zu werden.</target>
         </trans-unit>
         <trans-unit id="CompareFontFaceTitle.Text" translate="yes" xml:space="preserve">
           <source>Compare Font Faces</source>
-          <target state="translated">Schriftarten vergleichen</target>
+          <target state="translated">Schriftbilder vergleichen</target>
         </trans-unit>
         <trans-unit id="CompareFacesCountLabel.Text" translate="yes" xml:space="preserve">
           <source>Compare {0} font faces</source>
-          <target state="translated">Vergleiche {0} Schriftarten</target>
+          <target state="translated">Vergleiche {0} Schriftbilder</target>
         </trans-unit>
         <trans-unit id="CompareFamilyTitle.Text" translate="yes" xml:space="preserve">
           <source>Compare {0}</source>
@@ -1584,7 +1582,7 @@ Benötigt einen Neustart, um wirksam zu werden.</target>
         <trans-unit id="SettingsCustomSuggestions.Description" translate="yes" xml:space="preserve">
           <source>Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
 Tap and hold to arrange.</source>
-          <target state="translated">Füge benutzerdefinierte Optionen zur Ansicht in der Typen-Rampenansicht und den Textvorschlägen im Vergleichsfenster hinzu und verwalte sie.
+          <target state="translated">Füge benutzerdefinierte Optionen zur Ansicht in der Rampenansicht und den Textvorschlägen im Vergleichsfenster hinzu und verwalte sie.
 Tippen und halten zum umsortieren.</target>
         </trans-unit>
         <trans-unit id="SettingsCustomSuggestions.Title" translate="yes" xml:space="preserve">
@@ -1602,42 +1600,6 @@ Tippen und halten zum umsortieren.</target>
         <trans-unit id="FontPropPanoseTitle.Text" translate="yes" xml:space="preserve">
           <source>PANOSE Values</source>
           <target state="translated">PANOSE-Werte</target>
-        </trans-unit>
-        <trans-unit id="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
-          <source>Group Characters by Unicode Range (Ctrl+G)</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Gruppieren von Zeichen nach Unicode-Bereich (Strg+G)</target>
-        </trans-unit>
-        <trans-unit id="PixelUnits.Text" translate="yes" xml:space="preserve">
-          <source>px</source>
-          <target state="needs-review-translation">px</target>
-        </trans-unit>
-        <trans-unit id="SettingsCharGrouping.Description" translate="yes" xml:space="preserve">
-          <source>If enabled, characters are grouped by Unicode range in the character map, otherwise all characters are shown in a single ungrouped list.</source>
-          <target state="translated">Wenn diese Option aktiviert ist, werden Zeichen nach Unicode-Bereich in der Zeichentabelle gruppiert, andernfalls werden alle Zeichen in einer einzigen nicht gruppierten Liste angezeigt.</target>
-        </trans-unit>
-        <trans-unit id="SettingsCharGrouping.Title" translate="yes" xml:space="preserve">
-          <source>Character Grouping</source>
-          <target state="translated">Gruppierung von Zeichen</target>
-        </trans-unit>
-        <trans-unit id="CopyAsImageItem.Text" translate="yes" xml:space="preserve">
-          <source>Copy as image</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als Bild kopieren</target>
-        </trans-unit>
-        <trans-unit id="CopyAsPngItem.Text" translate="yes" xml:space="preserve">
-          <source>Copy as PNG</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als PNG kopieren</target>
-        </trans-unit>
-        <trans-unit id="CopyAsSvgItem.Text" translate="yes" xml:space="preserve">
-          <source>Copy as SVG</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als SVG kopieren</target>
-        </trans-unit>
-        <trans-unit id="NotificationCopiedPNG" translate="yes" xml:space="preserve">
-          <source>Copied as PNG</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als PNG kopiert</target>
-        </trans-unit>
-        <trans-unit id="NotificationCopiedSVG" translate="yes" xml:space="preserve">
-          <source>Copied as SVG</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Als SVG kopiert</target>
         </trans-unit>
       </group>
     </body>
