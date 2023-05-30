@@ -1601,6 +1601,42 @@ Tippen und halten zum umsortieren.</target>
           <source>PANOSE Values</source>
           <target state="translated">PANOSE-Werte</target>
         </trans-unit>
+				<trans-unit id="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Group Characters by Unicode Range (Ctrl+G)</source>
+          <target state="translated">Gruppieren von Zeichen nach Unicode-Bereich (Strg+G)</target>
+        </trans-unit>
+        <trans-unit id="PixelUnits.Text" translate="yes" xml:space="preserve">
+          <source>px</source>
+          <target state="translated">px</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharGrouping.Description" translate="yes" xml:space="preserve">
+          <source>If enabled, characters are grouped by Unicode range in the character map, otherwise all characters are shown in a single ungrouped list.</source>
+          <target state="translated">Wenn diese Option aktiviert ist, werden Zeichen nach Unicode-Bereich in der Zeichentabelle gruppiert, andernfalls werden alle Zeichen in einer einzigen nicht gruppierten Liste angezeigt.</target>
+        </trans-unit>
+        <trans-unit id="SettingsCharGrouping.Title" translate="yes" xml:space="preserve">
+          <source>Character Grouping</source>
+          <target state="translated">Zeichen-Gruppierung</target>
+        </trans-unit>
+        <trans-unit id="CopyAsImageItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as image</source>
+          <target state="translated">Als Bild kopieren</target>
+        </trans-unit>
+        <trans-unit id="CopyAsPngItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as PNG</source>
+          <target state="translated">Als PNG kopieren</target>
+        </trans-unit>
+        <trans-unit id="CopyAsSvgItem.Text" translate="yes" xml:space="preserve">
+          <source>Copy as SVG</source>
+          <target state="translated">Als SVG kopieren</target>
+        </trans-unit>
+        <trans-unit id="NotificationCopiedPNG" translate="yes" xml:space="preserve">
+          <source>Copied as PNG</source>
+          <target state="translated">Als PNG kopiert</target>
+        </trans-unit>
+        <trans-unit id="NotificationCopiedSVG" translate="yes" xml:space="preserve">
+          <source>Copied as SVG</source>
+          <target state="translated">Als SVG kopiert</target>
+        </trans-unit>
       </group>
     </body>
   </file>
