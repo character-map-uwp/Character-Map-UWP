@@ -250,7 +250,6 @@ namespace CharacterMap.Core
 
 
 
-
         /* .NET */
 
         public void Dispose()

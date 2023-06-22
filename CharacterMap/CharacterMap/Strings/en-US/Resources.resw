@@ -1070,6 +1070,9 @@ Default variant copied.</value>
   <data name="ExportSkipBlank.Content" xml:space="preserve">
     <value>Skip exporting glyphs with no visible content</value>
   </data>
+  <data name="IncludeGlyphCode.Content" xml:space="preserve">
+    <value>Include XAML glyph code in file name</value>
+  </data>
   <data name="CharacterFilterButton.Label" xml:space="preserve">
     <value>Filter</value>
     <comment>Labels must be as short as possible</comment>

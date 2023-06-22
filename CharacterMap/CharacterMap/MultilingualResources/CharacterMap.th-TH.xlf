@@ -1290,6 +1290,10 @@ Default variant copied.</source>
           <source>Skip exporting glyphs with no visible content</source>
           <target state="translated">ไม่ส่งออกอักษรที่ว่างเปล่า</target>
         </trans-unit>
+		<trans-unit id="IncludeGlyphCode.Content" translate="yes" xml:space="preserve">
+          <source>Include XAML glyph code in file name</source>
+          <target state="translated"></target>
+        </trans-unit>
         <trans-unit id="SettingsDesignStyle.Description" translate="yes" xml:space="preserve">
           <source>Change the design style of the application.
 Requires a restart to take effect.</source>

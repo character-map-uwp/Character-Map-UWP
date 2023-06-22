@@ -965,6 +965,9 @@ Standardvarianten kopiert.</value>
   <data name="ExportSkipBlank.Content" xml:space="preserve">
     <value>Den Export von Glyphen ohne sichtbaren Inhalt überspringen</value>
   </data>
+   <data name="IncludeGlyphCode.Content" xml:space="preserve">
+    <value></value>
+  </data>
   <data name="SettingsDesignStyle.Description" xml:space="preserve">
     <value>Den Designstil der Anwendung ändern.
 Benötigt einen Neustart, um wirksam zu werden.</value>

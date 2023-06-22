@@ -32,6 +32,8 @@ namespace CharacterMap.ViewModels
 
         public bool HideWhitespace          { get => GetV(true); set => Set(value); }
         public bool SkipBlankGlyphs         { get => GetV(true); set => Set(value); }
+        public bool IncludeGlyphCode         { get => GetV(true); set => Set(value); }
+
         public double GlyphSize             { get => GetV(0d); set => Set(value); }
         public Color GlyphColor             { get => GetV(Colors.White); set => Set(value); }
         public bool ExportColor             { get => GetV(true); set => Set(value); }
@@ -154,7 +156,8 @@ namespace CharacterMap.ViewModels
             { 
                 PreferredColor = GlyphColor, 
                 PreferredSize = GlyphSize,
-                SkipEmptyGlyphs = SkipBlankGlyphs
+                SkipEmptyGlyphs = SkipBlankGlyphs,
+                IncludeGlyphCodes = IncludeGlyphCode,
             };
 
             IsExporting = true;

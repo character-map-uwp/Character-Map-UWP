@@ -676,8 +676,14 @@
                                 IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}"
                                 Style="{StaticResource DefaultThemeCheckBoxStyle}"
                                 d:Content="{core:Localizer Key=ExportSkipBlank/Content}" />
+                            <CheckBox 
+                                x:Uid="IncludeGlyphCode"
+                                IsChecked="{x:Bind ViewModel.IncludeGlyphCode, Mode=TwoWay}"
+                                Style="{StaticResource DefaultThemeCheckBoxStyle}"
+                                d:Content="{core:Localizer Key=IncludeGlyphCode/Content}"/>
                         </cmControls:ContentGroup>
 
+                        
                     </StackPanel>
                 </ScrollViewer>
 

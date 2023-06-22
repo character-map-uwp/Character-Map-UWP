@@ -47,6 +47,7 @@ namespace CharacterMap.Core
         public Color PreferredColor { get; init; }
         public StorageFolder TargetFolder { get; init; }
         public bool SkipEmptyGlyphs { get; init; }
+        public bool IncludeGlyphCodes { get; init; }
 
         public ExportOptions() { }
 
@@ -319,9 +320,9 @@ namespace CharacterMap.Core
                 return ExportSvgAsync(export, selectedFont, options, selectedChar, targetFolder);
         }
 
-        public static Task<StorageFile> GetTargetFileAsync(InstalledFont font, FontVariant variant, Character c, string format, StorageFolder targetFolder)
+        public static Task<StorageFile> GetTargetFileAsync(InstalledFont font, FontVariant variant, Character c, string format, StorageFolder targetFolder, bool includeXamlGlyphCode)
         {
-            string name = GetFileName(font, variant, c, format);
+            string name = GetFileName(font, variant, c, format, includeXamlGlyphCode);
             if (targetFolder != null)
                 return targetFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting).AsTask();
             else
@@ -348,7 +349,7 @@ namespace CharacterMap.Core
                     return new ExportResult(ExportState.Skipped, null);
 
                 // 2. Get the file we will save the image to.
-                var providedFile = await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "svg", targetFolder);                
+                var providedFile = await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "svg", targetFolder, style.IncludeGlyphCodes);                
                 if (providedFile is StorageFile file)
                 {
                     try
@@ -390,9 +391,9 @@ namespace CharacterMap.Core
                     stream = await GetGlyphPNGStreamAsync(style, options, selectedChar);
                     if (stream is null)
                         return new ExportResult(ExportState.Skipped, null);
-
+                    
                     // 2. Get the file we will save the image to.
-                    if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder)
+                    if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder, style.IncludeGlyphCodes)
                         is StorageFile file)
                     {
                         // 3. Write to the file
@@ -510,10 +511,19 @@ namespace CharacterMap.Core
             InstalledFont selectedFont,
             FontVariant selectedVariant,
             Character selectedChar,
-            string ext)
+            string ext,
+            bool includeXamlGlyphCode)
         {
-            var chr = selectedVariant.GetDescription(selectedChar) ?? selectedChar.UnicodeString;
-            return $"{selectedFont.Name} {selectedVariant.PreferredName} - {chr}.{ext}";
+            if (includeXamlGlyphCode == true)
+            {
+                var Hex = selectedChar.UnicodeIndex.ToString("x4").ToUpper();
+                return $"{selectedFont.Name} {selectedVariant.PreferredName} - &#x{Hex};.{ext}";
+            }
+            else
+            {
+                var chr = selectedVariant.GetDescription(selectedChar) ?? selectedChar.UnicodeString;
+                return $"{selectedFont.Name} {selectedVariant.PreferredName} - {chr}.{ext}";
+            }
         }
 
         private static async Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values, PickerLocationId suggestedLocation = PickerLocationId.PicturesLibrary)

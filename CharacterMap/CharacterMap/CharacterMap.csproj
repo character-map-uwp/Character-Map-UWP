@@ -170,7 +170,9 @@
     <Content Include="Assets\Data\GlyphData.db" />
     <PRIResource Include="Strings\zh-TW\Resources.resw" />
     <PRIResource Include="Strings\zh-CN\Resources.resw" />
-    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\en-US\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Content Include="Assets\Data\glyphlist.txt" />
