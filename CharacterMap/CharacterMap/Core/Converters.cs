@@ -121,6 +121,24 @@ namespace CharacterMap.Core
             return $"{size:0.00} MB";
         }
 
+        public static string GetColourGlyphFormats(FontAnalysis a)
+        {
+            if (a is null)
+                return null;
+
+            List<string> s = new();
+            if (a.HasBitmapGlyphs)
+                s.Add(Localization.Get("GlyphTypeBitmap"));
+
+            if (a.HasSVGGlyphs)
+                s.Add("SVG");
+
+            if (a.HasCOLRGlyphs)
+                s.Add("COLR");
+
+            return string.Join(", ", s);
+        }
+
         public static SupportedLanguage GetSelectedLanguage(string selected, IList<Models.SupportedLanguage> languages) 
             => languages.FirstOrDefault(i => i.LanguageID == selected);
 

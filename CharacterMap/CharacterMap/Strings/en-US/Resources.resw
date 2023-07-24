@@ -1336,4 +1336,16 @@ Tap and hold to arrange.</value>
   <data name="NotificationCopiedSVG" xml:space="preserve">
     <value>Copied as SVG</value>
   </data>
+  <data name="ColrV1SupportMessage.Text" xml:space="preserve">
+    <value>This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above.</value>
+  </data>
+  <data name="FontPropCOLRVersion.Text" xml:space="preserve">
+    <value>COLR Version</value>
+  </data>
+  <data name="FontPropColourFormats.Text" xml:space="preserve">
+    <value>Color Glyph Formats</value>
+  </data>
+  <data name="GlyphTypeBitmap" xml:space="preserve">
+    <value>Bitmap</value>
+  </data>
 </root>

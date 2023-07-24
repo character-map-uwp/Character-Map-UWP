@@ -752,11 +752,35 @@
                                                 <TextBlock x:Uid="FontPropWeight" />
                                                 <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetWeightName(ViewModel.SelectedVariant.DirectWriteProperties.Weight), Mode=OneWay}" />
 
+                                                <TextBlock
+                                                    x:Name="FontPropColourFormats"
+                                                    x:Load="{x:Bind ViewModel.SelectedVariant.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
+                                                    x:Uid="FontPropColourFormats"
+                                                    d:Text="Colour Glyph Formats" />
+                                                <TextBlock
+                                                    x:Name="FontProperColourFormatsValue"
+                                                    x:Load="{x:Bind ViewModel.SelectedVariant.Face.Properties.IsColorFont, Mode=OneWay, FallbackValue=False}"
+                                                    Style="{StaticResource Value}"
+                                                    Text="{x:Bind core:Converters.GetColourGlyphFormats(ViewModel.SelectedVariantAnalysis), Mode=OneWay}" />
+
+                                                <TextBlock
+                                                    x:Name="FontPropCOLRVersion"
+                                                    x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
+                                                    x:Uid="FontPropCOLRVersion"
+                                                    d:Text="COLR Version" />
+                                                <TextBlock
+                                                    x:Name="FontProperCOLRVersionValue"
+                                                    x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasCOLRGlyphs, Mode=OneWay, FallbackValue=False}"
+                                                    Style="{StaticResource Value}"
+                                                    Text="{x:Bind ViewModel.SelectedVariantAnalysis.COLRVersion, Mode=OneWay}" />
+
                                                 <!--<TextBlock x:Uid="FontPropInstallType" />
                                                 <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.GetProviderName(), Mode=OneWay}" />-->
 
                                                 <TextBlock x:Uid="FontPropFileSize" />
                                                 <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetFileSize(ViewModel.SelectedVariantAnalysis.FileSize), Mode=OneWay}" />
+
+
 
                                                 <TextBlock
                                                     x:Name="FontPropXaml"
@@ -1026,15 +1050,29 @@
 
 
                 <!--  Notifications  -->
-                <Grid Grid.Row="1" Visibility="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=Collapsed}">
+                <StackPanel
+                    x:Name="TypeRampHints"
+                    Grid.Row="1"
+                    Spacing="8">
                     <TextBlock
                         x:Name="VariableFeaturesMessage"
+                        x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
                         x:Uid="VariableFeaturesMessage"
                         Margin="12 6 0 -12"
                         FontSize="12"
                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                        TextWrapping="Wrap" />
-                </Grid>
+                        TextWrapping="Wrap"
+                        d:Text="This font has variable features. To explore them, switch to Type Ramp view using the switch button above." />
+                    <TextBlock
+                        x:Name="ColrV1SupportMessage"
+                        x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
+                        x:Uid="ColrV1SupportMessage"
+                        Margin="12 6 0 -12"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                        TextWrapping="Wrap"
+                        d:Text="This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above." />
+                </StackPanel>
 
             </Grid>
 
@@ -2044,7 +2082,7 @@
                         <!--<Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
                         <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />-->
                         <Setter Target="ViewToggleButton.(ToolTipService.ToolTip)" Value="{core:Localizer Key='LblSwitchToCharMap/Text'}" />
-                        <Setter Target="VariableFeaturesMessage.Visibility" Value="Collapsed" />
+                        <Setter Target="TypeRampHints.Visibility" Value="Collapsed" />
                         <!--  Popup menu options  -->
                         <Setter Target="IncreaseSizeButton.IsEnabled" Value="False" />
                         <Setter Target="DecreaseSizeButton.IsEnabled" Value="False" />
