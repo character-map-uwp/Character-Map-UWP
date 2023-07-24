@@ -194,6 +194,13 @@ namespace CharacterMap.Core
         /// </summary>
         public bool SupportsCOLRv1Rendering => Utils.Supports23H2 && DirectWriteProperties.IsColorFont && GetAnalysisInternal().SupportsCOLRv1;
 
+        /// <summary>
+        /// Hack used for QuickCompare - we show ALL colour fonts using manual DirectWrite rendering (using DirectText control) rather than 
+        /// XAML TextBlock. We cannot use the flag above to filter only COLRv1 fonts as the FontAnalysis object requires actually opening and 
+        /// manually parsing the font file headers - too expensive an operation to perform when scrolling the entire font list on the UI thread.
+        /// /// </summary>
+        public bool SupportsColourRendering => Utils.Supports23H2 && DirectWriteProperties.IsColorFont;
+
         public string TryGetSampleText()
         {
             return GetInfoKey(Face, CanvasFontInformation.SampleText).Value;

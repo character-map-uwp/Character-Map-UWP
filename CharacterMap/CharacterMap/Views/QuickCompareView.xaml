@@ -180,6 +180,8 @@
                     </TextBlock>
                 </controls:ContentGroup.Text>
                 <TextBlock
+                    x:Name="SystemRender"
+                    x:Load="{x:Bind core:Converters.False(DefaultVariant.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
                     x:Phase="1"
                     Canvas.Top="24"
                     Width="400"
@@ -191,6 +193,21 @@
                     IsColorFontEnabled="True"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="Wrap" />
+                <cx:DirectText
+                    x:Name="NativeRender"
+                    x:Load="{x:Bind DefaultVariant.SupportsColourRendering, FallbackValue=False, TargetNullValue=False}"
+                    x:Phase="1"
+                    Canvas.Top="24"
+                    Width="400"
+                    MaxHeight="226"
+                    FontFace="{x:Bind DefaultVariant.Face}"
+                    FontFamily="{x:Bind DefaultVariant.Source}"
+                    FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
+                    FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
+                    FontWeight="{x:Bind DefaultVariant.DirectWriteProperties.Weight}"
+                    IsColorFontEnabled="True"
+                    IsTextWrappingEnabled="True"
+                    Typography="{x:Bind core:TypographyFeatureInfo.None}" />
             </controls:ContentGroup>
         </DataTemplate>
 
@@ -205,18 +222,34 @@
                     </TextBlock>
                 </controls:ContentGroup.Text>
                 <controls:ContentGroup.SecondaryContent>
-                    <TextBlock
-                        x:Name="ContentRender"
-                        x:Phase="1"
-                        Margin="0 0 0 0"
-                        FontFamily="{x:Bind DefaultVariant.DisplaySource}"
-                        FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
-                        FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
-                        FontWeight="{x:Bind DefaultVariant.DirectWriteProperties.Weight}"
-                        IsColorFontEnabled="True"
-                        MaxLines="5"
-                        TextTrimming="CharacterEllipsis"
-                        TextWrapping="Wrap" />
+                    <Grid>
+                        <TextBlock
+                            x:Name="ContentRender"
+                            x:Load="{x:Bind core:Converters.False(DefaultVariant.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
+                            x:Phase="1"
+                            Margin="0 0 0 0"
+                            FontFamily="{x:Bind DefaultVariant.DisplaySource}"
+                            FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
+                            FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
+                            FontWeight="{x:Bind DefaultVariant.DirectWriteProperties.Weight}"
+                            IsColorFontEnabled="True"
+                            MaxLines="5"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="Wrap" />
+                        <cx:DirectText
+                            x:Name="NativeRender"
+                            x:Load="{x:Bind DefaultVariant.SupportsColourRendering, FallbackValue=False, TargetNullValue=False}"
+                            x:Phase="1"
+                            Margin="0 0 0 0"
+                            FontFace="{x:Bind DefaultVariant.Face}"
+                            FontFamily="{x:Bind DefaultVariant.Source}"
+                            FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
+                            FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
+                            FontWeight="{x:Bind DefaultVariant.DirectWriteProperties.Weight}"
+                            IsColorFontEnabled="True"
+                            IsTextWrappingEnabled="True"
+                            Typography="{x:Bind core:TypographyFeatureInfo.None}" />
+                    </Grid>
                 </controls:ContentGroup.SecondaryContent>
             </controls:ContentGroup>
         </DataTemplate>

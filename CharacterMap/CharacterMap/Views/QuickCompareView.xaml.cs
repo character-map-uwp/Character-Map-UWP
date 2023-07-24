@@ -375,32 +375,39 @@ namespace CharacterMap.Views
 
         private void Repeater_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            // This is hack for Quick Compare view - force ItemTemplate
-            // to be inflated so our code will work
-            if (args.ItemContainer.Content is null)
+            if (args.Phase == 1)
             {
-                args.ItemContainer.Content = args.Item;
-                args.ItemContainer.Measure(new Windows.Foundation.Size(50, 50));
-            }
-
-            var g = GetTargets(args.ItemContainer).FirstOrDefault();
-            if (!args.InRecycleQueue && g is not null)
-            {
-                g.DataContext = args.Item;
-                SetText(g, ViewModel.Text);
-                SetFontSize(g, FontSizeSlider.Value);
-            }
-
-            if (ResourceHelper.AllowExpensiveAnimation)
-            {
-                if (args.InRecycleQueue)
+                var g = GetTargets(args.ItemContainer).FirstOrDefault();
+                if (!args.InRecycleQueue && g is not null)
                 {
-                    CompositionFactory.PokeUIElementZIndex(args.ItemContainer);
+                    g.DataContext = args.Item;
+                        SetText(g, ViewModel.Text);
+                        SetFontSize(g, FontSizeSlider.Value);
                 }
-                else
+            }
+            else
+            {
+                // This is hack for Quick Compare view - force ItemTemplate
+                // to be inflated so our code will work
+                if (args.ItemContainer.Content is null)
                 {
-                    var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-                    v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
+                    args.ItemContainer.Content = args.Item;
+                    args.ItemContainer.Measure(new Windows.Foundation.Size(50, 50));
+                }
+
+                args.RegisterUpdateCallback(1, Repeater_ContainerContentChanging);
+
+                if (ResourceHelper.AllowExpensiveAnimation)
+                {
+                    if (args.InRecycleQueue)
+                    {
+                        CompositionFactory.PokeUIElementZIndex(args.ItemContainer);
+                    }
+                    else
+                    {
+                        var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
+                        v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
+                    }
                 }
             }
         }
