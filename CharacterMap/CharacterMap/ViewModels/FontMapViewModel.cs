@@ -102,6 +102,12 @@ namespace CharacterMap.ViewModels
         public FontDisplayMode DisplayMode                                  { get => Get<FontDisplayMode>(); set { if (Set(value)) { UpdateTypography(); } } }
         public FontAnalysis SelectedVariantAnalysis                         { get => Get<FontAnalysis>(); set { if (Set(value)) { UpdateVariations(); } } }
 
+        partial void OnShowColorGlyphsChanged(bool value)
+        {
+            if (DisplayMode == FontDisplayMode.TypeRamp)
+                UpdateRampOptions();
+        }
+
         partial void OnSelectedFontChanging(FontItem value)
         {
             // Remove property changed listener from old font
@@ -479,7 +485,7 @@ namespace CharacterMap.ViewModels
             if (_renderingOptions is null)
                 return;
 
-            var ops = _renderingOptions with { Axis = _variationAxis };
+            var ops = _renderingOptions with { Axis = _variationAxis, IsColourFontEnabled = ShowColorGlyphs };
             foreach (var ramp in Ramps)
                 ramp.Option = ops;
         }
