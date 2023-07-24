@@ -704,8 +704,11 @@ namespace CharacterMap.ViewModels
 
         public void AddCharToSequence(int start, int length, Character c)
         {
-            var s = Sequence;
-            start = Math.Min(start, Sequence.Length);
+            if (c is null)
+                return;
+
+            var s = Sequence ?? string.Empty;
+            start = Math.Min(start, s.Length);
             if (s.Length > 0)
                 s = s.Remove(start, length);
                     
