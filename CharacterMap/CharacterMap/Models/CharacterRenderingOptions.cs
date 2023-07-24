@@ -65,7 +65,7 @@ namespace CharacterMap.Models
             Axis = axis?.Copy();
 
             //IsVariation = Axis != null && Axis.Where(a => a.Value != a.DefaultValue).ToList() is List<DWriteFontAxis> a && a.Count > 0;
-            RequiresNativeRender = Variant.DirectWriteProperties.HasVariations;
+            RequiresNativeRender = Variant.DirectWriteProperties.HasVariations || Variant.SupportsCOLRv1Rendering;
         }
 
         

@@ -179,6 +179,21 @@ namespace CharacterMap.Core
             return _analysis ??= TypographyAnalyzer.Analyze(this);
         }
 
+        /// <summary>
+        /// Load an analysis without a glyph search map. Callers later using the cached analysis and expecting a search map should
+        /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(FontVariant, FontAnalysis)"/>
+        /// </summary>
+        /// <returns></returns>
+        private FontAnalysis GetAnalysisInternal()
+        {
+            return _analysis ??= TypographyAnalyzer.Analyze(this, false);
+        }
+
+        /// <summary>
+        /// Used temporarily to allow insider builds to access COLRv1. Do not use elsewhere. Very expensive.
+        /// </summary>
+        public bool SupportsCOLRv1Rendering => Utils.Supports23H2 && DirectWriteProperties.IsColorFont && GetAnalysisInternal().SupportsCOLRv1;
+
         public string TryGetSampleText()
         {
             return GetInfoKey(Face, CanvasFontInformation.SampleText).Value;
@@ -273,10 +288,7 @@ namespace CharacterMap.Core
             return new FontVariant(face, null)
             {
                 PreferredName = "",
-                Characters = new List<Character>
-                {
-                    new Character(0)
-                }
+                Characters = new List<Character> { new (0) }
             };
         }
 

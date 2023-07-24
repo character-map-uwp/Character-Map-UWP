@@ -32,7 +32,7 @@ namespace CharacterMap.ViewModels
 
     public partial class RampOption : ObservableObject
     {
-        public int FontSize { get; set; }
+        public int FontSize { get; set; } = 12;
         [ObservableProperty]
         CharacterRenderingOptions _option;
     }
@@ -315,13 +315,13 @@ namespace CharacterMap.ViewModels
                 if (variant != null)
                 {
                     var analysis = variant.GetAnalysis();
+                    TypographyAnalyzer.PrepareSearchMap(variant, analysis);
                     analysis.ResetVariableAxis();
                     SelectedVariantAnalysis = analysis;
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
-
-                    // Update Unicode Categories
                     
+                    // Update Unicode Categories
                 }
                 else
                 {

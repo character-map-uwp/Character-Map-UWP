@@ -498,5 +498,10 @@ namespace CharacterMap.Core
         public static bool Supports1809 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7);
 
         public static bool Supports1903 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8);
+
+        /// <summary>
+        /// 23H2 Windows 11 builds introduce COLRv1 font format support to DirectWrite
+        /// </summary>
+        public static bool Supports23H2 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 17);
     }
 }

@@ -81,7 +81,7 @@
         <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
-        <Setter Property="Padding" Value="0" />
+        <Setter Property="Padding" Value="2 1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewItem">

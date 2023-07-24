@@ -221,6 +221,7 @@
 
                         <Grid
                             x:Name="RootGrid"
+                            MinHeight="{TemplateBinding MinHeight}"
                             MaxWidth="{TemplateBinding MaxWidth}"
                             Margin="{TemplateBinding Margin}"
                             Padding="{TemplateBinding Padding}"
@@ -228,7 +229,6 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="8"
-                            MinHeight="{TemplateBinding MinHeight}"
                             RenderTransformOrigin="{TemplateBinding RenderTransformOrigin}"
                             Visibility="{TemplateBinding Visibility}">
 
@@ -543,7 +543,8 @@
                             MaxHeight="500"
                             Padding="12 12 0 48"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
-                            SelectionMode="None">
+                            SelectionMode="None"
+                            ShowsScrollingPlaceholders="False">
                             <GridView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <ItemsWrapGrid CacheLength="0" Orientation="Horizontal" />

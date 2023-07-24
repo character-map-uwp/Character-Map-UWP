@@ -1356,7 +1356,7 @@
                                         x:Name="Native"
                                         x:Load="{x:Bind Option.RequiresNativeRender, FallbackValue=False, Mode=OneWay}"
                                         core:Properties.Options="{x:Bind Option, Mode=OneWay}"
-                                        FontSize="{x:Bind FontSize}"
+                                        FontSize="{Binding FontSize, TargetNullValue=12.0, FallbackValue=12.0}"
                                         IsOverwriteCompensationEnabled="True"
                                         Text="{Binding ElementName=TypeRampRoot, Path=DataContext.TypeRampText}" />
                                 </StackPanel>

@@ -114,10 +114,12 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
         Platform::String^ text = Text;
 
+        auto fontSize = 8 > FontSize ? 8 : FontSize;
+
         /* CREATE FORMAT */
         auto format = ref new CanvasTextFormat();
         format->FontFamily = FontFamily->Source;
-        format->FontSize = FontSize;
+        format->FontSize = fontSize;
         format->FontWeight = FontWeight;
         format->FontStyle = FontStyle;
         format->FontStretch = FontStretch;

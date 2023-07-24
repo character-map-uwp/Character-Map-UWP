@@ -1151,5 +1151,58 @@ namespace CharacterMap.Core
             }));
 
         #endregion
+
+        #region ItemContainerBackgroundTransition
+
+        private static bool GetSetContainerBackgroundTransition(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(SetContainerBackgroundTransitionProperty);
+        }
+
+        private static void SetSetContainerBackgroundTransition(DependencyObject obj, bool value)
+        {
+            obj.SetValue(SetContainerBackgroundTransitionProperty, value);
+        }
+
+        public static readonly DependencyProperty SetContainerBackgroundTransitionProperty =
+            DependencyProperty.RegisterAttached("SetContainerBackgroundTransition", typeof(bool), typeof(Properties), new PropertyMetadata(false));
+
+
+        public static BrushTransition GetItemContainerBackgroundTransition(DependencyObject obj)
+        {
+            return (BrushTransition)obj.GetValue(ItemContainerBackgroundTransitionProperty);
+        }
+
+        public static void SetItemContainerBackgroundTransition(DependencyObject obj, BrushTransition value)
+        {
+            obj.SetValue(ItemContainerBackgroundTransitionProperty, value);
+        }
+
+        public static readonly DependencyProperty ItemContainerBackgroundTransitionProperty =
+            DependencyProperty.RegisterAttached("ItemContainerBackgroundTransition", typeof(BrushTransition), typeof(Properties), new PropertyMetadata(null, (d, e) =>
+            {
+                if (d is ListViewBase b)
+                {
+                    b.ContainerContentChanging -= ContainerContentChanging;
+                    b.ContainerContentChanging += ContainerContentChanging;
+                }
+
+                static void ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+                {
+                    if (args.ItemContainer is not null 
+                        && GetSetContainerBackgroundTransition(args.ItemContainer) is false
+                        && args.ItemContainer.ContentTemplateRoot is not null)
+                    {
+                        SetSetContainerBackgroundTransition(args.ItemContainer, true);
+
+                        var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
+                        var b = VisualTreeHelper.GetChild(c, 0);
+                        if (b is Border br && br.BackgroundTransition is null)
+                            br.BackgroundTransition = ResourceHelper.AllowAnimation ? GetItemContainerBackgroundTransition(sender) as BrushTransition : null;
+                    }
+                }
+            }));
+
+        #endregion
     }
 }

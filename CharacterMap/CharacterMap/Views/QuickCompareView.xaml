@@ -650,15 +650,29 @@
                                                         Text="{x:Bind PreferredName}" />
                                                 </controls:ContentGroup.Text>
                                                 <controls:ContentGroup.SecondaryContent>
-                                                    <TextBlock
-                                                        x:Name="TargetRender"
-                                                        FontFamily="{x:Bind DisplaySource}"
-                                                        FontStretch="{x:Bind DirectWriteProperties.Stretch}"
-                                                        FontStyle="{x:Bind DirectWriteProperties.Style}"
-                                                        FontWeight="{x:Bind DirectWriteProperties.Weight}"
-                                                        IsColorFontEnabled="True"
-                                                        TextTrimming="CharacterEllipsis"
-                                                        TextWrapping="Wrap" />
+                                                    <Grid>
+                                                        <TextBlock
+                                                            x:Name="XAMLRender"
+                                                            x:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
+                                                            FontFamily="{x:Bind DisplaySource}"
+                                                            FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                            FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                            FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                            IsColorFontEnabled="True"
+                                                            TextTrimming="CharacterEllipsis"
+                                                            TextWrapping="Wrap" />
+                                                        <cx:DirectText
+                                                            x:Name="DWriteRender"
+                                                            x:Load="{x:Bind SupportsCOLRv1Rendering, FallbackValue=False}"
+                                                            FontFace="{x:Bind Face}"
+                                                            FontFamily="{Binding Source}"
+                                                            FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                            FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                            FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                            IsColorFontEnabled="True"
+                                                            IsTextWrappingEnabled="True"
+                                                            Typography="{x:Bind core:TypographyFeatureInfo.None}" />
+                                                    </Grid>
                                                 </controls:ContentGroup.SecondaryContent>
                                             </controls:ContentGroup>
                                         </DataTemplate>

@@ -104,6 +104,8 @@ namespace CharacterMap.Views
 
         #endregion
 
+        private BrushTransition t = new () { Duration = TimeSpan.FromSeconds(0.115) };
+
         public bool IsStandalone { get; set; }
 
         private Debouncer _sizeDebouncer { get; } = new ();
@@ -862,6 +864,11 @@ namespace CharacterMap.Views
             {
                 args.ItemContainer.ContextRequested -= Grid_ContextRequested;
                 args.ItemContainer.ContextRequested += Grid_ContextRequested;
+
+                var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
+                var b = VisualTreeHelper.GetChild(c, 0);
+                if (b is Border br)
+                    br.BackgroundTransition = ResourceHelper.AllowAnimation ? t : null;
             }
         }
 
