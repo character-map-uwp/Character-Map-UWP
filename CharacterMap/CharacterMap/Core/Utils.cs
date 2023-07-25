@@ -95,7 +95,7 @@ namespace CharacterMap.Core
 
         public static async Task<bool> TryCopyToClipboardAsync(CopyToClipboardMessage msg, FontMapViewModel viewModel)
         {
-            string c = @$"\u{msg.RequestedItem.UnicodeIndex}?";
+            string c = msg.RequestedItem.GetClipboardString();
 
             if (msg.DataType == CopyDataType.Text)
             {
@@ -119,7 +119,7 @@ namespace CharacterMap.Core
 
         public static Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
         {
-            string c = @$"\u{character.UnicodeIndex}?";
+            string c = character.GetClipboardString();
             return TryCopyToClipboardInternalAsync(character.Char, c, viewModel);
         }
 

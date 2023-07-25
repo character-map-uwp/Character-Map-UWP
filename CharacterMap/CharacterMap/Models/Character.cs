@@ -39,6 +39,18 @@ namespace CharacterMap.Models
             };
         }
 
+        public string GetClipboardString()
+        {
+            // Check if SurrogatePair
+            if (UnicodeIndex >= 0x010000 && UnicodeIndex <= 0x10FFFF)
+            {
+                Windows.Data.Text.UnicodeCharacters.GetSurrogatePairFromCodepoint(UnicodeIndex, out char high, out char low);
+                return @$"\u{(uint)high}?\u{(uint)low}?";
+            }
+            else
+                return @$"\u{UnicodeIndex}?";
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as Character);
