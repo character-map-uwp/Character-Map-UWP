@@ -1017,6 +1017,13 @@ namespace CharacterMap.Views
 #pragma warning restore CS0618
         }
 
+        private void TypeRampFlowButton_Click(object sender, RoutedEventArgs e)
+        {
+            TypeRampScroller.FlowDirection = TypeRampScroller.FlowDirection == FlowDirection.LeftToRight
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
+        }
+
 
 
 

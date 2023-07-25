@@ -1348,4 +1348,7 @@ Tap and hold to arrange.</value>
   <data name="GlyphTypeBitmap" xml:space="preserve">
     <value>Bitmap</value>
   </data>
+  <data name="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Change flow direction</value>
+  </data>
 </root>

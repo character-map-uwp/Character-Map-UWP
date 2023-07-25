@@ -207,6 +207,7 @@
     <Compile Include="Controls\FilterFlyout.xaml.cs">
       <DependentUpon>FilterFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FlowAwareComboBox.cs" />
     <Compile Include="Controls\ModalPagePresenter.cs" />
     <Compile Include="Controls\OpenFolderDialog.xaml.cs">
       <DependentUpon>OpenFolderDialog.xaml</DependentUpon>

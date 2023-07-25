@@ -12,7 +12,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
-    xmlns:sdk17="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract,17)"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
@@ -205,7 +204,7 @@
                     MaxHeight="226"
                     FallbackFont="{x:Bind core:FontFinder.Fallback}"
                     FontFace="{x:Bind DefaultVariant.Face}"
-                    FontFamily="{x:Bind DefaultVariant.Source}"
+                    FontFamily="{Binding DefaultVariant.Source}"
                     FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
                     FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
                     FontWeight="{x:Bind DefaultVariant.DirectWriteProperties.Weight}"
@@ -247,7 +246,7 @@
                             Margin="0 0 0 0"
                             FallbackFont="{x:Bind core:FontFinder.Fallback}"
                             FontFace="{x:Bind DefaultVariant.Face}"
-                            FontFamily="{x:Bind DefaultVariant.Source}"
+                            FontFamily="{Binding DefaultVariant.Source}"
                             FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
                             FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
                             FontWeight="{x:Bind DefaultVariant.DirectWriteProperties.Weight}"
@@ -480,7 +479,7 @@
                                 </Button.Flyout>
                             </Button>
 
-                            <ComboBox
+                            <controls:FlowAwareComboBox
                                 x:Name="InputText"
                                 x:Uid="TypeRampInputBox"
                                 Grid.Column="1"
@@ -489,6 +488,7 @@
                                 Background="Transparent"
                                 BorderThickness="0 0 0 1"
                                 CornerRadius="0"
+                                DetectedFlowDirectionChanged="InputText_DetectedFlowDirectionChanged"
                                 IsEditable="True"
                                 ItemsSource="{x:Bind ViewModel.TextOptions, Mode=OneWay}"
                                 SelectedIndex="0"
@@ -502,7 +502,7 @@
                                             Text="Edit Suggestions" />
                                     </MenuFlyout>
                                 </ComboBox.ContextFlyout>
-                            </ComboBox>
+                            </controls:FlowAwareComboBox>
 
                         </Grid>
                         <Grid x:Name="SecondRow">

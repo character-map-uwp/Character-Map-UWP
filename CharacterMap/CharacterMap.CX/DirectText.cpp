@@ -47,10 +47,12 @@ DirectText::DirectText()
     m_isStale = true;
 
     auto c = ref new DependencyPropertyChangedCallback(this, &DirectText::OnPropChanged);
-    this->RegisterPropertyChangedCallback(DirectText::FontSizeProperty, c);
 
-    auto d = ref new DependencyPropertyChangedCallback(this, &DirectText::OnPropChanged);
-    this->RegisterPropertyChangedCallback(DirectText::ForegroundProperty, d);
+    this->RegisterPropertyChangedCallback(DirectText::FontFamilyProperty, c);
+    this->RegisterPropertyChangedCallback(DirectText::FontSizeProperty, c);
+    this->RegisterPropertyChangedCallback(DirectText::ForegroundProperty, c);
+    this->RegisterPropertyChangedCallback(DirectText::FlowDirectionProperty, c);
+    this->RegisterPropertyChangedCallback(DirectText::RequestedThemeProperty, c);
 }
 
 void DirectText::OnPropChanged(DependencyObject^ d, DependencyProperty^ p)
@@ -103,7 +105,7 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     bool hasText = UnicodeIndex > 0 || FontFace != nullptr;
 
-    if (!hasText || Typography == nullptr || m_canvas == nullptr || !m_canvas->ReadyToDraw)
+    if (!hasText || Typography == nullptr || m_canvas == nullptr || FontFamily == nullptr || !m_canvas->ReadyToDraw)
         return Size(this->MinWidth, this->MinHeight);
 
     auto dpi = m_canvas->Dpi / 96.0f;
@@ -126,6 +128,8 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
         /* CREATE FORMAT */
         auto format = ref new CanvasTextFormat();
+        if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
+            format->Direction = CanvasTextDirection::RightToLeftThenTopToBottom;
         format->FontFamily = FontFamily->Source;
         format->FontSize = fontSize;
         format->FontWeight = FontWeight;
