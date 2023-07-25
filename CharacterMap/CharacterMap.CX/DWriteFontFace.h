@@ -152,6 +152,17 @@ namespace CharacterMapCX
 			return face;
 		}
 
+		DWRITE_FONT_METRICS1 GetMetrics()
+		{
+			if (m_hasMetrics == false)
+			{
+				m_font->GetMetrics(&m_metrics);
+				m_hasMetrics = true;
+			}
+
+			return m_metrics;
+		}
+
 		void SetProperties(DWriteProperties^ props)
 		{
 			m_dwProperties = props;
@@ -162,6 +173,8 @@ namespace CharacterMapCX
 	private:
 		inline DWriteFontFace() { }
 
+		bool m_hasMetrics = false;
+		DWRITE_FONT_METRICS1 m_metrics{};
 		CanvasFontFace^ m_fontFace = nullptr;
 		DWriteProperties^ m_dwProperties = nullptr;
 		ComPtr<IDWriteFontFaceReference> m_fontResource = nullptr;

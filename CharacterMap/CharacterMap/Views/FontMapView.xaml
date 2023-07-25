@@ -1053,12 +1053,12 @@
                 <StackPanel
                     x:Name="TypeRampHints"
                     Grid.Row="1"
-                    Spacing="8">
+                    Spacing="0">
                     <TextBlock
                         x:Name="VariableFeaturesMessage"
                         x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
                         x:Uid="VariableFeaturesMessage"
-                        Margin="12 6 0 -12"
+                        Margin="12 6 0 -6"
                         FontSize="12"
                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                         TextWrapping="Wrap"
@@ -1067,7 +1067,7 @@
                         x:Name="ColrV1SupportMessage"
                         x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
                         x:Uid="ColrV1SupportMessage"
-                        Margin="12 6 0 -12"
+                        Margin="12 6 0 -6"
                         FontSize="12"
                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                         TextWrapping="Wrap"
@@ -1280,7 +1280,7 @@
                 </Grid.RenderTransform>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" MaxHeight="300" />
+                    <RowDefinition Height="Auto" MaxHeight="246" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -1304,7 +1304,7 @@
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
 
-                <ScrollViewer Grid.Row="1">
+                <ScrollViewer Grid.Row="1" MaxHeight="246">
                     <ItemsControl
                         x:Name="VariableAxis"
                         Margin="24 0"
@@ -1469,32 +1469,32 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Border x:Name="PreviewBorder" />
-                        <Viewbox
+                        <Border
                             x:Name="TxtPreviewViewBox"
                             x:FieldModifier="public"
                             Margin="24 12 24 4"
+                            Padding="24 12"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch"
-                            IsHitTestVisible="False"
-                            Stretch="Uniform"
-                            StretchDirection="Both">
-                            <Border>
-                                <TextBlock
-                                    x:Name="TxtPreview"
-                                    VerticalAlignment="Center"
-                                    FontFamily="{Binding FontFamily}"
-                                    FontSize="{x:Bind core:Converters.GetFontSize(ViewModel.Settings.GridSize), Mode=OneTime}"
-                                    FontStretch="{Binding SelectedVariant.DirectWriteProperties.Stretch}"
-                                    FontStyle="{Binding SelectedVariant.DirectWriteProperties.Style}"
-                                    FontWeight="{Binding SelectedVariant.DirectWriteProperties.Weight}"
-                                    Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                    IsColorFontEnabled="{Binding ShowColorGlyphs}"
-                                    IsTextScaleFactorEnabled="False"
-                                    Text="{Binding SelectedChar.Char}"
-                                    TextAlignment="Center"
-                                    d:Text="a" />
-                            </Border>
-                        </Viewbox>
+                            IsHitTestVisible="False">
+                            <cxc:DirectText
+                                x:Name="TxtPreview"
+                                VerticalAlignment="Center"
+                                FontFace="{Binding SelectedVariant.Face}"
+                                FontFamily="{Binding FontFamily}"
+                                FontSize="24"
+                                FontStretch="{Binding SelectedVariant.DirectWriteProperties.Stretch}"
+                                FontStyle="{Binding SelectedVariant.DirectWriteProperties.Style}"
+                                FontWeight="{Binding SelectedVariant.DirectWriteProperties.Weight}"
+                                Foreground="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                IsCharacterFitEnabled="True"
+                                IsColorFontEnabled="{Binding ShowColorGlyphs}"
+                                IsOverwriteCompensationEnabled="True"
+                                IsTextScaleFactorEnabled="False"
+                                Text="{Binding SelectedChar.Char}"
+                                Typography="{Binding SelectedCharTypography}"
+                                d:Text="a" />
+                        </Border>
 
                         <controls:UXComboBox
                             x:Name="PreviewTypographySelector"
@@ -1623,7 +1623,7 @@
                                     FlowDirection="RightToLeft"
                                     Orientation="Horizontal">
 
-                                    <controls:UXButton
+                                    <!--<controls:UXButton
                                         x:Name="BtnFit"
                                         x:Uid="BtnFit"
                                         Click="BtnFit_Click"
@@ -1643,7 +1643,7 @@
                                                 Glyph="&#xE799;"
                                                 Visibility="{x:Bind ViewModel.Settings.FitCharacter, Mode=OneTime}" />
                                         </Grid>
-                                    </controls:UXButton>
+                                    </controls:UXButton>-->
 
                                     <controls:UXButton x:Uid="BtnSaveGlyph" d:Label="Save">
                                         <FontIcon Glyph="&#xE105;" />

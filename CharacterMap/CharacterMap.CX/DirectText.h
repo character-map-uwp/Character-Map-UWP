@@ -171,6 +171,8 @@ namespace CharacterMapCX
 			CanvasTextLayout^ m_layout;
 			bool m_isStale;
 			bool m_render;
+			double m_minWidth = 1.0;
+			double m_targetScale = 1.0;
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);
 

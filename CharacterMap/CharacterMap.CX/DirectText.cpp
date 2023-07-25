@@ -21,12 +21,14 @@ using namespace Windows::UI::Xaml::Hosting;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::Xaml::Media;
+using namespace Microsoft::WRL;
 using namespace Microsoft::Graphics::Canvas::UI;
 using namespace Microsoft::Graphics::Canvas::UI::Xaml;
 using namespace Windows::Graphics;
 using namespace Windows::Graphics::DirectX;
 using namespace Windows::Graphics::DirectX::Direct3D11;
 using namespace Microsoft::Graphics::Canvas::UI::Composition;
+using namespace Windows::ApplicationModel;
 
 DependencyProperty^ DirectText::_FallbackFontProperty = nullptr;
 DependencyProperty^ DirectText::_IsColorFontEnabledProperty = nullptr;
@@ -76,6 +78,9 @@ void DirectText::OnApplyTemplate()
             DirectXAlphaMode::Premultiplied);
     }*/
 
+    if (DesignMode::DesignModeEnabled)
+        return;
+
     if (m_canvas == nullptr)
     {
         m_canvas = (CanvasControl^)GetTemplateChild("TextCanvas");
@@ -93,6 +98,9 @@ void DirectText::OnApplyTemplate()
 
 Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(Windows::Foundation::Size size)
 {
+    if (DesignMode::DesignModeEnabled)
+        return size;
+
     bool hasText = UnicodeIndex > 0 || FontFace != nullptr;
 
     if (!hasText || Typography == nullptr || m_canvas == nullptr || !m_canvas->ReadyToDraw)
@@ -207,6 +215,32 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         targetsize = Size(targetsize.Width - m_layout->DrawBounds.Left, targetsize.Height);
     }
 
+    if (IsCharacterFitEnabled)
+    {
+        if (targetsize.Width < size.Width || targetsize.Height < size.Height)
+        {
+            m_minWidth = FontSize / 2.2;
+            auto dHeight = m_layout->DrawBounds.Height;
+            auto dWidth = max(m_minWidth, m_layout->DrawBounds.Width);
+
+            auto lHeight = m_layout->LayoutBounds.Height;
+            auto lWidth = max(m_minWidth, m_layout->LayoutBounds.Width);
+
+            targetsize = Size(dWidth, dHeight);
+
+            auto scale = min(size.Width / targetsize.Width, size.Height / targetsize.Height);
+            if (targetsize.Width == 0 || targetsize.Height == 0)
+                scale = 1;
+
+            m_targetScale = scale;
+            targetsize = Size(targetsize.Width * scale, targetsize.Height * scale);
+        }
+    }
+    else
+    {
+        m_targetScale = 1;
+    }
+
     return targetsize;
 }
 
@@ -216,29 +250,52 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         return;
 
     // Useful for debugging to see which textboxes are DX
-    //args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
+    if (Windows::UI::Xaml::Application::Current->DebugSettings->IsTextPerformanceVisualizationEnabled)
+        args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
 
-    auto left = -min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);
-    auto top = -min(m_layout->DrawBounds.Top, m_layout->LayoutBounds.Top);
+    auto db = m_layout->DrawBounds;
+    auto lb = m_layout->LayoutBounds;
+    auto left = -min(db.Left, lb.Left);
+    auto top = -min(db.Top, lb.Top);
 
     if (IsCharacterFitEnabled)
     {
-        auto hw = m_layout->DrawBounds.Width / 2.;
-        auto cent = this->RenderSize.Width / 2.;
-        left = cent - hw + left;
+        auto bounds = RectHelper::FromCoordinatesAndDimensions(
+            min(db.Left, lb.Left),
+            min(db.Top, lb.Top),
+            max(db.Width, 0),
+            max(db.Height, 0));
 
-        if (m_layout->DrawBounds.Bottom > this->RenderSize.Height || m_layout->DrawBounds.Width > this->RenderSize.Width)
-        {
-            double destWidth = this->RenderSize.Width;
-            double destHeight = this->RenderSize.Height;
+        auto ds = this->DesiredSize;
+        auto rs = this->RenderSize;
+        left = -db.Left;
+        top = -db.Top;
 
-            double scale = min(destWidth / (double)m_layout->DrawBounds.Width, destHeight / (double)m_layout->DrawBounds.Bottom);
+        double scale = min(rs.Width / bounds.Width, rs.Height / bounds.Height);
+        args->DrawingSession->Transform = Windows::Foundation::Numerics::make_float3x2_scale(scale / 1.0);
 
-            args->DrawingSession->Transform = Windows::Foundation::Numerics::make_float3x2_scale(scale / 1.);
-        }
+        // Horizontally centre glyphs
+        if (db.Width < m_minWidth)
+            left += (m_minWidth - db.Width) / 2.0; 
     }
 
-    if (IsOverwriteCompensationEnabled && (m_layout->DrawBounds.Left < 0 || m_layout->DrawBounds.Top < 0))
+    bool drawMetrics = false;
+    if (drawMetrics)
+    {
+        args->DrawingSession->DrawRectangle(left + lb.Left, top + lb.Top, lb.Width, lb.Height, Windows::UI::Colors::DarkGreen);
+        args->DrawingSession->DrawRectangle(left + db.Left, top + db.Top, db.Width, db.Height, Windows::UI::Colors::DarkBlue);
+        
+        auto metrics = this->FontFace->GetMetrics();
+        double capRatio = (double)metrics.capHeight / (double)metrics.designUnitsPerEm;
+        auto capHeight = FontSize * capRatio;
+
+        auto base = m_layout->LineMetrics[0].Baseline + lb.Top + top;
+        auto cap = base - capHeight;
+        args->DrawingSession->DrawLine(left + db.Left, base, left + db.Right, base, Windows::UI::Colors::DarkGoldenrod);
+        args->DrawingSession->DrawLine(left + db.Left, cap, left + db.Right, cap, Windows::UI::Colors::DarkMagenta);
+    }
+
+    if (IsOverwriteCompensationEnabled && !IsCharacterFitEnabled && (m_layout->DrawBounds.Left < 0 || m_layout->DrawBounds.Top < 0))
     {
         auto b = m_layout->DrawBounds.Left;
         auto t = m_layout->DrawBounds.Top;
@@ -249,6 +306,25 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     }
     else
         m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
+
+    //if (IsOverwriteCompensationEnabled && (m_layout->DrawBounds.Left < 0 || m_layout->DrawBounds.Top < 0))
+    //{
+    //    auto b = db.Left;
+    //    auto t = db.Top;
+
+    //    m_canvas->Margin = ThicknessHelper::FromLengths(b, t, 0, 0);
+    //    left -= b;
+    //    top -= t;
+    //}
+    //else if (IsOverwriteCompensationEnabled && m_layout->DrawBounds.Left > 0)
+    //{
+    //    //m_canvas->Margin = ThicknessHelper::FromLengths(-db.Left, 0, 0, 0);
+    //    left += db.Left;
+    //}
+    //else
+        //m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
+
+   
 
     args->DrawingSession->DrawTextLayout(m_layout, float2(left, top), ((SolidColorBrush^)this->Foreground)->Color);
 

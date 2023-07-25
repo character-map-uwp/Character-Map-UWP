@@ -486,8 +486,8 @@ namespace CharacterMap.Views
         {
             if (ViewModel.Settings.FitCharacter)
             {
-                ZoomOutGlyph.Visibility = Visibility.Visible;
-                ZoomGlyph.Visibility = Visibility.Collapsed;
+                //ZoomOutGlyph.Visibility = Visibility.Visible;
+                //ZoomGlyph.Visibility = Visibility.Collapsed;
 
                 TxtPreview.MinHeight = ViewModel.Settings.GridSize;
                 TxtPreview.MinWidth = ViewModel.Settings.GridSize;
@@ -497,8 +497,8 @@ namespace CharacterMap.Views
                 TxtPreview.ClearValue(TextBlock.MinWidthProperty);
                 TxtPreview.ClearValue(TextBlock.MinHeightProperty);
 
-                ZoomOutGlyph.Visibility = Visibility.Collapsed;
-                ZoomGlyph.Visibility = Visibility.Visible;
+                //ZoomOutGlyph.Visibility = Visibility.Collapsed;
+                //ZoomGlyph.Visibility = Visibility.Visible;
             }
         }
 
