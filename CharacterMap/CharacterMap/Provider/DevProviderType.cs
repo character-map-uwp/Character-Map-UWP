@@ -11,5 +11,6 @@
         VisualBasic,
         CSharpWinUI3,
         CppWinRTWinUI3,
+        Unicode
     }
 }

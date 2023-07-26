@@ -581,10 +581,10 @@ namespace CharacterMap.Helpers
                     {
                         foreach (var p in providers.Where(p => p.Type != DevProviderType.None))
                         {
-                            var item = new MenuFlyoutSubItem { Text = p.DisplayName };
+                            MenuFlyoutSubItem item = new () { Text = p.DisplayName };
                             foreach (var o in p.GetAllOptions())
                             {
-                                var i = new MenuFlyoutItem { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = style };
+                                MenuFlyoutItem i = new () { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = style };
                                 i.Click += CopyItemClick;
                                 Properties.SetDevOption(i, o);
                                 item.Items.Add(i);

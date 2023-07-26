@@ -2,6 +2,7 @@
 
 using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Provider;
 using SQLite;
 using System.Collections.Generic;
@@ -136,6 +137,8 @@ namespace CharacterMap.Services
             ops.AddRange(ResourceHelper.AppSettings.CustomRampOptions);
             return ops;
         }
+
+        public static bool RequiresSurrogates(Character c) => c.UnicodeIndex >= 0x010000;
 
         //public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
         //    Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)

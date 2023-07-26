@@ -1351,4 +1351,10 @@ Tap and hold to arrange.</value>
   <data name="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Change flow direction</value>
   </data>
+  <data name="TxtUniCodepoint.Header" xml:space="preserve">
+    <value>Unicode Codepoint</value>
+  </data>
+  <data name="TxtUTF16.Header" xml:space="preserve">
+    <value>UTF-16 Value</value>
+  </data>
 </root>

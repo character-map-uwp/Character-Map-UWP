@@ -295,6 +295,7 @@
     <Compile Include="Models\CharacterRenderingOptions.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
+    <Compile Include="Provider\UnicodeDevProvider.cs" />
     <Compile Include="Provider\VBDevProvider.cs" />
     <Compile Include="Provider\XamarinFormsDevProvider.cs" />
     <Compile Include="Provider\XamlDevProvider.cs" />
