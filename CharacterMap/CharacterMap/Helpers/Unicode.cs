@@ -41,8 +41,8 @@ namespace CharacterMap.Helpers
 
         public static bool SupportsScript(FontVariant v, UnicodeRange range)
         {
-            // Filters out fonts that support just a singular symbol (like currency symbol)
-            return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last && ((r.Last - r.First) > 0));
+            // Filters out fonts that support less than two glyphs in the script range
+            return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last && ((r.Last - r.First) > 1));
         }
 
         public static bool ContainsEmoji(FontVariant v)

@@ -34,6 +34,11 @@ namespace CharacterMap.Models
             return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => Unicode.SupportsScript(v, range))), displayTitle);
         }
 
+        public static BasicFontFilter SupportsScripts(UnicodeRange[] ranges, string displayTitle)
+        {
+            return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => ranges.Any(r => Unicode.SupportsScript(v, r)))), displayTitle);
+        }
+
         public BasicFontFilter(Func<IEnumerable<InstalledFont>, UserCollectionsService, IEnumerable<InstalledFont>> query, string displayTitle, bool requiresAsync = false)
         {
             Query = query;
@@ -116,13 +121,22 @@ namespace CharacterMap.Models
         /* SCRIPTS */
 
         public static BasicFontFilter ScriptArabic { get; }
-            = ForRange(UnicodeRange.Arabic, Localization.Get("OptionScriptArabic/Text"));
+            = SupportsScript(UnicodeRanges.Arabic.Range, Localization.Get("OptionScriptArabic/Text"));
+
+        public static BasicFontFilter ScriptBengali { get; }
+            = SupportsScript(UnicodeRanges.Bengali.Range, Localization.Get("OptionsScriptBengali/Text"));
 
         public static BasicFontFilter ScriptCyrillic { get; }
-            = ForRange(UnicodeRange.Cyrillic, Localization.Get("OptionScriptCyrillic/Text"));
+            = SupportsScript(UnicodeRanges.Cyrillic.Range, Localization.Get("OptionScriptCyrillic/Text"));
 
         public static BasicFontFilter ScriptGreekAndCoptic { get; }
             = SupportsScript(UnicodeRange.GreekAndCoptic, Localization.Get("OptionScriptGreekAndCoptic/Text"));
+
+        public static BasicFontFilter ScriptDevanagari { get; }
+            = SupportsScript(UnicodeRanges.Devanagari.Range, Localization.Get("OptionsScriptDevanagari/Text"));
+
+        public static BasicFontFilter ScriptHiraganaAndKatakana { get; }
+            = SupportsScripts(new[] { UnicodeRanges.Hiragana.Range, UnicodeRanges.Katakana.Range }, Localization.Get("OptionScriptHiraganaAndKatakana/Text"));
 
         public static BasicFontFilter ScriptHebrew { get; }
             = ForRange(UnicodeRange.Hebrew, Localization.Get("OptionScriptHebrew/Text"));

@@ -1360,4 +1360,13 @@ Tap and hold to arrange.</value>
   <data name="EditSuggestionsItem.Text" xml:space="preserve">
     <value>Edit Suggestions</value>
   </data>
+  <data name="OptionScriptHiraganaAndKatakana.Text" xml:space="preserve">
+    <value>Hiragana &amp; Katakana</value>
+  </data>
+  <data name="OptionsScriptBengali.Text" xml:space="preserve">
+    <value>Bengali</value>
+  </data>
+  <data name="OptionsScriptDevanagari.Text" xml:space="preserve">
+    <value>Devanagari</value>
+  </data>
 </root>

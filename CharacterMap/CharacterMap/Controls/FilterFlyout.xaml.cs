@@ -62,8 +62,11 @@ namespace CharacterMap.Controls
 
             AddSub("OptionSupportedScripts/Text")
                 .Add(BasicFontFilter.ScriptArabic, style)
+                .Add(BasicFontFilter.ScriptBengali, style)
                 .Add(BasicFontFilter.ScriptCyrillic, style)
+                .Add(BasicFontFilter.ScriptDevanagari, style)
                 .Add(BasicFontFilter.ScriptGreekAndCoptic, style)
+                .Add(BasicFontFilter.ScriptHiraganaAndKatakana, style)
                 .Add(BasicFontFilter.ScriptHebrew, style)
                 .Add(BasicFontFilter.ScriptBasicLatin, style)
                 .Add(BasicFontFilter.ScriptThai, style)
