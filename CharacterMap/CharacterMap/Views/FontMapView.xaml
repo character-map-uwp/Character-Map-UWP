@@ -1106,6 +1106,7 @@
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.Face, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
+                    ItemFontVariant="{x:Bind ViewModel.SelectedVariant, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
                     ItemsSource="{Binding Source={StaticResource CharacterSource}}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"

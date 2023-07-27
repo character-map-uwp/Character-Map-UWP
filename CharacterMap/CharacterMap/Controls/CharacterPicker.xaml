@@ -26,6 +26,7 @@
             ItemDoubleTapped="ItemsGridView_ItemDoubleTapped"
             ItemFontFace="{x:Bind Options.Variant.Face}"
             ItemFontFamily="{x:Bind Options.Variant.Source}"
+            ItemFontVariant="{x:Bind Options.Variant}"
             ItemSize="40"
             ItemTypography="{x:Bind Options.DXTypography}"
             ItemsSource="{x:Bind Options.Variant.Characters}"

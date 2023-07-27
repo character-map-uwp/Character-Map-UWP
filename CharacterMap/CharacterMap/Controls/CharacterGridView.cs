@@ -3,6 +3,7 @@
 using CharacterMap.Core;
 using CharacterMap.Helpers;
 using CharacterMap.Models;
+using CharacterMap.Services;
 using CharacterMapCX;
 using CharacterMapCX.Controls;
 using Microsoft.Graphics.Canvas.Text;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
@@ -168,6 +170,19 @@ namespace CharacterMap.Controls
 
         #endregion
 
+        #region ItemFontVariant
+
+        public FontVariant ItemFontVariant
+        {
+            get { return (FontVariant)GetValue(ItemFontVariantProperty); }
+            set { SetValue(ItemFontVariantProperty, value); }
+        }
+
+        public static readonly DependencyProperty ItemFontVariantProperty =
+            DependencyProperty.Register(nameof(ItemFontVariant), typeof(FontVariant), typeof(CharacterGridView), new PropertyMetadata(null));
+
+        #endregion
+
         #endregion
 
         private XamlDirect _xamlDirect = null;
@@ -181,6 +196,13 @@ namespace CharacterMap.Controls
 
             this.ContainerContentChanging += OnContainerContentChanging;
             this.ChoosingItemContainer += OnChoosingItemContainer;
+        }
+
+        private class ItemTooltipData
+        {
+            public Character Char { get; set; }
+            public FontVariant Variant { get; set; }
+            public GridViewItem Container { get; set; }
         }
 
         private void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -198,6 +220,36 @@ namespace CharacterMap.Controls
                 item.DataContext = c;
                 item.DoubleTapped -= Item_DoubleTapped;
                 item.DoubleTapped += Item_DoubleTapped;
+
+                // Set ToolTip
+                if (ItemFontVariant is not null)
+                {
+                    if ((ToolTipService.GetToolTip(item) is ToolTip t) is false)
+                    {
+                        t = new();
+                        t.PlacementTarget = item;
+                        t.VerticalOffset = 4;
+                        t.Placement = Windows.UI.Xaml.Controls.Primitives.PlacementMode.Top;
+                        t.Loaded += (d, e) =>
+                        {
+                            if (d is ToolTip tt && tt.Tag is ItemTooltipData data)
+                            {
+                                tt.PlacementRect = new (0, 0, data.Container.ActualWidth, data.Container.ActualHeight);
+                                
+                                // Do not use object initializer Constructor here, this will result in random NullReferenceExceptions.
+                                // No idea why.
+                                TextBlock t = new ();
+                                string txt = data.Variant is not null
+                                    ? GlyphService.GetCharacterDescription(data.Char.UnicodeIndex, data.Variant)
+                                    : string.Empty;
+                                t.Text = txt ?? data.Char.UnicodeString;
+                                tt.Content = t;
+                            }
+                        };
+                        ToolTipService.SetToolTip(item, t);
+                    }
+                    t.Tag = new ItemTooltipData { Char = c, Container = item, Variant = ItemFontVariant };
+                }
             }
 
             if (_templateSettings.EnableReposition)
