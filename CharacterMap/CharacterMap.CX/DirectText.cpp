@@ -328,7 +328,13 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
     //else
         //m_canvas->Margin = ThicknessHelper::FromUniformLength(0);
 
-   
+    if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
+    {
+        // Note: something is wrong here causing the right hand side to clip slightly.
+        //       currently we use 4 as a magic number to avoid this in 90% of cases.
+        //       need to figure out what's up at some point.
+        left += this->ActualWidth - m_layout->DrawBounds.Width - 4;
+    }
 
     args->DrawingSession->DrawTextLayout(m_layout, float2(left, top), ((SolidColorBrush^)this->Foreground)->Color);
 
