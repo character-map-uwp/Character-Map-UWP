@@ -17,6 +17,8 @@ namespace CharacterMap.Helpers
 
         public static string GetHexValue(uint i) => (i <= 0x10FFFF && (i< 0xD800 || i> 0xDFFF)) ? char.ConvertFromUtf32((int) i) : new string ((char) i, 1);
 
+        public static bool RequiresSurrogates(Character c) => c.UnicodeIndex >= 0x010000;
+
         public static bool IsWhiteSpaceOrControl(uint c)
         {
             UnicodeGeneralCategory category = UnicodeCharacters.GetGeneralCategory(c);

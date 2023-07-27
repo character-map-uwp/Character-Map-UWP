@@ -138,8 +138,6 @@ namespace CharacterMap.Services
             return ops;
         }
 
-        public static bool RequiresSurrogates(Character c) => c.UnicodeIndex >= 0x010000;
-
         //public static (string Hex, string FontIcon, string Path, string Symbol) GetDevValues(
         //    Character c, FontVariant v, CanvasTextLayoutAnalysis a, CanvasTypography t, bool isXaml)
         //{

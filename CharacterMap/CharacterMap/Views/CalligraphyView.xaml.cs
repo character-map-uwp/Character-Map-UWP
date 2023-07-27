@@ -160,24 +160,6 @@ namespace CharacterMap.Views
             }
         }
 
-        private void Flyout_Opening(object sender, object e)
-        {
-            if (sender is Flyout flyout)
-            {
-                if (flyout.Content is CharacterPicker p)
-                    p.CharacterSelected -= P_CharacterSelected;
-
-                p = new CharacterPicker(flyout, ViewModel.Options);
-                p.CharacterSelected += P_CharacterSelected;
-                flyout.Content = p;
-            }
-        }
-
-        private void P_CharacterSelected(object sender, Character e)
-        {
-            ViewModel.Text += e.Char;
-        }
-
         private void SaveAsSVG(object sender, RoutedEventArgs e)
         {
             _ = SaveAsync(_container.GetStrokes(), ExportFormat.Svg, _container.BoundingRect);

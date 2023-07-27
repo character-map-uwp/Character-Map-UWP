@@ -136,7 +136,7 @@
     <value>Colored Glyph</value>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
-    <value>Monochrome glyphs</value>
+    <value>Monochrome Glyphs</value>
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>Color glyphs</value>
@@ -1356,5 +1356,8 @@ Tap and hold to arrange.</value>
   </data>
   <data name="TxtUTF16.Header" xml:space="preserve">
     <value>UTF-16 Value</value>
+  </data>
+  <data name="EditSuggestionsItem.Text" xml:space="preserve">
+    <value>Edit Suggestions</value>
   </data>
 </root>

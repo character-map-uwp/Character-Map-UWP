@@ -104,6 +104,8 @@ namespace CharacterMap.ViewModels
 
         partial void OnShowColorGlyphsChanged(bool value)
         {
+            if (RenderingOptions is not null)
+                RenderingOptions = RenderingOptions with { IsColourFontEnabled = value };
             if (DisplayMode == FontDisplayMode.TypeRamp)
                 UpdateRampOptions();
         }
@@ -397,6 +399,10 @@ namespace CharacterMap.ViewModels
             else
                 TypographyFeatures = SelectedVariant.XamlTypographyFeatures;
 
+            // Ensure ColorFont option propagates
+            if (DisplayMode is FontDisplayMode.TypeRamp)
+                UpdateRampOptions();
+
             this.SelectedTypography = TypographyFeatures.FirstOrDefault(t => t.Feature == current.Feature);
             OnPropertyChanged(nameof(SelectedTypography)); // Required.
         }
@@ -482,10 +488,10 @@ namespace CharacterMap.ViewModels
 
         public void UpdateRampOptions()
         {
-            if (_renderingOptions is null)
+            if (RenderingOptions is null)
                 return;
 
-            var ops = _renderingOptions with { Axis = _variationAxis, IsColourFontEnabled = ShowColorGlyphs };
+            var ops = RenderingOptions with { Axis = VariationAxis };
             foreach (var ramp in Ramps)
                 ramp.Option = ops;
         }

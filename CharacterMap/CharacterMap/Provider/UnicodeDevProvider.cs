@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Core;
+using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using System;
@@ -37,7 +38,7 @@ namespace CharacterMap.Provider
             string hex = c.UnicodeIndex.ToString("x4").ToUpper();
             string utf = null;
 
-            if (GlyphService.RequiresSurrogates(c))
+            if (Unicode.RequiresSurrogates(c))
             {
                 Windows.Data.Text.UnicodeCharacters.GetSurrogatePairFromCodepoint(c.UnicodeIndex, out char high, out char low);
                 utf =@$"\u{(uint)high:x4}\u{(uint)low:x4}";

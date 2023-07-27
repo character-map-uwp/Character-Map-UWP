@@ -633,4 +633,39 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="controls:CharacterPickerButton">
+        <Setter Property="BorderThickness" Value="0 1 1 1" />
+        <Setter Property="CornerRadius" Value="0 4 4 0" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Foreground" Value="{ThemeResource ComboBoxDropDownGlyphForeground}" />
+        <Setter Property="Content" Value="&#xE710;" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CharacterPickerButton">
+                    <Button
+                        x:Name="RootButton"
+                        x:Uid="CharacterPickerButton"
+                        Height="{TemplateBinding Height}"
+                        VerticalAlignment="Stretch"
+                        Background="{Binding Target.Background, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        BorderBrush="{Binding Target.BorderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        FontSize="{TemplateBinding FontSize}"
+                        Foreground="{TemplateBinding Foreground}"
+                        Style="{StaticResource SmolButton}">
+                        <Button.Flyout>
+                            <Flyout
+                                core:Properties.UseExpandContractAnimation="True"
+                                FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
+                                Opening="Flyout_Opening" />
+                        </Button.Flyout>
+                    </Button>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

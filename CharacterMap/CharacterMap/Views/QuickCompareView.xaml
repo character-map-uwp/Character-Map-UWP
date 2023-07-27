@@ -5,17 +5,17 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:cx="using:CharacterMapCX.Controls"
-    xmlns:cxsdk17="using:CharacterMapCX.Controls?IsApiContractPresent(Windows.Foundation.UniversalApiContract,17)"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:m="using:CharacterMap.Models"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:primitives="using:Microsoft.UI.Xaml.Controls.Primitives"
+    xmlns:sdk17_cx="using:CharacterMapCX.Controls?IsApiContractPresent(Windows.Foundation.UniversalApiContract,17)"
+    xmlns:sdk17_x="http://schemas.microsoft.com/winfx/2006/xaml?IsApiContractPresent(Windows.Foundation.UniversalApiContract,17)"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
-    xmlns:x17="http://schemas.microsoft.com/winfx/2006/xaml?IsApiContractPresent(Windows.Foundation.UniversalApiContract,17)"
     x:Name="ViewRoot"
     Background="Transparent"
     TabFocusNavigation="Cycle"
@@ -187,7 +187,7 @@
                     Canvas.Top="24"
                     Width="400"
                     MaxHeight="226"
-                    x17:Load="{x:Bind core:Converters.False(DefaultVariant.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
+                    sdk17_x:Load="{x:Bind core:Converters.False(DefaultVariant.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
                     FontFamily="{x:Bind DefaultVariant.DisplaySource}"
                     FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
                     FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
@@ -195,7 +195,7 @@
                     IsColorFontEnabled="True"
                     TextTrimming="CharacterEllipsis"
                     TextWrapping="Wrap" />
-                <cxsdk17:DirectText
+                <sdk17_cx:DirectText
                     x:Name="NativeRender"
                     x:Load="{x:Bind DefaultVariant.SupportsColourRendering, FallbackValue=False, TargetNullValue=False}"
                     x:Phase="1"
@@ -230,7 +230,7 @@
                             x:Name="ContentRender"
                             x:Phase="1"
                             Margin="0 0 0 0"
-                            x17:Load="{x:Bind core:Converters.False(DefaultVariant.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
+                            sdk17_x:Load="{x:Bind core:Converters.False(DefaultVariant.SupportsColourRendering), FallbackValue=False, TargetNullValue=False}"
                             FontFamily="{x:Bind DefaultVariant.DisplaySource}"
                             FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
                             FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
@@ -239,7 +239,7 @@
                             MaxLines="5"
                             TextTrimming="CharacterEllipsis"
                             TextWrapping="Wrap" />
-                        <cxsdk17:DirectText
+                        <sdk17_cx:DirectText
                             x:Name="NativeRender"
                             x:Load="{x:Bind DefaultVariant.SupportsColourRendering, FallbackValue=False, TargetNullValue=False}"
                             x:Phase="1"
@@ -497,13 +497,13 @@
                                 <ComboBox.ContextFlyout>
                                     <MenuFlyout AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
                                         <MenuFlyoutItem
+                                            x:Uid="EditsSuggestionItem"
                                             Click="{x:Bind ViewModel.ShowEditSuggestions}"
                                             Icon="Edit"
-                                            Text="Edit Suggestions" />
+                                            d:Text="Edit Suggestions" />
                                     </MenuFlyout>
                                 </ComboBox.ContextFlyout>
                             </controls:FlowAwareComboBox>
-
                         </Grid>
                         <Grid x:Name="SecondRow">
                             <Grid.ColumnDefinitions>
@@ -691,7 +691,7 @@
                                                     <Grid>
                                                         <TextBlock
                                                             x:Name="XAMLRender"
-                                                            x17:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
+                                                            sdk17_x:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
                                                             FontFamily="{x:Bind DisplaySource}"
                                                             FontStretch="{x:Bind DirectWriteProperties.Stretch}"
                                                             FontStyle="{x:Bind DirectWriteProperties.Style}"
@@ -699,7 +699,7 @@
                                                             IsColorFontEnabled="True"
                                                             TextTrimming="CharacterEllipsis"
                                                             TextWrapping="Wrap" />
-                                                        <cxsdk17:DirectText
+                                                        <sdk17_cx:DirectText
                                                             x:Name="DWriteRender"
                                                             x:Load="{x:Bind SupportsCOLRv1Rendering, FallbackValue=False}"
                                                             FallbackFont="{x:Bind core:FontFinder.Fallback}"

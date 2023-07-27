@@ -152,9 +152,10 @@
 
         <MenuFlyout x:Name="SuggestionFlyout" AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
             <MenuFlyoutItem
+                x:Uid="EditSuggestionsItem"
                 Click="EditSuggestions_Click"
                 Icon="Edit"
-                Text="Edit Suggestions" />
+                d:Text="Edit Suggestions" />
         </MenuFlyout>
 
         <Popup x:Name="CharacterPopup">
@@ -1287,32 +1288,44 @@
 
                 <Grid x:Name="TypeRampInputRow">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <controls:FlowAwareComboBox
                         x:Name="TypeRampInputBox"
                         x:Uid="TypeRampInputBox"
                         MinWidth="430"
                         MinHeight="0"
-                        Margin="12"
+                        Margin="12 12 0 12"
                         HorizontalAlignment="Left"
                         core:Properties.PointerOverAnimation="DropDownGlyph"
                         Background="Transparent"
                         BorderThickness="0 0 0 1"
                         ContextFlyout="{StaticResource SuggestionFlyout}"
+                        CornerRadius="4 0 0 4"
                         Header="Preview Text"
+                        IsColorFontEnabled="{Binding RenderingOptions.IsColourFontEnabled}"
                         IsEditable="True"
                         ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
                         SelectedIndex="0"
                         Style="{StaticResource RampComboBoxStyle}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
+                    <controls:CharacterPickerButton
+                        x:Name="PickerButton"
+                        Grid.Column="1"
+                        Margin="0 12"
+                        BorderThickness="0 0 0 1"
+                        Options="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
+                        Target="{x:Bind TypeRampInputBox}" />
+
                     <controls:UXButton
                         x:Name="TypeRampFlowButton"
                         x:Uid="TypeRampFlowButton"
-                        Grid.Column="1"
-                        Margin="0 0 0 8"
+                        Grid.Column="2"
+                        Margin="12 0 0 8"
+                        HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
                         Click="TypeRampFlowButton_Click"
                         Style="{StaticResource MapInfoButtonStyle}">
@@ -1323,7 +1336,11 @@
                     </controls:UXButton>
                 </Grid>
 
-                <ScrollViewer Grid.Row="1" MaxHeight="246">
+                <ScrollViewer
+                    x:Name="VariationScroller"
+                    x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.HasVariationAxis, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
+                    Grid.Row="1"
+                    MaxHeight="246">
                     <ItemsControl
                         x:Name="VariableAxis"
                         Margin="24 0"

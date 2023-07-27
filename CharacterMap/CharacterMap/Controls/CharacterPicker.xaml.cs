@@ -58,5 +58,10 @@ namespace CharacterMap.Controls
                 _parent = null;
             }
         }
+
+        private void ItemsGridView_ItemDoubleTapped(object sender, Character e)
+        {
+            CharacterSelected?.Invoke(this, e);
+        }
     }
 }

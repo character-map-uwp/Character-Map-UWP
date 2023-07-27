@@ -1,12 +1,23 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls
 {
     public class FlowAwareComboBox : ComboBox
     {
         public event EventHandler<FlowDirection> DetectedFlowDirectionChanged;
+
+        public bool IsColorFontEnabled
+        {
+            get { return (bool)GetValue(IsColorFontEnabledProperty); }
+            set { SetValue(IsColorFontEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsColorFontEnabledProperty =
+            DependencyProperty.Register(nameof(IsColorFontEnabled), typeof(bool), typeof(FlowAwareComboBox), new PropertyMetadata(true));
 
         public FlowDirection DetectedFlowDirection
         {
@@ -20,17 +31,56 @@ namespace CharacterMap.Controls
                 ((FlowAwareComboBox)d).DetectedFlowDirectionChanged?.Invoke(d, (FlowDirection)e.NewValue);
             }));
 
-        private FrameworkElement _presenter;
+        private Binding _colorFontBinding { get; }
+
+        private ContentPresenter _presenter;
+
+        private long _presenterReg = 0;
+
+        public FlowAwareComboBox()
+        {
+            _colorFontBinding = new() { Source = this, Path = new(nameof(IsColorFontEnabled)) };
+        }
 
         protected override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            _presenter = this.GetTemplateChild("ContentPresenter") as FrameworkElement;
+            if (this.GetTemplateChild("ContentPresenter") is ContentPresenter p)
+            {
+                _presenter = p;
+
+                // We want the ContentPresenter (whose content will be a TextBlock) to respect the
+                // IsColorFontEnabled property. There's no easy way to bind this, so we have handle two cases:
+                // 1: First load of the ContentPresenter. For this we need to listen to Size changed and wait
+                //    for it to create it's content.
+                // 2: When the content changes after the first load. For this we listen to the Content DP
+
+                p.SizeChanged -= P_SizeChanged;
+                p.SizeChanged += P_SizeChanged;
+
+                if (_presenterReg != 0)
+                    p.UnregisterPropertyChangedCallback(ContentPresenter.ContentProperty, _presenterReg);
+                _presenterReg = p.RegisterPropertyChangedCallback(ContentPresenter.ContentProperty, ContentChanged);
+            }
             if (this.GetTemplateChild("EditableText") is TextBox box)
             {
+                box.SetBinding(TextBox.IsColorFontEnabledProperty, _colorFontBinding);
                 box.TextChanged -= Box_TextChanged;
                 box.TextChanged += Box_TextChanged;
             }
+        }
+
+        private void P_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ((FrameworkElement)sender).SizeChanged -= P_SizeChanged;
+            if (sender is ContentPresenter p && VisualTreeHelper.GetChild(p, 0) is TextBlock t)
+                t.SetBinding(TextBlock.IsColorFontEnabledProperty, _colorFontBinding);
+        }
+
+        private void ContentChanged(DependencyObject sender, DependencyProperty dp)
+        {
+            if (sender is ContentPresenter p && p.Content is TextBlock t)
+                t.SetBinding(TextBlock.IsColorFontEnabledProperty, _colorFontBinding);
         }
 
         private void Box_TextChanged(object sender, TextChangedEventArgs e)
@@ -39,6 +89,7 @@ namespace CharacterMap.Controls
             {
                 try
                 {
+                    // We detect LTR or RTL by checking where the first character is
                     var rect = box.GetRectFromCharacterIndex(0, false);
 
                     // Note: Probably we can check if rect.X == 0, but I haven't properly tested it.
