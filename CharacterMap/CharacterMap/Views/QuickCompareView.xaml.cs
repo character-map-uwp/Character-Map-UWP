@@ -214,7 +214,7 @@ namespace CharacterMap.Views
         void SetText(object t, string text)
         {
             if (t is TextBlock tb)
-                tb.Text = text;
+                tb.Text = text ?? string.Empty;
             else if (t is DirectText d)
                 d.Text = text;
         }

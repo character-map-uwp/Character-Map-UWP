@@ -69,12 +69,12 @@
                 Style="{StaticResource AccentButtonStyle}"
                 d:Content="Add" />
             <Button
-                x:Uid="BtnCancel"
+                x:Uid="BtnTextClose"
                 Grid.Column="1"
                 HorizontalAlignment="Stretch"
                 Click="Close_Click"
                 Style="{StaticResource DefaultThemeButtonStyle}"
-                d:Content="Cancel" />
+                d:Content="Close" />
         </Grid>
 
     </Grid>

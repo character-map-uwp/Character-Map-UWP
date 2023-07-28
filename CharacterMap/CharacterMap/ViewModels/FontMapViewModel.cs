@@ -78,7 +78,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] CharacterRenderingOptions              _renderingOptions;
         [ObservableProperty] CanvasTextLayoutAnalysis               _selectedCharAnalysis;
         [ObservableProperty] List<TypographyFeatureInfo>            _selectedCharVariations;
-        [ObservableProperty] IReadOnlyList<string>                  _rampOptions;
+        [ObservableProperty] IReadOnlyList<Suggestion>              _rampOptions;
         [ObservableProperty] IReadOnlyList<Character>               _chars;
         [ObservableProperty] IReadOnlyList<IGlyphData>              _searchResults;
         [ObservableProperty] IReadOnlyList<DWriteFontAxis>          _variationAxis;
@@ -362,21 +362,21 @@ namespace CharacterMap.ViewModels
                 });
             }
         }
-        private IReadOnlyList<String> GetRampOptions(FontVariant variant)
+        private IReadOnlyList<Suggestion> GetRampOptions(FontVariant variant)
         {
             if (variant == null)
-                return new List<string>();
+                return new List<Suggestion>();
 
             var list = GlyphService.GetRampOptions();
             
             if (variant?.TryGetSampleText() is String s)
-                list.Insert(0, s);
+                list.Insert(0, new Suggestion(Localization.Get("SuggestOptionSample/Text"), s));
 
             if (Unicode.ContainsRange(variant, UnicodeRange.Emoticons))
             {
                 string emoji = "😂😍😭💁👍💋🐱🦉🌺🌲🍓🍕🎂🏰🏠🚄🚒🛫🛍";
-                if (!list.Contains(emoji))
-                    list.Add(emoji);
+                if (!list.Any(s => s.Text == emoji))
+                    list.Add(new Suggestion(Localization.Get("SuggestOptionEmoji/Text"), emoji));
             }
 
             return list;

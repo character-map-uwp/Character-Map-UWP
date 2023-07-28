@@ -633,6 +633,7 @@
             </Setter.Value>
         </Setter>
     </Style>
+
     <Style TargetType="controls:CharacterPickerButton">
         <Setter Property="BorderThickness" Value="0 1 1 1" />
         <Setter Property="CornerRadius" Value="0 4 4 0" />
@@ -657,13 +658,170 @@
                         FontSize="{TemplateBinding FontSize}"
                         Foreground="{TemplateBinding Foreground}"
                         Style="{StaticResource SmolButton}">
+                        <Button.Resources>
+                            <Style x:Key="PickerFlyoutStyle" BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+                                <Setter Property="IsDefaultShadowEnabled" Value="True" />
+                            </Style>
+                            <Style x:Key="PickerFlyoutRightStyle" BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+                                <Setter Property="RenderTransformOrigin" Value="0.95 0" />
+                                <Setter Property="IsDefaultShadowEnabled" Value="True" />
+                                <Setter Property="Margin" Value="0 0 0 0" />
+                            </Style>
+                        </Button.Resources>
                         <Button.Flyout>
                             <Flyout
+                                x:Name="Flyout"
                                 core:Properties.UseExpandContractAnimation="True"
-                                FlyoutPresenterStyle="{StaticResource ThemeFlyoutStyle}"
-                                Opening="Flyout_Opening" />
+                                FlyoutPresenterStyle="{StaticResource PickerFlyoutStyle}"
+                                Placement="{Binding Placement, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                ShouldConstrainToRootBounds="True" />
                         </Button.Flyout>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="PickerPlacementState">
+                                <VisualState x:Name="DefaultPlacementState" />
+                                <VisualState x:Name="RightPlacementState">
+                                    <VisualState.Setters>
+                                        <Setter Target="Flyout.FlyoutPresenterStyle" Value="{StaticResource PickerFlyoutRightStyle}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Button>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:SuggestionBox">
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderThemeBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0 0 0 1" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:SuggestionBox">
+                    <Grid
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <AutoSuggestBox
+                            x:Name="SuggestionBox"
+                            MinHeight="0"
+                            HorizontalAlignment="Stretch"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            CornerRadius="4 0 0 4"
+                            ManipulationMode="TranslateInertia, TranslateY"
+                            PlaceholderText="{TemplateBinding PlaceholderText}"
+                            Style="{StaticResource DefaultThemeAutoSuggestBoxStyle}"
+                            Text="{Binding Text, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay}"
+                            TextMemberPath="Text">
+                            <AutoSuggestBox.Resources>
+                                <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
+                                    <Setter Property="Margin" Value="0 0 0 6" />
+                                    <Setter Property="Padding" Value="18 8 16 12" />
+                                </Style>
+                            </AutoSuggestBox.Resources>
+                            <AutoSuggestBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock
+                                            core:Properties.Uppercase="{Binding Title}"
+                                            FontSize="10.666"
+                                            FontWeight="SemiBold"
+                                            Opacity="0.6" />
+                                        <TextBlock
+                                            FlowDirection="{Binding FlowDirection}"
+                                            MaxLines="2"
+                                            Text="{Binding Text}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </AutoSuggestBox.ItemTemplate>
+                            <core:Properties.Footer>
+                                <ListViewItem x:Name="EditButton">
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="8">
+                                        <SymbolIcon core:Properties.RenderScale="0.6" Symbol="Edit" />
+                                        <TextBlock
+                                            x:Uid="EditSuggestionsLabel"
+                                            VerticalAlignment="Center"
+                                            FontWeight="SemiBold"
+                                            TextLineBounds="Tight" />
+                                    </StackPanel>
+                                </ListViewItem>
+                            </core:Properties.Footer>
+                        </AutoSuggestBox>
+
+                        <Button
+                            x:Name="SuggestionButton"
+                            x:Uid="ShowSuggestionsButton"
+                            Grid.Column="1"
+                            Height="{TemplateBinding Height}"
+                            VerticalAlignment="Stretch"
+                            Background="Transparent"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="0"
+                            Content="&#xE70D;"
+                            CornerRadius="0"
+                            FontSize="12"
+                            Style="{StaticResource SmolButton}" />
+
+                        <controls:CharacterPickerButton
+                            x:Name="PickerButton"
+                            x:Load="False"
+                            Grid.Column="2"
+                            Height="{TemplateBinding Height}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            CornerRadius="0"
+                            Options="{TemplateBinding RenderingOptions}"
+                            Placement="BottomEdgeAlignedRight"
+                            Target="{Binding ElementName=SuggestionBox}"
+                            Visibility="Collapsed" />
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource TextControlBorderBrushPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="NotFocused" />
+                                <VisualState x:Name="Focused">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource TextControlBorderBrushFocused}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PickerStates">
+                                <VisualState x:Name="PickerHiddenState" />
+                                <VisualState x:Name="PickerVisibleState">
+                                    <VisualState.Setters>
+                                        <Setter Target="PickerButton.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

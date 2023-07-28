@@ -213,6 +213,7 @@
       <DependentUpon>OpenFolderDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CharacterPickerButton.cs" />
+    <Compile Include="Controls\SuggestionBox.cs" />
     <Compile Include="Controls\UXButton.cs" />
     <Compile Include="Controls\UXComboBox.cs" />
     <Compile Include="Controls\ExtendedListView.cs" />
@@ -248,6 +249,7 @@
     <Compile Include="Helpers\FluentAnimation.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
+    <Compile Include="Helpers\Throttler.cs" />
     <Compile Include="Helpers\WoffToOtf.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />

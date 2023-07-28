@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
@@ -15,7 +16,20 @@ namespace CharacterMap.Controls
 {
     public sealed class CharacterPickerButton : ContentControl
     {
-        private static PropertyMetadata NULL_META = new PropertyMetadata(null);
+        private static PropertyMetadata NULL_META = new (null);
+
+
+        public FlyoutPlacementMode Placement
+        {
+            get { return (FlyoutPlacementMode)GetValue(PlacementProperty); }
+            set { SetValue(PlacementProperty, value); }
+        }
+
+        public static readonly DependencyProperty PlacementProperty =
+            DependencyProperty.Register(nameof(Placement), typeof(FlyoutPlacementMode), typeof(CharacterPickerButton), new PropertyMetadata(FlyoutPlacementMode.Bottom, (d,e) =>
+            {
+                ((CharacterPickerButton)d).UpdatePlacement();
+            }));
 
         public event EventHandler<Character> CharacterSelected;
 
@@ -54,6 +68,13 @@ namespace CharacterMap.Controls
                     flyout.Opening += Flyout_Opening;
                 }
             }
+
+            UpdatePlacement();
+        }
+
+        void UpdatePlacement()
+        {
+            VisualStateManager.GoToState(this, Placement == FlyoutPlacementMode.BottomEdgeAlignedRight ? "RightPlacementState" : "DefaultPlacementState", false);
         }
 
         private void Flyout_Opening(object sender, object e)
@@ -71,7 +92,22 @@ namespace CharacterMap.Controls
 
         private void Picker_CharacterSelected(object sender, Character e)
         {
-            if (Target is TextBox box)
+            if (Target is AutoSuggestBox ab)
+            {
+                if (ab.GetFirstDescendantOfType<TextBox>() is { } t && t.SelectionStart > -1)
+                {
+                    string txt = ab.Text;
+                    int start = t.SelectionStart;
+                    if (t.SelectionLength > 0)
+                        txt = txt.Remove(t.SelectionStart, t.SelectionLength);
+
+                    ab.Text = txt.Insert(t.SelectionStart, e.Char);
+                    t.SelectionStart = start + 1;
+                }
+            }
+            if (Target is SuggestionBox sb)
+                sb.Text += e.Char;
+            else if (Target is TextBox box)
                 box.Text += e.Char;
             else if (Target is ComboBox c)
                 c.Text += e.Char;

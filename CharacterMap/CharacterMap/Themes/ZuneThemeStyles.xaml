@@ -3283,6 +3283,7 @@
                                     Margin="{ThemeResource AutoSuggestListPadding}"
                                     DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
                                     FontWeight="SemiBold"
+                                    Footer="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.Footer)}"
                                     IsItemClickEnabled="True"
                                     ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
                                     ItemTemplate="{TemplateBinding ItemTemplate}"
@@ -5597,5 +5598,11 @@
     </Style>
 
     <Style BasedOn="{StaticResource DefaultThemeContentDialogStyle}" TargetType="ContentDialog" />
+
+
+    <Style TargetType="controls:SuggestionBox">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
 
 </ResourceDictionary>

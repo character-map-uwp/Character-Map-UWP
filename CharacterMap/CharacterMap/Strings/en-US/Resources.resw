@@ -1369,4 +1369,67 @@ Tap and hold to arrange.</value>
   <data name="OptionsScriptDevanagari.Text" xml:space="preserve">
     <value>Devanagari</value>
   </data>
+  <data name="BtnTextClose.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="EditSuggestionsLabel.Text" xml:space="preserve">
+    <value>Edit Custom Suggestions</value>
+  </data>
+  <data name="ShowSuggestionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Show Suggestions</value>
+  </data>
+  <data name="SuggestOptionArabic.Text" xml:space="preserve">
+    <value>Arabic</value>
+  </data>
+  <data name="SuggestOptionBengali.Text" xml:space="preserve">
+    <value>Bengali</value>
+  </data>
+  <data name="SuggestOptionBulgarian.Text" xml:space="preserve">
+    <value>Bulgarian</value>
+  </data>
+  <data name="SuggestOptionChineseTraditional.Text" xml:space="preserve">
+    <value>Chinese (Traditional)</value>
+  </data>
+  <data name="SuggestOptionCustom.Text" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="SuggestOptionCyrillicAlpha.Text" xml:space="preserve">
+    <value>Cyrillic</value>
+  </data>
+  <data name="SuggestOptionEmoji.Text" xml:space="preserve">
+    <value>Emoji</value>
+  </data>
+  <data name="SuggestOptionEnglish.Text" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="SuggestOptionGreek.Text" xml:space="preserve">
+    <value>Greek</value>
+  </data>
+  <data name="SuggestOptionHebrew.Text" xml:space="preserve">
+    <value>Hebrew</value>
+  </data>
+  <data name="SuggestOptionHindi.Text" xml:space="preserve">
+    <value>Hindi</value>
+  </data>
+  <data name="SuggestOptionJapanese.Text" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="SuggestOptionKorean.Text" xml:space="preserve">
+    <value>Korean</value>
+  </data>
+  <data name="SuggestOptionLatinAlpha.Text" xml:space="preserve">
+    <value>Latin Alphabet</value>
+  </data>
+  <data name="SuggestOptionLatinSymbols.Text" xml:space="preserve">
+    <value>Latin Numbers &amp; Symbols</value>
+  </data>
+  <data name="SuggestOptionSample.Text" xml:space="preserve">
+    <value>Font Sample Text</value>
+  </data>
+  <data name="SuggestOptionThai.Text" xml:space="preserve">
+    <value>Thai</value>
+  </data>
+  <data name="SuggestOptionVietnamese.Text" xml:space="preserve">
+    <value>Vietnamese</value>
+  </data>
 </root>

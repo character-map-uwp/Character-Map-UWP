@@ -3126,6 +3126,7 @@
                                     MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"
                                     Margin="{ThemeResource AutoSuggestListPadding}"
                                     DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+                                    Footer="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.Footer)}"
                                     IsItemClickEnabled="True"
                                     ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
                                     ItemTemplate="{TemplateBinding ItemTemplate}"

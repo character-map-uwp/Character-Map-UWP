@@ -479,8 +479,19 @@
                                 </Button.Flyout>
                             </Button>
 
-                            <controls:FlowAwareComboBox
+                            <controls:SuggestionBox
                                 x:Name="InputText"
+                                x:Uid="TypeRampInputBox"
+                                Grid.Column="1"
+                                Background="Transparent"
+                                BorderThickness="0 0 0 1"
+                                DetectedFlowDirectionChanged="InputText_DetectedFlowDirectionChanged"
+                                IsCharacterPickerEnabled="False"
+                                ItemsSource="{x:Bind ViewModel.TextOptions, Mode=OneWay}"
+                                Text="{Binding ViewModel.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                            <!--<controls:FlowAwareComboBox
+                                x:Name="InputText2"
                                 x:Uid="TypeRampInputBox"
                                 Grid.Column="1"
                                 MinHeight="0"
@@ -503,7 +514,7 @@
                                             d:Text="Edit Suggestions" />
                                     </MenuFlyout>
                                 </ComboBox.ContextFlyout>
-                            </controls:FlowAwareComboBox>
+                            </controls:FlowAwareComboBox>-->
                         </Grid>
                         <Grid x:Name="SecondRow">
                             <Grid.ColumnDefinitions>
