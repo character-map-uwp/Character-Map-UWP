@@ -1390,11 +1390,14 @@ Tap and hold to arrange.</value>
   <data name="SuggestOptionChineseTraditional.Text" xml:space="preserve">
     <value>Chinese (Traditional)</value>
   </data>
+  <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
+    <value>English</value>
+  </data>
   <data name="SuggestOptionCustom.Text" xml:space="preserve">
     <value>Custom</value>
   </data>
   <data name="SuggestOptionCyrillicAlpha.Text" xml:space="preserve">
-    <value>Cyrillic</value>
+    <value>Cyrillic Alphabet</value>
   </data>
   <data name="SuggestOptionEmoji.Text" xml:space="preserve">
     <value>Emoji</value>

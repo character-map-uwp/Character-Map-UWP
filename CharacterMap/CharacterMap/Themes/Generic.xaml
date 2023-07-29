@@ -826,4 +826,84 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="controls:CharacterPicker">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Width" Value="310" />
+        <Setter Property="Height" Value="400" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CharacterPicker">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <controls:CharacterGridView
+                            x:Name="ItemsGridView"
+                            Margin="0"
+                            Padding="0 12 0 24"
+                            IsItemClickEnabled="False"
+                            ItemAnnotation="None"
+                            ItemContainerTransitions="{StaticResource NoTransitions}"
+                            ItemFontFace="{Binding Options.Variant.Face, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemFontFamily="{Binding Options.Variant.Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemFontVariant="{Binding Options.Variant, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemSize="40"
+                            ItemTypography="{Binding Options.DXTypography, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemsSource="{Binding Options.Variant.Characters, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            SelectionMode="Single"
+                            ShowColorGlyphs="{Binding Options.IsColourFontEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <!--  For performance reasons, all bindings are done in C#  -->
+                                    <Grid Padding="4">
+                                        <TextBlock
+                                            x:Name="Text"
+                                            Margin="0 -2 0 0"
+                                            Padding="0,0,0,8"
+                                            IsTextScaleFactorEnabled="False"
+                                            TextAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </controls:CharacterGridView>
+
+                        <Grid
+                            x:Name="BottomBar"
+                            Grid.Row="3"
+                            ColumnSpacing="8"
+                            Padding="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <Button
+                                x:Name="AddButton"
+                                HorizontalAlignment="Stretch"
+                                Content="{core:Localizer Key='AddButton/Label'}"
+                                Style="{StaticResource AccentButtonStyle}" />
+                            <Button
+                                x:Name="CloseButton"
+                                x:Uid="BtnTextClose"
+                                Grid.Column="1"
+                                HorizontalAlignment="Stretch"
+                                Style="{StaticResource DefaultThemeButtonStyle}" />
+                        </Grid>
+
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

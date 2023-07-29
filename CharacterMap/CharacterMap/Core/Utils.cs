@@ -326,6 +326,29 @@ namespace CharacterMap.Core
             return Humanise(e.ToString(), true);
         }
 
+        public static FlowDirection GetFlowDirection(TextBox box)
+        {
+            if (box.Text is not null && box.Text.Length > 0)
+            {
+                try
+                {
+                    // We detect LTR or RTL by checking where the first character is
+                    var rect = box.GetRectFromCharacterIndex(0, false);
+
+                    // Note: Probably we can check if rect.X == 0, but I haven't properly tested it.
+                    //       The current logic will fail with a small width TextBox with small fonts,
+                    //       but that's not a concern for our current use cases.
+                    return rect.X <= box.ActualWidth / 4.0 ? FlowDirection.LeftToRight : FlowDirection.RightToLeft;
+                }
+                catch
+                {
+                    // Don't care
+                }
+            }
+
+            return FlowDirection.LeftToRight;
+        }
+
         static Pool<StringBuilder> _builderPool { get; } = new Pool<StringBuilder>();
 
         /// <summary>

@@ -1,24 +1,18 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
+﻿using CharacterMap.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace CharacterMap.Controls
 {
-    public sealed partial class CharacterPicker : UserControl
+    public sealed class CharacterPicker : Control
     {
         public event EventHandler<Character> CharacterSelected;
 
@@ -29,13 +23,13 @@ namespace CharacterMap.Controls
         }
 
         public static readonly DependencyProperty OptionsProperty =
-            DependencyProperty.Register(nameof(Options), typeof(CharacterRenderingOptions), typeof(CharacterPicker), new PropertyMetadata(0));
+            DependencyProperty.Register(nameof(Options), typeof(CharacterRenderingOptions), typeof(CharacterPicker), new PropertyMetadata(null));
 
         private Flyout _parent = null;
 
         public CharacterPicker()
         {
-            this.InitializeComponent();
+            this.DefaultStyleKey = typeof(CharacterPicker);
         }
 
         public CharacterPicker(Flyout parent, CharacterRenderingOptions options) : this()
@@ -44,9 +38,37 @@ namespace CharacterMap.Controls
             Options = options;
         }
 
+        CharacterGridView _itemsGridView = null;
+
+        protected override void OnApplyTemplate()
+        {
+            base.OnApplyTemplate();
+
+            if (_itemsGridView is not null)
+                _itemsGridView.ItemDoubleTapped -= ItemsGridView_ItemDoubleTapped;
+
+            if (this.GetTemplateChild("ItemsGridView") is CharacterGridView g)
+            {
+                _itemsGridView = g;
+                g.ItemDoubleTapped -= ItemsGridView_ItemDoubleTapped;
+                g.ItemDoubleTapped += ItemsGridView_ItemDoubleTapped;
+            }
+
+            if (this.GetTemplateChild("AddButton") is Button b)
+            {
+                b.Click -= Add_Click;
+                b.Click += Add_Click;
+            }
+
+            if (this.GetTemplateChild("CloseButton") is Button c)
+            {
+                c.Click -= Close_Click;
+                c.Click += Close_Click;
+            }
+        }
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            if (ItemsGridView.SelectedItem is Character c)
+            if (_itemsGridView.SelectedItem is Character c)
                 CharacterSelected?.Invoke(this, c);
         }
 

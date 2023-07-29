@@ -98,6 +98,13 @@ namespace CharacterMap.Controls
 
         private Button _suggestButton = null;
 
+        private Throttler _scrollThrottle { get; } = new();
+
+        private Debouncer _suggestionDebouncer { get; } = new ();
+
+        private bool block = false;
+
+
         public SuggestionBox()
         {
             this.DefaultStyleKey = typeof(SuggestionBox);
@@ -115,6 +122,7 @@ namespace CharacterMap.Controls
                 _suggestBox.SizeChanged -= _suggestBox_SizeChanged;
                 _suggestBox.GotFocus -= _suggestBox_GotFocus;
                 _suggestBox.LostFocus -= _suggestBox_LostFocus;
+                _suggestBox.KeyDown -= _suggestBox_KeyDown;
             }
 
             if (_suggestButton is not null)
@@ -132,16 +140,15 @@ namespace CharacterMap.Controls
             _suggestBox = this.GetTemplateChild("SuggestionBox") as AutoSuggestBox;
             if (_suggestBox is not null)
             {
-                //var h = new PointerEventHandler(_suggestBox_PointerWheelChanged);
-                //_suggestBox.AddHandler(FrameworkElement.PointerWheelChangedEvent, h, true);
                 _suggestBox.PointerWheelChanged += _suggestBox_PointerWheelChanged;
                 _suggestBox.TextChanged += Box_TextChanged;
                 _suggestBox.SizeChanged += _suggestBox_SizeChanged;
                 _suggestBox.GotFocus += _suggestBox_GotFocus;
                 _suggestBox.LostFocus += _suggestBox_LostFocus;
-                
+                _suggestBox.KeyDown += _suggestBox_KeyDown;
             }
 
+            // Try to find the "Edit Suggestions" button and hook up the click handler
             if (this.GetTemplateChild("EditButton") is ListViewItem edit)
             {
                 edit.Tapped -= Item_Tapped;
@@ -153,14 +160,10 @@ namespace CharacterMap.Controls
                 _suggestButton.Click += _suggestButton_Click;
         }
 
+
         void UpdatePickerState(bool animate)
         {
             VisualStateManager.GoToState(this, IsCharacterPickerEnabled ? "PickerVisibleState" : "PickerHiddenState", animate);
-        }
-
-        private void _suggestBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            VisualStateManager.GoToState(this, "NotFocused", true);
         }
 
         private void _suggestBox_GotFocus(object sender, RoutedEventArgs e)
@@ -168,22 +171,29 @@ namespace CharacterMap.Controls
             VisualStateManager.GoToState(this, "Focused", true);
         }
 
+        private void _suggestBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            VisualStateManager.GoToState(this, "NotFocused", true);
+        }
+
+        private void _suggestBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (e.Key == Windows.System.VirtualKey.Up)
+                Scroll(1);
+            else if (e.Key == Windows.System.VirtualKey.Down) 
+                Scroll(-1);
+        }
+
         private void _suggestBox_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             _suggestBox.SizeChanged -= _suggestBox_SizeChanged;
 
+            // List to TextBox to discern flow direction
             if (_suggestBox.GetFirstDescendantOfType<TextBox>() is TextBox t)
             {
                 t.TextChanged -= T_TextChanged;
                 t.TextChanged += T_TextChanged;
             }
-
-            //if (_suggestBox.GetFirstDescendantOfType<ScrollViewer>() is ScrollViewer tb)
-            //{
-            //    tb.DirectManipulationStarted += Tb_DirectManipulationStarted;
-            //    tb.ManipulationStarting += Tb_ManipulationStarting;
-            //    tb.ManipulationMode = ManipulationModes.None;
-            //}
 
             if (_suggestBox.GetFirstDescendantOfType<Popup>() is Popup p)
             {
@@ -199,26 +209,8 @@ namespace CharacterMap.Controls
 
         private void T_TextChanged(object sender, TextChangedEventArgs e)
         {
-
             if (sender is TextBox box && box.Text is not null && box.Text.Length > 0)
-            {
-                try
-                {
-                    // We detect LTR or RTL by checking where the first character is
-                    var rect = box.GetRectFromCharacterIndex(0, false);
-
-                    // Note: Probably we can check if rect.X == 0, but I haven't properly tested it.
-                    //       The current logic will fail with a small width TextBox with small fonts,
-                    //       but that's not a concern for our current use cases.
-                    DetectedFlowDirection = rect.X <= box.ActualWidth / 4.0 ? FlowDirection.LeftToRight : FlowDirection.RightToLeft;
-                    //if (_presenter is not null)
-                    //    _presenter.FlowDirection = DetectedFlowDirection;
-                }
-                catch
-                {
-                    // Don't care
-                }
-            }
+                DetectedFlowDirection = Utils.GetFlowDirection(box);
         }
 
         private void P_Opened(object sender, object e)
@@ -231,18 +223,14 @@ namespace CharacterMap.Controls
                 // Force to be width of this entire control
                 if (p.Child is FrameworkElement f)
                     f.Width = this.ActualWidth;
-                
-                //p.MinWidth = this.ActualWidth;
             }
         }
 
-        bool block = false;
-
-        Throttler _throttle = new();
 
         private void _suggestBox_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
         {
-            _throttle.Throttle(200, () =>
+            // Allows changing the selected text by using mouse wheel or touchpad
+            _scrollThrottle.Throttle(150, () =>
             {
                 var point = e.GetCurrentPoint(this);
                 var props = point.Properties;
@@ -250,29 +238,32 @@ namespace CharacterMap.Controls
                     return;
 
                 var delta = props.MouseWheelDelta;
-                Debug.WriteLine($"Wheel moved {delta}");
                 if (delta > -2 && delta < 2)
                     return;
 
-
-                int idx = -1;
-                if (ItemsSource is IReadOnlyList<Suggestion> items)
-                {
-                    if (items.FirstOrDefault(i => i.Text == Text) is Suggestion match)
-                        idx = items.ToList().IndexOf(match);
-
-                    idx += delta < 0 ? 1 : -1;
-                    if (idx >= items.Count)
-                        idx = 0;
-                    else if (idx <= -1)
-                        idx = items.Count - 1;
-
-                    Text = items[idx].Text;
-                    _suggestBox.IsSuggestionListOpen = false;
-
-                    block = true;
-                }
+                Scroll(delta);
             });
+        }
+
+        private void Scroll(int delta)
+        {
+            int idx = -1;
+            if (ItemsSource is IReadOnlyList<Suggestion> items)
+            {
+                if (items.FirstOrDefault(i => i.Text == Text) is Suggestion match)
+                    idx = items.ToList().IndexOf(match);
+
+                idx += delta < 0 ? 1 : -1;
+                if (idx >= items.Count)
+                    idx = 0;
+                else if (idx <= -1)
+                    idx = items.Count - 1;
+
+                Text = items[idx].Text;
+                _suggestBox.IsSuggestionListOpen = false;
+
+                block = true;
+            }
         }
 
         private void _suggestButton_Click(object sender, RoutedEventArgs e)
@@ -284,16 +275,20 @@ namespace CharacterMap.Controls
             _suggestBox.IsSuggestionListOpen = true;
         }
 
-        Debouncer _debouncer = new Debouncer();
 
         private void Box_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
+            // This handler updates the suggestions and shows the list, if appropriate
+
+            // The PointerWheel handler can cause this handler to be called after updating the suggestions,
+            // but we don't want to handle it here in that case.
             if (block)
             {
                 block = false;
                 return;
             }
 
+            // Functions as auto-close for the suggestion list
             if (args.Reason is AutoSuggestionBoxTextChangeReason.SuggestionChosen or AutoSuggestionBoxTextChangeReason.ProgrammaticChange)
             {
                 sender.IsSuggestionListOpen = false;
@@ -301,8 +296,7 @@ namespace CharacterMap.Controls
             }
 
             string text = sender.Text;
-
-            _debouncer.Debounce(64, () =>
+            _suggestionDebouncer.Debounce(64, () =>
             {
                 if (args.CheckCurrent())
                 {

@@ -2312,7 +2312,7 @@
                         <Setter Target="SelectorLabel.FontSize" Value="11" />
                         <Setter Target="SelectorLabel.FontWeight" Value="SemiBold" />
                         <Setter Target="WeightSelector.FontWeight" Value="SemiBold" />
-                        <Setter Target="SearchContainer.Margin" Value="0 8 0 0" />
+                        <Setter Target="SearchContainer.Margin" Value="0 8 0 -8" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

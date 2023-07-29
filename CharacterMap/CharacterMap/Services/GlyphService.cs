@@ -117,7 +117,7 @@ namespace CharacterMap.Services
         private static IReadOnlyList<Suggestion> DefaultSuggestions { get; } = new List<Suggestion>
         {
             S("English", "The quick brown dog jumps over a lazy fox. 1234567890"),
-            S("English", Localization.Get("CultureSpecificPangram/Text")),
+            S("CultureSpecific", Localization.Get("CultureSpecificPangram/Text")),
             S("LatinAlpha", "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"), // Latin Alphabet
             S("CyrillicAlpha", "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"), // Cyrillic Alphabet
             S("LatinSymbols", "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/"), // Common Latin symbols and numbers
