@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 
 namespace CharacterMap.Controls
 {
@@ -38,6 +39,16 @@ namespace CharacterMap.Controls
 
     public class UXComboBox : ComboBox//, IThemeableControl
     {
+        public string ToolTipMemberPath
+        {
+            get { return (string)GetValue(ToolTipMemberPathProperty); }
+            set { SetValue(ToolTipMemberPathProperty, value); }
+        }
+
+        public static readonly DependencyProperty ToolTipMemberPathProperty =
+            DependencyProperty.Register(nameof(ToolTipMemberPath), typeof(string), typeof(UXComboBox), new PropertyMetadata(null));
+
+
         public double ContentSpacing
         {
             get { return (double)GetValue(ContentSpacingProperty); }
@@ -57,6 +68,7 @@ namespace CharacterMap.Controls
         public static readonly DependencyProperty ContentOrientationProperty =
             DependencyProperty.Register("ContentOrientation", typeof(Orientation), typeof(UXComboBox), new PropertyMetadata(Orientation.Vertical));
 
+
         public object PreContent
         {
             get { return (object)GetValue(PreContentProperty); }
@@ -68,6 +80,7 @@ namespace CharacterMap.Controls
             {
                 ((UXComboBox)d).UpdateContentStates();
             }));
+
 
         public object SecondaryContent
         {
@@ -107,6 +120,17 @@ namespace CharacterMap.Controls
         protected override DependencyObject GetContainerForItemOverride()
         {
             return new UXComboBoxItem();
+        }
+
+        protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
+        {
+            base.PrepareContainerForItemOverride(element, item);
+
+            if (!string.IsNullOrEmpty(ToolTipMemberPath))
+            {
+                Binding b = new Binding { Source = item, Path = new PropertyPath(ToolTipMemberPath) };
+                BindingOperations.SetBinding(element, ToolTipService.ToolTipProperty, b);
+            }
         }
 
         void UpdateContentStates()

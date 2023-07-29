@@ -654,7 +654,8 @@
                         IsEnabled="{Binding SelectedFont.Font.HasVariants}"
                         ItemsSource="{Binding SelectedFont.Font.Variants}"
                         SelectedItem="{Binding SelectedFont.Selected, Mode=TwoWay}"
-                        Style="{StaticResource VariantComboBoxStyle}">
+                        Style="{StaticResource VariantComboBoxStyle}"
+                        ToolTipMemberPath="PreferredName">
                         <controls:UXComboBox.SecondaryContent>
                             <TextBlock
                                 x:Name="SelectorLabel"
