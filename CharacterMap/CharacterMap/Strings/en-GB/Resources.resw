@@ -27,7 +27,4 @@
   <data name="ExportColorHeader.Text" xml:space="preserve">
     <value>Default Colour</value>
   </data>
-  <data name="FontPropColourFormats.Text" xml:space="preserve">
-    <value>Colour Glyph Formats</value>
-  </data>
 </root>

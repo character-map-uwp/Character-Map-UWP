@@ -34,8 +34,9 @@
           <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OffContent" translate="yes" xml:space="preserve">
-          <source>Monochrome glyphs</source>
-          <target state="translated">单色字符</target>
+          <source>Monochrome Glyphs</source>
+          <target state="needs-review-translation">单色字符</target>
+          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Color glyphs</source>
@@ -1652,6 +1653,138 @@ Tap and hold to arrange.</target>
         <trans-unit id="NotificationCopiedSVG" translate="yes" xml:space="preserve">
           <source>Copied as SVG</source>
           <target state="new">Copied as SVG</target>
+        </trans-unit>
+        <trans-unit id="ColrV1SupportMessage.Text" translate="yes" xml:space="preserve">
+          <source>This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above.</source>
+          <target state="new">This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above.</target>
+        </trans-unit>
+        <trans-unit id="FontPropCOLRVersion.Text" translate="yes" xml:space="preserve">
+          <source>COLR Version</source>
+          <target state="new">COLR Version</target>
+        </trans-unit>
+        <trans-unit id="FontPropColourFormats.Text" translate="yes" xml:space="preserve">
+          <source>Color Glyph Formats</source>
+          <target state="new">Color Glyph Formats</target>
+        </trans-unit>
+        <trans-unit id="GlyphTypeBitmap" translate="yes" xml:space="preserve">
+          <source>Bitmap</source>
+          <target state="new">Bitmap</target>
+        </trans-unit>
+        <trans-unit id="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Change flow direction</source>
+          <target state="new">Change flow direction</target>
+        </trans-unit>
+        <trans-unit id="TxtUniCodepoint.Header" translate="yes" xml:space="preserve">
+          <source>Unicode Codepoint</source>
+          <target state="new">Unicode Codepoint</target>
+        </trans-unit>
+        <trans-unit id="TxtUTF16.Header" translate="yes" xml:space="preserve">
+          <source>UTF-16 Value</source>
+          <target state="new">UTF-16 Value</target>
+        </trans-unit>
+        <trans-unit id="EditSuggestionsItem.Text" translate="yes" xml:space="preserve">
+          <source>Edit Suggestions</source>
+          <target state="new">Edit Suggestions</target>
+        </trans-unit>
+        <trans-unit id="OptionScriptHiraganaAndKatakana.Text" translate="yes" xml:space="preserve">
+          <source>Hiragana &amp; Katakana</source>
+          <target state="new">Hiragana &amp; Katakana</target>
+        </trans-unit>
+        <trans-unit id="OptionsScriptBengali.Text" translate="yes" xml:space="preserve">
+          <source>Bengali</source>
+          <target state="new">Bengali</target>
+        </trans-unit>
+        <trans-unit id="OptionsScriptDevanagari.Text" translate="yes" xml:space="preserve">
+          <source>Devanagari</source>
+          <target state="new">Devanagari</target>
+        </trans-unit>
+        <trans-unit id="BtnTextClose.Content" translate="yes" xml:space="preserve">
+          <source>Close</source>
+          <target state="new">Close</target>
+        </trans-unit>
+        <trans-unit id="EditSuggestionsLabel.Text" translate="yes" xml:space="preserve">
+          <source>Edit Custom Suggestions</source>
+          <target state="new">Edit Custom Suggestions</target>
+        </trans-unit>
+        <trans-unit id="ShowSuggestionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Show Suggestions</source>
+          <target state="new">Show Suggestions</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionArabic.Text" translate="yes" xml:space="preserve">
+          <source>Arabic</source>
+          <target state="new">Arabic</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionBengali.Text" translate="yes" xml:space="preserve">
+          <source>Bengali</source>
+          <target state="new">Bengali</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionBulgarian.Text" translate="yes" xml:space="preserve">
+          <source>Bulgarian</source>
+          <target state="new">Bulgarian</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionChineseTraditional.Text" translate="yes" xml:space="preserve">
+          <source>Chinese (Traditional)</source>
+          <target state="new">Chinese (Traditional)</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionCultureSpecific.Text" translate="yes" xml:space="preserve">
+          <source>English</source>
+          <target state="new">English</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionCustom.Text" translate="yes" xml:space="preserve">
+          <source>Custom</source>
+          <target state="new">Custom</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionCyrillicAlpha.Text" translate="yes" xml:space="preserve">
+          <source>Cyrillic Alphabet</source>
+          <target state="new">Cyrillic Alphabet</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionEmoji.Text" translate="yes" xml:space="preserve">
+          <source>Emoji</source>
+          <target state="new">Emoji</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionEnglish.Text" translate="yes" xml:space="preserve">
+          <source>English</source>
+          <target state="new">English</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionGreek.Text" translate="yes" xml:space="preserve">
+          <source>Greek</source>
+          <target state="new">Greek</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionHebrew.Text" translate="yes" xml:space="preserve">
+          <source>Hebrew</source>
+          <target state="new">Hebrew</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionHindi.Text" translate="yes" xml:space="preserve">
+          <source>Hindi</source>
+          <target state="new">Hindi</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionJapanese.Text" translate="yes" xml:space="preserve">
+          <source>Japanese</source>
+          <target state="new">Japanese</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionKorean.Text" translate="yes" xml:space="preserve">
+          <source>Korean</source>
+          <target state="new">Korean</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionLatinAlpha.Text" translate="yes" xml:space="preserve">
+          <source>Latin Alphabet</source>
+          <target state="new">Latin Alphabet</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionLatinSymbols.Text" translate="yes" xml:space="preserve">
+          <source>Latin Numbers &amp; Symbols</source>
+          <target state="new">Latin Numbers &amp; Symbols</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionSample.Text" translate="yes" xml:space="preserve">
+          <source>Font Sample Text</source>
+          <target state="new">Font Sample Text</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionThai.Text" translate="yes" xml:space="preserve">
+          <source>Thai</source>
+          <target state="new">Thai</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionVietnamese.Text" translate="yes" xml:space="preserve">
+          <source>Vietnamese</source>
+          <target state="new">Vietnamese</target>
         </trans-unit>
       </group>
     </body>
