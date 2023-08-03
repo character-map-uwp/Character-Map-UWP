@@ -221,6 +221,7 @@
 
                         <Grid
                             x:Name="RootGrid"
+                            MinHeight="{TemplateBinding MinHeight}"
                             MaxWidth="{TemplateBinding MaxWidth}"
                             Margin="{TemplateBinding Margin}"
                             Padding="{TemplateBinding Padding}"
@@ -228,7 +229,6 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="8"
-                            MinHeight="{TemplateBinding MinHeight}"
                             RenderTransformOrigin="{TemplateBinding RenderTransformOrigin}"
                             Visibility="{TemplateBinding Visibility}">
 
@@ -543,7 +543,8 @@
                             MaxHeight="500"
                             Padding="12 12 0 48"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
-                            SelectionMode="None">
+                            SelectionMode="None"
+                            ShowsScrollingPlaceholders="False">
                             <GridView.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <ItemsWrapGrid CacheLength="0" Orientation="Horizontal" />
@@ -628,6 +629,279 @@
                             Visibility="Collapsed" />
                     </Grid>
 
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:CharacterPickerButton">
+        <Setter Property="BorderThickness" Value="0 1 1 1" />
+        <Setter Property="CornerRadius" Value="0 4 4 0" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Foreground" Value="{ThemeResource ComboBoxDropDownGlyphForeground}" />
+        <Setter Property="Content" Value="&#xE710;" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CharacterPickerButton">
+                    <Button
+                        x:Name="RootButton"
+                        x:Uid="CharacterPickerButton"
+                        Height="{TemplateBinding Height}"
+                        VerticalAlignment="Stretch"
+                        Background="{Binding Target.Background, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        BorderBrush="{Binding Target.BorderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        FontSize="{TemplateBinding FontSize}"
+                        Foreground="{TemplateBinding Foreground}"
+                        Style="{StaticResource SmolButton}">
+                        <Button.Resources>
+                            <Style x:Key="PickerFlyoutStyle" BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+                                <Setter Property="IsDefaultShadowEnabled" Value="True" />
+                            </Style>
+                            <Style x:Key="PickerFlyoutRightStyle" BasedOn="{StaticResource ThemeFlyoutStyle}" TargetType="FlyoutPresenter">
+                                <Setter Property="RenderTransformOrigin" Value="0.95 0" />
+                                <Setter Property="IsDefaultShadowEnabled" Value="True" />
+                                <Setter Property="Margin" Value="0 0 0 0" />
+                            </Style>
+                        </Button.Resources>
+                        <Button.Flyout>
+                            <Flyout
+                                x:Name="Flyout"
+                                core:Properties.UseExpandContractAnimation="True"
+                                FlyoutPresenterStyle="{StaticResource PickerFlyoutStyle}"
+                                Placement="{Binding Placement, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                ShouldConstrainToRootBounds="True" />
+                        </Button.Flyout>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="PickerPlacementState">
+                                <VisualState x:Name="DefaultPlacementState" />
+                                <VisualState x:Name="RightPlacementState">
+                                    <VisualState.Setters>
+                                        <Setter Target="Flyout.FlyoutPresenterStyle" Value="{StaticResource PickerFlyoutRightStyle}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Button>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:SuggestionBox">
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ComboBoxBorderThemeBrush}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0 0 0 1" />
+        <Setter Property="Height" Value="32" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:SuggestionBox">
+                    <Grid
+                        x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <AutoSuggestBox
+                            x:Name="SuggestionBox"
+                            MinHeight="0"
+                            HorizontalAlignment="Stretch"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            CornerRadius="4 0 0 4"
+                            ManipulationMode="TranslateInertia, TranslateY"
+                            PlaceholderText="{TemplateBinding PlaceholderText}"
+                            Style="{StaticResource DefaultThemeAutoSuggestBoxStyle}"
+                            Text="{Binding Text, RelativeSource={RelativeSource Mode=TemplatedParent}, Mode=TwoWay}"
+                            TextMemberPath="Text">
+                            <AutoSuggestBox.Resources>
+                                <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
+                                    <Setter Property="Margin" Value="0 0 0 6" />
+                                    <Setter Property="Padding" Value="18 8 16 12" />
+                                </Style>
+                            </AutoSuggestBox.Resources>
+                            <AutoSuggestBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock
+                                            core:Properties.Uppercase="{Binding Title}"
+                                            FontSize="10.666"
+                                            FontWeight="SemiBold"
+                                            Opacity="0.6" />
+                                        <TextBlock
+                                            FlowDirection="{Binding FlowDirection}"
+                                            MaxLines="2"
+                                            Text="{Binding Text}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </AutoSuggestBox.ItemTemplate>
+                            <core:Properties.Footer>
+                                <ListViewItem x:Name="EditButton">
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="8">
+                                        <SymbolIcon core:Properties.RenderScale="0.6" Symbol="Edit" />
+                                        <TextBlock
+                                            x:Uid="EditSuggestionsLabel"
+                                            VerticalAlignment="Center"
+                                            FontWeight="SemiBold"
+                                            TextLineBounds="Tight" />
+                                    </StackPanel>
+                                </ListViewItem>
+                            </core:Properties.Footer>
+                        </AutoSuggestBox>
+
+                        <Button
+                            x:Name="SuggestionButton"
+                            x:Uid="ShowSuggestionsButton"
+                            Grid.Column="1"
+                            Height="{TemplateBinding Height}"
+                            VerticalAlignment="Stretch"
+                            Background="Transparent"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="0"
+                            Content="&#xE70D;"
+                            CornerRadius="0"
+                            FontSize="12"
+                            Style="{StaticResource SmolButton}" />
+
+                        <controls:CharacterPickerButton
+                            x:Name="PickerButton"
+                            x:Load="False"
+                            Grid.Column="2"
+                            Height="{TemplateBinding Height}"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            CornerRadius="0"
+                            Options="{TemplateBinding RenderingOptions}"
+                            Placement="BottomEdgeAlignedRight"
+                            Target="{Binding ElementName=SuggestionBox}"
+                            Visibility="Collapsed" />
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource TextControlBorderBrushPointerOver}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="FocusStates">
+                                <VisualState x:Name="NotFocused" />
+                                <VisualState x:Name="Focused">
+                                    <VisualState.Setters>
+                                        <Setter Target="Root.BorderBrush" Value="{ThemeResource TextControlBorderBrushFocused}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                            <VisualStateGroup x:Name="PickerStates">
+                                <VisualState x:Name="PickerHiddenState" />
+                                <VisualState x:Name="PickerVisibleState">
+                                    <VisualState.Setters>
+                                        <Setter Target="PickerButton.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:CharacterPicker">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Width" Value="310" />
+        <Setter Property="Height" Value="400" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:CharacterPicker">
+                    <Grid
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <controls:CharacterGridView
+                            x:Name="ItemsGridView"
+                            Margin="0"
+                            Padding="0 12 0 24"
+                            IsItemClickEnabled="False"
+                            ItemAnnotation="None"
+                            ItemContainerTransitions="{StaticResource NoTransitions}"
+                            ItemFontFace="{Binding Options.Variant.Face, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemFontFamily="{Binding Options.Variant.Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemFontVariant="{Binding Options.Variant, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemSize="40"
+                            ItemTypography="{Binding Options.DXTypography, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            ItemsSource="{Binding Options.Variant.Characters, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                            SelectionMode="Single"
+                            ShowColorGlyphs="{Binding Options.IsColourFontEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                            <GridView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsWrapGrid HorizontalAlignment="Center" Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </GridView.ItemsPanel>
+                            <GridView.ItemTemplate>
+                                <DataTemplate>
+                                    <!--  For performance reasons, all bindings are done in C#  -->
+                                    <Grid Padding="4">
+                                        <TextBlock
+                                            x:Name="Text"
+                                            Margin="0 -2 0 0"
+                                            Padding="0,0,0,8"
+                                            IsTextScaleFactorEnabled="False"
+                                            TextAlignment="Center" />
+                                    </Grid>
+                                </DataTemplate>
+                            </GridView.ItemTemplate>
+                        </controls:CharacterGridView>
+
+                        <Grid
+                            x:Name="BottomBar"
+                            Grid.Row="3"
+                            ColumnSpacing="8"
+                            Padding="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+
+                            <Button
+                                x:Name="AddButton"
+                                HorizontalAlignment="Stretch"
+                                Content="{core:Localizer Key='AddButton/Label'}"
+                                Style="{StaticResource AccentButtonStyle}" />
+                            <Button
+                                x:Name="CloseButton"
+                                x:Uid="BtnTextClose"
+                                Grid.Column="1"
+                                HorizontalAlignment="Stretch"
+                                Style="{StaticResource DefaultThemeButtonStyle}" />
+                        </Grid>
+
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

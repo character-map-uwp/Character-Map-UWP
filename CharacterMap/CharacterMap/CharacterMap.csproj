@@ -195,9 +195,7 @@
     <Compile Include="Controls\ButtonGroup.cs" />
     <Compile Include="Controls\CategoryFlyout.cs" />
     <Compile Include="Controls\CharacterGridView.cs" />
-    <Compile Include="Controls\CharacterPicker.xaml.cs">
-      <DependentUpon>CharacterPicker.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="Controls\CharacterPicker.cs" />
     <Compile Include="Controls\ContentGroup.cs" />
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
@@ -207,10 +205,13 @@
     <Compile Include="Controls\FilterFlyout.xaml.cs">
       <DependentUpon>FilterFlyout.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FlowAwareComboBox.cs" />
     <Compile Include="Controls\ModalPagePresenter.cs" />
     <Compile Include="Controls\OpenFolderDialog.xaml.cs">
       <DependentUpon>OpenFolderDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\CharacterPickerButton.cs" />
+    <Compile Include="Controls\SuggestionBox.cs" />
     <Compile Include="Controls\UXButton.cs" />
     <Compile Include="Controls\UXComboBox.cs" />
     <Compile Include="Controls\ExtendedListView.cs" />
@@ -246,6 +247,7 @@
     <Compile Include="Helpers\FluentAnimation.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
+    <Compile Include="Helpers\Throttler.cs" />
     <Compile Include="Helpers\WoffToOtf.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />
@@ -294,6 +296,7 @@
     <Compile Include="Models\CharacterRenderingOptions.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.cs" />
     <Compile Include="Provider\SQLiteGlyphProvider.Debug.cs" />
+    <Compile Include="Provider\UnicodeDevProvider.cs" />
     <Compile Include="Provider\VBDevProvider.cs" />
     <Compile Include="Provider\XamarinFormsDevProvider.cs" />
     <Compile Include="Provider\XamlDevProvider.cs" />
@@ -453,10 +456,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Controls\CharacterPicker.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Controls\CreateCollectionDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

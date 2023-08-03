@@ -81,7 +81,7 @@
         <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
-        <Setter Property="Padding" Value="0" />
+        <Setter Property="Padding" Value="2 1" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListViewItem">
@@ -1645,87 +1645,18 @@
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Grid>
-                        <Grid.Resources>
-                            <Style x:Name="DeleteButtonStyle" TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Grid
-                                                x:Name="ButtonLayoutGrid"
-                                                Background="{ThemeResource TextControlButtonBackground}"
-                                                BorderBrush="{ThemeResource TextControlButtonBorderBrush}"
-                                                BorderThickness="{TemplateBinding BorderThickness}"
-                                                CornerRadius="{TemplateBinding CornerRadius}">
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup x:Name="CommonStates">
-                                                        <VisualState x:Name="Normal" />
-
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPointerOver}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPointerOver}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPointerOver}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-
-                                                        <VisualState x:Name="Pressed">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="Background">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBackgroundPressed}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ButtonLayoutGrid" Storyboard.TargetProperty="BorderBrush">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonBorderBrushPressed}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="GlyphElement" Storyboard.TargetProperty="Foreground">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlButtonForegroundPressed}" />
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-
-                                                        <VisualState x:Name="Disabled">
-                                                            <Storyboard>
-                                                                <DoubleAnimation
-                                                                    Storyboard.TargetName="ButtonLayoutGrid"
-                                                                    Storyboard.TargetProperty="Opacity"
-                                                                    To="0"
-                                                                    Duration="0" />
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-                                                <TextBlock
-                                                    x:Name="GlyphElement"
-                                                    HorizontalAlignment="Center"
-                                                    VerticalAlignment="Center"
-                                                    AutomationProperties.AccessibilityView="Raw"
-                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                    FontSize="{ThemeResource TextBoxIconFontSize}"
-                                                    FontStyle="Normal"
-                                                    Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Grid.Resources>
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Normal">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentElement.HorizontalScrollMode" Value="Disabled" />
+                                    </VisualState.Setters>
+                                </VisualState>
 
                                 <VisualState x:Name="Disabled">
 
                                     <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HeaderContentPresenter" Storyboard.TargetProperty="Foreground">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlHeaderForegroundDisabled}" />
-                                        </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="Background">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBackgroundDisabled}" />
                                         </ObjectAnimationUsingKeyFrames>
@@ -1742,7 +1673,9 @@
                                 </VisualState>
 
                                 <VisualState x:Name="PointerOver">
-
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentElement.HorizontalScrollMode" Value="Disabled" />
+                                    </VisualState.Setters>
                                     <Storyboard>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BorderElement" Storyboard.TargetProperty="BorderBrush">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource TextControlBorderBrushPointerOver}" />
@@ -1781,44 +1714,13 @@
 
                             </VisualStateGroup>
                             <VisualStateGroup x:Name="ButtonStates">
-                                <VisualState x:Name="ButtonVisible">
-                                    <Storyboard>
-                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="DeleteButton" Storyboard.TargetProperty="Visibility">
-                                            <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
-                                        </ObjectAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="ButtonVisible" />
                                 <VisualState x:Name="ButtonCollapsed" />
 
                             </VisualStateGroup>
 
                         </VisualStateManager.VisualStateGroups>
 
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-
-                        <ContentPresenter
-                            x:Name="HeaderContentPresenter"
-                            x:DeferLoadStrategy="Lazy"
-                            Grid.Row="0"
-                            Grid.Column="0"
-                            Grid.ColumnSpan="2"
-                            Margin="{ThemeResource TextBoxTopHeaderMargin}"
-                            VerticalAlignment="Top"
-                            Content="{TemplateBinding Header}"
-                            ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            FontWeight="Normal"
-                            Foreground="{ThemeResource TextControlHeaderForeground}"
-                            TextWrapping="Wrap"
-                            Visibility="Collapsed" />
                         <Border
                             x:Name="BorderElement"
                             Grid.Row="1"
@@ -1838,6 +1740,7 @@
                             Grid.Column="0"
                             Margin="{TemplateBinding BorderThickness}"
                             Padding="{TemplateBinding Padding}"
+                            HorizontalAlignment="Stretch"
                             AutomationProperties.AccessibilityView="Raw"
                             Foreground="{TemplateBinding Foreground}"
                             HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
@@ -1883,21 +1786,6 @@
                                 IsHitTestVisible="False"
                                 IsTabStop="False" />
                         </StackPanel>
-
-                        <Button
-                            x:Name="DeleteButton"
-                            Grid.Row="1"
-                            Grid.Column="1"
-                            MinWidth="34"
-                            Padding="{ThemeResource HelperButtonThemePadding}"
-                            VerticalAlignment="Stretch"
-                            AutomationProperties.AccessibilityView="Raw"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=CornerRadius, Converter={StaticResource RightCornerRadiusFilterConverter}}"
-                            FontSize="{TemplateBinding FontSize}"
-                            IsTabStop="False"
-                            Style="{StaticResource DeleteButtonStyle}"
-                            Visibility="Collapsed" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -1909,6 +1797,7 @@
     <Style x:Key="DefaultThemeAutoSuggestBoxStyle" TargetType="AutoSuggestBox">
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="MaxSuggestionListHeight" Value="500" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="TextBoxStyle" Value="{StaticResource DefaultThemeAutoSuggestBoxTextBoxStyle}" />
@@ -1916,9 +1805,11 @@
         <Setter Property="BorderThickness" Value="0 0 0 1" />
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
-                <Style TargetType="ListViewItem">
+                <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Margin" Value="0 0 0 6" />
+                    <Setter Property="Padding" Value="18 8 16 12" />
                 </Style>
             </Setter.Value>
         </Setter>
@@ -1926,7 +1817,6 @@
             <Setter.Value>
                 <ControlTemplate TargetType="AutoSuggestBox">
                     <Grid x:Name="LayoutRoot">
-
                         <TextBox
                             x:Name="TextBox"
                             Width="{TemplateBinding Width}"
@@ -1956,9 +1846,10 @@
                                 CornerRadius="{ThemeResource OverlayCornerRadius}">
                                 <ListView
                                     x:Name="SuggestionsList"
-                                    MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"
+                                    MaxHeight="{TemplateBinding MaxSuggestionListHeight}"
                                     Margin="{ThemeResource AutoSuggestListPadding}"
                                     DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+                                    Footer="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.Footer)}"
                                     IsItemClickEnabled="True"
                                     ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
                                     ItemTemplate="{TemplateBinding ItemTemplate}"

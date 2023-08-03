@@ -153,22 +153,32 @@ namespace CharacterMap.Views
             }
         }
 
+        private void InputText_DetectedFlowDirectionChanged(object sender, FlowDirection e)
+        {
+            UpdateText(ViewModel.Text, flowOnly: true);
+        }
+
+        bool IsDetailsView => ViewStates.CurrentState == DetailsState;
+
         /*
          * ElementName Bindings don't work inside ItemsRepeater, so to change
          * preview Text & FontSize we need to manually update all TextBlocks
          */
 
-        bool IsDetailsView => ViewStates.CurrentState == DetailsState;
-
-        void UpdateText(string text, FrameworkElement root = null)
+        void UpdateText(string text, FrameworkElement root = null, bool flowOnly = false)
         {
             FrameworkElement target = root ?? (IsDetailsView ? DetailsRepeater : Repeater.Realize().ItemsPanelRoot);
             if (target == null)
                 return;
 
             XamlBindingHelper.SuspendRendering(target);
+            var flow = InputText.DetectedFlowDirection;
             foreach (var g in GetTargets(target))
-                SetText(g, text);
+            {
+                if (flowOnly is false)
+                    SetText(g, text);
+                SetFlow(g, flow);
+            }
             XamlBindingHelper.ResumeRendering(target);
         }
 
@@ -204,9 +214,15 @@ namespace CharacterMap.Views
         void SetText(object t, string text)
         {
             if (t is TextBlock tb)
-                tb.Text = text;
+                tb.Text = text ?? string.Empty;
             else if (t is DirectText d)
                 d.Text = text;
+        }
+
+        void SetFlow(object t, FlowDirection dir)
+        {
+            if (t is FrameworkElement f)
+                f.FlowDirection = dir;
         }
 
         void SetFontSize(object t, double size)
@@ -232,11 +248,13 @@ namespace CharacterMap.Views
             if (args.Element is Button b && b.Content is Panel g)
             {
                 SetText(g, InputText.Text);
+                SetFlow(g, InputText.DetectedFlowDirection);
                 SetFontSize(g, FontSizeSlider.Value);
             }
             else if (args.Element is FrameworkElement p && GetTargets(p).FirstOrDefault() is FrameworkElement t)
             {
                 SetText(t, InputText.Text);
+                SetFlow(t, InputText.DetectedFlowDirection);
                 SetFontSize(t, FontSizeSlider.Value);
             }
         }
@@ -375,32 +393,40 @@ namespace CharacterMap.Views
 
         private void Repeater_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
         {
-            // This is hack for Quick Compare view - force ItemTemplate
-            // to be inflated so our code will work
-            if (args.ItemContainer.Content is null)
+            if (args.Phase == 1)
             {
-                args.ItemContainer.Content = args.Item;
-                args.ItemContainer.Measure(new Windows.Foundation.Size(50, 50));
-            }
-
-            var g = GetTargets(args.ItemContainer).FirstOrDefault();
-            if (!args.InRecycleQueue && g is not null)
-            {
-                g.DataContext = args.Item;
-                SetText(g, ViewModel.Text);
-                SetFontSize(g, FontSizeSlider.Value);
-            }
-
-            if (ResourceHelper.AllowExpensiveAnimation)
-            {
-                if (args.InRecycleQueue)
+                var g = GetTargets(args.ItemContainer).FirstOrDefault();
+                if (!args.InRecycleQueue && g is not null)
                 {
-                    CompositionFactory.PokeUIElementZIndex(args.ItemContainer);
+                    g.DataContext = args.Item;
+                    SetText(g, ViewModel.Text);
+                    SetFlow(g, InputText.DetectedFlowDirection);
+                    SetFontSize(g, FontSizeSlider.Value);
                 }
-                else
+            }
+            else
+            {
+                // This is hack for Quick Compare view - force ItemTemplate
+                // to be inflated so our code will work
+                if (args.ItemContainer.Content is null)
                 {
-                    var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-                    v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
+                    args.ItemContainer.Content = args.Item;
+                    args.ItemContainer.Measure(new Windows.Foundation.Size(50, 50));
+                }
+
+                args.RegisterUpdateCallback(1, Repeater_ContainerContentChanging);
+
+                if (ResourceHelper.AllowExpensiveAnimation)
+                {
+                    if (args.InRecycleQueue)
+                    {
+                        CompositionFactory.PokeUIElementZIndex(args.ItemContainer);
+                    }
+                    else
+                    {
+                        var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
+                        v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
+                    }
                 }
             }
         }

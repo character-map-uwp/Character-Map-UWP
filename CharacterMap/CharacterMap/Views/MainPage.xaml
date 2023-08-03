@@ -763,6 +763,7 @@
                                 <SemanticZoom.ZoomedInView>
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
+                                        core:Properties.ItemContainerBackgroundTransition="{StaticResource QuickBackgroundTransition}"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
@@ -1055,6 +1056,14 @@
             </Grid>
         </controls:ExtendedSplitView>
 
+        <!--  Print Presenter  -->
+        <Border
+            x:Name="PrintPresenter"
+            x:DeferLoadStrategy="Lazy"
+            Grid.RowSpan="3"
+            Grid.ColumnSpan="10"
+            d:Visibility="Collapsed" />
+
         <!--  Settings  -->
         <views:SettingsView
             x:Name="SettingsView"
@@ -1092,14 +1101,6 @@
                     Click="{x:Bind ViewModel.ShowStartUpException}" />
             </StackPanel>
         </Grid>
-
-        <!--  Print Presenter  -->
-        <Border
-            x:Name="PrintPresenter"
-            x:DeferLoadStrategy="Lazy"
-            Grid.RowSpan="3"
-            Grid.ColumnSpan="10"
-            d:Visibility="Collapsed" />
 
         <!--  Notification Presenter  -->
         <Grid

@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Windows.Foundation.Collections;
 using Windows.UI.Composition;
 using Windows.UI.Core;
@@ -1147,6 +1148,150 @@ namespace CharacterMap.Core
                             }
                         }
                     }
+                }
+            }));
+
+        #endregion
+
+        #region ItemContainerBackgroundTransition
+
+        private static bool GetSetContainerBackgroundTransition(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(SetContainerBackgroundTransitionProperty);
+        }
+
+        private static void SetSetContainerBackgroundTransition(DependencyObject obj, bool value)
+        {
+            obj.SetValue(SetContainerBackgroundTransitionProperty, value);
+        }
+
+        public static readonly DependencyProperty SetContainerBackgroundTransitionProperty =
+            DependencyProperty.RegisterAttached("SetContainerBackgroundTransition", typeof(bool), typeof(Properties), new PropertyMetadata(false));
+
+
+        public static BrushTransition GetItemContainerBackgroundTransition(DependencyObject obj)
+        {
+            return (BrushTransition)obj.GetValue(ItemContainerBackgroundTransitionProperty);
+        }
+
+        public static void SetItemContainerBackgroundTransition(DependencyObject obj, BrushTransition value)
+        {
+            obj.SetValue(ItemContainerBackgroundTransitionProperty, value);
+        }
+
+        public static readonly DependencyProperty ItemContainerBackgroundTransitionProperty =
+            DependencyProperty.RegisterAttached("ItemContainerBackgroundTransition", typeof(BrushTransition), typeof(Properties), new PropertyMetadata(null, (d, e) =>
+            {
+                if (d is ListViewBase b)
+                {
+                    b.ContainerContentChanging -= ContainerContentChanging;
+                    b.ContainerContentChanging += ContainerContentChanging;
+                }
+
+                static void ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+                {
+                    if (args.ItemContainer is not null 
+                        && GetSetContainerBackgroundTransition(args.ItemContainer) is false
+                        && args.ItemContainer.ContentTemplateRoot is not null)
+                    {
+                        SetSetContainerBackgroundTransition(args.ItemContainer, true);
+
+                        var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
+                        var b = VisualTreeHelper.GetChild(c, 0);
+                        if (b is Border br && br.BackgroundTransition is null)
+                            br.BackgroundTransition = ResourceHelper.AllowAnimation ? GetItemContainerBackgroundTransition(sender) as BrushTransition : null;
+                    }
+                }
+            }));
+
+        #endregion
+
+        #region Uppercase
+
+        public static string GetUppercase(DependencyObject obj)
+        {
+            return (string)obj.GetValue(UppercaseProperty);
+        }
+
+        public static void SetUppercase(DependencyObject obj, string value)
+        {
+            obj.SetValue(UppercaseProperty, value);
+        }
+
+        public static readonly DependencyProperty UppercaseProperty =
+            DependencyProperty.RegisterAttached("Uppercase", typeof(string), typeof(Properties), new PropertyMetadata(string.Empty, (d,e) =>
+            {
+                if (d is TextBlock t && e.NewValue is string s)
+                    t.Text = (s ?? string.Empty).ToUpper();
+            }));
+
+        #endregion
+
+        #region DisableTranslation 
+
+        public static bool GetDisableTranslation(DependencyObject obj)
+        {
+            return (bool)obj.GetValue(DisableTranslationProperty);
+        }
+
+        public static void SetDisableTranslation(DependencyObject obj, bool value)
+        {
+            obj.SetValue(DisableTranslationProperty, value);
+        }
+
+        public static readonly DependencyProperty DisableTranslationProperty =
+            DependencyProperty.RegisterAttached("DisableTranslation", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d,e) =>
+            {
+                // Fix offset ComboBox's caused by global PerspectiveTransform3D
+                if (d is Popup popup && e.NewValue is bool s && s)
+                {
+                    popup.Opened += async (src, arg) =>
+                    {
+                        //await Task.Delay(32);
+                        if (src is Popup pp && pp.Child?.GetFirstDescendantOfType<Border>() is Border b)
+                            b.Translation = new();
+                    };
+                }
+            }));
+        #endregion
+
+        #region Footer
+
+        public static object GetFooter(DependencyObject obj)
+        {
+            return (object)obj.GetValue(FooterProperty);
+        }
+
+        public static void SetFooter(DependencyObject obj, object value)
+        {
+            obj.SetValue(FooterProperty, value);
+        }
+
+        public static readonly DependencyProperty FooterProperty =
+            DependencyProperty.RegisterAttached("Footer", typeof(object), typeof(Properties), new PropertyMetadata(null));
+
+        #endregion
+
+        #region RenderScale
+
+        public static double GetRenderScale(DependencyObject obj)
+        {
+            return (double)obj.GetValue(RenderScaleProperty);
+        }
+
+        public static void SetRenderScale(DependencyObject obj, double value)
+        {
+            obj.SetValue(RenderScaleProperty, value);
+        }
+
+        // Using a DependencyProperty as the backing store for RenderScale.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty RenderScaleProperty =
+            DependencyProperty.RegisterAttached("RenderScale", typeof(double), typeof(Properties), new PropertyMetadata(1d, (d,e) =>
+            {
+                if (d is FrameworkElement f && e.NewValue is double s)
+                {
+                    var ct = f.GetCompositeTransform();
+                    ct.ScaleX = ct.ScaleY = s;
                 }
             }));
 

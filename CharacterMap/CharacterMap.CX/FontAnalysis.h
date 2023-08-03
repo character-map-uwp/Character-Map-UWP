@@ -28,6 +28,12 @@ namespace CharacterMapCX
 		
 		property bool HasGlyphNames { bool get() { return m_hasGlyphNames; } }
 
+		property int COLRVersion { int get() { return m_colrVersion; } }
+
+		property bool SupportsCOLRv1 { bool get() { return m_colrVersion >= 1; } }
+
+		property bool HasVariationAxis { bool get() { return m_variableAxis != nullptr && m_variableAxis->Size > 0; } }
+
 		/*property String^ DesignLanguages { String^ get() { return m_dlng; } }
 
 		property String^ ScriptLanguages { String^ get() { return m_slng; } }*/
@@ -83,6 +89,7 @@ namespace CharacterMapCX
 		bool m_hasCOLR = false;
 		bool m_hasSVG = false;
 		bool m_hasGlyphNames = false;
+		int m_colrVersion = -1;
 		String^ m_dlng = nullptr;
 		String^ m_slng = nullptr;
 
@@ -166,6 +173,7 @@ namespace CharacterMapCX
 			{
 				auto reader = ref new ColrTableReader(tableData, tableSize);
 				m_hasCOLR = reader->BaseGlyphRecordsCount > 0;
+				m_colrVersion = reader->Version;
 				delete reader;
 			}
 			face->ReleaseFontTable(context);

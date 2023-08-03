@@ -2,10 +2,13 @@
 
 using CharacterMap.Core;
 using CharacterMap.Helpers;
+using CharacterMap.Models;
 using CharacterMap.Provider;
 using SQLite;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Windows.UI.Xaml;
 
 namespace CharacterMap.Services
 {
@@ -111,29 +114,32 @@ namespace CharacterMap.Services
             return _provider.SearchAsync(query, variant);
         }
 
-        // todo : refactor into classes with description + writing direction
-        private static IReadOnlyList<string> DefaultTextOptions { get; } = new List<string>
+        private static IReadOnlyList<Suggestion> DefaultSuggestions { get; } = new List<Suggestion>
         {
-            "The quick brown dog jumps over a lazy fox. 1234567890",
-            Localization.Get("CultureSpecificPangram/Text"),
-            "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-            "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ", // Cyrillic Alphabet
-            "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/",
-            "Do bạch kim rất quý nên sẽ dùng để lắp vô xương.", // Vietnamese,
-            "Шугав льохман, държащ птицечовка без сейф и ютия.", // Bulgarian
-            "เป็นมนุษย์สุดประเสริฐเลิศคุณค่า กว่าบรรดาฝูงสัตว์เดรัจฉาน จงฝ่าฟันพัฒนาวิชาการ อย่าล้างผลาญฤๅเข่นฆ่าบีฑาใคร ไม่ถือโทษโกรธแช่งซัดฮึดฮัดด่า หัดอภัยเหมือนกีฬาอัชฌาสัย ปฏิบัติประพฤติกฎกำหนดใจ พูดจาให้จ๊ะๆ จ๋าๆ น่าฟังเอยฯ", // Thai
-            "Ταχίστη αλώπηξ βαφής ψημένη γη, δρασκελίζει υπέρ νωθρού κυνός", // Greek
-            "עטלף אבק נס דרך מזגן שהתפוצץ כי חם", // Hebrew
-            "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق", // Arabic,
-            "키스의 고유조건은 입술끼리 만나야 하고 특별한 기술은 필요치 않다", // Korean
-            "視野無限廣，窗外有藍天", // Chinese (Traditional)
-            "いろはにほへと ちりぬるを わかよたれそ つねならむ うゐのおくやま けふこえて あさきゆめみし ゑひもせす（ん）" // Japanese
+            S("English", "The quick brown dog jumps over a lazy fox. 1234567890"),
+            S("CultureSpecific", Localization.Get("CultureSpecificPangram/Text")),
+            S("LatinAlpha", "abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"), // Latin Alphabet
+            S("CyrillicAlpha", "абвгдеёжзийклмнопрстуфхцчшщъыьэюя АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ"), // Cyrillic Alphabet
+            S("LatinSymbols", "1234567890.:,; ' \" (!?) +-*/= #@£$€%^& {~¬} [<>] |\\/"), // Common Latin symbols and numbers
+            S("Vietnamese", "Do bạch kim rất quý nên sẽ dùng để lắp vô xương."), // Vietnamese,
+            S("Bulgarian", "Шугав льохман държащ птицечовка без сейф и ютия"), // Bulgarian
+            S("Greek", "Ταχίστη αλώπηξ βαφής ψημένη γη, δρασκελίζει υπέρ νωθρού κυνός"), // Greek
+            S("Bengali", "একজাতীতো সংগঠিত প্রবণতা ও জৈববৈচিত্র্যের কলসী দেখা হয়।"), // Bengali
+            S("Hindi", "ऋषियों को सताने वाले दुष्ट राक्षसों के राजा रावण का सर्वनाश करने वाले विष्णुवतार भगवान श्रीराम, अयोध्या के महाराज दशरथ के बड़े सपुत्र थे।"), // Hindi
+            S("Thai", "เป็นมนุษย์สุดประเสริฐเลิศคุณค่า กว่าบรรดาฝูงสัตว์เดรัจฉาน จงฝ่าฟันพัฒนาวิชาการ อย่าล้างผลาญฤๅเข่นฆ่าบีฑาใคร ไม่ถือโทษโกรธแช่งซัดฮึดฮัดด่า หัดอภัยเหมือนกีฬาอัชฌาสัย ปฏิบัติประพฤติกฎกำหนดใจ พูดจาให้จ๊ะๆ จ๋าๆ น่าฟังเอยฯ"), // Thai
+            S("Hebrew", "עטלף אבק נס דרך מזגן שהתפוצץ כי חם", false), // Hebrew
+            S("Arabic", "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق", false), // Arabic,
+            S("Korean", "키스의 고유조건은 입술끼리 만나야 하고 특별한 기술은 필요치 않다"), // Korean
+            S("ChineseTraditional", "視野無限廣，窗外有藍天"), // Chinese (Traditional)
+            S("Japanese", "いろはにほへと ちりぬるを わかよたれそ つねならむ うゐのおくやま けふこえて あさきゆめみし ゑひもせす（ん）") // Japanese
         };
 
-        public static List<string> GetRampOptions()
+        private static Suggestion S(string key, string content, bool ltr = true) => new(Localization.Get($"SuggestOption{key}/Text"), content, ltr);
+
+        public static List<Suggestion> GetRampOptions()
         {
-            List<string> ops = new(DefaultTextOptions);
-            ops.AddRange(ResourceHelper.AppSettings.CustomRampOptions);
+            List<Suggestion> ops = new(DefaultSuggestions);
+            ops.AddRange(ResourceHelper.AppSettings.CustomRampOptions.Select(o => S("Custom", o)));
             return ops;
         }
 
@@ -186,5 +192,21 @@ namespace CharacterMap.Services
         //    return (h, f, p, s);
         //}
 
+    }
+
+    public class Suggestion
+    {
+        public string Title { get; set; }
+        public string Text { get; set; }
+        public FlowDirection FlowDirection { get; set; }
+
+        public Suggestion() { }
+
+        public Suggestion(string title, string text, bool ltr = true)
+        {
+            Title = title;
+            Text = text;
+            FlowDirection = ltr ? FlowDirection.LeftToRight : FlowDirection.RightToLeft;
+        }
     }
 }

@@ -21,7 +21,7 @@ namespace CharacterMap.Views
 
                 // Calling measure will force an ItemsControl to populate its
                 // ItemsPanel with realized children.
-                VariableAxis.Measure(CharGrid.DesiredSize);
+                VariableAxis?.Measure(CharGrid.DesiredSize);
                 TypeRampList.Measure(CharGrid.DesiredSize);
             }
 
@@ -30,7 +30,7 @@ namespace CharacterMap.Views
 
             var items = TypeRampList.ItemsPanelRoot.Children.OfType<FrameworkElement>();
 
-            if (VariableAxis.ItemsPanelRoot is not null)
+            if (VariableAxis is not null && VariableAxis.ItemsPanelRoot is not null)
                 items = items.Concat(VariableAxis.ItemsPanelRoot.Children.OfType<FrameworkElement>());
 
             return items.Append(TypeRampInputRow).OrderBy(g => Guid.NewGuid()).ToList();

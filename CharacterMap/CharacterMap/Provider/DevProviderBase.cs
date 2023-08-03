@@ -20,6 +20,7 @@ namespace CharacterMap.Provider
             return new List<DevProviderBase>
             {
                 new DevProviderNone(o, c),
+                new UnicodeDevProvider(o, c),
                 new XamlDevProvider(o, c),
                 new CSharpDevProvider(o, c),
                 new CSharpWinUI3DevProvider(o, c),
@@ -31,7 +32,7 @@ namespace CharacterMap.Provider
             };
         }
 
-        private static List<KeyValuePair<GeometryCacheEntry, string>> _geometryCache { get; } = new List<KeyValuePair<GeometryCacheEntry, string>>();
+        private static List<KeyValuePair<GeometryCacheEntry, string>> _geometryCache { get; } = new ();
 
         /// <summary>
         /// Creates an SVG / XAML path syntax compatible string representing the filled geometry
@@ -51,7 +52,7 @@ namespace CharacterMap.Provider
              * configured, so a small cache will help performance
              */
 
-            if (_geometryCache.FirstOrDefault(p => p.Key is GeometryCacheEntry e && e.Options == o && e.Character == c) is KeyValuePair<GeometryCacheEntry, string> pair
+            if (_geometryCache.FirstOrDefault(p => p.Key is GeometryCacheEntry e && e.Options == o && e.Character == c) is { } pair
                 && pair.Value != null)
                 return pair.Value;
 
@@ -82,7 +83,7 @@ namespace CharacterMap.Provider
     /// </summary>
     public abstract partial class DevProviderBase
     {
-        protected static List<DevOption> DefaultUWPOptions { get; } = new List<DevOption>
+        protected static List<DevOption> DefaultUWPOptions { get; } = new ()
         {
             new ("TxtXamlCode/Header", null),
             new ("TxtFontIcon/Header", null),

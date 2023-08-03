@@ -260,6 +260,7 @@ namespace CharacterMap.Helpers
 
             foreach (var target in targets)
             {
+                if (target is null) continue;
                 var animation = CreateEntranceAnimation(target, new Vector3(fromOffsetX, fromOffsetY, 0), start, durationMs);
                 target.GetElementVisual().StartAnimationGroup(animation);
                 start += staggerMs;

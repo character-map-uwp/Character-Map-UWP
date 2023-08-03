@@ -104,6 +104,8 @@ namespace CharacterMap.Views
 
         #endregion
 
+        private BrushTransition t = new () { Duration = TimeSpan.FromSeconds(0.115) };
+
         public bool IsStandalone { get; set; }
 
         private Debouncer _sizeDebouncer { get; } = new ();
@@ -484,8 +486,8 @@ namespace CharacterMap.Views
         {
             if (ViewModel.Settings.FitCharacter)
             {
-                ZoomOutGlyph.Visibility = Visibility.Visible;
-                ZoomGlyph.Visibility = Visibility.Collapsed;
+                //ZoomOutGlyph.Visibility = Visibility.Visible;
+                //ZoomGlyph.Visibility = Visibility.Collapsed;
 
                 TxtPreview.MinHeight = ViewModel.Settings.GridSize;
                 TxtPreview.MinWidth = ViewModel.Settings.GridSize;
@@ -495,8 +497,8 @@ namespace CharacterMap.Views
                 TxtPreview.ClearValue(TextBlock.MinWidthProperty);
                 TxtPreview.ClearValue(TextBlock.MinHeightProperty);
 
-                ZoomOutGlyph.Visibility = Visibility.Collapsed;
-                ZoomGlyph.Visibility = Visibility.Visible;
+                //ZoomOutGlyph.Visibility = Visibility.Collapsed;
+                //ZoomGlyph.Visibility = Visibility.Visible;
             }
         }
 
@@ -862,6 +864,11 @@ namespace CharacterMap.Views
             {
                 args.ItemContainer.ContextRequested -= Grid_ContextRequested;
                 args.ItemContainer.ContextRequested += Grid_ContextRequested;
+
+                var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
+                var b = VisualTreeHelper.GetChild(c, 0);
+                if (b is Border br)
+                    br.BackgroundTransition = ResourceHelper.AllowAnimation ? t : null;
             }
         }
 
@@ -1008,6 +1015,13 @@ namespace CharacterMap.Views
             // Reset flyout scroll position
             InfoScroller.ScrollToVerticalOffset(0);
 #pragma warning restore CS0618
+        }
+
+        private void TypeRampFlowButton_Click(object sender, RoutedEventArgs e)
+        {
+            TypeRampScroller.FlowDirection = TypeRampScroller.FlowDirection == FlowDirection.LeftToRight
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
         }
 
 

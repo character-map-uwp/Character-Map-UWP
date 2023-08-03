@@ -41,7 +41,7 @@ namespace CharacterMap.ViewModels
         protected override bool TrackAnimation => true;
 
         [ObservableProperty]
-        IReadOnlyList<string> _textOptions = null;
+        IReadOnlyList<Suggestion> _textOptions = null;
 
         public string Title                 { get => Get<string>(); set => Set(value); }
 

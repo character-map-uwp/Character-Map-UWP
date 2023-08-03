@@ -250,7 +250,7 @@ namespace CharacterMap.Provider
 
                 // 3.3. Execute!
                 string sql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
-                results.AddRange(_connection.GetGlyphData(table, sql, $"{query}*"));
+                results.AddRange(_connection.GetGlyphData(ftsTable, sql, $"{query}*"));
 
                 // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
                 if (results != null && results.Count == SEARCH_LIMIT)

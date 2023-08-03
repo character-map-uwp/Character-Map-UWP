@@ -50,14 +50,18 @@ namespace CharacterMap.Core
         /// </summary>
         /// <param name="variant"></param>
         /// <returns></returns>
-        public static FontAnalysis Analyze(FontVariant variant)
+        public static FontAnalysis Analyze(FontVariant variant, bool loadGlyphNames = true)
         {
             FontAnalysis analysis = new (variant.Face);
-            if (analysis.HasGlyphNames)
-            {
+            if (loadGlyphNames && analysis.HasGlyphNames)
                 PrepareSearchMap(variant, analysis.GlyphNameMappings);
-            }
             return analysis;
+        }
+
+        public static void PrepareSearchMap(FontVariant variant, FontAnalysis a)
+        {
+            if (variant.SearchMap is null && a.HasGlyphNames)
+                PrepareSearchMap(variant, a.GlyphNameMappings);
         }
 
         private static void PrepareSearchMap(FontVariant variant, IReadOnlyDictionary<int, string> names)

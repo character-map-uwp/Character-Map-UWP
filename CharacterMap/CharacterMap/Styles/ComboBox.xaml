@@ -556,7 +556,6 @@
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
                             MinWidth="{ThemeResource ComboBoxThemeMinWidth}"
-                            Margin="4 0"
                             Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -609,10 +608,9 @@
                             x:Load="False"
                             Grid.Row="1"
                             Grid.Column="1"
-                            Width="30"
-                            Margin="0,1,1,1"
-                            HorizontalAlignment="Right"
+                            HorizontalAlignment="Stretch"
                             Background="Transparent"
+                            CornerRadius="0"
                             Visibility="Collapsed" />
                         <FontIcon
                             x:Name="DropDownGlyph"

@@ -1365,7 +1365,10 @@
                             Glyph="&#xE0E5;"
                             IsHitTestVisible="False" />
 
-                        <Popup x:Name="Popup">
+                        <Popup
+                            x:Name="Popup"
+                            core:Properties.DisableTranslation="True"
+                            Translation="0,0,0">
                             <Border
                                 x:Name="PopupBorder"
                                 Margin="0,-1,0,-1"
@@ -2520,6 +2523,7 @@
                                     MaxHeight="{ThemeResource AutoSuggestListMaxHeight}"
                                     Margin="{ThemeResource AutoSuggestListPadding}"
                                     DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+                                    Footer="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.Footer)}"
                                     IsItemClickEnabled="True"
                                     ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
                                     ItemTemplate="{TemplateBinding ItemTemplate}"

@@ -95,7 +95,7 @@ namespace CharacterMap.Core
 
         public static async Task<bool> TryCopyToClipboardAsync(CopyToClipboardMessage msg, FontMapViewModel viewModel)
         {
-            string c = @$"\u{msg.RequestedItem.UnicodeIndex}?";
+            string c = msg.RequestedItem.GetClipboardString();
 
             if (msg.DataType == CopyDataType.Text)
             {
@@ -119,7 +119,7 @@ namespace CharacterMap.Core
 
         public static Task<bool> TryCopyToClipboardAsync(Character character, FontMapViewModel viewModel)
         {
-            string c = @$"\u{character.UnicodeIndex}?";
+            string c = character.GetClipboardString();
             return TryCopyToClipboardInternalAsync(character.Char, c, viewModel);
         }
 
@@ -326,6 +326,29 @@ namespace CharacterMap.Core
             return Humanise(e.ToString(), true);
         }
 
+        public static FlowDirection GetFlowDirection(TextBox box)
+        {
+            if (box.Text is not null && box.Text.Length > 0)
+            {
+                try
+                {
+                    // We detect LTR or RTL by checking where the first character is
+                    var rect = box.GetRectFromCharacterIndex(0, false);
+
+                    // Note: Probably we can check if rect.X == 0, but I haven't properly tested it.
+                    //       The current logic will fail with a small width TextBox with small fonts,
+                    //       but that's not a concern for our current use cases.
+                    return rect.X <= box.ActualWidth / 4.0 ? FlowDirection.LeftToRight : FlowDirection.RightToLeft;
+                }
+                catch
+                {
+                    // Don't care
+                }
+            }
+
+            return FlowDirection.LeftToRight;
+        }
+
         static Pool<StringBuilder> _builderPool { get; } = new Pool<StringBuilder>();
 
         /// <summary>
@@ -498,5 +521,10 @@ namespace CharacterMap.Core
         public static bool Supports1809 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 7);
 
         public static bool Supports1903 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 8);
+
+        /// <summary>
+        /// 23H2 Windows 11 builds introduce COLRv1 font format support to DirectWrite
+        /// </summary>
+        public static bool Supports23H2 { get; } = ApiInformation.IsApiContractPresent("Windows.Foundation.UniversalApiContract", 17);
     }
 }

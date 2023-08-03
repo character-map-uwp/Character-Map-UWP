@@ -365,5 +365,18 @@ namespace Windows.UI.Xaml.Media
             return null;
         }
 
+        public static VisualStateGroup GetVisualStateGroup(this FrameworkElement f, string groupName)
+        {
+            if (VisualStateManager.GetVisualStateGroups(f) is IList<VisualStateGroup> groups)
+                return groups.FirstOrDefault(g => g.Name == groupName);
+
+            return null;
+        }
+
+        public static VisualState GetState(this VisualStateGroup group, string stateName)
+        {
+            return group.States.FirstOrDefault(s => s.Name == stateName);
+        }
+
     }
 }

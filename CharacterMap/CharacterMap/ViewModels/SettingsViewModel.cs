@@ -109,7 +109,14 @@ namespace CharacterMap.ViewModels
             // application, rather than things like bug-fixes or visual changes.
             return new()
             {
-                new("Latest Update (June 2023)", // April 2023
+                new("Latest Update (August 2023)", // August 2023
+                    "- Added support for Right-to-Left text in Type Ramp view, Quick Compare and Compare Fonts view\n" +
+                    "- Added Unicode developers tools showing Unicode codepoint and UTF-16 value\n" +
+                    "- Added experimental COLRv1 support to Preview Pane, Type Ramp View, Quick Compare and Compare Fonts View for Windows 11 builds > 25905\n" +
+                    "    • If a glyph has both COLRv1 and COLRv0 versions, only the COLRv1 version can be seen in these views\n" +
+                    "    • SVG Export or copying as SVG will only use COLRv0 glyphs\n" +
+                    "    • PNG Export or copying as PNG will favour the COLRv1 glyphs"),
+                new("2023.6.0.0 (June 2023)", // June 2023
                     "- Added ability to group characters by Unicode Range on character map (Ctrl + G)\n" +
                     "- Added ability to Copy as SVG (Ctrl + Shift + C)\n" +
                     "- Added ability to Copy as PNG (Ctrl + Alt + C)\n" +

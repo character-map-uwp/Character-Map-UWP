@@ -17,6 +17,8 @@ namespace CharacterMap.Helpers
 
         public static string GetHexValue(uint i) => (i <= 0x10FFFF && (i< 0xD800 || i> 0xDFFF)) ? char.ConvertFromUtf32((int) i) : new string ((char) i, 1);
 
+        public static bool RequiresSurrogates(Character c) => c.UnicodeIndex >= 0x010000;
+
         public static bool IsWhiteSpaceOrControl(uint c)
         {
             UnicodeGeneralCategory category = UnicodeCharacters.GetGeneralCategory(c);
@@ -39,8 +41,8 @@ namespace CharacterMap.Helpers
 
         public static bool SupportsScript(FontVariant v, UnicodeRange range)
         {
-            // Filters out fonts that support just a singular symbol (like currency symbol)
-            return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last && ((r.Last - r.First) > 0));
+            // Filters out fonts that support less than two glyphs in the script range
+            return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last && ((r.Last - r.First) > 1));
         }
 
         public static bool ContainsEmoji(FontVariant v)

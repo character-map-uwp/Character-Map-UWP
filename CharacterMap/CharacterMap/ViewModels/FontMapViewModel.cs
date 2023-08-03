@@ -32,7 +32,7 @@ namespace CharacterMap.ViewModels
 
     public partial class RampOption : ObservableObject
     {
-        public int FontSize { get; set; }
+        public int FontSize { get; set; } = 12;
         [ObservableProperty]
         CharacterRenderingOptions _option;
     }
@@ -78,7 +78,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] CharacterRenderingOptions              _renderingOptions;
         [ObservableProperty] CanvasTextLayoutAnalysis               _selectedCharAnalysis;
         [ObservableProperty] List<TypographyFeatureInfo>            _selectedCharVariations;
-        [ObservableProperty] IReadOnlyList<string>                  _rampOptions;
+        [ObservableProperty] IReadOnlyList<Suggestion>              _rampOptions;
         [ObservableProperty] IReadOnlyList<Character>               _chars;
         [ObservableProperty] IReadOnlyList<IGlyphData>              _searchResults;
         [ObservableProperty] IReadOnlyList<DWriteFontAxis>          _variationAxis;
@@ -101,6 +101,14 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] DevProviderBase        _selectedProvider;
         public FontDisplayMode DisplayMode                                  { get => Get<FontDisplayMode>(); set { if (Set(value)) { UpdateTypography(); } } }
         public FontAnalysis SelectedVariantAnalysis                         { get => Get<FontAnalysis>(); set { if (Set(value)) { UpdateVariations(); } } }
+
+        partial void OnShowColorGlyphsChanged(bool value)
+        {
+            if (RenderingOptions is not null)
+                RenderingOptions = RenderingOptions with { IsColourFontEnabled = value };
+            if (DisplayMode == FontDisplayMode.TypeRamp)
+                UpdateRampOptions();
+        }
 
         partial void OnSelectedFontChanging(FontItem value)
         {
@@ -315,13 +323,13 @@ namespace CharacterMap.ViewModels
                 if (variant != null)
                 {
                     var analysis = variant.GetAnalysis();
+                    TypographyAnalyzer.PrepareSearchMap(variant, analysis);
                     analysis.ResetVariableAxis();
                     SelectedVariantAnalysis = analysis;
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
-
-                    // Update Unicode Categories
                     
+                    // Update Unicode Categories
                 }
                 else
                 {
@@ -354,21 +362,21 @@ namespace CharacterMap.ViewModels
                 });
             }
         }
-        private IReadOnlyList<String> GetRampOptions(FontVariant variant)
+        private IReadOnlyList<Suggestion> GetRampOptions(FontVariant variant)
         {
             if (variant == null)
-                return new List<string>();
+                return new List<Suggestion>();
 
             var list = GlyphService.GetRampOptions();
             
             if (variant?.TryGetSampleText() is String s)
-                list.Insert(0, s);
+                list.Insert(0, new Suggestion(Localization.Get("SuggestOptionSample/Text"), s));
 
             if (Unicode.ContainsRange(variant, UnicodeRange.Emoticons))
             {
                 string emoji = "😂😍😭💁👍💋🐱🦉🌺🌲🍓🍕🎂🏰🏠🚄🚒🛫🛍";
-                if (!list.Contains(emoji))
-                    list.Add(emoji);
+                if (!list.Any(s => s.Text == emoji))
+                    list.Add(new Suggestion(Localization.Get("SuggestOptionEmoji/Text"), emoji));
             }
 
             return list;
@@ -390,6 +398,10 @@ namespace CharacterMap.ViewModels
                 TypographyFeatures = SelectedVariant.TypographyFeatures;
             else
                 TypographyFeatures = SelectedVariant.XamlTypographyFeatures;
+
+            // Ensure ColorFont option propagates
+            if (DisplayMode is FontDisplayMode.TypeRamp)
+                UpdateRampOptions();
 
             this.SelectedTypography = TypographyFeatures.FirstOrDefault(t => t.Feature == current.Feature);
             OnPropertyChanged(nameof(SelectedTypography)); // Required.
@@ -476,10 +488,10 @@ namespace CharacterMap.ViewModels
 
         public void UpdateRampOptions()
         {
-            if (_renderingOptions is null)
+            if (RenderingOptions is null)
                 return;
 
-            var ops = _renderingOptions with { Axis = _variationAxis };
+            var ops = RenderingOptions with { Axis = VariationAxis };
             foreach (var ramp in Ramps)
                 ramp.Option = ops;
         }
@@ -698,8 +710,11 @@ namespace CharacterMap.ViewModels
 
         public void AddCharToSequence(int start, int length, Character c)
         {
-            var s = Sequence;
-            start = Math.Min(start, Sequence.Length);
+            if (c is null)
+                return;
+
+            var s = Sequence ?? string.Empty;
+            start = Math.Min(start, s.Length);
             if (s.Length > 0)
                 s = s.Remove(start, length);
                     
