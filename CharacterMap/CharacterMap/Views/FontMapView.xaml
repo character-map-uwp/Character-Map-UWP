@@ -1527,7 +1527,7 @@
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
                                 FontFace="{Binding SelectedVariant.Face}"
-                                FontFamily="{Binding FontFamily}"
+                                FontFamily="{Binding SelectedVariant.Source}"
                                 FontSize="24"
                                 FontStretch="{Binding SelectedVariant.DirectWriteProperties.Stretch}"
                                 FontStyle="{Binding SelectedVariant.DirectWriteProperties.Style}"

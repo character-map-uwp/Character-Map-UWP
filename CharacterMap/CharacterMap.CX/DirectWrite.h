@@ -18,6 +18,7 @@ using namespace Platform;
 using namespace Platform::Collections;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
+using namespace CharacterMapCX;
 
 namespace CharacterMapCX
 {

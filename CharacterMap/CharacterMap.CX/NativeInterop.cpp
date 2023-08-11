@@ -1,3 +1,4 @@
+#pragma once
 #include "pch.h"
 #include "NativeInterop.h"
 #include "CanvasTextLayoutAnalysis.h"
@@ -17,6 +18,7 @@ using namespace Platform::Collections;
 using namespace Windows::Foundation::Numerics;
 using namespace concurrency;
 
+NativeInterop^ NativeInterop::_Current = nullptr;
 
 NativeInterop::NativeInterop(CanvasDevice^ device)
 {
@@ -39,6 +41,7 @@ NativeInterop::NativeInterop(CanvasDevice^ device)
 		&m_d2dContext);
 
 	m_fontManager = new CustomFontManager(m_dwriteFactory);
+	_Current = this;
 }
 
 IAsyncAction^ NativeInterop::ListenForFontSetExpirationAsync()
@@ -82,6 +85,7 @@ DWriteFontSet^ NativeInterop::GetSystemFonts()
 
 		ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(true, DWRITE_FONT_FAMILY_MODEL_WEIGHT_STRETCH_STYLE, &fontCollection));
 		ThrowIfFailed(fontCollection->GetFontSet(&fontSet));
+		m_fontCollection = fontCollection;
 
 		ComPtr<IDWriteFontSet3> fontSet3;
 		ThrowIfFailed(fontSet.As(&fontSet3));

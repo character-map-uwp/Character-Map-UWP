@@ -355,23 +355,35 @@ Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
 	ComPtr<IDWriteFontFile> file;
 	ComPtr<IDWriteFontFileLoader> loader;
 	ComPtr<IDWriteLocalFontFileLoader> localLoader;
+	ComPtr<IDWriteRemoteFontFileLoader> remoteLoader;
 	uint32 keySize = 0;
 	const void* refKey = nullptr;
 
 	if (fontFaceRef->GetFontFile(&file) == S_OK
 		&& file->GetLoader(&loader) == S_OK
-		&& loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK
 		&& file->GetReferenceKey(&refKey, &keySize) == S_OK)
 	{
-		UINT filePathSize = 0;
-		UINT filePathLength = 0;
-		if (localLoader->GetFilePathLengthFromKey(refKey, keySize, &filePathLength) == S_OK)
+		if (loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK)
 		{
-			wchar_t* namebuffer = new (std::nothrow) wchar_t[filePathLength + 1];
-			if (localLoader->GetFilePathFromKey(refKey, keySize, namebuffer, filePathLength + 1) == S_OK)
-				name = ref new Platform::String(namebuffer);
+			UINT filePathSize = 0;
+			UINT filePathLength = 0;
+			if (localLoader->GetFilePathLengthFromKey(refKey, keySize, &filePathLength) == S_OK)
+			{
+				wchar_t* namebuffer = new (std::nothrow) wchar_t[filePathLength + 1];
+				if (localLoader->GetFilePathFromKey(refKey, keySize, namebuffer, filePathLength + 1) == S_OK)
+					name = ref new Platform::String(namebuffer);
 
-			delete[] namebuffer;
+				delete[] namebuffer;
+			}
+		}
+		else if (loader->QueryInterface<IDWriteRemoteFontFileLoader>(&remoteLoader) == S_OK)
+		{
+			UINT filePathSize = 0;
+			UINT filePathLength = 0;
+
+			DWRITE_LOCALITY local;
+			remoteLoader->GetLocalityFromKey(refKey, keySize, &local);
+			auto t = local;
 		}
 	}
 

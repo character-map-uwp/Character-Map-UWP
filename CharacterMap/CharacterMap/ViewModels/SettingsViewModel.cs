@@ -111,7 +111,7 @@ namespace CharacterMap.ViewModels
             {
                 new("Latest Update (August 2023)", // August 2023
                     "- Added support for Right-to-Left text in Type Ramp view, Quick Compare and Compare Fonts view\n" +
-                    "- Added Unicode developers tools showing Unicode codepoint and UTF-16 value\n" +
+                    "- Added Unicode developer tools showing Unicode codepoint and UTF-16 value\n" +
                     "- Added experimental COLRv1 support to Preview Pane, Type Ramp View, Quick Compare and Compare Fonts View for Windows 11 builds > 25905\n" +
                     "    • If a glyph has both COLRv1 and COLRv0 versions, only the COLRv1 version can be seen in these views\n" +
                     "    • SVG Export or copying as SVG will only use COLRv0 glyphs\n" +
@@ -125,7 +125,7 @@ namespace CharacterMap.ViewModels
                     "- Added ability to open and import WOFF2 fonts (WOFF2 fonts are converted to OTF during import)\n" +
                     "- Added font PANOSE information to Font Properties flyout"),
                 new("2023.2.4.0 (Mar 2023)", // March 2023
-                    "- Add ability to add default preview strings for Type Ramp view and Compare window through the context menu on the suggestion box or inside Settings view"),
+                    "- Add ability to add default preview strings for Type Ramp view and Compare window through the suggestions popup or inside Settings view"),
                 new("2023.1.2.0 (Jan 2023)", // Jan 2023
                     "- Added tabbed interface support to the Windows 11 theme\n" +
                     "- Added ability to compare all faces in a font family from Font List context menu or the \"...\" menu"),
