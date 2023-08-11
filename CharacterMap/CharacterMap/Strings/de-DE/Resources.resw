@@ -22,7 +22,7 @@
     <value>Schwarze Füllung</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
-    <value>Kopie (nur Charakter)</value>
+    <value>Kopie (nur Zeichen)</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Auswählen</value>
@@ -43,10 +43,10 @@
     <value>Schriftart-Renderingoptionen</value>
   </data>
   <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Schriftart-Eigenschaften</value>
+    <value>Schriftbild-Eigenschaften</value>
   </data>
   <data name="FontPropFace.Text" xml:space="preserve">
-    <value>Schriftart-Name</value>
+    <value>Schriftartname</value>
   </data>
   <data name="FontPropFamily.Text" xml:space="preserve">
     <value>Schriftfamilien-Name</value>
@@ -55,7 +55,7 @@
     <value>Ist Monospace-Schriftart</value>
   </data>
   <data name="FontPropStretch.Text" xml:space="preserve">
-    <value>Dehnen</value>
+    <value>Dehnung</value>
   </data>
   <data name="FontPropStyle.Text" xml:space="preserve">
     <value>Stil</value>
@@ -64,7 +64,7 @@
     <value>Ist Symbol-Schriftart</value>
   </data>
   <data name="FontPropTitle.Text" xml:space="preserve">
-    <value>Schriftart-Eigenschaften</value>
+    <value>Schriftbild-Eigenschaften</value>
   </data>
   <data name="FontPropType.Text" xml:space="preserve">
     <value>Typ</value>
@@ -237,10 +237,10 @@
     <value>Zur Sammlung hinzufügen</value>
   </data>
   <data name="InstantSearchToggle.OffContent" xml:space="preserve">
-    <value>Sofortsuche deaktiviert</value>
+    <value>Schnellsuche deaktiviert</value>
   </data>
   <data name="InstantSearchToggle.OnContent" xml:space="preserve">
-    <value>Sofortsuche aktiviert</value>
+    <value>Schnellsuche aktiviert</value>
   </data>
   <data name="SearchResultsSlider.Header" xml:space="preserve">
     <value>Maximale Anzahl an Suchergebnissen</value>
@@ -288,7 +288,7 @@
     <value>Skript-Schriftarten</value>
   </data>
   <data name="StatusBarFontCount" xml:space="preserve">
-    <value>{0} Schriftartfamilien</value>
+    <value>{0} Schriftfamilien</value>
   </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
     <value>Dateigröße</value>
@@ -300,7 +300,7 @@
     <value>{0} Zeichen</value>
   </data>
   <data name="SearchDelaySelector.Header" xml:space="preserve">
-    <value>Verzögerung vor Suche (ms)</value>
+    <value>Verzögerung der Suche (ms)</value>
   </data>
   <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
     <value>Schnellsuche</value>
@@ -318,7 +318,7 @@
     <value>Im Ordner anzeigen</value>
   </data>
   <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Schriftarten-Pane ausblenden (Strg+L)</value>
+    <value>Schriftarten-Leiste ausblenden (Strg+L)</value>
   </data>
   <data name="NotificationImportFailed" xml:space="preserve">
     <value>Import fehlgeschlagen</value>
@@ -330,7 +330,7 @@
     <value>{0} wurde deiner Sammlung hinzugefügt</value>
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Schriftarten-Pane anzeigen (Strg+L)</value>
+    <value>Schriftarten-Leiste anzeigen (Strg+L)</value>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Mehr</value>
@@ -390,7 +390,7 @@
     <value>System-Schriftart verwenden</value>
   </data>
   <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
-    <value>Sofortsuche umschalten. Wenn deaktiviert, kannst du die Suche mit Hilfe der EingabeTaste oder einem Klick auf das Suchsymbol starten.</value>
+    <value>Schnellsuche umschalten. Wenn deaktiviert, kannst du die Suche mit Hilfe der EingabeTaste oder einem Klick auf das Suchsymbol starten.</value>
   </data>
   <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
     <value>Zeichen-Suche</value>
@@ -443,7 +443,7 @@ Durch das Anschalten können große Leistungseinbußen bei der Größenänderung
 Benötigt einen Neustart, um wirksam zu werden.</value>
   </data>
   <data name="SettingsLanguageHeader.Text" xml:space="preserve">
-    <value>Sprachenüberschreibung</value>
+    <value>Sprache</value>
   </data>
   <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
     <value>Die Größe exportierter PNG-Bilder in Pixeln.</value>
@@ -489,7 +489,7 @@ Das Anschalten hat einen vernachlässigbaren Einfluss auf die Leistung.</value>
     <value>Lädt Schriftarten</value>
   </data>
   <data name="AppBtnClear.Label" xml:space="preserve">
-    <value>Leeren</value>
+    <value>Alle abwählen</value>
   </data>
   <data name="AppBtnReset.Label" xml:space="preserve">
     <value>Zurücksetzen</value>
@@ -595,7 +595,7 @@ Du kannst den Seitenbereich im "Seiten-Einrichtung"-Bereich anpassen.</value>
     <value>Installierte Schriftarten</value>
   </data>
   <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
-    <value>Systemthema</value>
+    <value>Systemthema-Einstellungen</value>
   </data>
   <data name="SettingsCharLabel.Text" xml:space="preserve">
     <value>Zeichen-Beschriftung</value>
@@ -654,7 +654,7 @@ Erwäge, die Details über diesen Fehler bei GitHub mitzuteilen, damit wir dir b
     <value>In die Zwischenablage kopieren</value>
   </data>
   <data name="BtnSaveGlyph.Label" xml:space="preserve">
-    <value>Speichern</value>
+    <value>Speichern unter</value>
   </data>
   <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Speichern unter</value>
@@ -745,7 +745,7 @@ Erwäge, die Details über diesen Fehler bei GitHub mitzuteilen, damit wir dir b
     <value>Zur Zeichendarstellung wechseln (Strg+T)</value>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
-    <value>Zur Typen-Rampenansicht wechseln (Strg+T)</value>
+    <value>Zur Rampenansicht wechseln (Strg+T)</value>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>Gib einen Text ein oder wähle einen aus der Auswahlliste</value>
@@ -788,11 +788,11 @@ Importierte Schriftarten werden in den privaten Anwendungsspeicher kopiert, dami
   <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
     <value>Wähle, wie Schriftarten beim Export benannt werden sollen.
 
-Das System wird den Namen der von Windows genutzten Schriftart in Großbuchstaben zurückgeben.
-Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem Schriftartnamen erstellen.</value>
+'System' wird den Namen der von Windows genutzten Schriftart in Großbuchstaben zurückgeben.
+'Optimiert' wird einen intelligenten Namen basierend auf der Schriftfamilie und dem Schriftartnamen erstellen.</value>
   </data>
   <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
-    <value>Schriftart-Datei-Export-Namensgebung</value>
+    <value>Schriftart-Dateiexport-Namensgebung</value>
   </data>
   <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
     <value>Importierte Schriftarten</value>
@@ -804,16 +804,16 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
     <value>Variable Schriftarten</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
-    <value>Diese Schriftart hat variable Funktionen. Um sie zu erforschen, nutze den obigen Schaltknopf zum Wechsel in die Typen-Rampenansicht.</value>
+    <value>Diese Schriftart hat variable Funktionen. Um sie zu erforschen, nutze den obigen Schaltknopf zum Wechsel in die Rampenansicht.</value>
   </data>
   <data name="BtnReset.Content" xml:space="preserve">
     <value>Zurücksetzen</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
-    <value>Zeigt oder versteckt die Vorschau-Pane auf der rechten Bildschirmseite. Wenn abgeschaltet, können viele Funktionen per Rechtsklick oder Touch-Druck auf ein Zeichen im Zeichenraster trotzdem erreicht werden.</value>
+    <value>Zeigt oder versteckt die Vorschauleiste auf der rechten Bildschirmseite. Wenn abgeschaltet, können viele Funktionen per Rechtsklick oder Touch-Druck auf ein Zeichen im Zeichenraster trotzdem erreicht werden.</value>
   </data>
   <data name="SettingsEnablePaneHeader.Text" xml:space="preserve">
-    <value>Vorschau-Pane-Anzeige</value>
+    <value>Vorschauleiste-Anzeige</value>
   </data>
   <data name="CopyFontIconCode.Text" xml:space="preserve">
     <value>FontIcon Code kopieren</value>
@@ -831,22 +831,22 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
     <value>Unicode-Wert kopieren</value>
   </data>
   <data name="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zeichengröße verkleinern (Strg+-)</value>
+    <value>Zeichen verkleinern (Strg+-)</value>
   </data>
   <data name="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zeichengröße vergrößern (Strg++)</value>
+    <value>Zeichen vergrößern (Strg++)</value>
   </data>
   <data name="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Anzeige wechseln (Strg+T)</value>
   </data>
   <data name="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Vorschau-Pane umschalten (Strg+R)</value>
+    <value>Vorschauleiste umschalten (Strg+R)</value>
   </data>
   <data name="NotificationCopied" xml:space="preserve">
     <value>Kopiert</value>
   </data>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Kopier-Pane umschalten (Strg+B)</value>
+    <value>Kopierleiste umschalten (Strg+B)</value>
   </data>
   <data name="AddButton.Label" xml:space="preserve">
     <value>Hinzufügen</value>
@@ -864,10 +864,10 @@ Optimiert wird einen schlauen Namen basierend auf der Schriftartfamilie und dem 
     <value>Typografie-Variationen</value>
   </data>
   <data name="ToggleDevDefaultLabel" xml:space="preserve">
-    <value>Tools</value>
+    <value>Werkzeuge</value>
   </data>
   <data name="BtnFit.Label" xml:space="preserve">
-    <value>Passen</value>
+    <value>Einpassen</value>
   </data>
   <data name="TxtCopiedVariantMessage.Text" xml:space="preserve">
     <value>Glypen-Variationen können nicht kopiert werden.
@@ -880,10 +880,10 @@ Standardvarianten kopiert.</value>
     <value>Keine Treffer für diese Suche gefunden. Versuche etwas anderes.</value>
   </data>
   <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
-    <value>Einen Schriftarten-Familie finden</value>
+    <value>Eine Schriftfamilie finden</value>
   </data>
   <data name="BtnToggleDev.Label" xml:space="preserve">
-    <value>Tools</value>
+    <value>Werkzeuge</value>
   </data>
   <data name="DevPopupHeader.Text" xml:space="preserve">
     <value>Entwicklerwerkzeuge anzeigen</value>
@@ -1110,7 +1110,7 @@ Benötigt einen Neustart, um wirksam zu werden.</value>
     <value>Anleitungsgröße</value>
   </data>
   <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Schriftart-Pane anzeigen oder ausblenden (Strg+L)</value>
+    <value>Schriftarten-Leiste anzeigen oder ausblenden (Strg+L)</value>
   </data>
   <data name="OpenInNewTab.Text" xml:space="preserve">
     <value>In neuem Tab öffnen</value>
@@ -1122,7 +1122,7 @@ Benötigt einen Neustart, um wirksam zu werden.</value>
     <value>Zur aktiven Sammlung hinzufügen</value>
   </data>
   <data name="CompareActiveItem.Text" xml:space="preserve">
-    <value>Aktiven Schriftarten vergleichen</value>
+    <value>Aktive Schriftbilder vergleichen</value>
   </data>
   <data name="OptionEmoji.Text" xml:space="preserve">
     <value>Emoji</value>
@@ -1131,10 +1131,10 @@ Benötigt einen Neustart, um wirksam zu werden.</value>
     <value>Unterstütze Skripte</value>
   </data>
   <data name="CompareFontFaceTitle.Text" xml:space="preserve">
-    <value>Schriftarten vergleichen</value>
+    <value>Schriftbilder vergleichen</value>
   </data>
   <data name="CompareFacesCountLabel.Text" xml:space="preserve">
-    <value>Vergleiche {0} Schriftarten</value>
+    <value>Vergleiche {0} Schriftbilder</value>
   </data>
   <data name="CompareFamilyTitle.Text" xml:space="preserve">
     <value>Vergleiche {0}</value>
@@ -1189,7 +1189,7 @@ Benötigt einen Neustart, um wirksam zu werden.</value>
     <value>Mauszeiger-Drüber-Animationen aktivieren</value>
   </data>
   <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
-    <value>Füge benutzerdefinierte Optionen zur Ansicht in der Typen-Rampenansicht und den Textvorschlägen im Vergleichsfenster hinzu und verwalte sie.
+    <value>Füge benutzerdefinierte Optionen zur Ansicht in der Rampenansicht und den Textvorschlägen im Vergleichsfenster hinzu und verwalte sie.
 Tippen und halten zum umsortieren.</value>
   </data>
   <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
@@ -1214,7 +1214,7 @@ Tippen und halten zum umsortieren.</value>
     <value>Wenn diese Option aktiviert ist, werden Zeichen nach Unicode-Bereich in der Zeichentabelle gruppiert, andernfalls werden alle Zeichen in einer einzigen nicht gruppierten Liste angezeigt.</value>
   </data>
   <data name="SettingsCharGrouping.Title" xml:space="preserve">
-    <value>Gruppierung von Zeichen</value>
+    <value>Zeichen-Gruppierung</value>
   </data>
   <data name="CopyAsImageItem.Text" xml:space="preserve">
     <value>Als Bild kopieren</value>
