@@ -10,7 +10,6 @@
 
 using namespace CharacterMapCX;
 using namespace CharacterMapCX::Controls;
-
 using namespace Platform;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -129,19 +128,13 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         auto fontSize = 8 > FontSize ? 8 : FontSize;
 
         /* CREATE FORMAT */
-        ComPtr<IDWriteTextFormat> tempFormat;
-        NativeInterop::_Current->m_dwriteFactory->CreateTextFormat(
-            fontFace->Properties->FamilyName->Data(),
-            NativeInterop::_Current->m_fontCollection.Get(),
-            DWRITE_FONT_WEIGHT_NORMAL,
-            DWRITE_FONT_STYLE_NORMAL,
-            DWRITE_FONT_STRETCH_NORMAL,
-            fontSize,
-            L"en-us",
-            &tempFormat);
-
-        ComPtr<IDWriteTextFormat3> idFormat;
-        ThrowIfFailed(tempFormat.As(&idFormat));
+        ComPtr<IDWriteTextFormat3> idFormat = 
+            NativeInterop::_Current->CreateIDWriteTextFormat(
+                fontFace,
+                FontWeight,
+                FontStyle,
+                FontStretch,
+                fontSize);
 
         /* Set flow direction */
         if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
@@ -188,7 +181,6 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         /* Create and set properties */
         auto layout = ref new CanvasTextLayout(device, text, format, width, height);
         layout->SetTypography(0, text->Length(), typography);
-
         if (IsColorFontEnabled && !IsOverwriteCompensationEnabled)
             layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
         else if (IsColorFontEnabled)

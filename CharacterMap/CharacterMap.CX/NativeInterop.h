@@ -62,13 +62,28 @@ namespace CharacterMapCX
 
 		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
 
+		CanvasTextFormat^ CreateTextFormat(
+			DWriteFontFace^ fontFace,
+			FontWeight weight,
+			FontStyle style,
+			FontStretch stretch,
+			float fontSize);
+
 	internal:
+
+		ComPtr<IDWriteTextFormat3> CreateIDWriteTextFormat(
+			DWriteFontFace^ fontFace,
+			FontWeight weight,
+			FontStyle style,
+			FontStretch stretch,
+			float fontSize);
+
 		static NativeInterop^ _Current;
 		ComPtr<IDWriteFactory7> m_dwriteFactory;
 		ComPtr<IDWriteFontCollection3> m_fontCollection;
+		ComPtr<IDWriteFontSet3> m_systemFontSet;
 
 	private:
-		ComPtr<IDWriteFontSet3> m_systemFontSet;
 		ComPtr<ID2D1Factory5> m_d2dFactory;
 		ComPtr<ID2D1DeviceContext1> m_d2dContext;
 		DWriteFontSet^ m_appFontSet;

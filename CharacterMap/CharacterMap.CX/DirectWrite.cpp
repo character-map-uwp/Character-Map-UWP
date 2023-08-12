@@ -363,6 +363,8 @@ Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
 		&& file->GetLoader(&loader) == S_OK
 		&& file->GetReferenceKey(&refKey, &keySize) == S_OK)
 	{
+		// 2. We can only get fileNames for fonts from the Local FontFileLoader.
+		//    Remote fonts have no filenames and will return nullptr
 		if (loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK)
 		{
 			UINT filePathSize = 0;
@@ -375,15 +377,6 @@ Platform::String^ DirectWrite::GetFileName(DWriteFontFace^ fontFace)
 
 				delete[] namebuffer;
 			}
-		}
-		else if (loader->QueryInterface<IDWriteRemoteFontFileLoader>(&remoteLoader) == S_OK)
-		{
-			UINT filePathSize = 0;
-			UINT filePathLength = 0;
-
-			DWRITE_LOCALITY local;
-			remoteLoader->GetLocalityFromKey(refKey, keySize, &local);
-			auto t = local;
 		}
 	}
 

@@ -34,6 +34,8 @@ namespace CharacterMapCX
 
 		property bool HasVariationAxis { bool get() { return m_variableAxis != nullptr && m_variableAxis->Size > 0; } }
 
+		property bool IsRemote { bool get() { return m_isRemote; } }
+
 		/*property String^ DesignLanguages { String^ get() { return m_dlng; } }
 
 		property String^ ScriptLanguages { String^ get() { return m_slng; } }*/
@@ -44,7 +46,7 @@ namespace CharacterMapCX
 		property int FileSize { int get() { return m_fileSize; } }
 
 		/// <summary>
-		/// Absolute path to the underlying font file
+		/// Absolute path to the underlying font file. May be null for Remote fonts.
 		/// </summary>
 		property String^ FilePath { String^ get() { return m_filePath; } }
 
@@ -61,17 +63,13 @@ namespace CharacterMapCX
 		void ResetVariableAxis()
 		{
 			for each (auto a in m_variableAxis)
-			{
 				a->Value = a->DefaultValue; 
-			}
 		}
 
 		/// <summary>
-		/// Mappings of a glyph index to a font-provided glyph name
+		/// Mappings of glyph index to font-provided glyph names
 		/// </summary>
 		property IMapView<int, String^>^ GlyphNameMappings;
-
-		//property CharacterMapping^ GlyphMap;
 
 
 		FontAnalysis() { }
@@ -85,6 +83,7 @@ namespace CharacterMapCX
 
 	private:
 
+		bool m_isRemote = false;
 		bool m_hasBitmap = false;
 		bool m_hasCOLR = false;
 		bool m_hasSVG = false;
@@ -119,25 +118,32 @@ namespace CharacterMapCX
 			ComPtr<IDWriteFontFile> file;
 			ComPtr<IDWriteFontFileLoader> loader;
 			ComPtr<IDWriteLocalFontFileLoader> localLoader;
+			ComPtr<IDWriteRemoteFontFileLoader> remoteLoader;
 
 			if (faceRef->GetFontFile(&file) == S_OK
-				&& file->GetLoader(&loader) == S_OK
-				&& loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK)
+				&& file->GetLoader(&loader) == S_OK)
 			{
-				const void* refKey = nullptr;
-				uint32 size = 0;
-				if (file->GetReferenceKey(&refKey, &size) == S_OK)
+				if (loader->QueryInterface<IDWriteLocalFontFileLoader>(&localLoader) == S_OK)
 				{
-					UINT filePathSize = 0;
-					UINT filePathLength = 0;
-					if (localLoader->GetFilePathLengthFromKey(refKey, size, &filePathLength) == S_OK)
+					const void* refKey = nullptr;
+					uint32 size = 0;
+					if (file->GetReferenceKey(&refKey, &size) == S_OK)
 					{
-						wchar_t* buffer = new (std::nothrow) wchar_t[filePathLength + 1];
-						if (localLoader->GetFilePathFromKey(refKey, size, buffer, filePathLength + 1) == S_OK)
+						UINT filePathSize = 0;
+						UINT filePathLength = 0;
+						if (localLoader->GetFilePathLengthFromKey(refKey, size, &filePathLength) == S_OK)
 						{
-							m_filePath = ref new Platform::String(buffer);
+							wchar_t* buffer = new (std::nothrow) wchar_t[filePathLength + 1];
+							if (localLoader->GetFilePathFromKey(refKey, size, buffer, filePathLength + 1) == S_OK)
+							{
+								m_filePath = ref new Platform::String(buffer);
+							}
 						}
 					}
+				}
+				else if (loader->QueryInterface<IDWriteRemoteFontFileLoader>(&remoteLoader) == S_OK)
+				{
+					m_isRemote = true;
 				}
 			}
 		}

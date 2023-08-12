@@ -141,9 +141,7 @@ namespace CharacterMap.Core
                     ext = strsrc;
             }
 
-            if (string.IsNullOrEmpty(ext))
-
-            if (scheme == ExportNamingScheme.System)
+            if (scheme == ExportNamingScheme.System && !string.IsNullOrWhiteSpace(src))
                 fileName = src;
 
             if (string.IsNullOrWhiteSpace(fileName))
