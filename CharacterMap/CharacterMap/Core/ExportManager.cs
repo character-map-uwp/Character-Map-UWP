@@ -483,16 +483,15 @@ namespace CharacterMap.Core
             ExportStyle style,
             float canvasSize)
         {
-            CanvasTextLayout layout = new (Utils.CanvasDevice, $"{character}", new()
-            {
-                FontSize = options.FontSize,
-                FontFamily = options.Variant.Source,
-                FontStretch = options.Variant.DirectWriteProperties.Stretch,
-                FontWeight = options.Variant.DirectWriteProperties.Weight,
-                FontStyle = options.Variant.DirectWriteProperties.Style,
-                HorizontalAlignment = CanvasHorizontalAlignment.Center,
-                Options = style == ExportStyle.ColorGlyph ? CanvasDrawTextOptions.EnableColorFont : CanvasDrawTextOptions.Default
-            }, canvasSize, canvasSize);
+            CanvasTextFormat format = Utils.GetInterop().CreateTextFormat(
+                options.Variant.Face,
+                options.Variant.DirectWriteProperties.Weight,
+                options.Variant.DirectWriteProperties.Style,
+                options.Variant.DirectWriteProperties.Stretch,
+                options.FontSize);
+            format.HorizontalAlignment = CanvasHorizontalAlignment.Center;
+
+            CanvasTextLayout layout = new (Utils.CanvasDevice, $"{character}", format, canvasSize, canvasSize);
 
             if (style == ExportStyle.ColorGlyph)
                 layout.Options = CanvasDrawTextOptions.EnableColorFont;

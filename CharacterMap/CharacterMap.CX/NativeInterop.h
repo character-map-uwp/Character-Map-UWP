@@ -1,5 +1,4 @@
 ﻿#pragma once
-
 #include <Microsoft.Graphics.Canvas.native.h>
 #include <d2d1_2.h>
 #include <d2d1_3.h>
@@ -63,18 +62,33 @@ namespace CharacterMapCX
 
 		IVectorView<DWriteFontSet^>^ GetFonts(IVectorView<Uri^>^ uris);
 
-	private:
+		CanvasTextFormat^ CreateTextFormat(
+			DWriteFontFace^ fontFace,
+			FontWeight weight,
+			FontStyle style,
+			FontStretch stretch,
+			float fontSize);
 
-		IAsyncAction^ ListenForFontSetExpirationAsync();
+	internal:
 
-		bool m_isFontSetStale = true;
-		ComPtr<IDWriteFontSet3> m_systemFontSet;
-		DWriteFontSet^ m_appFontSet;
+		ComPtr<IDWriteTextFormat3> CreateIDWriteTextFormat(
+			DWriteFontFace^ fontFace,
+			FontWeight weight,
+			FontStyle style,
+			FontStretch stretch,
+			float fontSize);
 
+		static NativeInterop^ _Current;
 		ComPtr<IDWriteFactory7> m_dwriteFactory;
+		ComPtr<IDWriteFontCollection3> m_fontCollection;
+		ComPtr<IDWriteFontSet3> m_systemFontSet;
+
+	private:
 		ComPtr<ID2D1Factory5> m_d2dFactory;
 		ComPtr<ID2D1DeviceContext1> m_d2dContext;
-
+		DWriteFontSet^ m_appFontSet;
+		IAsyncAction^ ListenForFontSetExpirationAsync();
+		bool m_isFontSetStale = true;
 		CustomFontManager* m_fontManager;
     };
 }

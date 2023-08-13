@@ -38,6 +38,12 @@ namespace CharacterMapCX
 
 		property FontStretch Stretch { FontStretch get() { return m_stretch; } }
 
+
+		/// <summary>
+		/// If true, font is from a remote provider
+		/// </summary>
+		property bool IsRemote { bool get() { LoadRemoteProperties(); return m_isRemote; } }
+
 		property bool HasVariations 
 		{ 
 			bool get() 
@@ -120,17 +126,45 @@ namespace CharacterMapCX
 			m_hasVariations = hasVariations;
 		}
 
-		ComPtr<IDWriteFont3> m_font = nullptr;
 
 	private:
 		inline DWriteProperties() { }
+
+		ComPtr<IDWriteFont3> m_font = nullptr;
+
+		void LoadRemoteProperties()
+		{
+			if (m_loadedRemote)
+				return;
+
+			ComPtr<IDWriteFontFaceReference> ref;
+			ComPtr<IDWriteFontFile> file;
+			ComPtr<IDWriteFontFileLoader> loader;
+			ComPtr<IDWriteRemoteFontFileLoader> remoteLoader;
+			const void* refKey = nullptr;
+			uint32 size = 0;
+
+			if (m_font->GetFontFaceReference(&ref) == S_OK
+				&& ref->GetFontFile(&file) == S_OK
+				&& file->GetLoader(&loader) == S_OK
+				&& file->GetReferenceKey(&refKey, &size) == S_OK
+				&& loader->QueryInterface<IDWriteRemoteFontFileLoader>(&remoteLoader) == S_OK)
+			{
+				m_isRemote = true;
+				m_source = DWriteFontSource::RemoteFontProvider;
+			}
+
+			m_loadedRemote = true;
+		}
 
 		FontWeight m_weight;
 		FontStyle m_style = FontStyle::Normal;
 		FontStretch m_stretch = FontStretch::Normal;
 
 		bool m_loadedVariations = false;
+		bool m_loadedRemote = false;
 
+		bool m_isRemote = false;
 		bool m_hasVariations = false;
 		bool m_isColorFont = false;
 		bool m_isSymbolFont = false;

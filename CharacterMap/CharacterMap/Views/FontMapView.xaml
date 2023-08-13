@@ -774,27 +774,38 @@
                                                     Style="{StaticResource Value}"
                                                     Text="{x:Bind ViewModel.SelectedVariantAnalysis.COLRVersion, Mode=OneWay}" />
 
-                                                <!--<TextBlock x:Uid="FontPropInstallType" />
-                                                <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.GetProviderName(), Mode=OneWay}" />-->
-
                                                 <TextBlock x:Uid="FontPropFileSize" />
                                                 <TextBlock Style="{StaticResource Value}" Text="{x:Bind core:Converters.GetFileSize(ViewModel.SelectedVariantAnalysis.FileSize), Mode=OneWay}" />
 
+                                                <TextBlock
+                                                    x:Name="FontPropSrc"
+                                                    x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
+                                                    x:Uid="FontPropInstallType"
+                                                    d:Text="Install Type" />
+                                                <TextBlock
+                                                    x:Name="FontPropSrcValue"
+                                                    x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.IsRemote, Mode=OneWay, FallbackValue=False}"
+                                                    Style="{StaticResource Value}"
+                                                    Text="{core:Localizer Key='DWriteSourceRemoteFontProvider'}" />
 
+
+                                                <!--<TextBlock x:Uid="FontPropInstallType" />
+                                                <TextBlock Style="{StaticResource Value}" Text="{x:Bind ViewModel.SelectedVariant.GetProviderName(), Mode=OneWay}" />-->
 
                                                 <TextBlock
                                                     x:Name="FontPropXaml"
+                                                    x:Load="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=False}"
                                                     x:Uid="FontPropXaml"
-                                                    Padding="0,4,0,0"
-                                                    Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
+                                                    Padding="0,4,0,0" />
 
                                                 <TextBlock
+                                                    x:Name="FontPropXamlValue"
+                                                    x:Load="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=False}"
                                                     Grid.Column="0"
                                                     Grid.ColumnSpan="2"
                                                     Margin="0,-4,0,0"
                                                     Style="{StaticResource Value}"
-                                                    Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}"
-                                                    Visibility="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=Collapsed}" />
+                                                    Text="{x:Bind ViewModel.XamlPath, Mode=OneWay}" />
 
                                                 <TextBlock x:Uid="FontPropFilePath" Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}" />
                                                 <TextBlock
@@ -1278,7 +1289,7 @@
                 Transform3D="{StaticResource Perspective}"
                 Visibility="Collapsed"
                 d:Background="Green"
-                d:Visibility="Visible">
+                d:Visibility="Collapsed">
                 <Grid.RenderTransform>
                     <CompositeTransform />
                 </Grid.RenderTransform>
@@ -1527,7 +1538,7 @@
                                 x:Name="TxtPreview"
                                 VerticalAlignment="Center"
                                 FontFace="{Binding SelectedVariant.Face}"
-                                FontFamily="{Binding FontFamily}"
+                                FontFamily="{Binding SelectedVariant.Source}"
                                 FontSize="24"
                                 FontStretch="{Binding SelectedVariant.DirectWriteProperties.Stretch}"
                                 FontStyle="{Binding SelectedVariant.DirectWriteProperties.Style}"

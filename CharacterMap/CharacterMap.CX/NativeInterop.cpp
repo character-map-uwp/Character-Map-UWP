@@ -1,3 +1,4 @@
+#pragma once
 #include "pch.h"
 #include "NativeInterop.h"
 #include "CanvasTextLayoutAnalysis.h"
@@ -17,6 +18,7 @@ using namespace Platform::Collections;
 using namespace Windows::Foundation::Numerics;
 using namespace concurrency;
 
+NativeInterop^ NativeInterop::_Current = nullptr;
 
 NativeInterop::NativeInterop(CanvasDevice^ device)
 {
@@ -39,6 +41,7 @@ NativeInterop::NativeInterop(CanvasDevice^ device)
 		&m_d2dContext);
 
 	m_fontManager = new CustomFontManager(m_dwriteFactory);
+	_Current = this;
 }
 
 IAsyncAction^ NativeInterop::ListenForFontSetExpirationAsync()
@@ -66,7 +69,6 @@ IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<Uri^>^ uris)
 	return DirectWrite::GetFonts(uris, m_dwriteFactory);
 }
 
-
 DWriteFontSet^ NativeInterop::GetSystemFonts()
 {
 	if (m_isFontSetStale)
@@ -82,6 +84,7 @@ DWriteFontSet^ NativeInterop::GetSystemFonts()
 
 		ThrowIfFailed(m_dwriteFactory->GetSystemFontCollection(true, DWRITE_FONT_FAMILY_MODEL_WEIGHT_STRETCH_STYLE, &fontCollection));
 		ThrowIfFailed(fontCollection->GetFontSet(&fontSet));
+		m_fontCollection = fontCollection;
 
 		ComPtr<IDWriteFontSet3> fontSet3;
 		ThrowIfFailed(fontSet.As(&fontSet3));
@@ -284,8 +287,6 @@ byte* GetPointerToPixelData(IBuffer^ pixelBuffer, unsigned int* length)
 	return pixels;
 }
 
-
-
 IAsyncOperation<bool>^ NativeInterop::UnpackWOFF2Async(IBuffer^ buffer, IOutputStream^ stream)
 {
 	// 1. Unpack the WOFF2 data
@@ -299,4 +300,29 @@ IAsyncOperation<bool>^ NativeInterop::UnpackWOFF2Async(IBuffer^ buffer, IOutputS
 		return create_async([] { return task_from_result(false); });
 	else
 		return DirectWrite::SaveFontStreamAsync(fileStream, stream);
+}
+
+CanvasTextFormat^ CharacterMapCX::NativeInterop::CreateTextFormat(DWriteFontFace^ fontFace, FontWeight weight, FontStyle style, FontStretch stretch, float fontSize)
+{
+	ComPtr<IDWriteTextFormat3> idFormat = CreateIDWriteTextFormat(fontFace, weight, style, stretch, fontSize);
+	return GetOrCreate<CanvasTextFormat>(idFormat.Get());
+}
+
+ComPtr<IDWriteTextFormat3> CharacterMapCX::NativeInterop::CreateIDWriteTextFormat(DWriteFontFace^ fontFace, FontWeight weight, FontStyle style, FontStretch stretch, float fontSize)
+{
+	ComPtr<IDWriteTextFormat> tempFormat;
+	m_dwriteFactory->CreateTextFormat(
+		fontFace->Properties->FamilyName->Data(),
+		m_fontCollection.Get(),
+		static_cast<DWRITE_FONT_WEIGHT>(weight.Weight),
+		static_cast<DWRITE_FONT_STYLE>(style),
+		static_cast<DWRITE_FONT_STRETCH>(stretch),
+		fontSize,
+		L"en-us",
+		&tempFormat);
+
+	ComPtr<IDWriteTextFormat3> idFormat;
+	ThrowIfFailed(tempFormat.As(&idFormat));
+
+	return idFormat;
 }

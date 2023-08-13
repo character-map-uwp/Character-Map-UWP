@@ -3,12 +3,13 @@
 // Implementation of the DirectText class.
 //
 
+#pragma once
 #include "pch.h"
 #include "DWriteFallbackFont.h"
+#include "NativeInterop.h"
 
 using namespace CharacterMapCX;
 using namespace CharacterMapCX::Controls;
-
 using namespace Platform;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
@@ -127,33 +128,21 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         auto fontSize = 8 > FontSize ? 8 : FontSize;
 
         /* CREATE FORMAT */
-        auto format = ref new CanvasTextFormat();
+        ComPtr<IDWriteTextFormat3> idFormat = 
+            NativeInterop::_Current->CreateIDWriteTextFormat(
+                fontFace,
+                FontWeight,
+                FontStyle,
+                FontStretch,
+                fontSize);
+
+        /* Set flow direction */
         if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
-            format->Direction = CanvasTextDirection::RightToLeftThenTopToBottom;
-        format->FontFamily = FontFamily->Source;
-        format->FontSize = fontSize;
-        format->FontWeight = FontWeight;
-        format->FontStyle = FontStyle;
-        format->FontStretch = FontStretch;
-
-        if (IsColorFontEnabled && !IsOverwriteCompensationEnabled)
-            format->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
-        else if (IsColorFontEnabled)
-            format->Options = CanvasDrawTextOptions::EnableColorFont;
-        else if (!IsCharacterFitEnabled)
-            format->Options = CanvasDrawTextOptions::Clip;
-
-        if (IsTextWrappingEnabled)
-        {
-            format->WordWrapping = CanvasWordWrapping::Character;
-            format->TrimmingGranularity = CanvasTextTrimmingGranularity::Character;
-            format->TrimmingSign = CanvasTrimmingSign::Ellipsis;
-        }
+            idFormat->SetFlowDirection(DWRITE_FLOW_DIRECTION::DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT);
 
         /* Set blank fallback font */
-        ComPtr<IDWriteTextFormat3> dformat = GetWrappedResource<IDWriteTextFormat3>(format);
         if (FallbackFont != nullptr)
-            dformat->SetFontFallback(FallbackFont->Fallback.Get());
+            idFormat->SetFontFallback(FallbackFont->Fallback.Get());
 
         /* Set Variable Font Axis */
         if (Axis != nullptr && Axis->Size > 0)
@@ -163,25 +152,33 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             {
                 values[i] = Axis->GetAt(i)->GetDWriteValue();
             }
-            dformat->SetFontAxisValues(values, Axis->Size);
+            idFormat->SetFontAxisValues(values, Axis->Size);
         }
 
-        dformat = nullptr;
-        ComPtr<IDWriteTextLayout4> dlayout;
+        /* Set trimming. Much easier to let Win2D handle this */
+        auto format = GetOrCreate<CanvasTextFormat>(idFormat.Get());
+        if (IsTextWrappingEnabled)
+        {
+            idFormat->SetWordWrapping(DWRITE_WORD_WRAPPING::DWRITE_WORD_WRAPPING_CHARACTER);
+            format->TrimmingGranularity = CanvasTextTrimmingGranularity::Character;
+            format->TrimmingSign = CanvasTrimmingSign::Ellipsis;
+        }
 
-        /* CREATE LAYOUT */
+        /* Prepare typography */
         auto typography = ref new CanvasTypography();
         if (Typography->Feature != CanvasTypographyFeatureName::None)
             typography->AddFeature(Typography->Feature, 1);
 
-
+        ComPtr<IDWriteTextLayout4> dlayout;
+        /* CREATE LAYOUT */
+        /* calculate dimensions */
         auto device = m_canvas->Device;
-
         float width = IsTextWrappingEnabled ? size.Width : m;
         float height = IsTextWrappingEnabled ? size.Height : m;
         width = min(width, m);
         height = min(height, m);
 
+        /* Create and set properties */
         auto layout = ref new CanvasTextLayout(device, text, format, width, height);
         layout->SetTypography(0, text->Length(), typography);
         if (IsColorFontEnabled && !IsOverwriteCompensationEnabled)
@@ -333,8 +330,13 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         // Note: something is wrong here causing the right hand side to clip slightly.
         //       currently we use 4 as a magic number to avoid this in 90% of cases.
         //       need to figure out what's up at some point.
-        left += this->ActualWidth - m_layout->DrawBounds.Width - 4;
+        left += m_canvas->ActualWidth - m_layout->DrawBounds.Width - 4;
     }
+
+    auto fam = m_layout->DefaultFontFamily;
+    auto fam2 = m_layout->GetFontFamily(0);
+    auto loc = m_layout->DefaultLocaleName;
+    m_layout->SetLocaleName(0, 1, L"en-us");
 
     args->DrawingSession->DrawTextLayout(m_layout, float2(left, top), ((SolidColorBrush^)this->Foreground)->Color);
 
