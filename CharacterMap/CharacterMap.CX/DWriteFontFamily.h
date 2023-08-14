@@ -20,5 +20,6 @@ namespace CharacterMapCX
 
 	private:
 		ComPtr<IDWriteFontFamily2> m_family = nullptr;
+		ComPtr<IDWriteFontCollection3> m_collection = nullptr;
 	};
 }
