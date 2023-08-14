@@ -124,7 +124,21 @@ namespace CharacterMapCX
 		{
 			m_font = font;
 			m_dwProperties = properties;
+
 		};
+
+		ComPtr<IDWriteFontCollection3> GetFontCollection()
+		{
+			ComPtr<IDWriteFontFamily> family;
+			m_font->GetFontFamily(&family);
+
+			ComPtr<IDWriteFontCollection> col;
+			family->GetFontCollection(&col);
+
+			ComPtr<IDWriteFontCollection3> fontCollection;
+			col.As<IDWriteFontCollection3>(&fontCollection);
+			return fontCollection;
+		}
 
 		void Realize()
 		{

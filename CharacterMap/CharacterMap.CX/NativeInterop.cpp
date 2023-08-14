@@ -313,7 +313,7 @@ ComPtr<IDWriteTextFormat3> CharacterMapCX::NativeInterop::CreateIDWriteTextForma
 	ComPtr<IDWriteTextFormat> tempFormat;
 	m_dwriteFactory->CreateTextFormat(
 		fontFace->Properties->FamilyName->Data(),
-		m_fontCollection.Get(),
+		fontFace->GetFontCollection().Get(),
 		static_cast<DWRITE_FONT_WEIGHT>(weight.Weight),
 		static_cast<DWRITE_FONT_STYLE>(style),
 		static_cast<DWRITE_FONT_STRETCH>(stretch),

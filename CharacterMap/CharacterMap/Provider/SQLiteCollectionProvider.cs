@@ -2,6 +2,7 @@
 using CharacterMap.Models;
 using CharacterMap.Services;
 using SQLite;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -18,12 +19,21 @@ namespace CharacterMap.Provider
         public Task<List<UserFontCollection>> LoadCollectionsAsync()
         {
             PrepareConnection();
-
             List<UserFontCollection> collections = new();
 
-            var cols = _conn.CreateCommand("SELECT * FROM \"Collections\" ORDER BY Name").AsCollections();
-            foreach (var c in cols)
-                collections.Add(c.AsUserFontCollection());
+            try
+            {
+                var cols = _conn.CreateCommand("SELECT * FROM \"Collections\" ORDER BY Name").AsCollections();
+                foreach (var c in cols)
+                    collections.Add(c.AsUserFontCollection());
+            }
+            catch (Exception ex) when (ex.Message.StartsWith("no such table"))
+            {
+                // Workaround for #275, though there's no reasonable explanation
+                // for ever being able to get in this state.
+                CreateCollectionsTable();
+                return LoadCollectionsAsync();
+            }
 
             return Task.FromResult(collections);
         }
@@ -64,13 +74,18 @@ namespace CharacterMap.Provider
             });
         }
 
+        private void CreateCollectionsTable()
+        {
+            string create = "CREATE TABLE IF NOT EXISTS \"Collections\" (\r\n\"Id\" integer primary key autoincrement not null ,\r\n\"Name\" varchar ,\r\n\"Fonts\" varchar )";
+            _conn.Execute(create);
+        }
+
         public Task StoreMigrationAsync(List<UserFontCollection> collections)
         {
             PrepareConnection();
 
             // 1. Create Collections Table
-            string create = "CREATE TABLE IF NOT EXISTS \"Collections\" (\r\n\"Id\" integer primary key autoincrement not null ,\r\n\"Name\" varchar ,\r\n\"Fonts\" varchar )";
-            _conn.Execute(create);
+            CreateCollectionsTable();
 
             // 2. Insert old collections into Database
             var obs = new object[2];
