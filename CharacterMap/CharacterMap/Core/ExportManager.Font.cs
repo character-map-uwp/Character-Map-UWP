@@ -144,6 +144,9 @@ namespace CharacterMap.Core
             if (scheme == ExportNamingScheme.System && !string.IsNullOrWhiteSpace(src))
                 fileName = src;
 
+            if (scheme is ExportNamingScheme.Optimised && FontFinder.ImportFormats.Contains(ext) is false)
+                ext = ".ttf";
+
             if (string.IsNullOrWhiteSpace(fileName))
                 fileName = $"{font.FamilyName.Trim()} {font.PreferredName.Trim()}{ext}";
 
