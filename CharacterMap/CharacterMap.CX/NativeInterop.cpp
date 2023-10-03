@@ -321,8 +321,10 @@ ComPtr<IDWriteTextFormat3> CharacterMapCX::NativeInterop::CreateIDWriteTextForma
 		L"en-us",
 		&tempFormat);
 
+	tempFormat->SetFlowDirection(DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM);
+	tempFormat->SetReadingDirection(DWRITE_READING_DIRECTION_LEFT_TO_RIGHT);
+
 	ComPtr<IDWriteTextFormat3> idFormat;
 	ThrowIfFailed(tempFormat.As(&idFormat));
-
 	return idFormat;
 }
