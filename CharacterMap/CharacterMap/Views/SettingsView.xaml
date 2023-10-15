@@ -546,8 +546,8 @@
                                             HorizontalAlignment="Stretch"
                                             IsThumbToolTipEnabled="True"
                                             Maximum="2048"
-                                            Minimum="128"
-                                            StepFrequency="64"
+                                            Minimum="32"
+                                            StepFrequency="32"
                                             TickFrequency="64"
                                             TickPlacement="Outside"
                                             Value="{x:Bind Settings.PngSize, Mode=TwoWay}" />
