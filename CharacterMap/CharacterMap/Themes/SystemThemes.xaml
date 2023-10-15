@@ -50,6 +50,14 @@
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
 
+    <Style x:Key="DescriptionContentStyle" TargetType="ContentPresenter">
+        <Setter Property="Opacity" Value="0.7" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Margin" Value="0 0 0 8" />
+        <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+
     <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
         <Setter Property="Margin" Value="0 4 0 2" />
         <Setter Property="FontStyle" Value="Italic" />

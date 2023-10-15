@@ -1435,4 +1435,13 @@ Tap and hold to arrange.</value>
   <data name="SuggestOptionVietnamese.Text" xml:space="preserve">
     <value>Vietnamese</value>
   </data>
+  <data name="InstallCountLabel" xml:space="preserve">
+    <value>{0} Font Families, {1} Font Faces installed on your computer</value>
+  </data>
+  <data name="OptionSystemFonts.Text" xml:space="preserve">
+    <value>Installed Fonts</value>
+  </data>
+  <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
+    <value>Export Installed Fonts</value>
+  </data>
 </root>

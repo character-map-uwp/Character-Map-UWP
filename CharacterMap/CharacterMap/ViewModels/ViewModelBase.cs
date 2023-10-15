@@ -96,11 +96,15 @@ namespace CharacterMap.ViewModels
         /// </summary>
         protected virtual bool TrackAnimation => false;
 
+        protected virtual bool CaptureContext => false;
+
         public BaseNotifyingModel()
         {
+            if (TrackAnimation || CaptureContext)
+                _originalContext = SynchronizationContext.Current;
+
             if (TrackAnimation)
             {
-                _originalContext = SynchronizationContext.Current;
                 Register<AppSettingsChangedMessage>(m =>
                 {
                     void Notify(string s) 

@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage.Streams;
 using Windows.Storage;
@@ -46,13 +45,19 @@ namespace CharacterMap.Core
             WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, new ExportFontFileResult(null, false)));
         }
 
-        internal static Task ExportCollectionAsZipAsync(IList<InstalledFont> fontList, UserFontCollection selectedCollection)
+        internal static Task ExportCollectionAsZipAsync(
+            IList<InstalledFont> fontList, 
+            UserFontCollection selectedCollection,
+            Action<string> callback = null)
         {
             var fonts = fontList.SelectMany(f => f.Variants).ToList();
-            return ExportFontsAsZipAsync(fonts, selectedCollection.Name);
+            return ExportFontsAsZipAsync(fonts, selectedCollection.Name, callback);
         }
 
-        internal static async Task ExportFontsAsZipAsync(List<FontVariant> fonts, string name)
+        internal static async Task ExportFontsAsZipAsync(
+            List<FontVariant> fonts, 
+            string name,
+            Action<string> callback = null)
         {
             if (await PickFileAsync(name, "ZIP", new[] { ".zip" }) is StorageFile file)
             {
@@ -63,7 +68,10 @@ namespace CharacterMap.Core
                     using var i = await file.OpenStreamForWriteAsync();
                     i.SetLength(0);
 
+                    int c = 0;
                     using ZipArchive z = new(i, ZipArchiveMode.Create);
+                    callback?.Invoke($"0%");
+
                     foreach (var font in fonts)
                     {
                         if (DirectWrite.IsFontLocal(font.Face))
@@ -73,6 +81,9 @@ namespace CharacterMap.Core
                             using IOutputStream s = entry.Open().AsOutputStream();
                             await DirectWrite.WriteToStreamAsync(font.Face, s);
                         }
+
+                        c++;
+                        callback?.Invoke($"{((double)c / (double)fonts.Count) * 100:0}%");
                     }
 
                     await i.FlushAsync();
@@ -82,20 +93,26 @@ namespace CharacterMap.Core
             }
         }
 
-        internal static Task ExportCollectionToFolderAsync(IList<InstalledFont> fontList)
+        internal static Task ExportCollectionToFolderAsync(
+            IList<InstalledFont> fontList,
+            Action<string> callback = null)
         {
             var fonts = fontList.SelectMany(f => f.Variants).ToList();
-            return ExportFontsToFolderAsync(fonts);
+            return ExportFontsToFolderAsync(fonts, callback);
         }
 
-        internal static async Task ExportFontsToFolderAsync(List<FontVariant> fonts)
+        internal static async Task ExportFontsToFolderAsync(
+            List<FontVariant> fonts,
+            Action<string> callback = null)
         {
             if (await PickFolderAsync() is StorageFolder folder)
             {
                 await Task.Run(async () =>
                 {
                     ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
+                    callback?.Invoke($"0%");
 
+                    int c = 0;
                     foreach (var font in fonts)
                     {
                         if (DirectWrite.IsFontLocal(font.Face))
@@ -104,6 +121,9 @@ namespace CharacterMap.Core
                             StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
                             await TryWriteToFileAsync(font, file).ConfigureAwait(false);
                         }
+
+                        c++;
+                        callback?.Invoke($"{((double)c / (double)fonts.Count) * 100:0}%");
                     }
                 });
 

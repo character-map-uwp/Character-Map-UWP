@@ -341,6 +341,9 @@ namespace CharacterMap.Helpers
 
         public void Update()
         {
+            if (DesignMode.DesignModeEnabled)
+                return;
+
             ResourceHelper.TryResolveThemeStyle3(_element);
             return;
 

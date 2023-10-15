@@ -203,6 +203,21 @@
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
 
+    <Style x:Key="DescriptionContentStyle" TargetType="ContentPresenter">
+        <Setter Property="Opacity" Value="0.7" />
+        <Setter Property="FontFamily" Value="{StaticResource ThemeFontFamily}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource DefaultControlForegroundBrush}" />
+        <Setter Property="Margin" Value="0 0 0 8" />
+        <Setter Property="FontSize" Value="13.333" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource TextForegroundBrush}" />
+        <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="LineStackingStrategy" Value="MaxHeight" />
+        <Setter Property="TextLineBounds" Value="Full" />
+    </Style>
+
     <Style x:Key="HintStyle" BasedOn="{StaticResource DescriptionStyle}" TargetType="TextBlock">
         <Setter Property="Margin" Value="0 4 0 2" />
         <Setter Property="Foreground" Value="{ThemeResource DefaultControlForegroundBrush}" />
@@ -341,11 +356,11 @@
                                 FontWeight="SemiBold"
                                 Foreground="{ThemeResource DefaultControlForegroundBrush}"
                                 OpticalMarginAlignment="TrimSideBearings" />
-                            <TextBlock
+                            <ContentPresenter
                                 x:Name="Description"
                                 x:Load="False"
-                                Style="{StaticResource BaseTextStyle}"
-                                Text="{TemplateBinding Description}"
+                                Content="{TemplateBinding Description}"
+                                Style="{StaticResource DescriptionContentStyle}"
                                 Visibility="Collapsed" />
                         </StackPanel>
 
