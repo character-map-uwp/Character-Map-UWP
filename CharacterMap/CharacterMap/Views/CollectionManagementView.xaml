@@ -7,6 +7,7 @@
     xmlns:ct="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     DataContext="{x:Bind}"
     mc:Ignorable="d"
     d:DesignHeight="600"
@@ -51,7 +52,8 @@
                     HorizontalAlignment="Right"
                     VerticalAlignment="Bottom"
                     Orientation="Horizontal"
-                    Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}">
+                    Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}"
+                    d:Visibility="Visible">
                     <controls:UXButton
                         x:Uid="RenameCollectionButton"
                         Height="Auto"
@@ -93,15 +95,25 @@
                             </MenuFlyout>
                         </Button.Flyout>
                         <Grid>
-                            <ProgressRing
-                                Width="20"
-                                Height="20"
-                                MinWidth="20"
-                                MinHeight="20"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                IsActive="{x:Bind ViewModel.IsExporting, Mode=OneWay}"
-                                Visibility="{x:Bind ViewModel.IsExporting, Mode=OneWay}" />
+                            <StackPanel Spacing="4" Visibility="{x:Bind ViewModel.IsExporting, Mode=OneWay}">
+                                <muxc:ProgressRing
+                                    Width="16"
+                                    Height="16"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    IsActive="{x:Bind ViewModel.IsExporting, Mode=OneWay}" />
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="11"
+                                    IsTextScaleFactorEnabled="False"
+                                    Opacity="0.7"
+                                    OpticalMarginAlignment="TrimSideBearings"
+                                    Text="{x:Bind ViewModel.CollectionExportProgress, Mode=OneWay}"
+                                    TextAlignment="Center"
+                                    TextLineBounds="Tight" />
+                            </StackPanel>
+
                             <Path
                                 Height="16"
                                 Data="F1 M 38.613281 -43.886719 L 47.167969 -52.500000 L 0.000000 -52.500000 L 0.000000 -60.000000 L 47.167969 -60.000000 L 38.613281 -68.613281 L 43.886719 -73.886719 L 61.523438 -56.250000 L 43.886719 -38.613281 Z M 62.167969 -112.500000 L 120.000000 -112.500000 L 120.000000 -22.500000 L 0.000000 -22.500000 L 0.000000 -45.000000 L 7.500000 -45.000000 L 7.500000 -30.000000 L 112.500000 -30.000000 L 112.500000 -75.000000 L 62.167969 -75.000000 L 47.167969 -90.000000 L 7.500000 -90.000000 L 7.500000 -67.500000 L 0.000000 -67.500000 L 0.000000 -97.500000 L 47.167969 -97.500000 Z M 112.500000 -82.500000 L 112.500000 -105.000000 L 65.332031 -105.000000 L 54.023438 -93.750000 L 65.332031 -82.500000 Z "

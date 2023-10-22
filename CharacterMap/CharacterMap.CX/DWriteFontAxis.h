@@ -86,10 +86,7 @@ namespace CharacterMapCX
 
 		DWRITE_FONT_AXIS_VALUE GetDWriteValue()
 		{
-			auto value = DWRITE_FONT_AXIS_VALUE();
-			value.axisTag = static_cast<DWRITE_FONT_AXIS_TAG>(m_tag_raw);
-			value.value = this->Value;
-			return value;
+			return  { static_cast<DWRITE_FONT_AXIS_TAG>(m_tag_raw), this->Value };
 		}
 
 	private:

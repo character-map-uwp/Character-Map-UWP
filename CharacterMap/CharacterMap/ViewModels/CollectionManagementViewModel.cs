@@ -9,37 +9,28 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using CharacterMap.Helpers;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace CharacterMap.ViewModels
 {
-    internal class CollectionManagementViewModel : ViewModelBase
+    internal partial class CollectionManagementViewModel : ViewModelBase
     {
+        protected override bool CaptureContext => true;
+
         #region Properties
 
-        public bool IsSaving                        { get => GetV(false); set => Set(value); }
-        public bool IsExporting                     { get => GetV(false); set => Set(value); }
+        [ObservableProperty] string _collectionExportProgress;
+        [ObservableProperty] bool _isSaving = false;
+        [ObservableProperty] bool _isExporting = false;
+
+        [ObservableProperty] List<UserFontCollection> _collections;
+        [ObservableProperty] ObservableCollection<InstalledFont> _fontList;
+        [ObservableProperty] ObservableCollection<InstalledFont> _collectionFonts;
 
         public ObservableCollection<InstalledFont> SelectedFonts            = new();
 
         public ObservableCollection<InstalledFont> SelectedCollectionFonts  = new();
-
-        public ObservableCollection<InstalledFont> FontList
-        {
-            get => Get<ObservableCollection<InstalledFont>>();
-            set => Set(value);
-        }
-
-        public ObservableCollection<InstalledFont> CollectionFonts
-        {
-            get => Get<ObservableCollection<InstalledFont>>();
-            set => Set(value);
-        }
-
-        public List<UserFontCollection> Collections
-        {
-            get => Get<List<UserFontCollection>>();
-            set => Set(value);
-        }
+        public UserCollectionsService CollectionService { get; private set; } = null;
 
         private UserFontCollection _selectedCollection;
         public UserFontCollection SelectedCollection
@@ -51,8 +42,6 @@ namespace CharacterMap.ViewModels
                     RefreshFontLists();
             }
         }
-
-        public UserCollectionsService CollectionService { get; private set; } = null;
 
         #endregion
 
@@ -154,7 +143,10 @@ namespace CharacterMap.ViewModels
 
             try
             {
-                await ExportManager.ExportCollectionAsZipAsync(CollectionFonts, SelectedCollection);
+                await ExportManager.ExportCollectionAsZipAsync(
+                    CollectionFonts, 
+                    SelectedCollection,
+                    p => OnSyncContext(() => CollectionExportProgress = p));
             }
             finally
             {
@@ -168,7 +160,9 @@ namespace CharacterMap.ViewModels
 
             try
             {
-                await ExportManager.ExportCollectionToFolderAsync(CollectionFonts);
+                await ExportManager.ExportCollectionToFolderAsync(
+                    CollectionFonts,
+                    p => OnSyncContext(() => CollectionExportProgress = p));
             }
             finally
             {

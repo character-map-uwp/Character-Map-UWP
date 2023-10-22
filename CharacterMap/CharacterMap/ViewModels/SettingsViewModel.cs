@@ -33,7 +33,15 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] FontFamily _previewFontSource;
         [ObservableProperty] List<InstalledFont> _previewFonts;
         [ObservableProperty] bool _isCollectionExportEnabled = true;
+        [ObservableProperty] bool _isSystemExportEnabled = true;
         [ObservableProperty] ObservableCollection<String> _rampOptions = null;
+
+        [ObservableProperty] int _systemFamilyCount = 0;
+        [ObservableProperty] int _systemFaceCount = 0;
+        [ObservableProperty] string _systemExportProgress;
+        [ObservableProperty] string _importedExportProgress;
+
+
 
         public bool ThemeHasChanged => Settings.ApplicationDesignTheme != _originalDesign;
 
@@ -82,6 +90,10 @@ namespace CharacterMap.ViewModels
             RampOptions = new(Settings.CustomRampOptions);
             RampOptions.CollectionChanged += RampOptions_CollectionChanged;
             RampInput = null;
+
+            // 4. Update other things
+            SystemFamilyCount = FontFinder.SystemFamilyCount;
+            SystemFaceCount = FontFinder.SystemFaceCount;
         }
 
         private void RampOptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -109,7 +121,9 @@ namespace CharacterMap.ViewModels
             // application, rather than things like bug-fixes or visual changes.
             return new()
             {
-                new("Latest Update (August 2023)", // August 2023
+                new("Latest Update (October 2023)", // October 2023
+                    "- Added option to export installed fonts in Settings->Font Management"),
+                new("2023.7.0.0 (August 2023)", // August 2023
                     "- Added support for Right-to-Left text in Type Ramp view, Quick Compare and Compare Fonts view\n" +
                     "- Added Unicode developer tools showing Unicode codepoint and UTF-16 value\n" +
                     "- Added experimental COLRv1 support to Preview Pane, Type Ramp View, Quick Compare and Compare Fonts View for Windows 11 builds > 25905\n" +
@@ -201,17 +215,49 @@ namespace CharacterMap.ViewModels
             return list;
         }
 
+        internal async void ExportSystemAsZip()
+        {
+            IsSystemExportEnabled = false;
+            try { 
+                await ExportManager.ExportFontsAsZipAsync(
+                    FontFinder.GetSystemVariants(), 
+                    Localization.Get("OptionSystemFonts/Text"),
+                    p => OnSyncContext(() => SystemExportProgress = p)); 
+            }
+            finally { IsSystemExportEnabled = true; }
+        }
+
+        internal async void ExportSystemToFolder()
+        {
+            IsSystemExportEnabled = false;
+            try { 
+                await ExportManager.ExportFontsToFolderAsync(
+                    FontFinder.GetSystemVariants(),
+                    p => OnSyncContext(() => SystemExportProgress = p)); 
+            }
+            finally { IsSystemExportEnabled = true; }
+        }
+
         internal async void ExportAsZip()
         {
             IsCollectionExportEnabled = false;
-            try { await ExportManager.ExportFontsAsZipAsync(FontFinder.GetImportedVariants(), Localization.Get("OptionImportedFonts/Text")); }
+            try { 
+                await ExportManager.ExportFontsAsZipAsync(
+                    FontFinder.GetImportedVariants(), 
+                    Localization.Get("OptionImportedFonts/Text"),
+                    p => OnSyncContext(() => ImportedExportProgress = p));
+            }
             finally { IsCollectionExportEnabled = true; }
         }
 
         internal async void ExportToFolder()
         {
             IsCollectionExportEnabled = false;
-            try { await ExportManager.ExportFontsToFolderAsync(FontFinder.GetImportedVariants()); }
+            try { 
+                await ExportManager.ExportFontsToFolderAsync(
+                    FontFinder.GetImportedVariants(),
+                    p => OnSyncContext(() => ImportedExportProgress = p)); 
+            }
             finally { IsCollectionExportEnabled = true; }
         }
 

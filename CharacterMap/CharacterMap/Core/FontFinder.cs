@@ -102,6 +102,9 @@ namespace CharacterMap.Core
             return systemFonts;
         }
 
+        public static int SystemFamilyCount { get; private set; }
+        public static int SystemFaceCount { get; private set; }
+
         public static Task LoadFontsAsync(bool clearExisting = true)
         {
             // It's possible to go down this path if the font collection
@@ -119,8 +122,10 @@ namespace CharacterMap.Core
                 await _loadSemaphore.WaitAsync().ConfigureAwait(false);
                 NativeInterop interop = Utils.GetInterop();
 
+#if DEBUG
                 Stopwatch s = new Stopwatch();
                 s.Start();
+#endif
 
                 // Load SystemFonts and imported fonts in parallel
                 // 1.1. Load imported fonts
@@ -166,6 +171,9 @@ namespace CharacterMap.Core
                 var imports = resultList.ToDictionary(d => d.Key, v => v.Value.Clone());
 
                 /* Add all system fonts */
+                SystemFamilyCount = systemFonts.Families.Count;
+                SystemFaceCount = systemFonts.Fonts.Count;
+
                 foreach (var font in systemFonts.Fonts)
                     AddFont(resultList, font);
                 
@@ -177,8 +185,10 @@ namespace CharacterMap.Core
                 if (Fallback == null)
                     Fallback = interop.CreateEmptyFallback();
 
+#if DEBUG
                 s.Stop();
                 var elasped = s.Elapsed;
+#endif
 
                 _loadSemaphore.Release();
 
@@ -214,6 +224,12 @@ namespace CharacterMap.Core
         {
             return Fonts.Where(f => f.HasImportedFiles)
                         .SelectMany(f => f.Variants.Where(v => v.IsImported))
+                        .ToList();
+        }
+
+        internal static List<FontVariant> GetSystemVariants()
+        {
+            return Fonts.SelectMany(f => f.Variants.Where(v => v.IsImported is false))
                         .ToList();
         }
 

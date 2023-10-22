@@ -565,11 +565,11 @@
                             FontWeight="Bold"
                             OpticalMarginAlignment="TrimSideBearings" />
 
-                        <TextBlock
+                        <ContentPresenter
                             x:Name="Description"
                             Grid.Row="1"
-                            Style="{StaticResource DescriptionStyle}"
-                            Text="{TemplateBinding Description}"
+                            Content="{TemplateBinding Description}"
+                            Style="{StaticResource DescriptionContentStyle}"
                             Visibility="Collapsed" />
                         <ContentPresenter Grid.Row="2" Content="{TemplateBinding Content}" />
 

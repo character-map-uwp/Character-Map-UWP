@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 using CharacterMap.Models;
+using System.Diagnostics;
 
 namespace CharacterMap.Provider
 {
@@ -174,9 +175,9 @@ namespace CharacterMap.Provider
                             
                             // 1.3. If the search is ambiguous we should still search for description matches,
                             //      otherwise we can return right now
-                            if (!ambiguous)
-                                return hexresults;
-                            else
+                            //if (!ambiguous)
+                            //    return hexresults;
+                            //else
                             {
                                 hexResult = hexresults.Cast<GlyphDescription>().FirstOrDefault();
                                 break;
@@ -187,10 +188,10 @@ namespace CharacterMap.Provider
                     // 1.4. If the search is ambiguous we should still search for description matches,
                     //      otherwise we can return right now with no hex results
                     //      If we are a generic symbol font, that's all folks. Time to leave.
-                    if (!ambiguous)
-                    {
-                        return GlyphService.EMPTY_SEARCH;
-                    }
+                    //if (!ambiguous)
+                    //{
+                    //    return GlyphService.EMPTY_SEARCH;
+                    //}
                 }
 
                 // 2. If we're performing SQL, create the base query filter
@@ -204,12 +205,20 @@ namespace CharacterMap.Provider
                 /// We don't want to throw an exception if we ever hit this case, we'll just do our best.
                 foreach (var range in variant.UnicodeRanges.Take(995)) 
                 {
+                    string qr = range.First != range.Last
+                        ? "Ix BETWEEN {0} AND {1}"
+                        : "Ix == {0}";
+
                     if (next)
-                        sb.AppendFormat(" OR Ix BETWEEN {0} AND {1}", range.First, range.Last);
+                        sb.AppendFormat(range.First != range.Last
+                        ? " OR Ix BETWEEN {0} AND {1}"
+                        : " OR Ix == {0}", range.First, range.Last);
                     else
                     {
                         next = true;
-                        sb.AppendFormat("WHERE (Ix BETWEEN {0} AND {1}", range.First, range.Last);
+                        sb.AppendFormat(range.First != range.Last
+                        ? "WHERE (Ix BETWEEN {0} AND {1}"
+                        : "WHERE (Ix == {0}", range.First, range.Last);
                     }
                 }
                 sb.Append(")");
@@ -247,6 +256,25 @@ namespace CharacterMap.Provider
                 {
                     extra = string.Format(" AND Ix NOT IN ({0})", string.Join(", ", results.Select(r => r.UnicodeIndex)));
                 }
+
+                /// BENCHMARKING FOR FTFS VS NORMAL TABLES
+                //Stopwatch sw = Stopwatch.StartNew();
+                //object res = null;
+                //for (int i = 0; i < 100; i++)
+                //{
+                //    string bsql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE ? LIMIT {limit}";
+                //    res = _connection.GetGlyphData(table, bsql2, $"%{query}%");
+                //}
+                //var time = sw.ElapsedMilliseconds;
+                //sw.Restart();
+                //for (int i = 0; i < 100; i++)
+                //{
+                //    string bsql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
+                //    res = _connection.GetGlyphData(ftsTable, bsql, $"{query}*");
+                //}
+                //var time2 = sw.ElapsedMilliseconds;
+                //Debugger.Break();
+             
 
                 // 3.3. Execute!
                 string sql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";

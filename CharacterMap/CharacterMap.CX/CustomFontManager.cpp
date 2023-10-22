@@ -108,7 +108,7 @@ ComPtr<IDWriteFontCollection3> CustomFontManager::GetFontCollectionFromPath(Plat
     ComPtr<IDWriteFontCollection> tcollection;
     ComPtr<IDWriteFontCollection3> collection;
 
-    auto factory = GetIsolatedFactory();
+    auto& factory = GetIsolatedFactory();
     ThrowIfFailed(factory->CreateCustomFontCollection(m_customLoader.Get(), key, keySize, &tcollection));
 
     tcollection.As<IDWriteFontCollection3>(&collection);

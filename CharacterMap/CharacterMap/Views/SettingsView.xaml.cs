@@ -162,7 +162,7 @@ namespace CharacterMap.Views
         {
             this.RunOnUI(() =>
             {
-                ImportedExportPanel?.SetVisible(FontFinder.ImportedFonts.Count > 0);
+                ExportImportedButton?.SetVisible(FontFinder.ImportedFonts.Count > 0);
             });
         }
 

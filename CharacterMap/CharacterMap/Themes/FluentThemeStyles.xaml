@@ -281,27 +281,32 @@
                                 Margin="0 0 18 0"
                                 Visibility="Collapsed" />
 
-                            <StackPanel
+                            <Grid
                                 Grid.Column="1"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 Transitions="{StaticResource RepositionTransitions}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
                                 <ContentPresenter
                                     HorizontalAlignment="Stretch"
                                     Content="{TemplateBinding Title}"
                                     FontFamily="{TemplateBinding FontFamily}"
                                     FontSize="14" />
-                                <TextBlock
+                                <ContentPresenter
                                     x:Name="Description"
                                     x:Load="False"
+                                    Grid.Row="1"
                                     Margin="0 2 0 0"
+                                    Content="{TemplateBinding Description}"
                                     FontFamily="{TemplateBinding FontFamily}"
                                     FontSize="12.666"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="{TemplateBinding Description}"
                                     TextWrapping="Wrap"
                                     Visibility="Collapsed" />
-                            </StackPanel>
+                            </Grid>
 
                             <ContentPresenter
                                 x:Name="Presenter"

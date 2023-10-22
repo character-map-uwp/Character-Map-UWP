@@ -95,6 +95,12 @@ namespace CharacterMap.Core
         public static string GetLocalizedEnumName(Enum a) 
             => Localization.Get($"{a.GetType().Name}_{a}");
 
+        public static string GetFormat(string key, object arg)
+            => Localization.Get(key, arg);
+
+        public static string GetFormat2(string key, object arg, object arg2)
+            => Localization.Get(key, arg, arg2);
+
         public static FontFamily GetPreviewFontSource(FontVariant variant)
         {
             if (_settings == null)

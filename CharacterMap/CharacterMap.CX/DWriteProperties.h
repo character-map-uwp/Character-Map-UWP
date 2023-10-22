@@ -69,7 +69,7 @@ namespace CharacterMapCX
 
 		property Array<UINT8>^ Panose { Array<UINT8>^ get() 
 		{
-			DWRITE_PANOSE* pan = new DWRITE_PANOSE();
+			DWRITE_PANOSE pan[10];
 			m_font->GetPanose(pan);
 
 			bool valid = false;

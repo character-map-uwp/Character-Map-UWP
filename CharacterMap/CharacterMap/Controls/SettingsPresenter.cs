@@ -39,14 +39,14 @@ namespace CharacterMap.Controls
             DependencyProperty.Register(nameof(Title), typeof(object), typeof(SettingsPresenter), new PropertyMetadata(null));
 
 
-        public string Description
+        public object Description
         {
-            get { return (string)GetValue(DescriptionProperty); }
+            get { return (object)GetValue(DescriptionProperty); }
             set { SetValue(DescriptionProperty, value); }
         }
 
         public static readonly DependencyProperty DescriptionProperty =
-            DependencyProperty.Register(nameof(Description), typeof(string), typeof(SettingsPresenter), new PropertyMetadata(null, (d,e) =>
+            DependencyProperty.Register(nameof(Description), typeof(object), typeof(SettingsPresenter), new PropertyMetadata(null, (d,e) =>
             {
                 ((SettingsPresenter)d).UpdateDescriptionStates();
             }));
@@ -219,7 +219,7 @@ namespace CharacterMap.Controls
 
         private void UpdateDescriptionStates()
         {
-            string state = string.IsNullOrWhiteSpace(Description) ? "NoDescriptionState" : "DescriptionState";
+            string state = Description is null ? "NoDescriptionState" : "DescriptionState";
             VisualStateManager.GoToState(this, state, true);
         }
 

@@ -1296,5 +1296,37 @@ namespace CharacterMap.Core
             }));
 
         #endregion
+
+        #region Flyout
+
+        public static FlyoutBase GetFlyout(DependencyObject obj)
+        {
+            return (FlyoutBase)obj.GetValue(FlyoutProperty);
+        }
+
+        public static void SetFlyout(DependencyObject obj, FlyoutBase value)
+        {
+            obj.SetValue(FlyoutProperty, value);
+        }
+
+        public static readonly DependencyProperty FlyoutProperty =
+            DependencyProperty.RegisterAttached("Flyout", typeof(FlyoutBase), typeof(Properties), new PropertyMetadata(null, (d,e) =>
+            {
+                if (d is ButtonBase b)
+                {
+                    b.Click -= ButtonFlyoutClick;
+                    b.Click += ButtonFlyoutClick;
+                }
+            }));
+
+        private static void ButtonFlyoutClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is ButtonBase b && GetFlyout(b) is FlyoutBase fly)
+            {
+                fly.ShowAt(b);
+            }
+        }
+
+        #endregion
     }
 }

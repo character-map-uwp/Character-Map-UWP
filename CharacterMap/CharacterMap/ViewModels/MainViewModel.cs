@@ -54,6 +54,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] string _titlePrefix;
         [ObservableProperty] string _fontSearch;
         [ObservableProperty] string _filterTitle;
+        [ObservableProperty] string _collectionExportProgress;
         [ObservableProperty] bool _canFilter = true;
         [ObservableProperty] bool _isLoadingFonts;
         [ObservableProperty] bool _isSearchResults;
@@ -586,7 +587,10 @@ namespace CharacterMap.ViewModels
 
             try
             {
-                await ExportManager.ExportCollectionAsZipAsync(FontList, SelectedCollection);
+                await ExportManager.ExportCollectionAsZipAsync(
+                    FontList, 
+                    SelectedCollection,
+                    p => OnSyncContext(() => CollectionExportProgress = p));
             }
             finally
             {
@@ -600,7 +604,9 @@ namespace CharacterMap.ViewModels
 
             try
             {
-                await ExportManager.ExportCollectionToFolderAsync(FontList);
+                await ExportManager.ExportCollectionToFolderAsync(
+                    FontList,
+                    p => OnSyncContext(() => CollectionExportProgress = p));
             }
             finally
             {

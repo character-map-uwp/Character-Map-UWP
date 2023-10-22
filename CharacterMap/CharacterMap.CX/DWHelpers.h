@@ -13,9 +13,9 @@ template <class T> void SafeRelease(T** ppT)
 namespace
 {
 	/// <summary>
-/// Opposite of DWRITE_MAKE_OPENTYPE_TAG, returns String
-/// representation of OpenType tag.
-/// </summary>
+	/// Opposite of DWRITE_MAKE_OPENTYPE_TAG, returns String
+	/// representation of OpenType tag.
+	/// </summary>
 	Platform::String^ GetOpenTypeFeatureTag(UINT32 value)
 	{
 		wchar_t buffer[] = L"    ";

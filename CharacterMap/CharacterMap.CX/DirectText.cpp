@@ -138,7 +138,10 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
         /* Set flow direction */
         if (this->FlowDirection == Windows::UI::Xaml::FlowDirection::RightToLeft)
-            idFormat->SetFlowDirection(DWRITE_FLOW_DIRECTION::DWRITE_FLOW_DIRECTION_RIGHT_TO_LEFT);
+            idFormat->SetReadingDirection(DWRITE_READING_DIRECTION_RIGHT_TO_LEFT);
+        else
+            idFormat->SetReadingDirection(DWRITE_READING_DIRECTION_LEFT_TO_RIGHT);
+
 
         /* Set blank fallback font */
         if (FallbackFont != nullptr)
