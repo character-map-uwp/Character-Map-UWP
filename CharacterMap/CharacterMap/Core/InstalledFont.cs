@@ -23,6 +23,9 @@ namespace CharacterMap.Core
 
         public bool HasImportedFiles { get; private set; }
 
+        private FontVariant _defaultVariant;
+        public FontVariant DefaultVariant => _defaultVariant ??= Utils.GetDefaultVariant(Variants);
+
         private InstalledFont(string name)
         {
             Name = name;
@@ -34,23 +37,14 @@ namespace CharacterMap.Core
             AddVariant(face, file);
         }
 
-        public FontVariant DefaultVariant
-        {
-            get
-            {
-                return Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal && v.DirectWriteProperties.Stretch == FontStretch.Normal) 
-                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal)
-                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Stretch == FontStretch.Normal)
-                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight)
-                    ?? Variants[0];
-            }
-        }
 
         public void AddVariant(DWriteFontFace fontFace, StorageFile file = null)
         {
             _variants.Add(new (fontFace, file));
             if (file != null)
                 HasImportedFiles = true;
+
+            _defaultVariant = null;
         }
 
         public void SortVariants()

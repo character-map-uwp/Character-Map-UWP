@@ -11,6 +11,8 @@ using Windows.Storage;
 
 namespace CharacterMap.Core
 {
+    public record FaceMetadataInfo(string Key, string Value, CanvasFontInformation Info);
+
     [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
     public partial class FontVariant : IDisposable
     {
@@ -18,12 +20,12 @@ namespace CharacterMap.Core
         private static Dictionary<int, Character> _characters { get; } = new ();
 
         private IReadOnlyList<NamedUnicodeRange> _ranges = null;
-        private IReadOnlyList<KeyValuePair<string, string>> _fontInformation = null;
+        private IReadOnlyList<FaceMetadataInfo> _fontInformation = null;
         private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
         private FontAnalysis _analysis = null;
 
-        public IReadOnlyList<KeyValuePair<string, string>> FontInformation
+        public IReadOnlyList<FaceMetadataInfo> FontInformation
             => _fontInformation ??= LoadFontInformation();
 
         public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
@@ -79,7 +81,7 @@ namespace CharacterMap.Core
         public string Source { get; }
 
         /// <summary>
-        /// A FontFamily source for XAML that includes a custom fallback font.
+        /// A FontFamily source for XAML that includes a custom fall-back font.
         /// This results in XAML *only* rendering the characters included in the font.
         /// Use when you may have a scenario where characters not inside a font's glyph
         /// range might be displayed, otherwise use <see cref="Source"/> for better performance.
@@ -203,7 +205,15 @@ namespace CharacterMap.Core
 
         public string TryGetSampleText()
         {
-            return GetInfoKey(Face, CanvasFontInformation.SampleText).Value;
+            return GetInfoKey(Face, CanvasFontInformation.SampleText)?.Value;
+        }
+
+        public string GetFullName()
+        {
+            if (GetInfo(CanvasFontInformation.FullName) is { } info)
+                return info.Value;
+
+            return this.PreferredName;
         }
 
         private void LoadTypographyFeatures()
@@ -220,37 +230,35 @@ namespace CharacterMap.Core
             _typographyFeatures = features;
         }
 
-        private List<KeyValuePair<string, string>> LoadFontInformation()
+        private List<FaceMetadataInfo> LoadFontInformation()
         {
-            //KeyValuePair<string, string> Get(CanvasFontInformation info)
-            //{
-            //    var infos = FontFace.GetInformationalStrings(info);
-            //    if (infos.Count == 0)
-            //        return new KeyValuePair<string, string>();
-
-            //    var name = info.Humanise();
-            //    var dic = infos.ToDictionary(k => k.Key, k => k.Value);
-            //    if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
-            //        || infos.TryGetValue("en-us", out value))
-            //        return KeyValuePair.Create(name, value);
-            //    return KeyValuePair.Create(name, infos.First().Value);
-            //}
-
-            return INFORMATIONS.Select(i => GetInfoKey(Face, i)).Where(s => s.Key != null).ToList();
+            return INFORMATIONS.Select(i => GetInfoKey(Face, i)).Where(s => s != null && s.Key != null).ToList();
         }
 
-        private static KeyValuePair<string, string> GetInfoKey(DWriteFontFace fontFace, CanvasFontInformation info)
+        private static FaceMetadataInfo GetInfoKey(DWriteFontFace fontFace, CanvasFontInformation info)
         {
             var infos = fontFace.GetInformationalStrings(info);
             if (infos.Count == 0)
-                return new();
+                return null;
 
             var name = info.Humanise();
             var dic = infos.ToDictionary(k => k.Key, k => k.Value);
             if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
                 || infos.TryGetValue("en-us", out value))
-                return KeyValuePair.Create(name, value);
-            return KeyValuePair.Create(name, infos.First().Value);
+                return new (name, value, info);
+            return new(name, infos.First().Value, info);
+        }
+
+        private FaceMetadataInfo GetInfo(CanvasFontInformation cfi)
+        {
+            if (_fontInformation is not null && _fontInformation.FirstOrDefault(p => p.Info == cfi)
+                is { } info)
+                return info;
+
+            if (GetInfoKey(Face, cfi) is { } faceInfo)
+                return faceInfo;
+
+            return null;
         }
 
 
