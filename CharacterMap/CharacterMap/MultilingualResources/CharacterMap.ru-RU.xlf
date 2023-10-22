@@ -1772,6 +1772,18 @@ Tap and hold to arrange.</target>
           <source>Vietnamese</source>
           <target state="new">Vietnamese</target>
         </trans-unit>
+        <trans-unit id="InstallCountLabel" translate="yes" xml:space="preserve">
+          <source>{0} Font Families, {1} Font Faces installed on your computer</source>
+          <target state="new">{0} Font Families, {1} Font Faces installed on your computer</target>
+        </trans-unit>
+        <trans-unit id="OptionSystemFonts.Text" translate="yes" xml:space="preserve">
+          <source>Installed Fonts</source>
+          <target state="new">Installed Fonts</target>
+        </trans-unit>
+        <trans-unit id="SettingsExportInstalledLabel.Text" translate="yes" xml:space="preserve">
+          <source>Export Installed Fonts</source>
+          <target state="new">Export Installed Fonts</target>
+        </trans-unit>
       </group>
     </body>
   </file>
