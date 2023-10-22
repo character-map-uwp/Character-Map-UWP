@@ -1,4 +1,6 @@
-﻿using CharacterMap.Helpers;
+﻿// Ignore Spelling: cfi
+
+using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CharacterMapCX;
@@ -25,33 +27,16 @@ namespace CharacterMap.Core
         private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
         private FontAnalysis _analysis = null;
 
-        public IReadOnlyList<FaceMetadataInfo> FontInformation
-            => _fontInformation ??= LoadFontInformation();
+        public IReadOnlyList<FaceMetadataInfo> FontInformation          => _fontInformation ??= GetFontInformation();
 
-        public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures
-        {
-            get
-            {
-                if (_typographyFeatures == null)
-                    LoadTypographyFeatures();
-                return _typographyFeatures;
-            }
-        }
+        public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures  => _typographyFeatures ??= LoadTypographyFeatures();
 
         /// <summary>
         /// Supported XAML typographer features for A SINGLE GLYPH. 
         /// Does not include features like Alternates which are used for strings of text.
         /// </summary>
-        public IReadOnlyList<TypographyFeatureInfo> XamlTypographyFeatures
-        {
-            get
-            {
-                if (_xamlTypographyFeatures == null)
-                    LoadTypographyFeatures();
-                return _xamlTypographyFeatures;
-            }
-        }
-
+        public IReadOnlyList<TypographyFeatureInfo> XamlTypographyFeatures => _xamlTypographyFeatures ??= LoadTypographyFeatures(true);
+        
         public bool HasXamlTypographyFeatures => XamlTypographyFeatures.Count > 0;
 
         public CanvasFontFace FontFace => Face.FontFace;
@@ -166,30 +151,18 @@ namespace CharacterMap.Core
             return Characters;
         }
 
-        public int GetGlyphIndex(Character c)
-        {
-            return Face.GetGlyphIndice(c.UnicodeIndex);
-        }
+        public int GetGlyphIndex(Character c) => Face.GetGlyphIndice(c.UnicodeIndex);
 
-        public uint[] GetGlyphUnicodeIndexes()
-        {
-            return GetCharacters().Select(c => c.UnicodeIndex).ToArray();
-        }
+        public uint[] GetGlyphUnicodeIndexes() =>  GetCharacters().Select(c => c.UnicodeIndex).ToArray();
 
-        public FontAnalysis GetAnalysis()
-        {
-            return _analysis ??= TypographyAnalyzer.Analyze(this);
-        }
+        public FontAnalysis GetAnalysis() => _analysis ??= TypographyAnalyzer.Analyze(this);
 
         /// <summary>
         /// Load an analysis without a glyph search map. Callers later using the cached analysis and expecting a search map should
         /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(FontVariant, FontAnalysis)"/>
         /// </summary>
         /// <returns></returns>
-        private FontAnalysis GetAnalysisInternal()
-        {
-            return _analysis ??= TypographyAnalyzer.Analyze(this, false);
-        }
+        private FontAnalysis GetAnalysisInternal() =>_analysis ??= TypographyAnalyzer.Analyze(this, false);
 
         /// <summary>
         /// Used temporarily to allow insider builds to access COLRv1. Do not use elsewhere. Very expensive.
@@ -203,20 +176,41 @@ namespace CharacterMap.Core
         /// /// </summary>
         public bool SupportsColourRendering => Utils.Supports23H2 && DirectWriteProperties.IsColorFont;
 
-        public string TryGetSampleText()
+        public string TryGetSampleText() => ReadInfoKey(CanvasFontInformation.SampleText)?.Value;
+
+        /// <summary>
+        /// Attempts to return the value of <see cref="CanvasFontInformation.FullName"/>. If it fails,
+        /// <see cref="PreferredName"/> is returned instead.
+        /// </summary>
+        /// <returns></returns>
+        public string TryGetFullName() => TryGetInfo(CanvasFontInformation.FullName)?.Value ?? PreferredName;
+
+
+
+
+        /* SEARCHING */
+
+        public Dictionary<Character, string> SearchMap { get; set; }
+
+        public string GetDescription(Character c)
         {
-            return GetInfoKey(Face, CanvasFontInformation.SampleText)?.Value;
+            if (SearchMap == null
+                || !SearchMap.TryGetValue(c, out string mapping)
+                || string.IsNullOrWhiteSpace(mapping))
+                return GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
+
+            return GlyphService.TryGetAGLFNName(mapping);
         }
 
-        public string GetFullName()
-        {
-            if (GetInfo(CanvasFontInformation.FullName) is { } info)
-                return info.Value;
 
-            return this.PreferredName;
-        }
 
-        private void LoadTypographyFeatures()
+
+        /* INTERNAL  */
+
+        private List<FaceMetadataInfo> GetFontInformation() 
+            => INFORMATIONS.Select(ReadInfoKey).Where(s => s != null).ToList();
+
+        private IReadOnlyList<TypographyFeatureInfo> LoadTypographyFeatures(bool isXaml = false)
         {
             var features = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
 
@@ -228,16 +222,19 @@ namespace CharacterMap.Core
             if (features.Count > 0)
                 features.Insert(0, TypographyFeatureInfo.None);
             _typographyFeatures = features;
+
+            return isXaml ? _xamlTypographyFeatures : _typographyFeatures;
         }
 
-        private List<FaceMetadataInfo> LoadFontInformation()
+        /// <summary>
+        /// Reads an info key from the underlying DWriteFontFace
+        /// </summary>
+        /// <param name="fontFace"></param>
+        /// <param name="info"></param>
+        /// <returns></returns>
+        private FaceMetadataInfo ReadInfoKey(CanvasFontInformation info)
         {
-            return INFORMATIONS.Select(i => GetInfoKey(Face, i)).Where(s => s != null && s.Key != null).ToList();
-        }
-
-        private static FaceMetadataInfo GetInfoKey(DWriteFontFace fontFace, CanvasFontInformation info)
-        {
-            var infos = fontFace.GetInformationalStrings(info);
+            var infos = Face.GetInformationalStrings(info);
             if (infos.Count == 0)
                 return null;
 
@@ -249,33 +246,21 @@ namespace CharacterMap.Core
             return new(name, infos.First().Value, info);
         }
 
-        private FaceMetadataInfo GetInfo(CanvasFontInformation cfi)
+        /// <summary>
+        /// Attempts to return a cached info key, or load it from scratch.
+        /// </summary>
+        /// <param name="cfi"></param>
+        /// <returns></returns>
+        public FaceMetadataInfo TryGetInfo(CanvasFontInformation cfi)
         {
             if (_fontInformation is not null && _fontInformation.FirstOrDefault(p => p.Info == cfi)
                 is { } info)
                 return info;
 
-            if (GetInfoKey(Face, cfi) is { } faceInfo)
+            if (ReadInfoKey(cfi) is { } faceInfo)
                 return faceInfo;
 
             return null;
-        }
-
-
-
-
-        /* SEARCHING */
-
-        public Dictionary<Character, string> SearchMap { get; set; }
-
-        public string GetDescription(Character c)
-        {
-            if (SearchMap == null 
-                || !SearchMap.TryGetValue(c, out string mapping)
-                || string.IsNullOrWhiteSpace(mapping))
-                return GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
-
-            return GlyphService.TryGetAGLFNName(mapping);
         }
 
 

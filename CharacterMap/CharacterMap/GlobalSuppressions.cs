@@ -6,3 +6,5 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "BritishEnglish", Scope = "member", Target = "~P:CharacterMap.Core.FontVariant.SupportsColourRendering")]
+[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Correct", Scope = "member", Target = "~P:CharacterMap.Core.FontVariant.Panose")]
+[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CharacterMap.ViewModels.SettingsViewModel.Changelog")]

@@ -708,7 +708,7 @@ namespace CharacterMap.Views
             _ = MainDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
             {
                 await WindowService.ReactivateMainAsync();
-                ShowSettings(5);
+                ShowSettings(4);
             });
         }
 

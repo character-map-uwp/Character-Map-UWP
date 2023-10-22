@@ -171,7 +171,7 @@ namespace CharacterMap.Core
             var font = Utils.GetDefaultVariant(group.ToList());
 
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = $"{font.GetFullName().Trim()}{ext}";
+                fileName = $"{font.TryGetFullName().Trim()}{ext}";
 
             return $"{Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false)}{Path.GetExtension(fileName).ToLower()}";
         }
@@ -196,7 +196,7 @@ namespace CharacterMap.Core
                 ext = ".ttf";
 
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = $"{font.FamilyName.Trim()} {font.PreferredName.Trim()}{ext}";
+                fileName = $"{font.TryGetFullName().Trim()}{ext}";
 
             return $"{Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false)}{Path.GetExtension(fileName).ToLower()}";
         }
