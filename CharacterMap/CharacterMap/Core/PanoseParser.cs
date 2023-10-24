@@ -1,13 +1,4 @@
-﻿using Microsoft.Graphics.Canvas.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CharacterMap.Models;
-using CharacterMapCX;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace CharacterMap.Core
 {

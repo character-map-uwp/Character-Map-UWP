@@ -1,18 +1,16 @@
-using System;
 using System.Collections.Concurrent;
 
-namespace CharacterMap.Helpers
-{
-    internal static class Singleton<T> where T : new()
-    {
-        private static ConcurrentDictionary<Type, T> _instances = new ConcurrentDictionary<Type, T>();
+namespace CharacterMap.Helpers;
 
-        public static T Instance
+internal static class Singleton<T> where T : new()
+{
+    private static ConcurrentDictionary<Type, T> _instances = new ConcurrentDictionary<Type, T>();
+
+    public static T Instance
+    {
+        get
         {
-            get
-            {
-                return _instances.GetOrAdd(typeof(T), (t) => new T());
-            }
+            return _instances.GetOrAdd(typeof(T), (t) => new T());
         }
     }
 }

@@ -1,28 +1,13 @@
-﻿using CharacterMap.Helpers;
-using CharacterMap.Services;
-using CharacterMapCX;
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Geometry;
 using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
+using System.IO.Compression;
 using Windows.Foundation;
-using Windows.Storage;
 using Windows.Storage.Pickers;
-using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
-using CharacterMap.Models;
-using System.IO;
-using System.IO.Compression;
-using System.Runtime.InteropServices.WindowsRuntime;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using System.Threading;
 
 namespace CharacterMap.Core
 {

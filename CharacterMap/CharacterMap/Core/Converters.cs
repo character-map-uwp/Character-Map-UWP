@@ -1,16 +1,5 @@
-﻿using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI;
-using Windows.UI.Xaml;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
-using CharacterMapCX;
 
 namespace CharacterMap.Core
 {

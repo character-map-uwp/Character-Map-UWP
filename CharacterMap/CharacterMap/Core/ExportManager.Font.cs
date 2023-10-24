@@ -1,15 +1,4 @@
-﻿using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMapCX;
-using CommunityToolkit.Mvvm.Messaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Windows.Storage.Streams;
-using Windows.Storage;
-using System.IO.Compression;
-using System.IO;
+﻿using System.IO.Compression;
 using Windows.Storage.Pickers;
 
 namespace CharacterMap.Core

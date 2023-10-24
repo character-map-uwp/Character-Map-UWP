@@ -1,19 +1,15 @@
-﻿using CharacterMap.Models;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿namespace CharacterMap.Models;
 
-namespace CharacterMap.Models
+public partial class UnicodeRangeModel : ObservableObject
 {
-    public partial class UnicodeRangeModel : ObservableObject
+    public NamedUnicodeRange Range { get; }
+
+    [ObservableProperty] bool _isSelected = true;
+
+    public UnicodeRangeModel(NamedUnicodeRange range)
     {
-        public NamedUnicodeRange Range { get; }
-
-        [ObservableProperty] bool _isSelected = true;
-
-        public UnicodeRangeModel(NamedUnicodeRange range)
-        {
-            Range = range;
-        }
-
-        public UnicodeRangeModel Clone() => new (Range) { IsSelected = _isSelected };
+        Range = range;
     }
+
+    public UnicodeRangeModel Clone() => new (Range) { IsSelected = _isSelected };
 }

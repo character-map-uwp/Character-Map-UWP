@@ -1,10 +1,4 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Provider;
-using CharacterMapCX;
-using Microsoft.Graphics.Canvas.Text;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Graphics.Canvas.Text;
 
 namespace System.Runtime.CompilerServices
 {
