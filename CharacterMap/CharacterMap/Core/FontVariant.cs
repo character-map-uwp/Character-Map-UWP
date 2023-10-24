@@ -183,7 +183,7 @@ namespace CharacterMap.Core
         /// <returns></returns>
         public string TryGetFullName() => TryGetInfo(CanvasFontInformation.FullName)?.Value ?? PreferredName;
 
-
+        public bool HasDesignScriptTag(string tag) => TryGetInfo(CanvasFontInformation.DesignScriptLanguageTag)?.Values.Contains(tag) ?? false;
 
 
         /* SEARCHING */
@@ -205,11 +205,6 @@ namespace CharacterMap.Core
 
         /* INTERNAL  */
 
-        private List<FaceMetadataInfo> GetFontInformation() 
-            => INFORMATIONS.Select(ReadInfoKey)
-                           .Where(s => s != null && !string.IsNullOrWhiteSpace(s.Value))
-                           .ToList();
-
         private IReadOnlyList<TypographyFeatureInfo> LoadTypographyFeatures(bool isXaml = false)
         {
             var features = TypographyAnalyzer.GetSupportedTypographyFeatures(this);
@@ -225,6 +220,11 @@ namespace CharacterMap.Core
 
             return isXaml ? _xamlTypographyFeatures : _typographyFeatures;
         }
+
+        private List<FaceMetadataInfo> GetFontInformation()
+             => INFORMATIONS.Select(ReadInfoKey)
+                            .Where(s => s != null && !string.IsNullOrWhiteSpace(s.Value))
+                            .ToList();
 
         /// <summary>
         /// Reads an info key from the underlying DWriteFontFace

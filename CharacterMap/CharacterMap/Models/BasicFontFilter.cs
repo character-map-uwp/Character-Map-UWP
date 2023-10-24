@@ -24,6 +24,14 @@ namespace CharacterMap.Models
         /// </summary>
         public bool RequiresAsync { get; set; }
 
+        public static BasicFontFilter ForDesignScriptTag(string tag, string displayTitle)
+        {
+            return new BasicFontFilter(
+                (f, c) => f.Where(i => i.Variants.Any(v => v.HasDesignScriptTag(tag))),
+                displayTitle,
+                true);
+        }
+
         public static BasicFontFilter ForRange(UnicodeRange range, string displayTitle)
         {
             return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => Unicode.ContainsRange(v, range))), displayTitle);

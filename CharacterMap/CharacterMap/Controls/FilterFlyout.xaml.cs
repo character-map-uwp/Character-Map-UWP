@@ -3,6 +3,7 @@ using CharacterMap.Helpers;
 using CharacterMap.Models;
 using CharacterMap.Services;
 using CommunityToolkit.Mvvm.DependencyInjection;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,8 +61,13 @@ namespace CharacterMap.Controls
             Add(BasicFontFilter.SansSerifFonts);
             Add(BasicFontFilter.SymbolFonts);
 
-            AddSub("OptionSupportedScripts/Text")
-                .Add(BasicFontFilter.ScriptArabic, style)
+            var sub = AddSub("OptionSupportedScripts/Text");
+            var design = AddSub("OptionDesignTag/Text", sub);
+            foreach (var script in UnicodeScriptTags.Scripts)
+                design.Add(BasicFontFilter.ForDesignScriptTag(script.Value, script.Value), style);
+
+            AddSep(sub);
+            sub.Add(BasicFontFilter.ScriptArabic, style)
                 .Add(BasicFontFilter.ScriptBengali, style)
                 .Add(BasicFontFilter.ScriptCyrillic, style)
                 .Add(BasicFontFilter.ScriptDevanagari, style)
@@ -72,6 +78,8 @@ namespace CharacterMap.Controls
                 .Add(BasicFontFilter.ScriptThai, style)
                 .Add(BasicFontFilter.ScriptCJKUnifiedIdeographs, style)
                 .Add(BasicFontFilter.ScriptKoreanHangul, style);
+
+          
 
             _ops = AddSub("OptionMoreFilters/Text")
                 .Add(BasicFontFilter.ColorFonts, style)
@@ -122,10 +130,13 @@ namespace CharacterMap.Controls
                 return item;
             }
 
-            MenuFlyoutSubItem AddSub(string key)
+            MenuFlyoutSubItem AddSub(string key, MenuFlyoutSubItem parent = null)
             {
-                MenuFlyoutSubItem item = new() { Text = Localization.Get(key), Style = subStyle };
-                this.Items.Add(item);
+                MenuFlyoutSubItem item = new() { Text = Localization.Get(key) ?? key, Style = subStyle };
+                if (parent is not null)
+                    parent.Items.Add(item);
+                else
+                    this.Items.Add(item);
                 return item;
             }
 

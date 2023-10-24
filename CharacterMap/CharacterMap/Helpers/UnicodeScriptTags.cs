@@ -99,7 +99,7 @@ internal class UnicodeScriptTags
         { "marc", "Marchen" },
         { "gonm", "Masaram Gondi" },
         { "math", "Mathematical Alphanumeric Symbols" },
-        { "medf", "Medefaidrin (Oberi Okaime, Oberi Ɔkaimɛ)" },
+        { "medf", "Medefaidrin" }, // (Oberi Okaime, Oberi Ɔkaimɛ)" },
         { "mtei", "Meitei Mayek (Meithei, Meetei)" },
         { "mend", "Mende Kikakui" },
         { "merc", "Meroitic Cursive" },
