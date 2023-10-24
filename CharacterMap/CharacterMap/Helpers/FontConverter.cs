@@ -21,7 +21,7 @@ public static class FontConverter
             if (targetFolder is not null) // Avoid threading errors with multiple converts to the same target folder
                 name += $"-{_random.Next(1000,100000)}";
 
-            StorageFile newFile = await folder.CreateFileAsync($"{name}.otf", CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
+            StorageFile newFile = await folder.CreateFileAsync($"{name}.ttf", CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
             ConversionStatus result = 
                 isWoff ? await TryConvertWoffToOtfAsync(file, newFile).ConfigureAwait(false)
                 : await TryConvertToWoff2Async(file, newFile).ConfigureAwait(false);

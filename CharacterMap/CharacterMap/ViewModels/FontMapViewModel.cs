@@ -12,12 +12,14 @@ using Microsoft.Graphics.Canvas.Text;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
@@ -56,7 +58,8 @@ namespace CharacterMap.ViewModels
 
         public AppSettings Settings { get; }
 
-        public StorageFile SourceFile { get; set; }
+        public StorageFile SourceFile { get => Get<StorageFile>(); set { if (Set(value)) { OnPropertyChanged(nameof(IsInstallable)); } } }
+
 
         public ExportStyle BlackColor { get; } = ExportStyle.Black;
         public ExportStyle WhiteColor { get; } = ExportStyle.White;
@@ -101,6 +104,11 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] DevProviderBase        _selectedProvider;
         public FontDisplayMode DisplayMode                                  { get => Get<FontDisplayMode>(); set { if (Set(value)) { UpdateTypography(); } } }
         public FontAnalysis SelectedVariantAnalysis                         { get => Get<FontAnalysis>(); set { if (Set(value)) { UpdateVariations(); } } }
+
+        public bool IsInstallable => 
+            IsExternalFile 
+            && SourceFile is not null
+            && SourceFile.FileType.ToLower() is ".woff" or ".woff2";
 
         partial void OnShowColorGlyphsChanged(bool value)
         {
@@ -693,6 +701,13 @@ namespace CharacterMap.ViewModels
 
                 Messenger.Send(new AppNotificationMessage(true, Localization.Get(key), 2500));
             }
+        }
+
+        public async void LaunchInstall()
+        {
+            var path = FontFinder.GetAppPath(SelectedVariantAnalysis.FilePath).ToLower();
+            var file = await StorageFile.GetFileFromApplicationUriAsync(new Uri(path));
+            var result = await Launcher.LaunchFileAsync(file, new LauncherOptions { DisplayApplicationPicker = true });
         }
 
         public async void CopySequence()

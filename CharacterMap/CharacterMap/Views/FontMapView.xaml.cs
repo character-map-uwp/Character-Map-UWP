@@ -1194,6 +1194,11 @@ namespace CharacterMap.Views
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
         }
+
+        private void InstallButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = new InstallFontDialog(ViewModel.SelectedVariantAnalysis).ShowAsync(ContentDialogPlacement.Popup);
+        }
     }
 
 

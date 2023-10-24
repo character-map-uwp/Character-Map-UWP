@@ -478,31 +478,63 @@
                 ToolTipService.ToolTip="{Binding SelectedFont.Font.Name}"
                 d:Text="Font Name" />
 
-            <controls:UXButton
-                x:Name="AddToLibraryButton"
+            <toolkit:WrapPanel
+                x:Name="ExternalPanel"
                 x:Load="{x:Bind ViewModel.IsExternalFile}"
                 Grid.Row="1"
                 Grid.Column="2"
                 Height="{StaticResource TitleRowHeight}"
-                Padding="12,0"
                 HorizontalAlignment="Right"
                 core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
-                Click="{x:Bind ViewModel.ImportFile}"
-                IsEnabled="{Binding ImportButtonEnabled}"
-                Style="{ThemeResource TransparentButton}">
-                <Grid ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <FontIcon Glyph="&#xE109;" />
-                    <TextBlock
-                        x:Uid="AddToCollectionHint"
-                        Grid.Column="1"
-                        TextTrimming="CharacterEllipsis"
-                        d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
-                </Grid>
-            </controls:UXButton>
+                HorizontalSpacing="4"
+                Orientation="Horizontal"
+                VerticalSpacing="4">
+                <controls:UXButton
+                    x:Name="InstallButton"
+                    x:Load="{x:Bind ViewModel.IsInstallable, Mode=OneWay}"
+                    Height="{StaticResource TitleRowHeight}"
+                    Padding="12,0"
+                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                    Click="InstallButton_Click"
+                    Style="{ThemeResource TransparentButton}">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE896;" />
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="Install"
+                            TextTrimming="CharacterEllipsis"
+                            d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
+                    </Grid>
+                </controls:UXButton>
+                <controls:UXButton
+                    x:Name="AddToLibraryButton"
+                    Height="{StaticResource TitleRowHeight}"
+                    Padding="12,0"
+                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                    Click="{x:Bind ViewModel.ImportFile}"
+                    IsEnabled="{Binding ImportButtonEnabled}"
+                    Style="{ThemeResource TransparentButton}"
+                    d:Click="{x:Bind ViewModel.LaunchInstall}">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE109;" />
+                        <TextBlock
+                            x:Uid="AddToCollectionHint"
+                            Grid.Column="1"
+                            TextTrimming="CharacterEllipsis"
+                            d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
+                    </Grid>
+                </controls:UXButton>
+            </toolkit:WrapPanel>
+
+
 
             <Grid
                 x:Name="SearchContainer"

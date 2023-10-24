@@ -1442,7 +1442,7 @@ Tap and hold to arrange.</value>
     <value>Installed Fonts</value>
   </data>
   <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
-    <value>Export Installed Fonts</value>
+    <value>Export installed fonts</value>
   </data>
   <data name="OptionDesignTag.Text" xml:space="preserve">
     <value>Design Tag</value>

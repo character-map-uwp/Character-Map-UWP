@@ -255,14 +255,21 @@ public class FontFinder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static string GetAppPath(StorageFile file)
     {
-        if (file.Path.StartsWith(ApplicationData.Current.TemporaryFolder.Path))
+        return GetAppPath(file.Path);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static string GetAppPath(string path)
+    {
+        if (path.StartsWith(ApplicationData.Current.TemporaryFolder.Path, StringComparison.InvariantCultureIgnoreCase))
         {
-            var str = file.Path.Replace(ApplicationData.Current.TemporaryFolder.Path, "ms-appdata:///temp")
+            var str = path.Replace(ApplicationData.Current.TemporaryFolder.Path, "ms-appdata:///temp", StringComparison.InvariantCultureIgnoreCase)
                 .Replace("\\", "/");
             return str;
         }
-        var temp = Path.GetDirectoryName(file.Path).EndsWith(TEMP);
-        return $"ms-appdata:///local/{(temp ? $"{TEMP}/" :  string.Empty)}{file.Name}";
+        var temp = Path.GetDirectoryName(path).EndsWith(TEMP);
+        return $"ms-appdata:///local/{(temp ? $"{TEMP}/" : string.Empty)}{Path.GetFileName(path)}";
+
     }
 
     internal static Task<FontImportResult> ImportFontsAsync(IReadOnlyList<IStorageItem> items)
