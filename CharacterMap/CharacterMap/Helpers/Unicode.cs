@@ -1,10 +1,4 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Models;
-using CharacterMap.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Windows.Data.Text;
+﻿using Windows.Data.Text;
 
 namespace CharacterMap.Helpers
 {

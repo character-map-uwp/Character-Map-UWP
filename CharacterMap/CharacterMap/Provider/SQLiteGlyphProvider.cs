@@ -1,16 +1,6 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Services;
-using SQLite;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SQLite;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
-using CharacterMap.Models;
-using System.Diagnostics;
 
 namespace CharacterMap.Provider
 {

@@ -1,13 +1,6 @@
 ﻿//#define GENERATE_DATA
 
-using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Provider;
 using SQLite;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.UI.Xaml;
 
 namespace CharacterMap.Services

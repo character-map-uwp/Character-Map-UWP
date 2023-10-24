@@ -3,8 +3,25 @@
 // Project-level suppressions either have no target or are given
 // a specific target and scoped to a namespace, type, member, etc.
 
-using System.Diagnostics.CodeAnalysis;
+global using CharacterMap.Core;
+global using CharacterMap.Helpers;
+global using CharacterMap.Models;
+global using CharacterMap.Provider;
+global using CharacterMap.Services;
+global using CharacterMap.ViewModels;
+global using CharacterMapCX;
+global using CommunityToolkit.Mvvm.Messaging;
+global using System;
+global using System.Collections.Generic;
+global using System.IO;
+global using System.Linq;
+global using System.Numerics;
+global using System.Runtime.CompilerServices;
+global using System.Text;
+global using System.Threading;
+global using System.Threading.Tasks;
 
+using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "BritishEnglish", Scope = "member", Target = "~P:CharacterMap.Core.FontVariant.SupportsColourRendering")]
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Correct", Scope = "member", Target = "~P:CharacterMap.Core.FontVariant.Panose")]
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CharacterMap.ViewModels.SettingsViewModel.Changelog")]

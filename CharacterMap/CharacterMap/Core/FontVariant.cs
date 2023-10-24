@@ -1,19 +1,17 @@
 ﻿// Ignore Spelling: cfi
 
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Services;
-using CharacterMapCX;
 using Microsoft.Graphics.Canvas.Text;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using Windows.Storage;
 
 namespace CharacterMap.Core
 {
-    public record FaceMetadataInfo(string Key, string Value, CanvasFontInformation Info);
+    public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformation Info)
+    {
+        public string Value => string.Join(", ", Values);
+    }
+
+
 
     [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
     public partial class FontVariant : IDisposable
@@ -208,7 +206,9 @@ namespace CharacterMap.Core
         /* INTERNAL  */
 
         private List<FaceMetadataInfo> GetFontInformation() 
-            => INFORMATIONS.Select(ReadInfoKey).Where(s => s != null).ToList();
+            => INFORMATIONS.Select(ReadInfoKey)
+                           .Where(s => s != null && !string.IsNullOrWhiteSpace(s.Value))
+                           .ToList();
 
         private IReadOnlyList<TypographyFeatureInfo> LoadTypographyFeatures(bool isXaml = false)
         {
@@ -242,8 +242,14 @@ namespace CharacterMap.Core
             var dic = infos.ToDictionary(k => k.Key, k => k.Value);
             if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
                 || infos.TryGetValue("en-us", out value))
-                return new (name, value, info);
-            return new(name, infos.First().Value, info);
+                return new (name, new string[1] { value }, info);
+
+            return new(
+                name,
+                info is CanvasFontInformation.DesignScriptLanguageTag
+                    ? infos.Select(i => UnicodeScriptTags.GetName(i.Value)).ToArray()
+                    : infos.Select(i => i.Value).ToArray(),
+                info);
         }
 
         /// <summary>
@@ -295,9 +301,10 @@ namespace CharacterMap.Core
         private static CanvasFontInformation[] INFORMATIONS { get; } = {
             CanvasFontInformation.FullName,
             CanvasFontInformation.Description,
+            CanvasFontInformation.VersionStrings,
+            CanvasFontInformation.DesignScriptLanguageTag,
             CanvasFontInformation.Designer,
             CanvasFontInformation.DesignerUrl,
-            CanvasFontInformation.VersionStrings,
             CanvasFontInformation.FontVendorUrl,
             CanvasFontInformation.Manufacturer,
             CanvasFontInformation.Trademark,
