@@ -1457,7 +1457,7 @@ Tap and hold to arrange.</value>
     <value>Install Font</value>
   </data>
   <data name="InstallFontInstructions.Text" xml:space="preserve">
-    <value>Please read the following instructions before continuing to install your font:
+    <value>Please read all of instructions before continuing to install your font
 
 1. Press "Start" below
 2. Select "Windows Font Viewer" and choose "Just once" or "open"
