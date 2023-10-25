@@ -22,6 +22,14 @@ public partial class BasicFontFilter
             true);
     }
 
+    public static BasicFontFilter ForNamedRange(NamedUnicodeRange range)
+    {
+        return new BasicFontFilter(
+            (f, c) => f.Where(i => i.Variants.Any(v => Unicode.ContainsRange(v, range.Range))),
+            range.Name,
+            true);
+    }
+
     public static BasicFontFilter ForRange(UnicodeRange range, string displayTitle)
     {
         return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => Unicode.ContainsRange(v, range))), displayTitle);

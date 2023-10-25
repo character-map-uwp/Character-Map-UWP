@@ -1457,14 +1457,20 @@ Tap and hold to arrange.</value>
     <value>Install Font</value>
   </data>
   <data name="InstallFontInstructions.Text" xml:space="preserve">
-    <value>To install this font:
+    <value>Please read the following instructions before continuing to install your font:
 
-1. Press "Start" below"
-2. Select &amp;quot;Windows Font Viewer&amp;quot; and choose "Just once" or "open"
-3. Press "Install" in the top of the font viewer Window</value>
+1. Press "Start" below
+2. Select "Windows Font Viewer" and choose "Just once" or "open"
+3. Press "Install" in the top of the font viewer Window
+
+Your web font will be converted to OTF format for installation.</value>
+    <comment>Word in such a way that encourages the user to read all the steps before continuing</comment>
   </data>
   <data name="InstallLabel.Text" xml:space="preserve">
     <value>Install</value>
+  </data>
+  <data name="OptionUnicodeRange/Text" xml:space="preserve">
+    <value>Unicode Range</value>
   </data>
   <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
     <value>Advanced</value>

@@ -124,7 +124,7 @@ namespace CharacterMap.Core
 
         public bool HideDeprecatedMDL2
         {
-            get => Get(false);
+            get => Get(true);
             set => Set(value);
         }
 

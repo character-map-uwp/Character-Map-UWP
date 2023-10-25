@@ -47,15 +47,22 @@ namespace CharacterMap.Controls
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
             Style subStyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
 
+            // 1. Top level filters
             Add(BasicFontFilter.All);
             Add(BasicFontFilter.SerifFonts);
             Add(BasicFontFilter.SansSerifFonts);
             Add(BasicFontFilter.SymbolFonts);
 
+            // 2. Support Scripts
             var sub = AddSub("OptionSupportedScripts/Text");
+
             var design = AddSub("OptionDesignTag/Text", sub);
             foreach (var script in UnicodeScriptTags.Scripts)
                 design.Add(BasicFontFilter.ForDesignScriptTag(script.Value, script.Value), style);
+
+            var unicode = AddSub("OptionUnicodeRange/Text", sub);
+            foreach (var range in UnicodeRanges.All)
+                unicode.Add(BasicFontFilter.ForNamedRange(range), style);
 
             AddSep(sub);
             sub.Add(BasicFontFilter.ScriptArabic, style)
@@ -70,8 +77,8 @@ namespace CharacterMap.Controls
                 .Add(BasicFontFilter.ScriptCJKUnifiedIdeographs, style)
                 .Add(BasicFontFilter.ScriptKoreanHangul, style);
 
-          
 
+            // 3. "More" option
             _ops = AddSub("OptionMoreFilters/Text")
                 .Add(BasicFontFilter.ColorFonts, style)
                 .Add(BasicFontFilter.PanoseDecorativeFonts, style)
@@ -94,6 +101,7 @@ namespace CharacterMap.Controls
             _ops.Items.Add(_remoteOption);
             _ops.Items.Add(_appxOption);
 
+            // 4. Imported fonts
             this.AddSeparator();
             Add(BasicFontFilter.ImportedFonts);
 
