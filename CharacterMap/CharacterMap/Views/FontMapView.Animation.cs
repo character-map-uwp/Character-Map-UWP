@@ -1,8 +1,4 @@
-﻿using CharacterMap.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
@@ -162,12 +158,15 @@ namespace CharacterMap.Views
             }
 
             // 1.0. Get all the items we'll be animating
-            List<FrameworkElement> childs = CharGrid.ItemsPanelRoot.Children
+            var clds = CharGrid.ItemsPanelRoot.Children
                 .OfType<FrameworkElement>()
                 .Where(c => c.IsInViewport(CharGrid))
-                .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
-                .OrderBy(c => Guid.NewGuid()).ToList();
+                .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c); ;
 
+            if (CharGrid.Header is FrameworkElement header)
+                clds = clds.Append(header);
+
+            List<FrameworkElement> childs = clds.OrderBy(c => Guid.NewGuid()).ToList();
             List<FrameworkElement> toChilds = GetTypeRampAnimationTargets();
 
             // 1.1. Default animation configuration
@@ -308,7 +307,10 @@ namespace CharacterMap.Views
                 .OfType<FrameworkElement>()
                 .Where(c => c.IsInViewport(CharGrid))
                 .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
-                .OrderBy(c => Guid.NewGuid()).ToList();
+                .Append(CharGrid.Header as FrameworkElement)
+                .Where(c => c is not null)
+                .OrderBy(c => Guid.NewGuid())
+                .ToList();
 
             if (toChilds.Count == 0)
             {
@@ -316,7 +318,10 @@ namespace CharacterMap.Views
                     .OfType<FrameworkElement>()
                     .Where(c => c.IsInViewport(this))
                     .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
-                    .OrderBy(c => Guid.NewGuid()).ToList();
+                    .Append(CharGrid.Header as FrameworkElement)
+                    .Where(c => c is not null)
+                    .OrderBy(c => Guid.NewGuid())
+                    .ToList();
 
                 if (toChilds.Count == 0)
                     return;

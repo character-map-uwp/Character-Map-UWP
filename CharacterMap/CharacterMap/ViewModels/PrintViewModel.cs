@@ -1,10 +1,4 @@
 ﻿using CharacterMap.Controls;
-using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -152,14 +146,7 @@ namespace CharacterMap.ViewModels
             }
 
             // Filter characters
-            var chars = Font.Characters.AsEnumerable();
-            if (HideWhitespace)
-                chars = Font.Characters.Where(c => !Unicode.IsWhiteSpaceOrControl(c.UnicodeIndex));
-
-            foreach (var cat in Categories.Where(c => !c.IsSelected))
-                chars = chars.Where(c => c.Range != cat.Range);
-
-            Characters = chars.ToList();
+            Characters = Unicode.FilterCharacters(Font.Characters, Categories, HideWhitespace);
         }
 
         private PrintViewModel() { }

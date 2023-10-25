@@ -5,14 +5,14 @@
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Install Font"
+    x:Uid="InstallDialog"
     CornerRadius="{StaticResource PopupCornerRadius}"
     SecondaryButtonClick="{x:Bind Hide}"
     SecondaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
-    SecondaryButtonText="Close"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
-    mc:Ignorable="d">
-
+    mc:Ignorable="d"
+    d:SecondaryButtonText="Close"
+    d:Title="Install Font">
 
     <Grid>
         <StackPanel
@@ -20,21 +20,23 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Spacing="24">
-            <TextBlock HorizontalAlignment="Left">
-                <Run Text="To install this font:" />
-                <LineBreak />
-                <LineBreak />
-                <Run Text="1. Press &quot;Start&quot; below" />
-                <LineBreak />
-                <Run Text="2. Select &quot;Windows Font Viewer&quot; and choose &quot;Just Once&quot; or &quot;open&quot;" />
-                <LineBreak />
-                <Run Text="3. Press &quot;Install&quot; in the top of the font viewer Window" />
+            <TextBlock x:Uid="InstallFontInstructions" HorizontalAlignment="Left">
+                <d:TextBlock.Inlines>
+                    <Run Text="To install this font:" />
+                    <LineBreak />
+                    <LineBreak />
+                    <Run Text="1. Press &quot;Start&quot; below" />
+                    <LineBreak />
+                    <Run Text="2. Select &quot;Windows Font Viewer&quot; and choose &quot;Just once&quot; or &quot;open&quot;" />
+                    <LineBreak />
+                    <Run Text="3. Press &quot;Install&quot; in the top of the font viewer Window" />
+                </d:TextBlock.Inlines>
             </TextBlock>
 
             <Button
                 Width="200"
                 Click="StartClick"
-                Content="Start"
+                Content="{core:Localizer Key=StartLabel/Text}"
                 Style="{StaticResource DefaultThemeButtonStyle}" />
         </StackPanel>
     </Grid>

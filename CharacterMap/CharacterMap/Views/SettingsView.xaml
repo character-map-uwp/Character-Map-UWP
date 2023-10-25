@@ -162,6 +162,15 @@
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
+                        Content="{x:Bind h:Localization.Get('SettingsAdvancedOptionsLabel/Text')}"
+                        Tag="AdvancedPanel">
+                        <controls:MenuButton.Icon>
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEA86;" />
+                        </controls:MenuButton.Icon>
+                    </controls:MenuButton>
+
+                    <controls:MenuButton
+                        Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsChangelogLabel/Text')}"
                         Tag="ChangePanel">
                         <controls:MenuButton.Icon>
@@ -661,9 +670,19 @@
                             </Grid>
 
                             <StackPanel
-                                x:Name="ChangePanel"
+                                x:Name="AdvancedPanel"
                                 x:Load="False"
                                 Visibility="Collapsed">
+                                <TextBlock x:Uid="SettingsAdvancedOptionsLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                <controls:SettingsPresenter
+                                    x:Uid="SettingsDeprecatedIconsPresenter"
+                                    d:Description="If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout."
+                                    d:Title="Hide deprecated icons">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.HideDeprecatedMDL2, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+                            </StackPanel>
+
+                            <StackPanel x:Name="ChangePanel">
                                 <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <controls:UXHyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />

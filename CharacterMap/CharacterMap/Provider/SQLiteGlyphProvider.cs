@@ -91,7 +91,7 @@ namespace CharacterMap.Provider
             return desc;
         }
 
-
+        
 
 
         #region SEARCH
@@ -195,10 +195,6 @@ namespace CharacterMap.Provider
                 /// We don't want to throw an exception if we ever hit this case, we'll just do our best.
                 foreach (var range in variant.UnicodeRanges.Take(995)) 
                 {
-                    string qr = range.First != range.Last
-                        ? "Ix BETWEEN {0} AND {1}"
-                        : "Ix == {0}";
-
                     if (next)
                         sb.AppendFormat(range.First != range.Last
                         ? " OR Ix BETWEEN {0} AND {1}"
@@ -248,24 +244,27 @@ namespace CharacterMap.Provider
                 }
 
                 /// BENCHMARKING FOR FTFS VS NORMAL TABLES
-                //Stopwatch sw = Stopwatch.StartNew();
-                //object res = null;
-                //for (int i = 0; i < 100; i++)
-                //{
-                //    string bsql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE ? LIMIT {limit}";
-                //    res = _connection.GetGlyphData(table, bsql2, $"%{query}%");
-                //}
-                //var time = sw.ElapsedMilliseconds;
-                //sw.Restart();
-                //for (int i = 0; i < 100; i++)
-                //{
-                //    string bsql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
-                //    res = _connection.GetGlyphData(ftsTable, bsql, $"{query}*");
-                //}
-                //var time2 = sw.ElapsedMilliseconds;
-                //Debugger.Break();
-             
+#if BENCHMARK
+                Stopwatch sw = Stopwatch.StartNew();
+                object res = null;
+                for (int i = 0; i < 100; i++)
+                {
+                    string bsql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE ? LIMIT {limit}";
+                    res = _connection.GetGlyphData(table, bsql2, $"%{query}%");
+                }
+                var time = sw.ElapsedMilliseconds;
+                sw.Restart();
+                for (int i = 0; i < 100; i++)
+                {
+                    string bsql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
+                    res = _connection.GetGlyphData(ftsTable, bsql, $"{query}*");
+                }
+                var time2 = sw.ElapsedMilliseconds;
+                Debugger.Break();
+#endif
 
+
+#if USE_FTS
                 // 3.3. Execute!
                 string sql = $"SELECT * FROM {ftsTable} {sb}{extra} AND Description MATCH ? LIMIT {limit}";
                 results.AddRange(_connection.GetGlyphData(ftsTable, sql, $"{query}*"));
@@ -273,6 +272,7 @@ namespace CharacterMap.Provider
                 // 4. If we have SEARCH_LIMIT matches, we don't need to perform a partial search and can go home early
                 if (results != null && results.Count == SEARCH_LIMIT)
                     return InsertHex(results);
+#endif
 
                 // 5. Perform a partial search on non-FTS table. Only search for what we need.
                 //    This means limit the amount of results, and exclude anything we've already matched.
@@ -305,6 +305,6 @@ namespace CharacterMap.Provider
             return s.Length <= 7 && !s.Any(c => char.IsLetter(c) == false);
         }
 
-        #endregion
+#endregion
     }
 }

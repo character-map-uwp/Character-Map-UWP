@@ -78,7 +78,7 @@ namespace CharacterMap.Core
 
         public int MaxSearchResult
         {
-            get => Get(31, "MSR");
+            get => Get(51, "MSR");
             set => Set(value, "MSR");
         }
 
@@ -120,6 +120,12 @@ namespace CharacterMap.Core
         {
             get => Get(true);
             set => BroadcastSet(value);
+        }
+
+        public bool HideDeprecatedMDL2
+        {
+            get => Get(false);
+            set => Set(value);
         }
 
         public ElementTheme UserRequestedTheme

@@ -1,12 +1,5 @@
-using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Services;
 using CharacterMap.Views;
-using CharacterMapCX;
 using Microsoft.Extensions.DependencyInjection;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using System;
-using System.Threading.Tasks;
 using Windows.UI.Popups;
 
 namespace CharacterMap.ViewModels
@@ -35,7 +28,7 @@ namespace CharacterMap.ViewModels
     {
         static ViewModelLocator()
         {
-            NavigationServiceEx _navigationService = new NavigationServiceEx();
+            NavigationServiceEx _navigationService = new ();
 
             void Register<VM, V>(IServiceCollection services) where VM : class
             {

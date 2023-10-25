@@ -1,5 +1,4 @@
-﻿using CharacterMap.Helpers;
-using Windows.UI.Composition;
+﻿using Windows.UI.Composition;
 using Windows.UI.Xaml;
 
 namespace CharacterMap.Styles

@@ -1447,4 +1447,37 @@ Tap and hold to arrange.</value>
   <data name="OptionDesignTag.Text" xml:space="preserve">
     <value>Design Tag</value>
   </data>
+  <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
+    <value>Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</value>
+  </data>
+  <data name="InstallDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="InstallDialog.Title" xml:space="preserve">
+    <value>Install Font</value>
+  </data>
+  <data name="InstallFontInstructions.Text" xml:space="preserve">
+    <value>To install this font:
+
+1. Press "Start" below"
+2. Select &amp;quot;Windows Font Viewer&amp;quot; and choose "Just once" or "open"
+3. Press "Install" in the top of the font viewer Window</value>
+  </data>
+  <data name="InstallLabel.Text" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Description" xml:space="preserve">
+    <value>If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout.
+
+Referencing deprecated icons by unicode codepoint is not recommended, and all deprecated icons have non-deprecated equivalents.</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Title" xml:space="preserve">
+    <value>Hide deprecated icons</value>
+  </data>
+  <data name="StartLabel.Text" xml:space="preserve">
+    <value>Start</value>
+  </data>
 </root>

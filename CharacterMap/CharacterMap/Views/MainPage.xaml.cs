@@ -49,6 +49,7 @@ namespace CharacterMap.Views
                 ViewModel = Ioc.Default.GetService<MainViewModel>();
                 MainDispatcher = Dispatcher;
                 Register<EditSuggestionsRequested>(m => ShowEditSuggestions());
+                Register<AdvancedOptionsRequested>(m => ShowAdvancedOptions());
             }
             else
             {
@@ -365,7 +366,7 @@ namespace CharacterMap.Views
             ShowSettings();
         }
 
-        void ShowAbout() => ShowSettings(9);
+        void ShowAbout() => ShowSettings(10);
 
         void ShowSettings(int idx = 0)
         {
@@ -697,6 +698,15 @@ namespace CharacterMap.Views
             {
                 await WindowService.ReactivateMainAsync();
                 ShowSettings(4);
+            });
+        }
+
+        public void ShowAdvancedOptions()
+        {
+            _ = MainDispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                await WindowService.ReactivateMainAsync();
+                ShowSettings(7);
             });
         }
 

@@ -1,18 +1,12 @@
-﻿using CharacterMap.Services;
+﻿// Ignore Spelling: MDL
+
 using SQLite;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.Data.Xml.Dom;
-using Windows.Storage;
 using Windows.UI.Xaml.Controls;
-using CharacterMap.Models;
 
 #if DEBUG && GENERATE_DATABASE
 using Humanizer;
+using System.Globalization;
 #endif
 
 namespace CharacterMap.Provider
@@ -24,6 +18,36 @@ namespace CharacterMap.Provider
      * the app
      */
 #if DEBUG && GENERATE_DATABASE
+
+    /// <summary>
+    /// Glyphs with prefixes ranging from E0- to E5- are legacy, so we return them at the end of search results
+    /// See https://learn.microsoft.com/en-us/windows/apps/design/style/segoe-ui-symbol-font#icon-list
+    /// </summary>
+    public class MDL2Comparer : IComparer<int>
+    {
+        const int min = 0xE000;
+        const int max = 0xE5FF;
+
+        public int Compare(int x, int y)
+        {
+            if (IsDeprecated(x))
+                x += 2_000_000;
+            if (IsDeprecated(y))
+                y += 2_000_000;
+
+            return x - y;
+        }
+
+        public bool IsDeprecated(MDL2Glyph g)
+        {
+            return g.UnicodeIndex >= min && g.UnicodeIndex <= max;
+        }
+
+        public bool IsDeprecated(int index)
+        {
+            return index >= min && index <= max;
+        }
+    }
 
     internal class FabricGlyph
     {
@@ -41,9 +65,8 @@ namespace CharacterMap.Provider
                 if (File.Exists(path))
                     File.Delete(path);
 
-                SQLiteConnectionString connection = new SQLiteConnectionString(path);
-
-                using (SQLiteConnection con = new SQLiteConnection(connection))
+                SQLiteConnectionString connection = new (path);
+                using (SQLiteConnection con = new (connection))
                 {
                     PrepareDatabase(con);
                 }
@@ -58,6 +81,7 @@ namespace CharacterMap.Provider
                 await PopulateDingsAsync<Wingdings2Glyph>(connection, unicode, "Wingdings2");
                 await PopulateDingsAsync<Wingdings3Glyph>(connection, unicode, "Wingdings3");
 
+#if USE_FTS
                 using (SQLiteConnection con = new SQLiteConnection(connection))
                 {
                     con.Execute($"DROP TRIGGER IF EXISTS insert_trigger_{MDL2_SEARCH_TABLE}");
@@ -72,8 +96,9 @@ namespace CharacterMap.Provider
                         con.Execute($"INSERT INTO {target.SearchTable}({target.SearchTable}) VALUES('optimize')");
                     }
                 }
+#endif
 
-                using (SQLiteConnection con = new SQLiteConnection(connection))
+                using (SQLiteConnection con = new(connection))
                 {
                     con.Execute("VACUUM \"main\"");
                     con.Execute("VACUUM \"temp\"");
@@ -175,6 +200,7 @@ namespace CharacterMap.Provider
         {
             return Task.Run(async () =>
             {
+
                 /* Based on the MDL2 listings taken from the Github source of the 
                  * Windows Developer documentation
                  */
@@ -226,19 +252,18 @@ namespace CharacterMap.Provider
                     }
                 }
 
+                var comparer = new MDL2Comparer();
+
                 var data = datas.Select(d => new MDL2Glyph
                 {
-                    Description = Humanize(d.name),
-                    UnicodeIndex = int.Parse(d.code, System.Globalization.NumberStyles.HexNumber),
+                    Description = $"{Humanize(d.name)}{(comparer.IsDeprecated(int.Parse(d.code, NumberStyles.HexNumber)) ? " (Deprecated)" : string.Empty)}",
+                    UnicodeIndex = int.Parse(d.code, NumberStyles.HexNumber),
                     UnicodeHex = d.code
-                }).OrderBy(g => g.UnicodeIndex).ToList();
+                }).OrderBy(g => g.UnicodeIndex, comparer).ToList();
 
-                using (var c = new SQLiteConnection(connection))
+                using (SQLiteConnection c = new (connection))
                 {
-                    c.RunInTransaction(() =>
-                    {
-                        c.InsertAll(data);
-                    });
+                    c.RunInTransaction(() => c.InsertAll(data));
                 }
             });
         }
@@ -294,14 +319,14 @@ namespace CharacterMap.Provider
                 using var reader = new StreamReader(stream);
 
                 string[] parts;
-                List<T> data = new List<T>();
+                List<T> data = new ();
                 while (!reader.EndOfStream)
                 {
                     parts = reader.ReadLine().Split(" ", 2, StringSplitOptions.None);
 
                     string desc = parts[1];
                     string hex = parts[0].ToUpper();
-                    int code = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+                    int code = Int32.Parse(hex, NumberStyles.HexNumber);
 
                     data.Add(new T
                     {
@@ -340,7 +365,7 @@ namespace CharacterMap.Provider
                     // from the original Dings range to the appropriate Unicode range... about 60,000+ places away.
                     // Whilst still also keeping the original mappings.
                     string hex2 = $"F{hex.Remove(0, 1)}";
-                    int code2 = Int32.Parse(hex2, System.Globalization.NumberStyles.HexNumber);
+                    int code2 = Int32.Parse(hex2, NumberStyles.HexNumber);
 
                     data.Add(new T
                     {
@@ -367,7 +392,7 @@ namespace CharacterMap.Provider
                     });
                 }
 
-                using (var c = new SQLiteConnection(connection))
+                using (SQLiteConnection c = new (connection))
                 {
                     c.RunInTransaction(() => c.InsertAll(data.OrderBy(d => d.UnicodeIndex).ToList()));
                 }
@@ -383,6 +408,9 @@ namespace CharacterMap.Provider
             foreach (SearchTarget target in SearchTarget.KnownTargets)
                 con.CreateTable(target.TargetType);
 
+            // Create Fast-Text-Search tables.
+
+#if USE_FTS
             /* MDL2 SEARCH */
             CreateSearchTable(con, MDL2_SEARCH_TABLE, nameof(MDL2Glyph));
 
@@ -392,6 +420,7 @@ namespace CharacterMap.Provider
             /* GENERIC ICON FONTS */
             foreach (SearchTarget target in SearchTarget.KnownTargets)
                 CreateSearchTable(con, target.SearchTable, target.TargetType.Name);
+#endif
         }
 
         private static void CreateSearchTable(SQLiteConnection con, string table, string insertSource)
@@ -405,4 +434,4 @@ namespace CharacterMap.Provider
         }
     }
 #endif
-}
+        }

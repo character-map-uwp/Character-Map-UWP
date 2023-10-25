@@ -1,24 +1,10 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Provider;
-using CharacterMap.Services;
-using CharacterMap.Views;
-using CharacterMapCX;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CharacterMap.Views;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Graphics.Canvas.Text;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -55,11 +41,9 @@ namespace CharacterMap.ViewModels
 
         private int[] _rampSizes { get; } = new[] { 12, 18, 24, 48, 72, 96, 110, 134 };
 
-
         public AppSettings Settings { get; }
 
         public StorageFile SourceFile { get => Get<StorageFile>(); set { if (Set(value)) { OnPropertyChanged(nameof(IsInstallable)); } } }
-
 
         public ExportStyle BlackColor { get; } = ExportStyle.Black;
         public ExportStyle WhiteColor { get; } = ExportStyle.White;
@@ -95,6 +79,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] bool                   _hasFontOptions;
         [ObservableProperty] bool                   _isSvgChar;
         [ObservableProperty] bool                   _isSequenceRootVisible;
+        [ObservableProperty] bool                   _isMDL2Font;
         [ObservableProperty] string                 _titlePrefix;
         [ObservableProperty] string                 _xamlPath;
         [ObservableProperty] string                 _sequence               = string.Empty;
@@ -284,21 +269,18 @@ namespace CharacterMap.ViewModels
             {
                 // Fast path : all characters;
                 Chars = SelectedVariant?.GetCharacters();
-                GroupedChars = UnicodeRangeGroup.CreateGroups(Chars);
+                GroupedChars = UnicodeRangeGroup.CreateGroups(Chars, IsMDL2Font);
             }
             else
             {
                 // Filter characters
-                var chars = SelectedVariant?.GetCharacters().AsEnumerable();
-                foreach (var range in SelectedGlyphCategories.Where(c => !c.IsSelected))
-                    chars = chars.Where(c => !range.Range.Contains(c.UnicodeIndex));
-
+                var items = Unicode.FilterCharacters(SelectedVariant?.GetCharacters(), SelectedGlyphCategories, false);
+                
                 // Only change the character source if we actually need too
-                var items = chars.ToList();
-                if (items.Count != Chars.Count)
+                if (Chars is null || items.Count != Chars.Count)
                 {
                     Chars = items;
-                    GroupedChars = UnicodeRangeGroup.CreateGroups(items);
+                    GroupedChars = UnicodeRangeGroup.CreateGroups(items, IsMDL2Font);
                 }
                 else
                 {
@@ -306,7 +288,7 @@ namespace CharacterMap.ViewModels
                         if (items[i] != Chars[i])
                         {
                             Chars = items;
-                            GroupedChars = UnicodeRangeGroup.CreateGroups(items);
+                            GroupedChars = UnicodeRangeGroup.CreateGroups(items, IsMDL2Font);
                             break;
                         }
                 }
@@ -321,13 +303,14 @@ namespace CharacterMap.ViewModels
             {
                 IsLoadingCharacters = true;
 
-                var ranges = SelectedVariant.GetRanges();
-                SelectedGlyphCategories = UnicodeRanges.All
-                    .Where(r => ranges.Any(g => g.Name == r.Name))
-                    .Select(r => new UnicodeRangeModel(r))
-                    .ToList();
+                // 1. Update categories
+                IsMDL2Font = FontFinder.IsMDL2(variant);
+                SelectedGlyphCategories = Unicode.GetCategories(SelectedVariant, IsMDL2Font);
 
+                // 2. Update characters
                 UpdateCharacters();
+
+                // 3. Load variant data
                 if (variant != null)
                 {
                     var analysis = variant.GetAnalysis();
@@ -336,8 +319,6 @@ namespace CharacterMap.ViewModels
                     SelectedVariantAnalysis = analysis;
                     HasFontOptions = SelectedVariantAnalysis.ContainsVectorColorGlyphs || SelectedVariant.HasXamlTypographyFeatures;
                     ShowColorGlyphs = variant.DirectWriteProperties.IsColorFont;
-                    
-                    // Update Unicode Categories
                 }
                 else
                 {

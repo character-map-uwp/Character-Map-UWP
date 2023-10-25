@@ -80,6 +80,8 @@ public class RampOptionsUpdatedMessage { }
 
 public class EditSuggestionsRequested { }
 
+public class AdvancedOptionsRequested { }
+
 public class ToggleCompactOverlayMessage { }
 
 public class AppSettingsChangedMessage

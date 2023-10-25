@@ -116,14 +116,7 @@ namespace CharacterMap.ViewModels
             }
 
             // Filter characters
-            var chars = Font.Characters.AsEnumerable();
-            if (HideWhitespace)
-                chars = Font.Characters.Where(c => !Unicode.IsWhiteSpaceOrControl(c.UnicodeIndex));
-            
-            foreach (var cat in Categories.Where(c => !c.IsSelected))
-                chars = chars.Where(c => c.Range != cat.Range);
-
-            Characters = chars.ToList();
+            Characters = Unicode.FilterCharacters(Font.Characters, Categories, HideWhitespace);
         }
 
         public void UpdateCategories(IList<UnicodeRangeModel> value)

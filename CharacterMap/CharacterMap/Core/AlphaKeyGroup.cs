@@ -12,11 +12,29 @@ public class UnicodeRangeGroup : List<Character>, IGrouping<NamedUnicodeRange, C
         Key = key;
     }
 
-    public static ObservableCollection<UnicodeRangeGroup> CreateGroups(IEnumerable<Character> items)
+    public static ObservableCollection<UnicodeRangeGroup> CreateGroups(IEnumerable<Character> items, bool mdl2 = false)
     {
-        return new(items
-            .GroupBy(i => i.Range ?? throw new InvalidOperationException(), c => c)
-            .Select(g=> new UnicodeRangeGroup(g.Key, g)));
+        if (!mdl2)
+        {
+            return new(items
+                .GroupBy(i => i.Range ?? throw new InvalidOperationException(), c => c)
+                .Select(g => new UnicodeRangeGroup(g.Key, g)));
+        }
+        else
+        {
+            return new(items
+                .GroupBy(i =>
+                {
+                    if (i.UnicodeIndex >= 0xE000 && i.UnicodeIndex <= 0xE5FF)
+                        return UnicodeRanges.MDL2Deprecated;
+                    else if (i.UnicodeIndex >= 0xE600)
+                        return UnicodeRanges.PrivateUseAreaMDL2;
+                    else
+                        return i.Range ?? throw new InvalidOperationException();
+                }, c => c)
+                .Select(g => new UnicodeRangeGroup(g.Key, g)));
+        }
+        
     }
 
     public override string ToString()

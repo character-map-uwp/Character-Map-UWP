@@ -504,10 +504,10 @@
                         </Grid.ColumnDefinitions>
                         <FontIcon Glyph="&#xE896;" />
                         <TextBlock
+                            x:Uid="InstallLabel"
                             Grid.Column="1"
-                            Text="Install"
                             TextTrimming="CharacterEllipsis"
-                            d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
+                            d:Text="Install" />
                     </Grid>
                 </controls:UXButton>
                 <controls:UXButton
@@ -1102,19 +1102,15 @@
                         x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
                         x:Uid="VariableFeaturesMessage"
                         Margin="12 6 0 -6"
-                        FontSize="12"
-                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                        TextWrapping="Wrap"
-                        d:Text="This font has variable features. To explore them, switch to Type Ramp view using the switch button above." />
+                        Style="{StaticResource DescriptionContentStyle}"
+                        d:Text="{core:Localizer Key=VariableFeaturesMessage/Text}" />
                     <TextBlock
                         x:Name="ColrV1SupportMessage"
                         x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
                         x:Uid="ColrV1SupportMessage"
                         Margin="12 6 0 -6"
-                        FontSize="12"
-                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                        TextWrapping="Wrap"
-                        d:Text="This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above." />
+                        Style="{StaticResource DescriptionContentStyle}"
+                        d:Text="{core:Localizer Key=ColrV1SupportMessage/Text}" />
                 </StackPanel>
 
             </Grid>
@@ -1157,6 +1153,56 @@
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
+                    <GridView.Header>
+                        <!--    -->
+                        <Grid
+                            x:Name="DeprecatedIconsInfoBar"
+                            x:Load="{x:Bind core:Converters.TrueTrue(ViewModel.Settings.HideDeprecatedMDL2, ViewModel.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
+                            ColumnSpacing="12"
+                            Margin="14 24 0 0"
+                            Padding="6"
+                            Background="{StaticResource InfoBarBackgroundBrush}"
+                            CornerRadius="{StaticResource InfoBarCornerRadius}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <FontIcon
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="13.333"
+                                Glyph="&#xE946;" />
+
+                            <TextBlock
+                                x:Name="HiddenGlyphsMessage"
+                                x:Uid="HiddenGlyphsMessage"
+                                Grid.Column="1"
+                                Margin="0"
+                                VerticalAlignment="Center"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                Opacity="0.99"
+                                Style="{StaticResource DescriptionStyle}"
+                                Text="{core:Localizer Key=HiddenGlyphsMessage/Text}"
+                                TextLineBounds="Tight" />
+
+                            <Button
+                                Grid.Column="2"
+                                Padding="0"
+                                Click="AdvancedSettings_Click"
+                                Style="{StaticResource ChromelessButtonStyle}">
+                                <ToolTipService.ToolTip>
+                                    <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
+                                </ToolTipService.ToolTip>
+                                <FontIcon
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="13.333"
+                                    Glyph="&#xE713;" />
+                            </Button>
+                        </Grid>
+
+                    </GridView.Header>
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid AreStickyGroupHeadersEnabled="True" Orientation="Horizontal" />

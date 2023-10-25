@@ -2745,6 +2745,7 @@ namespace SQLite
             return exact;
         }
 
+        [DebuggerDisplay("{Name}")]
         public class Column
         {
             PropertyInfo _prop;

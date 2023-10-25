@@ -1,17 +1,7 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Services;
-using CharacterMap.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.DependencyInjection;
+﻿using CharacterMap.Views;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Mvvm.Messaging;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Windows.Input;
 using Windows.ApplicationModel;
 

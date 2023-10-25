@@ -1,4 +1,5 @@
-﻿using Windows.Data.Text;
+﻿using SQLitePCL;
+using Windows.Data.Text;
 
 namespace CharacterMap.Helpers;
 
@@ -72,5 +73,35 @@ public static class Unicode
             : source.Select(s => s.Clone()).ToList();
 
         return list;
+    }
+
+    public static List<Character> FilterCharacters(IReadOnlyList<Character> characters, IList<UnicodeRangeModel> categories, bool hideWhitespace)
+    {
+        var chars = characters.AsEnumerable();
+
+        if (hideWhitespace)
+            chars = chars.Where(c => !Unicode.IsWhiteSpaceOrControl(c.UnicodeIndex));
+
+        foreach (var cat in categories.Where(c => !c.IsSelected))
+            chars = chars.Where(c => !cat.Range.Contains(c.UnicodeIndex));
+
+        return chars.ToList();
+    }
+
+    public static List<UnicodeRangeModel> GetCategories(FontVariant variant, bool mdl2)
+    {
+        var ranges = variant.GetRanges();
+        var cats = UnicodeRanges.All
+            .Where(r => ranges.Any(g => g.Name == r.Name))
+            .Select(r => new UnicodeRangeModel(r))
+            .ToList();
+        if (mdl2)
+        {
+            cats.Remove(cats.FirstOrDefault(m => m.Range == UnicodeRanges.PrivateUseArea));
+            cats.Add(new UnicodeRangeModel(UnicodeRanges.MDL2Deprecated) { IsSelected = !ResourceHelper.AppSettings.HideDeprecatedMDL2 });
+            cats.Add(new UnicodeRangeModel(UnicodeRanges.PrivateUseAreaMDL2));
+        }
+
+        return cats;
     }
 }

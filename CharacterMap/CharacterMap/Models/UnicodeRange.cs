@@ -1,4 +1,6 @@
-﻿namespace CharacterMap.Models;
+﻿using System.Diagnostics;
+
+namespace CharacterMap.Models;
 
 public partial struct UnicodeRange
 {
@@ -30,6 +32,7 @@ public partial struct UnicodeRange
     public static UnicodeRange TransportSymbols { get; } = new(0x1F680, 0x1F6FF);
 }
 
+[DebuggerDisplay("{Name}, Start: {Start}, End: {End}")]
 public class NamedUnicodeRange
 {
     public string Name { get; }
@@ -213,6 +216,10 @@ public static class UnicodeRanges
     public static NamedUnicodeRange HalfwidthandFullwidthForms = new("Half-width and Full-width Forms", 65280, 240);
     public static NamedUnicodeRange Specials = new("Specials", 65520, 16);
     public static NamedUnicodeRange Misc = new("Misc", 65536, 20000);
+
+    /* These are special cases for MDL2 and are not included in All */
+    public static NamedUnicodeRange MDL2Deprecated = new("Deprecated", 0xE000, 0xE5FF - 0xE000 + 1);
+    public static NamedUnicodeRange PrivateUseAreaMDL2 = new("Private Use Area", 58880, 4864);
 
     /// <summary>
     /// Unicode Ranges sorted by Range

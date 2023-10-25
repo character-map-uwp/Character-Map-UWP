@@ -1,15 +1,5 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Services;
-using CharacterMap.ViewModels;
-using CharacterMap.Views;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CharacterMap.Views;
 using Microsoft.Toolkit.Uwp.UI.Controls;
-using System;
-using System.IO;
-using System.Linq;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

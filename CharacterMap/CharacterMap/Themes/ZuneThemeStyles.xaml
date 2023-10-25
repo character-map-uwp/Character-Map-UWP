@@ -19,6 +19,7 @@
     <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource SystemChromeMediumColor}" />
     <x:Double x:Key="MinTitleBarHeight">32</x:Double>
     <CornerRadius x:Key="CardCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="InfoBarCornerRadius">0</CornerRadius>
 
 
 
@@ -137,6 +138,7 @@
     <SolidColorBrush x:Key="SelectedPointerOverBackgroundBrush" Color="#E7E8E8" />
     <SolidColorBrush x:Key="ControlGlyphBrush" Color="#555555" />
     <SolidColorBrush x:Key="ControlContentPointerOverForeground" Color="#B1B4B6" />
+    <SolidColorBrush x:Key="InfoBarBackgroundBrush" Color="Transparent" />
 
     <LinearGradientBrush x:Key="ComboBoxBackground" StartPoint="0.5,0" EndPoint="0.5,1">
         <GradientStop Offset="1" Color="#FFD8D8D8" />

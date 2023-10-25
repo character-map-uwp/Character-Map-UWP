@@ -66,6 +66,7 @@
 
     <BrushTransition x:Key="ThemeBackgroundTransition" Duration="0:0:0.1" />
     <StaticResource x:Key="AltHostBrush" ResourceKey="DefaultPageBackgroundBrush" />
+    <SolidColorBrush x:Key="InfoBarBackgroundBrush" Color="Transparent" />
 
 
 

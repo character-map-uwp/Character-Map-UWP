@@ -1012,6 +1012,16 @@ namespace CharacterMap.Views
                 : FlowDirection.LeftToRight;
         }
 
+        private void InstallButton_Click(object sender, RoutedEventArgs e)
+        {
+            _ = new InstallFontDialog(ViewModel.SelectedVariantAnalysis).ShowAsync(ContentDialogPlacement.Popup);
+        }
+
+        private void AdvancedSettings_Click(object sender, RoutedEventArgs e)
+        {
+            Messenger.Send<AdvancedOptionsRequested>();
+        }
+
 
 
 
@@ -1193,11 +1203,6 @@ namespace CharacterMap.Views
             CopySequenceRoot.GetElementVisual().StartAnimation(CompositionFactory.TRANSLATION, CompositionFactory.CreateSlideIn(sender));
 
             //Composition.SetThemeShadow(CopySequenceRoot, 20, CharGrid);
-        }
-
-        private void InstallButton_Click(object sender, RoutedEventArgs e)
-        {
-            _ = new InstallFontDialog(ViewModel.SelectedVariantAnalysis).ShowAsync(ContentDialogPlacement.Popup);
         }
     }
 

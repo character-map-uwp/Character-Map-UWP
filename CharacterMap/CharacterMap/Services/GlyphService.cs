@@ -1,6 +1,4 @@
-﻿//#define GENERATE_DATA
-
-using SQLite;
+﻿using SQLite;
 using Windows.UI.Xaml;
 
 namespace CharacterMap.Services
