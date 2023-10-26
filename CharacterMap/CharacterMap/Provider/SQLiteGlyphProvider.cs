@@ -6,6 +6,8 @@ namespace CharacterMap.Provider
 {
     public partial class SQLiteGlyphProvider : IGlyphDataProvider
     {
+
+        /* Used for FTS searches */
         internal const string FONTAWESOME_SEARCH_TABLE = "fontawesomesearch";
         internal const string MDL2_SEARCH_TABLE = "mdl2search";
         internal const string UNICODE_SEARCH_TABLE = "unicodesearch";
@@ -79,7 +81,11 @@ namespace CharacterMap.Provider
             {
                 if (target.IsTarget(variant))
                 {
+#if USE_FTS
                     desc = _connection.GetUnicodeDescription(unicodeIndex, target.SearchTable);
+#else
+                    desc = _connection.GetUnicodeDescription(unicodeIndex, target.TargetType.Name);
+#endif
                     break;
                 }
             }

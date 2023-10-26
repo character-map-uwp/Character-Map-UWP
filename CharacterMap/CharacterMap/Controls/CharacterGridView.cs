@@ -240,7 +240,7 @@ namespace CharacterMap.Controls
                                 // No idea why.
                                 TextBlock t = new ();
                                 string txt = data.Variant is not null
-                                    ? GlyphService.GetCharacterDescription(data.Char.UnicodeIndex, data.Variant)
+                                    ? data.Variant.GetDescription(data.Char)
                                     : string.Empty;
                                 t.Text = txt ?? data.Char.UnicodeString;
                                 tt.Content = t;
