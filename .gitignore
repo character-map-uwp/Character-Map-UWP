@@ -222,3 +222,4 @@ ModelManifest.xml
 *.appx
 CharacterMap/CharacterMap.CX/Generated Files
 CharacterMap/enc_temp_folder
+lfs

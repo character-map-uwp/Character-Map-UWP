@@ -1486,4 +1486,7 @@ Referencing deprecated icons by unicode codepoint is not recommended, and all de
   <data name="StartLabel.Text" xml:space="preserve">
     <value>Start</value>
   </data>
+  <data name="TxtUniHexValue.Text" xml:space="preserve">
+    <value>Hex Value</value>
+  </data>
 </root>

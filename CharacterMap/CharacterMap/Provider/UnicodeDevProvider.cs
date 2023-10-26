@@ -22,6 +22,7 @@ namespace CharacterMap.Provider
         private static List<DevOption> _allOptions { get; } = new ()
         {
             new ("TxtUniCodepoint/Header", null),
+            new ("TxtUniHexValue/Text", null),
             new ("TxtUTF16/Header", null)
         };
 
@@ -51,6 +52,7 @@ namespace CharacterMap.Provider
             List<DevOption> ops = new ()
             {
                 new ("TxtUniCodepoint/Header", $"{c.UnicodeIndex}"),
+                new ("TxtUniHexValue/Text", c.UnicodeString),
                 new ("TxtUTF16/Header", $"{utf}"),
             };
 
