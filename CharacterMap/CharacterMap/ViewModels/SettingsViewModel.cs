@@ -28,6 +28,8 @@ namespace CharacterMap.ViewModels
 
         [ObservableProperty] int _systemFamilyCount = 0;
         [ObservableProperty] int _systemFaceCount = 0;
+        [ObservableProperty] int _importedFamilyCount = 0;
+        [ObservableProperty] int _importedFaceCount = 0;
         [ObservableProperty] string _systemExportProgress;
         [ObservableProperty] string _importedExportProgress;
 
@@ -84,6 +86,8 @@ namespace CharacterMap.ViewModels
             // 4. Update other things
             SystemFamilyCount = FontFinder.SystemFamilyCount;
             SystemFaceCount = FontFinder.SystemFaceCount;
+            ImportedFamilyCount = FontFinder.ImportedFamilyCount;
+            ImportedFaceCount = FontFinder.ImportedFaceCount;
         }
 
         private void RampOptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

@@ -74,6 +74,22 @@ namespace CharacterMap.Controls
                 ((UXButton)d).UpdateLabelText();
             }));
 
+
+
+        public bool IsActive
+        {
+            get { return (bool)GetValue(IsActiveProperty); }
+            set { SetValue(IsActiveProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsActiveProperty =
+            DependencyProperty.Register(nameof(IsActive), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
+            {
+                ((UXButton)d).UpdateActive();
+            }));
+
+
+
         public UXButtonTemplateSettings TemplateSettings { get; } = new UXButtonTemplateSettings();
 
         bool _isTemplateApplied = false;
@@ -96,6 +112,12 @@ namespace CharacterMap.Controls
 
             UpdateHint(false);
             UpdateLabel(false);
+            UpdateActive(false);
+        }
+        private void UpdateActive(bool animate = true)
+        {
+            if (_isTemplateApplied)
+                VisualStateManager.GoToState(this, IsActive ? "IsActive" : "IsNotActive", animate);
         }
 
         private void UpdateHint(bool animate = true)

@@ -143,6 +143,16 @@
                                 </VisualState>
                             </VisualStateGroup>
 
+                            <VisualStateGroup x:Name="ActiveStates">
+                                <VisualState x:Name="IsActive">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.Foreground" Value="{ThemeResource ComboBoxDropDownGlyphForeground}" />
+                                        <Setter Target="FilteredBorder.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IsNotActive" />
+                            </VisualStateGroup>
+
                             <VisualStateGroup x:Name="HintStates">
                                 <VisualState x:Name="HintHidden" />
                                 <VisualState x:Name="HintVisible">
@@ -159,6 +169,13 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition x:Name="HintColumn" Width="0" />
                         </Grid.ColumnDefinitions>
+
+                        <Border
+                            x:Name="FilteredBorder"
+                            x:Load="False"
+                            Grid.ColumnSpan="2"
+                            Background="{ThemeResource ListViewItemBackgroundSelected}"
+                            Visibility="Collapsed" />
 
                         <ContentPresenter
                             x:Name="ContentPresenter"

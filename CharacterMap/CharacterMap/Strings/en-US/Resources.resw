@@ -1492,4 +1492,10 @@ Referencing deprecated icons by unicode codepoint is not recommended, and all de
   <data name="FileExplorerFileToolTip" xml:space="preserve">
     <value>Preview File</value>
   </data>
+  <data name="ImportCountLabel" xml:space="preserve">
+    <value>{0} Font Families, {1} Font Faces imported</value>
+  </data>
+  <data name="SettingsFontExportVersionLabel.Text" xml:space="preserve">
+    <value>Include version number in file name</value>
+  </data>
 </root>

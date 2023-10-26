@@ -603,7 +603,7 @@
                                             IsChecked="{x:Bind Settings.FontExportIncludeVersion, Mode=TwoWay}"
                                             IsEnabled="{Binding ElementName=OptimisedRadio, Path=IsChecked}">
                                             <TextBlock TextWrapping="Wrap">
-                                                <Run Text="Include version number in file name" />
+                                                <Run x:Uid="SettingsFontExportVersionLabel" d:Text="{core:Localizer Key=SettingsFontExportVersionLabel/Text}" />
                                                 <Run
                                                     FontSize="13.333"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
@@ -730,7 +730,7 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSystemFontHeader/Text}" ContentPlacement="Bottom">
                                     <controls:SettingsPresenter.Description>
-                                        <TextBlock Text="{x:Bind core:Converters.GetFormat2('InstallCountLabel', ViewModel.SystemFamilyCount, ViewModel.SystemFaceCount), Mode=OneWay}" />
+                                        <TextBlock Text="{x:Bind core:Converters.GetFormat2('InstallCountLabel', ViewModel.SystemFamilyCount, ViewModel.SystemFaceCount), Mode=OneWay}" TextWrapping="Wrap" />
                                     </controls:SettingsPresenter.Description>
                                     <StackPanel Orientation="Horizontal" Spacing="12">
                                         <controls:UXHyperlinkButton x:Uid="SettingsManageSystemFonts" NavigateUri="ms-settings:fonts" />
@@ -765,7 +765,10 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsImportedFontsLabel/Text}" ContentPlacement="Bottom">
                                     <controls:SettingsPresenter.Description>
-                                        <TextBlock x:Uid="SettingsFontImportDescription" TextWrapping="Wrap" />
+                                        <StackPanel Spacing="12">
+                                            <TextBlock x:Uid="SettingsFontImportDescription" TextWrapping="Wrap" />
+                                            <TextBlock Text="{x:Bind core:Converters.GetFormat2('ImportCountLabel', ViewModel.ImportedFamilyCount, ViewModel.ImportedFaceCount), Mode=OneWay}" TextWrapping="Wrap" />
+                                        </StackPanel>
                                     </controls:SettingsPresenter.Description>
 
                                     <StackPanel Spacing="6">

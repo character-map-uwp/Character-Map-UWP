@@ -787,6 +787,17 @@
                                 </VisualState>
                             </VisualStateGroup>
 
+                            <VisualStateGroup x:Name="ActiveStates">
+                                <VisualState x:Name="IsActive">
+                                    <VisualState.Setters>
+                                        <Setter Target="RootGrid.BorderBrush" Value="{ThemeResource ComboBoxBorderBrush}" />
+                                        <Setter Target="RootGrid.Background" Value="{ThemeResource ButtonBackgroundBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IsNotActive" />
+                            </VisualStateGroup>
+
+
                             <VisualStateGroup x:Name="HintStates">
                                 <VisualState x:Name="HintHidden" />
                                 <VisualState x:Name="HintVisible">

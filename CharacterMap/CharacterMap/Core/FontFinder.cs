@@ -5,19 +5,7 @@ using WoffToOtf;
 
 namespace CharacterMap.Core;
 
-public class FontImportResult
-{
-    public FontImportResult(List<StorageFile> imported, List<StorageFile> existing, List<(IStorageItem, string)> invalid)
-    {
-        Imported = imported;
-        Existing = existing;
-        Invalid = invalid;
-    }
-
-    public List<StorageFile> Imported { get; }
-    public List<StorageFile> Existing { get; }
-    public List<(IStorageItem, string)> Invalid { get; }
-}
+public record FontImportResult(List<StorageFile> Imported, List<StorageFile> Existing, List<(IStorageItem, string)> Invalid);
 
 public class FontFinder
 {
@@ -40,6 +28,12 @@ public class FontFinder
     public static bool HasAppxFonts                             { get; private set; }
     public static bool HasRemoteFonts                           { get; private set; }
     public static bool HasVariableFonts                         { get; private set; }
+
+    public static int SystemFamilyCount                         { get; private set; }
+    public static int SystemFaceCount                           { get; private set; }
+
+    public static int ImportedFamilyCount                       { get; private set; }
+    public static int ImportedFaceCount                         { get; private set; }
 
     public static DWriteFallbackFont Fallback                   { get; private set; }
 
@@ -90,8 +84,7 @@ public class FontFinder
         return systemFonts;
     }
 
-    public static int SystemFamilyCount { get; private set; }
-    public static int SystemFaceCount { get; private set; }
+
 
     public static Task LoadFontsAsync(bool clearExisting = true)
     {
@@ -142,6 +135,7 @@ public class FontFinder
 
             /* Add imported fonts */
             IReadOnlyList<DWriteFontSet> sets = setsTask.Result;
+            ImportedFamilyCount = ImportedFaceCount = 0;
             for (int i = 0; i < files.Count; i++)
             {
                 var file = files[i];
@@ -150,6 +144,9 @@ public class FontFinder
 
                 DWriteFontSet importedFonts = sets[i];
                 UpdateMeta(importedFonts);
+                ImportedFaceCount += importedFonts.Fonts.Count;
+                ImportedFamilyCount += importedFonts.Families.Count;
+
                 foreach (DWriteFontFace font in importedFonts.Fonts)
                 {
                     AddFont(resultList, font, file);

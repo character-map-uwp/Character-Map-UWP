@@ -80,6 +80,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] bool                   _isSvgChar;
         [ObservableProperty] bool                   _isSequenceRootVisible;
         [ObservableProperty] bool                   _isMDL2Font;
+        [ObservableProperty] bool                   _isFiltered;
         [ObservableProperty] string                 _titlePrefix;
         [ObservableProperty] string                 _xamlPath;
         [ObservableProperty] string                 _sequence               = string.Empty;
@@ -270,6 +271,7 @@ namespace CharacterMap.ViewModels
                 // Fast path : all characters;
                 Chars = SelectedVariant?.GetCharacters();
                 GroupedChars = UnicodeRangeGroup.CreateGroups(Chars, IsMDL2Font);
+                IsFiltered = false;
             }
             else
             {
@@ -292,6 +294,8 @@ namespace CharacterMap.ViewModels
                             break;
                         }
                 }
+
+                IsFiltered = true;
             }
 
             SetDefaultChar(last);

@@ -17,6 +17,7 @@ namespace CharacterMap.Core
         public static bool FalseFalse(bool b, bool c) => !b && !c;
         public static bool True(bool b) => b;
         public static bool TrueTrue(bool b, bool c) => b && c;
+        public static bool TrueTrueTrue(bool a, bool b, bool c) => a && b && c;
         public static bool TrueFalse(bool b, bool c) => b && !c;
 
         public static Visibility InvertVis(Visibility b) => b == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;

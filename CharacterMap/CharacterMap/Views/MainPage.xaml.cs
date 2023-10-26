@@ -768,6 +768,7 @@ namespace CharacterMap.Views
             if (e.DataView.Contains(StandardDataFormats.StorageItems))
             {
                 ViewModel.IsLoadingFonts = true;
+                SettingsView?.Hide();
                 try
                 {
                     var items = await e.DataView.GetStorageItemsAsync();

@@ -1031,6 +1031,7 @@
                         x:Name="CharacterFilterButton"
                         x:Uid="CharacterFilterButton"
                         VerticalAlignment="Stretch"
+                        IsActive="{x:Bind ViewModel.IsFiltered, Mode=OneWay}"
                         IsHintVisible="True"
                         Loaded="{x:Bind helpers:CompositionFactory.SetStandardFadeInOut}"
                         Style="{ThemeResource MapInfoButtonStyle}"
@@ -1102,14 +1103,14 @@
                         x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
                         x:Uid="VariableFeaturesMessage"
                         Margin="12 6 0 -6"
-                        Style="{StaticResource DescriptionContentStyle}"
+                        Style="{StaticResource DescriptionStyle}"
                         d:Text="{core:Localizer Key=VariableFeaturesMessage/Text}" />
                     <TextBlock
                         x:Name="ColrV1SupportMessage"
                         x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
                         x:Uid="ColrV1SupportMessage"
                         Margin="12 6 0 -6"
-                        Style="{StaticResource DescriptionContentStyle}"
+                        Style="{StaticResource DescriptionStyle}"
                         d:Text="{core:Localizer Key=ColrV1SupportMessage/Text}" />
                 </StackPanel>
 
@@ -1157,7 +1158,7 @@
                         <!--    -->
                         <Grid
                             x:Name="DeprecatedIconsInfoBar"
-                            x:Load="{x:Bind core:Converters.TrueTrue(ViewModel.Settings.HideDeprecatedMDL2, ViewModel.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
+                            x:Load="{x:Bind core:Converters.TrueTrueTrue(ViewModel.IsFiltered, ViewModel.Settings.HideDeprecatedMDL2, ViewModel.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
                             ColumnSpacing="12"
                             Margin="14 24 0 0"
                             Padding="6"
@@ -1184,8 +1185,8 @@
                                 Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                 Opacity="0.99"
                                 Style="{StaticResource DescriptionStyle}"
-                                Text="{core:Localizer Key=HiddenGlyphsMessage/Text}"
-                                TextLineBounds="Tight" />
+                                TextLineBounds="Tight"
+                                d:Text="{core:Localizer Key=HiddenGlyphsMessage/Text}" />
 
                             <Button
                                 Grid.Column="2"
