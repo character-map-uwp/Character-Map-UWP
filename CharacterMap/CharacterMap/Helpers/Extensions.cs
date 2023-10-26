@@ -159,4 +159,12 @@ public static class Extensions
             return file;
         });
     }
+
+    public static string RemoveFrom(this string source, string match)
+    {
+        if (source.IndexOf(match) is int idx && idx > 0)
+            return source.Remove(idx);
+
+        return source;
+    }
 }

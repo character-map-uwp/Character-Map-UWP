@@ -206,6 +206,12 @@ namespace CharacterMap.Core
             set => Set(value);
         }
 
+        public bool FontExportIncludeVersion
+        {
+            get => Get(true);
+            set => Set(value);
+        }
+
         // This setting has been deprecated.
         // Do not reuse this setting name.
         //public bool ShowDevUtils

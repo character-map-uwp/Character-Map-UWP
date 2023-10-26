@@ -572,30 +572,47 @@
                                     Title="{core:Localizer Key=SettingsFontNameExportLabel/Text}"
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsFontNameExportDescription/Text}">
-                                    <muxc:RadioButtons
-                                        x:Name="FontNamingSelection"
-                                        Background="{x:Null}"
-                                        BorderThickness="0"
-                                        SelectionChanged="FontNamingSelection_SelectionChanged">
-                                        <controls:UXRadioButton>
-                                            <TextBlock>
-                                                <Run x:Uid="SettingsFontExportSystemLabel" />
+                                    <StackPanel>
+                                        <muxc:RadioButtons
+                                            x:Name="FontNamingSelection"
+                                            Background="{x:Null}"
+                                            BorderThickness="0"
+                                            SelectionChanged="FontNamingSelection_SelectionChanged">
+                                            <controls:UXRadioButton>
+                                                <TextBlock>
+                                                    <Run x:Uid="SettingsFontExportSystemLabel" />
+                                                    <Run
+                                                        FontSize="13.333"
+                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                        Text="e.g. MSOFFSYMB.ttf" />
+                                                </TextBlock>
+                                            </controls:UXRadioButton>
+                                            <controls:UXRadioButton x:Name="OptimisedRadio">
+                                                <TextBlock>
+                                                    <Run x:Uid="SettingsFontExportOptimizedLabel" />
+                                                    <Run
+                                                        FontSize="13.333"
+                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                        Text=" e.g. MS Office Symbol Regular.ttf" />
+                                                </TextBlock>
+                                            </controls:UXRadioButton>
+                                        </muxc:RadioButtons>
+
+                                        <CheckBox
+                                            Margin="48 0 0 0"
+                                            IsChecked="{x:Bind Settings.FontExportIncludeVersion, Mode=TwoWay}"
+                                            IsEnabled="{Binding ElementName=OptimisedRadio, Path=IsChecked}">
+                                            <TextBlock TextWrapping="Wrap">
+                                                <Run Text="Include version number in file name" />
                                                 <Run
                                                     FontSize="13.333"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text="e.g. MSOFFSYMB.ttf" />
+                                                    Text=" e.g. MS Office Symbol Regular v1.5.ttf" />
                                             </TextBlock>
-                                        </controls:UXRadioButton>
-                                        <controls:UXRadioButton>
-                                            <TextBlock>
-                                                <Run x:Uid="SettingsFontExportOptimizedLabel" />
-                                                <Run
-                                                    FontSize="13.333"
-                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text=" e.g. MS Office Symbol Regular.ttf" />
-                                            </TextBlock>
-                                        </controls:UXRadioButton>
-                                    </muxc:RadioButtons>
+                                        </CheckBox>
+
+                                    </StackPanel>
+
 
                                 </controls:SettingsPresenter>
 

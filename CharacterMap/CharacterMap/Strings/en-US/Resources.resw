@@ -1489,4 +1489,7 @@ Referencing deprecated icons by unicode codepoint is not recommended, and all de
   <data name="TxtUniHexValue.Text" xml:space="preserve">
     <value>Hex Value</value>
   </data>
+  <data name="FileExplorerFileToolTip" xml:space="preserve">
+    <value>Preview File</value>
+  </data>
 </root>

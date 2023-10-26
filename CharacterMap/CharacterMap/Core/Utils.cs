@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.System;
 using Windows.UI.Core;
+using System.Collections.Concurrent;
 
 namespace CharacterMap.Core;
 
@@ -316,6 +317,73 @@ public static class Utils
             s.AppendFormat(", {0}", fontFace.Properties.Stretch);
 
         return s.ToString();
+    }
+
+    public static bool TryGetVersion(FontVariant variant, out double version)
+    {
+        /*
+         * A non-exhaustive, best attempt, minimum effort approach to wrangling 
+         * out a version number from a Font File. If it fails, it fails.
+         * There is no defined format for version strings so we try our best
+         * to support what we can.
+         * 
+         * Examples of version strings:
+         *   1.0 of this spazzed out Caps Set!
+         *   Version 1.002;Fontself Maker 1.1.0
+         *   Version 001.000 
+         *   Version 1.00 February 1, 2017, initial release
+         *   2.3
+         *   v1 by Andrew Hart - Dirt2.com/SickCapital.com - 10/14/2014
+         *   sabrina star version 1.0
+         *   Macromedia Fontographer 4.1 13/01/2000                             <-- NO ACTUAL VERSION NUMBER!
+         *   http://moorstation.org/typoasis/designers/insanitype/              <-- NO ACTUAL VERSION NUMBER!
+         *   fenotypefaces 4.1 30.3.2005                                        <-- NO ACTUAL VERSION NUMBER!
+         *   04-07-93                                                           <-- NO ACTUAL VERSION NUMBER!
+         *   
+         *   
+         *   We should try not to catch strings that do not contain
+         *   actual version numbers
+         */
+
+        var verStr = variant.TryGetInfo(CanvasFontInformation.VersionStrings)?.Value;
+        if (string.IsNullOrWhiteSpace(verStr) is false)
+        {
+            if (verStr.StartsWith("Version ", StringComparison.InvariantCultureIgnoreCase))
+            {
+                // This tends to be the most common format
+                verStr = verStr.Remove(0, "Version ".Length)
+                               .RemoveFrom(";")
+                               .RemoveFrom(" ");
+
+                return double.TryParse(verStr, out version);
+            }
+            else
+            {
+                // Handle version strings that are just numbers or start with just numbers
+                // e.g. '2.0' becomes '2'
+                // e.g. '1.0 of this spazzed out Caps Set!' becomes '1'
+                // e.g. 'v1 by Andrew Hart - Dirt2.com/SickCapital.com - 10/14/2014' becomes '1'
+                // e.g. 'sabrina star version 1.0' becomes '1'
+
+                if (verStr.Length > 1 && char.ToLower(verStr[0]) == 'v' && char.IsDigit(verStr[1]))
+                    verStr = verStr.Substring(1);
+
+                if (verStr.IndexOf("version ", StringComparison.InvariantCultureIgnoreCase) is int vidx && vidx > 0)
+                    verStr = verStr.Remove(0, vidx + "version ".Length);
+
+                verStr = verStr.Replace("OTF ", string.Empty)
+                               .Replace("v. ", string.Empty)
+                               .RemoveFrom(",")
+                               .RemoveFrom(" ")
+                               .RemoveFrom(";");
+
+                return double.TryParse(verStr, out version);
+            }
+
+        }
+
+        version = 0;
+        return false;
     }
 
     public static string Humanise(this Enum e)

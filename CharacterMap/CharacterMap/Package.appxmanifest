@@ -36,8 +36,8 @@
               <uap:FileType>.woff</uap:FileType>
               <uap:FileType>.woff2</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Character Map UWP</uap:DisplayName>
-            <uap:InfoTip>Preview Font</uap:InfoTip>
+            <uap:DisplayName>ms-resource:AppName</uap:DisplayName>
+            <uap:InfoTip>ms-resource:FileExplorerFileToolTip</uap:InfoTip>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets/FileAssociationTile.png</uap:Logo>
           </uap:FileTypeAssociation>

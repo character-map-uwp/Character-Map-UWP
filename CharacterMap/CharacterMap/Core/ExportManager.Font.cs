@@ -53,12 +53,13 @@ namespace CharacterMap.Core
             string name,
             Action<string> callback = null)
         {
+            callback?.Invoke($"0%");
             if (await PickFileAsync(name, "ZIP", new[] { ".zip" }) is StorageFile file)
             {
-                callback?.Invoke($"0%");
                 await Task.Run(async () =>
                 {
                     ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
+                    bool incVersion = ResourceHelper.AppSettings.FontExportIncludeVersion;
                     var grouped = GetGrouped(fonts);
 
                     using var i = await file.OpenStreamForWriteAsync();
@@ -69,7 +70,7 @@ namespace CharacterMap.Core
                     foreach (var group in grouped)
                     {
 
-                        string fileName = GetFileName(group, scheme);
+                        string fileName = GetFileName(group, scheme, incVersion);
                         ZipArchiveEntry entry = z.CreateEntry(fileName);
                         using IOutputStream s = entry.Open().AsOutputStream();
                         await DirectWrite.WriteToStreamAsync(group.First().Face, s);
@@ -97,18 +98,19 @@ namespace CharacterMap.Core
             List<FontVariant> fonts,
             Action<string> callback = null)
         {
+            callback?.Invoke($"0%");
             if (await PickFolderAsync() is StorageFolder folder)
             {
-                callback?.Invoke($"0%");
                 await Task.Run(async () =>
                 {
                     ExportNamingScheme scheme = ResourceHelper.AppSettings.ExportNamingScheme;
+                    bool incVersion = ResourceHelper.AppSettings.FontExportIncludeVersion;
                     int c = 0;
 
                     var grouped = GetGrouped(fonts); ;
                     foreach (var group in grouped)
                     {
-                        string fileName = GetFileName(group, scheme);
+                        string fileName = GetFileName(group, scheme, incVersion);
                         StorageFile file = await folder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
                         await TryWriteToFileAsync(group.First(), file).ConfigureAwait(false);
 
@@ -138,7 +140,7 @@ namespace CharacterMap.Core
             return false;
         }
 
-        private static string GetFileName(IGrouping<string, FontVariant> group, ExportNamingScheme scheme)
+        private static string GetFileName(IGrouping<string, FontVariant> group, ExportNamingScheme scheme, bool includeVersion)
         {
             string fileName = null;
             string ext = ".ttf";
@@ -154,15 +156,23 @@ namespace CharacterMap.Core
             if (scheme == ExportNamingScheme.System && !string.IsNullOrWhiteSpace(src))
                 fileName = src;
 
-            if (scheme is ExportNamingScheme.Optimised && FontFinder.ImportFormats.Contains(ext) is false)
+            if (scheme is ExportNamingScheme.Optimised && FontFinder.ImportFormats.Contains(ext.ToLower()) is false)
                 ext = ".ttf";
 
             var font = Utils.GetDefaultVariant(group.ToList());
 
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = $"{font.TryGetFullName().Trim()}{ext}";
+                fileName = $"{font.TryGetFullName().Trim()}";
+            else
+                fileName = Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false);
 
-            return $"{Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false)}{Path.GetExtension(fileName).ToLower()}";
+
+            if (includeVersion && Utils.TryGetVersion(font, out double version))
+            {
+                fileName += $" v{version:0.0########}";
+            }
+
+            return $"{fileName}{ext.ToLower()}";
         }
 
         private static string GetFileName(FontVariant font, ExportNamingScheme scheme)
