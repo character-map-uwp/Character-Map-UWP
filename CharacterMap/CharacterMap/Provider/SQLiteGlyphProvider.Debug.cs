@@ -229,11 +229,20 @@ namespace CharacterMap.Provider
                 using (var stream = await fabric.OpenStreamForReadAsync().ConfigureAwait(false))
                 using (var reader = new StreamReader(stream))
                 {
+                    HashSet<String> ignore = new() // these conflict with system MDL2 icons
+                    {
+                        "E614", "E615", "E616", "E617", "E618",
+                        "E65B", "E62E", "E65B", "E66C",
+                        "E670", "E671", "E672", "E673", "E674",
+                        "E678", "E67A",
+                    };
+
                     string[] parts;
                     while (!reader.EndOfStream)
                     {
                         parts = reader.ReadLine().Split(" ", StringSplitOptions.None);
-                        if (!datas.Any(d => d.code.Equals(parts[0], StringComparison.OrdinalIgnoreCase)))
+                        if (ignore.Contains(parts[0]) is false &&
+                            !datas.Any(d => d.code.Equals(parts[0], StringComparison.OrdinalIgnoreCase)))
                             datas.Add((parts[0], parts[1]));
                     }
                 }

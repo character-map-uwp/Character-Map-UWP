@@ -5,7 +5,7 @@ namespace CharacterMap.Helpers;
 
 public static class FontConverter
 {
-    private static Random _random { get; } = new Random();
+    private static Random _random { get; } = new ();
 
     public static async Task<(StorageFile File, ConversionStatus Result)> TryConvertAsync(
         StorageFile file, StorageFolder targetFolder = null)
@@ -49,7 +49,7 @@ public static class FontConverter
         {
             IBuffer buffer = null;
             using (var stream = await file.OpenReadAsync())
-            using (DataReader reader = new DataReader(stream))
+            using (DataReader reader = new (stream))
             {
                 await reader.LoadAsync((uint)stream.Size);
                 buffer = reader.ReadBuffer(reader.UnconsumedBufferLength);
