@@ -95,11 +95,21 @@ public static class Unicode
             .Where(r => ranges.Any(g => g.Name == r.Name))
             .Select(r => new UnicodeRangeModel(r))
             .ToList();
+
         if (mdl2)
         {
-            cats.Remove(cats.FirstOrDefault(m => m.Range == UnicodeRanges.PrivateUseArea));
-            cats.Add(new UnicodeRangeModel(UnicodeRanges.MDL2Deprecated) { IsSelected = !ResourceHelper.AppSettings.HideDeprecatedMDL2 });
-            cats.Add(new UnicodeRangeModel(UnicodeRanges.PrivateUseAreaMDL2));
+            if (cats.FirstOrDefault(m => m.Range == UnicodeRanges.PrivateUseArea) is { } pua)
+            {
+                int idx = cats.IndexOf(pua);
+                cats.RemoveAt(idx);
+                cats.Insert(idx, new UnicodeRangeModel(UnicodeRanges.PrivateUseAreaMDL2));
+                cats.Insert(idx, new UnicodeRangeModel(UnicodeRanges.MDL2Deprecated) { IsSelected = !ResourceHelper.AppSettings.HideDeprecatedMDL2 });
+            }
+            else
+            {
+                cats.Add(new UnicodeRangeModel(UnicodeRanges.MDL2Deprecated) { IsSelected = !ResourceHelper.AppSettings.HideDeprecatedMDL2 });
+                cats.Add(new UnicodeRangeModel(UnicodeRanges.PrivateUseAreaMDL2));
+            }
         }
 
         return cats;

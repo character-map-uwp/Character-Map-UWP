@@ -118,7 +118,7 @@ namespace CharacterMap.ViewModels
                  new("Latest Update (November 2023)", // August 2023
                     "- Added support for installing opened .WOFF & .WOFF2 fonts\n" +
                     "- Added support for showing Design Script Languages in Font Properties flyout\n" +
-                    "- Added 300+ new font list filters for Design Tag & Unicode Range under Supported Scripts\n" +
+                    "- Added 400+ additional font list filters for Design Tag & Unicode Range under Supported Scripts\n" +
                     "- Added support for hiding deprecated MDL2 & Fluent glyphs by default under Settings->Advanced"),
                 new("2023.8.0.0 (October 2023)", // October 2023
                     "- Added option to export installed fonts in Settings->Font Management"),

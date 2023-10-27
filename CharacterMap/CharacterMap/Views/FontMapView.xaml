@@ -1713,9 +1713,11 @@
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                 IsTextSelectionEnabled="True"
-                                Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}"
                                 TextWrapping="Wrap"
-                                d:Text="U+0061" />
+                                d:Text="U+0061, Latin Extended Supplemental">
+                                <Run Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" /><Run Text="," />
+                                <Run Text="{x:Bind ViewModel.SelectedChar.Range.Name, Mode=OneWay}" />
+                            </TextBlock>
                         </StackPanel>
 
                         <!--  Copy / Save / Fit Row  -->

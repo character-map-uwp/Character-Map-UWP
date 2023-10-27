@@ -25,9 +25,9 @@ public class UnicodeRangeGroup : List<Character>, IGrouping<NamedUnicodeRange, C
             return new(items
                 .GroupBy(i =>
                 {
-                    if (i.UnicodeIndex >= 0xE000 && i.UnicodeIndex <= 0xE5FF)
+                    if (UnicodeRanges.MDL2Deprecated.Contains(i.UnicodeIndex))
                         return UnicodeRanges.MDL2Deprecated;
-                    else if (i.UnicodeIndex >= 0xE600)
+                    else if (UnicodeRanges.PrivateUseAreaMDL2.Contains(i.UnicodeIndex))
                         return UnicodeRanges.PrivateUseAreaMDL2;
                     else
                         return i.Range ?? throw new InvalidOperationException();

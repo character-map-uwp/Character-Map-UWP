@@ -15,7 +15,7 @@ public class Character : IEquatable<Character>
     public string UnicodeString => "U+" + UnicodeIndex.ToString("x4").ToUpper();
 
     private NamedUnicodeRange _range;
-    public NamedUnicodeRange Range => _range ??= (UnicodeRanges.All.FirstOrDefault(r => r.Contains(UnicodeIndex)) ?? UnicodeRanges.Misc);
+    public NamedUnicodeRange Range => _range ??= (UnicodeRanges.All.FirstOrDefault(r => r != UnicodeRanges.Unassigned && r.Contains(UnicodeIndex)) ?? UnicodeRanges.Unassigned);
 
     public override string ToString()
     {
