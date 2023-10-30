@@ -54,6 +54,7 @@ using Sqlite3 = SQLitePCL.raw;
 using CharacterMap.Models;
 using SQLitePCL;
 using CharacterMap.Services;
+using System.Xml.Linq;
 #else
 using Sqlite3DatabaseHandle = System.IntPtr;
 using Sqlite3BackupHandle = System.IntPtr;
@@ -376,6 +377,24 @@ namespace SQLite
                      UnicodeHex = SQLite3.ColumnString(stmt, 1),
                      Description = SQLite3.ColumnString(stmt, columnDesc)
                 });
+            }
+
+            return data;
+        }
+
+        public List<UnihanReading> GetUnihanReadings(int idx)
+        {
+            var cmd = this.CreateCommand("SELECT * FROM UnihanReading WHERE Ix = ?", idx);
+            var stmt = cmd.Prepare();
+
+            List<UnihanReading> data = new();
+            while (SQLite3.Step(stmt) == SQLite3.Result.Row)
+            {
+                data.Add(
+                    new UnihanReading(
+                            SQLite3.ColumnInt(stmt, 0),
+                            (UnihanFieldType)SQLite3.ColumnInt(stmt, 1),
+                            SQLite3.ColumnString(stmt, 2)));
             }
 
             return data;

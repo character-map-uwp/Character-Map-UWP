@@ -42,6 +42,7 @@ namespace CharacterMap.Services
     {
         void Initialise();
         string GetCharacterDescription(int unicodeIndex, FontVariant variant);
+        List<UnihanReading> GetUnihanReadings(int unicodeIndex);
         string GetAdobeGlyphListMapping(string postscriptName);
         Task<IReadOnlyList<IGlyphData>> SearchAsync(string query, FontVariant variant);
     }
@@ -87,6 +88,18 @@ namespace CharacterMap.Services
         internal static string TryGetAGLFNName(string aglfn)
         {
             return _provider.GetAdobeGlyphListMapping(aglfn);
+        }
+
+        public static UnihanData GetUnihanData(uint unicodeIndex)
+        {
+            if (unicodeIndex >= 0x3000)
+            {
+                var readings = _provider.GetUnihanReadings((int)unicodeIndex);
+                if (readings is not null && readings.Count > 0)
+                    return new UnihanData(readings);
+            }
+            
+            return null;
         }
 
         internal static string GetCharacterKeystroke(uint unicodeIndex)

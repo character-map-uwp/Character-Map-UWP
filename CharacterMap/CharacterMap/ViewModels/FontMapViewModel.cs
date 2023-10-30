@@ -65,6 +65,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] CharacterRenderingOptions              _renderingOptions;
         [ObservableProperty] CanvasTextLayoutAnalysis               _selectedCharAnalysis;
         [ObservableProperty] List<TypographyFeatureInfo>            _selectedCharVariations;
+        [ObservableProperty] UnihanData                             _unihanData;
         [ObservableProperty] IReadOnlyList<Suggestion>              _rampOptions;
         [ObservableProperty] IReadOnlyList<Character>               _chars;
         [ObservableProperty] IReadOnlyList<IGlyphData>              _searchResults;
@@ -75,6 +76,7 @@ namespace CharacterMap.ViewModels
 
         [ObservableProperty] bool                   _showColorGlyphs        = true;
         [ObservableProperty] bool                   _importButtonEnabled    = true;
+        [ObservableProperty] bool                   _showingUnihan          = true;
         [ObservableProperty] bool                   _isLoading;
         [ObservableProperty] bool                   _hasFontOptions;
         [ObservableProperty] bool                   _isSvgChar;
@@ -404,6 +406,7 @@ namespace CharacterMap.ViewModels
         {
             if (SelectedChar == null)
             {
+                UnihanData = null;
                 SelectedCharAnalysis = new ();
                 IsSvgChar = false;
                 SelectedCharVariations = new ();
@@ -413,6 +416,7 @@ namespace CharacterMap.ViewModels
             SelectedCharAnalysis = GetCharAnalysis(SelectedChar);
             SelectedCharVariations = TypographyAnalyzer.GetCharacterVariants(SelectedVariant, SelectedChar);
             IsSvgChar = SelectedCharAnalysis.GlyphFormats.Contains(GlyphImageFormat.Svg);
+            UnihanData = GlyphService.GetUnihanData(SelectedChar.UnicodeIndex);
         }
 
         internal CanvasTextLayoutAnalysis GetCharAnalysis(Character c)
@@ -707,6 +711,7 @@ namespace CharacterMap.ViewModels
         public void HidePane() => Settings.EnablePreviewPane = false;
         public void ShowCopyPane() => Settings.EnableCopyPane = true;
         public void HideCopyPane() => Settings.EnableCopyPane = false;
+        public void ToggleUnihan() => ShowingUnihan = !ShowingUnihan;
 
         public void AddCharToSequence(int start, int length, Character c)
         {

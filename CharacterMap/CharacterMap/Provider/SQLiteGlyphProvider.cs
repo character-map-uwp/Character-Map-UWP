@@ -63,6 +63,12 @@ namespace CharacterMap.Provider
             return postscriptName;
         }
 
+        public List<UnihanReading> GetUnihanReadings(int unicodeIndex)
+        {
+            return _connection.GetUnihanReadings(unicodeIndex);
+        }
+
+
         public string GetCharacterDescription(int unicodeIndex, FontVariant variant)
         {
             string desc = null;

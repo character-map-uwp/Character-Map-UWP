@@ -183,6 +183,7 @@
     <Content Include="Assets\Data\MDL2.xml" />
     <Content Include="Assets\Data\FabricMDL2.txt" />
     <Content Include="Assets\Data\FullMDL2ManualList.txt" />
+    <Content Include="Assets\Data\Unihan_Readings.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activation\ActivationHandler.cs" />
@@ -291,6 +292,7 @@
     <Compile Include="Helpers\VisualTreeHelperExtensions.cs" />
     <Compile Include="Models\SearchTarget.cs" />
     <Compile Include="Models\DevOption.cs" />
+    <Compile Include="Models\Unihan.cs" />
     <Compile Include="Provider\CppCxDevProvider.cs" />
     <Compile Include="Provider\CppWinrtDevProvider.cs" />
     <Compile Include="Provider\CSharpDevProvider.cs" />
