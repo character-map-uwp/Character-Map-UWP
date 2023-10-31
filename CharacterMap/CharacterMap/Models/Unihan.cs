@@ -37,8 +37,14 @@ public class UnihanData
 
     public UnihanData(List<UnihanReading> readings)
     {
-        Definition      = readings.Where(r => r.Type == UnihanFieldType.Definition && !string.IsNullOrEmpty(r.Description)).FirstOrDefault();
-        Pronunciations  = readings.Where(r => r.Type != UnihanFieldType.Definition).OrderBy(r => r.Type).ToList();
+        if (readings.FirstOrDefault() is { } def && def.Type is UnihanFieldType.Definition)
+        {
+            Definition = def;
+            readings.RemoveAt(0);
+            Pronunciations = readings;
+        }
+        else
+            Pronunciations  = readings;
     }
 }
 

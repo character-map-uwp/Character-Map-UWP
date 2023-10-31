@@ -531,7 +531,7 @@ namespace CharacterMap.ViewModels
             if (SelectedVariant == null || c == null)
                 return null;
 
-            return SelectedVariant.GetDescription(c);
+            return SelectedVariant.GetDescription(c, allowUnihan: true);
         }
 
         public string GetCharDescription(Character c)

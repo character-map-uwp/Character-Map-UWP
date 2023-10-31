@@ -230,6 +230,14 @@ namespace CharacterMap.Provider
                     }
                 }
 
+                // Order everything into our desired order
+                // so when we load data we don't have to sort
+                mappings = mappings
+                    .GroupBy(m => m.Index)
+                    .OrderBy(g => g.Key)
+                    .SelectMany(g => g.OrderBy(r => r.Type))
+                    .ToList();
+
                 using var c = new SQLiteConnection(connection);
                 c.RunInTransaction(() => { c.InsertAll(mappings); });
             });

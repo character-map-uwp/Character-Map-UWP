@@ -187,12 +187,23 @@ public partial class FontVariant : IDisposable
 
     public Dictionary<Character, string> SearchMap { get; set; }
 
-    public string GetDescription(Character c)
+    public string GetDescription(Character c, bool allowUnihan = false)
     {
         if (SearchMap == null
             || !SearchMap.TryGetValue(c, out string mapping)
             || string.IsNullOrWhiteSpace(mapping))
-            return GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
+        {
+            string name = GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
+            if (string.IsNullOrWhiteSpace(name)
+                && c.UnicodeIndex > 0x3000
+                && allowUnihan
+                && GlyphService.GetUnihanData(c.UnicodeIndex)?.Definition
+                    is { } def)
+                name = def.Description;
+
+            return name;
+        }
+
 
         return GlyphService.TryGetAGLFNName(mapping);
     }

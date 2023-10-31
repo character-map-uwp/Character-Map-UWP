@@ -240,7 +240,7 @@ namespace CharacterMap.Controls
                                 // No idea why.
                                 TextBlock t = new ();
                                 string txt = data.Variant is not null
-                                    ? data.Variant.GetDescription(data.Char)
+                                    ? data.Variant.GetDescription(data.Char, allowUnihan: true)
                                     : string.Empty;
                                 t.Text = txt ?? data.Char.UnicodeString;
                                 tt.Content = t;
