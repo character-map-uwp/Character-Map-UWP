@@ -21,6 +21,7 @@ public partial class FontVariant : IDisposable
     private IReadOnlyList<TypographyFeatureInfo> _typographyFeatures = null;
     private IReadOnlyList<TypographyFeatureInfo> _xamlTypographyFeatures = null;
     private FontAnalysis _analysis = null;
+    private FaceMetadataInfo _designLangRawSearch = null;
 
     public IReadOnlyList<FaceMetadataInfo> FontInformation          => _fontInformation ??= GetFontInformation();
 
@@ -180,8 +181,11 @@ public partial class FontVariant : IDisposable
     /// <returns></returns>
     public string TryGetFullName() => TryGetInfo(CanvasFontInformation.FullName)?.Value ?? PreferredName;
 
-    public bool HasDesignScriptTag(string tag) => TryGetInfo(CanvasFontInformation.DesignScriptLanguageTag)?.Values.Contains(tag) ?? false;
-
+    public bool HasDesignScriptTag(string tag)
+    {
+        TryGetInfo(CanvasFontInformation.DesignScriptLanguageTag);
+        return _designLangRawSearch?.Values.Contains(tag, StringComparer.OrdinalIgnoreCase) ?? false;
+    }
 
     /* SEARCHING */
 
@@ -251,6 +255,12 @@ public partial class FontVariant : IDisposable
         if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
             || infos.TryGetValue("en-us", out value))
             return new (name, new string[1] { value }, info);
+
+        if (info is CanvasFontInformation.DesignScriptLanguageTag 
+            && _designLangRawSearch is null)
+        {
+            _designLangRawSearch = new (name, infos.Select(i => UnicodeScriptTags.GetBaseTag(i.Value)).ToArray(), info);
+        }
 
         return new(
             name,

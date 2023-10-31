@@ -1445,7 +1445,7 @@ Tap and hold to arrange.</value>
     <value>Export installed fonts</value>
   </data>
   <data name="OptionDesignTag.Text" xml:space="preserve">
-    <value>Design Tag</value>
+    <value>Design Language</value>
   </data>
   <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
     <value>Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</value>

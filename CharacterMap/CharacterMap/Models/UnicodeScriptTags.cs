@@ -1,4 +1,6 @@
-﻿namespace CharacterMap.Models;
+﻿using System.Globalization;
+
+namespace CharacterMap.Models;
 
 internal class UnicodeScriptTags
 {
@@ -8,12 +10,13 @@ internal class UnicodeScriptTags
      */
 
     public static IReadOnlyDictionary<string, string> Scripts { get; } 
-        = new Dictionary<string, string>()
+        = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
         { "adlm", "Adlam" },
         { "ahom", "Ahom" },
         { "hluw", "Anatolian Hieroglyphs" },
         { "arab", "Arabic" },
+        { "aran", "Arabic (Nastaliq variant)" },
         { "armn", "Armenian" },
         { "avst", "Avestan" },
         { "bali", "Balinese" },
@@ -41,9 +44,9 @@ internal class UnicodeScriptTags
         { "cprt", "Cypriot Syllabary" },
         { "cpmn", "Cypro-Minoan" },
         { "cyrl", "Cyrillic" },
-        { "bg-cyrl", "Cyrillic (Bulgarian)" },
-        { "mk-cyrl", "Cyrillic (Macedonian)" },
-        { "sr-cyrl", "Cyrillic (Serbian)" },
+        //{ "bg-cyrl", "Cyrillic (Bulgarian)" },
+        //{ "mk-cyrl", "Cyrillic (Macedonian)" },
+        //{ "sr-cyrl", "Cyrillic (Serbian)" },
         { "dflt", "Default" },
         { "dsrt", "Deseret" },
         { "deva", "Devanagari" },
@@ -89,13 +92,14 @@ internal class UnicodeScriptTags
         { "kali", "Kayah Li" },
         { "khar", "Kharosthi" },
         { "kits", "Khitan Small Script" },
+        { "kore", "Korean" },
         { "khmr", "Khmer" },
         { "khoj", "Khojki" },
         { "sind", "Khudawadi" },
-        { "lao ", "Lao" },
+        //{ "lao ", "Lao" },
         { "laoo", "Lao" },
         { "latn", "Latin" },
-        { "vi-latn", "Latin (Vietnamese)" },
+        //{ "vi-latn", "Latin (Vietnamese)" },
         { "lepc", "Lepcha" },
         { "limb", "Limbu" },
         { "lina", "Linear A" },
@@ -129,7 +133,7 @@ internal class UnicodeScriptTags
         { "nand", "Nandinagari" },
         { "newa", "Newa" },
         { "talu", "New Tai Lue" },
-        { "nko ", "N'Ko" },
+        //{ "nko ", "N'Ko" },
         { "nkoo", "N'Ko" },
         { "nshu", "Nüshu" },
         { "hmnp", "Nyiakeng Puachue Hmong" },
@@ -189,26 +193,95 @@ internal class UnicodeScriptTags
         { "tirh", "Tirhuta" },
         { "toto", "Toto" },
         { "ugar", "Ugaritic Cuneiform" },
-        { "vai ", "Vai" },
+        //{ "vai ", "Vai" },
+        { "vaii", "Vai" },
         { "vith", "Vithkuqi" },
         { "wcho", "Wancho" },
         { "wara", "Warang Citi" },
         { "yezi", "Yezidi" },
-        { "yi  ", "Yi" },
+        //{ "yi  ", "Yi" },
         { "yiii", "Yi" },
-        { "zan",  "Zanabazar Square" },
-        { "zan ", "Zanabazar Square" },
         { "zanb", "Zanabazar Square" },
         { "zmth", "Mathematical notation" },
         { "zsye", "Emoji Style" },
         { "zsym", "Text Style emoji" }
     };
 
+    private static Dictionary<String, string> _corrections { get; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "zann", "zanb" },      // zan -> zann -> zanb
+    };
+
     public static string GetName(string tag)
     {
-        if (Scripts.TryGetValue(tag.ToLower(), out string name))
+        if (string.IsNullOrEmpty(tag))
+            return tag;
+
+        tag = PadTag(tag);
+        if (Scripts.TryGetValue(tag, out string name))
             return name;
+
+        // Attempt to handle language/script variants
+        // e.g. vi-latn would parse as 'latn' and return as 'Latin (Vietnamese)'
+        // e.g. sr-cyrl would parse as 'cyrl' and return as 'Cyrillic (Serbian)'
+        // e.g. Hant-HK would parse as 'hant' and return as 'Han (Traditional) (HK)'
+        if (IsLangTag(tag))
+        {
+            var parts = tag.Split('-');
+            var script = parts[0].Length == 4 ? parts[0] : parts[1];
+
+            if (Scripts.TryGetValue(script, out name))
+            {
+                // Try convert the ISO 639-1 language tag to full name
+                var lng = parts[0].Length == 4 ? parts[1] : parts[0];
+                try {
+                    var clt = new CultureInfo(lng);
+                    if (clt.EnglishName.StartsWith("Unknown") is false)
+                        lng = clt.DisplayName; 
+                } catch { }
+
+                return $"{name} ({lng})";
+            }
+        }
+        
+        return tag;
+    }
+
+    /// <summary>
+    /// Attempts to return the base script tag without language specific identifiers
+    /// </summary>
+    public static string GetBaseTag(string tag)
+    {
+        // Attempt to handle undocumented cases of language variants
+        // e.g. au-latn would parse and return as 'latn'
+        // e.g. Hant-HK would parse and return as 'Hant'
+        tag = PadTag(tag);
+        if (IsLangTag(tag))
+        {
+            var parts = tag.Split('-');
+            return parts[0].Length == 4 ? parts[0] : parts[1];
+        }
+
+        return PadTag(tag);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static string PadTag(string tag)
+    {
+        if (tag is not null && tag.Length > 0 && tag.Length < 4)
+        {
+            while (tag.Length < 4)
+                tag = tag + tag[tag.Length - 1];
+
+            if (_corrections.TryGetValue(tag, out var cor))
+                tag = cor;
+        }
 
         return tag;
     }
+
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsLangTag(string scriptTag) => scriptTag.Length == 7 && (scriptTag[2] is '-' || scriptTag[4] == '-');
+
 }

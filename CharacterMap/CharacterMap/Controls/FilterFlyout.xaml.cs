@@ -58,7 +58,7 @@ namespace CharacterMap.Controls
 
             var design = AddSub("OptionDesignTag/Text", sub);
             foreach (var script in UnicodeScriptTags.Scripts)
-                design.Add(BasicFontFilter.ForDesignScriptTag(script.Value, script.Value), style);
+                design.Add(BasicFontFilter.ForDesignScriptTag(script.Key, script.Value), style);
 
             var unicode = AddSub("OptionUnicodeRange/Text", sub);
             foreach (var range in UnicodeRanges.All)
