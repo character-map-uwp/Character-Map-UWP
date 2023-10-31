@@ -253,7 +253,7 @@
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
     <Compile Include="Helpers\Throttler.cs" />
-    <Compile Include="Helpers\UnicodeScriptTags.cs" />
+    <Compile Include="Models\UnicodeScriptTags.cs" />
     <Compile Include="Helpers\WoffToOtf.cs" />
     <Compile Include="Helpers\Extensions.cs" />
     <Compile Include="Helpers\InAppNotificationHelper.cs" />

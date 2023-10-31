@@ -1,8 +1,14 @@
-﻿namespace CharacterMap.Helpers;
+﻿namespace CharacterMap.Models;
 
 internal class UnicodeScriptTags
 {
-    public static Dictionary<string, string> Scripts { get; } = new()
+    /* 
+     * Values are not translatable yet.
+     * TODO: Add all values from https://en.wikipedia.org/wiki/ISO_15924
+     */
+
+    public static IReadOnlyDictionary<string, string> Scripts { get; } 
+        = new Dictionary<string, string>()
     {
         { "adlm", "Adlam" },
         { "ahom", "Ahom" },
@@ -30,7 +36,7 @@ internal class UnicodeScriptTags
         { "cham", "Cham" },
         { "cher", "Cherokee" },
         { "chrs", "Chorasmian" },
-        { "hani", "CJK Ideographic" },
+        { "hani", "CJK Ideographic (Han)" },
         { "copt", "Coptic" },
         { "cprt", "Cypriot Syllabary" },
         { "cpmn", "Cypro-Minoan" },
@@ -38,7 +44,7 @@ internal class UnicodeScriptTags
         { "bg-cyrl", "Cyrillic (Bulgarian)" },
         { "mk-cyrl", "Cyrillic (Macedonian)" },
         { "sr-cyrl", "Cyrillic (Serbian)" },
-        { "DFLT", "Default" },
+        { "dflt", "Default" },
         { "dsrt", "Deseret" },
         { "deva", "Devanagari" },
         { "dev2", "Devanagari v.2" },
@@ -61,20 +67,25 @@ internal class UnicodeScriptTags
         { "guru", "Gurmukhi" },
         { "gur2", "Gurmukhi v.2" },
         { "hang", "Hangul" },
-        { "jamo", "Hangul Jamo" },
-        { "rohg", "Hanifi Rohingya" },
+        { "hanb", "Han with Bopomofo" },
+        { "hans", "Han (Simplified)" },
+        { "hant", "Han (Traditional)" },
         { "hano", "Hanunoo" },
         { "hatr", "Hatran" },
         { "hebr", "Hebrew" },
-        { "kana", "Hiragana / Katakana" },
+        { "hira", "Hiragana" },
+        { "hrkt", "Hiragana/Katakana" },
+        { "kana", "Katakana" },
         { "armi", "Imperial Aramaic" },
+        { "rohg", "Hanifi Rohingya" },
         { "phli", "Inscriptional Pahlavi" },
         { "prti", "Inscriptional Parthian" },
+        { "jamo", "Hangul Jamo" },
         { "java", "Javanese" },
+        { "jpan", "Japanese" },
         { "kthi", "Kaithi" },
         { "knda", "Kannada" },
         { "knd2", "Kannada v.2" },
-        //{ "kana", "Katakana" },
         { "kali", "Kayah Li" },
         { "khar", "Kharosthi" },
         { "kits", "Khitan Small Script" },
@@ -82,7 +93,7 @@ internal class UnicodeScriptTags
         { "khoj", "Khojki" },
         { "sind", "Khudawadi" },
         { "lao ", "Lao" },
-        { "laoo ", "Lao" },
+        { "laoo", "Lao" },
         { "latn", "Latin" },
         { "vi-latn", "Latin (Vietnamese)" },
         { "lepc", "Lepcha" },
@@ -119,6 +130,7 @@ internal class UnicodeScriptTags
         { "newa", "Newa" },
         { "talu", "New Tai Lue" },
         { "nko ", "N'Ko" },
+        { "nkoo", "N'Ko" },
         { "nshu", "Nüshu" },
         { "hmnp", "Nyiakeng Puachue Hmong" },
         { "orya", "Odia" },
@@ -183,7 +195,11 @@ internal class UnicodeScriptTags
         { "wara", "Warang Citi" },
         { "yezi", "Yezidi" },
         { "yi  ", "Yi" },
-        { "zan", "Zanabazar Square" },
+        { "yiii", "Yi" },
+        { "zan",  "Zanabazar Square" },
+        { "zan ", "Zanabazar Square" },
+        { "zanb", "Zanabazar Square" },
+        { "zmth", "Mathematical notation" },
         { "zsye", "Emoji Style" },
         { "zsym", "Text Style emoji" }
     };

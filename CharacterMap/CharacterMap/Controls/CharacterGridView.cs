@@ -1,18 +1,9 @@
 ﻿//#define DX
 
-using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Services;
-using CharacterMapCX;
 using CharacterMapCX.Controls;
 using Microsoft.Graphics.Canvas.Text;
-using System;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
@@ -235,10 +226,11 @@ namespace CharacterMap.Controls
                             if (d is ToolTip tt && tt.Tag is ItemTooltipData data)
                             {
                                 tt.PlacementRect = new (0, 0, data.Container.ActualWidth, data.Container.ActualHeight);
-                                
+
                                 // Do not use object initializer Constructor here, this will result in random NullReferenceExceptions.
                                 // No idea why.
-                                TextBlock t = new ();
+                                TextBlock t = new();
+                                t.TextWrapping = TextWrapping.Wrap;
                                 string txt = data.Variant is not null
                                     ? data.Variant.GetDescription(data.Char, allowUnihan: true)
                                     : string.Empty;
