@@ -116,10 +116,12 @@ namespace CharacterMap.ViewModels
             return new()
             {
                  new("Latest Update (November 2023)", // August 2023
+                    "- Integrate the Unicode Unihan readings data set, providing descriptions and pronunciations for CJK Han ideographs\n" +
                     "- Added support for installing opened .WOFF & .WOFF2 fonts\n" +
                     "- Added support for showing Design Script Languages in Font Properties flyout\n" +
                     "- Added 400+ additional font list filters for Design Tag & Unicode Range under Supported Scripts\n" +
-                    "- Added support for hiding deprecated MDL2 & Fluent glyphs by default under Settings->Advanced"),
+                    "- Added support for hiding deprecated MDL2 & Fluent glyphs by default under Settings->Advanced\n" +
+                    "- Added option to include version number on Font File exports in Settings->Export"),
                 new("2023.8.0.0 (October 2023)", // October 2023
                     "- Added option to export installed fonts in Settings->Font Management"),
                 new("2023.7.0.0 (August 2023)", // August 2023

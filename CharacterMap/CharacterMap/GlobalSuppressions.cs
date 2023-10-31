@@ -3,6 +3,8 @@
 // Project-level suppressions either have no target or are given
 // a specific target and scoped to a namespace, type, member, etc.
 
+// Global usings also exist in here because why not.
+
 global using CharacterMap.Core;
 global using CharacterMap.Helpers;
 global using CharacterMap.Models;
@@ -31,3 +33,4 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Correct", Scope = "member", Target = "~P:CharacterMap.Core.FontVariant.Panose")]
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "<Pending>", Scope = "member", Target = "~P:CharacterMap.ViewModels.SettingsViewModel.Changelog")]
 [assembly: SuppressMessage("CommunityToolkit.Mvvm.SourceGenerators.ObservablePropertyGenerator", "MVVMTK0034:Direct field reference to [ObservableProperty] backing field", Justification = "<Pending>")]
+[assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "Correct", Scope = "type", Target = "~T:CharacterMap.Models.UnihanFieldType")]

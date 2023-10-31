@@ -3,6 +3,7 @@
 using SQLite;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Xaml.Controls;
+using Windows.Foundation.Collections;
 
 #if DEBUG && GENERATE_DATABASE
 using Humanizer;
@@ -73,6 +74,8 @@ namespace CharacterMap.Provider
 
                 await PopulateAglfnAsync(connection).ConfigureAwait(false);
                 await PopulateMDL2Async(connection).ConfigureAwait(false);
+                await PopulateUnihanReadingsAsync(connection).ConfigureAwait(false);
+
                 await PopulateFontAsync<FontAwesomeGlyph>(connection, "FontAwesome.txt").ConfigureAwait(false);
 
                 var unicode = await PopulateUnicodeAsync(connection).ConfigureAwait(false);
@@ -195,6 +198,44 @@ namespace CharacterMap.Provider
                 c.RunInTransaction(() => { c.InsertAll(mappings); });
             });
         }
+
+        private Task PopulateUnihanReadingsAsync(SQLiteConnectionString connection)
+        {
+            return Task.Run(async () =>
+            {
+                var fabric = await StorageFile.GetFileFromApplicationUriAsync(new Uri("ms-appx:///Assets/Data/Unihan_Readings.txt")).AsTask().ConfigureAwait(false);
+                using var stream = await fabric.OpenStreamForReadAsync().ConfigureAwait(false);
+                using var reader = new StreamReader(stream);
+
+                string[] parts;
+                string line;
+
+                List<UnihanReading> mappings = new();
+
+                while (!reader.EndOfStream)
+                {
+                    line = reader.ReadLine();
+                    if (line.StartsWith('#') || string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    parts = line.Split("\t", StringSplitOptions.None);
+                    if (parts.Length == 3)
+                    {
+                        var mapping = new UnihanReading(
+                            index: int.Parse(parts[0].Remove(0,2), NumberStyles.HexNumber),
+                            type: Enum.Parse<UnihanFieldType>(parts[1].Remove(0, 1)),
+                            description: parts[2]);
+
+                        mappings.Add(mapping);
+                    }
+                }
+
+                using var c = new SQLiteConnection(connection);
+                c.RunInTransaction(() => { c.InsertAll(mappings); });
+            });
+        }
+
+
 
         private Task PopulateMDL2Async(SQLiteConnectionString connection)
         {
@@ -413,6 +454,7 @@ namespace CharacterMap.Provider
             con.CreateTable<MDL2Glyph>();
             con.CreateTable<UnicodeGlyphData>();
             con.CreateTable<AdobeGlyphListMapping>();
+            con.CreateTable<UnihanReading>();
 
             foreach (SearchTarget target in SearchTarget.KnownTargets)
                 con.CreateTable(target.TargetType);

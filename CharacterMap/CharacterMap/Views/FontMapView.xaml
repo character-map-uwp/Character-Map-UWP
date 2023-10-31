@@ -1481,7 +1481,7 @@
                                         VerticalAlignment="Bottom"
                                         Click="AxisReset_Click"
                                         FontSize="12"
-                                        Style="{StaticResource TextBlockButtonStyle}"
+                                        Style="{StaticResource ThemeTextBlockButtonStyle}"
                                         Tag="{Binding ElementName=AxisSlider}" />
                                 </Grid>
                             </DataTemplate>
@@ -1594,12 +1594,17 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <!--  Character Preview  -->
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -1720,9 +1725,118 @@
                             </TextBlock>
                         </StackPanel>
 
+                        <!--  Unihan  -->
+                        <Grid
+                            x:Name="UnihanRoot"
+                            x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.UnihanData), FallbackValue=False, Mode=OneWay}"
+                            Grid.Row="3"
+                            MaxHeight="170"
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
+                            <ScrollViewer Visibility="{x:Bind ViewModel.ShowingUnihan, Mode=OneWay}">
+                                <StackPanel>
+                                    <StackPanel.Resources>
+                                        <DataTemplate x:Key="UnihanDataTemplate" x:DataType="models:UnihanReading">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.8*" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                    Text="{x:Bind Field.Name}"
+                                                    TextWrapping="Wrap"
+                                                    ToolTipService.ToolTip="{x:Bind Field.Description}" />
+
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    FontSize="12"
+                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                    IsTextSelectionEnabled="True"
+                                                    Text="{x:Bind Description}"
+                                                    TextWrapping="Wrap" />
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </StackPanel.Resources>
+
+                                    <StackPanel>
+                                        <StackPanel Margin="12 0 12 6" Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.UnihanData.Definition), FallbackValue=Collapsed, Mode=OneWay}">
+                                            <TextBlock
+                                                x:Uid="UnihanDefinition"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextControlHeaderForeground}"
+                                                Opacity="0.5"
+                                                TextWrapping="Wrap"
+                                                d:Text="Definition" />
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                IsTextSelectionEnabled="True"
+                                                Text="{x:Bind ViewModel.UnihanData.Definition.Description, Mode=OneWay}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>
+
+                                        <TextBlock
+                                            x:Uid="UnihanPronunciations"
+                                            Margin="12 0"
+                                            FontSize="12"
+                                            Foreground="{ThemeResource TextControlHeaderForeground}"
+                                            Opacity="0.5"
+                                            TextWrapping="Wrap"
+                                            d:Text="Pronunciations" />
+                                        <ItemsControl
+                                            Margin="12 0"
+                                            ItemTemplate="{StaticResource UnihanDataTemplate}"
+                                            ItemsSource="{x:Bind ViewModel.UnihanData.Pronunciations, Mode=OneWay}" />
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </ScrollViewer>
+                        </Grid>
+
+                        <Button
+                            x:Name="UnihanButton"
+                            x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.UnihanData), FallbackValue=False, Mode=OneWay}"
+                            Grid.Row="4"
+                            Margin="1 0"
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                            Click="{x:Bind ViewModel.ToggleUnihan}"
+                            FontSize="12"
+                            FontWeight="Normal"
+                            Foreground="{ThemeResource SystemAccentColor}"
+                            Style="{StaticResource ThemeTextBlockButtonStyle}">
+                            <Grid>
+                                <StackPanel
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    Visibility="{x:Bind ViewModel.ShowingUnihan, Mode=OneWay, FallbackValue=Collapsed}">
+                                    <TextBlock x:Uid="HideUnihanLabel" d:Text="{core:Localizer Key=HideUnihanLabel/Text}" />
+                                    <FontIcon
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="11.3333"
+                                        Glyph="&#xE70D;" />
+                                </StackPanel>
+                                <StackPanel
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.ShowingUnihan), Mode=OneWay, FallbackValue=Collapsed}">
+                                    <TextBlock x:Uid="ShowUnihanLabel" d:Text="{core:Localizer Key=ShowUnihanLabel/Text}" />
+                                    <FontIcon
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="11.3333"
+                                        Glyph="&#xE70E;" />
+                                </StackPanel>
+                            </Grid>
+
+                        </Button>
+
                         <!--  Copy / Save / Fit Row  -->
                         <StackPanel
-                            Grid.Row="3"
+                            Grid.Row="5"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom"
                             core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
@@ -1936,7 +2050,7 @@
                             x:Name="BorderCopiedMessage"
                             x:Load="False"
                             Grid.Row="0"
-                            Grid.RowSpan="3"
+                            Grid.RowSpan="5"
                             Margin="12 12 12 12"
                             Padding="12"
                             VerticalAlignment="Bottom"
@@ -1973,10 +2087,11 @@
                         </Border>
                     </Grid>
 
+
                     <!--  Dev Utilities  -->
                     <StackPanel
                         x:Name="DevUtilsRoot"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                         Visibility="Collapsed">
 
@@ -2024,7 +2139,7 @@
                                                 x:Uid="BtnXAMLGeometry"
                                                 Margin="6 0 0 0"
                                                 FontSize="13.333"
-                                                Style="{StaticResource TextBlockButtonStyle}">
+                                                Style="{StaticResource ThemeTextBlockButtonStyle}">
                                                 <Button.Flyout>
                                                     <Flyout
                                                         x:Name="GeometryFlyout"

@@ -453,22 +453,21 @@
                             <Button
                                 x:Name="FontListFilter"
                                 x:Uid="FontListFilter"
-                                Margin="0,0,0,0"
-                                Padding="0 0"
+                                Margin="-11 0 4 0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
-                                Style="{StaticResource TextBlockButtonStyle}"
+                                Style="{StaticResource ThemeTextBlockButtonStyle}"
                                 ToolTipService.Placement="Bottom">
 
-                                <TextBlock Margin="0 0 12 0">
+                                <TextBlock>
                                     <Run Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="All Fonts" />
                                     <Run />
                                     <Run
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         FontSize="10"
-                                        Text="&#xE011;" />
+                                        Text="&#xE70D;" />
                                 </TextBlock>
 
                                 <Button.Flyout>
@@ -665,11 +664,10 @@
                                     d:Text="Segoe UI" />
                                 <Button
                                     Grid.Column="1"
-                                    Padding="8 0"
                                     Click="{x:Bind ViewModel.OpenCurrentFont}"
                                     Content="{core:Localizer Key='OpenFontButton/Label'}"
                                     Foreground="{StaticResource SystemColorControlAccentBrush}"
-                                    Style="{StaticResource TextBlockButtonStyle}"
+                                    Style="{StaticResource ThemeTextBlockButtonStyle}"
                                     ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}" />
                             </Grid>
 
