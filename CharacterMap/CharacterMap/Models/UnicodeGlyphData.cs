@@ -4,7 +4,6 @@ using SQLite;
 
 namespace CharacterMap.Models;
 
-
 public class UnicodeGlyphData : IGlyphData
 {
 #if DEBUG

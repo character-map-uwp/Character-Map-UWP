@@ -24,11 +24,6 @@ public static class Unicode
             or UnicodeGeneralCategory.ParagraphSeparator;
     }
 
-    public static bool IsInCategory(uint c, UnicodeGeneralCategory cat)
-    {
-        return cat == UnicodeCharacters.GetGeneralCategory(c);
-    }
-
     public static bool ContainsRange(FontVariant v, UnicodeRange range)
     {
         return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last);
@@ -53,17 +48,6 @@ public static class Unicode
             || ContainsRange(v, UnicodeRange.MiscSymbols)
             || ContainsRange(v, UnicodeRange.SupplementalSymbols)
             || ContainsRange(v, UnicodeRange.TransportSymbols);
-    }
-
-    public static List<UnicodeCategoryModel> CreateCategoriesList(IList<UnicodeCategoryModel> source = null)
-    {
-        var list = Enum.GetValues(typeof(UnicodeGeneralCategory)).OfType<UnicodeGeneralCategory>().Select(e => new UnicodeCategoryModel(e)).ToList();
-
-        if (source != null)
-            for (int i = 0; i < list.Count; i++)
-                list[i].IsSelected = source[i].IsSelected;
-
-        return list;
     }
 
     public static List<UnicodeRangeModel> CreateRangesList(IList<UnicodeRangeModel> source = null)
