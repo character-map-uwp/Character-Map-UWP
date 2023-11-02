@@ -695,7 +695,7 @@ namespace CharacterMap.Views
 
         private void OnSearchBoxGotFocus(AutoSuggestBox searchBox)
         {
-            if (ViewModel.SearchResults != null && ViewModel.SearchResults.Count > 0)
+            if (ViewModel.SearchResults is not null)
                 searchBox.IsSuggestionListOpen = true;
             else
                 ViewModel.DebounceSearch(ViewModel.SearchQuery, ViewModel.Settings.InstantSearchDelay);
@@ -1020,6 +1020,11 @@ namespace CharacterMap.Views
         private void AdvancedSettings_Click(object sender, RoutedEventArgs e)
         {
             Messenger.Send<AdvancedOptionsRequested>();
+        }
+
+        private void VariableHintClick(object sender, RoutedEventArgs e)
+        {
+            ViewToggleButton.Focus(FocusState.Keyboard);
         }
 
 

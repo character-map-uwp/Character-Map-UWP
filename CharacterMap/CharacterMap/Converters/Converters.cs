@@ -1,5 +1,6 @@
 ﻿using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml;
 
 namespace CharacterMap.Converters;
 
@@ -92,6 +93,22 @@ public class ZoomBackgroundConverter : IValueConverter
                 return 1;
         }
         return 0.3;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class VisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+       if (value is string str)
+            return !string.IsNullOrEmpty(str) ? Visibility.Visible : Visibility.Collapsed;
+
+       return value != null ? Visibility.Visible : Visibility.Collapsed;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

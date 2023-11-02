@@ -150,6 +150,12 @@
             IsSourceGrouped="True"
             Source="{Binding ViewModel.GroupedChars, ElementName=ViewRoot, Mode=OneWay}" />
 
+        <CollectionViewSource
+            x:Key="SearchResultsSource"
+            x:Name="SearchResultsSource"
+            IsSourceGrouped="{Binding ViewModel.IsSearchGrouped, ElementName=ViewRoot, Mode=OneWay}"
+            Source="{Binding ViewModel.SearchResults, ElementName=ViewRoot, Mode=OneWay}" />
+
         <MenuFlyout x:Name="SuggestionFlyout" AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
             <MenuFlyoutItem
                 x:Uid="EditSuggestionsItem"
@@ -556,7 +562,7 @@
                     VerticalAlignment="Center"
                     GotFocus="SearchBox_GotFocus"
                     ItemTemplate="{StaticResource SearchResultTemplate}"
-                    ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                    ItemsSource="{Binding Source={StaticResource SearchResultsSource}}"
                     PlaceholderText="#SearchBox"
                     PreviewKeyDown="SearchBox_PreviewKeyDown"
                     QuerySubmitted="SearchBox_QuerySubmitted"
@@ -1099,13 +1105,6 @@
                     Grid.Row="1"
                     Spacing="0">
                     <TextBlock
-                        x:Name="VariableFeaturesMessage"
-                        x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
-                        x:Uid="VariableFeaturesMessage"
-                        Margin="12 6 0 -6"
-                        Style="{StaticResource DescriptionStyle}"
-                        d:Text="{core:Localizer Key=VariableFeaturesMessage/Text}" />
-                    <TextBlock
                         x:Name="ColrV1SupportMessage"
                         x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
                         x:Uid="ColrV1SupportMessage"
@@ -1155,53 +1154,99 @@
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
                     <GridView.Header>
-                        <!--    -->
-                        <Grid
-                            x:Name="DeprecatedIconsInfoBar"
-                            x:Load="{x:Bind core:Converters.TrueTrueTrue(ViewModel.IsFiltered, ViewModel.Settings.HideDeprecatedMDL2, ViewModel.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
-                            ColumnSpacing="12"
-                            Margin="14 24 0 0"
-                            Padding="6"
-                            Background="{StaticResource InfoBarBackgroundBrush}"
-                            CornerRadius="{StaticResource InfoBarCornerRadius}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="-16">
 
-                            <FontIcon
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                FontSize="13.333"
-                                Glyph="&#xE946;" />
+                            <Grid
+                                x:Name="VariableFeaturesMessage"
+                                x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
+                                ColumnSpacing="12"
+                                Margin="14 24 0 0"
+                                Padding="6 2"
+                                Background="{StaticResource InfoBarBackgroundBrush}"
+                                CornerRadius="{StaticResource InfoBarCornerRadius}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                            <TextBlock
-                                x:Name="HiddenGlyphsMessage"
-                                x:Uid="HiddenGlyphsMessage"
-                                Grid.Column="1"
-                                Margin="0"
-                                VerticalAlignment="Center"
-                                FontSize="12"
-                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                Opacity="0.99"
-                                Style="{StaticResource DescriptionStyle}"
-                                TextLineBounds="Tight"
-                                d:Text="{core:Localizer Key=HiddenGlyphsMessage/Text}" />
-
-                            <Button
-                                Grid.Column="2"
-                                Padding="0"
-                                Click="AdvancedSettings_Click"
-                                Style="{StaticResource ChromelessButtonStyle}">
-                                <ToolTipService.ToolTip>
-                                    <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
-                                </ToolTipService.ToolTip>
                                 <FontIcon
                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                     FontSize="13.333"
-                                    Glyph="&#xE713;" />
-                            </Button>
-                        </Grid>
+                                    Glyph="&#xE946;" />
+
+                                <TextBlock
+                                    x:Uid="VariableFeaturesMessage"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                    Opacity="0.99"
+                                    Style="{StaticResource DescriptionStyle}"
+                                    TextLineBounds="Tight"
+                                    d:Text="{core:Localizer Key=VariableFeaturesMessage/Text}" />
+
+                                <Button
+                                    Grid.Column="2"
+                                    Padding="0"
+                                    Click="VariableHintClick"
+                                    Style="{StaticResource ChromelessButtonStyle}"
+                                    ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
+                                    <FontIcon
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="13.333"
+                                        Glyph="&#xE13C;" />
+                                </Button>
+                            </Grid>
+
+                            <Grid
+                                x:Name="DeprecatedIconsInfoBar"
+                                x:Load="{x:Bind core:Converters.TrueTrueTrue(ViewModel.IsFiltered, ViewModel.Settings.HideDeprecatedMDL2, ViewModel.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
+                                ColumnSpacing="12"
+                                Margin="14 24 0 0"
+                                Padding="6 2"
+                                Background="{StaticResource InfoBarBackgroundBrush}"
+                                CornerRadius="{StaticResource InfoBarCornerRadius}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <FontIcon
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="13.333"
+                                    Glyph="&#xE946;" />
+
+                                <TextBlock
+                                    x:Name="HiddenGlyphsMessage"
+                                    x:Uid="HiddenGlyphsMessage"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                    Opacity="0.99"
+                                    Style="{StaticResource DescriptionStyle}"
+                                    TextLineBounds="Tight"
+                                    d:Text="{core:Localizer Key=HiddenGlyphsMessage/Text}" />
+
+                                <Button
+                                    Grid.Column="2"
+                                    Padding="0"
+                                    Click="AdvancedSettings_Click"
+                                    Style="{StaticResource ChromelessButtonStyle}">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
+                                    </ToolTipService.ToolTip>
+                                    <FontIcon
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="13.333"
+                                        Glyph="&#xE713;" />
+                                </Button>
+                            </Grid>
+
+                        </StackPanel>
+                        <!--    -->
 
                     </GridView.Header>
                     <GridView.ItemsPanel>
@@ -1388,7 +1433,7 @@
 
                     <controls:SuggestionBox
                         x:Name="TypeRampSuggestionBox"
-                        Margin="12 12 0 12"
+                        Margin="24 12 0 12"
                         ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
                         RenderingOptions="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1420,7 +1465,7 @@
                         Width="36"
                         Height="36"
                         MinWidth="36"
-                        Margin="8 -4 0 -4"
+                        Margin="8 -4 12 -4"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         helpers:FluentAnimation.PointerOver="FluentContentPresenter"

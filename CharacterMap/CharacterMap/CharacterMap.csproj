@@ -243,6 +243,8 @@
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
+    <Compile Include="Models\SearchResultsGroup.cs" />
+    <Compile Include="Models\UnicodeRangeGroup.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\Animation.cs" />
     <Compile Include="Helpers\Composition.cs" />

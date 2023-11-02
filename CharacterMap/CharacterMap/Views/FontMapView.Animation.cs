@@ -163,8 +163,8 @@ namespace CharacterMap.Views
                 .Where(c => c.IsInViewport(CharGrid))
                 .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c); ;
 
-            if (CharGrid.Header is FrameworkElement header)
-                clds = clds.Append(header);
+            if (CharGrid.Header is Panel header && header.Children.Count > 0)
+                clds = clds.Concat(header.Children.OfType<FrameworkElement>());
 
             List<FrameworkElement> childs = clds.OrderBy(c => Guid.NewGuid()).ToList();
             List<FrameworkElement> toChilds = GetTypeRampAnimationTargets();
@@ -307,7 +307,7 @@ namespace CharacterMap.Views
                 .OfType<FrameworkElement>()
                 .Where(c => c.IsInViewport(CharGrid))
                 .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
-                .Append(CharGrid.Header as FrameworkElement)
+                .Concat(((Panel)CharGrid.Header).Children.OfType<FrameworkElement>())
                 .Where(c => c is not null)
                 .OrderBy(c => Guid.NewGuid())
                 .ToList();
@@ -318,7 +318,7 @@ namespace CharacterMap.Views
                     .OfType<FrameworkElement>()
                     .Where(c => c.IsInViewport(this))
                     .Select(c => c is GridViewHeaderItem hi ? (FrameworkElement)hi.ContentTemplateRoot : c)
-                    .Append(CharGrid.Header as FrameworkElement)
+                    .Concat(((Panel)CharGrid.Header).Children.OfType<FrameworkElement>())
                     .Where(c => c is not null)
                     .OrderBy(c => Guid.NewGuid())
                     .ToList();

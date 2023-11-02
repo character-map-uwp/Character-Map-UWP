@@ -1,6 +1,7 @@
 ﻿using CharacterMap.Views;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Graphics.Canvas.Text;
+using System.Collections;
 using System.Collections.ObjectModel;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -68,7 +69,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] UnihanData                             _unihanData;
         [ObservableProperty] IReadOnlyList<Suggestion>              _rampOptions;
         [ObservableProperty] IReadOnlyList<Character>               _chars;
-        [ObservableProperty] IReadOnlyList<IGlyphData>              _searchResults;
+        [ObservableProperty] IEnumerable                           _searchResults;
         [ObservableProperty] IReadOnlyList<DWriteFontAxis>          _variationAxis;
         [ObservableProperty] IReadOnlyList<DevProviderBase>         _providers;
         [ObservableProperty] IReadOnlyList<TypographyFeatureInfo>   _typographyFeatures;
@@ -78,6 +79,7 @@ namespace CharacterMap.ViewModels
         [ObservableProperty] bool                   _importButtonEnabled    = true;
         [ObservableProperty] bool                   _showingUnihan          = true;
         [ObservableProperty] bool                   _isLoading;
+        [ObservableProperty] bool                   _isSearchGrouped;
         [ObservableProperty] bool                   _hasFontOptions;
         [ObservableProperty] bool                   _isSvgChar;
         [ObservableProperty] bool                   _isSequenceRootVisible;
@@ -562,6 +564,23 @@ namespace CharacterMap.ViewModels
             if (await GlyphService.SearchAsync(query, SelectedVariant) is IReadOnlyList<IGlyphData> results
                 && token.IsValid())
             {
+                SearchResults = null;
+                IsSearchGrouped = false;
+
+                if (results.Count == 0)
+                    results = null;
+
+                if (results != null && SelectedGlyphCategories.Any(c => c.IsSelected is false))
+                {
+                    var groups = SearchResultsGroup.CreateGroups(results, SelectedGlyphCategories);
+                    if (groups[1].Count > 0)
+                    {
+                        IsSearchGrouped = true;
+                        SearchResults = groups;
+                        return;
+                    }
+                }
+                
                 SearchResults = results;
             }
         }
