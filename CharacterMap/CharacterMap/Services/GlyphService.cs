@@ -134,6 +134,7 @@ namespace CharacterMap.Services
             S("Hebrew", "עטלף אבק נס דרך מזגן שהתפוצץ כי חם", false), // Hebrew
             S("Arabic", "نص حكيم له سر قاطع وذو شأن عظيم مكتوب على ثوب أخضر ومغلف بجلد أزرق", false), // Arabic,
             S("Korean", "키스의 고유조건은 입술끼리 만나야 하고 특별한 기술은 필요치 않다"), // Korean
+            S("ChineseSimplified", "床前明月光 疑是地上霜 举头望明月 低头思故乡"), // Chinese (Simplified)
             S("ChineseTraditional", "視野無限廣，窗外有藍天"), // Chinese (Traditional)
             S("Japanese", "いろはにほへと ちりぬるを わかよたれそ つねならむ うゐのおくやま けふこえて あさきゆめみし ゑひもせす（ん）") // Japanese
         };

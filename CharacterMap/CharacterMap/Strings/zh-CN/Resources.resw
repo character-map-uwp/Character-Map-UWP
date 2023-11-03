@@ -657,6 +657,9 @@
   <data name="OptionScriptThai.Text" xml:space="preserve">
     <value>泰语</value>
   </data>
+  <data name="CultureSpecificPangram.Text" xml:space="preserve">
+    <value>有朋自远方来 不亦乐乎</value>
+  </data>
   <data name="LblSwitchToCharMap.Text" xml:space="preserve">
     <value>切换到字符集视图</value>
   </data>
@@ -715,5 +718,11 @@
   </data>
   <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
     <value>该应用使用了以下的开源库</value>
+  </data>
+  <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>简体中文</value>
   </data>
 </root>

@@ -70,23 +70,23 @@ namespace CharacterMap.Controls
                 .Add(BasicFontFilter.ScriptCyrillic, style)
                 .Add(BasicFontFilter.ScriptDevanagari, style)
                 .Add(BasicFontFilter.ScriptGreekAndCoptic, style)
+                .Add(BasicFontFilter.ScriptCJKUnifiedIdeographs, style)
                 .Add(BasicFontFilter.ScriptHiraganaAndKatakana, style)
                 .Add(BasicFontFilter.ScriptHebrew, style)
+                .Add(BasicFontFilter.ScriptKoreanHangul, style)
                 .Add(BasicFontFilter.ScriptBasicLatin, style)
-                .Add(BasicFontFilter.ScriptThai, style)
-                .Add(BasicFontFilter.ScriptCJKUnifiedIdeographs, style)
-                .Add(BasicFontFilter.ScriptKoreanHangul, style);
+                .Add(BasicFontFilter.ScriptThai, style);
 
 
             // 3. "More" option
             _ops = AddSub("OptionMoreFilters/Text")
+                .Add(BasicFontFilter.VariableFonts, style)
                 .Add(BasicFontFilter.ColorFonts, style)
                 .Add(BasicFontFilter.PanoseDecorativeFonts, style)
                 .Add(BasicFontFilter.PanoseScriptFonts, style)
-                .Add(BasicFontFilter.MonospacedFonts, style)
-                .Add(BasicFontFilter.VariableFonts, style);
+                .Add(BasicFontFilter.MonospacedFonts, style);
 
-            _variableOption = _ops.Items.Last();
+            _variableOption = _ops.Items[0];
 
             AddChild(_ops, "OptionEmoji/Text")
                 .Add(BasicFontFilter.EmojiAll, style)

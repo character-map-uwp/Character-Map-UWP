@@ -962,8 +962,8 @@ Please consider posting details about this error to GitHub so we can help you fi
           <target state="new">Latin</target>
         </trans-unit>
         <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
-          <source>CJK</source>
-          <target state="new">CJK</target>
+          <source>CJK (Chinese/Japanese/Korean)</source>
+          <target state="new">CJK (Chinese/Japanese/Korean)</target>
         </trans-unit>
         <trans-unit id="OptionScriptCyrillic.Text" translate="yes" xml:space="preserve">
           <source>Cyrillic</source>
@@ -1771,6 +1771,255 @@ Tap and hold to arrange.</target>
         <trans-unit id="SuggestOptionVietnamese.Text" translate="yes" xml:space="preserve">
           <source>Vietnamese</source>
           <target state="new">Vietnamese</target>
+        </trans-unit>
+        <trans-unit id="InstallCountLabel" translate="yes" xml:space="preserve">
+          <source>{0} Font Families, {1} Font Faces installed on your computer</source>
+          <target state="new">{0} Font Families, {1} Font Faces installed on your computer</target>
+        </trans-unit>
+        <trans-unit id="OptionSystemFonts.Text" translate="yes" xml:space="preserve">
+          <source>Installed Fonts</source>
+          <target state="new">Installed Fonts</target>
+        </trans-unit>
+        <trans-unit id="SettingsExportInstalledLabel.Text" translate="yes" xml:space="preserve">
+          <source>Export installed fonts</source>
+          <target state="new">Export installed fonts</target>
+        </trans-unit>
+        <trans-unit id="OptionDesignTag.Text" translate="yes" xml:space="preserve">
+          <source>By Design Language</source>
+          <target state="new">By Design Language</target>
+        </trans-unit>
+        <trans-unit id="HiddenGlyphsMessage.Text" translate="yes" xml:space="preserve">
+          <source>Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</source>
+          <target state="new">Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</target>
+        </trans-unit>
+        <trans-unit id="InstallDialog.SecondaryButtonText" translate="yes" xml:space="preserve">
+          <source>Close</source>
+          <target state="new">Close</target>
+        </trans-unit>
+        <trans-unit id="InstallDialog.Title" translate="yes" xml:space="preserve">
+          <source>Install Font</source>
+          <target state="new">Install Font</target>
+        </trans-unit>
+        <trans-unit id="InstallFontInstructions.Text" translate="yes" xml:space="preserve">
+          <source>Please read all of instructions before continuing to install your font
+
+1. Press "Start" below
+2. Select "Windows Font Viewer" and choose "Just once" or "open"
+3. Press "Install" in the top of the font viewer Window
+
+Your web font will be converted to OTF format for installation.</source>
+          <target state="new">Please read all of instructions before continuing to install your font
+
+1. Press "Start" below
+2. Select "Windows Font Viewer" and choose "Just once" or "open"
+3. Press "Install" in the top of the font viewer Window
+
+Your web font will be converted to OTF format for installation.</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Word in such a way that encourages the user to read all the steps before continuing</note>
+        </trans-unit>
+        <trans-unit id="InstallLabel.Text" translate="yes" xml:space="preserve">
+          <source>Install</source>
+          <target state="new">Install</target>
+        </trans-unit>
+        <trans-unit id="OptionUnicodeRange/Text" translate="yes" xml:space="preserve">
+          <source>By Unicode Range</source>
+          <target state="new">By Unicode Range</target>
+        </trans-unit>
+        <trans-unit id="SettingsAdvancedOptionsLabel.Text" translate="yes" xml:space="preserve">
+          <source>Advanced</source>
+          <target state="new">Advanced</target>
+        </trans-unit>
+        <trans-unit id="SettingsDeprecatedIconsPresenter.Description" translate="yes" xml:space="preserve">
+          <source>If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout.
+
+Referencing deprecated icons by unicode codepoint is not recommended, and all deprecated icons have non-deprecated equivalents.</source>
+          <target state="new">If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout.
+
+Referencing deprecated icons by unicode codepoint is not recommended, and all deprecated icons have non-deprecated equivalents.</target>
+        </trans-unit>
+        <trans-unit id="SettingsDeprecatedIconsPresenter.Title" translate="yes" xml:space="preserve">
+          <source>Hide deprecated icons</source>
+          <target state="new">Hide deprecated icons</target>
+        </trans-unit>
+        <trans-unit id="StartLabel.Text" translate="yes" xml:space="preserve">
+          <source>Start</source>
+          <target state="new">Start</target>
+        </trans-unit>
+        <trans-unit id="TxtUniHexValue.Text" translate="yes" xml:space="preserve">
+          <source>Hex Value</source>
+          <target state="new">Hex Value</target>
+        </trans-unit>
+        <trans-unit id="FileExplorerFileToolTip" translate="yes" xml:space="preserve">
+          <source>Preview File</source>
+          <target state="new">Preview File</target>
+        </trans-unit>
+        <trans-unit id="ImportCountLabel" translate="yes" xml:space="preserve">
+          <source>{0} Font Families, {1} Font Faces imported</source>
+          <target state="new">{0} Font Families, {1} Font Faces imported</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontExportVersionLabel.Text" translate="yes" xml:space="preserve">
+          <source>Include version number in file name</source>
+          <target state="new">Include version number in file name</target>
+        </trans-unit>
+        <trans-unit id="HideUnihanLabel.Text" translate="yes" xml:space="preserve">
+          <source>Hide Unihan data</source>
+          <target state="new">Hide Unihan data</target>
+        </trans-unit>
+        <trans-unit id="ShowUnihanLabel.Text" translate="yes" xml:space="preserve">
+          <source>Show Unihan data</source>
+          <target state="new">Show Unihan data</target>
+        </trans-unit>
+        <trans-unit id="UnihanDefinition.Text" translate="yes" xml:space="preserve">
+          <source>Definition</source>
+          <target state="new">Definition</target>
+        </trans-unit>
+        <trans-unit id="UnihanPronunciations.Text" translate="yes" xml:space="preserve">
+          <source>Pronunciations</source>
+          <target state="new">Pronunciations</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionCantonese" translate="yes" xml:space="preserve">
+          <source>The most customary jyutping (Cantonese) reading for this ideograph.</source>
+          <target state="new">The most customary jyutping (Cantonese) reading for this ideograph.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionHangul" translate="yes" xml:space="preserve">
+          <source>The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) following a colon.</source>
+          <target state="new">The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) following a colon.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionHanyuPinlu" translate="yes" xml:space="preserve">
+          <source>The Pronunciations and Frequencies of this ideograph, based in part on those appearing in 《現代漢語頻率詞典》 <it id="1" pos="open">&lt;Xiandai Hanyu Pinlu Cidian&gt;</it></source>
+          <target state="new">The Pronunciations and Frequencies of this ideograph, based in part on those appearing in 《現代漢語頻率詞典》 <it id="1" pos="open">&lt;Xiandai Hanyu Pinlu Cidian&gt;</it></target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionHanyuPinyin" translate="yes" xml:space="preserve">
+          <source>The 漢語拼音 Hànyǔ Pīnyīn reading(s) appearing in the edition of 《漢語大字典》 Hànyǔ Dà Zìdiǎn (HDZ) specified in the kHanYu property description (q.v.).</source>
+          <target state="new">The 漢語拼音 Hànyǔ Pīnyīn reading(s) appearing in the edition of 《漢語大字典》 Hànyǔ Dà Zìdiǎn (HDZ) specified in the kHanYu property description (q.v.).</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionJapanese" translate="yes" xml:space="preserve">
+          <source>The Japanese readings(s) for this ideograph expressed in Kana. 
+
+Readings expressed in Hiragana are generally considered Kun-yomi (訓読み), and readings expressed in Katakana are generally considered On-yomi (音読み).</source>
+          <target state="new">The Japanese readings(s) for this ideograph expressed in Kana. 
+
+Readings expressed in Hiragana are generally considered Kun-yomi (訓読み), and readings expressed in Katakana are generally considered On-yomi (音読み).</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionJapaneseKun" translate="yes" xml:space="preserve">
+          <source>The Japanese pronunciation(s) of this ideograph in the Hepburn romanization.</source>
+          <target state="new">The Japanese pronunciation(s) of this ideograph in the Hepburn romanization.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionJapaneseOn" translate="yes" xml:space="preserve">
+          <source>The Sino-Japanese pronunciation(s) of this ideograph.</source>
+          <target state="new">The Sino-Japanese pronunciation(s) of this ideograph.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionKorean" translate="yes" xml:space="preserve">
+          <source>The Korean pronunciation(s) of this ideograph, using the Yale romanization system.</source>
+          <target state="new">The Korean pronunciation(s) of this ideograph, using the Yale romanization system.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionMandarin" translate="yes" xml:space="preserve">
+          <source>The most customary pīnyīn reading for this ideograph. 
+
+When there are two values, then the first is preferred for Simplified Chinese (zh-Hans (CN)) and the second is preferred for Traditional Chinese (zh-Hant (TW)). 
+
+When there is only one value, it is appropriate for both.</source>
+          <target state="new">The most customary pīnyīn reading for this ideograph. 
+
+When there are two values, then the first is preferred for Simplified Chinese (zh-Hans (CN)) and the second is preferred for Traditional Chinese (zh-Hant (TW)). 
+
+When there is only one value, it is appropriate for both.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionSMSZD2003Readings" translate="yes" xml:space="preserve">
+          <source>This represents the Mandarin and Cantonese readings(s) of the ideograph in the Soengmou San Zidin (商務 新字典, New Commercial Press Character Dictionary).
+
+Mandarin readings are in hànyǔ pīnyīn. Cantonese readings are in jyutping. Note that some ideographs have readings which would ordinarily be considered invalid, such as polysyllabic readings.
+
+If an ideograph has multiple entries, it means that the ideograph has multiple definitions and the readings are grouped in order of those definitions.</source>
+          <target state="new">This represents the Mandarin and Cantonese readings(s) of the ideograph in the Soengmou San Zidin (商務 新字典, New Commercial Press Character Dictionary).
+
+Mandarin readings are in hànyǔ pīnyīn. Cantonese readings are in jyutping. Note that some ideographs have readings which would ordinarily be considered invalid, such as polysyllabic readings.
+
+If an ideograph has multiple entries, it means that the ideograph has multiple definitions and the readings are grouped in order of those definitions.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionTang" translate="yes" xml:space="preserve">
+          <source>The Tang dynasty pronunciation(s) of this ideograph, derived from or consistent with T’ang Poetic Vocabulary by Hugh M. Stimson, Far Eastern Publications, Yale University 1976.</source>
+          <target state="new">The Tang dynasty pronunciation(s) of this ideograph, derived from or consistent with T’ang Poetic Vocabulary by Hugh M. Stimson, Far Eastern Publications, Yale University 1976.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionTGHZ2013" translate="yes" xml:space="preserve">
+          <source>One or more Hànyǔ Pīnyīn readings as given in Tōngyòng Guīfàn Hànzì Zìdiǎn.</source>
+          <target state="new">One or more Hànyǔ Pīnyīn readings as given in Tōngyòng Guīfàn Hànzì Zìdiǎn.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionVietnamese" translate="yes" xml:space="preserve">
+          <source>The ideograph’s pronunciation(s) in Quốc ngữ.</source>
+          <target state="new">The ideograph’s pronunciation(s) in Quốc ngữ.</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeDescriptionXHC1983" translate="yes" xml:space="preserve">
+          <source>One or more Hànyǔ Pīnyīn readings as given in the Xiàndài Hànyǔ Cídiǎn</source>
+          <target state="new">One or more Hànyǔ Pīnyīn readings as given in the Xiàndài Hànyǔ Cídiǎn</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameCantonese" translate="yes" xml:space="preserve">
+          <source>Cantonese</source>
+          <target state="new">Cantonese</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameHangul" translate="yes" xml:space="preserve">
+          <source>Hangul</source>
+          <target state="new">Hangul</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameHanyuPinlu" translate="yes" xml:space="preserve">
+          <source>Hanyu Pinlu</source>
+          <target state="new">Hanyu Pinlu</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameHanyuPinyin" translate="yes" xml:space="preserve">
+          <source>Hànyǔ Pīnyīn</source>
+          <target state="new">Hànyǔ Pīnyīn</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameJapanese" translate="yes" xml:space="preserve">
+          <source>Japanese</source>
+          <target state="new">Japanese</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameJapaneseKun" translate="yes" xml:space="preserve">
+          <source>Japanese Kun</source>
+          <target state="new">Japanese Kun</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameJapaneseOn" translate="yes" xml:space="preserve">
+          <source>Japanese On</source>
+          <target state="new">Japanese On</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameKorean" translate="yes" xml:space="preserve">
+          <source>Korean</source>
+          <target state="new">Korean</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameMandarin" translate="yes" xml:space="preserve">
+          <source>Mandarin</source>
+          <target state="new">Mandarin</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameSMSZD2003Readings" translate="yes" xml:space="preserve">
+          <source>SmSZ</source>
+          <target state="new">SmSZ</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameTang" translate="yes" xml:space="preserve">
+          <source>Tang</source>
+          <target state="new">Tang</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameTGHZ2013" translate="yes" xml:space="preserve">
+          <source>Hànyǔ Pīnyīn (TGHZ)</source>
+          <target state="new">Hànyǔ Pīnyīn (TGHZ)</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameVietnamese" translate="yes" xml:space="preserve">
+          <source>Vietnamese</source>
+          <target state="new">Vietnamese</target>
+        </trans-unit>
+        <trans-unit id="UnihanTypeNameXHC1983" translate="yes" xml:space="preserve">
+          <source>Hànyǔ Pīnyīn (XHC)</source>
+          <target state="new">Hànyǔ Pīnyīn (XHC)</target>
+        </trans-unit>
+        <trans-unit id="HiddenSearchResultsLabel.Text" translate="yes" xml:space="preserve">
+          <source>HIDDEN</source>
+          <target state="new">HIDDEN</target>
+        </trans-unit>
+        <trans-unit id="SuggestOptionChineseSimplified.Text" translate="yes" xml:space="preserve">
+          <source>Chinese (Simplified)</source>
+          <target state="new">Chinese (Simplified)</target>
+        </trans-unit>
+        <trans-unit id="NotificationSearchSelectedCharHidden" translate="yes" xml:space="preserve">
+          <source>The selected character is currently hidden by your selected filters</source>
+          <target state="new">The selected character is currently hidden by your selected filters</target>
         </trans-unit>
       </group>
     </body>

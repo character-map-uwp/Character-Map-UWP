@@ -590,7 +590,7 @@ namespace CharacterMap.Views
 
         public void SelectCharacter(Character ch)
         {
-            if (null != ch)
+            if (ch is not null)
             {
                 CharGrid.SelectedItem = ch;
                 CharGrid.ScrollIntoView(ch);
@@ -728,10 +728,13 @@ namespace CharacterMap.Views
 
         internal void SearchBox_SuggestionChosen(AutoSuggestBox sender, AutoSuggestBoxSuggestionChosenEventArgs args)
         {
-            if (args.SelectedItem is IGlyphData data
-                && ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == data.UnicodeIndex) is Character c)
+            if (args.SelectedItem is IGlyphData data)
             {
-                SelectCharacter(c);
+                if (ViewModel.Chars.FirstOrDefault(c => c.UnicodeIndex == data.UnicodeIndex) is Character c)
+                    SelectCharacter(c);
+                else
+                    ViewModel.Messenger.Send(new AppNotificationMessage(true, 
+                        Localization.Get("NotificationSearchSelectedCharHidden")));
             }
         }
 

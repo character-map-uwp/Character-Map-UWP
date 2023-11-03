@@ -249,27 +249,28 @@
                                 VerticalContentAlignment="Center"
                                 TextWrapping="WrapWholeWords" />
 
-                            <AppBarButton
+                            <controls:UXButton
                                 x:Name="PART_DismissButton"
                                 Grid.Column="1"
                                 Width="40"
                                 Height="40"
+                                MinWidth="40"
                                 MinHeight="40"
                                 MaxHeight="40"
-                                Margin="0"
-                                Padding="0"
                                 VerticalAlignment="Center"
                                 AutomationProperties.Name="Dismiss"
-                                CornerRadius="4"
-                                LabelPosition="Collapsed">
+                                CornerRadius="8"
+                                Foreground="White"
+                                Style="{StaticResource MapInfoButtonStyle}">
                                 <Button.RenderTransform>
                                     <TranslateTransform x:Name="DismissButtonTransform" X="18" />
                                 </Button.RenderTransform>
                                 <FontIcon
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
+                                    Foreground="White"
                                     Glyph="&#xE10A;" />
-                            </AppBarButton>
+                            </controls:UXButton>
                         </Grid>
                     </Grid>
                 </ControlTemplate>

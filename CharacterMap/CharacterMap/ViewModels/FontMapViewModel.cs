@@ -570,10 +570,13 @@ namespace CharacterMap.ViewModels
                 if (results.Count == 0)
                     results = null;
 
+                // If we have filtered out any characters from the character list we should
+                // group the search results into characters that are shown and characters
+                // that are hidden by filtering
                 if (results != null && SelectedGlyphCategories.Any(c => c.IsSelected is false))
                 {
-                    var groups = SearchResultsGroup.CreateGroups(results, SelectedGlyphCategories);
-                    if (groups[1].Count > 0)
+                    if (SearchResultsGroup.CreateGroups(results, SelectedGlyphCategories) is { } groups
+                        && groups.HasHiddenResults)
                     {
                         IsSearchGrouped = true;
                         SearchResults = groups;

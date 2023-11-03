@@ -26,7 +26,7 @@ namespace CharacterMap.Core
         {
             _props = props;
 
-            HasPanose = hasPanose;
+            HasPanose = hasPanose && (family != PanoseFamily.Any && style != PanoseSerifStyle.ANY);
             Family = family;
             Style = style;
             IsSansSerifStyle = Style >= PanoseSerifStyle.NORMAL_SANS;

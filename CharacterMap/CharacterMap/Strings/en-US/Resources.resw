@@ -829,7 +829,7 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>Latin</value>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
-    <value>CJK</value>
+    <value>CJK (Chinese/Japanese/Korean)</value>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>Cyrillic</value>
@@ -1445,7 +1445,7 @@ Tap and hold to arrange.</value>
     <value>Export installed fonts</value>
   </data>
   <data name="OptionDesignTag.Text" xml:space="preserve">
-    <value>Design Language</value>
+    <value>By Design Language</value>
   </data>
   <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
     <value>Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</value>
@@ -1470,7 +1470,7 @@ Your web font will be converted to OTF format for installation.</value>
     <value>Install</value>
   </data>
   <data name="OptionUnicodeRange/Text" xml:space="preserve">
-    <value>Unicode Range</value>
+    <value>By Unicode Range</value>
   </data>
   <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
     <value>Advanced</value>
@@ -1523,7 +1523,9 @@ Referencing deprecated icons by unicode codepoint is not recommended, and all de
     <value>The 漢語拼音 Hànyǔ Pīnyīn reading(s) appearing in the edition of 《漢語大字典》 Hànyǔ Dà Zìdiǎn (HDZ) specified in the kHanYu property description (q.v.).</value>
   </data>
   <data name="UnihanTypeDescriptionJapanese" xml:space="preserve">
-    <value>The Japanese readings(s) for this ideograph expressed in Kana. Readings expressed in Hiragana are generally considered Kun-yomi (訓読み), and readings expressed in Katakana are generally considered On-yomi (音読み).</value>
+    <value>The Japanese readings(s) for this ideograph expressed in Kana. 
+
+Readings expressed in Hiragana are generally considered Kun-yomi (訓読み), and readings expressed in Katakana are generally considered On-yomi (音読み).</value>
   </data>
   <data name="UnihanTypeDescriptionJapaneseKun" xml:space="preserve">
     <value>The Japanese pronunciation(s) of this ideograph in the Hepburn romanization.</value>
@@ -1535,7 +1537,11 @@ Referencing deprecated icons by unicode codepoint is not recommended, and all de
     <value>The Korean pronunciation(s) of this ideograph, using the Yale romanization system.</value>
   </data>
   <data name="UnihanTypeDescriptionMandarin" xml:space="preserve">
-    <value>The most customary pīnyīn reading for this ideograph. When there are two values, then the first is preferred for zh-Hans (CN) and the second is preferred for zh-Hant (TW). When there is only one value, it is appropriate for both.</value>
+    <value>The most customary pīnyīn reading for this ideograph. 
+
+When there are two values, then the first is preferred for Simplified Chinese (zh-Hans (CN)) and the second is preferred for Traditional Chinese (zh-Hant (TW)). 
+
+When there is only one value, it is appropriate for both.</value>
   </data>
   <data name="UnihanTypeDescriptionSMSZD2003Readings" xml:space="preserve">
     <value>This represents the Mandarin and Cantonese readings(s) of the ideograph in the Soengmou San Zidin (商務 新字典, New Commercial Press Character Dictionary).
@@ -1597,5 +1603,14 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
   </data>
   <data name="UnihanTypeNameXHC1983" xml:space="preserve">
     <value>Hànyǔ Pīnyīn (XHC)</value>
+  </data>
+  <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
+    <value>HIDDEN</value>
+  </data>
+  <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
+    <value>The selected character is currently hidden by your selected filters</value>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>Chinese (Simplified)</value>
   </data>
 </root>

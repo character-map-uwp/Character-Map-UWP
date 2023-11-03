@@ -1224,8 +1224,6 @@
                 <ControlTemplate TargetType="controls:UXButton">
                     <Grid
                         x:Name="Root"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
                         Margin="2"
                         Background="Transparent"
                         CornerRadius="{TemplateBinding CornerRadius}">
