@@ -1514,7 +1514,7 @@ Referencing deprecated icons by unicode codepoint is not recommended, and all de
     <value>The most customary jyutping (Cantonese) reading for this ideograph.</value>
   </data>
   <data name="UnihanTypeDescriptionHangul" xml:space="preserve">
-    <value>The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) following a colon.</value>
+    <value>The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) in brackets.</value>
   </data>
   <data name="UnihanTypeDescriptionHanyuPinlu" xml:space="preserve">
     <value>The Pronunciations and Frequencies of this ideograph, based in part on those appearing in 《現代漢語頻率詞典》 &lt;Xiandai Hanyu Pinlu Cidian&gt;</value>

@@ -221,10 +221,57 @@ namespace CharacterMap.Provider
                     parts = line.Split("\t", StringSplitOptions.None);
                     if (parts.Length == 3)
                     {
+                        var desc = parts[2];
+
+                        if (parts[1] != "kDefinition" && desc.Contains(":"))
+                        {
+                            if (parts[1] == "kHangul")
+                            {
+                                // e.g. 양:0E -> 양 (0E)
+                                desc = $"{desc.Replace(":", " (")})";
+                            }
+                            else
+                            {
+                                // Special parsing for for Hanyu readings
+                                // e.g. converts '31914.110:yáng'
+                                //            to 'yáng (31914.110)'
+                                //
+                                //      converts '0069.080:biāo 1008.081:sháo'
+                                //            to 'biāo (0069.080), sháo (1008.081)'
+
+                                string o = desc;
+                                desc = string.Empty;
+
+                                if (o.Contains(" "))
+                                {
+                                    var op = o.Split(" ");
+                                    foreach (var opart in op)
+                                        Append(opart.Split(":"));
+                                }
+                                else
+                                    Append(o.Split(":"));
+
+                                void Append(string[] p)
+                                {
+                                    if (!string.IsNullOrWhiteSpace(desc))
+                                        desc += ", ";
+                                    desc += $"{p[1]} ({p[0]})";
+                                }
+                            }
+                        }
+                        else if (desc.IndexOf("(") is int idx && idx > 0 && desc[idx - 1] != ' ')
+                        {
+                            // Adds a space infront of brackets
+                            // e.g. 'yáng(179)' bcomes 'yáng (179)'
+                            desc = desc.Insert(idx, " ");
+                        }
+                        else if (parts[1] != "kDefinition")
+                            desc = desc.ToLower();
+
                         var mapping = new UnihanReading(
                             index: int.Parse(parts[0].Remove(0,2), NumberStyles.HexNumber),
                             type: Enum.Parse<UnihanFieldType>(parts[1].Remove(0, 1)),
-                            description: parts[2]);
+                            description: desc.Replace(",", ", ").Replace("  ", " "));
 
                         mappings.Add(mapping);
                     }
@@ -348,6 +395,15 @@ namespace CharacterMap.Provider
                             string desc = parts[1] == ctrl ? parts[10] : parts[1];
                             if (string.IsNullOrWhiteSpace(desc))
                                 desc = parts[1]; // some controls characters are unlabeled
+
+                            // Skip things that announce start/end of ranges
+                            if (desc.EndsWith("First>") || desc.EndsWith("Last>"))
+                                continue;
+
+                            // Skip Ideograph labels
+                            if (desc.StartsWith("CJK COMPATIBILITY IDEOGRAPH-"))
+                                continue;
+
                             int code = Int32.Parse(hex, System.Globalization.NumberStyles.HexNumber);
                             data.Add(new UnicodeGlyphData
                             {
@@ -467,9 +523,8 @@ namespace CharacterMap.Provider
             foreach (SearchTarget target in SearchTarget.KnownTargets)
                 con.CreateTable(target.TargetType);
 
-            // Create Fast-Text-Search tables.
-
 #if USE_FTS
+            // Create Fast-Text-Search tables.
             /* MDL2 SEARCH */
             CreateSearchTable(con, MDL2_SEARCH_TABLE, nameof(MDL2Glyph));
 

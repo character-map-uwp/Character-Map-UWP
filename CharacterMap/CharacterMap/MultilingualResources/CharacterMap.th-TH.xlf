@@ -1889,8 +1889,8 @@ Referencing deprecated icons by unicode codepoint is not recommended, and all de
           <target state="new">The most customary jyutping (Cantonese) reading for this ideograph.</target>
         </trans-unit>
         <trans-unit id="UnihanTypeDescriptionHangul" translate="yes" xml:space="preserve">
-          <source>The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) following a colon.</source>
-          <target state="new">The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) following a colon.</target>
+          <source>The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) in brackets.</source>
+          <target state="new">The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) in brackets.</target>
         </trans-unit>
         <trans-unit id="UnihanTypeDescriptionHanyuPinlu" translate="yes" xml:space="preserve">
           <source>The Pronunciations and Frequencies of this ideograph, based in part on those appearing in 《現代漢語頻率詞典》 <it id="1" pos="open">&lt;Xiandai Hanyu Pinlu Cidian&gt;</it></source>
