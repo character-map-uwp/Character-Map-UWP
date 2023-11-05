@@ -1103,15 +1103,7 @@
                 <StackPanel
                     x:Name="TypeRampHints"
                     Grid.Row="1"
-                    Spacing="0">
-                    <TextBlock
-                        x:Name="ColrV1SupportMessage"
-                        x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
-                        x:Uid="ColrV1SupportMessage"
-                        Margin="12 6 0 -6"
-                        Style="{StaticResource DescriptionStyle}"
-                        d:Text="{core:Localizer Key=ColrV1SupportMessage/Text}" />
-                </StackPanel>
+                    Spacing="0" />
 
             </Grid>
 
@@ -1154,7 +1146,10 @@
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
                     <GridView.Header>
-                        <StackPanel Spacing="-16">
+                        <StackPanel
+                            x:Name="InfoHeader"
+                            RequestedTheme="Dark"
+                            Spacing="-16">
 
                             <Grid
                                 x:Name="VariableFeaturesMessage"
@@ -1177,6 +1172,49 @@
 
                                 <TextBlock
                                     x:Uid="VariableFeaturesMessage"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                    Opacity="0.99"
+                                    Style="{StaticResource DescriptionStyle}"
+                                    TextLineBounds="Tight"
+                                    d:Text="{core:Localizer Key=VariableFeaturesMessage/Text}" />
+
+                                <Button
+                                    Grid.Column="2"
+                                    Padding="0"
+                                    Click="VariableHintClick"
+                                    Style="{StaticResource ChromelessButtonStyle}"
+                                    ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
+                                    <FontIcon
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="13.333"
+                                        Glyph="&#xE13C;" />
+                                </Button>
+                            </Grid>
+
+                            <Grid
+                                x:Name="ColrV1SupportMessage"
+                                x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
+                                ColumnSpacing="12"
+                                Margin="14 24 0 0"
+                                Padding="6 2"
+                                Background="{StaticResource InfoBarBackgroundBrush}"
+                                CornerRadius="{StaticResource InfoBarCornerRadius}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <FontIcon
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="13.333"
+                                    Glyph="&#xE946;" />
+
+                                <TextBlock
+                                    x:Uid="ColrV1SupportMessage"
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
                                     FontSize="12"
@@ -1246,8 +1284,6 @@
                             </Grid>
 
                         </StackPanel>
-                        <!--    -->
-
                     </GridView.Header>
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -2551,6 +2587,7 @@
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
+                        <Setter Target="InfoHeader.RequestedTheme" Value="Light" />
                         <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="DevUtilsRoot.Margin" Value="0 0 0 8" />
                         <Setter Target="CharGridRoot.Margin" Value="0 0 8 0" />
@@ -2559,6 +2596,7 @@
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
+                        <Setter Target="InfoHeader.RequestedTheme" Value="Light" />
                         <Setter Target="OptionsList.FontWeight" Value="SemiBold" />
                         <Setter Target="SelectorLabel.IsHitTestVisible" Value="False" />
                         <Setter Target="SelectorLabel.FontSize" Value="11" />

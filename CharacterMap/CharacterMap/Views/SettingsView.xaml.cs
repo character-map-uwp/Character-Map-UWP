@@ -14,7 +14,7 @@ namespace CharacterMap.Views
         public bool IsOpen { get; private set; }
 
         [ObservableProperty] 
-        private GridLength _titleBarHeight = new GridLength(32);
+        private GridLength _titleBarHeight = new (32);
 
         public int GridSize
         {
@@ -311,6 +311,7 @@ namespace CharacterMap.Views
 
         void UpdateStyle()
         {
+            if (DesignMode) return;
             //string key = Settings.ApplicationDesignTheme == 0 ? "Default" : "FUI";
             //if (Settings.ApplicationDesignTheme == 2) key = "Zune";
             //var controls = this.GetDescendants().OfType<FrameworkElement>().Where(e => e is not IThemeableControl && Properties.GetStyleKey(e) is not null).ToList();

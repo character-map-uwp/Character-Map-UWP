@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace CharacterMap.Models;
 
@@ -217,17 +218,17 @@ internal class UnicodeScriptTags
         if (string.IsNullOrEmpty(tag))
             return tag;
 
-        tag = PadTag(tag);
-        if (Scripts.TryGetValue(tag, out string name))
+        string padded = PadTag(tag);
+        if (Scripts.TryGetValue(padded, out string name))
             return name;
 
         // Attempt to handle language/script variants
         // e.g. vi-latn would parse as 'latn' and return as 'Latin (Vietnamese)'
         // e.g. sr-cyrl would parse as 'cyrl' and return as 'Cyrillic (Serbian)'
         // e.g. Hant-HK would parse as 'hant' and return as 'Han (Traditional) (HK)'
-        if (IsLangTag(tag))
+        if (IsLangTag(padded))
         {
-            var parts = tag.Split('-');
+            var parts = padded.Split('-');
             var script = parts[0].Length == 4 ? parts[0] : parts[1];
 
             if (Scripts.TryGetValue(script, out name))
@@ -235,7 +236,7 @@ internal class UnicodeScriptTags
                 // Try convert the ISO 639-1 language tag to full name
                 var lng = parts[0].Length == 4 ? parts[1] : parts[0];
                 try {
-                    var clt = new CultureInfo(lng);
+                    CultureInfo clt = new(lng);
                     if (clt.EnglishName.StartsWith("Unknown") is false)
                         lng = clt.DisplayName; 
                 } catch { }
@@ -268,11 +269,16 @@ internal class UnicodeScriptTags
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static string PadTag(string tag)
     {
+        // Tags should be 4 characters long - tags that are
+        // shorter should be padded with extra spaces
         if (tag is not null && tag.Length > 0 && tag.Length < 4)
         {
+            // 1. Pad
             while (tag.Length < 4)
                 tag = tag + tag[tag.Length - 1];
 
+            // 2. Use any corrections to replace a padded version
+            //    with a specific OpenType tag
             if (_corrections.TryGetValue(tag, out var cor))
                 tag = cor;
         }
@@ -280,8 +286,45 @@ internal class UnicodeScriptTags
         return tag;
     }
 
-    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool IsLangTag(string scriptTag) => scriptTag.Length == 7 && (scriptTag[2] is '-' || scriptTag[4] == '-');
+    private static bool IsLangTag(string scriptTag) 
+        => scriptTag.Length == 7 && (scriptTag[2] is '-' || scriptTag[4] == '-');
 
+
+    #region DEBUG
+
+    // Creates a code list that could be used to convert lang tags
+    // from Apple fonts into names of countries. 
+    static void Generate()
+    {
+        Regex regex = new Regex(@"\b[a-zA-Z]{4}\b");
+        var countryCodesMapping = new Dictionary<string, string>();
+        CultureInfo[] cultures = CultureInfo.GetCultures(CultureTypes.SpecificCultures);
+
+        foreach (var culture in cultures)
+        {
+            try
+            {
+                var region = new RegionInfo(culture.LCID);
+                countryCodesMapping[region.TwoLetterISORegionName] = region.EnglishName;
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+        System.Diagnostics.Debug.WriteLine(CultureInfo.CurrentCulture.EnglishName);
+        System.Diagnostics.Debug.WriteLine("var countryCodesMapping = new Dictionary<string, string>() {");
+        foreach (var mapping in countryCodesMapping.OrderBy(mapping => mapping.Key))
+        {
+            System.Diagnostics.Debug.WriteLine("   {{ \"{0}\", \"{1}\" }}", mapping.Key, mapping.Value);
+        }
+
+        System.Diagnostics.Debug.WriteLine("};");
+    }
+
+
+
+    #endregion
 }

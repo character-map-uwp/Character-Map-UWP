@@ -216,6 +216,7 @@
     </Compile>
     <Compile Include="Controls\CharacterPickerButton.cs" />
     <Compile Include="Controls\SuggestionBox.cs" />
+    <Compile Include="Controls\Toolkit\AdaptiveGridView.cs" />
     <Compile Include="Controls\UXButton.cs" />
     <Compile Include="Controls\UXComboBox.cs" />
     <Compile Include="Controls\ExtendedListView.cs" />

@@ -107,7 +107,7 @@ namespace CharacterMap.Core
                     bool incVersion = ResourceHelper.AppSettings.FontExportIncludeVersion;
                     int c = 0;
 
-                    var grouped = GetGrouped(fonts); ;
+                    var grouped = GetGrouped(fonts);
                     foreach (var group in grouped)
                     {
                         string fileName = GetFileName(group, scheme, incVersion);
@@ -140,11 +140,21 @@ namespace CharacterMap.Core
             return false;
         }
 
+        private static string GetFileName(FontVariant font, ExportNamingScheme scheme)
+        {
+            var group = new List<FontVariant> { font }.GroupBy(v => DirectWrite.GetFileName(v.Face)).First();
+            return GetFileName(group, scheme, ResourceHelper.AppSettings.FontExportIncludeVersion);
+        }
+
         private static string GetFileName(IGrouping<string, FontVariant> group, ExportNamingScheme scheme, bool includeVersion)
         {
             string fileName = null;
-            string ext = ".ttf";
+            string ext = ".otf";
 
+            // Attempt to get the appropriate extension from the current source
+            // (The group Key **should** be the windows file name.)
+            // NOTE: Fonts do not actually need file extensions to work properly
+            //       so this may be null
             var src = group.Key;
             if (!string.IsNullOrWhiteSpace(src))
             {
@@ -153,51 +163,32 @@ namespace CharacterMap.Core
                     ext = strsrc;
             }
 
+            // If using the system file name, set it as the target
             if (scheme == ExportNamingScheme.System && !string.IsNullOrWhiteSpace(src))
                 fileName = src;
 
+            // Optimized export will export as .otf regardless
             if (scheme is ExportNamingScheme.Optimised && FontFinder.ImportFormats.Contains(ext.ToLower()) is false)
-                ext = ".ttf";
+                ext = ".otf";
 
-            var font = Utils.GetDefaultVariant(group.ToList());
+            // Get the default font for the group
+            FontVariant font = Utils.GetDefaultVariant(group.ToList());
 
+            // If we don't have a file name, get one from our default font
             if (string.IsNullOrWhiteSpace(fileName))
                 fileName = $"{font.TryGetFullName().Trim()}";
             else
                 fileName = Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false);
 
-
-            if (includeVersion && Utils.TryGetVersion(font, out double version))
+            // Include version number if requested
+            if (scheme == ExportNamingScheme.Optimised 
+                && includeVersion 
+                && Utils.TryGetVersion(font, out double version))
             {
                 fileName += $" v{version:0.0########}";
             }
 
             return $"{fileName}{ext.ToLower()}";
-        }
-
-        private static string GetFileName(FontVariant font, ExportNamingScheme scheme)
-        {
-            string fileName = null;
-            string ext = ".ttf";
-
-            var src = DirectWrite.GetFileName(font.Face);
-            if (!string.IsNullOrWhiteSpace(src))
-            {
-                var strsrc = Path.GetExtension(src);
-                if (!string.IsNullOrWhiteSpace(strsrc))
-                    ext = strsrc;
-            }
-
-            if (scheme == ExportNamingScheme.System && !string.IsNullOrWhiteSpace(src))
-                fileName = src;
-
-            if (scheme is ExportNamingScheme.Optimised && FontFinder.ImportFormats.Contains(ext) is false)
-                ext = ".ttf";
-
-            if (string.IsNullOrWhiteSpace(fileName))
-                fileName = $"{font.TryGetFullName().Trim()}{ext}";
-
-            return $"{Utils.Humanise(Path.GetFileNameWithoutExtension(fileName), false)}{Path.GetExtension(fileName).ToLower()}";
         }
     }
 }

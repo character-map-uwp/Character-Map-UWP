@@ -2021,6 +2021,10 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
           <source>The selected character is currently hidden by your selected filters</source>
           <target state="new">The selected character is currently hidden by your selected filters</target>
         </trans-unit>
+        <trans-unit id="CanvasFontInformationDesignScriptLanguageTag" translate="yes" xml:space="preserve">
+          <source>Designed Languages</source>
+          <target state="new">Designed Languages</target>
+        </trans-unit>
       </group>
     </body>
   </file>

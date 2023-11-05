@@ -1,16 +1,6 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Services;
-using CharacterMap.ViewModels;
-using CharacterMapCX.Controls;
-using CommunityToolkit.Mvvm.Messaging;
+﻿using CharacterMapCX.Controls;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -29,7 +19,7 @@ namespace CharacterMap.Views
 
         public QuickCompareView() : this(new(false)) { }
 
-        private NavigationHelper _navHelper { get; } = new NavigationHelper();
+        private NavigationHelper _navHelper { get; } = new ();
 
         public QuickCompareView(QuickCompareArgs args)
         {
@@ -38,6 +28,8 @@ namespace CharacterMap.Views
             ViewModel = new QuickCompareViewModel(args);
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             this.DataContext = this;
+
+            VisualStateManager.GoToState(this, GridLayoutState.Name, false);
 
             if (ViewModel.IsQuickCompare)
                 VisualStateManager.GoToState(this, QuickCompareState.Name, false);
@@ -364,29 +356,6 @@ namespace CharacterMap.Views
                     return;
 
                 var ani = ConnectedAnimationService.GetForCurrentView().GetAnimation("Title");
-                //ani.Configuration = new BasicConnectedAnimationConfiguration();
-                //var c = this.GetElementVisual().Compositor;
-                //var offset = c.CreateScalarKeyFrameAnimation();
-
-                ////CubicBezierEasingFunction ease = c.CreateCubicBezierEasingFunction(
-                ////  new Vector2(0.95f, 0.05f),
-                ////  new Vector2(0.79f, 0.04f));
-
-                //CubicBezierEasingFunction easeOut = c.CreateCubicBezierEasingFunction(
-                //new Vector2(0.13f, 1.0f),
-                //new Vector2(0.49f, 1.0f));
-
-                //offset.InsertExpressionKeyFrame(0.0f, "StartingValue");
-                ////offset.InsertExpressionKeyFrame(0.2f, "StartingValue");
-                //offset.InsertExpressionKeyFrame(1, "FinalValue", easeOut);
-                //offset.Duration = TimeSpan.FromSeconds(0.6);
-                //offset.DelayTime = TimeSpan.FromSeconds(0.15);
-
-                //ani.SetAnimationComponent(ConnectedAnimationComponent.OffsetX, offset);
-                //ani.SetAnimationComponent(ConnectedAnimationComponent.OffsetY, offset);
-                //ani.SetAnimationComponent(ConnectedAnimationComponent.Scale, offset);
-                //ani.SetAnimationComponent(ConnectedAnimationComponent.CrossFade, offset);
-
                 ani.TryStart(DetailsTitleContainer);//, new List<UIElement> { DetailsViewContent });
             }
         }
@@ -416,19 +385,34 @@ namespace CharacterMap.Views
 
                 args.RegisterUpdateCallback(1, Repeater_ContainerContentChanging);
 
-                if (ResourceHelper.AllowExpensiveAnimation)
+                if (ResourceHelper.AllowExpensiveAnimation && LayoutModeStates.CurrentState == GridLayoutState)
                 {
                     if (args.InRecycleQueue)
-                    {
                         CompositionFactory.PokeUIElementZIndex(args.ItemContainer);
-                    }
                     else
-                    {
-                        var v = ElementCompositionPreview.GetElementVisual(args.ItemContainer);
-                        v.ImplicitAnimations = CompositionFactory.GetRepositionCollection(v.Compositor);
-                    }
+                        SetAnimation(args.ItemContainer, true);
                 }
+                else
+                    SetAnimation(args.ItemContainer, false);
             }
+        }
+
+        private void LayoutModeStates_CurrentStateChanging(object sender, VisualStateChangedEventArgs e)
+        {
+            if (Repeater.ItemsPanelRoot is null)
+                return;
+
+            // Attempting to change this in XAML causes crashes.
+            // We don't won't reposition animations in stack layout
+            bool enable = e.NewState == GridLayoutState;
+            foreach (var item in Repeater.ItemsPanelRoot.Children.OfType<SelectorItem>())
+                SetAnimation(item, enable);
+        }
+
+        void SetAnimation(SelectorItem item, bool enable)
+        {
+            var v = ElementCompositionPreview.GetElementVisual(item);
+            v.ImplicitAnimations = enable ? CompositionFactory.GetRepositionCollection(v.Compositor) : null;
         }
 
 

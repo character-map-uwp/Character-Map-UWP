@@ -59,3 +59,4 @@
 #*.RTF   diff=astextplain
 CharacterMap/CharacterMap/Assets/Data/GlyphData.db filter=lfs diff=lfs merge=lfs -text
 CharacterMap/CharacterMap/Assets/Data/Unihan_Readings.txt filter=lfs diff=lfs merge=lfs -text
+0_artifacts/*.png filter=lfs diff=lfs merge=lfs -text

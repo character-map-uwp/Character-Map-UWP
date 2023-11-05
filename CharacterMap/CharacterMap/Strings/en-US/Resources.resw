@@ -1613,4 +1613,7 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
   <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
     <value>Chinese (Simplified)</value>
   </data>
+  <data name="CanvasFontInformationDesignScriptLanguageTag" xml:space="preserve">
+    <value>Designed Languages</value>
+  </data>
 </root>

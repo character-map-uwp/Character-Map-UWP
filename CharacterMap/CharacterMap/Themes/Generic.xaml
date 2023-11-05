@@ -161,6 +161,7 @@
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="VerticalOffset" Value="40" />
         <Setter Property="Margin" Value="24 24" />
+        <Setter Property="RequestedTheme" Value="Dark" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="toolkit:InAppNotification">

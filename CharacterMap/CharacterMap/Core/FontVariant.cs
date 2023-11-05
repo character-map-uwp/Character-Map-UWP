@@ -250,7 +250,10 @@ public partial class FontVariant : IDisposable
         if (infos.Count == 0)
             return null;
 
-        var name = info.Humanise();
+        var name = info == CanvasFontInformation.DesignScriptLanguageTag
+            ? Localization.Get($"CanvasFontInformation{info}")
+            : info.Humanise();
+
         var dic = infos.ToDictionary(k => k.Key, k => k.Value);
         if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
             || infos.TryGetValue("en-us", out value))
