@@ -83,6 +83,9 @@ namespace CharacterMap.Services
                     _ = ApplicationViewSwitcher.TryShowAsStandaloneAsync(WindowService.MainWindow.View.Id);
                     WindowService.MainWindow.CoreView.CoreWindow.Activate();
                 }
+
+                // Screenshots
+                // ApplicationView.GetForCurrentView().TryResizeView(new Size(1594, 833));
             }
 
            
