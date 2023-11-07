@@ -908,4 +908,48 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="controls:InfoBar">
+        <Setter Property="Background" Value="{ThemeResource InfoBarBackgroundBrush}" />
+        <Setter Property="CornerRadius" Value="{StaticResource InfoBarCornerRadius}" />
+        <Setter Property="Padding" Value="8 4 8 6" />
+        <Setter Property="Margin" Value="6 12 0 0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:InfoBar">
+                    <Border
+                        Margin="{TemplateBinding Margin}"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid ColumnSpacing="8" Margin="{TemplateBinding Padding}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <FontIcon
+                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                FontSize="13.333"
+                                Glyph="&#xE946;" />
+
+                            <ContentPresenter
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Content="{TemplateBinding Content}"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                TextLineBounds="Full"
+                                TextWrapping="Wrap" />
+
+                            <ContentPresenter Grid.Column="2" Content="{TemplateBinding SecondaryContent}" />
+                        </Grid>
+
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

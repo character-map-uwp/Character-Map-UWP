@@ -1149,139 +1149,68 @@
                         <StackPanel
                             x:Name="InfoHeader"
                             RequestedTheme="Dark"
-                            Spacing="-16">
+                            Spacing="0">
 
-                            <Grid
+                            <controls:InfoBar
                                 x:Name="VariableFeaturesMessage"
                                 x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
-                                ColumnSpacing="12"
-                                Margin="14 24 0 0"
-                                Padding="6 2"
-                                Background="{StaticResource InfoBarBackgroundBrush}"
-                                CornerRadius="{StaticResource InfoBarCornerRadius}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                                Content="{core:Localizer Key=VariableFeaturesMessage/Text}">
+                                <controls:InfoBar.SecondaryContent>
+                                    <Button
+                                        Click="VariableHintClick"
+                                        Style="{StaticResource ChromelessButtonStyle}"
+                                        ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
+                                        <FontIcon
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="13.333"
+                                            Glyph="&#xE13C;" />
+                                    </Button>
+                                </controls:InfoBar.SecondaryContent>
+                            </controls:InfoBar>
 
-                                <FontIcon
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    FontSize="13.333"
-                                    Glyph="&#xE946;" />
-
-                                <TextBlock
-                                    x:Uid="VariableFeaturesMessage"
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                    Opacity="0.99"
-                                    Style="{StaticResource DescriptionStyle}"
-                                    TextLineBounds="Tight"
-                                    d:Text="{core:Localizer Key=VariableFeaturesMessage/Text}" />
-
-                                <Button
-                                    Grid.Column="2"
-                                    Padding="0"
-                                    Click="VariableHintClick"
-                                    Style="{StaticResource ChromelessButtonStyle}"
-                                    ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
-                                    <FontIcon
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="13.333"
-                                        Glyph="&#xE13C;" />
-                                </Button>
-                            </Grid>
-
-                            <Grid
+                            <controls:InfoBar
                                 x:Name="ColrV1SupportMessage"
                                 x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
-                                ColumnSpacing="12"
-                                Margin="14 24 0 0"
-                                Padding="6 2"
-                                Background="{StaticResource InfoBarBackgroundBrush}"
-                                CornerRadius="{StaticResource InfoBarCornerRadius}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                                Content="{core:Localizer Key=ColrV1SupportMessage/Text}">
+                                <controls:InfoBar.SecondaryContent>
+                                    <Button
+                                        Click="VariableHintClick"
+                                        Style="{StaticResource ChromelessButtonStyle}"
+                                        ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
+                                        <FontIcon
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="13.333"
+                                            Glyph="&#xE13C;" />
+                                    </Button>
+                                </controls:InfoBar.SecondaryContent>
+                            </controls:InfoBar>
 
-                                <FontIcon
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    FontSize="13.333"
-                                    Glyph="&#xE946;" />
-
-                                <TextBlock
-                                    x:Uid="ColrV1SupportMessage"
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                    Opacity="0.99"
-                                    Style="{StaticResource DescriptionStyle}"
-                                    TextLineBounds="Tight"
-                                    d:Text="{core:Localizer Key=VariableFeaturesMessage/Text}" />
-
-                                <Button
-                                    Grid.Column="2"
-                                    Padding="0"
-                                    Click="VariableHintClick"
-                                    Style="{StaticResource ChromelessButtonStyle}"
-                                    ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
-                                    <FontIcon
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="13.333"
-                                        Glyph="&#xE13C;" />
-                                </Button>
-                            </Grid>
-
-                            <Grid
+                            <controls:InfoBar
                                 x:Name="DeprecatedIconsInfoBar"
                                 x:Load="{x:Bind core:Converters.TrueTrueTrue(ViewModel.IsFiltered, ViewModel.Settings.HideDeprecatedMDL2, ViewModel.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
-                                ColumnSpacing="12"
-                                Margin="14 24 0 0"
-                                Padding="6 2"
-                                Background="{StaticResource InfoBarBackgroundBrush}"
-                                CornerRadius="{StaticResource InfoBarCornerRadius}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
+                                Content="{core:Localizer Key=HiddenGlyphsMessage/Text}">
+                                <controls:InfoBar.SecondaryContent>
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <Button Click="FilterHint_Click" Style="{StaticResource ChromelessButtonStyle}">
+                                            <FontIcon
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="13.333"
+                                                Glyph="&#xE71C;" />
+                                        </Button>
 
-                                <FontIcon
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                    FontSize="13.333"
-                                    Glyph="&#xE946;" />
+                                        <Button
+                                            Click="AdvancedSettings_Click"
+                                            Style="{StaticResource ChromelessButtonStyle}"
+                                            ToolTipService.ToolTip="{core:Localizer Key=SettingsHeader/Text}">
+                                            <FontIcon
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="13.333"
+                                                Glyph="&#xE713;" />
+                                        </Button>
+                                    </StackPanel>
 
-                                <TextBlock
-                                    x:Name="HiddenGlyphsMessage"
-                                    x:Uid="HiddenGlyphsMessage"
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    FontSize="12"
-                                    Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                    Opacity="0.99"
-                                    Style="{StaticResource DescriptionStyle}"
-                                    TextLineBounds="Tight"
-                                    d:Text="{core:Localizer Key=HiddenGlyphsMessage/Text}" />
-
-                                <Button
-                                    Grid.Column="2"
-                                    Padding="0"
-                                    Click="AdvancedSettings_Click"
-                                    Style="{StaticResource ChromelessButtonStyle}">
-                                    <ToolTipService.ToolTip>
-                                        <TextBlock x:Uid="SettingsHeader" d:Text="Settings" />
-                                    </ToolTipService.ToolTip>
-                                    <FontIcon
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="13.333"
-                                        Glyph="&#xE713;" />
-                                </Button>
-                            </Grid>
+                                </controls:InfoBar.SecondaryContent>
+                            </controls:InfoBar>
 
                         </StackPanel>
                     </GridView.Header>

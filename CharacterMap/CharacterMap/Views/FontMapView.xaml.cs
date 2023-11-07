@@ -1030,6 +1030,11 @@ namespace CharacterMap.Views
             ViewToggleButton.Focus(FocusState.Keyboard);
         }
 
+        private void FilterHint_Click(object sender, RoutedEventArgs e)
+        {
+            CharacterFilterButton.Focus(FocusState.Keyboard);
+        }
+
 
 
 
