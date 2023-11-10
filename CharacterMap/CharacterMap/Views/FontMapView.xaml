@@ -2449,7 +2449,7 @@
                         <Setter Target="SplitterContainer.Visibility" Value="Visible" />
                         <Setter Target="CharGridColumn.Width" Value="*" />
                         <!--<Setter Target="SplitterColumn.Width" Value="10" />-->
-                        <Setter Target="PreviewColumn.Width" Value="326" />
+                        <Setter Target="PreviewColumn.Width" Value="{x:Bind ViewModel.Settings.LastColumnWidth, Mode=OneWay}" />
                         <Setter Target="PreviewColumn.MinWidth" Value="150" />
                     </VisualState.Setters>
                 </VisualState>
