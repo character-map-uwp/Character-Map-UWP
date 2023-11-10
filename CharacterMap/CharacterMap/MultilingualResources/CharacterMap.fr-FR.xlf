@@ -2025,6 +2025,14 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
           <source>Designed Languages</source>
           <target state="new">Designed Languages</target>
         </trans-unit>
+        <trans-unit id="CollectionManagementHint.Text" translate="yes" xml:space="preserve">
+          <source>Create collections to compare, export or manage multiple fonts at once. To get started, select an existing collection above or create a new one.</source>
+          <target state="new">Create collections to compare, export or manage multiple fonts at once. To get started, select an existing collection above or create a new one.</target>
+        </trans-unit>
+        <trans-unit id="CollectionSelector.PlaceholderText" translate="yes" xml:space="preserve">
+          <source>Choose existing</source>
+          <target state="new">Choose existing</target>
+        </trans-unit>
       </group>
     </body>
   </file>

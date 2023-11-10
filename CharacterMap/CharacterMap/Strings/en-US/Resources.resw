@@ -1616,4 +1616,10 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
   <data name="CanvasFontInformationDesignScriptLanguageTag" xml:space="preserve">
     <value>Designed Languages</value>
   </data>
+  <data name="CollectionManagementHint.Text" xml:space="preserve">
+    <value>Create collections to compare, export or manage multiple fonts at once. To get started, select an existing collection above or create a new one.</value>
+  </data>
+  <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
+    <value>Choose existing</value>
+  </data>
 </root>

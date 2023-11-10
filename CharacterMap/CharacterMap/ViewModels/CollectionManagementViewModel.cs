@@ -51,9 +51,14 @@ internal partial class CollectionManagementViewModel : ViewModelBase
         RefreshFontLists();
     }
 
-    void RefreshCollections()
+    public void RefreshCollections()
     {
-        Collections = CollectionService.Items;
+        // To work around a bug that this is technically
+        // the same collection every time we need to 
+        // make sure we call .ToList() or UI bindings will
+        // not work correctly.
+        Collections = CollectionService.Items.ToList();
+        OnPropertyChanged(nameof(Collections));
     }
 
     public void RefreshFontLists()

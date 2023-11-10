@@ -18,6 +18,9 @@ public class AddToCollectionResult
 
     public string GetTitle()
     {
+        if (Fonts is null) 
+            return string.Empty;
+
         if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
             return font.Name;
         else
@@ -26,6 +29,9 @@ public class AddToCollectionResult
 
     public string GetMessage()
     {
+        if (Fonts is null && Font is null)
+            return string.Empty;
+
         if (Font is null && Fonts is not null)
             return $"{Fonts.Count} fonts have been added to {Collection.Name}";
         else if (Collection.IsSystemSymbolCollection)

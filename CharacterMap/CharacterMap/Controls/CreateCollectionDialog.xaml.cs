@@ -78,11 +78,13 @@ public sealed partial class CreateCollectionDialog : ContentDialog
                 result = await collections.AddToCollectionAsync(font, collection);
             else if (this.DataContext is IList<InstalledFont> fonts)
                 result = await collections.AddToCollectionAsync(fonts, collection);
-
+            else if (this.DataContext is null)
+                result = new AddToCollectionResult(true, null, collection);
+            
             Result = result;
             d.Complete();
             await Task.Yield();
-            if (result is not null && result.Success)
+            if (result is not null && result.Success && result.Fonts is not null)
                 WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
 
         }

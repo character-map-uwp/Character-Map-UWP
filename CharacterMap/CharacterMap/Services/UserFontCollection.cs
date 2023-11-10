@@ -1,5 +1,6 @@
 ﻿namespace CharacterMap.Models;
 
+[DebuggerDisplay("({Id}) Name: {Name}, {Fonts.Count} Fonts")]
 public class UserFontCollection
 {
     public bool IsSystemSymbolCollection { get; set; }

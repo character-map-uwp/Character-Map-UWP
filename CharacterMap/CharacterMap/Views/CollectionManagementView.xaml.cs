@@ -8,7 +8,6 @@ public interface IActivateableControl
 {
     void Activate();
     void Deactivate();
-
 }
 
 public sealed partial class CollectionManagementView : UserControl, IActivateableControl
@@ -31,18 +30,19 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
         ViewModel.Deactivate();
     }
 
-    private void CollectionSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    void CollectionSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         ViewModel.RefreshFontLists();
     }
 
-    private async void NewCollection_Click(object sender, RoutedEventArgs e)
+    async void NewCollection_Click(object sender, RoutedEventArgs e)
     {
         CreateCollectionDialog d = new();
         await d.ShowAsync();
 
         if (d.Result is AddToCollectionResult result && result.Success)
         {
+            ViewModel.RefreshCollections();
             SelectCollection(result.Collection);
         }
     }
@@ -53,13 +53,13 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
         ViewModel.SelectedCollection = collection;
     }
 
-    private async void RenameFontCollection_Click(object sender, RoutedEventArgs e)
+    async void RenameFontCollection_Click(object sender, RoutedEventArgs e)
     {
         await (new CreateCollectionDialog(ViewModel.SelectedCollection)).ShowAsync();
         SelectCollection(ViewModel.SelectedCollection);
     }
 
-    private void DeleteCollection_Click(object sender, RoutedEventArgs e)
+    void DeleteCollection_Click(object sender, RoutedEventArgs e)
     {
         var d = new ContentDialog
         {
@@ -74,18 +74,18 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
         _ = d.ShowAsync();
     }
 
-    private async void DigDeleteCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    async void DigDeleteCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         string name = ViewModel.SelectedCollection.Name;
         await ViewModel.CollectionService.DeleteCollectionAsync(ViewModel.SelectedCollection);
         CollectionSelector.SelectedItem = null;
         CollectionSelector.SelectedIndex = -1;
         //SelectCollection(null);
-
+        ViewModel.RefreshCollections();
         ViewModel.Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
     }
 
-    private string GetCountLabel(int fontCount, int selectedCount)
+    string GetCountLabel(int fontCount, int selectedCount)
     {
         return string.Format(Localization.Get("FontsSelectedCountLabel"), fontCount, selectedCount);
     }
