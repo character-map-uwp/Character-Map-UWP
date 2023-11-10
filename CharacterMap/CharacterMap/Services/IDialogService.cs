@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace CharacterMap.Services;
 
-namespace CharacterMap.Services
+public interface IDialogService
 {
-    public interface IDialogService
-    {
-        void ShowMessageBox(string message, string title);
-        Task ShowMessageAsync(string message, string title);
-    }
+    void ShowMessageBox(string message, string title);
+    Task ShowMessageAsync(string message, string title);
 }

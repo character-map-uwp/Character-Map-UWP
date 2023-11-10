@@ -44,7 +44,7 @@ public class UnihanData
             Pronunciations = readings;
         }
         else
-            Pronunciations  = readings;
+            Pronunciations = readings;
     }
 }
 
@@ -62,7 +62,7 @@ public class UnihanFieldData
     private UnihanFieldData(UnihanFieldType type)
     {
         Type = type;
-        Name = Localization.Get($"UnihanTypeName{type}"); 
+        Name = Localization.Get($"UnihanTypeName{type}");
         Description = Localization.Get($"UnihanTypeDescription{type}");
     }
 

@@ -20,7 +20,7 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
     private InstalledFont(string name)
     {
         Name = name;
-        _variants = new ();
+        _variants = new();
     }
 
     public InstalledFont(string name, DWriteFontFace face, StorageFile file = null) : this(name)
@@ -31,7 +31,7 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
 
     public void AddVariant(DWriteFontFace fontFace, StorageFile file = null)
     {
-        _variants.Add(new (fontFace, file));
+        _variants.Add(new(fontFace, file));
         if (file != null)
             HasImportedFiles = true;
 

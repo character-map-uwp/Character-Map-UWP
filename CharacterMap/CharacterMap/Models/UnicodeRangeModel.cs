@@ -14,5 +14,5 @@ public partial class UnicodeRangeModel : ObservableObject
         Range = range;
     }
 
-    public UnicodeRangeModel Clone() => new (Range) { IsSelected = _isSelected };
+    public UnicodeRangeModel Clone() => new(Range) { IsSelected = _isSelected };
 }

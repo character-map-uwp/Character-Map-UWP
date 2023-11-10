@@ -141,7 +141,7 @@ public class AdaptiveGridView : GridView
         _heightBinding = new Binding()
         {
             Source = this,
-            Path = new (nameof(ItemHeight)),
+            Path = new(nameof(ItemHeight)),
         };
 
         // Prevent issues with higher DPIs and underlying panel. #1803
@@ -283,7 +283,7 @@ public class AdaptiveGridView : GridView
 
 internal class AdaptiveHeightValueConverter : IValueConverter
 {
-    private Thickness thickness = new (0, 0, 4, 4);
+    private Thickness thickness = new(0, 0, 4, 4);
 
     public Thickness DefaultItemMargin
     {

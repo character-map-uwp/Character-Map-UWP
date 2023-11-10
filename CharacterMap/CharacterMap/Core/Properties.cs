@@ -255,7 +255,7 @@ public class Properties : DependencyObject
                     d.ClearValue(DirectText.IsColorFontEnabledProperty);
                     d.ClearValue(DirectText.TypographyProperty);
                 }
-            } 
+            }
             else if (s is TextBlock t)
             {
                 if (e.NewValue is CharacterRenderingOptions o)
@@ -428,8 +428,8 @@ public class Properties : DependencyObject
                         void List_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
                         {
                             // Manually trigger the animation every time the tab content changes
-                            if (args.Item is not null 
-                                && args.ItemContainer is not null 
+                            if (args.Item is not null
+                                && args.ItemContainer is not null
                                 && ResourceHelper.AllowAnimation
                                 && _tooAdd.FirstOrDefault(r => r.IsAlive && r.Target == args.Item) is WeakReference itemRef)
                             {
@@ -632,7 +632,7 @@ public class Properties : DependencyObject
 
             static void F_Opened(object sender, object e)
             {
-                if ((sender is FlyoutBase flyout 
+                if ((sender is FlyoutBase flyout
                     && flyout.GetPresenter() is FrameworkElement presenter) is false)
                     return;
 
@@ -755,7 +755,7 @@ public class Properties : DependencyObject
     }
 
     public static readonly DependencyProperty SupportAnimatedIconProperty =
-        DependencyProperty.RegisterAttached("SupportAnimatedIcon", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d,a) =>
+        DependencyProperty.RegisterAttached("SupportAnimatedIcon", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, a) =>
         {
             if (d is FrameworkElement e)
             {
@@ -900,7 +900,7 @@ public class Properties : DependencyObject
     }
 
     public static readonly DependencyProperty ClickAnimationProperty =
-        DependencyProperty.RegisterAttached("ClickAnimation", typeof(string), typeof(Properties), new PropertyMetadata(null, (d,e) =>
+        DependencyProperty.RegisterAttached("ClickAnimation", typeof(string), typeof(Properties), new PropertyMetadata(null, (d, e) =>
         {
             if (d is FrameworkElement f)
             {
@@ -1098,7 +1098,7 @@ public class Properties : DependencyObject
                         .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
                     {
                         double duration = 0.35;
-                        
+
                         if (parts.Length > 1 && parts[1] == "Scale")
                         {
                             Visual v = target.GetElementVisual();
@@ -1123,7 +1123,7 @@ public class Properties : DependencyObject
                     if (source.GetDescendantsOfType<FrameworkElement>()
                         .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
                     {
-                        
+
                         if (parts.Length > 1 && parts[1] == "Scale")
                         {
                             Visual v = target.GetElementVisual();
@@ -1184,7 +1184,7 @@ public class Properties : DependencyObject
 
             static void ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
             {
-                if (args.ItemContainer is not null 
+                if (args.ItemContainer is not null
                     && GetSetContainerBackgroundTransition(args.ItemContainer) is false
                     && args.ItemContainer.ContentTemplateRoot is not null)
                 {
@@ -1213,7 +1213,7 @@ public class Properties : DependencyObject
     }
 
     public static readonly DependencyProperty UppercaseProperty =
-        DependencyProperty.RegisterAttached("Uppercase", typeof(string), typeof(Properties), new PropertyMetadata(string.Empty, (d,e) =>
+        DependencyProperty.RegisterAttached("Uppercase", typeof(string), typeof(Properties), new PropertyMetadata(string.Empty, (d, e) =>
         {
             if (d is TextBlock t && e.NewValue is string s)
                 t.Text = (s ?? string.Empty).ToUpper();
@@ -1234,7 +1234,7 @@ public class Properties : DependencyObject
     }
 
     public static readonly DependencyProperty DisableTranslationProperty =
-        DependencyProperty.RegisterAttached("DisableTranslation", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d,e) =>
+        DependencyProperty.RegisterAttached("DisableTranslation", typeof(bool), typeof(Properties), new PropertyMetadata(false, (d, e) =>
         {
             // Fix offset ComboBox's caused by global PerspectiveTransform3D
             if (d is Popup popup && e.NewValue is bool s && s)
@@ -1280,7 +1280,7 @@ public class Properties : DependencyObject
 
     // Using a DependencyProperty as the backing store for RenderScale.  This enables animation, styling, binding, etc...
     public static readonly DependencyProperty RenderScaleProperty =
-        DependencyProperty.RegisterAttached("RenderScale", typeof(double), typeof(Properties), new PropertyMetadata(1d, (d,e) =>
+        DependencyProperty.RegisterAttached("RenderScale", typeof(double), typeof(Properties), new PropertyMetadata(1d, (d, e) =>
         {
             if (d is FrameworkElement f && e.NewValue is double s)
             {
@@ -1304,7 +1304,7 @@ public class Properties : DependencyObject
     }
 
     public static readonly DependencyProperty FlyoutProperty =
-        DependencyProperty.RegisterAttached("Flyout", typeof(FlyoutBase), typeof(Properties), new PropertyMetadata(null, (d,e) =>
+        DependencyProperty.RegisterAttached("Flyout", typeof(FlyoutBase), typeof(Properties), new PropertyMetadata(null, (d, e) =>
         {
             if (d is ButtonBase b)
             {

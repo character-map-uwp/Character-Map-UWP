@@ -14,7 +14,7 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
 public partial class FontVariant : IDisposable
 {
     /* Using a character cache avoids a lot of unnecessary allocations */
-    private static Dictionary<int, Character> _characters { get; } = new ();
+    private static Dictionary<int, Character> _characters { get; } = new();
 
     private IReadOnlyList<NamedUnicodeRange> _ranges = null;
     private IReadOnlyList<FaceMetadataInfo> _fontInformation = null;
@@ -23,16 +23,16 @@ public partial class FontVariant : IDisposable
     private FontAnalysis _analysis = null;
     private FaceMetadataInfo _designLangRawSearch = null;
 
-    public IReadOnlyList<FaceMetadataInfo> FontInformation          => _fontInformation ??= GetFontInformation();
+    public IReadOnlyList<FaceMetadataInfo> FontInformation => _fontInformation ??= GetFontInformation();
 
-    public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures  => _typographyFeatures ??= LoadTypographyFeatures();
+    public IReadOnlyList<TypographyFeatureInfo> TypographyFeatures => _typographyFeatures ??= LoadTypographyFeatures();
 
     /// <summary>
     /// Supported XAML typographer features for A SINGLE GLYPH. 
     /// Does not include features like Alternates which are used for strings of text.
     /// </summary>
     public IReadOnlyList<TypographyFeatureInfo> XamlTypographyFeatures => _xamlTypographyFeatures ??= LoadTypographyFeatures(true);
-    
+
     public bool HasXamlTypographyFeatures => XamlTypographyFeatures.Count > 0;
 
     public CanvasFontFace FontFace => Face.FontFace;
@@ -123,7 +123,7 @@ public partial class FontVariant : IDisposable
     {
         if (Characters == null)
         {
-            List<Character> characters = new ();
+            List<Character> characters = new();
             foreach (var range in UnicodeRanges)
             {
                 CharacterHash += range.First;
@@ -149,7 +149,7 @@ public partial class FontVariant : IDisposable
 
     public int GetGlyphIndex(Character c) => Face.GetGlyphIndice(c.UnicodeIndex);
 
-    public uint[] GetGlyphUnicodeIndexes() =>  GetCharacters().Select(c => c.UnicodeIndex).ToArray();
+    public uint[] GetGlyphUnicodeIndexes() => GetCharacters().Select(c => c.UnicodeIndex).ToArray();
 
     public FontAnalysis GetAnalysis() => _analysis ??= TypographyAnalyzer.Analyze(this);
 
@@ -158,7 +158,7 @@ public partial class FontVariant : IDisposable
     /// take care to ensure it's created by manually calling <see cref="TypographyAnalyzer.PrepareSearchMap(FontVariant, FontAnalysis)"/>
     /// </summary>
     /// <returns></returns>
-    private FontAnalysis GetAnalysisInternal() =>_analysis ??= TypographyAnalyzer.Analyze(this, false);
+    private FontAnalysis GetAnalysisInternal() => _analysis ??= TypographyAnalyzer.Analyze(this, false);
 
     /// <summary>
     /// Used temporarily to allow insider builds to access COLRv1. Do not use elsewhere. Very expensive.
@@ -257,12 +257,12 @@ public partial class FontVariant : IDisposable
         var dic = infos.ToDictionary(k => k.Key, k => k.Value);
         if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
             || infos.TryGetValue("en-us", out value))
-            return new (name, new string[1] { value }, info);
+            return new(name, new string[1] { value }, info);
 
-        if (info is CanvasFontInformation.DesignScriptLanguageTag 
+        if (info is CanvasFontInformation.DesignScriptLanguageTag
             && _designLangRawSearch is null)
         {
-            _designLangRawSearch = new (name, infos.Select(i => UnicodeScriptTags.GetBaseTag(i.Value)).ToArray(), info);
+            _designLangRawSearch = new(name, infos.Select(i => UnicodeScriptTags.GetBaseTag(i.Value)).ToArray(), info);
         }
 
         return new(
@@ -315,7 +315,7 @@ public partial class FontVariant
         return new FontVariant(face, null)
         {
             PreferredName = "",
-            Characters = new List<Character> { new (0) }
+            Characters = new List<Character> { new(0) }
         };
     }
 

@@ -322,7 +322,7 @@ public class ThemeHelper
                 Debug.WriteLine($"UNREGISTERING {_element}");
                 ResourceHelper.UnregisterForThemeChanges(_element);
             }
-                
+
         });
     }
 

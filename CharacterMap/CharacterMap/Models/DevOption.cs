@@ -1,6 +1,4 @@
-﻿using CharacterMap.Helpers;
-
-namespace CharacterMap.Models;
+﻿namespace CharacterMap.Models;
 
 public class DevOption
 {

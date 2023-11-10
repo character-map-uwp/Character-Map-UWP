@@ -23,6 +23,7 @@
         <Setter Property="MinHeight" Value="0" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="h:FluentAnimation.Pressed" Value="Text" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
@@ -40,29 +41,19 @@
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
-                                <VisualState x:Name="Normal">
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Text" />
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Normal" />
 
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
                                         <Setter Target="Presenter.Background" Value="{ThemeResource HyperlinkButtonBackgroundPointerOver}" />
                                         <Setter Target="Presenter.BorderBrush" Value="{ThemeResource HyperlinkButtonBorderBrushPointerOver}" />
                                     </VisualState.Setters>
-                                    <Storyboard>
-                                        <PointerUpThemeAnimation Storyboard.TargetName="Text" />
-                                        <!--<ColorAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
-                                            <EasingColorKeyFrame KeyTime="0:0:0.15" Value="{ThemeResource HyperlinkButtonForegroundPointerOver}" />
-                                        </ColorAnimationUsingKeyFrames>-->
-                                    </Storyboard>
+
                                 </VisualState>
 
                                 <VisualState x:Name="Pressed">
 
                                     <Storyboard>
-                                        <PointerDownThemeAnimation Storyboard.TargetName="Text" />
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Text" Storyboard.TargetProperty="Foreground">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForegroundPressed}" />
                                         </ObjectAnimationUsingKeyFrames>

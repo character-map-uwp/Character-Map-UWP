@@ -23,7 +23,7 @@ public class UnicodeGlyphData : IGlyphData
     [Indexed]
     [MaxLength(2)]
 #endif
-    public string UnicodeGroup { get; set;}
+    public string UnicodeGroup { get; set; }
 
     public string Description { get; set; }
 }

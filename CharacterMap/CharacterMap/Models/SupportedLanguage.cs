@@ -22,8 +22,8 @@ public record SupportedLanguage
 
     public override string ToString() => LanguageName;
 
-    public static SupportedLanguage DefaultLanguage { get; } = new ("en-US");
-    public static SupportedLanguage SystemLanguage { get; } = new ()
+    public static SupportedLanguage DefaultLanguage { get; } = new("en-US");
+    public static SupportedLanguage SystemLanguage { get; } = new()
     {
         LanguageID = "",
         LanguageName = Localization.Get("UseSystemLanguage")

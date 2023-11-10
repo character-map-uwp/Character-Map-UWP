@@ -1,10 +1,10 @@
-using Windows.ApplicationModel.Activation;
-using Windows.UI.Xaml;
 using CharacterMap.Controls;
-using UnhandledExceptionEventArgs = CharacterMap.Core.UnhandledExceptionEventArgs;
 using CharacterMapCX.Controls;
-using Windows.ApplicationModel.Core;
 using SQLite;
+using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Xaml;
+using UnhandledExceptionEventArgs = CharacterMap.Core.UnhandledExceptionEventArgs;
 
 namespace CharacterMap;
 

@@ -39,7 +39,7 @@ public class CollectionUpdatedArgs
             else
                 return $"{Fonts.Count} fonts were removed from the \"{Collection.Name}\" collection";
         }
-        
+
     }
 }
 

@@ -1,6 +1,5 @@
 ﻿using CharacterMap.Controls;
 using CharacterMap.Views;
-using Windows.Foundation;
 using Windows.Graphics.Printing;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -134,7 +133,7 @@ public class PrintHelper
         {
             return false;
         }
-        
+
     }
 
     /// <summary>
@@ -263,7 +262,7 @@ public class PrintHelper
             var printableAreaHeight = pageHeight - marginHeight;
 
             int charsPerPage = FontMapPrintPage.CalculateGlyphsPerPage(
-                new Size(Math.Floor(printableAreaWidth), Math.Floor(printableAreaHeight)), 
+                new Size(Math.Floor(printableAreaWidth), Math.Floor(printableAreaHeight)),
                 _printModel);
 
             bool hasMore = true;
@@ -280,7 +279,7 @@ public class PrintHelper
 
                 // Set-up "printable area" on the "paper"
                 printableArea.Width = printableAreaWidth;
-                printableArea.Height = printableAreaHeight ;
+                printableArea.Height = printableAreaHeight;
 
                 // Layout page
                 hasMore = page.AddCharacters(currentPage, charsPerPage, _printModel.Characters);

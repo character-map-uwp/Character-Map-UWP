@@ -22,12 +22,12 @@ public class Localizer : MarkupExtension
         if (Casing != CharacterCasing.Normal)
         {
         }
-            text = Casing switch
-            {
-                CharacterCasing.Upper => text.ToUpper(),
-                CharacterCasing.Lower => text.ToLower(),
-                _ => text
-            };
+        text = Casing switch
+        {
+            CharacterCasing.Upper => text.ToUpper(),
+            CharacterCasing.Lower => text.ToLower(),
+            _ => text
+        };
 
         return text;
     }

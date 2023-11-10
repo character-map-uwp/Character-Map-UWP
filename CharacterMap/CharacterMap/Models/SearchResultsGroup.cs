@@ -4,7 +4,7 @@ public class SearchResultsGroups : List<SearchResultsGroup>
 {
     public bool HasHiddenResults { get; }
 
-    public SearchResultsGroups(params SearchResultsGroup[]  groups) : base(groups)
+    public SearchResultsGroups(params SearchResultsGroup[] groups) : base(groups)
     {
         HasHiddenResults = groups.Length > 1 && groups[1].Count > 0;
     }

@@ -4,24 +4,22 @@ using Microsoft.Graphics.Canvas.Text;
 using System.Globalization;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
 using Windows.Foundation.Metadata;
+using Windows.System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.System;
-using Windows.UI.Core;
-using System.Collections.Concurrent;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core;
 
 public class Pool<T> where T : new()
 {
-    Queue<T> _pool { get; } = new ();
+    Queue<T> _pool { get; } = new();
 
     public T Request()
     {
@@ -132,7 +130,7 @@ public static class Utils
         // Internal helper method to set clipboard
         static void TrySetClipboard(string raw, string formatted, FontMapViewModel v, CopyDataType copyType, IRandomAccessStream stream = null)
         {
-            DataPackage dp = new () {  RequestedOperation = DataPackageOperation.Copy };
+            DataPackage dp = new() { RequestedOperation = DataPackageOperation.Copy };
 
             if (raw != null)
                 dp.SetText(raw);
@@ -502,7 +500,7 @@ public static class Utils
     /// <returns></returns>
     public static CanvasSvgDocument GenerateSvgDocument(
         ICanvasResourceCreator device,
-        Rect rect, 
+        Rect rect,
         IList<string> paths,
         IList<Color> colors,
         bool invertBounds = true)

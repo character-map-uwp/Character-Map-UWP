@@ -16,10 +16,10 @@ public static class TypographyAnalyzer
     /// </summary>
     public static List<TypographyFeatureInfo> GetCharacterVariants(FontVariant font, Models.Character character)
     {
-        CanvasTextAnalyzer textAnalyzer = new (character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
+        CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
         KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
 
-        List<TypographyFeatureInfo> supported = new ()
+        List<TypographyFeatureInfo> supported = new()
         {
             TypographyFeatureInfo.None
         };
@@ -47,7 +47,7 @@ public static class TypographyAnalyzer
     /// <returns></returns>
     public static FontAnalysis Analyze(FontVariant variant, bool loadGlyphNames = true)
     {
-        FontAnalysis analysis = new (variant.Face);
+        FontAnalysis analysis = new(variant.Face);
         if (loadGlyphNames && analysis.HasGlyphNames)
             PrepareSearchMap(variant, analysis.GlyphNameMappings);
         return analysis;
@@ -66,7 +66,7 @@ public static class TypographyAnalyzer
             uint[] uni = variant.GetGlyphUnicodeIndexes();
             int[] gly = variant.Face.GetGlyphIndices(uni);
             IReadOnlyList<Character> chars = variant.GetCharacters();
-            Dictionary<Character, string> map = new ();
+            Dictionary<Character, string> map = new();
 
             for (int i = 0; i < chars.Count; i++)
             {

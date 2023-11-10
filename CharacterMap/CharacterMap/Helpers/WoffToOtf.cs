@@ -262,7 +262,7 @@ public static class Converter
                 writer.Write(new byte[padding]);
             }
         }
-        
+
         writer.Flush();
         output.Flush();
 
@@ -303,7 +303,7 @@ public static class Converter
                 };
             }).ToList();
 
-           
+
 
             // Debug code to view table data.
             //var options = recs.Where(r => r.PlatformId == 3).ToList();
@@ -358,7 +358,7 @@ public static class Converter
             mso.Flush();
             return mso.ToArray();
         }
-        
+
         return null;
     }
 

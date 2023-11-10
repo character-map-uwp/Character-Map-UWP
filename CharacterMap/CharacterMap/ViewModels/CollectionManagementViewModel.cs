@@ -1,173 +1,159 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Models;
-using CharacterMap.Services;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CharacterMap.Helpers;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿namespace CharacterMap.ViewModels;
 
-namespace CharacterMap.ViewModels
+internal partial class CollectionManagementViewModel : ViewModelBase
 {
-    internal partial class CollectionManagementViewModel : ViewModelBase
+    protected override bool CaptureContext => true;
+
+    #region Properties
+
+    [ObservableProperty] string _collectionExportProgress;
+    [ObservableProperty] bool _isSaving = false;
+    [ObservableProperty] bool _isExporting = false;
+
+    [ObservableProperty] List<UserFontCollection> _collections;
+    [ObservableProperty] ObservableCollection<InstalledFont> _fontList;
+    [ObservableProperty] ObservableCollection<InstalledFont> _collectionFonts;
+
+    public ObservableCollection<InstalledFont> SelectedFonts = new();
+
+    public ObservableCollection<InstalledFont> SelectedCollectionFonts = new();
+    public UserCollectionsService CollectionService { get; private set; } = null;
+
+    private UserFontCollection _selectedCollection;
+    public UserFontCollection SelectedCollection
     {
-        protected override bool CaptureContext => true;
-
-        #region Properties
-
-        [ObservableProperty] string _collectionExportProgress;
-        [ObservableProperty] bool _isSaving = false;
-        [ObservableProperty] bool _isExporting = false;
-
-        [ObservableProperty] List<UserFontCollection> _collections;
-        [ObservableProperty] ObservableCollection<InstalledFont> _fontList;
-        [ObservableProperty] ObservableCollection<InstalledFont> _collectionFonts;
-
-        public ObservableCollection<InstalledFont> SelectedFonts            = new();
-
-        public ObservableCollection<InstalledFont> SelectedCollectionFonts  = new();
-        public UserCollectionsService CollectionService { get; private set; } = null;
-
-        private UserFontCollection _selectedCollection;
-        public UserFontCollection SelectedCollection
+        get => _selectedCollection;
+        set
         {
-            get => _selectedCollection;
-            set
-            {
-                if (Set(ref _selectedCollection, value) && value != null)
-                    RefreshFontLists();
-            }
+            if (Set(ref _selectedCollection, value) && value != null)
+                RefreshFontLists();
+        }
+    }
+
+    #endregion
+
+
+
+
+    public void Activate()
+    {
+        if (CollectionService is null)
+            CollectionService = Ioc.Default.GetService<UserCollectionsService>();
+
+        RefreshCollections();
+        RefreshFontLists();
+    }
+
+    public void Deactivate()
+    {
+        _ = SaveAsync();
+        SelectedCollection = null;
+        RefreshFontLists();
+    }
+
+    void RefreshCollections()
+    {
+        Collections = CollectionService.Items;
+    }
+
+    public void RefreshFontLists()
+    {
+        if (SelectedCollection is null)
+        {
+            // clear all the things
+            CollectionFonts = new();
+            FontList = new();
+            return;
         }
 
-        #endregion
+        // 1. Get list of fonts in and not in the collection
+        var collectionFonts = FontFinder.Fonts.Where(f => SelectedCollection.Fonts.Contains(f.Name)).ToList();
+        var systemFonts = FontFinder.Fonts.Except(collectionFonts).ToList();
 
+        // 2. Create binding lists
+        FontList = new(systemFonts);
+        CollectionFonts = new(collectionFonts);
+    }
 
+    public void AddToCollection()
+    {
+        if (SelectedFonts is null || SelectedFonts.Count == 0)
+            return;
 
+        var fonts = SelectedFonts.ToList();
+        foreach (var font in fonts)
+            if (FontList.Remove(font))
+                CollectionFonts.AddSorted(font);
 
-        public void Activate()
+        StartSave();
+    }
+
+    public void RemoveFromCollection()
+    {
+        if (SelectedCollectionFonts is null || SelectedCollectionFonts.Count == 0)
+            return;
+
+        var fonts = SelectedCollectionFonts.ToList();
+        foreach (var font in fonts)
+            if (CollectionFonts.Remove(font))
+                FontList.AddSorted(font);
+
+        StartSave();
+    }
+
+    public void StartSave()
+    {
+        _ = SaveAsync();
+    }
+
+    async Task SaveAsync()
+    {
+        if (SelectedCollection is null || IsSaving)
+            return;
+
+        IsSaving = true;
+
+        try
         {
-            if (CollectionService is null)
-                CollectionService = Ioc.Default.GetService<UserCollectionsService>();
-
-            RefreshCollections();
-            RefreshFontLists();
+            SelectedCollection.Fonts = new HashSet<string>(CollectionFonts.Select(c => c.Name));
+            await CollectionService.SaveCollectionAsync(SelectedCollection);
         }
-
-        public void Deactivate()
+        finally
         {
-            _ = SaveAsync();
-            SelectedCollection = null;
-            RefreshFontLists();
+            IsSaving = false;
         }
+    }
 
-        void RefreshCollections()
+    internal async void ExportAsZip()
+    {
+        IsExporting = true;
+
+        try
         {
-            Collections = CollectionService.Items;
+            await ExportManager.ExportCollectionAsZipAsync(
+                CollectionFonts,
+                SelectedCollection,
+                p => OnSyncContext(() => CollectionExportProgress = p));
         }
-
-        public void RefreshFontLists()
+        finally
         {
-            if (SelectedCollection is null)
-            {
-                // clear all the things
-                CollectionFonts = new();
-                FontList = new ();
-                return;
-            }
-
-            // 1. Get list of fonts in and not in the collection
-            var collectionFonts = FontFinder.Fonts.Where(f => SelectedCollection.Fonts.Contains(f.Name)).ToList();
-            var systemFonts = FontFinder.Fonts.Except(collectionFonts).ToList();
-
-            // 2. Create binding lists
-            FontList = new (systemFonts);
-            CollectionFonts = new (collectionFonts);
+            IsExporting = false;
         }
+    }
 
-        public void AddToCollection()
+    internal async void ExportAsFolder()
+    {
+        IsExporting = true;
+
+        try
         {
-            if (SelectedFonts is null || SelectedFonts.Count == 0)
-                return;
-
-            var fonts = SelectedFonts.ToList();
-            foreach (var font in fonts)
-                if (FontList.Remove(font))
-                    CollectionFonts.AddSorted(font);
-
-            StartSave();
+            await ExportManager.ExportCollectionToFolderAsync(
+                CollectionFonts,
+                p => OnSyncContext(() => CollectionExportProgress = p));
         }
-
-        public void RemoveFromCollection()
+        finally
         {
-            if (SelectedCollectionFonts is null || SelectedCollectionFonts.Count == 0)
-                return;
-
-            var fonts = SelectedCollectionFonts.ToList();
-            foreach (var font in fonts)
-                if (CollectionFonts.Remove(font))
-                    FontList.AddSorted(font);
-
-            StartSave();
-        }
-
-        public void StartSave()
-        {
-            _ = SaveAsync();
-        }
-
-        async Task SaveAsync()
-        {
-            if (SelectedCollection is null || IsSaving)
-                return;
-
-            IsSaving = true;
-
-            try
-            {
-                SelectedCollection.Fonts = new HashSet<string>(CollectionFonts.Select(c => c.Name));
-                await CollectionService.SaveCollectionAsync(SelectedCollection);
-            }
-            finally
-            {
-                IsSaving = false;
-            }
-        }
-
-        internal async void ExportAsZip()
-        {
-            IsExporting = true;
-
-            try
-            {
-                await ExportManager.ExportCollectionAsZipAsync(
-                    CollectionFonts, 
-                    SelectedCollection,
-                    p => OnSyncContext(() => CollectionExportProgress = p));
-            }
-            finally
-            {
-                IsExporting = false;
-            }
-        }
-
-        internal async void ExportAsFolder()
-        {
-            IsExporting = true;
-
-            try
-            {
-                await ExportManager.ExportCollectionToFolderAsync(
-                    CollectionFonts,
-                    p => OnSyncContext(() => CollectionExportProgress = p));
-            }
-            finally
-            {
-                IsExporting = false;
-            }
+            IsExporting = false;
         }
     }
 }

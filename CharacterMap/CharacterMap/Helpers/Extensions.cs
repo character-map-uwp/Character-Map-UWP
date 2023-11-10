@@ -1,10 +1,10 @@
-﻿using Windows.System;
+﻿using Microsoft.UI.Xaml.Controls;
+using System.IO.Compression;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using System.IO.Compression;
-using Microsoft.UI.Xaml.Controls;
 
 namespace CharacterMap.Helpers;
 
@@ -47,9 +47,9 @@ public static class Extensions
 
     public static Task ExecuteAsync(this CoreDispatcher d, Func<Task> action, CoreDispatcherPriority p = CoreDispatcherPriority.Normal)
     {
-        TaskCompletionSource<bool> tcs = new ();
+        TaskCompletionSource<bool> tcs = new();
 
-        _ =d.RunAsync(p, async () =>
+        _ = d.RunAsync(p, async () =>
         {
             try
             {
@@ -61,13 +61,13 @@ public static class Extensions
                 tcs.SetException(e);
             }
         });
-        
+
         return tcs.Task;
     }
 
     public static Task ExecuteAsync(this CoreDispatcher d, Action action, CoreDispatcherPriority p = CoreDispatcherPriority.Normal)
     {
-        TaskCompletionSource<bool> tcs = new ();
+        TaskCompletionSource<bool> tcs = new();
 
         _ = d.RunAsync(p, () =>
         {
@@ -122,7 +122,7 @@ public static class Extensions
     public static T Realize<T>(this T list, double width = 100, double height = 100) where T : ItemsControl
     {
         if (list.ItemsPanelRoot == null)
-            list.Measure(new (width, height));
+            list.Measure(new(width, height));
 
         return list;
     }
@@ -135,13 +135,13 @@ public static class Extensions
 
     public static T MergeMUXC<T>(this T dictionary, ControlsResourcesVersion version) where T : ResourceDictionary
     {
-        dictionary.MergedDictionaries.Add(new XamlControlsResources {  ControlsResourcesVersion = version });
+        dictionary.MergedDictionaries.Add(new XamlControlsResources { ControlsResourcesVersion = version });
         return dictionary;
     }
 
     public static T Merge<T>(this T dictionary, string source) where T : ResourceDictionary
     {
-        dictionary.MergedDictionaries.Add(new () { Source = new Uri(source) });
+        dictionary.MergedDictionaries.Add(new() { Source = new Uri(source) });
         return dictionary;
     }
 

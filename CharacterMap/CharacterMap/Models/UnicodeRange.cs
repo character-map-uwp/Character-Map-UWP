@@ -45,7 +45,7 @@ public class NamedUnicodeRange
     {
         Name = name;
         Start = start;
-        End = start + length -1;
+        End = start + length - 1;
         Range = new(Start, End);
     }
 
@@ -393,7 +393,7 @@ public static class UnicodeRanges
     public static NamedUnicodeRange VariationSelectorsSupplement = new(0xE0100, 0xE01EF, "Variation Selectors Supplement");
     public static NamedUnicodeRange SupplementaryPrivateUseAreaA = new(0xF0000, 0xFFFFF, "Supplementary Private Use Area-A");
     public static NamedUnicodeRange SupplementaryPrivateUseAreaB = new(0x100000, 0x10FFFF, "Supplementary Private Use Area-B");
-    
+
     /* Manually added */
     public static NamedUnicodeRange Unassigned = new("Unassigned", 0x110000, 200000);
 

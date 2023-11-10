@@ -1,145 +1,140 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using Windows.UI.Xaml;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace CharacterMap.Controls
-{
-    [ObservableObject]
-    public partial class UXButtonTemplateSettings
-    {
-        [ObservableProperty]
-        string _effectiveLabel;
+namespace CharacterMap.Controls;
 
-        public void Update(string text, CharacterCasing casing)
+[ObservableObject]
+public partial class UXButtonTemplateSettings
+{
+    [ObservableProperty]
+    string _effectiveLabel;
+
+    public void Update(string text, CharacterCasing casing)
+    {
+        EffectiveLabel = casing switch
         {
-            EffectiveLabel = casing switch
-            {
-                CharacterCasing.Upper => text.ToUpper(),
-                CharacterCasing.Lower => text.ToLower(),
-                _ => text
-            };
-        }
+            CharacterCasing.Upper => text.ToUpper(),
+            CharacterCasing.Lower => text.ToLower(),
+            _ => text
+        };
+    }
+}
+
+public class UXButton : Button//, IThemeableControl
+{
+    public bool IsHintVisible
+    {
+        get { return (bool)GetValue(IsHintVisibleProperty); }
+        set { SetValue(IsHintVisibleProperty, value); }
     }
 
-    public class UXButton : Button//, IThemeableControl
+    public static readonly DependencyProperty IsHintVisibleProperty =
+        DependencyProperty.Register(nameof(IsHintVisible), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
+        {
+            ((UXButton)d).UpdateHint();
+        }));
+
+    public bool IsLabelVisible
     {
-        public bool IsHintVisible
+        get { return (bool)GetValue(IsLabelVisibleProperty); }
+        set { SetValue(IsLabelVisibleProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsLabelVisibleProperty =
+        DependencyProperty.Register(nameof(IsLabelVisible), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
         {
-            get { return (bool)GetValue(IsHintVisibleProperty); }
-            set { SetValue(IsHintVisibleProperty, value); }
-        }
+            ((UXButton)d).UpdateLabel();
+        }));
 
-        public static readonly DependencyProperty IsHintVisibleProperty =
-            DependencyProperty.Register(nameof(IsHintVisible), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d,e) =>
-            {
-                ((UXButton)d).UpdateHint();
-            }));
+    public CharacterCasing LabelCasing
+    {
+        get { return (CharacterCasing)GetValue(LabelCasingProperty); }
+        set { SetValue(LabelCasingProperty, value); }
+    }
 
-        public bool IsLabelVisible
+    public static readonly DependencyProperty LabelCasingProperty =
+        DependencyProperty.Register(nameof(LabelCasing), typeof(CharacterCasing), typeof(UXButton), new PropertyMetadata(CharacterCasing.Normal, (d, e) =>
         {
-            get { return (bool)GetValue(IsLabelVisibleProperty); }
-            set { SetValue(IsLabelVisibleProperty, value); }
-        }
+            ((UXButton)d).UpdateLabelText();
+        }));
 
-        public static readonly DependencyProperty IsLabelVisibleProperty =
-            DependencyProperty.Register(nameof(IsLabelVisible), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
-            {
-                ((UXButton)d).UpdateLabel();
-            }));
+    public string Label
+    {
+        get { return (string)GetValue(LabelProperty); }
+        set { SetValue(LabelProperty, value); }
+    }
 
-        public CharacterCasing LabelCasing
+    public static readonly DependencyProperty LabelProperty =
+        DependencyProperty.Register(nameof(Label), typeof(string), typeof(UXButton), new PropertyMetadata(null, (d, e) =>
         {
-            get { return (CharacterCasing)GetValue(LabelCasingProperty); }
-            set { SetValue(LabelCasingProperty, value); }
-        }
+            ((UXButton)d).UpdateLabelText();
+        }));
 
-        public static readonly DependencyProperty LabelCasingProperty =
-            DependencyProperty.Register(nameof(LabelCasing), typeof(CharacterCasing), typeof(UXButton), new PropertyMetadata(CharacterCasing.Normal, (d, e) =>
-            {
-                ((UXButton)d).UpdateLabelText();
-            }));
 
-        public string Label
+
+    public bool IsActive
+    {
+        get { return (bool)GetValue(IsActiveProperty); }
+        set { SetValue(IsActiveProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsActiveProperty =
+        DependencyProperty.Register(nameof(IsActive), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
         {
-            get { return (string)GetValue(LabelProperty); }
-            set { SetValue(LabelProperty, value); }
-        }
-
-        public static readonly DependencyProperty LabelProperty =
-            DependencyProperty.Register(nameof(Label), typeof(string), typeof(UXButton), new PropertyMetadata(null, (d, e) =>
-            {
-                ((UXButton)d).UpdateLabelText();
-            }));
+            ((UXButton)d).UpdateActive();
+        }));
 
 
 
-        public bool IsActive
-        {
-            get { return (bool)GetValue(IsActiveProperty); }
-            set { SetValue(IsActiveProperty, value); }
-        }
+    public UXButtonTemplateSettings TemplateSettings { get; } = new UXButtonTemplateSettings();
 
-        public static readonly DependencyProperty IsActiveProperty =
-            DependencyProperty.Register(nameof(IsActive), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
-            {
-                ((UXButton)d).UpdateActive();
-            }));
+    bool _isTemplateApplied = false;
 
+    //public ThemeHelper _themer;
 
-
-        public UXButtonTemplateSettings TemplateSettings { get; } = new UXButtonTemplateSettings();
-
-        bool _isTemplateApplied = false;
-
-        //public ThemeHelper _themer;
-
-        public UXButton()
-        {
-            //Properties.SetStyleKey(this, "DefaultThemeButtonStyle");
-            //_themer = new ThemeHelper(this);
-        }
+    public UXButton()
+    {
+        //Properties.SetStyleKey(this, "DefaultThemeButtonStyle");
+        //_themer = new ThemeHelper(this);
+    }
 
 
-        protected override void OnApplyTemplate()
-        {
-            _isTemplateApplied = true;
+    protected override void OnApplyTemplate()
+    {
+        _isTemplateApplied = true;
 
-            base.OnApplyTemplate();
-            //_themer.Update();
+        base.OnApplyTemplate();
+        //_themer.Update();
 
-            UpdateHint(false);
-            UpdateLabel(false);
-            UpdateActive(false);
-        }
-        private void UpdateActive(bool animate = true)
-        {
-            if (_isTemplateApplied)
-                VisualStateManager.GoToState(this, IsActive ? "IsActive" : "IsNotActive", animate);
-        }
+        UpdateHint(false);
+        UpdateLabel(false);
+        UpdateActive(false);
+    }
+    private void UpdateActive(bool animate = true)
+    {
+        if (_isTemplateApplied)
+            VisualStateManager.GoToState(this, IsActive ? "IsActive" : "IsNotActive", animate);
+    }
 
-        private void UpdateHint(bool animate = true)
-        {
-            if (_isTemplateApplied)
-                VisualStateManager.GoToState(this, IsHintVisible ? "HintVisible" : "HintHidden", animate);
-        }
+    private void UpdateHint(bool animate = true)
+    {
+        if (_isTemplateApplied)
+            VisualStateManager.GoToState(this, IsHintVisible ? "HintVisible" : "HintHidden", animate);
+    }
 
-        private void UpdateLabel(bool animate = true)
-        {
-            if (_isTemplateApplied)
-                VisualStateManager.GoToState(this, IsLabelVisible ? "LabelVisible" : "LabelHidden", animate);
-        }
+    private void UpdateLabel(bool animate = true)
+    {
+        if (_isTemplateApplied)
+            VisualStateManager.GoToState(this, IsLabelVisible ? "LabelVisible" : "LabelHidden", animate);
+    }
 
-        private void UpdateLabelText()
-        {
-            TemplateSettings.Update(Label, LabelCasing);
-        }
+    private void UpdateLabelText()
+    {
+        TemplateSettings.Update(Label, LabelCasing);
+    }
 
-        public void UpdateTheme()
-        {
-            //_themer.Update();
-        }
+    public void UpdateTheme()
+    {
+        //_themer.Update();
     }
 }

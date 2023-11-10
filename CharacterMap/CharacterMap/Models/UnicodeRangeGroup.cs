@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace CharacterMap.Models;
+﻿namespace CharacterMap.Models;
 
 public class UnicodeRangeGroup : List<Character>, IGrouping<NamedUnicodeRange, Character>
 {
@@ -33,7 +31,7 @@ public class UnicodeRangeGroup : List<Character>, IGrouping<NamedUnicodeRange, C
                 }, c => c)
                 .Select(g => new UnicodeRangeGroup(g.Key, g)));
         }
-        
+
     }
 
     public override string ToString()

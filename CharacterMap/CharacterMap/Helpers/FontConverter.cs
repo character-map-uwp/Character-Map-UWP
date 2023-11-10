@@ -5,7 +5,7 @@ namespace CharacterMap.Helpers;
 
 public static class FontConverter
 {
-    private static Random _random { get; } = new ();
+    private static Random _random { get; } = new();
 
     public static async Task<(StorageFile File, ConversionStatus Result)> TryConvertAsync(
         StorageFile file, StorageFolder targetFolder = null)
@@ -19,10 +19,10 @@ public static class FontConverter
             string name = Path.GetFileNameWithoutExtension(file.DisplayName);
 
             if (targetFolder is not null) // Avoid threading errors with multiple converts to the same target folder
-                name += $"-{_random.Next(1000,100000)}";
+                name += $"-{_random.Next(1000, 100000)}";
 
             StorageFile newFile = await folder.CreateFileAsync($"{name}.otf", CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
-            ConversionStatus result = 
+            ConversionStatus result =
                 isWoff ? await TryConvertWoffToOtfAsync(file, newFile).ConfigureAwait(false)
                 : await TryConvertToWoff2Async(file, newFile).ConfigureAwait(false);
 
@@ -49,7 +49,7 @@ public static class FontConverter
         {
             IBuffer buffer = null;
             using (var stream = await file.OpenReadAsync())
-            using (DataReader reader = new (stream))
+            using (DataReader reader = new(stream))
             {
                 await reader.LoadAsync((uint)stream.Size);
                 buffer = reader.ReadBuffer(reader.UnconsumedBufferLength);
@@ -80,7 +80,7 @@ public static class FontConverter
         {
             using var input = await inputFile.OpenStreamForReadAsync().ConfigureAwait(false);
             using var output = await outputFile.OpenStreamForWriteAsync().ConfigureAwait(false);
-            var result =  Converter.Convert(input, output);
+            var result = Converter.Convert(input, output);
             return result;
         });
     }

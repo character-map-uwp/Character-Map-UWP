@@ -1,5 +1,4 @@
-﻿using SQLitePCL;
-using Windows.Data.Text;
+﻿using Windows.Data.Text;
 
 namespace CharacterMap.Helpers;
 
@@ -10,7 +9,7 @@ public static class Unicode
         return ((c == ' ') || (c >= 0x0009 && c <= 0x000d) || c == 0x00a0 || c == 0x0085);
     }
 
-    public static string GetHexValue(uint i) => (i <= 0x10FFFF && (i< 0xD800 || i> 0xDFFF)) ? char.ConvertFromUtf32((int) i) : new string ((char) i, 1);
+    public static string GetHexValue(uint i) => (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1);
 
     public static bool RequiresSurrogates(Character c) => c.UnicodeIndex >= 0x010000;
 

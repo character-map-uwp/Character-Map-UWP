@@ -1,14 +1,11 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Models;
-using System;
-using System.Collections.Generic;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Provider
 {
     public class XamlDevProvider : DevProviderBase
     {
-        public XamlDevProvider(CharacterRenderingOptions o, Character c) : base(o, c) {
+        public XamlDevProvider(CharacterRenderingOptions o, Character c) : base(o, c)
+        {
             DisplayName = "XAML (UWP)";
         }
 

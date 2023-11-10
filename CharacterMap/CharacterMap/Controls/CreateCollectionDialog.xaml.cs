@@ -1,112 +1,90 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Models;
-using CharacterMap.Services;
-using CharacterMap.ViewModels;
-using CommunityToolkit.Mvvm.DependencyInjection;
-using CommunityToolkit.Mvvm.Messaging;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
+﻿using Windows.UI.Xaml.Controls;
 
-namespace CharacterMap.Controls
+namespace CharacterMap.Controls;
+
+public class CreateCollectionDialogTemplateSettings : ViewModelBase
 {
-    public class CreateCollectionDialogTemplateSettings : ViewModelBase
+    private string _collectionTitle;
+    public string CollectionTitle
     {
-        private string _collectionTitle;
-        public string CollectionTitle
-        {
-            get => _collectionTitle;
-            set { if (Set(ref _collectionTitle, value)) OnCollectionTitleChanged(); }
-        }
+        get => _collectionTitle;
+        set { if (Set(ref _collectionTitle, value)) OnCollectionTitleChanged(); }
+    }
 
-        private bool _isCollectionTitleValid;
-        public bool IsCollectionTitleValid
-        {
-            get => _isCollectionTitleValid;
-            private set => Set(ref _isCollectionTitleValid, value);
-        }
+    private bool _isCollectionTitleValid;
+    public bool IsCollectionTitleValid
+    {
+        get => _isCollectionTitleValid;
+        private set => Set(ref _isCollectionTitleValid, value);
+    }
 
-        private void OnCollectionTitleChanged()
+    private void OnCollectionTitleChanged()
+    {
+        IsCollectionTitleValid = !string.IsNullOrWhiteSpace(CollectionTitle);
+    }
+}
+
+public sealed partial class CreateCollectionDialog : ContentDialog
+{
+    public CreateCollectionDialogTemplateSettings TemplateSettings { get; }
+
+    public bool IsRenameMode { get; }
+
+    public object Result { get; private set; }
+
+
+    private UserFontCollection _collection = null;
+
+    public CreateCollectionDialog(UserFontCollection collection = null)
+    {
+        _collection = collection;
+        TemplateSettings = new CreateCollectionDialogTemplateSettings();
+        this.InitializeComponent();
+
+        if (_collection != null)
         {
-            IsCollectionTitleValid = !string.IsNullOrWhiteSpace(CollectionTitle);
+            IsRenameMode = true;
+            this.Title = Localization.Get("DigRenameCollection/Title");
+            this.PrimaryButtonText = Localization.Get("DigRenameCollection/PrimaryButtonText");
+            TemplateSettings.CollectionTitle = _collection.Name;
         }
     }
 
-    public sealed partial class CreateCollectionDialog : ContentDialog
+
+    private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
-        public CreateCollectionDialogTemplateSettings TemplateSettings { get; }
+        var d = args.GetDeferral();
 
-        public bool IsRenameMode { get; }
+        var collections = Ioc.Default.GetService<UserCollectionsService>();
 
-        public object Result { get; private set; }
-
-
-        private UserFontCollection _collection = null;
-
-        public CreateCollectionDialog(UserFontCollection collection = null)
+        if (IsRenameMode)
         {
-            _collection = collection;
-            TemplateSettings = new CreateCollectionDialogTemplateSettings();
-            this.InitializeComponent();
+            this.IsPrimaryButtonEnabled = false;
+            this.IsSecondaryButtonEnabled = false;
+            InputBox.IsEnabled = false;
 
-            if (_collection != null)
-            {
-                IsRenameMode = true;
-                this.Title = Localization.Get("DigRenameCollection/Title");
-                this.PrimaryButtonText = Localization.Get("DigRenameCollection/PrimaryButtonText");
-                TemplateSettings.CollectionTitle = _collection.Name;
-            }
+            await collections.RenameCollectionAsync(TemplateSettings.CollectionTitle, _collection);
+            d.Complete();
+
+            await Task.Yield();
+            WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
         }
-
-
-        private async void ContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        else
         {
-            var d = args.GetDeferral();
+            AddToCollectionResult result = null;
+            UserFontCollection collection = await collections.CreateCollectionAsync(TemplateSettings.CollectionTitle);
 
-            var collections = Ioc.Default.GetService<UserCollectionsService>();
+            if (this.DataContext is InstalledFont font)
+                result = await collections.AddToCollectionAsync(font, collection);
+            else if (this.DataContext is IList<InstalledFont> fonts)
+                result = await collections.AddToCollectionAsync(fonts, collection);
 
-            if (IsRenameMode)
-            {
-                this.IsPrimaryButtonEnabled = false;
-                this.IsSecondaryButtonEnabled = false;
-                InputBox.IsEnabled = false;
+            Result = result;
+            d.Complete();
+            await Task.Yield();
+            if (result is not null && result.Success)
+                WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
 
-                await collections.RenameCollectionAsync(TemplateSettings.CollectionTitle, _collection);
-                d.Complete();
-
-                await Task.Yield();
-                WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
-            }
-            else
-            {
-                AddToCollectionResult result = null;
-                UserFontCollection collection = await collections.CreateCollectionAsync(TemplateSettings.CollectionTitle);
-
-                if (this.DataContext is InstalledFont font)
-                    result = await collections.AddToCollectionAsync(font, collection);
-                else if (this.DataContext is IList<InstalledFont> fonts)
-                    result = await collections.AddToCollectionAsync(fonts, collection);
-
-                Result = result;
-                d.Complete();
-                await Task.Yield();
-                if (result is not null && result.Success)
-                    WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
-
-            }
         }
     }
 }

@@ -13,35 +13,35 @@ public class FlyoutArgs
     /// <summary>
     /// A window showing a folder of fonts
     /// </summary>
-    public bool IsFolderView        => Folder is not null;
+    public bool IsFolderView => Folder is not null;
 
     /// <summary>
     /// Folder of fonts associated with the view that initiates
     /// the flyout menu
     /// </summary>
-    public FolderContents Folder    { get; set; }
+    public FolderContents Folder { get; set; }
 
     /// <summary>
     /// ... menu 
     /// </summary>
-    public bool ShowAdvanced        { get; set; }
+    public bool ShowAdvanced { get; set; }
 
     /// <summary>
     /// A stand-alone Window showing a single Font Family
     /// </summary>
-    public bool Standalone          { get; set; }
+    public bool Standalone { get; set; }
 
     /// <summary>
     /// Context menu for font tab headers
     /// </summary>
-    public bool IsTabContext        { get; set; }
-    
+    public bool IsTabContext { get; set; }
+
     /// <summary>
     /// The font family is from file that is not installed in the system
     /// or imported into the app. (I.e., opened via Drag & Drop or open
     /// button)
     /// </summary>
-    public bool IsExternalFile      { get; set; }
+    public bool IsExternalFile { get; set; }
 
     public string PreviewText { get; set; }
 
@@ -177,7 +177,7 @@ public static class FlyoutHelper
         {
             if (sender is FrameworkElement f && f.Tag is InstalledFont fnt)
             {
-                _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.Variants.ToList()) {  IsFamilyCompare = true }));
+                _ = QuickCompareView.CreateWindowAsync(new(false, new(fnt.Variants.ToList()) { IsFamilyCompare = true }));
             }
         }
 
@@ -185,7 +185,7 @@ public static class FlyoutHelper
         {
             MenuFlyoutItem item = new()
             {
-                Text = key.StartsWith("~") ? key.Remove(0,1) : Localization.Get(key),
+                Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
                 Icon = new FontIcon { Glyph = icon },
                 Tag = font,
                 DataContext = options,
@@ -196,7 +196,7 @@ public static class FlyoutHelper
 
             if (accel != VirtualKey.None)
                 item.AddKeyboardAccelerator(accel, VirtualKeyModifiers.Control);
-            
+
             if (add)
                 menu.Items.Add(item);
 
@@ -278,8 +278,8 @@ public static class FlyoutHelper
             }
 
             // 6. Add "Delete Font" button
-            if (!standalone 
-                && !args.IsFolderView 
+            if (!standalone
+                && !args.IsFolderView
                 && !args.IsTabContext
                 && font.HasImportedFiles)
             {
@@ -347,13 +347,13 @@ public static class FlyoutHelper
 
             async void RemoveFrom_Click(object sender, RoutedEventArgs e)
             {
-                if (sender is FrameworkElement f 
+                if (sender is FrameworkElement f
                     && f.DataContext is InstalledFont fnt
                     && f.Tag is UserFontCollection collection)
                 {
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
                     WeakReferenceMessenger.Default.Send(
-                        new AppNotificationMessage(true, 
+                        new AppNotificationMessage(true,
                             new CollectionUpdatedArgs(new List<InstalledFont> { fnt }, collection, false)));
                     WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage { SourceCollection = collection });
                 }
@@ -377,7 +377,7 @@ public static class FlyoutHelper
             if (sender is FrameworkElement f && f.DataContext is IList<InstalledFont> fnts)
             {
                 var result = await _collections.AddToCollectionAsync(
-                    fnts, 
+                    fnts,
                     _collections.SymbolCollection,
                     f.Tag as Action);
 
@@ -409,7 +409,7 @@ public static class FlyoutHelper
         // 1. Add "Add To Collection" item
         MenuFlyoutSubItem parent = new()
         {
-            Text = Localization.Get( key ?? "AddToCollectionFlyout/Text"),
+            Text = Localization.Get(key ?? "AddToCollectionFlyout/Text"),
             Icon = new FontIcon { Glyph = "\uE71D" },
             Style = substyle
         };
@@ -469,7 +469,7 @@ public static class FlyoutHelper
                     {
                         m.Click += async (s, a) =>
                         {
-                            if (s is FrameworkElement f 
+                            if (s is FrameworkElement f
                                 && f.DataContext is IList<InstalledFont> fnts
                                 && f.Tag is UserFontCollection clct)
                             {
@@ -522,7 +522,7 @@ public static class FlyoutHelper
 
             // 4. Handle SVG options
             var svgRoot = menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "SvgRoot");
-            
+
             // 4.1. We can only save as SVG if all layers of the glyph are created with vectors
             svgRoot.SetVisible(analysis.IsFullVectorBased);
             if (analysis.IsFullVectorBased)
@@ -570,10 +570,10 @@ public static class FlyoutHelper
                 {
                     foreach (var p in providers.Where(p => p.Type != DevProviderType.None))
                     {
-                        MenuFlyoutSubItem item = new () { Text = p.DisplayName };
+                        MenuFlyoutSubItem item = new() { Text = p.DisplayName };
                         foreach (var o in p.GetAllOptions())
                         {
-                            MenuFlyoutItem i = new () { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = style };
+                            MenuFlyoutItem i = new() { Text = Localization.Get("ContextMenuDevCopyCommand", o.Name), Style = style };
                             i.Click += CopyItemClick;
                             Properties.SetDevOption(i, o);
                             item.Items.Add(i);

@@ -12,7 +12,7 @@ public partial class FontItem : ObservableObject
     [NotifyPropertyChangedFor(nameof(Tooltip))]
     private string _subTitle;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Tooltip))]
     private InstalledFont _font;
 
@@ -63,7 +63,7 @@ public partial class FontItem : ObservableObject
         {
             Font = font;
             Selected = font.DefaultVariant;
-            
+
             // This is an assumption but works for the current UI flow.
             IsCompact = false;
         }

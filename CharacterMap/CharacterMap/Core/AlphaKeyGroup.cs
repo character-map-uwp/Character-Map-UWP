@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using Windows.Globalization.Collation;
 
 namespace CharacterMap.Core;
@@ -23,7 +22,7 @@ public class AlphaKeyGroup<T> : ObservableCollection<T>
 
     public static List<AlphaKeyGroup<T>> CreateGroups(IEnumerable<T> items, Func<T, string> keySelector)
     {
-        CharacterGroupings slg = new ();
+        CharacterGroupings slg = new();
         List<AlphaKeyGroup<T>> list = CreateAZGroups(); //CreateDefaultGroups(slg);
         foreach (T item in items)
         {

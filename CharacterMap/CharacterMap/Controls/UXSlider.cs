@@ -1,48 +1,45 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 
-namespace CharacterMap.Controls
+namespace CharacterMap.Controls;
+
+public class UXSlider : Slider, IThemeableControl
 {
-    public class UXSlider : Slider, IThemeableControl
+    public ThemeHelper _themer;
+    public UXSlider()
     {
-        public ThemeHelper _themer;
-        public UXSlider()
-        {
-            Properties.SetStyleKey(this, "DefaultThemeSliderStyle");
-            _themer = new ThemeHelper(this);
-        }
-
-        public void UpdateTheme()
-        {
-            _themer.Update();
-        }
-
-        protected override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            _themer.Update();
-        }
+        Properties.SetStyleKey(this, "DefaultThemeSliderStyle");
+        _themer = new ThemeHelper(this);
     }
 
-    public class UXHyperlinkButton : HyperlinkButton, IThemeableControl
+    public void UpdateTheme()
     {
-        public ThemeHelper _themer;
-        public UXHyperlinkButton()
-        {
-            Properties.SetStyleKey(this, "DefaultHyperlinkButtonStyle");
-            _themer = new ThemeHelper(this);
-        }
+        _themer.Update();
+    }
 
-        public void UpdateTheme()
-        {
-            _themer.Update();
-        }
+    protected override void OnApplyTemplate()
+    {
+        base.OnApplyTemplate();
+        _themer.Update();
+    }
+}
 
-        protected override void OnApplyTemplate()
-        {
-            base.OnApplyTemplate();
-            _themer.Update();
-        }
+public class UXHyperlinkButton : HyperlinkButton, IThemeableControl
+{
+    public ThemeHelper _themer;
+    public UXHyperlinkButton()
+    {
+        Properties.SetStyleKey(this, "DefaultHyperlinkButtonStyle");
+        _themer = new ThemeHelper(this);
+    }
+
+    public void UpdateTheme()
+    {
+        _themer.Update();
+    }
+
+    protected override void OnApplyTemplate()
+    {
+        base.OnApplyTemplate();
+        _themer.Update();
     }
 }

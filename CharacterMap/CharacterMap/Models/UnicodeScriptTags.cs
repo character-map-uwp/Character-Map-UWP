@@ -10,7 +10,7 @@ internal class UnicodeScriptTags
      * TODO: Add all values from https://en.wikipedia.org/wiki/ISO_15924
      */
 
-    public static IReadOnlyDictionary<string, string> Scripts { get; } 
+    public static IReadOnlyDictionary<string, string> Scripts { get; }
         = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
         { "adlm", "Adlam" },
@@ -235,16 +235,18 @@ internal class UnicodeScriptTags
             {
                 // Try convert the ISO 639-1 language tag to full name
                 var lng = parts[0].Length == 4 ? parts[1] : parts[0];
-                try {
+                try
+                {
                     CultureInfo clt = new(lng);
                     if (clt.EnglishName.StartsWith("Unknown") is false)
-                        lng = clt.DisplayName; 
-                } catch { }
+                        lng = clt.DisplayName;
+                }
+                catch { }
 
                 return $"{name} ({lng})";
             }
         }
-        
+
         return tag;
     }
 
@@ -287,7 +289,7 @@ internal class UnicodeScriptTags
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static bool IsLangTag(string scriptTag) 
+    private static bool IsLangTag(string scriptTag)
         => scriptTag.Length == 7 && (scriptTag[2] is '-' || scriptTag[4] == '-');
 
 
