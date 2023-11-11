@@ -829,7 +829,7 @@ Please consider posting details about this error to GitHub so we can help you fi
     <value>Latin</value>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
-    <value>CJK</value>
+    <value>CJK (Chinese/Japanese/Korean)</value>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>Cyrillic</value>
@@ -1442,6 +1442,184 @@ Tap and hold to arrange.</value>
     <value>Installed Fonts</value>
   </data>
   <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
-    <value>Export Installed Fonts</value>
+    <value>Export installed fonts</value>
+  </data>
+  <data name="OptionDesignTag.Text" xml:space="preserve">
+    <value>By Design Language</value>
+  </data>
+  <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
+    <value>Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</value>
+  </data>
+  <data name="InstallDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="InstallDialog.Title" xml:space="preserve">
+    <value>Install Font</value>
+  </data>
+  <data name="InstallFontInstructions.Text" xml:space="preserve">
+    <value>Please read all of instructions before continuing to install your font
+
+1. Press "Start" below
+2. Select "Windows Font Viewer" and choose "Just once" or "open"
+3. Press "Install" in the top of the font viewer Window
+
+Your web font will be converted to OTF format for installation.</value>
+    <comment>Word in such a way that encourages the user to read all the steps before continuing</comment>
+  </data>
+  <data name="InstallLabel.Text" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="OptionUnicodeRange/Text" xml:space="preserve">
+    <value>By Unicode Range</value>
+  </data>
+  <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Description" xml:space="preserve">
+    <value>If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout.
+
+Referencing deprecated icons by unicode codepoint is not recommended, and all deprecated icons have non-deprecated equivalents.</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Title" xml:space="preserve">
+    <value>Hide deprecated icons</value>
+  </data>
+  <data name="StartLabel.Text" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="TxtUniHexValue.Text" xml:space="preserve">
+    <value>Hex Value</value>
+  </data>
+  <data name="FileExplorerFileToolTip" xml:space="preserve">
+    <value>Preview File</value>
+  </data>
+  <data name="ImportCountLabel" xml:space="preserve">
+    <value>{0} Font Families, {1} Font Faces imported</value>
+  </data>
+  <data name="SettingsFontExportVersionLabel.Text" xml:space="preserve">
+    <value>Include version number in file name</value>
+  </data>
+  <data name="HideUnihanLabel.Text" xml:space="preserve">
+    <value>Hide Unihan data</value>
+  </data>
+  <data name="ShowUnihanLabel.Text" xml:space="preserve">
+    <value>Show Unihan data</value>
+  </data>
+  <data name="UnihanDefinition.Text" xml:space="preserve">
+    <value>Definition</value>
+  </data>
+  <data name="UnihanPronunciations.Text" xml:space="preserve">
+    <value>Pronunciations</value>
+  </data>
+  <data name="UnihanTypeDescriptionCantonese" xml:space="preserve">
+    <value>The most customary jyutping (Cantonese) reading for this ideograph.</value>
+  </data>
+  <data name="UnihanTypeDescriptionHangul" xml:space="preserve">
+    <value>The modern Korean pronunciation(s) for this ideograph in Hangul, with its source(s) in brackets.</value>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinlu" xml:space="preserve">
+    <value>The Pronunciations and Frequencies of this ideograph, based in part on those appearing in 《現代漢語頻率詞典》 &lt;Xiandai Hanyu Pinlu Cidian&gt;</value>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinyin" xml:space="preserve">
+    <value>The 漢語拼音 Hànyǔ Pīnyīn reading(s) appearing in the edition of 《漢語大字典》 Hànyǔ Dà Zìdiǎn (HDZ) specified in the kHanYu property description (q.v.).</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapanese" xml:space="preserve">
+    <value>The Japanese readings(s) for this ideograph expressed in Kana. 
+
+Readings expressed in Hiragana are generally considered Kun-yomi (訓読み), and readings expressed in Katakana are generally considered On-yomi (音読み).</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseKun" xml:space="preserve">
+    <value>The Japanese pronunciation(s) of this ideograph in the Hepburn romanization.</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseOn" xml:space="preserve">
+    <value>The Sino-Japanese pronunciation(s) of this ideograph.</value>
+  </data>
+  <data name="UnihanTypeDescriptionKorean" xml:space="preserve">
+    <value>The Korean pronunciation(s) of this ideograph, using the Yale romanization system.</value>
+  </data>
+  <data name="UnihanTypeDescriptionMandarin" xml:space="preserve">
+    <value>The most customary pīnyīn reading for this ideograph. 
+
+When there are two values, then the first is preferred for Simplified Chinese (zh-Hans (CN)) and the second is preferred for Traditional Chinese (zh-Hant (TW)). 
+
+When there is only one value, it is appropriate for both.</value>
+  </data>
+  <data name="UnihanTypeDescriptionSMSZD2003Readings" xml:space="preserve">
+    <value>This represents the Mandarin and Cantonese readings(s) of the ideograph in the Soengmou San Zidin (商務 新字典, New Commercial Press Character Dictionary).
+
+Mandarin readings are in hànyǔ pīnyīn. Cantonese readings are in jyutping. Note that some ideographs have readings which would ordinarily be considered invalid, such as polysyllabic readings.
+
+If an ideograph has multiple entries, it means that the ideograph has multiple definitions and the readings are grouped in order of those definitions.</value>
+  </data>
+  <data name="UnihanTypeDescriptionTang" xml:space="preserve">
+    <value>The Tang dynasty pronunciation(s) of this ideograph, derived from or consistent with T’ang Poetic Vocabulary by Hugh M. Stimson, Far Eastern Publications, Yale University 1976.</value>
+  </data>
+  <data name="UnihanTypeDescriptionTGHZ2013" xml:space="preserve">
+    <value>One or more Hànyǔ Pīnyīn readings as given in Tōngyòng Guīfàn Hànzì Zìdiǎn.</value>
+  </data>
+  <data name="UnihanTypeDescriptionVietnamese" xml:space="preserve">
+    <value>The ideograph’s pronunciation(s) in Quốc ngữ.</value>
+  </data>
+  <data name="UnihanTypeDescriptionXHC1983" xml:space="preserve">
+    <value>One or more Hànyǔ Pīnyīn readings as given in the Xiàndài Hànyǔ Cídiǎn</value>
+  </data>
+  <data name="UnihanTypeNameCantonese" xml:space="preserve">
+    <value>Cantonese</value>
+  </data>
+  <data name="UnihanTypeNameHangul" xml:space="preserve">
+    <value>Hangul</value>
+  </data>
+  <data name="UnihanTypeNameHanyuPinlu" xml:space="preserve">
+    <value>Hanyu Pinlu</value>
+  </data>
+  <data name="UnihanTypeNameHanyuPinyin" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn</value>
+  </data>
+  <data name="UnihanTypeNameJapanese" xml:space="preserve">
+    <value>Japanese</value>
+  </data>
+  <data name="UnihanTypeNameJapaneseKun" xml:space="preserve">
+    <value>Japanese Kun</value>
+  </data>
+  <data name="UnihanTypeNameJapaneseOn" xml:space="preserve">
+    <value>Japanese On</value>
+  </data>
+  <data name="UnihanTypeNameKorean" xml:space="preserve">
+    <value>Korean</value>
+  </data>
+  <data name="UnihanTypeNameMandarin" xml:space="preserve">
+    <value>Mandarin</value>
+  </data>
+  <data name="UnihanTypeNameSMSZD2003Readings" xml:space="preserve">
+    <value>SmSZ</value>
+  </data>
+  <data name="UnihanTypeNameTang" xml:space="preserve">
+    <value>Tang</value>
+  </data>
+  <data name="UnihanTypeNameTGHZ2013" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn (TGHZ)</value>
+  </data>
+  <data name="UnihanTypeNameVietnamese" xml:space="preserve">
+    <value>Vietnamese</value>
+  </data>
+  <data name="UnihanTypeNameXHC1983" xml:space="preserve">
+    <value>Hànyǔ Pīnyīn (XHC)</value>
+  </data>
+  <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
+    <value>HIDDEN</value>
+  </data>
+  <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
+    <value>The selected character is currently hidden by your selected filters</value>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>Chinese (Simplified)</value>
+  </data>
+  <data name="CanvasFontInformationDesignScriptLanguageTag" xml:space="preserve">
+    <value>Designed Languages</value>
+  </data>
+  <data name="CollectionManagementHint.Text" xml:space="preserve">
+    <value>Create collections to compare, export or manage multiple fonts at once. To get started, select an existing collection above or create a new one.</value>
+  </data>
+  <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
+    <value>Choose existing</value>
   </data>
 </root>

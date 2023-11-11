@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading;
-using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml.Controls;
 
 // from https://github.com/kiwidev/WinRTExceptions
 namespace CharacterMap.Core

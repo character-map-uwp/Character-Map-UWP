@@ -1,121 +1,105 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using CharacterMapCX;
-using Microsoft.Graphics.Canvas.Text;
-using Windows.Storage;
-using Windows.UI.Text;
+﻿namespace CharacterMap.Core;
 
-namespace CharacterMap.Core
+public class InstalledFont : IComparable, IEquatable<InstalledFont>
 {
-    public class InstalledFont : IComparable, IEquatable<InstalledFont>
+    private List<FontVariant> _variants;
+
+    public string Name { get; }
+
+    public bool IsSymbolFont => _variants[0].DirectWriteProperties.IsSymbolFont;
+
+    public IList<FontVariant> Variants => _variants;
+
+    public bool HasVariants => _variants.Count > 1;
+
+    public bool HasImportedFiles { get; private set; }
+
+    private FontVariant _defaultVariant;
+    public FontVariant DefaultVariant => _defaultVariant ??= Utils.GetDefaultVariant(Variants);
+
+    private InstalledFont(string name)
     {
-        private List<FontVariant> _variants;
+        Name = name;
+        _variants = new();
+    }
 
-        public string Name { get; }
+    public InstalledFont(string name, DWriteFontFace face, StorageFile file = null) : this(name)
+    {
+        AddVariant(face, file);
+    }
 
-        public bool IsSymbolFont => _variants[0].DirectWriteProperties.IsSymbolFont;
 
-        public IList<FontVariant> Variants => _variants;
+    public void AddVariant(DWriteFontFace fontFace, StorageFile file = null)
+    {
+        _variants.Add(new(fontFace, file));
+        if (file != null)
+            HasImportedFiles = true;
 
-        public bool HasVariants => _variants.Count > 1;
+        _defaultVariant = null;
+    }
 
-        public bool HasImportedFiles { get; private set; }
+    public void SortVariants()
+    {
+        _variants = _variants.OrderBy(v => v.DirectWriteProperties.Weight.Weight).ToList();
+    }
 
-        private InstalledFont(string name)
+    public void PrepareForDelete()
+    {
+        //FontFace = null;
+    }
+
+    public InstalledFont Clone()
+    {
+        return new InstalledFont(this.Name)
         {
-            Name = name;
-            _variants = new ();
-        }
+            _variants = this._variants.ToList(),
+            HasImportedFiles = this.HasImportedFiles
+        };
+    }
 
-        public InstalledFont(string name, DWriteFontFace face, StorageFile file = null) : this(name)
-        {
-            AddVariant(face, file);
-        }
+    public static InstalledFont CreateDefault(DWriteFontFace face)
+    {
+        var font = new InstalledFont("");
+        font._variants.Add(FontVariant.CreateDefault(face));
+        return font;
+    }
 
-        public FontVariant DefaultVariant
-        {
-            get
-            {
-                return Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal && v.DirectWriteProperties.Stretch == FontStretch.Normal) 
-                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Style == FontStyle.Normal)
-                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight && v.DirectWriteProperties.Stretch == FontStretch.Normal)
-                    ?? Variants.FirstOrDefault(v => v.DirectWriteProperties.Weight.Weight == FontWeights.Normal.Weight)
-                    ?? Variants[0];
-            }
-        }
+    public int CompareTo(object obj)
+    {
+        if (obj is InstalledFont f)
+            return Name.CompareTo(f.Name);
 
-        public void AddVariant(DWriteFontFace fontFace, StorageFile file = null)
-        {
-            _variants.Add(new (fontFace, file));
-            if (file != null)
-                HasImportedFiles = true;
-        }
+        return 0;
+    }
 
-        public void SortVariants()
-        {
-            _variants = _variants.OrderBy(v => v.DirectWriteProperties.Weight.Weight).ToList();
-        }
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as InstalledFont);
+    }
 
-        public void PrepareForDelete()
-        {
-            //FontFace = null;
-        }
+    public bool Equals(InstalledFont other)
+    {
+        return other is not null &&
+               Name == other.Name;
+    }
 
-        public InstalledFont Clone()
-        {
-            return new InstalledFont(this.Name)
-            {
-                _variants = this._variants.ToList(),
-                HasImportedFiles = this.HasImportedFiles
-            };
-        }
+    public override int GetHashCode()
+    {
+        int hashCode = -1425556920;
+        hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+        hashCode = hashCode * -1521134295 + EqualityComparer<IList<FontVariant>>.Default.GetHashCode(Variants);
+        hashCode = hashCode * -1521134295 + HasImportedFiles.GetHashCode();
+        hashCode = hashCode * -1521134295 + EqualityComparer<FontVariant>.Default.GetHashCode(DefaultVariant);
+        return hashCode;
+    }
 
-        public static InstalledFont CreateDefault(DWriteFontFace face)
-        {
-            var font = new InstalledFont("");
-            font._variants.Add(FontVariant.CreateDefault(face));
-            return font;
-        }
+    public static bool operator ==(InstalledFont left, InstalledFont right)
+    {
+        return EqualityComparer<InstalledFont>.Default.Equals(left, right);
+    }
 
-        public int CompareTo(object obj)
-        {
-            if (obj is InstalledFont f)
-                return Name.CompareTo(f.Name);
-
-            return 0;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as InstalledFont);
-        }
-
-        public bool Equals(InstalledFont other)
-        {
-            return other is not null &&
-                   Name == other.Name;
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = -1425556920;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<IList<FontVariant>>.Default.GetHashCode(Variants);
-            hashCode = hashCode * -1521134295 + HasImportedFiles.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<FontVariant>.Default.GetHashCode(DefaultVariant);
-            return hashCode;
-        }
-
-        public static bool operator ==(InstalledFont left, InstalledFont right)
-        {
-            return EqualityComparer<InstalledFont>.Default.Equals(left, right);
-        }
-
-        public static bool operator !=(InstalledFont left, InstalledFont right)
-        {
-            return !(left == right);
-        }
+    public static bool operator !=(InstalledFont left, InstalledFont right)
+    {
+        return !(left == right);
     }
 }

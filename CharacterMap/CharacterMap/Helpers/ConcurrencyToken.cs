@@ -1,44 +1,41 @@
-﻿using System;
+﻿namespace CharacterMap.Helpers;
 
-namespace CharacterMap.Helpers
+public class ConcurrencyToken
 {
-    public class ConcurrencyToken
+    public class ConcurrencyTokenGenerator
     {
-        public class ConcurrencyTokenGenerator
+        private object Root { get; } = new object();
+        private Guid CurrentId { get; set; } = Guid.NewGuid();
+
+        public ConcurrencyToken GenerateToken()
         {
-            private object Root { get; } = new object();
-            private Guid CurrentId { get; set; } = Guid.NewGuid();
-
-            public ConcurrencyToken GenerateToken()
+            lock (Root)
             {
-                lock (Root)
-                {
-                    CurrentId = new Guid();
-                    return new ConcurrencyToken(CurrentId, this);
-                }
-            }
-
-            internal bool IsValid(ConcurrencyToken token)
-            {
-                lock (Root)
-                {
-                    return token.Id == CurrentId;
-                }
+                CurrentId = new Guid();
+                return new ConcurrencyToken(CurrentId, this);
             }
         }
 
-        private Guid Id { get; }
-        private ConcurrencyTokenGenerator Owner { get; }
-
-        private ConcurrencyToken(Guid id, ConcurrencyTokenGenerator owner)
+        internal bool IsValid(ConcurrencyToken token)
         {
-            Id = id;
-            Owner = owner;
+            lock (Root)
+            {
+                return token.Id == CurrentId;
+            }
         }
+    }
 
-        public bool IsValid()
-        {
-            return Owner.IsValid(this);
-        }
+    private Guid Id { get; }
+    private ConcurrencyTokenGenerator Owner { get; }
+
+    private ConcurrencyToken(Guid id, ConcurrencyTokenGenerator owner)
+    {
+        Id = id;
+        Owner = owner;
+    }
+
+    public bool IsValid()
+    {
+        return Owner.IsValid(this);
     }
 }

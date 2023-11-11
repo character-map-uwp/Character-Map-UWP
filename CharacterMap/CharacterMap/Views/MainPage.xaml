@@ -395,7 +395,7 @@
                     Foreground="{ThemeResource ControlHighlightContrastForegroundBrush}"
                     IsHitTestVisible="False"
                     Style="{StaticResource BaseTextStyle}"
-                    Text="Character Map UWP"
+                    Text="{core:Localizer Key=AppName}"
                     TextLineBounds="Tight" />
 
             </Grid>

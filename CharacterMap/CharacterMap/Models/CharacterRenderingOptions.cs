@@ -1,10 +1,4 @@
-﻿using CharacterMap.Core;
-using CharacterMap.Helpers;
-using CharacterMap.Provider;
-using CharacterMapCX;
-using Microsoft.Graphics.Canvas.Text;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.Graphics.Canvas.Text;
 
 namespace System.Runtime.CompilerServices
 {
@@ -68,13 +62,13 @@ namespace CharacterMap.Models
             RequiresNativeRender = Variant.DirectWriteProperties.HasVariations || Variant.SupportsCOLRv1Rendering;
         }
 
-        
+
 
         public string GetName()
         {
             // Basic Name
             string name = $"{Variant.FamilyName} {Variant.PreferredName}";
-            
+
             // Add OpenType features
             if (DefaultTypography is not null)
                 name += $" - {DefaultTypography.DisplayName}";
@@ -93,7 +87,7 @@ namespace CharacterMap.Models
 
         public CanvasTypography CreateCanvasTypography()
         {
-            CanvasTypography t = new ();
+            CanvasTypography t = new();
             foreach (var f in Typography)
             {
                 if (f.Feature != CanvasTypographyFeatureName.None)
@@ -105,10 +99,10 @@ namespace CharacterMap.Models
         public bool IsCompareMatch(CharacterRenderingOptions o)
         {
             return object.ReferenceEquals(this, o) ||
-                (o.Variant == this.Variant 
+                (o.Variant == this.Variant
                     && o.DefaultTypography == this.DefaultTypography
                     && o.Axis == this.Axis);
-            
+
             // && o.IsColourFontEnabled == this.IsColourFontEnabled);
         }
     }

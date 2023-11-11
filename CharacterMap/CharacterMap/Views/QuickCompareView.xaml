@@ -154,13 +154,13 @@
             ItemsStretch="Fill"
             MinColumnSpacing="12"
             MinItemHeight="250"
-            MinItemWidth="400"
+            MinItemWidth="422"
             MinRowSpacing="12" />
 
         <muxc:StackLayout
             x:Name="StackLayout"
             Orientation="Vertical"
-            Spacing="24" />
+            Spacing="12" />
 
         <ItemsPanelTemplate x:Key="StackingPanelTemplate">
             <ItemsStackPanel CacheLength="1" />
@@ -217,11 +217,10 @@
         <DataTemplate x:Key="StackTemplate" x:DataType="core:InstalledFont">
             <controls:ContentGroup VerticalAlignment="Stretch">
                 <controls:ContentGroup.Text>
-                    <!--<TextBlock Foreground="{ThemeResource SystemColorControlAccentBrush}">-->
-                    <TextBlock Foreground="{ThemeResource SystemAccentColor}">
+                    <TextBlock>
                         <Run Text="{x:Bind Name}" />
-                        <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="{x:Bind Variants.Count}" />
-                        <Run Foreground="{ThemeResource TextControlPlaceholderForeground}" Text="face(s)" />
+                        <Run Foreground="{ThemeResource TextControlPlaceholderForegroundDisabled}" Text="{x:Bind Variants.Count}" />
+                        <Run Foreground="{ThemeResource TextControlPlaceholderForegroundDisabled}" Text="face(s)" />
                     </TextBlock>
                 </controls:ContentGroup.Text>
                 <controls:ContentGroup.SecondaryContent>
@@ -453,22 +452,21 @@
                             <Button
                                 x:Name="FontListFilter"
                                 x:Uid="FontListFilter"
-                                Margin="0,0,0,0"
-                                Padding="0 0"
+                                Margin="-11 0 4 0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
-                                Style="{StaticResource TextBlockButtonStyle}"
+                                Style="{StaticResource ThemeTextBlockButtonStyle}"
                                 ToolTipService.Placement="Bottom">
 
-                                <TextBlock Margin="0 0 12 0">
+                                <TextBlock>
                                     <Run Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="All Fonts" />
                                     <Run />
                                     <Run
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         FontSize="10"
-                                        Text="&#xE011;" />
+                                        Text="&#xE70D;" />
                                 </TextBlock>
 
                                 <Button.Flyout>
@@ -586,27 +584,25 @@
                             <Border.RenderTransform>
                                 <CompositeTransform />
                             </Border.RenderTransform>
-                            <GridView
+                            <toolkit:AdaptiveGridView
                                 x:Name="Repeater"
                                 Margin="-8 0 0 0"
-                                Padding="8 0 0 0"
+                                Padding="8 0 10 48"
                                 ContainerContentChanging="Repeater_ContainerContentChanging"
                                 ItemClick="Repeater_ItemClick"
-                                ItemContainerTransitions="{x:Bind GetTransitions('ItemTransitions', ViewModel.AllowAnimation), Mode=OneWay}"
                                 ItemTemplate="{StaticResource StackTemplate}"
                                 ItemsSource="{x:Bind ViewModel.ItemsSource, Mode=OneWay}">
                                 <GridView.ItemsPanel>
                                     <ItemsPanelTemplate>
                                         <ItemsWrapGrid
+                                            x:Name="RepeaterPanel"
                                             CacheLength="1"
-                                            ItemHeight="262"
-                                            ItemWidth="412"
                                             Orientation="Horizontal" />
                                     </ItemsPanelTemplate>
                                 </GridView.ItemsPanel>
                                 <GridView.ItemContainerStyle>
                                     <Style TargetType="GridViewItem">
-                                        <Setter Property="Margin" Value="0 0 12 12" />
+                                        <Setter Property="Margin" Value="0 0 12 0" />
                                         <Setter Property="VerticalAlignment" Value="Stretch" />
                                         <Setter Property="VerticalContentAlignment" Value="Stretch" />
                                         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -630,7 +626,7 @@
                                         </Setter>
                                     </Style>
                                 </GridView.ItemContainerStyle>
-                            </GridView>
+                            </toolkit:AdaptiveGridView>
                         </Border>
 
                         <Grid
@@ -665,11 +661,10 @@
                                     d:Text="Segoe UI" />
                                 <Button
                                     Grid.Column="1"
-                                    Padding="8 0"
                                     Click="{x:Bind ViewModel.OpenCurrentFont}"
                                     Content="{core:Localizer Key='OpenFontButton/Label'}"
                                     Foreground="{StaticResource SystemColorControlAccentBrush}"
-                                    Style="{StaticResource TextBlockButtonStyle}"
+                                    Style="{StaticResource ThemeTextBlockButtonStyle}"
                                     ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}" />
                             </Grid>
 
@@ -691,40 +686,45 @@
                                     VerticalCacheLength="0.5">
                                     <muxc:ItemsRepeater.ItemTemplate>
                                         <DataTemplate x:DataType="core:FontVariant">
-                                            <controls:ContentGroup>
-                                                <controls:ContentGroup.Text>
-                                                    <TextBlock
-                                                        FontSize="{StaticResource ControlContentThemeFontSize}"
-                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                        Text="{x:Bind PreferredName}" />
-                                                </controls:ContentGroup.Text>
-                                                <controls:ContentGroup.SecondaryContent>
-                                                    <Grid>
+                                            <Button
+                                                Margin="0"
+                                                IsHitTestVisible="False"
+                                                Style="{StaticResource QuickCompareContainerStyle}">
+                                                <controls:ContentGroup Style="{StaticResource CompareCardStyle}">
+                                                    <controls:ContentGroup.Text>
                                                         <TextBlock
-                                                            x:Name="XAMLRender"
-                                                            sdk17_x:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
-                                                            FontFamily="{x:Bind DisplaySource}"
-                                                            FontStretch="{x:Bind DirectWriteProperties.Stretch}"
-                                                            FontStyle="{x:Bind DirectWriteProperties.Style}"
-                                                            FontWeight="{x:Bind DirectWriteProperties.Weight}"
-                                                            IsColorFontEnabled="True"
-                                                            TextTrimming="CharacterEllipsis"
-                                                            TextWrapping="Wrap" />
-                                                        <sdk17_cx:DirectText
-                                                            x:Name="DWriteRender"
-                                                            x:Load="{x:Bind SupportsCOLRv1Rendering, FallbackValue=False}"
-                                                            FallbackFont="{x:Bind core:FontFinder.Fallback}"
-                                                            FontFace="{x:Bind Face}"
-                                                            FontFamily="{Binding Source}"
-                                                            FontStretch="{x:Bind DirectWriteProperties.Stretch}"
-                                                            FontStyle="{x:Bind DirectWriteProperties.Style}"
-                                                            FontWeight="{x:Bind DirectWriteProperties.Weight}"
-                                                            IsColorFontEnabled="True"
-                                                            IsTextWrappingEnabled="True"
-                                                            Typography="{x:Bind core:TypographyFeatureInfo.None}" />
-                                                    </Grid>
-                                                </controls:ContentGroup.SecondaryContent>
-                                            </controls:ContentGroup>
+                                                            FontSize="{StaticResource ControlContentThemeFontSize}"
+                                                            Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                            Text="{x:Bind PreferredName}" />
+                                                    </controls:ContentGroup.Text>
+                                                    <controls:ContentGroup.SecondaryContent>
+                                                        <Grid>
+                                                            <TextBlock
+                                                                x:Name="XAMLRender"
+                                                                sdk17_x:Load="{x:Bind core:Converters.False(SupportsCOLRv1Rendering), FallbackValue=False}"
+                                                                FontFamily="{x:Bind DisplaySource}"
+                                                                FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                                FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                                FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                                IsColorFontEnabled="True"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                TextWrapping="Wrap" />
+                                                            <sdk17_cx:DirectText
+                                                                x:Name="DWriteRender"
+                                                                x:Load="{x:Bind SupportsCOLRv1Rendering, FallbackValue=False}"
+                                                                FallbackFont="{x:Bind core:FontFinder.Fallback}"
+                                                                FontFace="{x:Bind Face}"
+                                                                FontFamily="{Binding Source}"
+                                                                FontStretch="{x:Bind DirectWriteProperties.Stretch}"
+                                                                FontStyle="{x:Bind DirectWriteProperties.Style}"
+                                                                FontWeight="{x:Bind DirectWriteProperties.Weight}"
+                                                                IsColorFontEnabled="True"
+                                                                IsTextWrappingEnabled="True"
+                                                                Typography="{x:Bind core:TypographyFeatureInfo.None}" />
+                                                        </Grid>
+                                                    </controls:ContentGroup.SecondaryContent>
+                                                </controls:ContentGroup>
+                                            </Button>
                                         </DataTemplate>
                                     </muxc:ItemsRepeater.ItemTemplate>
                                 </muxc:ItemsRepeater>
@@ -883,11 +883,15 @@
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
-            <VisualStateGroup x:Name="LayoutModeStates">
-                <VisualState x:Name="GridLayoutState" />
+            <VisualStateGroup x:Name="LayoutModeStates" CurrentStateChanging="LayoutModeStates_CurrentStateChanging">
+                <VisualState x:Name="GridLayoutState">
+                    <VisualState.Setters>
+                        <Setter Target="Repeater.DesiredWidth" Value="500" />
+                        <Setter Target="Repeater.ItemHeight" Value="262" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="StackLayoutState">
                     <VisualState.Setters>
-                        <!--<Setter Target="Repeater.ItemTemplate" Value="{StaticResource StackTemplate}" />-->
                         <Setter Target="Repeater.ItemsPanel" Value="{StaticResource StackingPanelTemplate}" />
                         <Setter Target="DetailsRepeater.Layout" Value="{StaticResource StackLayout}" />
                         <Setter Target="FontSizeSlider.Maximum" Value="128" />

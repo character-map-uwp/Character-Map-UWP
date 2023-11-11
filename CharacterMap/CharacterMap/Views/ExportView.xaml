@@ -579,7 +579,7 @@
                         ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}">
 
                         <cmControls:ContentGroup x:Uid="PrintDataHeader" d:Text="{core:Localizer Key=PrintDataHeader/Text}">
-                            <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
+                            <Button Padding="0 2 0 8" Style="{StaticResource ThemeTextBlockButtonStyle}">
                                 <Button.Content>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />

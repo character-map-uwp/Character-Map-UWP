@@ -31,6 +31,7 @@
                 <ResourceDictionary>
                     <converters:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
                     <converters:CasingConverter x:Key="CasingConverter" />
+                    <converters:VisibilityConverter x:Key="VisConverter" />
 
                     <Style TargetType="FontIcon">
                         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
@@ -42,6 +43,7 @@
 
                     <BrushTransition x:Key="RootBackgroundTransition" Duration="0:0:0.25" />
                     <BrushTransition x:Key="QuickBackgroundTransition" Duration="0:0:0.1" />
+                    <BrushTransition x:Key="BackgroundTransition" Duration="0:0:0.15" />
 
                     <TransitionCollection x:Key="NoTransitions" />
                     <TransitionCollection x:Key="RepositionTransitions">

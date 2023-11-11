@@ -1,160 +1,151 @@
-﻿using CharacterMap.Core;
-using CharacterMapCX;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.UI.Xaml;
+﻿namespace CharacterMap.Models;
 
-namespace CharacterMap.Models
+public class ModalClosedMessage { }
+
+public class CollectionUpdatedArgs
 {
-    public class ModalClosedMessage { }
+    public IList<InstalledFont> Fonts { get; }
+    public UserFontCollection Collection { get; }
+    public bool IsAdd { get; }
 
-    public class CollectionUpdatedArgs
+    public CollectionUpdatedArgs(IList<InstalledFont> fonts, UserFontCollection collection, bool isAdd)
     {
-        public IList<InstalledFont> Fonts { get; }
-        public UserFontCollection Collection { get; }
-        public bool IsAdd { get; }
+        Fonts = fonts;
+        Collection = collection;
+        IsAdd = isAdd;
+    }
 
-        public CollectionUpdatedArgs(IList<InstalledFont> fonts, UserFontCollection collection, bool isAdd)
-        {
-            Fonts = fonts;
-            Collection = collection;
-            IsAdd = isAdd;
-        }
+    public string GetTitle()
+    {
+        if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
+            return font.Name;
+        else
+            return $"{Fonts.Count} fonts";
+    }
 
-        public string GetTitle()
+    public string GetMessage()
+    {
+        if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
         {
-            if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
-                return font.Name;
+            if (IsAdd)
+                return $"{font.Name} was added to the \"{Collection.Name}\" collection";
             else
-                return $"{Fonts.Count} fonts";
+                return $"{font.Name} was removed from the \"{Collection.Name}\" collection";
         }
-
-        public string GetMessage()
+        else
         {
-            if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
-            {
-                if (IsAdd)
-                    return $"{font.Name} was added to the \"{Collection.Name}\" collection";
-                else
-                    return $"{font.Name} was removed from the \"{Collection.Name}\" collection";
-            }
+            if (IsAdd)
+                return $"{Fonts.Count} fonts were added to the \"{Collection.Name}\" collection";
             else
-            {
-                if (IsAdd)
-                    return $"{Fonts.Count} fonts were added to the \"{Collection.Name}\" collection";
-                else
-                    return $"{Fonts.Count} fonts were removed from the \"{Collection.Name}\" collection";
-            }
-            
-        }
-    }
-
-    public class FontListCreatedMessage { }
-
-    public class ImportMessage
-    {
-        public ImportMessage(FontImportResult result)
-        {
-            Result = result;
+                return $"{Fonts.Count} fonts were removed from the \"{Collection.Name}\" collection";
         }
 
-        public FontImportResult Result { get; }
     }
+}
 
-    public class CollectionsUpdatedMessage
+public class FontListCreatedMessage { }
+
+public class ImportMessage
+{
+    public ImportMessage(FontImportResult result)
     {
-        public UserFontCollection SourceCollection { get; set; }
+        Result = result;
     }
 
-    public class CollectionRequestedMessage
+    public FontImportResult Result { get; }
+}
+
+public class CollectionsUpdatedMessage
+{
+    public UserFontCollection SourceCollection { get; set; }
+}
+
+public class CollectionRequestedMessage
+{
+    public UserFontCollection Collection { get; }
+
+    public bool Handled { get; set; }
+
+    public CollectionRequestedMessage(UserFontCollection sourceCollection)
     {
-        public UserFontCollection Collection { get; }
-
-        public bool Handled { get; set; }
-
-        public CollectionRequestedMessage(UserFontCollection sourceCollection)
-        {
-            Collection = sourceCollection;
-        }
+        Collection = sourceCollection;
     }
+}
 
-    public class PrintRequestedMessage { }
+public class PrintRequestedMessage { }
 
-    public class ExportRequestedMessage { }
+public class ExportRequestedMessage { }
 
-    public class RampOptionsUpdatedMessage { }
+public class RampOptionsUpdatedMessage { }
 
-    public class EditSuggestionsRequested { }
+public class EditSuggestionsRequested { }
 
-    public class ToggleCompactOverlayMessage { }
+public class AdvancedOptionsRequested { }
 
-    public class AppSettingsChangedMessage
+public class ToggleCompactOverlayMessage { }
+
+public class AppSettingsChangedMessage
+{
+    public AppSettingsChangedMessage(string propertyName)
     {
-        public AppSettingsChangedMessage(string propertyName)
-        {
-            PropertyName = propertyName;
-        }
-
-        public string PropertyName { get; }
+        PropertyName = propertyName;
     }
 
-    public class AppNotificationMessage
+    public string PropertyName { get; }
+}
+
+public class AppNotificationMessage
+{
+    public AppNotificationMessage(bool local, object data, int durationMs = 0)
     {
-        public AppNotificationMessage(bool local, object data, int durationMs = 0)
-        {
-            Local = local;
-            Data = data;
-            DurationInMilliseconds = durationMs;
-        }
-
-        public bool Local { get; }
-        public object Data { get; }
-        public int DurationInMilliseconds { get; }
+        Local = local;
+        Data = data;
+        DurationInMilliseconds = durationMs;
     }
 
-    public enum DevValueType
+    public bool Local { get; }
+    public object Data { get; }
+    public int DurationInMilliseconds { get; }
+}
+
+public enum DevValueType
+{
+    Char,
+    Glyph,
+    FontIcon,
+    PathIcon,
+    UnicodeValue,
+}
+
+public enum CopyDataType
+{
+    Text,
+    PNG,
+    SVG
+}
+
+
+public class CopyToClipboardMessage
+{
+    public DevValueType CopyType { get; }
+    public CopyDataType DataType { get; }
+    public Character RequestedItem { get; }
+    public CanvasTextLayoutAnalysis Analysis { get; }
+
+    public ExportStyle Style { get; set; }
+
+    public CopyToClipboardMessage(Character c)
     {
-        Char,
-        Glyph,
-        FontIcon,
-        PathIcon,
-        UnicodeValue,
+        CopyType = DevValueType.Char;
+        RequestedItem = c;
+        Analysis = null;
     }
 
-    public enum CopyDataType
+    public CopyToClipboardMessage(DevValueType type, Character requested, CanvasTextLayoutAnalysis ca, CopyDataType dataType = CopyDataType.Text)
     {
-        Text,
-        PNG,
-        SVG
+        CopyType = type;
+        RequestedItem = requested;
+        Analysis = ca;
+        DataType = dataType;
     }
-
-
-    public class CopyToClipboardMessage
-    {
-        public DevValueType CopyType { get; }
-        public CopyDataType DataType { get; }
-        public Character RequestedItem { get; }
-        public CanvasTextLayoutAnalysis Analysis { get; }
-
-        public ExportStyle Style { get; set; }
-
-        public CopyToClipboardMessage(Character c)
-        {
-            CopyType = DevValueType.Char;
-            RequestedItem = c;
-            Analysis = null;
-        }
-
-        public CopyToClipboardMessage(DevValueType type, Character requested, CanvasTextLayoutAnalysis ca, CopyDataType dataType = CopyDataType.Text)
-        {
-            CopyType = type;
-            RequestedItem = requested;
-            Analysis = ca;
-            DataType = dataType;
-        }
-    }
-
 }

@@ -151,7 +151,7 @@
                             ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}">
 
                             <controls:ContentGroup x:Uid="PrintDataHeader">
-                                <Button Padding="0 2 0 8" Style="{StaticResource TextBlockButtonStyle}">
+                                <Button Margin="0 2 0 8" Style="{StaticResource ThemeTextBlockButtonStyle}">
                                     <Button.Content>
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />

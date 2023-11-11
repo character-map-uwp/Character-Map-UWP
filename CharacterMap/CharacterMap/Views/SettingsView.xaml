@@ -120,6 +120,30 @@
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
+                        Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
+                        Tag="CollectionPanel">
+                        <controls:MenuButton.Icon>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
+                        </controls:MenuButton.Icon>
+                    </controls:MenuButton>
+
+                    <controls:MenuButton
+                        controls:MenuButton.Icon="Font"
+                        Checked="MenuItem_Checked"
+                        Content="{x:Bind h:Localization.Get('SettingsFontManagementLabel/Text')}"
+                        Tag="FontPanel" />
+
+                    <controls:MenuButton
+                        Checked="MenuItem_Checked"
+                        Content="{x:Bind h:Localization.Get('SettingsSuggestionsHeader/Text')}"
+                        Tag="RampPanel">
+                        <controls:MenuButton.Icon>
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEA37;" />
+                        </controls:MenuButton.Icon>
+                    </controls:MenuButton>
+
+                    <controls:MenuButton
+                        Checked="MenuItem_Checked"
                         Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
                         Tag="ExportPanel">
                         <controls:MenuButton.Icon>
@@ -138,27 +162,12 @@
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsCollectionsHeader')}"
-                        Tag="CollectionPanel">
+                        Content="{x:Bind h:Localization.Get('SettingsAdvancedOptionsLabel/Text')}"
+                        Tag="AdvancedPanel">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE71D;" />
+                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEA86;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
-
-                    <controls:MenuButton
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsSuggestionsHeader/Text')}"
-                        Tag="RampPanel">
-                        <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEA37;" />
-                        </controls:MenuButton.Icon>
-                    </controls:MenuButton>
-
-                    <controls:MenuButton
-                        controls:MenuButton.Icon="Font"
-                        Checked="MenuItem_Checked"
-                        Content="{x:Bind h:Localization.Get('SettingsFontManagementLabel/Text')}"
-                        Tag="FontPanel" />
 
                     <controls:MenuButton
                         Checked="MenuItem_Checked"
@@ -563,30 +572,47 @@
                                     Title="{core:Localizer Key=SettingsFontNameExportLabel/Text}"
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsFontNameExportDescription/Text}">
-                                    <muxc:RadioButtons
-                                        x:Name="FontNamingSelection"
-                                        Background="{x:Null}"
-                                        BorderThickness="0"
-                                        SelectionChanged="FontNamingSelection_SelectionChanged">
-                                        <controls:UXRadioButton>
-                                            <TextBlock>
-                                                <Run x:Uid="SettingsFontExportSystemLabel" />
+                                    <StackPanel>
+                                        <muxc:RadioButtons
+                                            x:Name="FontNamingSelection"
+                                            Background="{x:Null}"
+                                            BorderThickness="0"
+                                            SelectionChanged="FontNamingSelection_SelectionChanged">
+                                            <controls:UXRadioButton>
+                                                <TextBlock>
+                                                    <Run x:Uid="SettingsFontExportSystemLabel" />
+                                                    <Run
+                                                        FontSize="13.333"
+                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                        Text="e.g. MSOFFSYMB.ttf" />
+                                                </TextBlock>
+                                            </controls:UXRadioButton>
+                                            <controls:UXRadioButton x:Name="OptimisedRadio">
+                                                <TextBlock>
+                                                    <Run x:Uid="SettingsFontExportOptimizedLabel" />
+                                                    <Run
+                                                        FontSize="13.333"
+                                                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                        Text=" e.g. MS Office Symbol Regular.ttf" />
+                                                </TextBlock>
+                                            </controls:UXRadioButton>
+                                        </muxc:RadioButtons>
+
+                                        <CheckBox
+                                            Margin="48 0 0 0"
+                                            IsChecked="{x:Bind Settings.FontExportIncludeVersion, Mode=TwoWay}"
+                                            IsEnabled="{Binding ElementName=OptimisedRadio, Path=IsChecked}">
+                                            <TextBlock TextWrapping="Wrap">
+                                                <Run x:Uid="SettingsFontExportVersionLabel" d:Text="{core:Localizer Key=SettingsFontExportVersionLabel/Text}" />
                                                 <Run
                                                     FontSize="13.333"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text="e.g. MSOFFSYMB.ttf" />
+                                                    Text=" e.g. MS Office Symbol Regular v1.5.ttf" />
                                             </TextBlock>
-                                        </controls:UXRadioButton>
-                                        <controls:UXRadioButton>
-                                            <TextBlock>
-                                                <Run x:Uid="SettingsFontExportOptimizedLabel" />
-                                                <Run
-                                                    FontSize="13.333"
-                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text=" e.g. MS Office Symbol Regular.ttf" />
-                                            </TextBlock>
-                                        </controls:UXRadioButton>
-                                    </muxc:RadioButtons>
+                                        </CheckBox>
+
+                                    </StackPanel>
+
 
                                 </controls:SettingsPresenter>
 
@@ -661,9 +687,19 @@
                             </Grid>
 
                             <StackPanel
-                                x:Name="ChangePanel"
+                                x:Name="AdvancedPanel"
                                 x:Load="False"
                                 Visibility="Collapsed">
+                                <TextBlock x:Uid="SettingsAdvancedOptionsLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+                                <controls:SettingsPresenter
+                                    x:Uid="SettingsDeprecatedIconsPresenter"
+                                    d:Description="If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout."
+                                    d:Title="Hide deprecated icons">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.HideDeprecatedMDL2, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+                            </StackPanel>
+
+                            <StackPanel x:Name="ChangePanel">
                                 <TextBlock x:Uid="SettingsChangelogLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
                                 <controls:UXHyperlinkButton x:Uid="BtnGithubCommits" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/commits/master" />
@@ -694,7 +730,7 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsSystemFontHeader/Text}" ContentPlacement="Bottom">
                                     <controls:SettingsPresenter.Description>
-                                        <TextBlock Text="{x:Bind core:Converters.GetFormat2('InstallCountLabel', ViewModel.SystemFamilyCount, ViewModel.SystemFaceCount), Mode=OneWay}" />
+                                        <TextBlock Text="{x:Bind core:Converters.GetFormat2('InstallCountLabel', ViewModel.SystemFamilyCount, ViewModel.SystemFaceCount), Mode=OneWay}" TextWrapping="Wrap" />
                                     </controls:SettingsPresenter.Description>
                                     <StackPanel Orientation="Horizontal" Spacing="12">
                                         <controls:UXHyperlinkButton x:Uid="SettingsManageSystemFonts" NavigateUri="ms-settings:fonts" />
@@ -729,91 +765,91 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsImportedFontsLabel/Text}" ContentPlacement="Bottom">
                                     <controls:SettingsPresenter.Description>
-                                        <StackPanel Spacing="6">
-
+                                        <StackPanel Spacing="12">
                                             <TextBlock x:Uid="SettingsFontImportDescription" TextWrapping="Wrap" />
-
-                                            <controls:UXHyperlinkButton
-                                                x:Name="ExportImportedButton"
-                                                MinWidth="133"
-                                                IsEnabled="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}">
-                                                <Grid>
-                                                    <StackPanel
-                                                        HorizontalAlignment="Center"
-                                                        Orientation="Horizontal"
-                                                        Spacing="12"
-                                                        Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsCollectionExportEnabled), Mode=OneWay}">
-                                                        <muxc:ProgressRing
-                                                            Width="18"
-                                                            Height="18"
-                                                            HorizontalAlignment="Center" />
-                                                        <TextBlock Text="{x:Bind ViewModel.ImportedExportProgress, Mode=OneWay}" />
-                                                    </StackPanel>
-
-                                                    <TextBlock x:Uid="SettingsExportImportedLabel" Visibility="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}" />
-                                                </Grid>
-                                                <core:Properties.Flyout>
-                                                    <MenuFlyout
-                                                        AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
-                                                        MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
-                                                        Placement="Bottom">
-                                                        <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportToFolder}" />
-                                                        <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
-                                                    </MenuFlyout>
-                                                </core:Properties.Flyout>
-                                            </controls:UXHyperlinkButton>
-
-                                            <StackPanel Spacing="6">
-                                                <TextBlock
-                                                    x:Uid="ImportLabel"
-                                                    Margin="0 10 0 0"
-                                                    Style="{StaticResource HeaderStyle}"
-                                                    TextWrapping="Wrap"
-                                                    d:Text="Import" />
-
-                                                <Grid
-                                                    x:Name="ImportFontsRegion"
-                                                    Width="340"
-                                                    Height="80"
-                                                    HorizontalAlignment="Left">
-                                                    <Rectangle
-                                                        Opacity="0.8"
-                                                        Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
-                                                        StrokeDashArray="2 2"
-                                                        StrokeThickness="1" />
-
-                                                    <Grid>
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto" />
-                                                            <ColumnDefinition Width="*" />
-                                                        </Grid.ColumnDefinitions>
-
-                                                        <FontIcon
-                                                            Margin="12 12 0 12"
-                                                            VerticalAlignment="Top"
-                                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                            FontSize="30"
-                                                            Glyph="&#xE1E3;" />
-
-                                                        <StackPanel Grid.Column="1" Margin="12">
-                                                            <TextBlock
-                                                                x:Uid="ImportDragDropLabel"
-                                                                FontWeight="SemiBold"
-                                                                Opacity="0.8" />
-                                                            <TextBlock
-                                                                x:Uid="ImportDragDropDescriptionLabel"
-                                                                FontSize="12"
-                                                                Opacity="0.8"
-                                                                TextWrapping="Wrap" />
-                                                        </StackPanel>
-
-                                                    </Grid>
-
-
-                                                </Grid>
-                                            </StackPanel>
+                                            <TextBlock Text="{x:Bind core:Converters.GetFormat2('ImportCountLabel', ViewModel.ImportedFamilyCount, ViewModel.ImportedFaceCount), Mode=OneWay}" TextWrapping="Wrap" />
                                         </StackPanel>
                                     </controls:SettingsPresenter.Description>
+
+                                    <StackPanel Spacing="6">
+                                        <controls:UXHyperlinkButton
+                                            x:Name="ExportImportedButton"
+                                            MinWidth="133"
+                                            IsEnabled="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}">
+                                            <Grid>
+                                                <StackPanel
+                                                    HorizontalAlignment="Center"
+                                                    Orientation="Horizontal"
+                                                    Spacing="12"
+                                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.IsCollectionExportEnabled), Mode=OneWay}">
+                                                    <muxc:ProgressRing
+                                                        Width="18"
+                                                        Height="18"
+                                                        HorizontalAlignment="Center" />
+                                                    <TextBlock Text="{x:Bind ViewModel.ImportedExportProgress, Mode=OneWay}" />
+                                                </StackPanel>
+
+                                                <TextBlock x:Uid="SettingsExportImportedLabel" Visibility="{x:Bind ViewModel.IsCollectionExportEnabled, Mode=OneWay}" />
+                                            </Grid>
+                                            <core:Properties.Flyout>
+                                                <MenuFlyout
+                                                    AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                                                    MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
+                                                    Placement="Bottom">
+                                                    <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportToFolder}" />
+                                                    <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
+                                                </MenuFlyout>
+                                            </core:Properties.Flyout>
+                                        </controls:UXHyperlinkButton>
+
+                                        <TextBlock
+                                            x:Uid="ImportLabel"
+                                            Margin="0 16 0 0"
+                                            Style="{StaticResource HeaderStyle}"
+                                            TextWrapping="Wrap"
+                                            d:Text="Import" />
+
+                                        <Grid
+                                            x:Name="ImportFontsRegion"
+                                            Width="340"
+                                            Height="80"
+                                            HorizontalAlignment="Left">
+                                            <Rectangle
+                                                Opacity="0.8"
+                                                Stroke="{ThemeResource SystemControlForegroundBaseHighBrush}"
+                                                StrokeDashArray="2 2"
+                                                StrokeThickness="1" />
+
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <FontIcon
+                                                    Margin="12 12 0 12"
+                                                    VerticalAlignment="Top"
+                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                    FontSize="30"
+                                                    Glyph="&#xE1E3;" />
+
+                                                <StackPanel Grid.Column="1" Margin="12">
+                                                    <TextBlock
+                                                        x:Uid="ImportDragDropLabel"
+                                                        FontWeight="SemiBold"
+                                                        Opacity="0.8" />
+                                                    <TextBlock
+                                                        x:Uid="ImportDragDropDescriptionLabel"
+                                                        FontSize="12"
+                                                        Opacity="0.8"
+                                                        TextWrapping="Wrap" />
+                                                </StackPanel>
+
+                                            </Grid>
+
+
+                                        </Grid>
+                                    </StackPanel>
 
 
                                 </controls:SettingsPresenter>

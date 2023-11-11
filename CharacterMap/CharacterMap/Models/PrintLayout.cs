@@ -1,9 +1,8 @@
-﻿namespace CharacterMap.Models
+﻿namespace CharacterMap.Models;
+
+public enum PrintLayout
 {
-    public enum PrintLayout
-    {
-        Grid,
-        List,
-        TwoColumn
-    }
+    Grid,
+    List,
+    TwoColumn
 }

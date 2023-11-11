@@ -17,7 +17,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
@@ -28,14 +27,20 @@
             Grid.Row="1"
             ContentPlacement="Bottom">
             <Grid>
-                <StackPanel Orientation="Horizontal" Spacing="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Top">
                     <ComboBox
                         x:Name="CollectionSelector"
+                        x:Uid="CollectionSelector"
                         Width="200"
                         DisplayMemberPath="Name"
                         ItemsSource="{x:Bind ViewModel.Collections, Mode=OneWay}"
                         SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=TwoWay}"
-                        SelectionChanged="CollectionSelector_SelectionChanged" />
+                        SelectionChanged="CollectionSelector_SelectionChanged"
+                        d:PlaceholderText="Select exisiting" />
                     <TextBlock
                         x:Uid="OrLabel"
                         VerticalAlignment="Center"
@@ -125,13 +130,21 @@
                     </controls:UXButton>
                 </StackPanel>
 
-
+                <TextBlock
+                    Margin="0 12 0 0"
+                    x:Name="CollectionManagementHint"
+                    x:Load="{x:Bind core:Converters.IsNull(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=True, TargetNullValue=True}"
+                    x:Uid="CollectionManagementHint"
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Style="{StaticResource DescriptionStyle}"
+                    d:Text="Create collections to compare, export or manage multiple fonts at once. To get started, select an existing collection above or create a new one." />
             </Grid>
         </controls:SettingsPresenter>
 
         <Grid
-            Grid.Row="3"
-            ColumnSpacing="24"
+            Grid.Row="2"
+            ColumnSpacing="12"
             Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}"
             d:Visibility="Visible">
             <Grid.ColumnDefinitions>
@@ -241,5 +254,7 @@
 
             </controls:SettingsPresenter>
         </Grid>
+
+
     </Grid>
 </UserControl>

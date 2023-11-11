@@ -82,7 +82,7 @@ F77D Baby Carriage
 F55A Backspace
 F04A backward
 F7E5 Bacon
-F666 Bahá'í
+F666 BahÃ¡'Ã­
 F24E Balance Scale
 F515 Balance Scale (Left-Weighted)
 F516 Balance Scale (Right-Weighted)
@@ -162,7 +162,7 @@ F1AD Building
 F0A1 bullhorn
 F140 Bullseye
 F46A Burn
-F37F Büromöbel-Experte GmbH & Co. KG.
+F37F BÃ¼romÃ¶bel-Experte GmbH & Co. KG.
 F207 Bus
 F55E Bus Alt
 F64A Business Time

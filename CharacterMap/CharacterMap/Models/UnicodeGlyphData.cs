@@ -1,31 +1,29 @@
-using CharacterMap.Services;
+#if DEBUG
 using SQLite;
+#endif
 
-namespace CharacterMap.Models
+namespace CharacterMap.Models;
+
+public class UnicodeGlyphData : IGlyphData
 {
-
-    public class UnicodeGlyphData : IGlyphData
-    {
 #if DEBUG
-        [PrimaryKey]
-        [Column("Ix")]
+    [PrimaryKey]
+    [Column("Ix")]
 #endif
-        public int UnicodeIndex { get; set; }
+    public int UnicodeIndex { get; set; }
 
 #if DEBUG
-        [Indexed]
-        [MaxLength(5)]
-        [Column("Hx")]
+    [Indexed]
+    [MaxLength(5)]
+    [Column("Hx")]
 #endif
-        public string UnicodeHex { get; set; }
+    public string UnicodeHex { get; set; }
 
 #if DEBUG
-        [Indexed]
-        [MaxLength(2)]
+    [Indexed]
+    [MaxLength(2)]
 #endif
-        public string UnicodeGroup { get; set;}
+    public string UnicodeGroup { get; set; }
 
-        public string Description { get; set; }
-    }
-
+    public string Description { get; set; }
 }

@@ -61,8 +61,7 @@ namespace CharacterMapCX
 			ThrowIfFailed(m_font->GetInformationalStrings(
 				static_cast<DWRITE_INFORMATIONAL_STRING_ID>(fontInformation), &localizedStrings, &exists));
 
-
-			if (localizedStrings)
+			if (exists)
 			{
 				const uint32_t stringCount = localizedStrings->GetCount();
 
@@ -74,10 +73,16 @@ namespace CharacterMapCX
 					wchar_t* name = new wchar_t[length + 1];
 					localizedStrings->GetString(i, name, length);
 
+					wchar_t* locale;
 					localizedStrings->GetLocaleNameLength(i, &length);
-					length++;
-					wchar_t* locale = new wchar_t[length + 1];
-					localizedStrings->GetLocaleName(i, locale, length);
+					if (length == 0)
+						locale = name;
+					else
+					{
+						length++;
+						locale = new wchar_t[length + 1];
+						localizedStrings->GetLocaleName(i, locale, length);
+					}
 
 					ThrowIfFailed(map->Insert(
 						ref new String(locale), ref new String(name)));

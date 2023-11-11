@@ -1,56 +1,40 @@
-﻿using CharacterMap.Helpers;
-using Microsoft.UI.Xaml.Controls;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+﻿using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Markup;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
-namespace CharacterMap.Themes
+namespace CharacterMap.Themes;
+
+public sealed partial class DefaultTheme : ResourceDictionary
 {
-    public sealed partial class DefaultTheme : ResourceDictionary
+    public DefaultTheme()
     {
-        public DefaultTheme()
+        this.InitializeComponent();
+
+        switch (ResourceHelper.AppSettings.ApplicationDesignTheme)
         {
-            this.InitializeComponent();
+            case 0: // Windows 10
+                this.MergeMUXC(ControlsResourcesVersion.Version1);
+                this.Merge("ms-appx:///Themes/SystemThemes.xaml");
+                this.Merge("ms-appx:///Themes/DefaultThemeStyles.xaml");
+                break;
 
-            switch (ResourceHelper.AppSettings.ApplicationDesignTheme)
-            {
-                case 0: // Windows 10
-                    this.MergeMUXC(ControlsResourcesVersion.Version1);
-                    this.Merge("ms-appx:///Themes/SystemThemes.xaml");
-                    this.Merge("ms-appx:///Themes/DefaultThemeStyles.xaml");
-                    break;
-
-                case 1: // Windows 11
-                    this.Merge(
-                        new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version2 }
-                            .Merge("ms-appx:///Styles/TabViewFluent.xaml")
-                            .Merge("ms-appx:///Themes/SystemThemes.xaml")
-                            .Merge("ms-appx:///Themes/FluentThemeStyles.xaml"));
-                    break;
-
-                case 2: // Classic Theme
-                    this.MergeMUXC(ControlsResourcesVersion.Version1)
+            case 1: // Windows 11
+                this.Merge(
+                    new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version2 }
+                        .Merge("ms-appx:///Styles/TabViewFluent.xaml")
                         .Merge("ms-appx:///Themes/SystemThemes.xaml")
-                        .Merge("ms-appx:///Themes/ClassicThemeStyles.xaml");
-                    break;
+                        .Merge("ms-appx:///Themes/FluentThemeStyles.xaml"));
+                break;
 
-                case 3: // Zune Theme
-                    this.MergeMUXC(ControlsResourcesVersion.Version1)
-                        .Merge("ms-appx:///Themes/ZuneThemeStyles.xaml");
-                    break;
-            }
+            case 2: // Classic Theme
+                this.MergeMUXC(ControlsResourcesVersion.Version1)
+                    .Merge("ms-appx:///Themes/SystemThemes.xaml")
+                    .Merge("ms-appx:///Themes/ClassicThemeStyles.xaml");
+                break;
+
+            case 3: // Zune Theme
+                this.MergeMUXC(ControlsResourcesVersion.Version1)
+                    .Merge("ms-appx:///Themes/ZuneThemeStyles.xaml");
+                break;
         }
     }
 }

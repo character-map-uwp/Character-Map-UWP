@@ -150,6 +150,12 @@
             IsSourceGrouped="True"
             Source="{Binding ViewModel.GroupedChars, ElementName=ViewRoot, Mode=OneWay}" />
 
+        <CollectionViewSource
+            x:Key="SearchResultsSource"
+            x:Name="SearchResultsSource"
+            IsSourceGrouped="{Binding ViewModel.IsSearchGrouped, ElementName=ViewRoot, Mode=OneWay}"
+            Source="{Binding ViewModel.SearchResults, ElementName=ViewRoot, Mode=OneWay}" />
+
         <MenuFlyout x:Name="SuggestionFlyout" AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
             <MenuFlyoutItem
                 x:Uid="EditSuggestionsItem"
@@ -478,31 +484,63 @@
                 ToolTipService.ToolTip="{Binding SelectedFont.Font.Name}"
                 d:Text="Font Name" />
 
-            <controls:UXButton
-                x:Name="AddToLibraryButton"
+            <toolkit:WrapPanel
+                x:Name="ExternalPanel"
                 x:Load="{x:Bind ViewModel.IsExternalFile}"
                 Grid.Row="1"
                 Grid.Column="2"
                 Height="{StaticResource TitleRowHeight}"
-                Padding="12,0"
                 HorizontalAlignment="Right"
                 core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
-                Click="{x:Bind ViewModel.ImportFile}"
-                IsEnabled="{Binding ImportButtonEnabled}"
-                Style="{ThemeResource TransparentButton}">
-                <Grid ColumnSpacing="12">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
-                    <FontIcon Glyph="&#xE109;" />
-                    <TextBlock
-                        x:Uid="AddToCollectionHint"
-                        Grid.Column="1"
-                        TextTrimming="CharacterEllipsis"
-                        d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
-                </Grid>
-            </controls:UXButton>
+                HorizontalSpacing="4"
+                Orientation="Horizontal"
+                VerticalSpacing="4">
+                <controls:UXButton
+                    x:Name="InstallButton"
+                    x:Load="{x:Bind ViewModel.IsInstallable, Mode=OneWay}"
+                    Height="{StaticResource TitleRowHeight}"
+                    Padding="12,0"
+                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                    Click="InstallButton_Click"
+                    Style="{ThemeResource TransparentButton}">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE896;" />
+                        <TextBlock
+                            x:Uid="InstallLabel"
+                            Grid.Column="1"
+                            TextTrimming="CharacterEllipsis"
+                            d:Text="Install" />
+                    </Grid>
+                </controls:UXButton>
+                <controls:UXButton
+                    x:Name="AddToLibraryButton"
+                    Height="{StaticResource TitleRowHeight}"
+                    Padding="12,0"
+                    core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                    Click="{x:Bind ViewModel.ImportFile}"
+                    IsEnabled="{Binding ImportButtonEnabled}"
+                    Style="{ThemeResource TransparentButton}"
+                    d:Click="{x:Bind ViewModel.LaunchInstall}">
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <FontIcon Glyph="&#xE109;" />
+                        <TextBlock
+                            x:Uid="AddToCollectionHint"
+                            Grid.Column="1"
+                            TextTrimming="CharacterEllipsis"
+                            d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
+                    </Grid>
+                </controls:UXButton>
+            </toolkit:WrapPanel>
+
+
 
             <Grid
                 x:Name="SearchContainer"
@@ -524,7 +562,7 @@
                     VerticalAlignment="Center"
                     GotFocus="SearchBox_GotFocus"
                     ItemTemplate="{StaticResource SearchResultTemplate}"
-                    ItemsSource="{x:Bind ViewModel.SearchResults, Mode=OneWay}"
+                    ItemsSource="{Binding Source={StaticResource SearchResultsSource}}"
                     PlaceholderText="#SearchBox"
                     PreviewKeyDown="SearchBox_PreviewKeyDown"
                     QuerySubmitted="SearchBox_QuerySubmitted"
@@ -999,6 +1037,7 @@
                         x:Name="CharacterFilterButton"
                         x:Uid="CharacterFilterButton"
                         VerticalAlignment="Stretch"
+                        IsActive="{x:Bind ViewModel.IsFiltered, Mode=OneWay}"
                         IsHintVisible="True"
                         Loaded="{x:Bind helpers:CompositionFactory.SetStandardFadeInOut}"
                         Style="{ThemeResource MapInfoButtonStyle}"
@@ -1064,26 +1103,7 @@
                 <StackPanel
                     x:Name="TypeRampHints"
                     Grid.Row="1"
-                    Spacing="0">
-                    <TextBlock
-                        x:Name="VariableFeaturesMessage"
-                        x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
-                        x:Uid="VariableFeaturesMessage"
-                        Margin="12 6 0 -6"
-                        FontSize="12"
-                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                        TextWrapping="Wrap"
-                        d:Text="This font has variable features. To explore them, switch to Type Ramp view using the switch button above." />
-                    <TextBlock
-                        x:Name="ColrV1SupportMessage"
-                        x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
-                        x:Uid="ColrV1SupportMessage"
-                        Margin="12 6 0 -6"
-                        FontSize="12"
-                        Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                        TextWrapping="Wrap"
-                        d:Text="This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above." />
-                </StackPanel>
+                    Spacing="0" />
 
             </Grid>
 
@@ -1125,6 +1145,75 @@
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
                     ShowsScrollingPlaceholders="False"
                     Style="{StaticResource CharacterMapStyle}">
+                    <GridView.Header>
+                        <StackPanel
+                            x:Name="InfoHeader"
+                            RequestedTheme="Dark"
+                            Spacing="0">
+
+                            <controls:InfoBar
+                                x:Name="VariableFeaturesMessage"
+                                x:Load="{x:Bind ViewModel.SelectedVariant.DirectWriteProperties.HasVariations, Mode=OneWay, FallbackValue=False}"
+                                Content="{core:Localizer Key=VariableFeaturesMessage/Text}">
+                                <controls:InfoBar.SecondaryContent>
+                                    <Button
+                                        Click="VariableHintClick"
+                                        Style="{StaticResource ChromelessButtonStyle}"
+                                        ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
+                                        <FontIcon
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="13.333"
+                                            Glyph="&#xE13C;" />
+                                    </Button>
+                                </controls:InfoBar.SecondaryContent>
+                            </controls:InfoBar>
+
+                            <controls:InfoBar
+                                x:Name="ColrV1SupportMessage"
+                                x:Load="{x:Bind ViewModel.SelectedVariant.SupportsCOLRv1Rendering, Mode=OneWay, FallbackValue=False}"
+                                Content="{core:Localizer Key=ColrV1SupportMessage/Text}">
+                                <controls:InfoBar.SecondaryContent>
+                                    <Button
+                                        Click="VariableHintClick"
+                                        Style="{StaticResource ChromelessButtonStyle}"
+                                        ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
+                                        <FontIcon
+                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                            FontSize="13.333"
+                                            Glyph="&#xE13C;" />
+                                    </Button>
+                                </controls:InfoBar.SecondaryContent>
+                            </controls:InfoBar>
+
+                            <controls:InfoBar
+                                x:Name="DeprecatedIconsInfoBar"
+                                x:Load="{x:Bind core:Converters.TrueTrueTrue(ViewModel.IsFiltered, ViewModel.Settings.HideDeprecatedMDL2, ViewModel.IsMDL2Font), Mode=OneWay, FallbackValue=False}"
+                                Content="{core:Localizer Key=HiddenGlyphsMessage/Text}">
+                                <controls:InfoBar.SecondaryContent>
+                                    <StackPanel Orientation="Horizontal" Spacing="12">
+                                        <Button Click="FilterHint_Click" Style="{StaticResource ChromelessButtonStyle}">
+                                            <FontIcon
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="13.333"
+                                                Glyph="&#xE71C;" />
+                                        </Button>
+
+                                        <Button
+                                            Click="AdvancedSettings_Click"
+                                            Style="{StaticResource ChromelessButtonStyle}"
+                                            ToolTipService.ToolTip="{core:Localizer Key=SettingsHeader/Text}">
+                                            <FontIcon
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="13.333"
+                                                Glyph="&#xE713;" />
+                                        </Button>
+                                    </StackPanel>
+
+                                </controls:InfoBar.SecondaryContent>
+                            </controls:InfoBar>
+
+                        </StackPanel>
+                    </GridView.Header>
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid AreStickyGroupHeadersEnabled="True" Orientation="Horizontal" />
@@ -1309,7 +1398,7 @@
 
                     <controls:SuggestionBox
                         x:Name="TypeRampSuggestionBox"
-                        Margin="12 12 0 12"
+                        Margin="24 12 0 12"
                         ItemsSource="{x:Bind ViewModel.RampOptions, Mode=OneWay}"
                         RenderingOptions="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -1341,7 +1430,7 @@
                         Width="36"
                         Height="36"
                         MinWidth="36"
-                        Margin="8 -4 0 -4"
+                        Margin="8 -4 12 -4"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         helpers:FluentAnimation.PointerOver="FluentContentPresenter"
@@ -1402,7 +1491,7 @@
                                         VerticalAlignment="Bottom"
                                         Click="AxisReset_Click"
                                         FontSize="12"
-                                        Style="{StaticResource TextBlockButtonStyle}"
+                                        Style="{StaticResource ThemeTextBlockButtonStyle}"
                                         Tag="{Binding ElementName=AxisSlider}" />
                                 </Grid>
                             </DataTemplate>
@@ -1515,12 +1604,17 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <!--  Character Preview  -->
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -1634,14 +1728,125 @@
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                 IsTextSelectionEnabled="True"
-                                Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}"
                                 TextWrapping="Wrap"
-                                d:Text="U+0061" />
+                                d:Text="U+0061, Latin Extended Supplemental">
+                                <Run Text="{x:Bind ViewModel.GetCharDescription(ViewModel.SelectedChar), Mode=OneWay}" /><Run Text="," />
+                                <Run Text="{x:Bind ViewModel.SelectedChar.Range.Name, Mode=OneWay}" />
+                            </TextBlock>
                         </StackPanel>
+
+                        <!--  Unihan  -->
+                        <Grid
+                            x:Name="UnihanRoot"
+                            x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.UnihanData), FallbackValue=False, Mode=OneWay}"
+                            Grid.Row="3"
+                            MaxHeight="170"
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
+                            <ScrollViewer Visibility="{x:Bind ViewModel.ShowingUnihan, Mode=OneWay}">
+                                <StackPanel>
+                                    <StackPanel.Resources>
+                                        <DataTemplate x:Key="UnihanDataTemplate" x:DataType="models:UnihanReading">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="0.8*" />
+                                                    <ColumnDefinition />
+                                                </Grid.ColumnDefinitions>
+
+                                                <TextBlock
+                                                    FontSize="12"
+                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                    Text="{x:Bind Field.Name}"
+                                                    TextWrapping="Wrap"
+                                                    ToolTipService.ToolTip="{x:Bind Field.Description}" />
+
+                                                <TextBlock
+                                                    Grid.Column="1"
+                                                    FontSize="12"
+                                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                    IsTextSelectionEnabled="True"
+                                                    Text="{x:Bind Description}"
+                                                    TextWrapping="Wrap" />
+
+                                            </Grid>
+                                        </DataTemplate>
+                                    </StackPanel.Resources>
+
+                                    <StackPanel>
+                                        <!--<StackPanel Margin="12 0 12 6" Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.UnihanData.Definition), FallbackValue=Collapsed, Mode=OneWay}">
+                                            <TextBlock
+                                                x:Uid="UnihanDefinition"
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextControlHeaderForeground}"
+                                                Opacity="0.5"
+                                                TextWrapping="Wrap"
+                                                d:Text="Definition" />
+                                            <TextBlock
+                                                FontSize="12"
+                                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                                IsTextSelectionEnabled="True"
+                                                Text="{x:Bind ViewModel.UnihanData.Definition.Description, Mode=OneWay}"
+                                                TextWrapping="Wrap" />
+                                        </StackPanel>-->
+
+                                        <TextBlock
+                                            x:Uid="UnihanPronunciations"
+                                            Margin="12 0"
+                                            FontSize="12"
+                                            Foreground="{ThemeResource TextControlHeaderForeground}"
+                                            Opacity="0.5"
+                                            TextWrapping="Wrap"
+                                            d:Text="Pronunciations" />
+                                        <ItemsControl
+                                            Margin="12 0"
+                                            ItemTemplate="{StaticResource UnihanDataTemplate}"
+                                            ItemsSource="{x:Bind ViewModel.UnihanData.Pronunciations, Mode=OneWay}" />
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </ScrollViewer>
+                        </Grid>
+
+                        <Button
+                            x:Name="UnihanButton"
+                            x:Load="{x:Bind core:Converters.IsNotNull(ViewModel.UnihanData), FallbackValue=False, Mode=OneWay}"
+                            Grid.Row="4"
+                            Margin="1 0"
+                            core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
+                            Click="{x:Bind ViewModel.ToggleUnihan}"
+                            FontSize="12"
+                            FontWeight="Normal"
+                            Foreground="{ThemeResource SystemAccentColor}"
+                            Style="{StaticResource ThemeTextBlockButtonStyle}">
+                            <Grid>
+                                <StackPanel
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    Visibility="{x:Bind ViewModel.ShowingUnihan, Mode=OneWay, FallbackValue=Collapsed}">
+                                    <TextBlock x:Uid="HideUnihanLabel" d:Text="{core:Localizer Key=HideUnihanLabel/Text}" />
+                                    <FontIcon
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="11.3333"
+                                        Glyph="&#xE70D;" />
+                                </StackPanel>
+                                <StackPanel
+                                    Orientation="Horizontal"
+                                    Spacing="4"
+                                    Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.ShowingUnihan), Mode=OneWay, FallbackValue=Collapsed}">
+                                    <TextBlock x:Uid="ShowUnihanLabel" d:Text="{core:Localizer Key=ShowUnihanLabel/Text}" />
+                                    <FontIcon
+                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                        FontSize="11.3333"
+                                        Glyph="&#xE70E;" />
+                                </StackPanel>
+                            </Grid>
+
+                        </Button>
 
                         <!--  Copy / Save / Fit Row  -->
                         <StackPanel
-                            Grid.Row="3"
+                            Grid.Row="5"
                             HorizontalAlignment="Stretch"
                             VerticalAlignment="Bottom"
                             core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
@@ -1855,7 +2060,7 @@
                             x:Name="BorderCopiedMessage"
                             x:Load="False"
                             Grid.Row="0"
-                            Grid.RowSpan="3"
+                            Grid.RowSpan="5"
                             Margin="12 12 12 12"
                             Padding="12"
                             VerticalAlignment="Bottom"
@@ -1892,10 +2097,11 @@
                         </Border>
                     </Grid>
 
+
                     <!--  Dev Utilities  -->
                     <StackPanel
                         x:Name="DevUtilsRoot"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                         Visibility="Collapsed">
 
@@ -1943,7 +2149,7 @@
                                                 x:Uid="BtnXAMLGeometry"
                                                 Margin="6 0 0 0"
                                                 FontSize="13.333"
-                                                Style="{StaticResource TextBlockButtonStyle}">
+                                                Style="{StaticResource ThemeTextBlockButtonStyle}">
                                                 <Button.Flyout>
                                                     <Flyout
                                                         x:Name="GeometryFlyout"
@@ -2243,7 +2449,7 @@
                         <Setter Target="SplitterContainer.Visibility" Value="Visible" />
                         <Setter Target="CharGridColumn.Width" Value="*" />
                         <!--<Setter Target="SplitterColumn.Width" Value="10" />-->
-                        <Setter Target="PreviewColumn.Width" Value="326" />
+                        <Setter Target="PreviewColumn.Width" Value="{x:Bind ViewModel.Settings.LastColumnWidth, Mode=OneWay}" />
                         <Setter Target="PreviewColumn.MinWidth" Value="150" />
                     </VisualState.Setters>
                 </VisualState>
@@ -2310,6 +2516,7 @@
                 </VisualState>
                 <VisualState x:Name="ClassicThemeState">
                     <VisualState.Setters>
+                        <Setter Target="InfoHeader.RequestedTheme" Value="Light" />
                         <Setter Target="BackgroundBorder.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="DevUtilsRoot.Margin" Value="0 0 0 8" />
                         <Setter Target="CharGridRoot.Margin" Value="0 0 8 0" />
@@ -2318,6 +2525,7 @@
                 </VisualState>
                 <VisualState x:Name="ZuneThemeState">
                     <VisualState.Setters>
+                        <Setter Target="InfoHeader.RequestedTheme" Value="Light" />
                         <Setter Target="OptionsList.FontWeight" Value="SemiBold" />
                         <Setter Target="SelectorLabel.IsHitTestVisible" Value="False" />
                         <Setter Target="SelectorLabel.FontSize" Value="11" />

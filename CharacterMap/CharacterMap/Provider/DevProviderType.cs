@@ -1,16 +1,15 @@
-﻿namespace CharacterMap.Provider
+﻿namespace CharacterMap.Provider;
+
+public enum DevProviderType
 {
-    public enum DevProviderType
-    {
-        None,
-        CSharp,
-        XAML,
-        CppCX,
-        CppWinRT,
-        XamarinForms,
-        VisualBasic,
-        CSharpWinUI3,
-        CppWinRTWinUI3,
-        Unicode
-    }
+    None,
+    CSharp,
+    XAML,
+    CppCX,
+    CppWinRT,
+    XamarinForms,
+    VisualBasic,
+    CSharpWinUI3,
+    CppWinRTWinUI3,
+    Unicode
 }

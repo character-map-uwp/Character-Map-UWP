@@ -1,68 +1,39 @@
-using CharacterMap.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Linq;
 using Windows.Globalization.Collation;
 
-namespace CharacterMap.Core
+namespace CharacterMap.Core;
+
+public class AlphaKeyGroup<T> : ObservableCollection<T>
 {
-    public class UnicodeRangeGroup : List<Character>, IGrouping<NamedUnicodeRange, Character>
+    public string Key { get; private set; }
+
+    public AlphaKeyGroup(string key)
     {
-        public NamedUnicodeRange Key { get; private set; }
-
-        public UnicodeRangeGroup(NamedUnicodeRange key, IEnumerable<Character> items) : base(items)
-        {
-            Key = key;
-        }
-
-        public static ObservableCollection<UnicodeRangeGroup> CreateGroups(IEnumerable<Character> items)
-        {
-            return new(items
-                .GroupBy(i => i.Range ?? throw new InvalidOperationException(), c => c)
-                .Select(g=> new UnicodeRangeGroup(g.Key, g)));
-        }
-
-        public override string ToString()
-        {
-            return Key.Name;
-        }
+        Key = key;
     }
 
-    public class AlphaKeyGroup<T> : ObservableCollection<T>
+    // Work around for Chinese version of Windows
+    // By default, Chinese language group will create useless "拼音A-Z" groups.
+    private static List<AlphaKeyGroup<T>> CreateAZGroups()
     {
-        public string Key { get; private set; }
+        char[] alpha = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ&".ToCharArray();
+        var list = alpha.Select(c => new AlphaKeyGroup<T>(c.ToString())).ToList();
+        return list;
+    }
 
-        public AlphaKeyGroup(string key)
+    public static List<AlphaKeyGroup<T>> CreateGroups(IEnumerable<T> items, Func<T, string> keySelector)
+    {
+        CharacterGroupings slg = new();
+        List<AlphaKeyGroup<T>> list = CreateAZGroups(); //CreateDefaultGroups(slg);
+        foreach (T item in items)
         {
-            Key = key;
+            int index = 0;
+            string label = slg.Lookup(keySelector(item));
+            index = list.FindIndex(alphagroupkey => (alphagroupkey.Key.Equals(label, StringComparison.CurrentCulture)));
+            if (index > -1 && index < list.Count)
+                list[index].Add(item);
+            else
+                list.Last().Add(item);
         }
-
-        // Work around for Chinese version of Windows
-        // By default, Chinese language group will create useless "拼音A-Z" groups.
-        private static List<AlphaKeyGroup<T>> CreateAZGroups()
-        {
-            char[] alpha = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ&".ToCharArray();
-            var list = alpha.Select(c => new AlphaKeyGroup<T>(c.ToString())).ToList();
-            return list;
-        }
-
-        public static List<AlphaKeyGroup<T>> CreateGroups(IEnumerable<T> items, Func<T, string> keySelector)
-        {
-            CharacterGroupings slg = new ();
-            List<AlphaKeyGroup<T>> list = CreateAZGroups(); //CreateDefaultGroups(slg);
-            foreach (T item in items)
-            {
-                int index = 0;
-                string label = slg.Lookup(keySelector(item));
-                index = list.FindIndex(alphagroupkey => (alphagroupkey.Key.Equals(label, StringComparison.CurrentCulture)));
-                if (index > -1 && index < list.Count)
-                    list[index].Add(item);
-                else
-                    list.Last().Add(item);
-            }
-            return list;
-        }
+        return list;
     }
 }

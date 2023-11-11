@@ -1,107 +1,118 @@
-﻿using System;
-using Windows.UI;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Media;
-using CharacterMap.Core;
-using CharacterMap.Helpers;
+﻿using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 
-namespace CharacterMap.Converters
+namespace CharacterMap.Converters;
+
+public class PassthroughConverter : IValueConverter
 {
-    public class PassthroughConverter : IValueConverter
+    public object Convert(object value, Type targetType, object parameter, string language)
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (parameter is string p)
-                return Localization.Get(p);
+        if (parameter is string p)
+            return Localization.Get(p);
 
-            return value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
+        return value;
     }
 
-    public class CasingConverter : IValueConverter
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
+        throw new NotImplementedException();
+    }
+}
+
+public class CasingConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (parameter is CharacterCasing casing && value is string s)
         {
-            if (parameter is CharacterCasing casing && value is string s)
+            return casing switch
             {
-                return casing switch
-                {
-                    CharacterCasing.Upper => s.ToUpper(),
-                    CharacterCasing.Lower => s.ToLower(),
-                    _ => s
-                };
-            }
-
-            return value;
+                CharacterCasing.Upper => s.ToUpper(),
+                CharacterCasing.Lower => s.ToLower(),
+                _ => s
+            };
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
+        return value;
     }
 
-
-    public class LowerConverter : IValueConverter
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (parameter is string p)
-                return Localization.Get(p).ToLower();
+        throw new NotImplementedException();
+    }
+}
 
-            if (value is string s)
-                return s.ToLower();
 
-            return value;
-        }
+public class LowerConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (parameter is string p)
+            return Localization.Get(p).ToLower();
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
+        if (value is string s)
+            return s.ToLower();
+
+        return value;
     }
 
-    public class UpperConverter : IValueConverter
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (parameter is string p)
-                value = Localization.Get(p).ToUpper();
+        throw new NotImplementedException();
+    }
+}
 
-            if (value is string s)
-                return s.ToUpper();
+public class UpperConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (parameter is string p)
+            value = Localization.Get(p).ToUpper();
 
-            return null;
-        }
+        if (value is string s)
+            return s.ToUpper();
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
+        return null;
     }
 
-    public class ZoomBackgroundConverter : IValueConverter
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (value != null)
-            {
-                var count = int.Parse(value.ToString());
-                if (count > 0)
-                    return 1;
-            }
-            return 0.3;
-        }
+        throw new NotImplementedException();
+    }
+}
 
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+public class ZoomBackgroundConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value != null)
         {
-            throw new NotImplementedException();
+            var count = int.Parse(value.ToString());
+            if (count > 0)
+                return 1;
         }
+        return 0.3;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class VisibilityConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        if (value is string str)
+            return !string.IsNullOrEmpty(str) ? Visibility.Visible : Visibility.Collapsed;
+
+        return value != null ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
     }
 }

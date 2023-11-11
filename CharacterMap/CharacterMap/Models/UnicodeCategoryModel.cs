@@ -1,25 +1,23 @@
-﻿using CharacterMap.Core;
-using Windows.Data.Text;
+﻿using Windows.Data.Text;
 
-namespace CharacterMap.ViewModels
+namespace CharacterMap.ViewModels;
+
+public class UnicodeCategoryModel : ViewModelBase
 {
-    public class UnicodeCategoryModel : ViewModelBase
+    public UnicodeGeneralCategory Category { get; }
+
+    private bool _isSelected = true;
+    public bool IsSelected
     {
-        public UnicodeGeneralCategory Category { get; }
+        get => _isSelected;
+        set => Set(ref _isSelected, value);
+    }
 
-        private bool _isSelected = true;
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set => Set(ref _isSelected, value);
-        }
+    public string DisplayName { get; }
 
-        public string DisplayName { get; }
-
-        public UnicodeCategoryModel(UnicodeGeneralCategory category)
-        {
-            Category = category;
-            DisplayName = category.Humanise();
-        }
+    public UnicodeCategoryModel(UnicodeGeneralCategory category)
+    {
+        Category = category;
+        DisplayName = category.Humanise();
     }
 }

@@ -1,87 +1,78 @@
-﻿using CharacterMap.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Windows.Storage;
-using Windows.System;
+﻿using Windows.System;
 
-namespace CharacterMap.Models
+namespace CharacterMap.Models;
+
+public record FolderOpenOptions
 {
-    public record FolderOpenOptions
-    {
-        public IStorageItem Root { get; init; }
-        public bool Recursive { get; init; }
-        public bool AllowZip { get; init; }
-        public CancellationToken? Token { get; init; }
-        public Action<int> Callback { get; init; }
+    public IStorageItem Root { get; init; }
+    public bool Recursive { get; init; }
+    public bool AllowZip { get; init; }
+    public CancellationToken? Token { get; init; }
+    public Action<int> Callback { get; init; }
 
-        public bool IsCancelled => Token is not null && Token.HasValue && Token.Value.IsCancellationRequested;
-        public void Increment(int count) => Callback?.Invoke(count);
+    public bool IsCancelled => Token is not null && Token.HasValue && Token.Value.IsCancellationRequested;
+    public void Increment(int count) => Callback?.Invoke(count);
+}
+
+public class FolderContents
+{
+    /// <summary>
+    /// Display contents using QuickCompare rules
+    /// </summary>
+    public bool UseQuickCompare { get; }
+
+    public Dictionary<string, InstalledFont> FontCache { get; }
+
+    /// <summary>
+    /// The original StorageItem source the content was loaded from. 
+    /// Could be a StorageFolder or a single .zip StorageFile
+    /// </summary>
+    public IStorageItem Source { get; }
+
+    /// <summary>
+    /// Original folder chosen by users
+    /// </summary>
+    public StorageFolder SourceFolder { get; }
+
+    /// <summary>
+    /// Temporary folder the fonts were copied into to be able to
+    /// be loaded by the XAML framework
+    /// </summary>
+    public StorageFolder TempFolder { get; }
+
+    public bool IsFamilyCompare { get; set; }
+
+    public IReadOnlyList<InstalledFont> Fonts { get; private set; }
+
+    public IReadOnlyList<FontVariant> Variants { get; private set; }
+
+
+    public FolderContents(IStorageItem source, StorageFolder tempFolder)
+    {
+        Source = source;
+        SourceFolder = source as StorageFolder;
+        TempFolder = tempFolder;
+        FontCache = new();
     }
 
-    public class FolderContents
+    public FolderContents(IReadOnlyList<FontVariant> fonts)
     {
-        /// <summary>
-        /// Display contents using QuickCompare rules
-        /// </summary>
-        public bool UseQuickCompare { get; }
+        UseQuickCompare = true;
+        Variants = fonts;
+    }
 
-        public Dictionary<string, InstalledFont> FontCache { get; }
+    public void UpdateFontSet()
+    {
+        Fonts = FontFinder.CreateFontList(FontCache);
+    }
 
-        /// <summary>
-        /// The original StorageItem source the content was loaded from. 
-        /// Could be a StorageFolder or a single .zip StorageFile
-        /// </summary>
-        public IStorageItem Source { get; }
+    public Task LaunchSourceAsync()
+    {
+        if (SourceFolder is not null)
+            return Launcher.LaunchFolderAsync(SourceFolder).AsTask();
+        else if (Source is StorageFile file)
+            return Launcher.LaunchFileAsync(file).AsTask();
 
-        /// <summary>
-        /// Original folder chosen by users
-        /// </summary>
-        public StorageFolder SourceFolder { get; }
-
-        /// <summary>
-        /// Temporary folder the fonts were copied into to be able to
-        /// be loaded by the XAML framework
-        /// </summary>
-        public StorageFolder TempFolder { get; }
-
-        public bool IsFamilyCompare { get; set; }
-
-        public IReadOnlyList<InstalledFont> Fonts { get; private set; }
-
-        public IReadOnlyList<FontVariant> Variants { get; private set; }
-
-
-        public FolderContents(IStorageItem source, StorageFolder tempFolder)
-        {
-            Source = source;
-            SourceFolder = source as StorageFolder;
-            TempFolder = tempFolder;
-            FontCache = new();
-        }
-
-        public FolderContents(IReadOnlyList<FontVariant> fonts)
-        {
-            UseQuickCompare = true;
-            Variants = fonts;
-        }
-
-        public void UpdateFontSet()
-        {
-            Fonts = FontFinder.CreateFontList(FontCache);
-        }
-
-        public Task LaunchSourceAsync()
-        {
-            if (SourceFolder is not null)
-                return Launcher.LaunchFolderAsync(SourceFolder).AsTask();
-            else if (Source is StorageFile file)
-                return Launcher.LaunchFileAsync(file).AsTask();
-
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

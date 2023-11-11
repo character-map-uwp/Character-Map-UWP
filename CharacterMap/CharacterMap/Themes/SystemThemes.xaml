@@ -13,6 +13,7 @@
     <x:Double x:Key="FontListFlyoutHeight">40</x:Double>
     <x:Double x:Key="MinTitleBarHeight">32</x:Double>
     <CornerRadius x:Key="CardCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="InfoBarCornerRadius">0</CornerRadius>
 
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</FontFamily>
 
@@ -47,6 +48,9 @@
         <Setter Property="Opacity" Value="0.7" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Margin" Value="0 0 0 8" />
+        <Setter Property="LineHeight" Value="16" />
+        <Setter Property="TextLineBounds" Value="Tight" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
 

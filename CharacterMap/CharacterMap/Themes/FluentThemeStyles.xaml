@@ -31,11 +31,15 @@
     <x:Boolean x:Key="SupportsTabs">True</x:Boolean>
     <x:Double x:Key="MinTitleBarHeight">40</x:Double>
     <CornerRadius x:Key="CardCornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="InfoBarCornerRadius">4</CornerRadius>
 
     <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
 
     <BrushTransition x:Key="QuickBrushTransition" Duration="0:0:0.06" />
+
+    <StaticResource x:Key="InfoBarBackgroundBrush" ResourceKey="SystemControlBackgroundAccentBrush" />
+
 
     <!--  TEXT STYLES  -->
     <Style x:Key="HeaderStyle" TargetType="TextBlock">
@@ -378,7 +382,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="CompareCardStyle" TargetType="controls:ContentGroup">
+    <Style x:Key="QuickCompareContainerStyle" BasedOn="{StaticResource ChromelessButtonStyle}" TargetType="Button">
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Padding" Value="16,14,16,4" />
         <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
@@ -389,29 +393,71 @@
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 8 0 4" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="ContentGroupRoot" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <ContentPresenter
+                        x:Name="Presenter"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource RootBackgroundTransition}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal">
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="Presenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="Presenter.Background" Value="{ThemeResource ButtonBackgroundPointerOver}" />
+                                        <Setter Target="Presenter.BorderBrush" Value="{ThemeResource ButtonBorderBrushPointerOver}" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <PointerUpThemeAnimation Storyboard.TargetName="Presenter" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <PointerDownThemeAnimation Storyboard.TargetName="Presenter" />
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Presenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CompareCardStyle" TargetType="controls:ContentGroup">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="ContentBorder" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ContentGroup">
-                    <Grid>
+                    <Grid x:Name="ContentGroupRoot" RowSpacing="4">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="4" />
                         </Grid.RowDefinitions>
 
                         <ContentPresenter
-                            Margin="0 0 0 4"
-                            Content="{TemplateBinding Text}"
-                            FontWeight="SemiBold" />
-
-                        <ContentPresenter
+                            x:Name="Title"
                             Grid.Row="1"
-                            Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}"
-                            BackgroundTransition="{StaticResource RootBackgroundTransition}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            Content="{TemplateBinding SecondaryContent}"
-                            CornerRadius="{TemplateBinding CornerRadius}" />
+                            Content="{TemplateBinding Text}"
+                            FontWeight="Normal" />
+
+                        <ContentPresenter Content="{TemplateBinding SecondaryContent}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -631,6 +677,7 @@
                         Margin="{StaticResource MenuFlyoutItemMargin}"
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource BackgroundTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
@@ -773,6 +820,7 @@
                         Margin="{StaticResource MenuFlyoutItemMargin}"
                         Padding="{TemplateBinding Padding}"
                         Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource BackgroundTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
@@ -1220,9 +1268,12 @@
                 <ControlTemplate TargetType="controls:UXButton">
                     <Grid
                         x:Name="Root"
-                        MinWidth="{TemplateBinding MinWidth}"
-                        MaxWidth="{TemplateBinding MaxWidth}"
-                        Background="Transparent">
+                        Margin="2"
+                        Background="Transparent"
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Grid.BackgroundTransition>
+                            <BrushTransition Duration="0:0:0.083" />
+                        </Grid.BackgroundTransition>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
@@ -1233,14 +1284,14 @@
                                     <VisualState.Setters>
                                         <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPointerOver}" />
                                         <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPointerOver}" />
-                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
+                                        <!--<Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />-->
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
                                         <Setter Target="AppBarButtonInnerBorder.Background" Value="{ThemeResource AppBarButtonBackgroundPressed}" />
                                         <Setter Target="AppBarButtonInnerBorder.BorderBrush" Value="{ThemeResource AppBarButtonBorderBrushPressed}" />
-                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />
+                                        <!--<Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPressed}" />-->
                                     </VisualState.Setters>
                                 </VisualState>
                                 <VisualState x:Name="Disabled">
@@ -1270,22 +1321,27 @@
                                 </VisualState>
                             </VisualStateGroup>
 
+                            <VisualStateGroup x:Name="ActiveStates">
+                                <VisualState x:Name="IsActive">
+                                    <VisualState.Setters>
+                                        <Setter Target="FluentContentPresenter.Foreground" Value="{ThemeResource AppBarButtonForegroundPointerOver}" />
+                                        <Setter Target="Root.Background" Value="{ThemeResource SystemControlForegroundAccentBrush}" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState x:Name="IsNotActive" />
+                            </VisualStateGroup>
+
                         </VisualStateManager.VisualStateGroups>
 
                         <Border
                             x:Name="AppBarButtonInnerBorder"
-                            Margin="2"
                             VerticalAlignment="Stretch"
                             Background="{TemplateBinding Background}"
                             BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                            BackgroundTransition="{StaticResource BackgroundTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
-                            Control.IsTemplateFocusTarget="True"
-                            CornerRadius="{TemplateBinding CornerRadius}">
-                            <Border.BackgroundTransition>
-                                <BrushTransition Duration="0:0:0.083" />
-                            </Border.BackgroundTransition>
-                        </Border>
+                            Control.IsTemplateFocusTarget="True" />
 
                         <Grid x:Name="ContentRoot">
                             <Grid.ColumnDefinitions>
@@ -1526,7 +1582,6 @@
                     <Grid
                         x:Name="RootGrid"
                         Background="{TemplateBinding Background}"
-                        BackgroundTransition="{StaticResource QuickBrushTransition}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}"
@@ -1587,7 +1642,8 @@
 
                         <Border
                             x:Name="ContentBorder"
-                            BackgroundTransition="{StaticResource QuickBrushTransition}"
+                            Background="Transparent"
+                            BackgroundTransition="{StaticResource BackgroundTransition}"
                             CornerRadius="{TemplateBinding CornerRadius}">
                             <Grid x:Name="ContentRoot">
                                 <Grid.ColumnDefinitions>
@@ -1735,6 +1791,7 @@
                             MinWidth="{TemplateBinding MinWidth}"
                             MinHeight="{TemplateBinding MinHeight}"
                             Background="{TemplateBinding Background}"
+                            BackgroundTransition="{StaticResource BackgroundTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Control.IsTemplateFocusTarget="True"
@@ -1858,7 +1915,34 @@
                                     IsItemClickEnabled="True"
                                     ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
                                     ItemTemplate="{TemplateBinding ItemTemplate}"
-                                    ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}" />
+                                    ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}">
+                                    <ListView.GroupStyle>
+                                        <GroupStyle HidesIfEmpty="True">
+                                            <GroupStyle.HeaderContainerStyle>
+                                                <Style TargetType="ListViewHeaderItem">
+                                                    <Setter Property="Padding" Value="12 12 0 4" />
+                                                    <Setter Property="Margin" Value="0" />
+                                                    <Setter Property="MinHeight" Value="0" />
+                                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="ListViewHeaderItem">
+                                                                <ContentPresenter
+                                                                    Margin="{TemplateBinding Padding}"
+                                                                    Content="{TemplateBinding Content}"
+                                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                    FontSize="12"
+                                                                    FontWeight="SemiBold"
+                                                                    Opacity="0.6"
+                                                                    Visibility="{Binding Path=Content.Key, Converter={StaticResource VisConverter}, RelativeSource={RelativeSource Mode=TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}" />
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </GroupStyle.HeaderContainerStyle>
+                                        </GroupStyle>
+                                    </ListView.GroupStyle>
+                                </ListView>
                             </Border>
                         </Popup>
                     </Grid>

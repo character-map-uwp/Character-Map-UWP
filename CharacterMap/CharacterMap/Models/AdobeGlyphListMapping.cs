@@ -1,34 +1,32 @@
 ﻿using SQLite;
 
-namespace CharacterMap.Models
+namespace CharacterMap.Models;
+
+public class AdobeGlyphListMapping
 {
-    public class AdobeGlyphListMapping
-    {
 #if DEBUG
-        [Column("I1")]
+    [Column("I1")]
 #endif
-        public int UnicodeIndex { get; set; }
+    public int UnicodeIndex { get; set; }
 
 #if DEBUG
-        [Column("I2")]
+    [Column("I2")]
 #endif
-        public int UnicodeIndex2 { get; set; }
+    public int UnicodeIndex2 { get; set; }
 
 #if DEBUG
-        [Column("I3")]
+    [Column("I3")]
 #endif
-        public int UnicodeIndex3 { get; set; }
+    public int UnicodeIndex3 { get; set; }
 
 #if DEBUG
-        [Column("I4")]
+    [Column("I4")]
 #endif
-        public int UnicodeIndex4 { get; set; }
+    public int UnicodeIndex4 { get; set; }
 
 #if DEBUG
-        [PrimaryKey]
-        [Column("S")]
+    [PrimaryKey]
+    [Column("S")]
 #endif
-        public string Value { get; set; }
-    }
-
+    public string Value { get; set; }
 }
