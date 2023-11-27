@@ -1879,6 +1879,49 @@
             <Setter.Value>
                 <ControlTemplate TargetType="AutoSuggestBox">
                     <Grid x:Name="LayoutRoot">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="DropDownStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="*" To="Opened">
+                                        <Storyboard>
+                                            <!--<ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBox" Storyboard.TargetProperty="CornerRadius">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="4 4 4 0" />
+                                            </ObjectAnimationUsingKeyFrames>-->
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="SuggestionsPopup"
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0"
+                                                To="1"
+                                                Duration="0:0:0.1">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <CircleEase EasingMode="EaseOut" />
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="PopupTransform" Storyboard.TargetProperty="TranslateY">
+                                                <SplineDoubleKeyFrame KeyTime="0" Value="-160" />
+                                                <SplineDoubleKeyFrame KeySpline="0.1 0.9 0.2 1" KeyTime="0:0:0.3" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Opened">
+                                    <!--<Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="TextBox" Storyboard.TargetProperty="CornerRadius">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="4 4 4 0" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>-->
+                                </VisualState>
+                                <VisualState x:Name="Closed">
+                                    <!--<Storyboard>
+                                        <SplitCloseThemeAnimation
+                                            ClosedTargetName="ContentPresenter"
+                                            OffsetFromCenter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DropDownOffset}"
+                                            OpenedLength="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.DropDownOpenedHeight}"
+                                            OpenedTargetName="SuggestionsContainer" />
+                                    </Storyboard>-->
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                         <TextBox
                             x:Name="TextBox"
                             Width="{TemplateBinding Width}"
@@ -1898,51 +1941,58 @@
                             Style="{TemplateBinding TextBoxStyle}"
                             UseSystemFocusVisuals="{TemplateBinding UseSystemFocusVisuals}" />
 
-                        <Popup x:Name="SuggestionsPopup">
-                            <Border
-                                x:Name="SuggestionsContainer"
-                                Padding="{ThemeResource AutoSuggestListMargin}"
-                                Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
-                                BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
-                                BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
-                                CornerRadius="{ThemeResource OverlayCornerRadius}">
-                                <ListView
-                                    x:Name="SuggestionsList"
-                                    MaxHeight="{TemplateBinding MaxSuggestionListHeight}"
-                                    Margin="{ThemeResource AutoSuggestListPadding}"
-                                    DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
-                                    Footer="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.Footer)}"
-                                    IsItemClickEnabled="True"
-                                    ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
-                                    ItemTemplate="{TemplateBinding ItemTemplate}"
-                                    ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}">
-                                    <ListView.GroupStyle>
-                                        <GroupStyle HidesIfEmpty="True">
-                                            <GroupStyle.HeaderContainerStyle>
-                                                <Style TargetType="ListViewHeaderItem">
-                                                    <Setter Property="Padding" Value="12 12 0 4" />
-                                                    <Setter Property="Margin" Value="0" />
-                                                    <Setter Property="MinHeight" Value="0" />
-                                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="ListViewHeaderItem">
-                                                                <ContentPresenter
-                                                                    Margin="{TemplateBinding Padding}"
-                                                                    Content="{TemplateBinding Content}"
-                                                                    ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                                    FontSize="12"
-                                                                    FontWeight="SemiBold"
-                                                                    Opacity="0.6"
-                                                                    Visibility="{Binding Path=Content.Key, Converter={StaticResource VisConverter}, RelativeSource={RelativeSource Mode=TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}" />
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </GroupStyle.HeaderContainerStyle>
-                                        </GroupStyle>
-                                    </ListView.GroupStyle>
-                                </ListView>
+                        <Popup x:Name="SuggestionsPopup" Grid.ColumnSpan="2">
+                            <Border core:Properties.ClipToBounds="true">
+                                <Border
+                                    x:Name="SuggestionsContainer"
+                                    Padding="{ThemeResource AutoSuggestListMargin}"
+                                    Background="{ThemeResource AutoSuggestBoxSuggestionsListBackground}"
+                                    BorderBrush="{ThemeResource AutoSuggestBoxSuggestionsListBorderBrush}"
+                                    BorderThickness="{ThemeResource AutoSuggestListBorderThemeThickness}"
+                                    CornerRadius="0 0 8 8">
+                                    <Border.RenderTransform>
+                                        <CompositeTransform x:Name="PopupTransform" />
+                                    </Border.RenderTransform>
+                                    <ListView
+                                        x:Name="SuggestionsList"
+                                        MaxHeight="{TemplateBinding MaxSuggestionListHeight}"
+                                        Margin="{ThemeResource AutoSuggestListPadding}"
+                                        DisplayMemberPath="{TemplateBinding DisplayMemberPath}"
+                                        Footer="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.Footer)}"
+                                        IsItemClickEnabled="True"
+                                        ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
+                                        ItemContainerTransitions="{StaticResource NoTransitions}"
+                                        ItemTemplate="{TemplateBinding ItemTemplate}"
+                                        ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}">
+                                        <ListView.GroupStyle>
+                                            <GroupStyle HidesIfEmpty="True">
+                                                <GroupStyle.HeaderContainerStyle>
+                                                    <Style TargetType="ListViewHeaderItem">
+                                                        <Setter Property="Padding" Value="12 12 0 4" />
+                                                        <Setter Property="Margin" Value="0" />
+                                                        <Setter Property="MinHeight" Value="0" />
+                                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="ListViewHeaderItem">
+                                                                    <ContentPresenter
+                                                                        Margin="{TemplateBinding Padding}"
+                                                                        Content="{TemplateBinding Content}"
+                                                                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                                        FontSize="12"
+                                                                        FontWeight="SemiBold"
+                                                                        Opacity="0.6"
+                                                                        Visibility="{Binding Path=Content.Key, Converter={StaticResource VisConverter}, RelativeSource={RelativeSource Mode=TemplatedParent}, FallbackValue=Collapsed, TargetNullValue=Collapsed}" />
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </GroupStyle.HeaderContainerStyle>
+                                            </GroupStyle>
+                                        </ListView.GroupStyle>
+                                    </ListView>
+                                </Border>
+
                             </Border>
                         </Popup>
                     </Grid>

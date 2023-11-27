@@ -237,7 +237,7 @@ public partial class GridSplitter : Control
     {
         _dragging = false;
         _pressed = false;
-        VisualStateManager.GoToState(this, _pointerEntered ? "PointerOver" : "Normal", true);
+        VisualStateManager.GoToState(this, _pointerEntered ? "PointerOver" : "Normal", ResourceHelper.AllowAnimation);
     }
 
     private void GridSplitter_ManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)

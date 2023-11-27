@@ -351,9 +351,9 @@ public sealed class XamlTitleBar : ContentControl
     private void UpdateStates()
     {
         if (IsDragTarget)
-            VisualStateManager.GoToState(this, "ActiveState", true);
+            VisualStateManager.GoToState(this, "ActiveState", ResourceHelper.AllowAnimation);
         else
-            VisualStateManager.GoToState(this, "InactiveState", true);
+            VisualStateManager.GoToState(this, "InactiveState", ResourceHelper.AllowAnimation);
     }
 
     private void UpdateDragElement()
