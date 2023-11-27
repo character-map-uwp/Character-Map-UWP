@@ -10,9 +10,9 @@ public partial class MainViewModel : ViewModelBase
 {
     public event EventHandler FontListCreated;
 
-    private Debouncer _searchDebouncer { get; } = new Debouncer();
+    private Debouncer _searchDebouncer { get; } = new ();
 
-    private Debouncer _settingsDebouncer { get; } = new Debouncer();
+    private Debouncer _settingsDebouncer { get; } = new ();
 
     private Exception _startUpException = null;
 

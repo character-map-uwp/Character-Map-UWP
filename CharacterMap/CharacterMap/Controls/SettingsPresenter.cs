@@ -197,19 +197,19 @@ public sealed class SettingsPresenter : ItemsControl, IThemeableControl
 
     void UpdatePlacementStates()
     {
-        VisualStateManager.GoToState(this, $"{ContentPlacement}PlacementState", true);
+        VisualStateManager.GoToState(this, $"{ContentPlacement}PlacementState", ResourceHelper.AllowAnimation);
     }
 
     void UpdateIconStates()
     {
         string state = Icon is null ? "NoIconState" : "IconState";
-        VisualStateManager.GoToState(this, state, true);
+        VisualStateManager.GoToState(this, state, ResourceHelper.AllowAnimation);
     }
 
     private void UpdateDescriptionStates()
     {
         string state = Description is null ? "NoDescriptionState" : "DescriptionState";
-        VisualStateManager.GoToState(this, state, true);
+        VisualStateManager.GoToState(this, state, ResourceHelper.AllowAnimation);
     }
 
     public void UpdateTheme()
