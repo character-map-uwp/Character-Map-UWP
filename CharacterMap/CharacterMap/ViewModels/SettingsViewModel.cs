@@ -114,7 +114,10 @@ public partial class SettingsViewModel : ViewModelBase
         // application, rather than things like bug-fixes or visual changes.
         return new()
         {
-             new("Latest Update (November 2023)", // August 2023
+            new("Latest Update (December 2023)", // Dec 2023
+                "- Support search for fonts that contain specific characters in \"Find a font family\" search box, by typing in \"char:\" followed by your query.\n" +
+                "    • e.g. to find all fonts that contain the two arrow characters '←' & '↗', type in \"char: ←↗\""),
+             new("2023.9.0.0 (November 2023)", // Nov 2023
                 "- Integrate the Unicode Unihan readings data set, providing descriptions and pronunciations for CJK Han ideographs\n" +
                 "- Added support for installing opened .WOFF & .WOFF2 fonts\n" +
                 "- Added support for showing Design Script Languages in Font Properties flyout\n" +
