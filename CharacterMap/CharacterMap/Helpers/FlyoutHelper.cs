@@ -497,8 +497,10 @@ public static class FlyoutHelper
     /// <param name="menu"></param>
     /// <param name="target"></param>
     /// <param name="viewmodel"></param>
-    public static void ShowCharacterGridContext(MenuFlyout menu, FrameworkElement target, FontMapViewModel viewmodel)
+    public static void ShowCharacterGridContext(MenuFlyout menu, FrameworkElement target, FontMapViewModel viewmodel, bool isStandalone)
     {
+        T Child<T>(string name) where T : MenuFlyoutItemBase => menu.Items.OfType<T>().FirstOrDefault(c => c.Name == name);
+
         if (target.Tag is Character c)
         {
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
@@ -511,7 +513,7 @@ public static class FlyoutHelper
             var analysis = viewmodel.GetCharAnalysis(c);
 
             // 3. Handle PNG options
-            var pngRoot = menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "PngRoot");
+            var pngRoot = Child<MenuFlyoutSubItem>("PngRoot");
             foreach (var child in pngRoot.Items.OfType<MenuFlyoutItem>())
             {
                 if (child.CommandParameter is ExportStyle s && s == ExportStyle.ColorGlyph)
@@ -521,7 +523,7 @@ public static class FlyoutHelper
             }
 
             // 4. Handle SVG options
-            var svgRoot = menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "SvgRoot");
+            var svgRoot = Child<MenuFlyoutSubItem>("SvgRoot");
 
             // 4.1. We can only save as SVG if all layers of the glyph are created with vectors
             svgRoot.SetVisible(analysis.IsFullVectorBased);
@@ -545,8 +547,11 @@ public static class FlyoutHelper
                 }
             }
 
+            // 4.2. Find in other fonts is only supported in MainView right now
+            Child<MenuFlyoutItem>("FindCharButton")?.SetVisible(!isStandalone);
+
             // 5. Handle Dev values
-            if (menu.Items.OfType<MenuFlyoutSubItem>().FirstOrDefault(i => i.Name == "DevRoot") is MenuFlyoutSubItem devRoot)
+            if (Child<MenuFlyoutSubItem>("DevRoot") is { } devRoot)
             {
                 // 5.0. Prepare click handler
                 static void CopyItemClick(object sender, RoutedEventArgs e)
@@ -598,10 +603,8 @@ public static class FlyoutHelper
             };
 
             // 6. Handle visibility of "Add to Selection" Button
-            if (menu.Items.OfType<MenuFlyoutItem>().FirstOrDefault(i => i.Name == "AddSelectionButton") is MenuFlyoutItem add)
-            {
+            if (Child<MenuFlyoutItem>("AddSelectionButton") is { } add)
                 add.SetVisible(ResourceHelper.AppSettings.EnableCopyPane);
-            }
 
             // 7. Set item context
             menu.SetItemsDataContext(target.Tag, subStyle);

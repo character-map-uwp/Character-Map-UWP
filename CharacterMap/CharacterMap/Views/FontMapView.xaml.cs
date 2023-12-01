@@ -664,7 +664,6 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         // Make sure the PreviewColumn fits properly.
-
         if (e.NewSize.Width > e.PreviousSize.Width)
             return;
 
@@ -673,6 +672,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             if (!this.IsLoaded)
                 return;
 
+            // Make sure PreviewColumn stays at a workable size
             if (CharGrid.Visibility == Visibility.Visible)
             {
                 int size = (int)CharGrid.ActualWidth + (int)Splitter.ActualWidth + (int)PreviewGrid.ActualWidth;
@@ -861,7 +861,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             /* Context menu for character grid */
             args.Handled = true;
-            FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel);
+            FlyoutHelper.ShowCharacterGridContext(GridContextFlyout, grid, ViewModel, IsStandalone);
         }
     }
 
@@ -1025,6 +1025,14 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private void FilterHint_Click(object sender, RoutedEventArgs e)
     {
         CharacterFilterButton.Focus(FocusState.Keyboard);
+    }
+
+    private void FindClick(object sender, RoutedEventArgs e)
+    {
+        if (sender is MenuFlyoutItem { DataContext: Character c }
+            && this.IsStandalone == false
+            && this.GetFirstAncestorOfType<MainPage>() is { } m)
+            m.CharacterSearch(c.Char);
     }
 
 

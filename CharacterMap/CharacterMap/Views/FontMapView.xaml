@@ -304,7 +304,18 @@
                 Click="AddClick"
                 Icon="Add"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+
             <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem
+                x:Name="FindCharButton"
+                x:Uid="FindCharButton"
+                Click="FindClick"
+                Icon="Find"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                d:Text="Find in other fonts SAMPLE" />
+
+            <MenuFlyoutSeparator Visibility="{Binding ElementName=FindCharButton, Path=Visibility}" />
 
             <MenuFlyoutItem
                 x:Uid="CalligraphyLabel"
