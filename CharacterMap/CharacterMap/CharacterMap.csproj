@@ -198,6 +198,7 @@
     <Compile Include="Controls\CharacterGridView.cs" />
     <Compile Include="Controls\CharacterPicker.cs" />
     <Compile Include="Controls\ContentGroup.cs" />
+    <Compile Include="Controls\ControlBase.cs" />
     <Compile Include="Controls\CreateCollectionDialog.xaml.cs">
       <DependentUpon>CreateCollectionDialog.xaml</DependentUpon>
     </Compile>

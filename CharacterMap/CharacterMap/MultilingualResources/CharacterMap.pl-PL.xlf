@@ -2035,6 +2035,10 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
           <source>Choose existing</source>
           <target state="new">Choose existing</target>
         </trans-unit>
+        <trans-unit id="FindCharButton.Text" translate="yes" xml:space="preserve">
+          <source>Find in other fonts</source>
+          <target state="new">Find in other fonts</target>
+        </trans-unit>
       </group>
     </body>
   </file>

@@ -25,9 +25,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         set { SetValue(TitleLeftContentProperty, value); }
     }
 
-    // Using a DependencyProperty as the backing store for TitleLeftContent.  This enables animation, styling, binding, etc...
-    public static readonly DependencyProperty TitleLeftContentProperty =
-        DependencyProperty.Register(nameof(TitleLeftContent), typeof(object), typeof(FontMapView), new PropertyMetadata(null));
+    public static readonly DP TitleLeftContentProperty = DP<object, FontMapView>();
 
     #endregion
 
@@ -39,9 +37,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         set { SetValue(TitleRightContentProperty, value); }
     }
 
-    // Using a DependencyProperty as the backing store for TitleRightContent.  This enables animation, styling, binding, etc...
-    public static readonly DependencyProperty TitleRightContentProperty =
-        DependencyProperty.Register(nameof(TitleRightContent), typeof(object), typeof(FontMapView), new PropertyMetadata(null));
+    public static readonly DP TitleRightContentProperty = DP<object, FontMapView>();
 
     #endregion
 
@@ -53,12 +49,11 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         set => SetValue(FontProperty, value);
     }
 
-    public static readonly DependencyProperty FontProperty =
-        DependencyProperty.Register(nameof(Font), typeof(FontItem), typeof(FontMapView), new PropertyMetadata(null, (d, e) =>
-        {
-            if (d is FontMapView f && e.NewValue is FontItem item)
-                f.ViewModel.SelectedFont = item;
-        }));
+    public static readonly DP FontProperty = DP<FontItem, FontMapView>(null, (d, o, n) =>
+    {
+        if (n is not null)
+            d.ViewModel.SelectedFont = n;
+    });
 
     #endregion
 
@@ -70,8 +65,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         private set => SetValue(ViewModelProperty, value);
     }
 
-    public static readonly DependencyProperty ViewModelProperty =
-        DependencyProperty.Register(nameof(ViewModel), typeof(FontMapViewModel), typeof(FontMapView), new PropertyMetadata(null));
+    public static readonly DP ViewModelProperty = DP<FontMapViewModel, FontMapView>();
 
     #endregion
 
@@ -83,8 +77,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         set { SetValue(HideTitleProperty, value); }
     }
 
-    public static readonly DependencyProperty HideTitleProperty =
-        DependencyProperty.Register(nameof(HideTitle), typeof(bool), typeof(FontMapView), new PropertyMetadata(false));
+    public static readonly DP HideTitleProperty = DP<bool, FontMapView>();
 
     #endregion
 

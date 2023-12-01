@@ -9,6 +9,8 @@ using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
 
+using CGV = CharacterMap.Controls.CharacterGridView;
+
 namespace CharacterMap.Controls;
 
 internal class CharacterGridViewTemplateSettings
@@ -37,11 +39,10 @@ public class CharacterGridView : GridView
         set { SetValue(ItemSizeProperty, value); }
     }
 
-    public static readonly DependencyProperty ItemSizeProperty =
-        DependencyProperty.Register(nameof(ItemSize), typeof(double), typeof(CharacterGridView), new PropertyMetadata(0d, (d, e) =>
-        {
-            ((CharacterGridView)d)._templateSettings.Size = (double)e.NewValue;
-        }));
+    public static readonly DP ItemSizeProperty = DP<double, CGV>(0d, (d, o, n) =>
+    {
+        d._templateSettings.Size = n;
+    });
 
     #endregion
 
@@ -53,11 +54,10 @@ public class CharacterGridView : GridView
         set { SetValue(ItemFontFamilyProperty, value); }
     }
 
-    public static readonly DependencyProperty ItemFontFamilyProperty =
-        DependencyProperty.Register(nameof(ItemFontFamily), typeof(FontFamily), typeof(CharacterGridView), new PropertyMetadata(null, (d, e) =>
-        {
-            ((CharacterGridView)d)._templateSettings.FontFamily = (FontFamily)e.NewValue;
-        }));
+    public static readonly DP ItemFontFamilyProperty = DP<FontFamily, CGV>(null, (d, o, n) =>
+    {
+        d._templateSettings.FontFamily = n;
+    });
 
     #endregion
 
@@ -69,11 +69,10 @@ public class CharacterGridView : GridView
         set { SetValue(ItemFontFaceProperty, value); }
     }
 
-    public static readonly DependencyProperty ItemFontFaceProperty =
-        DependencyProperty.Register(nameof(ItemFontFace), typeof(DWriteFontFace), typeof(CharacterGridView), new PropertyMetadata(null, (d, e) =>
-        {
-            ((CharacterGridView)d)._templateSettings.FontFace = (DWriteFontFace)e.NewValue;
-        }));
+    public static readonly DP ItemFontFaceProperty = DP<DWriteFontFace, CGV>(null, (d, o, n) =>
+    {
+        d._templateSettings.FontFace = n;
+    });
 
     #endregion
 
@@ -85,15 +84,15 @@ public class CharacterGridView : GridView
         set { SetValue(ItemTypographyProperty, value); }
     }
 
-    public static readonly DependencyProperty ItemTypographyProperty =
-        DependencyProperty.Register(nameof(ItemTypography), typeof(TypographyFeatureInfo), typeof(CharacterGridView), new PropertyMetadata(null, (d, e) =>
+    public static readonly DP ItemTypographyProperty = DP<TypographyFeatureInfo, CGV>(null, (d, o, n) =>
+    {
+        if (n is not null)
         {
-            if (d is CharacterGridView g && e.NewValue is TypographyFeatureInfo t)
-            {
-                g._templateSettings.Typography = t;
-                g.UpdateTypographies(t);
-            }
-        }));
+            d._templateSettings.Typography = n;
+            d.UpdateTypographies(n);
+        }
+
+    });
 
     #endregion
 
@@ -105,15 +104,11 @@ public class CharacterGridView : GridView
         set { SetValue(ShowColorGlyphsProperty, value); }
     }
 
-    public static readonly DependencyProperty ShowColorGlyphsProperty =
-        DependencyProperty.Register(nameof(ShowColorGlyphs), typeof(bool), typeof(CharacterGridView), new PropertyMetadata(false, (d, e) =>
-        {
-            if (d is CharacterGridView g && e.NewValue is bool b)
-            {
-                g._templateSettings.ShowColorGlyphs = b;
-                g.UpdateColorsFonts(b);
-            }
-        }));
+    public static readonly DP ShowColorGlyphsProperty = DP<bool, CGV>(false, (d, o, n) =>
+    {
+        d._templateSettings.ShowColorGlyphs = n;
+        d.UpdateColorsFonts(n);
+    });
 
     #endregion
 
@@ -125,19 +120,11 @@ public class CharacterGridView : GridView
         set { SetValue(ItemAnnotationProperty, value); }
     }
 
-    // Using a DependencyProperty as the backing store for ItemAnnotation.  This enables animation, styling, binding, etc...
-    public static readonly DependencyProperty ItemAnnotationProperty =
-        DependencyProperty.Register("ItemAnnotation", typeof(GlyphAnnotation), typeof(CharacterGridView), new PropertyMetadata(GlyphAnnotation.None, (d, e) =>
-        {
-            if (d is CharacterGridView g && e.NewValue is GlyphAnnotation b)
-            {
-                g._templateSettings.Annotation = b;
-                g.UpdateUnicode(b);
-            }
-        }));
-
-
-
+    public static readonly DP ItemAnnotationProperty = DP<GlyphAnnotation, CGV>(GlyphAnnotation.None, (d, o, n) =>
+    {
+        d._templateSettings.Annotation = n;
+        d.UpdateUnicode(n);
+    });
 
     #endregion
 
@@ -149,16 +136,12 @@ public class CharacterGridView : GridView
         set { SetValue(EnableResizeAnimationProperty, value); }
     }
 
-    public static readonly DependencyProperty EnableResizeAnimationProperty =
-        DependencyProperty.Register(nameof(EnableResizeAnimation), typeof(bool), typeof(CharacterGridView), new PropertyMetadata(false, (d, e) =>
-        {
-            if (d is CharacterGridView g && e.NewValue is bool b)
-            {
-                g._templateSettings.EnableReposition = b && CompositionFactory.UISettings.AnimationsEnabled;
-                g.UpdateAnimation(b);
-            }
-        }));
-
+    public static readonly DP EnableResizeAnimationProperty = DP<bool, CGV>(false, (d, o, n) =>
+    {
+        d._templateSettings.EnableReposition = n && CompositionFactory.UISettings.AnimationsEnabled;
+        d.UpdateAnimation(n);
+    });
+      
     #endregion
 
     #region ItemFontVariant
@@ -169,8 +152,7 @@ public class CharacterGridView : GridView
         set { SetValue(ItemFontVariantProperty, value); }
     }
 
-    public static readonly DependencyProperty ItemFontVariantProperty =
-        DependencyProperty.Register(nameof(ItemFontVariant), typeof(FontVariant), typeof(CharacterGridView), new PropertyMetadata(null));
+    public static readonly DP ItemFontVariantProperty = DP<FontVariant, CGV>();
 
     #endregion
 
@@ -183,7 +165,7 @@ public class CharacterGridView : GridView
     public CharacterGridView()
     {
         _xamlDirect = XamlDirect.GetDefault();
-        _templateSettings = new CharacterGridViewTemplateSettings();
+        _templateSettings = new ();
 
         this.ContainerContentChanging += OnContainerContentChanging;
         this.ChoosingItemContainer += OnChoosingItemContainer;
