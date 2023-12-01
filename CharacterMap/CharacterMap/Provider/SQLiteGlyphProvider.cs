@@ -147,11 +147,18 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
              * Step 3: Perform LIKE search if still space for results
              */
 
+          
+
             // 1. Decide if hex or FTS4 search
-            // 1.1. If hex, search the main table (UnicodeIndex column is indexed)
+            //    If hex, search the main table (UnicodeIndex column is indexed)
             GlyphDescription hexResult = null;
+
+            // 1.1 If single Char, try forcing as hex search
+            if (query.Length == 1)
+                query = ((uint)query[0]).ToString("x4");
+
             bool ambiguous = !variant.DirectWriteProperties.IsSymbolFont && IsAmbiguousQuery(query);
-            if (Utils.TryParseHexString(query, out int hex))
+            if (hexResult == null && Utils.TryParseHexString(query, out int hex))
             {
                 // 1.2. To be more efficient, first check if the font actually contains the UnicodeIndex.
                 //      If it does then we ask the database, otherwise we can return without query.
