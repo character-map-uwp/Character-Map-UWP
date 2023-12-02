@@ -30,6 +30,12 @@ public partial class BasicFontFilter
             true);
     }
 
+    public static BasicFontFilter ForChar(Character ch)
+    {
+        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(
+            v => Unicode.ContainsRange(v, new UnicodeRange(ch.UnicodeIndex, ch.UnicodeIndex)))), null);
+    }
+
     public static BasicFontFilter ForRange(UnicodeRange range, string displayTitle)
     {
         return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(v => Unicode.ContainsRange(v, range))), displayTitle);

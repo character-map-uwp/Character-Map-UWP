@@ -1622,4 +1622,7 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
   <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
     <value>Choose existing</value>
   </data>
+  <data name="FindCharButton.Text" xml:space="preserve">
+    <value>Find in other fonts</value>
+  </data>
 </root>

@@ -32,6 +32,9 @@ global using Windows.Storage;
 global using Windows.Storage.Pickers;
 global using Windows.Storage.Streams;
 
+global using static CharacterMap.Controls.ControlBase;
+global using DP = Windows.UI.Xaml.DependencyProperty;
+
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Naming", "VSSpell001:Spell Check", Justification = "BritishEnglish", Scope = "member", Target = "~P:CharacterMap.Core.FontVariant.SupportsColourRendering")]

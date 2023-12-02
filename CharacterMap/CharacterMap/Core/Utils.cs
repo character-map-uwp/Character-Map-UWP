@@ -200,6 +200,8 @@ public static class Utils
 
     public static bool TryParseHexString(string hexNumber, out int hex)
     {
+        if (hexNumber.StartsWith("U+", StringComparison.OrdinalIgnoreCase))
+            hexNumber = hexNumber.Remove(0, 2);
         hexNumber = hexNumber.Replace("x", string.Empty);
         if (int.TryParse(hexNumber, NumberStyles.HexNumber, null, out int result))
         {

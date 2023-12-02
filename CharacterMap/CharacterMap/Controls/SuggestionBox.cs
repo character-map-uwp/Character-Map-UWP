@@ -91,7 +91,7 @@ public sealed class SuggestionBox : Control
     private Debouncer _suggestionDebouncer { get; } = new();
 
     private bool block = false;
-
+    private long _token = 0;
 
     public SuggestionBox()
     {
@@ -134,6 +134,9 @@ public sealed class SuggestionBox : Control
             _suggestBox.GotFocus += _suggestBox_GotFocus;
             _suggestBox.LostFocus += _suggestBox_LostFocus;
             _suggestBox.KeyDown += _suggestBox_KeyDown;
+
+            if (_token != 0)
+                _suggestBox.UnregisterPropertyChangedCallback(AutoSuggestBox.IsSuggestionListOpenProperty, _token);
         }
 
         // Try to find the "Edit Suggestions" button and hook up the click handler
@@ -145,9 +148,19 @@ public sealed class SuggestionBox : Control
 
         _suggestButton = this.GetTemplateChild("SuggestionButton") as Button;
         if (_suggestButton is not null)
+        {
+            _token = _suggestBox.RegisterPropertyChangedCallback(AutoSuggestBox.IsSuggestionListOpenProperty, SuggestCallback);
             _suggestButton.Click += _suggestButton_Click;
+        }
     }
 
+    private void SuggestCallback(DependencyObject sender, DependencyProperty dp)
+    {
+        if (_suggestBox.IsSuggestionListOpen is false)
+            VisualStateManager.GoToState(_suggestBox, "Closed", false);
+        else
+            VisualStateManager.GoToState(_suggestBox, "Opened", ResourceHelper.AllowAnimation);
+    }
 
     void UpdatePickerState(bool animate)
     {
@@ -209,8 +222,8 @@ public sealed class SuggestionBox : Control
             p.Translation = new(0, 0, 0);
 
             // Force to be width of this entire control
-            if (p.Child is FrameworkElement f)
-                f.Width = this.ActualWidth;
+            //if (p.Child is FrameworkElement f)
+            //    f.Width = this.ActualWidth;
         }
     }
 

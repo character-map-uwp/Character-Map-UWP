@@ -628,6 +628,9 @@
                             IsHitTestVisible="False" />
 
                         <Popup x:Name="Popup">
+                            <Popup.RenderTransform>
+                                <CompositeTransform x:Name="PopupTransform" />
+                            </Popup.RenderTransform>
                             <Border
                                 x:Name="PopupBorder"
                                 Margin="0,-1,0,-1"

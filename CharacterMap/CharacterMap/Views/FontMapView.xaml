@@ -304,7 +304,18 @@
                 Click="AddClick"
                 Icon="Add"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+
             <MenuFlyoutSeparator />
+
+            <MenuFlyoutItem
+                x:Name="FindCharButton"
+                x:Uid="FindCharButton"
+                Click="FindClick"
+                Icon="Find"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                d:Text="Find in other fonts SAMPLE" />
+
+            <MenuFlyoutSeparator Visibility="{Binding ElementName=FindCharButton, Path=Visibility}" />
 
             <MenuFlyoutItem
                 x:Uid="CalligraphyLabel"
@@ -1403,26 +1414,6 @@
                         RenderingOptions="{x:Bind ViewModel.RenderingOptions, Mode=OneWay}"
                         Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <controls:FlowAwareComboBox
-                        x:Name="TypeRampInputBox"
-                        x:Uid="TypeRampInputBox"
-                        MinWidth="430"
-                        MinHeight="0"
-                        Margin="12 12 0 12"
-                        HorizontalAlignment="Left"
-                        core:Properties.PointerOverAnimation="DropDownGlyph"
-                        Background="Transparent"
-                        BorderThickness="0 0 0 1"
-                        ContextFlyout="{StaticResource SuggestionFlyout}"
-                        CornerRadius="4 0 0 4"
-                        Header="Preview Text"
-                        IsColorFontEnabled="{Binding RenderingOptions.IsColourFontEnabled}"
-                        IsEditable="True"
-                        SelectedIndex="0"
-                        Style="{StaticResource RampComboBoxStyle}"
-                        Text="{Binding TypeRampText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        Visibility="Collapsed" />
-
                     <controls:UXButton
                         x:Name="TypeRampFlowButton"
                         x:Uid="TypeRampFlowButton"
@@ -1453,7 +1444,7 @@
                     MaxHeight="246">
                     <ItemsControl
                         x:Name="VariableAxis"
-                        Margin="24 0"
+                        Margin="24 0 24 0"
                         Padding="12"
                         Background="LightGray"
                         ItemsSource="{x:Bind ViewModel.SelectedVariantAnalysis.VariableAxis, Mode=OneWay}">
@@ -1518,7 +1509,7 @@
                         ItemsSource="{x:Bind ViewModel.Ramps, Mode=OneWay}">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Margin="22 10 6 48" Spacing="16" />
+                                <StackPanel Margin="24 10 6 48" Spacing="16" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <ItemsControl.ItemTemplate>

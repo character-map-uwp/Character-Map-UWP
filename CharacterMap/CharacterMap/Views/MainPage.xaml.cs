@@ -115,7 +115,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     bool _disableMapChange = true;
 
-    private void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+    void ViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {
@@ -181,7 +181,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void OnAppSettingsChanged(AppSettingsChangedMessage msg)
+    void OnAppSettingsChanged(AppSettingsChangedMessage msg)
     {
         switch (msg.PropertyName)
         {
@@ -228,7 +228,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         ViewModel.FontListCreated -= ViewModel_FontListCreated;
     }
 
-    private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+    void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
     {
         if (e.NewSize.Width < 900)
             GoToState(nameof(CompactViewState));
@@ -241,7 +241,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             GoToState(nameof(WindowState));
     }
 
-    private void OnColorValuesChanged(UISettings settings, object e)
+    void OnColorValuesChanged(UISettings settings, object e)
     {
         RunOnUI(() =>
         {
@@ -250,7 +250,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         });
     }
 
-    private void OnAnimationsEnabledChanged(UISettings sender, UISettingsAnimationsEnabledChangedEventArgs args)
+    void OnAnimationsEnabledChanged(UISettings sender, UISettingsAnimationsEnabledChangedEventArgs args)
     {
         RunOnUI(() =>
         {
@@ -260,7 +260,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         });
     }
 
-    private void UpdateLoadingStates()
+    void UpdateLoadingStates()
     {
         TitleBar.TryUpdateMetrics();
 
@@ -296,7 +296,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void ViewModel_FontListCreated(object sender, EventArgs e)
+    void ViewModel_FontListCreated(object sender, EventArgs e)
     {
         StartScrollSelectedIntoView();
     }
@@ -320,7 +320,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         });
     }
 
-    private void TogglePane_Click(object sender, RoutedEventArgs e)
+    void TogglePane_Click(object sender, RoutedEventArgs e)
     {
         if (SplitView.DisplayMode == SplitViewDisplayMode.Inline)
             GoToState(nameof(CollapsedViewState));
@@ -342,24 +342,24 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             LstFontFamily.SelectedItem = null;
     }
 
-    private void FontMapContainer_AddTabButtonClick(TabView sender, object args)
+    void FontMapContainer_AddTabButtonClick(TabView sender, object args)
     {
         ViewModel.Fonts.Add(new(ViewModel.SelectedFont));
         FontsTabBar.SelectedIndex = ViewModel.Fonts.Count - 1;
     }
 
-    private void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
+    void FontMapContainer_TabCloseRequested(TabView sender, TabViewTabCloseRequestedEventArgs args)
     {
         ViewModel.TryCloseTab(sender.TabItems.IndexOf(args.Item));
     }
 
-    private void TabViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+    void TabViewItem_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
     {
         if (sender is FrameworkElement f && f.DataContext is FontItem item)
             ViewModel.TryCloseTab(FontsTabBar.TabItems.IndexOf(item));
     }
 
-    private void BtnSettings_OnClick(object sender, RoutedEventArgs e)
+    void BtnSettings_OnClick(object sender, RoutedEventArgs e)
     {
         ShowSettings();
     }
@@ -425,13 +425,13 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
     }
 
 
-    private bool AreModalsOpen()
+    bool AreModalsOpen()
     {
         return (SettingsView != null && SettingsView.IsOpen)
                  || (PrintPresenter != null && PrintPresenter.Child != null);
     }
 
-    private void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
+    void LayoutRoot_KeyDown(object sender, KeyRoutedEventArgs e)
     {
         if (e.Key == VirtualKey.F11)
             Utils.ToggleFullScreenMode();
@@ -465,7 +465,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void FontsTabBar_Loaded(object sender, RoutedEventArgs e)
+    void FontsTabBar_Loaded(object sender, RoutedEventArgs e)
     {
         // 1. Ensure animations are correct
         UpdateAnimation();
@@ -528,7 +528,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         _ = QuickCompareView.CreateWindowAsync(new(false, new(variants)));
     }
 
-    private void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    void LstFontFamily_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         if (ViewModel.IsLoadingFonts is false &&
             e.AddedItems.FirstOrDefault() is InstalledFont font)
@@ -537,7 +537,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void OpenFontPaneButton_Click(object sender, RoutedEventArgs e)
+    void OpenFontPaneButton_Click(object sender, RoutedEventArgs e)
     {
         SplitView.IsPaneOpen = !SplitView.IsPaneOpen;
     }
@@ -553,7 +553,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private string UpdateFontCountLabel(List<InstalledFont> fontList, bool keepCasing)
+    string UpdateFontCountLabel(List<InstalledFont> fontList, bool keepCasing)
     {
         if (fontList != null)
         {
@@ -570,7 +570,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         return string.Empty;
     }
 
-    private void OnFilterClick(object parameter)
+    void OnFilterClick(object parameter)
     {
         if (parameter is BasicFontFilter filter)
         {
@@ -584,7 +584,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void OnFontPreviewUpdated()
+    void OnFontPreviewUpdated()
     {
         if (ViewModel.InitialLoad.IsCompleted)
         {
@@ -604,19 +604,19 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void FontCompareButton_Click(object sender, RoutedEventArgs e)
+    void FontCompareButton_Click(object sender, RoutedEventArgs e)
     {
         DismissMenu();
 
         _ = QuickCompareView.CreateWindowAsync(new(false, ViewModel.Folder));
     }
 
-    private void CollectionCompareButton_Click(object sender, RoutedEventArgs e)
+    void CollectionCompareButton_Click(object sender, RoutedEventArgs e)
     {
         _ = QuickCompareView.CreateWindowAsync(new(false) { SelectedCollection = ViewModel.SelectedCollection });
     }
 
-    private void LstFontFamily_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    void LstFontFamily_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
         args.ItemContainer.PointerPressed -= ItemContainer_PointerPressed;
         args.ItemContainer.PointerPressed += ItemContainer_PointerPressed;
@@ -625,7 +625,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         args.ItemContainer.ContextRequested += ItemContainer_ContextRequested;
     }
 
-    private void ItemContainer_PointerPressed(object sender, PointerRoutedEventArgs e)
+    void ItemContainer_PointerPressed(object sender, PointerRoutedEventArgs e)
     {
         /* MIDDLE CLICK FOR FONT LIST */
         var pointer = e.GetCurrentPoint(sender as FrameworkElement);
@@ -647,7 +647,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void ItemContainer_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
+    void ItemContainer_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {
         /* RIGHT CLICK MENU FOR FONT LIST */
         if (sender is ListViewItem f && f.Content is InstalledFont font)
@@ -671,7 +671,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void TabViewItemContext_Opening(object sender, object e)
+    void TabViewItemContext_Opening(object sender, object e)
     {
         if (sender is MenuFlyout menu && menu.Target is TabViewItem t && t.DataContext is FontItem item)
         {
@@ -689,6 +689,20 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                     PreviewText = FontMap.ViewModel.Sequence
                 });
         }
+    }
+
+    void OpenFolder()
+    {
+        DismissMenu();
+        _ = (new OpenFolderDialog()).ShowAsync();
+    }
+
+    void DismissMenu() => AppMenuFlyout.Hide();
+
+    public void CharacterSearch(string s)
+    {
+        ViewModel.FontSearch = $"char: {s}";
+        FontListSearchBox.Focus(FocusState.Keyboard);
     }
 
     public void ShowEditSuggestions()
@@ -709,25 +723,17 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         });
     }
 
-    private void OpenFolder()
-    {
-        DismissMenu();
-        _ = (new OpenFolderDialog()).ShowAsync();
-    }
-
-    void DismissMenu() => AppMenuFlyout.Hide();
-
 
 
 
     /* Font Collection management */
 
-    private void RenameFontCollection_Click(object sender, RoutedEventArgs e)
+    void RenameFontCollection_Click(object sender, RoutedEventArgs e)
     {
         _ = (new CreateCollectionDialog(ViewModel.SelectedCollection)).ShowAsync();
     }
 
-    private void DeleteCollection_Click(object sender, RoutedEventArgs e)
+    void DeleteCollection_Click(object sender, RoutedEventArgs e)
     {
         ContentDialog d = new()
         {
@@ -742,7 +748,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         _ = d.ShowAsync();
     }
 
-    private async void DigDeleteCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+    async void DigDeleteCollection_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
     {
         string name = ViewModel.SelectedCollection.Name;
         await ViewModel.FontCollections.DeleteCollectionAsync(ViewModel.SelectedCollection);
@@ -756,13 +762,13 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     /* Drag / Drop support */
 
-    private void Grid_DragOver(object sender, DragEventArgs e)
+    void Grid_DragOver(object sender, DragEventArgs e)
     {
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
             e.AcceptedOperation = DataPackageOperation.Copy;
     }
 
-    private async void Grid_Drop(object sender, DragEventArgs e)
+    async void Grid_Drop(object sender, DragEventArgs e)
     {
         if (e.DataView.Contains(StandardDataFormats.StorageItems))
         {
@@ -790,7 +796,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private async void OpenFont()
+    async void OpenFont()
     {
         DismissMenu();
 
@@ -828,7 +834,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         }
     }
 
-    private void OnFontImportRequest(ImportMessage msg)
+    void OnFontImportRequest(ImportMessage msg)
     {
         _ = CoreApplication.MainView.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
         {
@@ -927,17 +933,17 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     /* Composition & Animation */
 
-    private void Grid_Loading(FrameworkElement sender, object args)
+    void Grid_Loading(FrameworkElement sender, object args)
     {
         CompositionFactory.SetThemeShadow(sender, 40, PaneRoot);
     }
 
-    private void FontListGrid_Loading(FrameworkElement sender, object args)
+    void FontListGrid_Loading(FrameworkElement sender, object args)
     {
         UpdateCollectionRowAnimation();
     }
 
-    private void UpdateAnimation()
+    void UpdateAnimation()
     {
         UpdateCollectionRowAnimation();
 
@@ -961,7 +967,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             CollectionControlRow);
     }
 
-    private void LoadingRoot_Loading(FrameworkElement sender, object args)
+    void LoadingRoot_Loading(FrameworkElement sender, object args)
     {
         if (ResourceHelper.AllowAnimation is false)
             return;
