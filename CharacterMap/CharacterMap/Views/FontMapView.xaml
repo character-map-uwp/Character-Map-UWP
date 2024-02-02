@@ -1747,8 +1747,14 @@
                                                     FontSize="12"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                     Text="{x:Bind Field.Name}"
-                                                    TextWrapping="Wrap"
-                                                    ToolTipService.ToolTip="{x:Bind Field.Description}" />
+                                                    TextWrapping="Wrap">
+                                                    <ToolTipService.ToolTip>
+                                                        <TextBlock
+                                                            FontSize="13"
+                                                            Text="{x:Bind Field.Description}"
+                                                            TextWrapping="Wrap" />
+                                                    </ToolTipService.ToolTip>
+                                                </TextBlock>
 
                                                 <TextBlock
                                                     Grid.Column="1"
