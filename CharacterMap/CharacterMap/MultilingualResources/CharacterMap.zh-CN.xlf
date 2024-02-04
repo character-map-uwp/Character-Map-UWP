@@ -12,7 +12,7 @@
         </trans-unit>
         <trans-unit id="AppName" translate="yes" xml:space="preserve">
           <source>Character Map UWP</source>
-          <target state="translated">字符映射表 UWP</target>
+          <target state="translated">字符映射表</target>
         </trans-unit>
         <trans-unit id="BlackFill.Text" translate="yes" xml:space="preserve">
           <source>Black Fill</source>
