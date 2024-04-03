@@ -1,4 +1,5 @@
-﻿using Windows.ApplicationModel.Core;
+﻿using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -94,6 +95,10 @@ public sealed class XamlTitleBar : ContentControl
     {
         DefaultStyleKey = typeof(XamlTitleBar);
         Loading += XamlTitleBar_Loading;
+
+        if (DesignMode.DesignModeEnabled)
+            return;
+
         Loaded += XamlTitleBar_Loaded;
         Unloaded += XamlTitleBar_Unloaded;
     }
@@ -112,7 +117,7 @@ public sealed class XamlTitleBar : ContentControl
         if (IsAutoHeightEnabled)
             Height = d;
 
-        TemplateSettings.GridHeight = new GridLength(d);
+        TemplateSettings.GridHeight = new (d);
         TemplateSettings.Height = d;
     }
 

@@ -241,6 +241,9 @@ public static class ResourceHelper
 
     public static bool TryResolveThemeStyle3(FrameworkElement element)
     {
+        if (element.ReadLocalValue(FrameworkElement.StyleProperty) != DependencyProperty.UnsetValue)
+            return false;
+
         if (Properties.GetStyleKey(element) is string styleKey)
         {
             // Find source dictionary for current theme

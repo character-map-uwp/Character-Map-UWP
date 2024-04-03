@@ -99,7 +99,11 @@ public class ExtendedListView : ListView
 
     protected override DependencyObject GetContainerForItemOverride()
     {
-        return new ExtendedListViewItem { Style = this.ItemContainerStyle };
+        var item = new ExtendedListViewItem { };
+        if (ItemContainerStyle != null)
+            item.Style = ItemContainerStyle;
+
+        return item;
     }
 
     void UpdateSelection()

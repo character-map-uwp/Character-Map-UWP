@@ -257,7 +257,7 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsCharLabelDesc/Text}">
                                     <StackPanel>
-                                        <ComboBox
+                                        <controls:UXComboBox
                                             MinWidth="160"
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
                                             SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
@@ -266,7 +266,7 @@
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
-                                        </ComboBox>
+                                        </controls:UXComboBox>
 
                                         <Border
                                             Margin="0 12 0 0"
@@ -409,7 +409,7 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsLanguageHeader/Text}">
                                     <StackPanel>
-                                        <ComboBox
+                                        <controls:UXComboBox
                                             MinWidth="256"
                                             Margin="0 8 0 0"
                                             ItemsSource="{x:Bind ViewModel.SupportedLanguages}"
@@ -511,7 +511,7 @@
 
                                 <controls:SettingsPresenter x:Uid="SettingsDesignStyle">
                                     <StackPanel>
-                                        <ComboBox
+                                        <controls:UXComboBox
                                             MinWidth="256"
                                             Margin="0 8 0 0"
                                             SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
@@ -520,7 +520,7 @@
                                             <x:String>Windows 11</x:String>
                                             <x:String>Classic Windows</x:String>
                                             <x:String>Zune Desktop</x:String>
-                                        </ComboBox>
+                                        </controls:UXComboBox>
                                     </StackPanel>
                                     <controls:SettingsPresenter.Items>
                                         <controls:UXButton
@@ -601,7 +601,8 @@
                                         <CheckBox
                                             Margin="48 0 0 0"
                                             IsChecked="{x:Bind Settings.FontExportIncludeVersion, Mode=TwoWay}"
-                                            IsEnabled="{Binding ElementName=OptimisedRadio, Path=IsChecked}">
+                                            IsEnabled="{Binding ElementName=OptimisedRadio, Path=IsChecked}"
+                                            Style="{StaticResource DefaultThemeCheckBoxStyle}">
                                             <TextBlock TextWrapping="Wrap">
                                                 <Run x:Uid="SettingsFontExportVersionLabel" d:Text="{core:Localizer Key=SettingsFontExportVersionLabel/Text}" />
                                                 <Run
@@ -755,8 +756,14 @@
                                                     AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                                     MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                                     Placement="Bottom">
-                                                    <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportSystemToFolder}" />
-                                                    <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportSystemAsZip}" />
+                                                    <MenuFlyoutItem
+                                                        x:Uid="CollectionExportFolder"
+                                                        Click="{x:Bind ViewModel.ExportSystemToFolder}"
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                                    <MenuFlyoutItem
+                                                        x:Uid="CollectionExportZip"
+                                                        Click="{x:Bind ViewModel.ExportSystemAsZip}"
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
                                                 </MenuFlyout>
                                             </core:Properties.Flyout>
                                         </controls:UXHyperlinkButton>
@@ -887,9 +894,10 @@
                                                 Text="{Binding ViewModel.RampInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <controls:UXButton
                                                 Grid.Column="1"
+                                                h:FluentAnimation.PointerOverOffset="-2"
                                                 Click="{x:Bind ViewModel.AddRamp}"
                                                 Style="{StaticResource MapInfoButtonStyle}">
-                                                <SymbolIcon Symbol="Add" />
+                                                <SymbolIcon Name="DropDownGlyph" Symbol="Add" />
                                             </controls:UXButton>
                                         </Grid>
 
@@ -916,9 +924,10 @@
                                                         <controls:UXButton
                                                             Grid.Column="1"
                                                             VerticalAlignment="Center"
+                                                            h:FluentAnimation.PointerOverOffset="-2"
                                                             Click="DeleteRampClick"
                                                             Style="{StaticResource MapInfoButtonStyle}">
-                                                            <SymbolIcon Symbol="Delete" />
+                                                            <SymbolIcon Name="DropDownGlyph" Symbol="Delete" />
                                                         </controls:UXButton>
                                                     </Grid>
                                                 </DataTemplate>

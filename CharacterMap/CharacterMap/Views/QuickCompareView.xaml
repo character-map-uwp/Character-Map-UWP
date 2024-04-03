@@ -130,7 +130,8 @@
             <MenuFlyoutItem
                 x:Uid="OpenInNewWindow"
                 Click="OpenWindow_Click"
-                Icon="NewWindow" />
+                Icon="NewWindow"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
         </MenuFlyout>
 
         <MenuFlyout
@@ -142,11 +143,13 @@
                 x:Uid="RemoveLabel"
                 Click="Remove_Clicked"
                 Icon="Clear"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                 d:Text="Remove" />
             <MenuFlyoutItem
                 x:Uid="OpenInNewWindow"
                 Click="OpenWindow_Click"
-                Icon="NewWindow" />
+                Icon="NewWindow"
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
         </MenuFlyout>
 
         <muxc:UniformGridLayout

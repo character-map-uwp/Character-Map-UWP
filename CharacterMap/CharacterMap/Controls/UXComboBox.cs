@@ -14,7 +14,7 @@ public class UXComboBoxItem : ComboBoxItem, IThemeableControl
     public ThemeHelper _themer;
     public UXComboBoxItem()
     {
-        Properties.SetStyleKey(this, "DefaultComboBoxItemStyle");
+        Properties.SetStyleKey(this, "DefaultThemeComboBoxItemStyle");
         _themer = new ThemeHelper(this);
     }
 
@@ -91,13 +91,14 @@ public class UXComboBox : ComboBox//, IThemeableControl
     bool _isTemplateApplied = false;
     public UXComboBox()
     {
-        //Properties.SetStyleKey(this, "DefaultThemeComboBoxStyle");
-        //_themer = new ThemeHelper(this);
+        this.DefaultStyleKey = typeof(UXComboBox);
+        Properties.SetStyleKey(this, "DefaultThemeComboBoxStyle");
+        _themer = new ThemeHelper(this);
     }
 
     public void UpdateTheme()
     {
-        //_themer.Update();
+        _themer.Update();
     }
 
     protected override void OnApplyTemplate()
@@ -105,14 +106,14 @@ public class UXComboBox : ComboBox//, IThemeableControl
         _isTemplateApplied = true;
 
         base.OnApplyTemplate();
-        //_themer.Update();
+        _themer.Update();
 
         UpdateContentStates();
     }
 
     protected override DependencyObject GetContainerForItemOverride()
     {
-        return new UXComboBoxItem();
+        return new UXComboBoxItem { };// Style = ResourceHelper.Get<Style>("DefaultThemeComboBoxItemStyle") ?? null };
     }
 
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)

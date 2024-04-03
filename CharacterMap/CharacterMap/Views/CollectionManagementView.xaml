@@ -35,7 +35,7 @@
                     VerticalAlignment="Top"
                     Orientation="Horizontal"
                     Spacing="12">
-                    <ComboBox
+                    <controls:UXComboBox
                         x:Name="CollectionSelector"
                         x:Uid="CollectionSelector"
                         Width="200"
@@ -98,8 +98,14 @@
                         <Button.Flyout>
                             <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
                                 <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
-                                <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportAsFolder}" />
-                                <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
+                                <MenuFlyoutItem
+                                    x:Uid="CollectionExportFolder"
+                                    Click="{x:Bind ViewModel.ExportAsFolder}"
+                                    Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                <MenuFlyoutItem
+                                    x:Uid="CollectionExportZip"
+                                    Click="{x:Bind ViewModel.ExportAsZip}"
+                                    Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
                             </MenuFlyout>
                         </Button.Flyout>
                         <Grid>

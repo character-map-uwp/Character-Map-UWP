@@ -14,6 +14,7 @@
     <x:Double x:Key="MinTitleBarHeight">32</x:Double>
     <CornerRadius x:Key="CardCornerRadius">0</CornerRadius>
     <CornerRadius x:Key="InfoBarCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="CommandToggleCornerRadius">0</CornerRadius>
 
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</FontFamily>
 
@@ -604,7 +605,7 @@
                 FontSize="30"
                 Glyph="{Binding Glyph}" />
 
-            <StackPanel Grid.Column="1">
+            <StackPanel Grid.Column="1" x:Name="LabelRoot">
                 <TextBlock>
                     <Run FontWeight="SemiBold" Text="{Binding Title}" />
                     <Run

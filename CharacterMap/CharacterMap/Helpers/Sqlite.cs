@@ -3091,29 +3091,6 @@ namespace SQLite
             CommandText = "";
         }
 
-        /// <summary>
-        /// Query for <see cref="SQLiteFontCollection"/>s  without using reflection
-        /// so we don't require any .NET Native metadata to be included
-        /// </summary>
-        /// <returns></returns>
-        public List<SQLiteFontCollection> AsCollections()
-        {
-            List<SQLiteFontCollection> results = new();
-            var stmt = Prepare();
-
-            while (SQLite3.Step(stmt) == SQLite3.Result.Row)
-            {
-                results.Add(new()
-                {
-                    Id = SQLite3.ColumnInt(stmt, 0),
-                    Name = SQLite3.ColumnString(stmt, 1),
-                    Fonts = SQLite3.ColumnString(stmt, 2)
-                });
-            }
-
-            return results;
-        }
-
         public int ExecuteNonQuery()
         {
             if (_conn.Trace)

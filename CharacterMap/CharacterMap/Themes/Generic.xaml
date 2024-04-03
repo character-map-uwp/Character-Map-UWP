@@ -404,6 +404,9 @@
                                 Height="45"
                                 HorizontalAlignment="Right"
                                 h:FluentAnimation.PointerDownScale="0.8"
+                                h:FluentAnimation.PointerOver="FluentContentPresenter"
+                                h:FluentAnimation.PointerOverOffset="-2"
+                                h:FluentAnimation.UsePointerOver="True"
                                 Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                                 Visibility="{TemplateBinding CloseButtonVisibility}">
                                 <FontIcon Glyph="&#xE10A;" />
@@ -737,7 +740,7 @@
                             </AutoSuggestBox.Resources>
                             <AutoSuggestBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
+                                    <StackPanel Name="TemplateContent">
                                         <TextBlock
                                             core:Properties.Uppercase="{Binding Title}"
                                             FontSize="10.666"
@@ -753,8 +756,14 @@
                                 </DataTemplate>
                             </AutoSuggestBox.ItemTemplate>
                             <core:Properties.Footer>
-                                <ListViewItem x:Name="EditButton">
+                                <ListViewItem
+                                    x:Name="EditButton"
+                                    h:FluentAnimation.PointerOver="Target"
+                                    h:FluentAnimation.PointerOverAxis="Vertical"
+                                    h:FluentAnimation.PointerOverOffset="-2"
+                                    Style="{StaticResource DefaultThemeListViewItemStyle}">
                                     <StackPanel
+                                        Name="Target"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Orientation="Horizontal"
@@ -893,6 +902,9 @@
                             <Button
                                 x:Name="AddButton"
                                 HorizontalAlignment="Stretch"
+                                h:FluentAnimation.PointerOver="ContentPresenter.Content"
+                                h:FluentAnimation.PointerOverOffset="-2"
+                                h:FluentAnimation.Pressed="ContentPresenter"
                                 Content="{core:Localizer Key='AddButton/Label'}"
                                 Style="{StaticResource AccentButtonStyle}" />
                             <Button

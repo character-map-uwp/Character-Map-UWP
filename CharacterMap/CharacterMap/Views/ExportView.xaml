@@ -27,7 +27,7 @@
             <TextBlock Style="{StaticResource HeaderStyle}" Text="{Binding}" />
         </DataTemplate>
 
-        <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox">
+        <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="cmControls:UXComboBox">
             <Setter Property="MinWidth" Value="168" />
             <Setter Property="HeaderTemplate" Value="{StaticResource HeaderTemplate}" />
         </Style>
@@ -579,7 +579,7 @@
                         ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}">
 
                         <cmControls:ContentGroup x:Uid="PrintDataHeader" d:Text="{core:Localizer Key=PrintDataHeader/Text}">
-                            <Button Padding="0 2 0 8" Style="{StaticResource ThemeTextBlockButtonStyle}">
+                            <Button Margin="0 2 0 8" Style="{StaticResource ThemeTextBlockButtonStyle}">
                                 <Button.Content>
                                     <StackPanel Orientation="Horizontal">
                                         <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
@@ -620,15 +620,15 @@
                                 Style="{StaticResource BaseTextStyle}"
                                 d:Text="{core:Localizer Key=ExportGlyphFormatDescription/Text}" />
 
-                            <ComboBox
+                            <cmControls:UXComboBox
                                 Margin="0 12 0 0"
                                 Header="{x:Null}"
                                 HeaderTemplate="{x:Null}"
                                 SelectedIndex="{x:Bind ViewModel.SelectedFormat, Mode=TwoWay}"
                                 Style="{StaticResource DefaultThemeComboBoxStyle}">
-                                <ComboBoxItem Content="PNG" />
-                                <ComboBoxItem Content="SVG" />
-                            </ComboBox>
+                                <cmControls:UXComboBoxItem Content="PNG" />
+                                <cmControls:UXComboBoxItem Content="SVG" />
+                            </cmControls:UXComboBox>
 
                             <StackPanel Transitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}" Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
                                 <TextBlock
@@ -808,6 +808,9 @@
                     <Button
                         x:Uid="BtnContinue"
                         Width="150"
+                        helpers:FluentAnimation.PointerOver="ContentPresenter.Content"
+                        helpers:FluentAnimation.PointerOverOffset="-2"
+                        helpers:FluentAnimation.Pressed="ContentPresenter"
                         Click="{x:Bind ViewModel.StartExport}"
                         IsEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
                         Style="{StaticResource AccentButtonStyle}"
