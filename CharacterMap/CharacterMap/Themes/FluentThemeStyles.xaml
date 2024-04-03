@@ -189,6 +189,7 @@
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="MinHeight" Value="67" />
         <Setter Property="IconSize" Value="24" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -261,7 +262,7 @@
                         <Grid
                             x:Name="TopCardRoot"
                             Padding="{TemplateBinding Padding}"
-                            VerticalAlignment="Center"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Background="{TemplateBinding Background}"
                             BackgroundTransition="{StaticResource QuickBrushTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"

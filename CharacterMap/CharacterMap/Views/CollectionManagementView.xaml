@@ -31,7 +31,10 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal" Spacing="12" VerticalAlignment="Top">
+                <StackPanel
+                    VerticalAlignment="Top"
+                    Orientation="Horizontal"
+                    Spacing="12">
                     <ComboBox
                         x:Name="CollectionSelector"
                         x:Uid="CollectionSelector"
@@ -131,12 +134,12 @@
                 </StackPanel>
 
                 <TextBlock
-                    Margin="0 12 0 0"
                     x:Name="CollectionManagementHint"
                     x:Load="{x:Bind core:Converters.IsNull(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=True, TargetNullValue=True}"
                     x:Uid="CollectionManagementHint"
                     Grid.Row="1"
                     Grid.ColumnSpan="2"
+                    Margin="0 12 0 0"
                     Style="{StaticResource DescriptionStyle}"
                     d:Text="Create collections to compare, export or manage multiple fonts at once. To get started, select an existing collection above or create a new one." />
             </Grid>
@@ -152,7 +155,10 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <controls:SettingsPresenter HorizontalContentAlignment="Stretch" ContentPlacement="Bottom">
+            <controls:SettingsPresenter
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Top"
+                ContentPlacement="Bottom">
                 <controls:SettingsPresenter.Title>
                     <Grid>
                         <TextBlock
@@ -182,15 +188,22 @@
 
                     </Grid>
                 </controls:SettingsPresenter.Title>
-                <Grid RowSpacing="8">
+                <Grid RowSpacing="8" VerticalAlignment="Top">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock Style="{StaticResource DescriptionStyle}" Text="{x:Bind GetCountLabel(ViewModel.FontList.Count, AllFontsList.SelectionCount), Mode=OneWay}" />
+                    <TextBox x:Uid="FontFamilyFilterInput" Text="{Binding ViewModel.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Style="{StaticResource DescriptionStyle}"
+                        Text="{x:Bind GetCountLabel(ViewModel.FontList.Count, AllFontsList.SelectionCount), Mode=OneWay}" />
+
                     <controls:ExtendedListView
                         x:Name="AllFontsList"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         BindableSelectedItems="{x:Bind ViewModel.SelectedFonts, Mode=TwoWay}"
                         IsMultiSelectCheckBoxEnabled="False"
                         IsSelectionBindingEnabled="True"
