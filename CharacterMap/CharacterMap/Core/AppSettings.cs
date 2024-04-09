@@ -10,6 +10,23 @@ public class AppSettings : INotifyPropertyChanged
     public const int MaxGridSize = 192;
     public string StartupLanugage { get; }
 
+    public const string UserCollectionIdentifier = "||UC:||";
+
+    /// <summary>
+    /// Last opened collection in MainView
+    /// </summary>
+    public string LastSelectedCollection
+    {
+        get => Get<string>(null);
+        set => Set(value);
+    }
+
+    public bool RestoreLastCollectionOnLaunch
+    {
+        get => Get(false);
+        set => Set(value);
+    }
+
     public int SettingsVersion
     {
         get => Get(0);
@@ -98,7 +115,7 @@ public class AppSettings : INotifyPropertyChanged
         set => BroadcastSet(value);
     }
 
-    public bool UseFluentPointerOverAnimations
+    public bool UseFluentPointerOverAnimations1
     {
         get => Get(true);
         set => BroadcastSet(value);

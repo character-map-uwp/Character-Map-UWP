@@ -2,6 +2,7 @@
 using CharacterMap.Views;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Runtime.ConstrainedExecution;
 using Windows.ApplicationModel.Core;
 
@@ -68,8 +69,16 @@ public partial class MainViewModel : ViewModelBase
                 return;
             }
 
-            if (Set(ref _selectedCollection, value) && value != null)
-                RefreshFontList(value);
+            if (Set(ref _selectedCollection, value))
+            {
+                if (value is not null)
+                {
+                    Settings.LastSelectedCollection = $"{AppSettings.UserCollectionIdentifier}{value.Id}";
+                    RefreshFontList(value);
+                }
+                else
+                    Settings.LastSelectedCollection = null;
+            }
         }
     }
 
@@ -124,6 +133,7 @@ public partial class MainViewModel : ViewModelBase
                 CreateFontListGroup();
                 break;
             case nameof(FontListFilter):
+                Settings.LastSelectedCollection = FontListFilter?.DisplayTitle;
                 RefreshFontList();
                 break;
             case nameof(TabIndex) when TabIndex > -1 && IsSecondaryView is false:
@@ -157,7 +167,27 @@ public partial class MainViewModel : ViewModelBase
                 interop.FontSetInvalidated += FontSetInvalidated;
             }
 
-            RefreshFontList();
+            if (!IsSecondaryView 
+                && isFirstLoad 
+                && Settings.RestoreLastCollectionOnLaunch)
+            {
+                switch(GetLastUsedCollection())
+                {
+                    case UserFontCollection uc:
+                        SelectedCollection = uc;
+                        break;
+                    case BasicFontFilter filter:
+                        FontListFilter = filter;
+                        break;
+                    default:
+                        RefreshFontList();
+                        break;
+                }
+            }
+            else
+                RefreshFontList();
+
+
             if (isFirstLoad)
                 RestoreOpenFonts();
         }
@@ -204,6 +234,28 @@ public partial class MainViewModel : ViewModelBase
         await FontFinder.LoadFontsAsync();
         RefreshFontList(SelectedCollection);
         IsLoadingFonts = false;
+    }
+
+    /// <summary>
+    /// Can return <see cref="UserFontCollection"/>, <see cref="BasicFontFilter"/> or <see cref="null"/>
+    /// </summary>
+    /// <returns></returns>
+    object GetLastUsedCollection()
+    {
+        // 1. No collection
+        if (Settings.LastSelectedCollection is null)
+            return null;
+
+        // 2. User collection
+        if (Settings.LastSelectedCollection.StartsWith(AppSettings.UserCollectionIdentifier))
+        {
+            if (long.TryParse(Settings.LastSelectedCollection.Remove(0, AppSettings.UserCollectionIdentifier.Length), System.Globalization.NumberStyles.Integer, CultureInfo.InvariantCulture, out long id))
+                return FontCollections.Items.FirstOrDefault(c => c.Id == id);
+        }
+
+        // 3. App defined font filter
+        //    NOTE: breaks if language changes
+        return FilterFlyout.AllFilters.FirstOrDefault(f => f.DisplayTitle == Settings.LastSelectedCollection);
     }
 
     public async void RefreshFontList(UserFontCollection collection = null)
@@ -299,6 +351,9 @@ public partial class MainViewModel : ViewModelBase
                 {
                     item.PropertyChanged -= Item_PropertyChanged;
                     item.PropertyChanged += Item_PropertyChanged;
+
+                    if (FontList is not null)
+                        item.IsCompact = FontList.Contains(item.Font) is false;
                 }
             }
 
@@ -334,7 +389,7 @@ public partial class MainViewModel : ViewModelBase
 
                 if (SelectedFont is not null)
                     Settings.LastSelectedFontName = SelectedFont.Name;
-                else if (TabIndex < Fonts.Count)
+                else if (TabIndex < Fonts.Count && TabIndex >= 0)
                     Settings.LastSelectedFontName = Fonts[TabIndex].Font.Name;
 
             });
@@ -471,15 +526,15 @@ public partial class MainViewModel : ViewModelBase
             if (IsLoadingFonts is false && FontList.Contains(selected) is false)
                 SelectedFont = null;
 
+            // 4.1. Update tab size
+            foreach (var font in Fonts.ToList())
+            {
+                font.IsCompact = FontList.Contains(font.Font) is false;
+            }
+
             // 4. Set the correct selected font and remove tabs that are no longer in the list
             if (selected is not null)
             {
-                // 4.1. Update tab size
-                foreach (var font in Fonts.ToList())
-                {
-                    font.IsCompact = FontList.Contains(font.Font) is false;
-                }
-
                 // 4.2. Handle selected font
                 if (SelectedFont == null || selected != SelectedFont)
                 {

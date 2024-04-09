@@ -94,7 +94,7 @@
                         <Setter Property="Margin" Value="0 24 0 12" />
                     </Style>
 
-                    <Style x:Key="Mfi" TargetType="MenuFlyoutItem">
+                    <Style x:Key="Mfi" BasedOn="{StaticResource ThemeMenuFlyoutItemStyle}" TargetType="MenuFlyoutItem">
                         <Setter Property="MinHeight" Value="40" />
                         <Setter Property="MinWidth" Value="160" />
                     </Style>

@@ -1628,4 +1628,12 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
   <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
     <value>Filter by family</value>
   </data>
+  <data name="SettingsRememberFilter.Description" xml:space="preserve">
+    <value>If enabled, the app will remember the last selected collection or filter and restore it when the app is restarted. 
+
+Otherwise, "All Fonts" is selected by default on every launch.</value>
+  </data>
+  <data name="SettingsRememberFilter.Title" xml:space="preserve">
+    <value>Remember selected font list filter between sessions</value>
+  </data>
 </root>

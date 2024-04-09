@@ -758,9 +758,11 @@
                             <core:Properties.Footer>
                                 <ListViewItem
                                     x:Name="EditButton"
+                                    h:FluentAnimation.PointerDownScale="0.92"
                                     h:FluentAnimation.PointerOver="Target"
                                     h:FluentAnimation.PointerOverAxis="Vertical"
                                     h:FluentAnimation.PointerOverOffset="-2"
+                                    h:FluentAnimation.Pressed="Target"
                                     Style="{StaticResource DefaultThemeListViewItemStyle}">
                                     <StackPanel
                                         Name="Target"

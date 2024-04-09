@@ -1430,6 +1430,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         helpers:FluentAnimation.PointerOver="FluentContentPresenter"
+                        helpers:FluentAnimation.PointerOverOffset="-2"
                         Click="TypeRampFlowButton_Click"
                         Style="{StaticResource MapInfoButtonStyle}">
                         <Path
@@ -1917,9 +1918,13 @@
                                                 AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                                 MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                                 Placement="Top">
-                                                <MenuFlyoutItem x:Uid="ExportPNGLabel" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
+                                                <MenuFlyoutItem
+                                                    x:Uid="ExportPNGLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
+                                                    Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
                                                 <MenuFlyoutItem
                                                     x:Uid="ColoredGlyphLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSavePng}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind ViewModel.SelectedCharAnalysis.HasColorGlyphs, Mode=OneWay}">
@@ -1929,6 +1934,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="BlackFill"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSavePng}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
@@ -1938,6 +1944,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="WhiteFill"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSavePng}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
@@ -1948,10 +1955,12 @@
 
                                                 <MenuFlyoutItem
                                                     x:Uid="ExportSVGLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
                                                     Visibility="{x:Bind ViewModel.SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}" />
                                                 <MenuFlyoutItem
                                                     x:Uid="ExportSVGGlyphLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSaveSvg}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind ViewModel.IsSvgChar, Mode=OneWay}">
@@ -1961,6 +1970,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="ColoredGlyphLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSaveSvg}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedCharAnalysis.HasColorGlyphs, ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
@@ -1970,6 +1980,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="BlackFill"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSaveSvg}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
@@ -1979,6 +1990,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="WhiteFill"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSaveSvg}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">

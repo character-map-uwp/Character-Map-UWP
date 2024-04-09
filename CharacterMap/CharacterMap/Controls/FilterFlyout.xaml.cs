@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
@@ -32,6 +33,8 @@ public sealed partial class FilterFlyout : MenuFlyout
     private MenuFlyoutSeparator _fontSep = null;
 
     private MenuFlyoutSubItem _ops = null;
+
+    public static IReadOnlyList<BasicFontFilter> AllFilters { get; private set; }
 
     public FilterFlyout()
     {
@@ -107,6 +110,11 @@ public sealed partial class FilterFlyout : MenuFlyout
 
         _defaultCount = Items.Count;
 
+        if (AllFilters is null)
+             AllFilters = AllMenuItems().Where(c => Properties.GetFilter(c) is not null)
+                .Select(c => Properties.GetFilter(c))
+                .ToList().AsReadOnly();
+
         #region Helpers
 
         MenuFlyout Add(BasicFontFilter filter)
@@ -147,6 +155,25 @@ public sealed partial class FilterFlyout : MenuFlyout
         }
 
         #endregion
+    }
+
+    public IEnumerable<MenuFlyoutItemBase> AllMenuItems()
+    {
+        var start = this;
+
+        Queue<MenuFlyoutItemBase> queue = [];
+        foreach (var item in this.Items)
+            queue.Enqueue(item);
+
+        while (queue.Count > 0)
+        {
+            var item = queue.Dequeue();
+            yield return item;
+
+            if (item is MenuFlyoutSubItem sub)
+                foreach (var i in sub.Items)
+                    queue.Enqueue(i);
+        }
     }
 
     private void MenuFlyout_Opening(object sender, object e)

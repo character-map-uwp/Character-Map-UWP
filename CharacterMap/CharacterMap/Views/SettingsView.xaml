@@ -455,7 +455,7 @@
                                             x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
                                             x:Uid="SettingsPointerOverAnimation"
                                             Style="{StaticResource SubItemSettingsPresenterStyle}">
-                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations, Mode=TwoWay}" />
+                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations1, Mode=TwoWay}" />
                                         </controls:SettingsPresenter>
                                         <controls:SettingsPresenter
                                             x:Name="ExpensiveAnimationToggle"
@@ -692,12 +692,21 @@
                                 x:Load="False"
                                 Visibility="Collapsed">
                                 <TextBlock x:Uid="SettingsAdvancedOptionsLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+
                                 <controls:SettingsPresenter
                                     x:Uid="SettingsDeprecatedIconsPresenter"
                                     d:Description="If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout."
                                     d:Title="Hide deprecated icons">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.HideDeprecatedMDL2, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
+                                    x:Uid="SettingsRememberFilter"
+                                    d:Description="If enabled, the app will remember the last selected collection or filter and restore it when the app is restarted. Otherwise, All Fonts is selected by default on every launch."
+                                    d:Title="Remember selected font list filter between sessions">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.RestoreLastCollectionOnLaunch, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
                             </StackPanel>
 
                             <StackPanel x:Name="ChangePanel">
@@ -803,8 +812,14 @@
                                                     AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                                     MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                                     Placement="Bottom">
-                                                    <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportToFolder}" />
-                                                    <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
+                                                    <MenuFlyoutItem
+                                                        x:Uid="CollectionExportFolder"
+                                                        Click="{x:Bind ViewModel.ExportToFolder}"
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                                    <MenuFlyoutItem
+                                                        x:Uid="CollectionExportZip"
+                                                        Click="{x:Bind ViewModel.ExportAsZip}"
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
                                                 </MenuFlyout>
                                             </core:Properties.Flyout>
                                         </controls:UXHyperlinkButton>

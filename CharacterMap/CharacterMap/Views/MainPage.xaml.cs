@@ -256,7 +256,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         {
             Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseSelectionAnimations)));
             Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.AllowExpensiveAnimations)));
-            Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseFluentPointerOverAnimations)));
+            Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseFluentPointerOverAnimations1)));
         });
     }
 
