@@ -409,7 +409,10 @@
 
     <Style x:Key="ThemeMenuFlyoutItemStyle" TargetType="MenuFlyoutItem" />
 
-    <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox" />
+    <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Padding" Value="8 -1 0 0" />
+    </Style>
 
 
     <!--  BUTTONS  -->
@@ -975,6 +978,8 @@
         </Setter>
     </Style>
 
+    <Style BasedOn="{StaticResource DefaultThemeListViewItemStyle}" TargetType="ListViewItem" />
+
 
 
 
@@ -1033,21 +1038,18 @@
                                 FontSize="{ThemeResource ControlContentThemeFontSize}" />
                         </Border>
 
-                        <RelativePanel Grid.Row="1" Margin="16 8 16 16">
+                        <Grid Grid.Row="1" Margin="16 8 16 16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
                             <ContentPresenter
                                 x:Name="Description"
                                 Content="{TemplateBinding Description}"
-                                RelativePanel.AlignLeftWithPanel="True"
-                                RelativePanel.AlignRightWithPanel="True"
-                                RelativePanel.AlignTopWithPanel="True"
                                 Style="{StaticResource DescriptionContentStyle}"
                                 Visibility="Collapsed" />
-                            <ContentPresenter
-                                Content="{TemplateBinding Content}"
-                                RelativePanel.AlignLeftWithPanel="True"
-                                RelativePanel.AlignRightWithPanel="True"
-                                RelativePanel.Below="Description" />
-                        </RelativePanel>
+                            <ContentPresenter Grid.Row="1" Content="{TemplateBinding Content}" />
+                        </Grid>
 
                         <Border
                             x:Name="ItemsRoot"
@@ -1078,6 +1080,11 @@
 
     <Style TargetType="controls:ContentGroup">
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="BorderBrush" Value="{ThemeResource CardBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Margin" Value="0 12 0 0" />
+        <Setter Property="IsTabStop" Value="False" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -1088,9 +1095,42 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ContentGroup">
-                    <controls:SettingsPresenter Title="{TemplateBinding Text}">
-                        <ItemsPresenter />
-                    </controls:SettingsPresenter>
+                    <Grid Background="{TemplateBinding Background}">
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Border
+                            Grid.RowSpan="3"
+                            Margin="4 8 4 4"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" />
+
+                        <Border
+                            Margin="12 0"
+                            Padding="4 0"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            Background="{ThemeResource DefaultPageBackgroundBrush}">
+                            <ContentPresenter
+                                HorizontalAlignment="Stretch"
+                                Content="{TemplateBinding Text}"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{ThemeResource ControlContentThemeFontSize}" />
+                        </Border>
+
+                        <Grid Grid.Row="1" Margin="16 8 16 16">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ItemsPresenter />
+                        </Grid>
+
+
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

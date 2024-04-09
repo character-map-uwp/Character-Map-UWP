@@ -862,6 +862,7 @@
                             Padding="0 12 0 24"
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
+                            ItemContainerStyle="{StaticResource DefaultThemeGridViewItemStyle}"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
                             ItemFontFace="{Binding Options.Variant.Face, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemFontFamily="{Binding Options.Variant.Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
@@ -879,7 +880,7 @@
                             <GridView.ItemTemplate>
                                 <DataTemplate>
                                     <!--  For performance reasons, all bindings are done in C#  -->
-                                    <Grid Padding="4">
+                                    <Grid Name="TemplateContent" Padding="4">
                                         <TextBlock
                                             x:Name="Text"
                                             Margin="0 -2 0 0"

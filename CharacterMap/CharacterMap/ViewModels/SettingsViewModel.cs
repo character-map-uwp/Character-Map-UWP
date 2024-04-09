@@ -7,7 +7,7 @@ namespace CharacterMap.ViewModels;
 
 public partial class SettingsViewModel : ViewModelBase
 {
-    private Random _random { get; } = new Random();
+    private Random _random { get; } = new ();
 
     protected override bool TrackAnimation => true;
 
@@ -17,6 +17,14 @@ public partial class SettingsViewModel : ViewModelBase
         GlyphAnnotation.UnicodeHex,
         GlyphAnnotation.UnicodeIndex
     };
+
+    public List<String> Themes { get; } =
+        [
+            "Windows 10",
+            "Windows 11",
+            "Classic Windows",
+            "Zune Desktop"
+        ];
 
     [ObservableProperty] string _rampInput;
     [ObservableProperty] FontFamily _previewFontSource;

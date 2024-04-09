@@ -624,11 +624,9 @@
                                 Margin="0 12 0 0"
                                 Header="{x:Null}"
                                 HeaderTemplate="{x:Null}"
+                                ItemsSource="{x:Bind ViewModel.ExportFormats}"
                                 SelectedIndex="{x:Bind ViewModel.SelectedFormat, Mode=TwoWay}"
-                                Style="{StaticResource DefaultThemeComboBoxStyle}">
-                                <cmControls:UXComboBoxItem Content="PNG" />
-                                <cmControls:UXComboBoxItem Content="SVG" />
-                            </cmControls:UXComboBox>
+                                Style="{StaticResource DefaultThemeComboBoxStyle}" />
 
                             <StackPanel Transitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}" Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
                                 <TextBlock

@@ -113,7 +113,7 @@ public class UXComboBox : ComboBox//, IThemeableControl
 
     protected override DependencyObject GetContainerForItemOverride()
     {
-        return new UXComboBoxItem { };// Style = ResourceHelper.Get<Style>("DefaultThemeComboBoxItemStyle") ?? null };
+        return new UXComboBoxItem { };// { Style = ItemContainerStyle };
     }
 
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)

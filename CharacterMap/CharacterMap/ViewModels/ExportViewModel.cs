@@ -8,6 +8,8 @@ public class ExportViewModel : ViewModelBase
 {
     #region Properties
 
+    public List<String> ExportFormats { get; } = ["PNG", "SVG"];
+
     protected override bool TrackAnimation => true;
 
     private InstalledFont _font { get; }

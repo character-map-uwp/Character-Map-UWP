@@ -510,18 +510,12 @@
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter x:Uid="SettingsDesignStyle">
-                                    <StackPanel>
-                                        <controls:UXComboBox
-                                            MinWidth="256"
-                                            Margin="0 8 0 0"
-                                            SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
-                                            SelectionChanged="Design_SelectionChanged">
-                                            <x:String>Windows 10</x:String>
-                                            <x:String>Windows 11</x:String>
-                                            <x:String>Classic Windows</x:String>
-                                            <x:String>Zune Desktop</x:String>
-                                        </controls:UXComboBox>
-                                    </StackPanel>
+                                    <controls:UXComboBox
+                                        Width="256"
+                                        Margin="0 8 0 0"
+                                        ItemsSource="{x:Bind ViewModel.Themes}"
+                                        SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
+                                        SelectionChanged="Design_SelectionChanged" />
                                     <controls:SettingsPresenter.Items>
                                         <controls:UXButton
                                             x:Name="ThemeRestartButton"
