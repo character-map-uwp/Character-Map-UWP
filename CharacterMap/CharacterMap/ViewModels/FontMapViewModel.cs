@@ -619,9 +619,11 @@ public partial class FontMapViewModel : ViewModelBase
         }
 
         ExportResult result = await ExportManager.ExportGlyphAsync(
-            new(format, args.Style),
-            SelectedFont.Font,
-            RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo>() { args.Typography } },
+            new(format, args.Style)
+            {
+                Font = SelectedFont.Font,
+                Options = RenderingOptions with { Analysis = analysis, Typography = new List<TypographyFeatureInfo>() { args.Typography } }
+            },
             character);
 
         if (result.State == ExportState.Succeeded)

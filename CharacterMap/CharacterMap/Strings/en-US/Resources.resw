@@ -1636,4 +1636,34 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="SettingsRememberFilter.Title" xml:space="preserve">
     <value>Remember selected font list filter between sessions</value>
   </data>
+  <data name="GlyphNameToggleHeader.Text" xml:space="preserve">
+    <value>File Name Template</value>
+  </data>
+  <data name="GlyphNameToggleLabel.Text" xml:space="preserve">
+    <value>Show template parts</value>
+  </data>
+  <data name="FileNameWriterCharDescDesc" xml:space="preserve">
+    <value>Character Unicode description, or Unicode string if none</value>
+  </data>
+  <data name="FileNameWriterExtensionDesc" xml:space="preserve">
+    <value>File Extension</value>
+  </data>
+  <data name="FileNameWriterFaceDesc" xml:space="preserve">
+    <value>Name of current font face</value>
+  </data>
+  <data name="FileNameWriterFamilyDesc" xml:space="preserve">
+    <value>Name of font family</value>
+  </data>
+  <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
+    <value>Size in pixels</value>
+  </data>
+  <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
+    <value>Unicode codepoint value</value>
+  </data>
+  <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
+    <value>Unicode hex value</value>
+  </data>
+  <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
+    <value>XAML glyph code</value>
+  </data>
 </root>

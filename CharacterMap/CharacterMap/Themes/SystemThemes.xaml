@@ -605,7 +605,7 @@
                 FontSize="30"
                 Glyph="{Binding Glyph}" />
 
-            <StackPanel Grid.Column="1" x:Name="LabelRoot">
+            <StackPanel x:Name="LabelRoot" Grid.Column="1">
                 <TextBlock>
                     <Run FontWeight="SemiBold" Text="{Binding Title}" />
                     <Run

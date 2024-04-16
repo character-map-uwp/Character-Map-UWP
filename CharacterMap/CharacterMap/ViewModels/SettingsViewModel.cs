@@ -1,9 +1,54 @@
-﻿using Windows.ApplicationModel.Core;
+﻿using SQLitePCL;
+using Windows.ApplicationModel.Core;
 using Windows.Globalization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
+
+public partial class GlyphFileNameViewModel : ObservableObject
+{
+    [ObservableProperty] string _template = ExportOptions.DefaultTemplate;
+    [ObservableProperty] string _example;
+    [ObservableProperty] bool _isExpanded;
+
+    public bool SaveTemplate { get; set; }
+
+    private InstalledFont _lastFont = null;
+    private CharacterRenderingOptions _lastOptions = null;
+
+    public void SetOptions(InstalledFont font, CharacterRenderingOptions options)
+    {
+        _lastFont = font;
+        _lastOptions = options;
+
+        UpdateExample();
+    }
+
+    public void Reset() => Template = ExportOptions.DefaultTemplate;
+
+    public void ToggleExpansion() => IsExpanded = !IsExpanded;
+
+    partial void OnTemplateChanged(string value)
+    {
+        UpdateExample();
+
+        if (SaveTemplate)
+            ResourceHelper.AppSettings.FileNameTemplate = value;
+    }
+
+    void UpdateExample()
+    {
+        ExportOptions options = new(ExportFormat.Png, ExportStyle.Black)
+        {
+            Font = _lastFont,
+            Options = _lastOptions,
+            FileNameTemplate = Template
+        };
+
+        Example = options.GetFileName(new Character(65), "png");
+    }
+}
 
 public partial class SettingsViewModel : ViewModelBase
 {
@@ -26,6 +71,8 @@ public partial class SettingsViewModel : ViewModelBase
             "Zune Desktop"
         ];
 
+    public GlyphFileNameViewModel GlyphNameModel { get; } = new() { SaveTemplate = true };
+
     [ObservableProperty] string _rampInput;
     [ObservableProperty] FontFamily _previewFontSource;
     [ObservableProperty] List<InstalledFont> _previewFonts;
@@ -40,8 +87,6 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] string _systemExportProgress;
     [ObservableProperty] string _importedExportProgress;
 
-
-
     public bool ThemeHasChanged => Settings.ApplicationDesignTheme != _originalDesign;
 
     private List<ChangelogItem> _changelog;
@@ -54,20 +99,25 @@ public partial class SettingsViewModel : ViewModelBase
 
     private AppSettings Settings { get; } = ResourceHelper.AppSettings;
 
+  
+
     public SettingsViewModel()
     {
         _originalDesign = Settings.ApplicationDesignTheme;
     }
 
-    public void UpdatePreviews(InstalledFont font, FontVariant variant)
+    public void UpdatePreviews(InstalledFont font, CharacterRenderingOptions options)
     {
+        GlyphNameModel.SetOptions(font, options);
+        GlyphNameModel.Template = Settings.FileNameTemplate;
+
         bool isSymbol = Ioc.Default.GetService<UserCollectionsService>().IsSymbolFont(font);
 
         // 1. Update "A B Y" Character grid previews
         // Note: it is legal for both "variant" and "font" to be NULL
         //       when calling, so test both cases.
-        PreviewFontSource = variant != null && !isSymbol
-            ? new FontFamily(variant.XamlFontSource)
+        PreviewFontSource = options.Variant != null && !isSymbol
+            ? new FontFamily(options.Variant.XamlFontSource)
             : FontFamily.XamlAutoFontFamily;
 
         // 2. Update FontList Previews
@@ -97,6 +147,8 @@ public partial class SettingsViewModel : ViewModelBase
         ImportedFaceCount = FontFinder.ImportedFaceCount;
     }
 
+   
+
     private void RampOptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {
         Settings.CustomRampOptions = RampOptions;
@@ -122,10 +174,11 @@ public partial class SettingsViewModel : ViewModelBase
         // application rather than bug-fixes or visual changes.
         return [
             new("Latest Update (April 2024)", // April 2024
-                "- Support searching font families in Settings->Collections.\n" +
-                "- Added option to restore last selected font filter / collection on app launch in Settings->Advanced"),
+                "- Support searching font families in Settings->Collections\n" +
+                "- Added option to restore last selected font filter / collection on app launch in Settings->Advanced\n" +
+                "- Added option to define how exported glyph files are named by default in Settings->Export"),
             new("2024.1.1.0 (December 2023)", // Dec 2023
-                "- Support search for fonts that contain specific characters in \"Find a font family\" search box, by typing in \"char:\" followed by your query.\n" +
+                "- Support search for fonts that contain specific characters in \"Find a font family\" search box, by typing in \"char:\" followed by your query\n" +
                 "    • e.g. to find all fonts that contain the two arrow characters '←' & '↗', type in \"char: ←↗\"\n" +
                 "- Added option to search for other fonts with the selected character in context menu of main window's Character Map"),
              new("2023.9.0.0 (November 2023)", // Nov 2023

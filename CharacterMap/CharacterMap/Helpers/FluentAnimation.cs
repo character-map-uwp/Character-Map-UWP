@@ -83,7 +83,7 @@ public class FluentAnimationHelper
 
 #if DEBUG
         //if (sender is FrameworkElement se && se.GetFirstAncestorOfType<Control>() is MenuFlyoutSubItem m)
-            System.Diagnostics.Debug.WriteLine($"From {e.OldState?.Name} to {e.NewState.Name}");
+           // System.Diagnostics.Debug.WriteLine($"From {e.OldState?.Name} to {e.NewState.Name}");
 #endif
 
         // 1. Handle "PointerOver"
@@ -114,7 +114,7 @@ public class FluentAnimationHelper
         }
 
         var tr = GetPressedTarget(e.Control);
-        Debug.WriteLine($"has pressed: {tr != null}");
+        //Debug.WriteLine($"has pressed: {tr != null}");
 
         // 2. Handle "PressedDown"
         if (e.NewState is VisualState vp

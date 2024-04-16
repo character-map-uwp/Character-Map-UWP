@@ -376,7 +376,9 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         DismissMenu();
 
         this.FindName(nameof(SettingsView));
-        SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont, idx);
+        SettingsView.Show(
+            FontMap.ViewModel.RenderingOptions, 
+            ViewModel.SelectedFont, idx);
         OnModalOpened();
     }
 

@@ -1350,4 +1350,63 @@ public class Properties : DependencyObject
     }
 
     #endregion
+
+    #region Rotation
+
+    public static double GetRotation(DependencyObject obj)
+    {
+        return (double)obj.GetValue(RotationProperty);
+    }
+
+    public static void SetRotation(DependencyObject obj, double value)
+    {
+        obj.SetValue(RotationProperty, value);
+    }
+
+    public static readonly DependencyProperty RotationProperty =
+        AP<double, Properties>(0d, (d, e) =>
+        {
+            if (d is FrameworkElement f && f.GetElementVisual() is { } v && e.NewValue is double n)
+            {
+                v.CenterPoint = new(v.Size / 2f, 0f);
+                v.RotationAxis = Vector3.UnitZ;
+                v.RotationAngleInDegrees = (float)n;
+            }
+        });
+
+    public static KeyTime GetRotationTransition(DependencyObject obj)
+    {
+        return (KeyTime)obj.GetValue(RotationTransitionProperty);
+    }
+
+    public static void SetRotationTransition(DependencyObject obj, KeyTime value)
+    {
+        obj.SetValue(RotationTransitionProperty, value);
+    }
+
+    public static readonly DependencyProperty RotationTransitionProperty =
+        AP<KeyTime, Properties>(KeyTime.FromTimeSpan(TimeSpan.Zero), (d, e) =>
+        {
+            if (d is FrameworkElement f
+                && f.GetElementVisual() is { } v 
+                && e.NewValue is KeyTime n)
+            {
+                v.SetImplicitAnimation(nameof(Visual.RotationAngleInDegrees),
+                    v.CreateScalarKeyFrameAnimation(nameof(Visual.RotationAngleInDegrees))
+                    .AddKeyFrame(0, CompositionFactory.STARTING_VALUE)
+                    .AddKeyFrame(1, CompositionFactory.FINAL_VALUE)
+                    .SetDuration(n.TimeSpan));
+            }
+        });
+
+    #endregion
+
+    [AttachedProperty(DefaultValue = 0d, Type = typeof(double))]
+    public static void RotationTransition() { }
+
+    public class AttachedPropertyAttribute : Attribute
+    {
+        public object DefaultValue { get; set; }
+        public Type Type { get; set; }
+    }
 }

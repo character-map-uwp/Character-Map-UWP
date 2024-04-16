@@ -12,6 +12,12 @@ public class AppSettings : INotifyPropertyChanged
 
     public const string UserCollectionIdentifier = "||UC:||";
 
+    public string FileNameTemplate
+    {
+        get => Get<string>(ExportOptions.DefaultTemplate);
+        set => Set(value);
+    }
+
     /// <summary>
     /// Last opened collection in MainView
     /// </summary>

@@ -39,7 +39,6 @@ public static class LeakTrackingService
 
     static void TryActivate()
     {
-        return;
         if (_isActive)
             return;
 

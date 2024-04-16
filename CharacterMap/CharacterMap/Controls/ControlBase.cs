@@ -111,12 +111,12 @@ public abstract class ControlBase : Control
     /// <returns></returns>
     public static DependencyProperty AP<V, Y>(PropertyMetadata metadata = null, [CallerMemberName] string name = null)
     {
-        return DependencyProperty.RegisterAttached(name.Remove(name.Length - 8), typeof(V), typeof(Y), metadata ?? NullMetadata);
+        return DependencyProperty.RegisterAttached(name[0..^8], typeof(V), typeof(Y), metadata ?? NullMetadata);
     }
 
-    public static DP AP<V, Y>(V defaultValue, PropertyChangedCallback callback, [CallerMemberName] string name = null)
+    public static DependencyProperty AP<V, Y>(V defaultValue, PropertyChangedCallback callback, [CallerMemberName] string name = null)
     {
-        return DependencyProperty.RegisterAttached(name.Remove(name.Length - 8), typeof(V), typeof(Y), new PropertyMetadata(defaultValue, callback));
+        return DependencyProperty.RegisterAttached(name[0..^8], typeof(V), typeof(Y), new PropertyMetadata(defaultValue, callback));
     }
 
     #endregion

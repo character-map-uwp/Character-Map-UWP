@@ -85,7 +85,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
-        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="5" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="Padding" Value="2 1" />
         <Setter Property="Template">
             <Setter.Value>
@@ -849,7 +849,7 @@
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
-        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="4" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutItem">
@@ -989,7 +989,7 @@
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="core:Properties.PointerOverAnimation" Value="SubItemChevron,TextBlock|X" />
-        <Setter Property="core:Properties.PointerAnimationOffset" Value="4" />
+        <Setter Property="core:Properties.PointerAnimationOffset" Value="3" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
         <!--<Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="4" />-->
@@ -1128,7 +1128,7 @@
     <!--  CHECKBOX  -->
     <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
         <Setter Property="core:Properties.PointerOverAnimation" Value="ContentPresenter|X" />
-        <Setter Property="core:Properties.PointerAnimationOffset" Value="4" />
+        <Setter Property="core:Properties.PointerAnimationOffset" Value="3" />
         <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentPresenter|Scale" />
         <Setter Property="core:Properties.ClickAnimation" Value="ContentPresenter|Scale" />
         <Setter Property="core:Properties.ClickAnimationOffset" Value="0.93" />
@@ -1786,7 +1786,7 @@
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="MinHeight" Value="36" />
         <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
-        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="5" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
         <Setter Property="Template">
             <Setter.Value>

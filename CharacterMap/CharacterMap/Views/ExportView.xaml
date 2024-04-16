@@ -7,10 +7,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:primitiveContract7Present="using:Microsoft.UI.Xaml.Controls.Primitives?IsApiContractPresent(Windows.Foundation.UniversalApiContract,7)"
     xmlns:views="using:CharacterMap.Views"
     Background="Transparent"
+    DataContext="{x:Bind}"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=views:ExportView}"
@@ -674,6 +676,7 @@
                                 IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}"
                                 Style="{StaticResource DefaultThemeCheckBoxStyle}"
                                 d:Content="{core:Localizer Key=ExportSkipBlank/Content}" />
+                            <cmControls:GlyphNamingControl Margin="0,16,0,4" ViewModel="{x:Bind ViewModel.GlyphNameModel}" />
                         </cmControls:ContentGroup>
 
                     </StackPanel>

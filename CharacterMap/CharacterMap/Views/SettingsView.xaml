@@ -9,12 +9,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     DataContext="{x:Bind}"
     Loaded="View_Loaded"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
     d:DesignHeight="1880"
     d:DesignWidth="1920">
 
@@ -605,9 +607,16 @@
                                                     Text=" e.g. MS Office Symbol Regular v1.5.ttf" />
                                             </TextBlock>
                                         </CheckBox>
-
                                     </StackPanel>
 
+
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
+                                    Title="Glyph Export Naming"
+                                    ContentPlacement="Bottom"
+                                    Description="Choose how exported character files are named.">
+                                    <controls:GlyphNamingControl ViewModel="{x:Bind ViewModel.GlyphNameModel}" />
 
                                 </controls:SettingsPresenter>
 

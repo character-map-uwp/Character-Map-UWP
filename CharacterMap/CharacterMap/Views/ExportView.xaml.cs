@@ -32,7 +32,9 @@ public sealed partial class ExportView : PopoverViewBase
 
     public override void Show()
     {
+        ViewModel.GlyphNameModel.SetOptions(ViewModel.Font, ViewModel.Options);
         StartShowAnimation();
+
         this.Visibility = Visibility.Visible;
         Presenter.SetTitleBar();
         base.Show();
