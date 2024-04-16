@@ -64,8 +64,8 @@ public sealed partial class FilterFlyout : MenuFlyout
             design.Add(BasicFontFilter.ForDesignScriptTag(script.Key, script.Value), style);
 
         var unicode = AddSub("OptionUnicodeRange/Text", sub);
-        foreach (var range in UnicodeRanges.All)
-            unicode.Add(BasicFontFilter.ForNamedRange(range), style);
+        foreach (var filter in UnicodeRanges.AllFilters)
+            unicode.Add(filter, style);
 
         AddSep(sub);
         sub.Add(BasicFontFilter.ScriptArabic, style)

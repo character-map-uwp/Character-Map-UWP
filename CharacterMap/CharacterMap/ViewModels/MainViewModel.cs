@@ -167,6 +167,7 @@ public partial class MainViewModel : ViewModelBase
                 interop.FontSetInvalidated += FontSetInvalidated;
             }
 
+            // Restore selected filter on app launch
             if (!IsSecondaryView 
                 && isFirstLoad 
                 && Settings.RestoreLastCollectionOnLaunch)
@@ -177,7 +178,9 @@ public partial class MainViewModel : ViewModelBase
                         SelectedCollection = uc;
                         break;
                     case BasicFontFilter filter:
-                        FontListFilter = filter;
+                        // Note: do not set FontListFilter directly, causes issues.
+                        _fontListFilter = filter;
+                        OnPropertyChanged(nameof(FontListFilter));
                         break;
                     default:
                         RefreshFontList();
@@ -187,7 +190,7 @@ public partial class MainViewModel : ViewModelBase
             else
                 RefreshFontList();
 
-
+            // restore tabs on app launch
             if (isFirstLoad)
                 RestoreOpenFonts();
         }

@@ -2044,6 +2044,22 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
           <source>Find in other fonts</source>
           <target state="new">Find in other fonts</target>
         </trans-unit>
+        <trans-unit id="FontFamilyFilterInput.PlaceholderText" translate="yes" xml:space="preserve">
+          <source>Filter by family</source>
+          <target state="new">Filter by family</target>
+        </trans-unit>
+        <trans-unit id="SettingsRememberFilter.Description" translate="yes" xml:space="preserve">
+          <source>If enabled, the app will remember the last selected collection or filter and restore it when the app is restarted. 
+
+Otherwise, "All Fonts" is selected by default on every launch.</source>
+          <target state="new">If enabled, the app will remember the last selected collection or filter and restore it when the app is restarted. 
+
+Otherwise, "All Fonts" is selected by default on every launch.</target>
+        </trans-unit>
+        <trans-unit id="SettingsRememberFilter.Title" translate="yes" xml:space="preserve">
+          <source>Remember selected font list filter between sessions</source>
+          <target state="new">Remember selected font list filter between sessions</target>
+        </trans-unit>
       </group>
     </body>
   </file>
