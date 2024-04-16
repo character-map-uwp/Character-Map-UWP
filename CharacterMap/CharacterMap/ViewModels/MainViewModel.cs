@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Globalization;
 using System.Runtime.ConstrainedExecution;
 using Windows.ApplicationModel.Core;
+using Windows.Foundation.Diagnostics;
 
 namespace CharacterMap.ViewModels;
 
@@ -151,6 +152,14 @@ public partial class MainViewModel : ViewModelBase
     private async Task LoadAsync(bool isFirstLoad = false)
     {
         IsLoadingFonts = true;
+       
+        if (InitialLoad != null
+            && InitialLoad.IsCompleted is false
+            && Task.CurrentId != InitialLoad.Id)
+        {
+            // Investigate re-entrancy issues at start-up
+            Debugger.Break();
+        }
 
         try
         {
@@ -168,6 +177,7 @@ public partial class MainViewModel : ViewModelBase
             }
 
             // Restore selected filter on app launch
+            // TODO: Doesn't work 100%. Why?
             if (!IsSecondaryView 
                 && isFirstLoad 
                 && Settings.RestoreLastCollectionOnLaunch)
@@ -175,14 +185,17 @@ public partial class MainViewModel : ViewModelBase
                 switch(GetLastUsedCollection())
                 {
                     case UserFontCollection uc:
+                        //Debug.WriteLine($"LAST USED COLLECTIN: {uc.Name}");
                         SelectedCollection = uc;
                         break;
                     case BasicFontFilter filter:
+                        //Debug.WriteLine($"LAST USED FILTER: {filter.DisplayTitle}");
                         // Note: do not set FontListFilter directly, causes issues.
                         _fontListFilter = filter;
                         OnPropertyChanged(nameof(FontListFilter));
                         break;
                     default:
+                        //Debug.WriteLine($"LAST USED: NONE");
                         RefreshFontList();
                         break;
                 }

@@ -117,12 +117,14 @@ public partial class SettingsViewModel : ViewModelBase
         // Could read this from a text file, but that's a waste of performance.
         // Naught wrong with this :P
 
-        // Not really including bug fixes in here, just key features. The main idea
-        // is to try and expose features people may not be aware exist inside the
-        // application, rather than things like bug-fixes or visual changes.
-        return new()
-        {
-            new("Latest Update (December 2023)", // Dec 2023
+        // Not including bug fixes in here, just key features. The main idea
+        // is to expose features people may not be aware exist inside the
+        // application rather than bug-fixes or visual changes.
+        return [
+            new("Latest Update (April 2024)", // April 2024
+                "- Support searching font families in Settings->Collections.\n" +
+                "- Added option to restore last selected font filter / collection on app launch in Settings->Advanced"),
+            new("2024.1.1.0 (December 2023)", // Dec 2023
                 "- Support search for fonts that contain specific characters in \"Find a font family\" search box, by typing in \"char:\" followed by your query.\n" +
                 "    • e.g. to find all fonts that contain the two arrow characters '←' & '↗', type in \"char: ←↗\"\n" +
                 "- Added option to search for other fonts with the selected character in context menu of main window's Character Map"),
@@ -214,7 +216,7 @@ public partial class SettingsViewModel : ViewModelBase
                 "- Added ability to export raw PNG glyphs from fonts with Bitmap PNG glyphs\n" +
                 "- Added support for user created font collections\n" +
                 "- App can now detect when a user installs new fonts to the system"),
-        };
+        ];
     }
 
     public static List<SupportedLanguage> GetSupportedLanguages()

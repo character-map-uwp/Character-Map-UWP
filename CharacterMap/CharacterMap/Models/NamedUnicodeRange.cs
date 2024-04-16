@@ -1,7 +1,7 @@
 ﻿namespace CharacterMap.Models;
 
 [DebuggerDisplay("{Name}, Start: {Start}, End: {End}")]
-public class NamedUnicodeRange
+public record class NamedUnicodeRange
 {
     public string Name { get; }
     public uint Start { get; }

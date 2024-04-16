@@ -153,11 +153,10 @@ public class CompositionFactory : DependencyObject
 
         if (t.TotalMilliseconds > 0)
         {
-            var c = e.GetElementVisual().Compositor;
-            var ani = c.CreateScalarKeyFrameAnimation();
-            ani.Target = nameof(Visual.Opacity);
-            ani.InsertExpressionKeyFrame(1, FINAL_VALUE, c.CreateLinearEasingFunction());
-            ani.Duration = t;
+            var v = e.GetElementVisual();
+            var ani = v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
+                .AddKeyFrame(1, FINAL_VALUE, v.Compositor.GetLinearEase())
+                .SetDuration(t);
 
             e.SetImplicitAnimation(nameof(Visual.Opacity), ani);
         }
@@ -226,7 +225,7 @@ public class CompositionFactory : DependencyObject
             var e = c.GetCachedEntranceEase();
             var t = c.CreateVector3KeyFrameAnimation()
                 .SetTarget(TRANSLATION)
-                .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                .SetInitialValueBeforeDelay()
                 .SetDelayTime(delay)
                 .AddKeyFrame(0, from)
                 .AddKeyFrame(1, 0, e)
@@ -268,14 +267,17 @@ public class CompositionFactory : DependencyObject
         string key = $"SFade{to}{from}{durationMs}{delayMs}";
         return c.GetCached(key, () =>
         {
-            var o = c.CreateScalarKeyFrameAnimation();
-            o.Target = nameof(Visual.Opacity);
+            var o = c.CreateScalarKeyFrameAnimation()
+                     .SetTarget(nameof(Visual.Opacity));
+
             if (from != null && from.HasValue)
-                o.InsertKeyFrame(0, from.Value);
-            o.InsertKeyFrame(1, to, c.CreateEntranceEasingFunction());
-            o.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            o.DelayTime = TimeSpan.FromMilliseconds(delayMs);
-            o.Duration = TimeSpan.FromMilliseconds(durationMs);
+                o.AddKeyFrame(0, from.Value);
+
+            o.AddKeyFrame(1, to, c.GetCachedEntranceEase())
+             .SetInitialValueBeforeDelay()
+             .SetDelayTime(TimeSpan.FromMilliseconds(delayMs))
+             .SetDuration(TimeSpan.FromMilliseconds(durationMs));
+           
             return o;
         });
     }
@@ -380,13 +382,13 @@ public class CompositionFactory : DependencyObject
         var bv = background.EnableTranslation(true).GetElementVisual();
         var ease = bv.Compositor.GetCachedEntranceEase();
 
-        var bt = bv.Compositor.CreateVector3KeyFrameAnimation();
-        bt.Target = TRANSLATION;
-        bt.InsertExpressionKeyFrame(0, "Vector3(0, -this.Target.Size.Y, 0)");
-        bt.InsertKeyFrame(1, Vector3.Zero, ease);
-        bt.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-        bt.DelayTime = TimeSpan.FromSeconds(delay);
-        bt.Duration = TimeSpan.FromSeconds(0.7);
+        var bt = bv.CreateVector3KeyFrameAnimation(TRANSLATION)
+            .AddKeyFrame(0, "Vector3(0, -this.Target.Size.Y, 0)")
+            .AddKeyFrame(1, Vector3.Zero, ease)
+            .SetInitialValueBeforeDelay()
+            .SetDelayTime(delay)
+            .SetDuration(0.7);
+
         background.SetShowAnimation(bt);
 
         delay += 0.15;
@@ -394,13 +396,13 @@ public class CompositionFactory : DependencyObject
         foreach (var child in children)
         {
             var v = child.EnableTranslation(true).GetElementVisual();
-            var t = v.Compositor.CreateVector3KeyFrameAnimation();
-            t.Target = TRANSLATION;
-            t.InsertExpressionKeyFrame(0, "Vector3(0, -this.Target.Size.Y, 0)");
-            t.InsertKeyFrame(1, Vector3.Zero, ease);
-            t.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
-            t.DelayTime = TimeSpan.FromSeconds(delay);
-            t.Duration = TimeSpan.FromSeconds(0.7);
+            var t = v.CreateVector3KeyFrameAnimation(TRANSLATION)
+                .AddKeyFrame(0, "Vector3(0, -this.Target.Size.Y, 0)")
+                .AddKeyFrame(1, Vector3.Zero, ease)
+                .SetInitialValueBeforeDelay()
+                .SetDelayTime(delay)
+                .SetDuration(0.7);
+
             child.SetShowAnimation(t);
             delay += 0.075;
         }
@@ -414,14 +416,13 @@ public class CompositionFactory : DependencyObject
 
 
         // Create hide animation
-        var list = new List<FrameworkElement>();
-        list.Add(background);
+        List<FrameworkElement> list = [background];
         list.AddRange(children);
 
-        var ht = bv.Compositor.CreateVector3KeyFrameAnimation();
-        ht.Target = TRANSLATION;
-        ht.InsertExpressionKeyFrame(1, "Vector3(0, -this.Target.Size.Y, 0)", ease);
-        ht.Duration = TimeSpan.FromSeconds(0.5);
+        var ht = bv.Compositor.CreateVector3KeyFrameAnimation()
+            .SetTarget(TRANSLATION)
+            .AddKeyFrame(1, "Vector3(0, -this.Target.Size.Y, 0)", ease)
+            .SetDuration(0.5);
 
         foreach (var child in list)
             child.SetHideAnimation(ht);
@@ -443,7 +444,7 @@ public class CompositionFactory : DependencyObject
         e.SetShowAnimation(CreateFade(v.Compositor, 1, null, durationMs));
     }
 
-    public static void StartStartUpAnimation(
+    public static void PlayStartUpAnimation(
         List<FrameworkElement> barElements,
         List<UIElement> contentElements)
     {
@@ -453,23 +454,21 @@ public class CompositionFactory : DependencyObject
         TimeSpan duration1 = TimeSpan.FromSeconds(0.7);
 
         var c = barElements[0].GetElementVisual().Compositor;
-        var backOut = c.CreateCubicBezierEasingFunction(new Vector2(0.2f, 0.885f), new Vector2(0.25f, 1.125f));
+        var backOut = c.CreateEase(0.2f, 0.885f, 0.25f, 1.125f);
 
         double delay = 0.1;
         foreach (var element in barElements)
         {
-            var t = c.CreateVector3KeyFrameAnimation()
-                .SetTarget(TRANSLATION)
-                .AddKeyFrame(0, 0, -100)
-                .AddKeyFrame(1, 0, backOut)
-                .SetDelayBehavior(AnimationDelayBehavior.SetInitialValueBeforeDelay)
-                .SetDelayTime(TimeSpan.FromSeconds(delay))
-                .SetDuration(duration1);
+            var v = element.EnableTranslation(true).GetElementVisual();
+            v.StartAnimationGroup(
+                v.CreateVector3KeyFrameAnimation(TRANSLATION)
+                 .AddKeyFrame(0, 0, -100)
+                 .AddKeyFrame(1, 0, backOut)
+                 .SetInitialValueBeforeDelay()
+                 .SetDelayTime(TimeSpan.FromSeconds(delay))
+                 .SetDuration(duration1));
 
             delay += 0.055;
-
-            var v = element.EnableTranslation(true).GetElementVisual();
-            v.StartAnimationGroup(t);
         }
 
         PlayEntrance(contentElements, 200);

@@ -136,7 +136,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                 if (ViewModel.SelectedFont != null)
                 {
                     SetSelectedItem(ViewModel.SelectedFont);
-                    if (ViewModel.TabIndex >= 0 && !ViewModel.IsCreating)
+                    if (ViewModel.TabIndex > -1 && !ViewModel.IsCreating)
                     {
                         ViewModel.Fonts[ViewModel.TabIndex].SetFont(ViewModel.SelectedFont);
                         FontMap.Font = ViewModel.Fonts[ViewModel.TabIndex];
@@ -273,7 +273,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             GoToState(nameof(FontsLoadedState), false);
             if (ResourceHelper.AllowAnimation)
             {
-                CompositionFactory.StartStartUpAnimation(
+                CompositionFactory.PlayStartUpAnimation(
                     new()
                     {
                         OpenFontPaneButton,
