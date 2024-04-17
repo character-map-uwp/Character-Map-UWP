@@ -18,7 +18,7 @@ public partial class FileNameWriter
 
     public override string ToString()
     {
-        return $"{Description}, e.g. {Example}";
+        return String.Format(Localization.Get("FileNameWriterStringFormat"), Description, Example);
     }
 
 

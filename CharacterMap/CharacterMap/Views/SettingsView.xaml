@@ -612,12 +612,8 @@
 
                                 </controls:SettingsPresenter>
 
-                                <controls:SettingsPresenter
-                                    Title="Glyph Export Naming"
-                                    ContentPlacement="Bottom"
-                                    Description="Choose how exported character files are named.">
+                                <controls:SettingsPresenter x:Uid="SettingsGlyphNaming" ContentPlacement="Bottom">
                                     <controls:GlyphNamingControl ViewModel="{x:Bind ViewModel.GlyphNameModel}" />
-
                                 </controls:SettingsPresenter>
 
                             </StackPanel>
