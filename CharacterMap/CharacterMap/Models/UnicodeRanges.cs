@@ -1,6 +1,4 @@
-﻿using CharacterMap.Generators;
-
-namespace CharacterMap.Models;
+﻿namespace CharacterMap.Models;
 
 public class MakeBasicFilterAttribute : Attribute
 {

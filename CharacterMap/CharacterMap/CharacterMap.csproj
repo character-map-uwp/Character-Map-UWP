@@ -599,7 +599,7 @@
       <Project>{3b9d858e-01e7-4706-8d87-2ac4e922a043}</Project>
       <Name>CharacterMap.CX</Name>
     </ProjectReference>
-    <ProjectReference Include="..\CharacterMap.Generators\CharacterMap.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true">
+    <ProjectReference Include="..\CharacterMap.Generators\CharacterMap.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false">
       <Project>{ad4b0c7d-5f3b-47d5-91df-c8b9a4dd0262}</Project>
       <Name>CharacterMap.Generators</Name>
     </ProjectReference>
