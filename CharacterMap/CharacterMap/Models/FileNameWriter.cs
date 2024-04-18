@@ -1,5 +1,12 @@
 ﻿namespace CharacterMap.Models;
 
+public class FileNameWriterArgs
+{
+    public ExportOptions Options { get; init; }
+    public Character Character { get; init; }
+    public string Extension { get; init; }
+}
+
 public partial class FileNameWriter
 {
     public string Match { get; init; }
@@ -57,7 +64,7 @@ public partial class FileNameWriter
     {
         Match = "{unicode}",
         Description = Localization.Get("FileNameWriterUnicodeHexDesc"),
-        Example = "U+F0DF",
+        Example = "U+F0041",
         Func = a => a.Character.UnicodeString
     };
 
@@ -65,7 +72,7 @@ public partial class FileNameWriter
     {
         Match = "{codepoint}",
         Description = Localization.Get("FileNameWriterUnicodeCPDesc"),
-        Example = "99",
+        Example = "65",
         Func = a => a.Character.UnicodeIndex.ToString()
     };
 
@@ -81,7 +88,7 @@ public partial class FileNameWriter
     {
         Match = "{xamlGlyph}",
         Description = Localization.Get("FileNameWriterXamlGlyphDesc"),
-        Example = "&#xF0DF;",
+        Example = "&#x0041;",
         Func = a => $"&#x{a.Character.UnicodeIndex.ToString("x4").ToUpper()};"
     };
 

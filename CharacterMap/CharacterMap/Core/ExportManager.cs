@@ -15,13 +15,6 @@ public enum ExportStyle { Black, White, ColorGlyph }
 
 public enum ExportState { Skipped, Succeeded, Failed }
 
-public class FileNameWriterArgs
-{
-    public ExportOptions Options { get; init; }
-    public Character Character { get; init; }
-    public string Extension { get; init; }
-}
-
 public class ExportResult
 {
     public StorageFile File { get; }

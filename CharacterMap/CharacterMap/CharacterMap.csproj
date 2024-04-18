@@ -346,6 +346,7 @@
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />
+    <Compile Include="ViewModels\GlyphFileNameViewModel.cs" />
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="ViewModels\QuickCompareViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />

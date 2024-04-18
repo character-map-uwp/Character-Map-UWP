@@ -1675,4 +1675,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="SettingsGlyphNaming.Title" xml:space="preserve">
     <value>Glyph Export Naming</value>
   </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>e.g. {0}</value>
+  </data>
 </root>

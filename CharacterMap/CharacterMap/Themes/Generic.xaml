@@ -997,7 +997,12 @@
                             FontStyle="Italic"
                             Opacity="0.7"
                             Text="Preview" />-->
-                        <TextBlock Opacity="0.7" Text="{Binding ViewModel.Example, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                        <TextBlock
+                            Margin="0 2 0 0"
+                            FontSize="12.666"
+                            FontStyle="Normal"
+                            Opacity="0.7"
+                            Text="{Binding ViewModel.Example, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
 
                         <Button
                             x:Name="ToggleButton"

@@ -6,62 +6,18 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.ViewModels;
 
-public partial class GlyphFileNameViewModel : ObservableObject
-{
-    [ObservableProperty] string _template = ExportOptions.DefaultTemplate;
-    [ObservableProperty] string _example;
-    [ObservableProperty] bool _isExpanded;
-
-    public bool SaveTemplate { get; set; }
-
-    private InstalledFont _lastFont = null;
-    private CharacterRenderingOptions _lastOptions = null;
-
-    public void SetOptions(InstalledFont font, CharacterRenderingOptions options)
-    {
-        _lastFont = font;
-        _lastOptions = options;
-
-        UpdateExample();
-    }
-
-    public void Reset() => Template = ExportOptions.DefaultTemplate;
-
-    public void ToggleExpansion() => IsExpanded = !IsExpanded;
-
-    partial void OnTemplateChanged(string value)
-    {
-        UpdateExample();
-
-        if (SaveTemplate)
-            ResourceHelper.AppSettings.FileNameTemplate = value;
-    }
-
-    void UpdateExample()
-    {
-        ExportOptions options = new(ExportFormat.Png, ExportStyle.Black)
-        {
-            Font = _lastFont,
-            Options = _lastOptions,
-            FileNameTemplate = Template
-        };
-
-        Example = options.GetFileName(new Character(65), "png");
-    }
-}
-
 public partial class SettingsViewModel : ViewModelBase
 {
     private Random _random { get; } = new ();
 
     protected override bool TrackAnimation => true;
 
-    public List<GlyphAnnotation> Annotations { get; } = new()
-    {
+    public List<GlyphAnnotation> Annotations { get; } = 
+    [
         GlyphAnnotation.None,
         GlyphAnnotation.UnicodeHex,
         GlyphAnnotation.UnicodeIndex
-    };
+    ];
 
     public List<String> Themes { get; } =
         [
