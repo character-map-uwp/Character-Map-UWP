@@ -578,7 +578,7 @@
                                                 <TextBlock>
                                                     <Run x:Uid="SettingsFontExportSystemLabel" />
                                                     <Run
-                                                        FontSize="13.333"
+                                                        FontSize="12.666"
                                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                         Text="e.g. MSOFFSYMB.ttf" />
                                                 </TextBlock>
@@ -587,7 +587,7 @@
                                                 <TextBlock>
                                                     <Run x:Uid="SettingsFontExportOptimizedLabel" />
                                                     <Run
-                                                        FontSize="13.333"
+                                                        FontSize="12.666"
                                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                         Text=" e.g. MS Office Symbol Regular.ttf" />
                                                 </TextBlock>
@@ -602,7 +602,7 @@
                                             <TextBlock TextWrapping="Wrap">
                                                 <Run x:Uid="SettingsFontExportVersionLabel" d:Text="{core:Localizer Key=SettingsFontExportVersionLabel/Text}" />
                                                 <Run
-                                                    FontSize="13.333"
+                                                    FontSize="12.666"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                     Text=" e.g. MS Office Symbol Regular v1.5.ttf" />
                                             </TextBlock>

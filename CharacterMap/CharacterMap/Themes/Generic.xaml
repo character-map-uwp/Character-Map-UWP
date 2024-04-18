@@ -1029,7 +1029,7 @@
                                     <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="104" />
+                                                <ColumnDefinition Width="100" />
                                                 <ColumnDefinition Width="*" />
                                             </Grid.ColumnDefinitions>
 

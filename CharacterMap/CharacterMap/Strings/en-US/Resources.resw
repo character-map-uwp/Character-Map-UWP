@@ -1661,7 +1661,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
     <value>{0}, e.g. {1}</value>
   </data>
   <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
-    <value>Unicode codepoint value</value>
+    <value>Unicode index/codepoint value</value>
   </data>
   <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
     <value>Unicode hex value</value>

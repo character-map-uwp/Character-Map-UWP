@@ -4,7 +4,7 @@ namespace CharacterMap.Models;
 
 public record ExportOptions
 {
-    public const string DefaultTemplate = "{family} {face} - {description}.{ext}";
+    public const string DefaultTemplate = "{family} {face} - {desc}.{ext}";
 
     public InstalledFont Font { get; init; }
     public CharacterRenderingOptions Options { get; init; }

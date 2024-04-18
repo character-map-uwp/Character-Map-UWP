@@ -54,7 +54,7 @@ public partial class FileNameWriter
 
     public static FileNameWriter CharacterDescription { get; } = new()
     {
-        Match = "{description}",
+        Match = "{desc}",
         Description = Localization.Get("FileNameWriterCharDescDesc"),
         Example = "Latin Capital Letter A",
         Func = a => a.Options.Options.Variant.GetDescription(a.Character) ?? a.Character.UnicodeString
@@ -62,7 +62,7 @@ public partial class FileNameWriter
 
     public static FileNameWriter UnicodeHex { get; } = new()
     {
-        Match = "{unicode}",
+        Match = "{hex}",
         Description = Localization.Get("FileNameWriterUnicodeHexDesc"),
         Example = "U+F0041",
         Func = a => a.Character.UnicodeString
@@ -70,12 +70,13 @@ public partial class FileNameWriter
 
     public static FileNameWriter UnicodeCodepoint { get; } = new()
     {
-        Match = "{codepoint}",
+        Match = "{index}",
         Description = Localization.Get("FileNameWriterUnicodeCPDesc"),
         Example = "65",
         Func = a => a.Character.UnicodeIndex.ToString()
     };
 
+    // "\" is invalid character to be used in filenames
     //public static FileNameWriter UTF16 { get; } = new()
     //{
     //    Match = "{utf16}",
