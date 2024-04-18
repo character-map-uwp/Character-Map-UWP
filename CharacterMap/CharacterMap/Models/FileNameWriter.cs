@@ -94,10 +94,24 @@ public partial class FileNameWriter
 
     public static FileNameWriter PixelSize { get; } = new()
     {
-        Match = "{pixelSize}",
+        Match = "{pixels}",
         Description = Localization.Get("FileNameWriterPixelSizeDesc"),
         Example = "1024",
         Func = a => $"{a.Options.PreferredSize}"
+    };
+
+    public static FileNameWriter FontVersion { get; } = new()
+    {
+        Match = "{ver}",
+        Description = Localization.Get("FileNameWriterFontVerDesc"),
+        Example = "5.2",
+        Func = a =>
+        {
+            if (Utils.TryGetVersion(a.Options.Options.Variant, out double version))
+                return version.ToString();
+
+            return string.Empty;
+        }
     };
 
     public static FileNameWriter Extension { get; } = new()

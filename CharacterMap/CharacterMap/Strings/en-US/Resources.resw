@@ -1643,7 +1643,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
     <value>Show template parts</value>
   </data>
   <data name="FileNameWriterCharDescDesc" xml:space="preserve">
-    <value>Character Unicode description, or Unicode string if none</value>
+    <value>Glyph Unicode description, or Unicode string if none</value>
   </data>
   <data name="FileNameWriterExtensionDesc" xml:space="preserve">
     <value>File Extension</value>
@@ -1677,5 +1677,8 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   </data>
   <data name="ExampleFormat" xml:space="preserve">
     <value>e.g. {0}</value>
+  </data>
+  <data name="FileNameWriterFontVerDesc" xml:space="preserve">
+    <value>Font version number, if applicable</value>
   </data>
 </root>
