@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
@@ -23,7 +24,7 @@ public class UXSlider : Slider, IThemeableControl
     }
 }
 
-public class UXHyperlinkButton : HyperlinkButton, IThemeableControl
+public partial class UXHyperlinkButton : HyperlinkButton, IThemeableControl
 {
     public ThemeHelper _themer;
     public UXHyperlinkButton()

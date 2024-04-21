@@ -25,7 +25,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     public MainViewModel ViewModel { get; }
 
-    private Debouncer _fontListDebouncer { get; } = new Debouncer();
+    private Debouncer _fontListDebouncer { get; } = new ();
 
     private UISettings _uiSettings { get; }
 

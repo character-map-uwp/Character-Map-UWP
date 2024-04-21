@@ -17,6 +17,42 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Core;
 
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class DependencyPropertyAttribute<T> : Attribute
+{
+    public string Name { get; set; }
+    public object Default { get; set; }
+    public Type Type => typeof(T);
+
+    public DependencyPropertyAttribute() { }
+
+    public DependencyPropertyAttribute(string name)
+    {
+        Name = name;
+    }
+
+    public DependencyPropertyAttribute(string name, object def)
+    {
+        Name = name;
+        Default = def;
+    }
+}
+
+public class DependencyPropertyAttribute : DependencyPropertyAttribute<object> {
+    public DependencyPropertyAttribute() { }
+    public DependencyPropertyAttribute(string name)
+    {
+        Name = name;
+    }
+
+    public DependencyPropertyAttribute(string name, object def)
+    {
+        Name = name;
+        Default = def;
+    }
+}
+    
+
 /// <summary>
 /// XAML Attached Properties
 /// </summary>
@@ -1401,12 +1437,5 @@ public class Properties : DependencyObject
 
     #endregion
 
-    [AttachedProperty(DefaultValue = 0d, Type = typeof(double))]
-    public static void RotationTransition() { }
 
-    public class AttachedPropertyAttribute : Attribute
-    {
-        public object DefaultValue { get; set; }
-        public Type Type { get; set; }
-    }
 }

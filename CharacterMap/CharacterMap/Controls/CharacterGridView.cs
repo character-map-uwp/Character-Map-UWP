@@ -2,14 +2,13 @@
 
 using CharacterMapCX.Controls;
 using Microsoft.Graphics.Canvas.Text;
+using Windows.Foundation.Metadata;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
-
-using CGV = CharacterMap.Controls.CharacterGridView;
 
 namespace CharacterMap.Controls;
 
@@ -24,137 +23,58 @@ internal class CharacterGridViewTemplateSettings
     public GlyphAnnotation Annotation { get; set; }
 }
 
-
-public class CharacterGridView : GridView
+[DependencyProperty<double>("ItemSize")]
+[DependencyProperty<bool>("ShowColorGlyphs")]
+[DependencyProperty<bool>("EnableResizeAnimation")]
+[DependencyProperty<FontFamily>("ItemFontFamily")]
+[DependencyProperty<DWriteFontFace>("ItemFontFace")]
+[DependencyProperty<TypographyFeatureInfo>("ItemTypography")]
+[DependencyProperty<FontVariant>("ItemFontVariant")]
+[DependencyProperty<GlyphAnnotation>("ItemAnnotation")]
+public partial class CharacterGridView : GridView
 {
     public event EventHandler<Character> ItemDoubleTapped;
 
     #region Dependency Properties
 
-    #region ItemSize
+    partial void OnItemSizeChanged(double? oldValue, double n) => _templateSettings.Size = n;
 
-    public double ItemSize
-    {
-        get { return (double)GetValue(ItemSizeProperty); }
-        set { SetValue(ItemSizeProperty, value); }
-    }
+    partial void OnItemFontFamilyChanged(FontFamily oldValue, FontFamily n) => _templateSettings.FontFamily = n;
 
-    public static readonly DP ItemSizeProperty = DP<double, CGV>(0d, (d, o, n) =>
-    {
-        d._templateSettings.Size = n;
-    });
+    partial void OnItemFontFaceChanged(DWriteFontFace oldValue, DWriteFontFace n) => _templateSettings.FontFace = n;
 
-    #endregion
-
-    #region ItemFontFamily
-
-    public FontFamily ItemFontFamily
-    {
-        get { return (FontFamily)GetValue(ItemFontFamilyProperty); }
-        set { SetValue(ItemFontFamilyProperty, value); }
-    }
-
-    public static readonly DP ItemFontFamilyProperty = DP<FontFamily, CGV>(null, (d, o, n) =>
-    {
-        d._templateSettings.FontFamily = n;
-    });
-
-    #endregion
-
-    #region ItemFontFace
-
-    public DWriteFontFace ItemFontFace
-    {
-        get { return (DWriteFontFace)GetValue(ItemFontFaceProperty); }
-        set { SetValue(ItemFontFaceProperty, value); }
-    }
-
-    public static readonly DP ItemFontFaceProperty = DP<DWriteFontFace, CGV>(null, (d, o, n) =>
-    {
-        d._templateSettings.FontFace = n;
-    });
-
-    #endregion
-
-    #region ItemTypography
-
-    public TypographyFeatureInfo ItemTypography
-    {
-        get { return (TypographyFeatureInfo)GetValue(ItemTypographyProperty); }
-        set { SetValue(ItemTypographyProperty, value); }
-    }
-
-    public static readonly DP ItemTypographyProperty = DP<TypographyFeatureInfo, CGV>(null, (d, o, n) =>
+    partial void OnItemTypographyChanged(TypographyFeatureInfo oldValue, TypographyFeatureInfo n)
     {
         if (n is not null)
         {
-            d._templateSettings.Typography = n;
-            d.UpdateTypographies(n);
+            _templateSettings.Typography = n;
+            UpdateTypographies(n);
         }
-
-    });
-
-    #endregion
-
-    #region ShowColorGlyphs
-
-    public bool ShowColorGlyphs
-    {
-        get { return (bool)GetValue(ShowColorGlyphsProperty); }
-        set { SetValue(ShowColorGlyphsProperty, value); }
     }
 
-    public static readonly DP ShowColorGlyphsProperty = DP<bool, CGV>(false, (d, o, n) =>
+    partial void OnShowColorGlyphsChanged(bool? oldValue, bool n)
     {
-        d._templateSettings.ShowColorGlyphs = n;
-        d.UpdateColorsFonts(n);
-    });
-
-    #endregion
-
-    #region ShowUnicodeDescription
-
-    public GlyphAnnotation ItemAnnotation
-    {
-        get { return (GlyphAnnotation)GetValue(ItemAnnotationProperty); }
-        set { SetValue(ItemAnnotationProperty, value); }
+        _templateSettings.ShowColorGlyphs = n;
+        UpdateColorsFonts(n);
     }
 
-    public static readonly DP ItemAnnotationProperty = DP<GlyphAnnotation, CGV>(GlyphAnnotation.None, (d, o, n) =>
+    partial void OnEnableResizeAnimationChanged(bool? oldValue, bool n)
     {
-        d._templateSettings.Annotation = n;
-        d.UpdateUnicode(n);
-    });
-
-    #endregion
-
-    #region EnableResizeAnimation
-
-    public bool EnableResizeAnimation
-    {
-        get { return (bool)GetValue(EnableResizeAnimationProperty); }
-        set { SetValue(EnableResizeAnimationProperty, value); }
+        _templateSettings.EnableReposition = n && CompositionFactory.UISettings.AnimationsEnabled;
+        UpdateAnimation(n);
     }
 
-    public static readonly DP EnableResizeAnimationProperty = DP<bool, CGV>(false, (d, o, n) =>
-    {
-        d._templateSettings.EnableReposition = n && CompositionFactory.UISettings.AnimationsEnabled;
-        d.UpdateAnimation(n);
-    });
-      
-    #endregion
+    //public GlyphAnnotation ItemAnnotation
+    //{
+    //    get { return (GlyphAnnotation)GetValue(ItemAnnotationProperty); }
+    //    set { SetValue(ItemAnnotationProperty, value); }
+    //}
 
-    #region ItemFontVariant
-
-    public FontVariant ItemFontVariant
-    {
-        get { return (FontVariant)GetValue(ItemFontVariantProperty); }
-        set { SetValue(ItemFontVariantProperty, value); }
-    }
-
-    public static readonly DP ItemFontVariantProperty = DP<FontVariant, CGV>();
-
-    #endregion
+    //public static readonly DP ItemAnnotationProperty = DP<GlyphAnnotation, CharacterGridView>(GlyphAnnotation.None, (d, o, n) =>
+    //{
+    //    d._templateSettings.Annotation = n;
+    //    d.UpdateUnicode(n);
+    //});
 
     #endregion
 

@@ -3,18 +3,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-public sealed class CharacterPicker : Control
+[DependencyProperty<CharacterRenderingOptions>("Options")]
+public sealed partial class CharacterPicker : Control
 {
     public event EventHandler<Character> CharacterSelected;
-
-    public CharacterRenderingOptions Options
-    {
-        get { return (CharacterRenderingOptions)GetValue(OptionsProperty); }
-        set { SetValue(OptionsProperty, value); }
-    }
-
-    public static readonly DependencyProperty OptionsProperty =
-        DependencyProperty.Register(nameof(Options), typeof(CharacterRenderingOptions), typeof(CharacterPicker), new PropertyMetadata(null));
 
     private Flyout _parent = null;
 

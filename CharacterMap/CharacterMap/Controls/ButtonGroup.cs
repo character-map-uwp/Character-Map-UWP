@@ -4,44 +4,11 @@ using Windows.UI.Xaml.Data;
 
 namespace CharacterMap.Controls;
 
-public class ButtonLabel : DependencyObject
-{
-    public string Shortcut
-    {
-        get { return (string)GetValue(ShortcutProperty); }
-        set { SetValue(ShortcutProperty, value); }
-    }
-
-    public static readonly DependencyProperty ShortcutProperty =
-        DependencyProperty.Register(nameof(Shortcut), typeof(string), typeof(ButtonLabel), new PropertyMetadata(null));
-
-    public string Glyph
-    {
-        get { return (string)GetValue(GlyphProperty); }
-        set { SetValue(GlyphProperty, value); }
-    }
-
-    public static readonly DependencyProperty GlyphProperty =
-        DependencyProperty.Register(nameof(Glyph), typeof(string), typeof(ButtonLabel), new PropertyMetadata(null));
-
-    public string Title
-    {
-        get { return (string)GetValue(TitleProperty); }
-        set { SetValue(TitleProperty, value); }
-    }
-
-    public static readonly DependencyProperty TitleProperty =
-        DependencyProperty.Register(nameof(Title), typeof(string), typeof(ButtonLabel), new PropertyMetadata(null));
-
-    public string Description
-    {
-        get { return (string)GetValue(DescriptionProperty); }
-        set { SetValue(DescriptionProperty, value); }
-    }
-
-    public static readonly DependencyProperty DescriptionProperty =
-        DependencyProperty.Register(nameof(Description), typeof(string), typeof(ButtonLabel), new PropertyMetadata(null));
-}
+[DependencyProperty<string>("Shortcut")]
+[DependencyProperty<string>("Glyph")]
+[DependencyProperty<string>("Title")]
+[DependencyProperty<string>("Description")]
+public partial class ButtonLabel : DependencyObject { }
 
 class ButtonGroupBorderConverter : IValueConverter
 {
@@ -90,17 +57,9 @@ class ButtonGroupCornerConverter : IValueConverter
     }
 }
 
-public sealed class ButtonGroup : ItemsControl
+[DependencyProperty<Orientation>("Orientation", Orientation.Horizontal)]
+public sealed partial class ButtonGroup : ItemsControl
 {
-    public Orientation Orientation
-    {
-        get { return (Orientation)GetValue(OrientationProperty); }
-        set { SetValue(OrientationProperty, value); }
-    }
-
-    public static readonly DependencyProperty OrientationProperty =
-        DependencyProperty.Register(nameof(Orientation), typeof(Orientation), typeof(ButtonGroup), new PropertyMetadata(Orientation.Horizontal));
-
     private static ButtonGroupBorderConverter _bConv { get; } = new();
     private static ButtonGroupCornerConverter _cConv { get; } = new();
 

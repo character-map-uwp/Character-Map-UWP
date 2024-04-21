@@ -13,79 +13,14 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
 
+[DependencyProperty("TitleLeftContent")]
+[DependencyProperty("TitleRightContent")]
+[DependencyProperty<FontMapViewModel>("ViewModel")]
+[DependencyProperty<bool>("HideTitle")]
+[DependencyProperty<FontItem>("Font")]
 public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
 {
-    #region Dependency Properties 
-
-    #region TitleLeftContent
-
-    public object TitleLeftContent
-    {
-        get { return (object)GetValue(TitleLeftContentProperty); }
-        set { SetValue(TitleLeftContentProperty, value); }
-    }
-
-    public static readonly DP TitleLeftContentProperty = DP<object, FontMapView>();
-
-    #endregion
-
-    #region TitleRightContent
-
-    public object TitleRightContent
-    {
-        get { return (object)GetValue(TitleRightContentProperty); }
-        set { SetValue(TitleRightContentProperty, value); }
-    }
-
-    public static readonly DP TitleRightContentProperty = DP<object, FontMapView>();
-
-    #endregion
-
-    #region Font
-
-    public FontItem Font
-    {
-        get => (FontItem)GetValue(FontProperty);
-        set => SetValue(FontProperty, value);
-    }
-
-    public static readonly DP FontProperty = DP<FontItem, FontMapView>(null, (d, o, n) =>
-    {
-        if (n is not null)
-            d.ViewModel.SelectedFont = n;
-    });
-
-    #endregion
-
-    #region ViewModel
-
-    public FontMapViewModel ViewModel
-    {
-        get => (FontMapViewModel)GetValue(ViewModelProperty);
-        private set => SetValue(ViewModelProperty, value);
-    }
-
-    public static readonly DP ViewModelProperty = DP<FontMapViewModel, FontMapView>();
-
-    #endregion
-
-    #region Hide Title
-
-    public bool HideTitle
-    {
-        get { return (bool)GetValue(HideTitleProperty); }
-        set { SetValue(HideTitleProperty, value); }
-    }
-
-    public static readonly DP HideTitleProperty = DP<bool, FontMapView>();
-
-    #endregion
-
-    #endregion
-
     private BrushTransition t = new() { Duration = TimeSpan.FromSeconds(0.115) };
-
-    public bool IsStandalone { get; set; }
 
     private Debouncer _sizeDebouncer { get; } = new();
 
@@ -94,6 +29,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
     private long _previewColumnToken = long.MinValue;
 
     private bool _isCompactOverlay = false;
+
+    public bool IsStandalone { get; set; }
 
     public FontMapView()
     {
@@ -113,6 +50,12 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         CharGrid.ItemSize = ViewModel.Settings.GridSize;
         CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
         _xamlDirect = XamlDirect.GetDefault();
+    }
+
+    partial void OnFontChanged(FontItem o, FontItem n)
+    {
+        if (n is not null)
+            ViewModel.SelectedFont = n;
     }
 
     private void FontMapView_Loading(FrameworkElement sender, object args)

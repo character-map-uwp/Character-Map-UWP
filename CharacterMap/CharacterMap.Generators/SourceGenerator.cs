@@ -11,7 +11,7 @@ public class SourceGenerator : ISourceGenerator
 
     public void Execute(GeneratorExecutionContext context)
     {
-        //Debugger.Launch();
+        //System.Diagnostics.Debugger.Launch();
 
         try
         {
@@ -22,6 +22,9 @@ public class SourceGenerator : ISourceGenerator
 
                 // 2. Handle FileNameWriter
                 new FileNameReader().Process(tree, context);
+
+                // 3. Create Dependency Properties
+                new DependencyPropertyReader().Process(tree, context);
             }
         }
         catch (Exception)

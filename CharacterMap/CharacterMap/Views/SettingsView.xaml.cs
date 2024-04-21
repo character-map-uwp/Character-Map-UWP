@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Views;
 
+[DependencyProperty<int>("GridSize")]
 public sealed partial class SettingsView : ViewBase
 {
     public AppSettings Settings { get; }
@@ -15,15 +16,6 @@ public sealed partial class SettingsView : ViewBase
 
     [ObservableProperty]
     private GridLength _titleBarHeight = new(32);
-
-    public int GridSize
-    {
-        get { return (int)GetValue(GridSizeProperty); }
-        set { SetValue(GridSizeProperty, value); }
-    }
-
-    public static readonly DependencyProperty GridSizeProperty =
-        DependencyProperty.Register(nameof(GridSize), typeof(int), typeof(SettingsView), new PropertyMetadata(0d));
 
     private bool _themeSupportsShadows = false;
 

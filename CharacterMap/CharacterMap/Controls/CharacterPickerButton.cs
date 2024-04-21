@@ -5,47 +5,21 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-public sealed class CharacterPickerButton : ContentControl
+[DependencyProperty<Control>("Target", typeof(Control))]
+[DependencyProperty<CharacterRenderingOptions>("Options", typeof(CharacterRenderingOptions))]
+[DependencyProperty<FlyoutPlacementMode>("Placement", FlyoutPlacementMode.Bottom)]
+public sealed partial class CharacterPickerButton : ContentControl
 {
     private static PropertyMetadata NULL_META = new(null);
 
-
-    public FlyoutPlacementMode Placement
-    {
-        get { return (FlyoutPlacementMode)GetValue(PlacementProperty); }
-        set { SetValue(PlacementProperty, value); }
-    }
-
-    public static readonly DependencyProperty PlacementProperty =
-        DependencyProperty.Register(nameof(Placement), typeof(FlyoutPlacementMode), typeof(CharacterPickerButton), new PropertyMetadata(FlyoutPlacementMode.Bottom, (d, e) =>
-        {
-            ((CharacterPickerButton)d).UpdatePlacement();
-        }));
-
     public event EventHandler<Character> CharacterSelected;
-
-    public Control Target
-    {
-        get { return (Control)GetValue(TargetProperty); }
-        set { SetValue(TargetProperty, value); }
-    }
-
-    public static readonly DependencyProperty TargetProperty =
-        DependencyProperty.Register(nameof(Target), typeof(Control), typeof(CharacterPickerButton), NULL_META);
-
-    public CharacterRenderingOptions Options
-    {
-        get { return (CharacterRenderingOptions)GetValue(OptionsProperty); }
-        set { SetValue(OptionsProperty, value); }
-    }
-
-    public static readonly DependencyProperty OptionsProperty =
-        DependencyProperty.Register(nameof(Options), typeof(CharacterRenderingOptions), typeof(CharacterPickerButton), NULL_META);
 
     public CharacterPickerButton()
     {
         this.DefaultStyleKey = typeof(CharacterPickerButton);
     }
+
+    partial void OnPlacementChanged(FlyoutPlacementMode? o, FlyoutPlacementMode n) => UpdatePlacement();
 
     protected override void OnApplyTemplate()
     {

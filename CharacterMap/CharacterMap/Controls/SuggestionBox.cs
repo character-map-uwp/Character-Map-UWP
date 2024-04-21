@@ -6,81 +6,15 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-public sealed class SuggestionBox : Control
+[DependencyProperty("ItemsSource")]
+[DependencyProperty<string>("Text", "string.Empty")]
+[DependencyProperty<string>("PlaceholderText", "string.Empty")]
+[DependencyProperty<bool>("IsCharacterPickerEnabled", true)]
+[DependencyProperty<CharacterRenderingOptions>("RenderingOptions")]
+[DependencyProperty<FlowDirection>("DetectedFlowDirection")]
+public sealed partial class SuggestionBox : Control
 {
     public event EventHandler<FlowDirection> DetectedFlowDirectionChanged;
-
-    #region Dependency Properties
-
-    #region IsCharacterPickerEnabled
-
-    public bool IsCharacterPickerEnabled
-    {
-        get { return (bool)GetValue(IsCharacterPickerEnabledProperty); }
-        set { SetValue(IsCharacterPickerEnabledProperty, value); }
-    }
-
-    public static readonly DependencyProperty IsCharacterPickerEnabledProperty =
-        DependencyProperty.Register(nameof(IsCharacterPickerEnabled), typeof(bool), typeof(SuggestionBox), new PropertyMetadata(true, (d, e) =>
-        {
-            ((SuggestionBox)d).UpdatePickerState(true);
-        }));
-
-    #endregion
-
-    #region PlaceholderText
-
-    public string PlaceholderText
-    {
-        get { return (string)GetValue(PlaceholderTextProperty); }
-        set { SetValue(PlaceholderTextProperty, value); }
-    }
-
-    public static readonly DependencyProperty PlaceholderTextProperty =
-        DependencyProperty.Register(nameof(PlaceholderText), typeof(string), typeof(SuggestionBox), new PropertyMetadata(string.Empty));
-
-    #endregion
-
-    public FlowDirection DetectedFlowDirection
-    {
-        get { return (FlowDirection)GetValue(DetectedFlowDirectionProperty); }
-        set { SetValue(DetectedFlowDirectionProperty, value); }
-    }
-
-    public static readonly DependencyProperty DetectedFlowDirectionProperty =
-        DependencyProperty.Register(nameof(DetectedFlowDirection), typeof(FlowDirection), typeof(SuggestionBox), new PropertyMetadata(FlowDirection.LeftToRight, (d, e) =>
-        {
-            ((SuggestionBox)d).DetectedFlowDirectionChanged?.Invoke(d, (FlowDirection)e.NewValue);
-        }));
-
-    public CharacterRenderingOptions RenderingOptions
-    {
-        get { return (CharacterRenderingOptions)GetValue(RenderingOptionsProperty); }
-        set { SetValue(RenderingOptionsProperty, value); }
-    }
-
-    public static readonly DependencyProperty RenderingOptionsProperty =
-        DependencyProperty.Register(nameof(RenderingOptions), typeof(CharacterRenderingOptions), typeof(SuggestionBox), new PropertyMetadata(null));
-
-    public string Text
-    {
-        get { return (string)GetValue(TextProperty); }
-        set { SetValue(TextProperty, value); }
-    }
-
-    public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register(nameof(Text), typeof(string), typeof(SuggestionBox), new PropertyMetadata(string.Empty));
-
-    public object ItemsSource
-    {
-        get { return (object)GetValue(ItemsSourceProperty); }
-        set { SetValue(ItemsSourceProperty, value); }
-    }
-
-    public static readonly DependencyProperty ItemsSourceProperty =
-        DependencyProperty.Register(nameof(ItemsSource), typeof(object), typeof(SuggestionBox), new PropertyMetadata(null));
-
-    #endregion
 
     private AutoSuggestBox _suggestBox = null;
 
@@ -96,6 +30,13 @@ public sealed class SuggestionBox : Control
     public SuggestionBox()
     {
         this.DefaultStyleKey = typeof(SuggestionBox);
+    }
+
+    partial void OnIsCharacterPickerEnabledChanged(bool? oldValue, bool newValue) => UpdatePickerState(true);
+
+    partial void OnDetectedFlowDirectionChanged(FlowDirection? oldValue, FlowDirection newValue)
+    {
+        DetectedFlowDirectionChanged?.Invoke(this, (FlowDirection)newValue);
     }
 
     protected override void OnApplyTemplate()

@@ -3,20 +3,11 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-public class ExtendedSplitView : SplitView
+[DependencyProperty<bool>("EnableAnimation", true)]
+public partial class ExtendedSplitView : SplitView
 {
-    public bool EnableAnimation
-    {
-        get { return (bool)GetValue(EnableAnimationProperty); }
-        set { SetValue(EnableAnimationProperty, value); }
-    }
-
-    public static readonly DependencyProperty EnableAnimationProperty =
-        DependencyProperty.Register(nameof(EnableAnimation), typeof(bool), typeof(ExtendedSplitView), new PropertyMetadata(true, (d, e) =>
-        {
-            if (d is ExtendedSplitView s)
-                s.UpdateAnimationStates();
-        }));
+    FrameworkElement _contentRoot = null;
+    FrameworkElement _paneRoot = null;
 
     public ExtendedSplitView()
     {
@@ -25,8 +16,7 @@ public class ExtendedSplitView : SplitView
         this.Unloaded += ExtendedSplitView_Unloaded;
     }
 
-    FrameworkElement _contentRoot = null;
-    FrameworkElement _paneRoot = null;
+    partial void OnEnableAnimationChanged(bool? oldValue, bool newValue) => UpdateAnimationStates();
 
     protected override void OnApplyTemplate()
     {
@@ -42,6 +32,7 @@ public class ExtendedSplitView : SplitView
     {
         UpdateAnimationStates();
     }
+
     private void ExtendedSplitView_Unloaded(object sender, RoutedEventArgs e)
     {
         UpdateAnimationStates(false);

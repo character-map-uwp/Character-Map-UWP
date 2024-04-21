@@ -29,54 +29,12 @@ public class ExtendedListViewItem : ListViewItem, IThemeableControl
     }
 }
 
-public class ExtendedListView : ListView
+[DependencyProperty<bool>("HasSelection")]
+[DependencyProperty<bool>("IsSelectionBindingEnabled")]
+[DependencyProperty<int>("SelectionCount")]
+[DependencyProperty<INotifyCollectionChanged>("BindableSelectedItems")]
+public partial class ExtendedListView : ListView
 {
-    #region Dependency Properties
-
-    public INotifyCollectionChanged BindableSelectedItems
-    {
-        get { return (INotifyCollectionChanged)GetValue(BindableSelectedItemsProperty); }
-        set { SetValue(BindableSelectedItemsProperty, value); }
-    }
-
-    public static readonly DependencyProperty BindableSelectedItemsProperty =
-        DependencyProperty.Register(nameof(BindableSelectedItems), typeof(INotifyCollectionChanged), typeof(ExtendedListView), new PropertyMetadata(null, (d, e) =>
-        {
-            ((ExtendedListView)d).OnSelectedItemsChanged(e);
-        }));
-
-    public bool HasSelection
-    {
-        get { return (bool)GetValue(HasSelectionProperty); }
-        set { SetValue(HasSelectionProperty, value); }
-    }
-
-    public static readonly DependencyProperty HasSelectionProperty =
-        DependencyProperty.Register(nameof(HasSelection), typeof(bool), typeof(ExtendedListView), new PropertyMetadata(false));
-
-    public int SelectionCount
-    {
-        get { return (int)GetValue(SelectionCountProperty); }
-        set { SetValue(SelectionCountProperty, value); }
-    }
-
-    public static readonly DependencyProperty SelectionCountProperty =
-        DependencyProperty.Register(nameof(SelectionCount), typeof(int), typeof(ExtendedListView), new PropertyMetadata(0));
-
-    public bool IsSelectionBindingEnabled
-    {
-        get { return (bool)GetValue(IsSelectionBindingEnabledProperty); }
-        set { SetValue(IsSelectionBindingEnabledProperty, value); }
-    }
-
-    public static readonly DependencyProperty IsSelectionBindingEnabledProperty =
-        DependencyProperty.Register(nameof(IsSelectionBindingEnabled), typeof(bool), typeof(ExtendedListView), new PropertyMetadata(false));
-
-    #endregion
-
-
-
-
     long token = 0;
 
     public ExtendedListView()
@@ -84,6 +42,8 @@ public class ExtendedListView : ListView
         this.Loaded += ExtendedListView_Loaded;
         this.Unloaded += ExtendedListView_Unloaded;
     }
+
+    partial void OnBindableSelectedItemsChanged(INotifyCollectionChanged o, INotifyCollectionChanged n) => OnSelectedItemsChanged(o, n);
 
     private void ExtendedListView_Loaded(object sender, RoutedEventArgs e)
     {
@@ -142,9 +102,9 @@ public class ExtendedListView : ListView
         UpdateSelection();
     }
 
-    private void OnSelectedItemsChanged(DependencyPropertyChangedEventArgs e)
+    private void OnSelectedItemsChanged(object old, object nw)
     {
-        if (e.OldValue is INotifyCollectionChanged c)
+        if (old is INotifyCollectionChanged c)
         {
             c.CollectionChanged -= SelectedItems_CollectionChanged;
         }
@@ -152,7 +112,7 @@ public class ExtendedListView : ListView
         if (this is null)
             return;
 
-        if (e.NewValue is INotifyCollectionChanged n)
+        if (nw is INotifyCollectionChanged n)
         {
             n.CollectionChanged -= SelectedItems_CollectionChanged;
             n.CollectionChanged += SelectedItems_CollectionChanged;

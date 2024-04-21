@@ -45,7 +45,7 @@ partial class FileNameWriter
     {b}
 }}", Encoding.UTF8);
 
-        context.AddSource($"FileNameWriter.g.cs", src);
+        context.AddSource("FileNameWriter.g.cs", src);
 
     }
 }

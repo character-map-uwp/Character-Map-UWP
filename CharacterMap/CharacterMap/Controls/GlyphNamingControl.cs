@@ -10,16 +10,10 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
-public sealed class GlyphNamingControl : Control
+
+[DependencyProperty<GlyphFileNameViewModel>("ViewModel")]
+public sealed partial class GlyphNamingControl : Control
 {
-    public GlyphFileNameViewModel ViewModel
-    {
-        get { return (GlyphFileNameViewModel)GetValue(ViewModelProperty); }
-        set { SetValue(ViewModelProperty, value); }
-    }
-
-    public static readonly DP ViewModelProperty = DP<GlyphFileNameViewModel, GlyphNamingControl>();
-
     public GlyphNamingControl()
     {
         this.DefaultStyleKey = typeof(GlyphNamingControl);

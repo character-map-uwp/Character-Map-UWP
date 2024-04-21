@@ -10,7 +10,7 @@ public sealed partial class FontMapPrintPage : Page
 {
     PrintViewModel PrintModel { get; }
     public bool IsInAppPreview { get; }
-    public ObservableCollection<Character> Items { get; } = new ObservableCollection<Character>();
+    public ObservableCollection<Character> Items { get; } = [];
 
 
     private DataTemplate _gridTemplate { get; } = null;
