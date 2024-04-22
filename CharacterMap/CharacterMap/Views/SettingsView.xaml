@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -264,8 +265,8 @@
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
                                             SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
                                             <ComboBox.ItemTemplate>
-                                                <DataTemplate x:DataType="models:GlyphAnnotation">
-                                                    <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
+                                                <DataTemplate x:DataType="cx:GlyphAnnotation">
+                                                    <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((cx:GlyphAnnotation))}" />
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
                                         </controls:UXComboBox>

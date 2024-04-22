@@ -9,8 +9,8 @@
     CornerRadius="4"
     IsSecondaryButtonEnabled="False"
     PrimaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
-    Style="{StaticResource DefaultThemeContentDialogStyle}"
     PrimaryButtonText="OK"
+    Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d">
 
     <Grid RowSpacing="12">

@@ -20,5 +20,8 @@
 #include "DWriteFontAxis.h"
 #include "DWriteFontSet.h"
 #include "FontAnalysis.h"
+#include "GridViewHelper.h"
+#include "GlyphAnnotation.h"
+#include "CharacterGridViewTemplateSettings.h"
 
 #include "CustomFontManager.h"

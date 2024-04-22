@@ -107,7 +107,7 @@ public class Properties : DependencyObject
                 TypographyFeatureInfo i = e.NewValue as TypographyFeatureInfo;
                 var x = XamlDirect.GetDefault();
                 IXamlDirectObject p = x.GetXamlDirectObject(t);
-                CharacterGridView.UpdateTypography(x, p, i);
+                GridViewHelper.UpdateTypography(x, p, i);
             }
         }));
 

@@ -28,6 +28,10 @@
     <ClCompile Include="DWriteFontFamily.cpp">
       <Filter>DWrite</Filter>
     </ClCompile>
+    <ClCompile Include="CharacterGridView.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="GridViewHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -113,6 +117,11 @@
       <Filter>DWrite</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="GlyphAnnotation.h" />
+    <ClInclude Include="CharacterGridViewTemplateSettings.h" />
+    <ClInclude Include="CharacterGridView.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\Generic.xaml" />

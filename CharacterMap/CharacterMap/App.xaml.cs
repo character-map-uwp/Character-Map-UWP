@@ -1,5 +1,4 @@
 using CharacterMap.Controls;
-using CharacterMapCX.Controls;
 using SQLite;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;
@@ -32,7 +31,9 @@ sealed partial class App : Application
         _activationService = new Lazy<ActivationService>(CreateActivationService);
         Current = this;
 
-        DirectText.RegisterDependencyProperties();
+        CharacterMapCX.Controls.CharacterGridView.RegisterDependencyProperties();
+        CharacterMapCX.Controls.DirectText.RegisterDependencyProperties();
+
         SQLitePCL.raw.SetProvider(SQLiteConnection.Provider);
     }
 

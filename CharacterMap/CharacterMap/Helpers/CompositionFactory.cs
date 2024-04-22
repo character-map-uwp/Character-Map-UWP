@@ -17,7 +17,7 @@ public class CompositionFactory : DependencyObject
 
     public static bool AnimationEnabled { get; set; }
 
-    public static UISettings UISettings { get; }
+    public static UISettings UISettings => GridViewHelper.UISettings;
 
     private static string CENTRE_EXPRESSION =>
         $"({nameof(Vector3)}(this.Target.{nameof(Visual.Size)}.{nameof(Vector2.X)} * {{0}}f, " +
@@ -99,7 +99,7 @@ public class CompositionFactory : DependencyObject
 
     static CompositionFactory()
     {
-        UISettings = new UISettings();
+        //UISettings = new UISettings();
     }
 
     public static ImplicitAnimationCollection GetRepositionCollection(Compositor c)

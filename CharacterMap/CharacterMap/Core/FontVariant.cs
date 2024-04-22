@@ -11,7 +11,7 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
 }
 
 [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
-public partial class FontVariant : IDisposable
+public partial class FontVariant : IFontFace, IDisposable
 {
     /* Using a character cache avoids a lot of unnecessary allocations */
     private static Dictionary<int, Character> _characters { get; } = new();
@@ -189,9 +189,9 @@ public partial class FontVariant : IDisposable
 
     /* SEARCHING */
 
-    public Dictionary<Character, string> SearchMap { get; set; }
+    public Dictionary<ICharacter, string> SearchMap { get; set; }
 
-    public string GetDescription(Character c, bool allowUnihan = false)
+    public string GetDescription(ICharacter c, bool allowUnihan = false)
     {
         if (SearchMap == null
             || !SearchMap.TryGetValue(c, out string mapping)
@@ -207,7 +207,6 @@ public partial class FontVariant : IDisposable
 
             return name;
         }
-
 
         return GlyphService.TryGetAGLFNName(mapping);
     }

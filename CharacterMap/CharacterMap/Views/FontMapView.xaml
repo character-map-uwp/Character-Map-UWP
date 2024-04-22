@@ -1142,7 +1142,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <controls:CharacterGridView
+                <cxc:CharacterGridView
                     x:Name="CharGrid"
                     x:FieldModifier="public"
                     ContainerContentChanging="CharGrid_ContainerContentChanging"
@@ -1156,6 +1156,7 @@
                     ItemFontVariant="{x:Bind ViewModel.SelectedVariant, Mode=OneWay}"
                     ItemTypography="{x:Bind ViewModel.SelectedTypography, Mode=OneWay}"
                     ItemsSource="{Binding Source={StaticResource CharacterSource}}"
+                    RepositionAnimationCollection="{x:Bind _repoAnimations}"
                     SelectedItem="{Binding SelectedChar, Mode=TwoWay}"
                     SelectionMode="Single"
                     ShowColorGlyphs="{x:Bind ViewModel.ShowColorGlyphs, Mode=OneWay}"
@@ -1281,7 +1282,7 @@
                             </Grid>
                         </DataTemplate>
                     </GridView.ItemTemplate>
-                </controls:CharacterGridView>
+                </cxc:CharacterGridView>
 
                 <!--  Character Copy Pane  -->
                 <Border

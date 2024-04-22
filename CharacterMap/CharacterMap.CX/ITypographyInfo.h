@@ -13,6 +13,18 @@ using namespace Microsoft::Graphics::Canvas::Text;
 
 namespace CharacterMapCX
 {
+	public interface class ICharacter
+	{
+		property String^ Char { String^ get(); };
+		property String^ UnicodeString { String^ get(); };
+		property unsigned int UnicodeIndex {  unsigned int get(); };
+	};
+
+	public interface class IFontFace
+	{
+		String^ GetDescription(ICharacter^ c, bool allowUnihan);
+	};
+
 	public interface class ITypographyInfo
 	{
 		property String^ DisplayName { String^ get(); };

@@ -1,6 +1,6 @@
 ﻿namespace CharacterMap.Models;
 
-public class Character : IEquatable<Character>
+public class Character : IEquatable<Character>, ICharacter
 {
     public Character(uint unicodeIndex)
     {

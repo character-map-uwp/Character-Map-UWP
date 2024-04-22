@@ -2,6 +2,7 @@
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System.ComponentModel;
 using Windows.System;
+using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -32,6 +33,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     public bool IsStandalone { get; set; }
 
+    private ImplicitAnimationCollection _repoAnimations { get; }
+
     public FontMapView()
     {
         InitializeComponent();
@@ -50,6 +53,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         CharGrid.ItemSize = ViewModel.Settings.GridSize;
         CharGrid.SetDesiredContainerUpdateDuration(TimeSpan.FromSeconds(1.5));
         _xamlDirect = XamlDirect.GetDefault();
+
+        _repoAnimations = CompositionFactory.GetRepositionCollection(Window.Current.Compositor);
     }
 
     partial void OnFontChanged(FontItem o, FontItem n)
@@ -904,9 +909,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         ViewModel.UpdateCategories(e);
     }
 
-    private void CharGrid_ItemDoubleTapped(object sender, Character e)
+    private void CharGrid_ItemDoubleTapped(object sender, ICharacter e)
     {
-        AddCharToSequence(e);
+        AddCharToSequence((Character)e);
     }
 
     private void AppBarButton_Click(object sender, RoutedEventArgs e)
@@ -1073,13 +1078,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         {
             ViewModel.SelectedCharTypography = info;
             IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(TxtPreview);
-            CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            GridViewHelper.UpdateTypography(_xamlDirect, p, info);
         }
 
         if (CopySequenceText != null && !previewOnly)
         {
             IXamlDirectObject p = _xamlDirect.GetXamlDirectObject(CopySequenceText);
-            CharacterGridView.UpdateTypography(_xamlDirect, p, info);
+            GridViewHelper.UpdateTypography(_xamlDirect, p, info);
         }
     }
 

@@ -31,10 +31,7 @@ public sealed partial class FontMapPrintPage : Page
 
     public void Update()
     {
-        if (ItemsPanel != null)
-        {
-            ItemsPanel.UpdateSize(PrintModel.GlyphSize);
-        }
+        ItemsPanel?.UpdateSize(PrintModel.GlyphSize);
     }
 
     public static int CalculateGlyphsPerPage(Size safePrintAreaSize, PrintViewModel viewModel)
@@ -134,7 +131,7 @@ public sealed partial class FontMapPrintPage : Page
         catch { }
 
         IXamlDirectObject o = _xamlDirect.GetXamlDirectObject(t);
-        CharacterGridView.SetGlyphProperties(_xamlDirect, o, PrintModel.GetTemplateSettings(), c);
+        GridViewHelper.SetGlyphProperties(_xamlDirect, o, PrintModel.GetTemplateSettings(), c);
 
         foreach (var r in g.GetFirstLevelDescendantsOfType<Rectangle>())
             r.SetVisible(PrintModel.ShowBorders);

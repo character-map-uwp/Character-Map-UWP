@@ -243,7 +243,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)pch.pch</PrecompiledHeaderOutputFile>
       <AdditionalUsingDirectories>$(WindowsSDK_WindowsMetadata);$(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <AdditionalOptions>/bigobj /GR- %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/bigobj /GR %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>28204</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -269,6 +269,8 @@
   <ItemGroup>
     <ClInclude Include="CanvasTextLayoutAnalysis.h" />
     <ClInclude Include="CblcTableReader.h" />
+    <ClInclude Include="CharacterGridView.h" />
+    <ClInclude Include="CharacterGridViewTemplateSettings.h" />
     <ClInclude Include="CmapTableReader.h" />
     <ClInclude Include="ColorTextAnalyzer.h" />
     <ClInclude Include="ColrTableReader.h" />
@@ -289,6 +291,7 @@
     <ClInclude Include="DWriteProperties.h" />
     <ClInclude Include="ErrorHandling.h" />
     <ClInclude Include="FontAnalysis.h" />
+    <ClInclude Include="GlyphAnnotation.h" />
     <ClInclude Include="GlyphImageFormat.h" />
     <ClInclude Include="GridViewHelper.h" />
     <ClInclude Include="GsubTableReader.h" />
@@ -311,11 +314,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CanvasTextLayoutAnalysis.cpp" />
+    <ClCompile Include="CharacterGridView.cpp" />
     <ClCompile Include="ColorTextAnalyzer.cpp" />
     <ClCompile Include="CustomFontManager.cpp" />
     <ClCompile Include="DirectText.cpp" />
     <ClCompile Include="DirectWrite.cpp" />
     <ClCompile Include="DWriteFontFamily.cpp" />
+    <ClCompile Include="GridViewHelper.cpp" />
     <ClCompile Include="NativeInterop.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

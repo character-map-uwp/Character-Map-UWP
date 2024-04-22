@@ -66,7 +66,7 @@ public static class TypographyAnalyzer
             uint[] uni = variant.GetGlyphUnicodeIndexes();
             int[] gly = variant.Face.GetGlyphIndices(uni);
             IReadOnlyList<Character> chars = variant.GetCharacters();
-            Dictionary<Character, string> map = new();
+            Dictionary<ICharacter, string> map = new();
 
             for (int i = 0; i < chars.Count; i++)
             {
