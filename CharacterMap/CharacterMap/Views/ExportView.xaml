@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:cmControls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:helpers="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -724,12 +725,13 @@
                         <Grid.BackgroundTransition>
                             <BrushTransition Duration="0:0:0.25" />
                         </Grid.BackgroundTransition>
-                        <cmControls:CharacterGridView
+                        <cx:CharacterGridView
                             x:Name="ItemsGridView"
                             Grid.Row="1"
                             Margin="0 0 16 0"
                             Padding="0 24 0 24"
                             ContainerContentChanging="ItemsPanel_ContainerContentChanging"
+                            DisableItemClicks="True"
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
@@ -749,7 +751,7 @@
                             <ItemsControl.Foreground>
                                 <SolidColorBrush Color="{x:Bind ViewModel.GlyphColor, Mode=OneWay}" />
                             </ItemsControl.Foreground>
-                        </cmControls:CharacterGridView>
+                        </cx:CharacterGridView>
                     </Grid>
                 </Grid>
             </Grid>

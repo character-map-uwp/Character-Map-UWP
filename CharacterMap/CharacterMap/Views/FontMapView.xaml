@@ -1142,14 +1142,17 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
+                <!--  ContainerContentChanging="CharGrid_ContainerContentChanging"  -->
+
                 <cxc:CharacterGridView
                     x:Name="CharGrid"
                     x:FieldModifier="public"
-                    ContainerContentChanging="CharGrid_ContainerContentChanging"
                     EnableResizeAnimation="{x:Bind ViewModel.AllowExpensiveAnimation, Mode=OneWay}"
                     IsItemClickEnabled="False"
                     ItemAnnotation="{x:Bind ViewModel.Settings.GlyphAnnotation, Mode=OneTime}"
+                    ItemBackgroundTransition="{x:Bind ItemBackgroundTransition, Mode=OneWay}"
                     ItemContainerTransitions="{StaticResource NoTransitions}"
+                    ItemContextRequested="Grid_ContextRequested"
                     ItemDoubleTapped="CharGrid_ItemDoubleTapped"
                     ItemFontFace="{x:Bind ViewModel.SelectedVariant.Face, Mode=OneWay}"
                     ItemFontFamily="{x:Bind ViewModel.FontFamily, Mode=OneWay}"

@@ -3,6 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
+    xmlns:cx="using:CharacterMapCX.Controls"
     xmlns:h="using:CharacterMap.Helpers"
     xmlns:models="using:CharacterMap.Models"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
@@ -857,7 +858,7 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <controls:CharacterGridView
+                        <cx:CharacterGridView
                             x:Name="ItemsGridView"
                             Margin="0"
                             Padding="0 12 0 24"
@@ -891,7 +892,7 @@
                                     </Grid>
                                 </DataTemplate>
                             </GridView.ItemTemplate>
-                        </controls:CharacterGridView>
+                        </cx:CharacterGridView>
 
                         <Grid
                             x:Name="BottomBar"

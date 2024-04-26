@@ -22,7 +22,7 @@ public sealed partial class ExportView : PopoverViewBase
         _presenter = presenter;
         _fontMap = presenter.GetFontMap();
         TitleBarHeight = presenter.GetTitleBarHeight();
-        ViewModel = new ExportViewModel(_fontMap.ViewModel);
+        ViewModel = new (_fontMap.ViewModel);
 
         this.InitializeComponent();
 
@@ -49,23 +49,23 @@ public sealed partial class ExportView : PopoverViewBase
             return;
         }
 
-        List<UIElement> elements = new() { this };
-        elements.AddRange(OptionsPanel.Children);
+        List<UIElement> elements = [this, ..OptionsPanel.Children];
         CompositionFactory.PlayEntrance(elements, 0, 200);
 
-        elements.Clear();
-        elements.AddRange(PreviewOptions.Children);
-        elements.Add(PreviewContainer);
+        elements = [..PreviewOptions.Children, PreviewContainer];
         CompositionFactory.PlayEntrance(elements, 0, 200);
 
-        elements.Clear();
-        elements.Add(BottomLabel);
-        elements.AddRange(BottomButtonOptions.Children);
+        elements = [BottomLabel, ..BottomButtonOptions.Children];
         CompositionFactory.PlayEntrance(elements, 0, 200);
     }
 
     private void ItemsPanel_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
     {
+#if DEBUG
+        if (sender is CharacterMapCX.Controls.CharacterGridView cgv && cgv.DisableItemClicks is false)
+            throw new InvalidOperationException("DisableItemClicks must be true in order to change container tags (these are let to event tokens in C++ when clicks are enabled");
+#endif
+
         if (args.ItemContainer is SelectorItem item && item.Tag == null)
         {
             item.Tag = sender;
@@ -78,7 +78,7 @@ public sealed partial class ExportView : PopoverViewBase
             });
 
             item.BorderBrush = ResourceHelper.Get<Brush>("ExportBorderBrush");
-            item.BorderThickness = new Thickness(1);
+            item.BorderThickness = new (1);
         }
     }
 

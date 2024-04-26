@@ -19,9 +19,10 @@ namespace CharacterMap.Views;
 [DependencyProperty<FontMapViewModel>("ViewModel")]
 [DependencyProperty<bool>("HideTitle")]
 [DependencyProperty<FontItem>("Font")]
+[DependencyProperty<BrushTransition>("ItemBackgroundTransition", "_itemBackgroundTransition")]
 public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
 {
-    private BrushTransition t = new() { Duration = TimeSpan.FromSeconds(0.115) };
+    private static BrushTransition _itemBackgroundTransition = new BrushTransition() { Duration = TimeSpan.FromSeconds(0.115) };
 
     private Debouncer _sizeDebouncer { get; } = new();
 
@@ -250,6 +251,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                     break;
                 case nameof(AppSettings.UserRequestedTheme):
                     this.RequestedTheme = ResourceHelper.GetEffectiveTheme();
+                    break;
+                case nameof(AppSettings.UseSelectionAnimations):
+                    ItemBackgroundTransition = ResourceHelper.AllowAnimation ? _itemBackgroundTransition : null;
                     break;
             }
         });
@@ -788,19 +792,19 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         }
     }
 
-    private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-    {
-        if (!args.InRecycleQueue && args.ItemContainer is not null)
-        {
-            args.ItemContainer.ContextRequested -= Grid_ContextRequested;
-            args.ItemContainer.ContextRequested += Grid_ContextRequested;
+    //private void CharGrid_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    //{
+    //    if (!args.InRecycleQueue && args.ItemContainer is not null)
+    //    {
+    //        args.ItemContainer.ContextRequested -= Grid_ContextRequested;
+    //        args.ItemContainer.ContextRequested += Grid_ContextRequested;
 
-            var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
-            var b = VisualTreeHelper.GetChild(c, 0);
-            if (b is Border br)
-                br.BackgroundTransition = ResourceHelper.AllowAnimation ? t : null;
-        }
-    }
+    //        var c = VisualTreeHelper.GetChild(args.ItemContainer, 0);
+    //        var b = VisualTreeHelper.GetChild(c, 0);
+    //        if (b is Border br)
+    //            br.BackgroundTransition = ResourceHelper.AllowAnimation ? t : null;
+    //    }
+    //}
 
     private void Grid_ContextRequested(UIElement sender, ContextRequestedEventArgs args)
     {

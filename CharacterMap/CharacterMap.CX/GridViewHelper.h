@@ -94,14 +94,15 @@ namespace CharacterMapCX
 
             //XamlBindingHelper::SuspendRendering(item);
 
-            IXamlDirectObject^ go = x->GetXamlDirectObject(item->ContentTemplateRoot);
+            IXamlDirectObject^ b = x->GetXamlDirectObject(VisualTreeHelper::GetChild(VisualTreeHelper::GetChild(item, 0), 0));
+            x->SetObjectProperty(b, XamlPropertyIndex::Border_BackgroundTransition, settings->BackgroundTransition);
 
+            IXamlDirectObject^ go = x->GetXamlDirectObject(item->ContentTemplateRoot);
             x->SetObjectProperty(go, XamlPropertyIndex::FrameworkElement_Tag, c);
             x->SetDoubleProperty(go, XamlPropertyIndex::FrameworkElement_Width, settings->Size);
             x->SetDoubleProperty(go, XamlPropertyIndex::FrameworkElement_Height, settings->Size);
 
             IXamlDirectObject^ cld = x->GetXamlDirectObjectProperty(go, XamlPropertyIndex::Panel_Children);
-
             IXamlDirectObject^ o = x->GetXamlDirectObjectFromCollectionAt(cld, 0);
             SetGlyphProperties(x, o, settings, c);
 

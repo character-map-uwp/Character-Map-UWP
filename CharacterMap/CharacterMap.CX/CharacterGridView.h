@@ -47,6 +47,11 @@ namespace CharacterMapCX
 
 			event ItemDoubleTappedHandler^ ItemDoubleTapped;
 
+			event TypedEventHandler<UIElement^, ContextRequestedEventArgs^>^ ItemContextRequested;
+
+			property bool DisableItemClicks;
+
+
 			#pragma region Dependency Properties
 
 			static void RegisterDependencyProperties();
@@ -96,8 +101,19 @@ namespace CharacterMapCX
 				DependencyProperty^ get() { return _ItemAnnotationProperty; }
 			}
 
+			static property DependencyProperty^ ItemBackgroundTransitionProperty
+			{
+				DependencyProperty^ get() { return _ItemBackgroundTransitionProperty; }
+			}
+
+			
 
 
+			property BrushTransition^ ItemBackgroundTransition
+			{
+				BrushTransition^ get() { return (BrushTransition^)GetValue(ItemBackgroundTransitionProperty); }
+				void set(BrushTransition^ value) { SetValue(ItemBackgroundTransitionProperty, value); }
+			}
 
 			property ImplicitAnimationCollection^ RepositionAnimationCollection
 			{
@@ -186,6 +202,7 @@ namespace CharacterMapCX
 			void UpdateUnicode(GlyphAnnotation value);
 
 		private:
+			static DependencyProperty^ _ItemBackgroundTransitionProperty;
 			static DependencyProperty^ _RepositionAnimationCollectionProperty;
 			static DependencyProperty^ _ItemSizeProperty;
 			static DependencyProperty^ _ShowColorGlyphsProperty;
@@ -198,6 +215,7 @@ namespace CharacterMapCX
 
 			RoutedEventHandler^ m_tooltipLoadedHandler = nullptr;
 			DoubleTappedEventHandler^ m_doubleTapped = nullptr;
+			TypedEventHandler<UIElement^, ContextRequestedEventArgs^>^ m_contextRequested = nullptr;
 
 			CharacterGridViewTemplateSettings^ m_templateSettings = nullptr;
 			XamlDirect^ m_xamlDirect = nullptr;
@@ -208,6 +226,8 @@ namespace CharacterMapCX
 
 			void OnChoosingItemContainer(ListViewBase^ sender, ChoosingItemContainerEventArgs^ args);
 			void OnContainerContentChanging(ListViewBase^ sender, ContainerContentChangingEventArgs^ args);
+
+			void PokeZIndex(UIElement^ args);
 
 			static void OnItemSizeChanged(DependencyObject^ d, DependencyPropertyChangedEventArgs^ e)
 			{
@@ -255,68 +275,75 @@ namespace CharacterMapCX
 				g->m_templateSettings->EnableReposition = v && GridViewHelper::UISettings->AnimationsEnabled;
 				g->UpdateAnimation(v);
 			}
-		};
+			void OnContextRequested(Windows::UI::Xaml::UIElement^ sender, Windows::UI::Xaml::Input::ContextRequestedEventArgs^ args);
+};
 
 		void CharacterGridView::RegisterDependencyProperties()
 		{
+			if (_ItemBackgroundTransitionProperty == nullptr)
+			{
+				_ItemBackgroundTransitionProperty = DependencyProperty::Register(
+					"ItemBackgroundTransition", BrushTransition::typeid, CharacterGridView::typeid, ref new PropertyMetadata(nullptr, nullptr));
+			}
+
 			if (_RepositionAnimationCollectionProperty == nullptr)
 			{
 				_RepositionAnimationCollectionProperty = DependencyProperty::Register(
-					"RepositionAnimationCollection", ImplicitAnimationCollection::typeid, DirectText::typeid, ref new PropertyMetadata(nullptr, nullptr));
+					"RepositionAnimationCollection", ImplicitAnimationCollection::typeid, CharacterGridView::typeid, ref new PropertyMetadata(nullptr, nullptr));
 			}
 
 			if (_ItemSizeProperty == nullptr)
 			{
 				_ItemSizeProperty = DependencyProperty::Register(
-					"ItemSize", double::typeid, DirectText::typeid, ref new PropertyMetadata(0.0, 
+					"ItemSize", double::typeid, CharacterGridView::typeid, ref new PropertyMetadata(0.0,
 						ref new PropertyChangedCallback(&CharacterGridView::OnItemSizeChanged)));
 			}
 
 			if (_ShowColorGlyphsProperty == nullptr)
 			{
 				_ShowColorGlyphsProperty = DependencyProperty::Register(
-					"ShowColorGlyphs", bool::typeid, DirectText::typeid, ref new PropertyMetadata(false, 
+					"ShowColorGlyphs", bool::typeid, CharacterGridView::typeid, ref new PropertyMetadata(false,
 						ref new PropertyChangedCallback(&CharacterGridView::OnShowColorGlyphsChanged)));
 			}
 
 			if (_EnableResizeAnimationProperty == nullptr)
 			{
 				_EnableResizeAnimationProperty = DependencyProperty::Register(
-					"EnableResizeAnimation", bool::typeid, DirectText::typeid, ref new PropertyMetadata(false,
+					"EnableResizeAnimation", bool::typeid, CharacterGridView::typeid, ref new PropertyMetadata(false,
 						ref new PropertyChangedCallback(&CharacterGridView::OnEnableResizeAnimationChanged)));
 			}
 
 			if (_ItemFontFamilyProperty == nullptr)
 			{
 				_ItemFontFamilyProperty = DependencyProperty::Register(
-					"ItemFontFamily", Media::FontFamily::typeid, DirectText::typeid, ref new PropertyMetadata(nullptr,
+					"ItemFontFamily", Media::FontFamily::typeid, CharacterGridView::typeid, ref new PropertyMetadata(nullptr,
 						ref new PropertyChangedCallback(&CharacterGridView::OnItemFontFamilyChanged)));
 			}
 
 			if (_ItemFontFaceProperty == nullptr)
 			{
 				_ItemFontFaceProperty = DependencyProperty::Register(
-					"ItemFontFace", DWriteFontFace::typeid, DirectText::typeid, ref new PropertyMetadata(nullptr,
+					"ItemFontFace", DWriteFontFace::typeid, CharacterGridView::typeid, ref new PropertyMetadata(nullptr,
 						ref new PropertyChangedCallback(&CharacterGridView::OnItemFontFaceChanged)));
 			}
 
 			if (_ItemTypographyProperty == nullptr)
 			{
 				_ItemTypographyProperty = DependencyProperty::Register(
-					"ItemTypography", ITypographyInfo::typeid, DirectText::typeid, ref new PropertyMetadata(nullptr,
+					"ItemTypography", ITypographyInfo::typeid, CharacterGridView::typeid, ref new PropertyMetadata(nullptr,
 						ref new PropertyChangedCallback(&CharacterGridView::OnItemTypographyChanged)));
 			}
 
 			if (_ItemFontVariantProperty == nullptr)
 			{
 				_ItemFontVariantProperty = DependencyProperty::Register(
-					"ItemFontVariant", IFontFace::typeid, DirectText::typeid, ref new PropertyMetadata(nullptr));
+					"ItemFontVariant", IFontFace::typeid, CharacterGridView::typeid, ref new PropertyMetadata(nullptr));
 			}
 
 			if (_ItemAnnotationProperty == nullptr)
 			{
 				_ItemAnnotationProperty = DependencyProperty::Register(
-					"ItemAnnotation", GlyphAnnotation::typeid, DirectText::typeid, ref new PropertyMetadata(GlyphAnnotation::None,
+					"ItemAnnotation", GlyphAnnotation::typeid, CharacterGridView::typeid, ref new PropertyMetadata(GlyphAnnotation::None,
 						ref new PropertyChangedCallback(&CharacterGridView::OnItemAnnotationChanged)));
 			}
 		}

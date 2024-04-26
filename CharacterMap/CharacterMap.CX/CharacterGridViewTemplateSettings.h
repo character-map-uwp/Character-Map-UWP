@@ -16,7 +16,7 @@ using namespace Windows::UI::Xaml::Media;
 
 namespace CharacterMapCX
 {
-
+    [Windows::Foundation::Metadata::WebHostHidden]
     public ref class CharacterGridViewTemplateSettings sealed
     {
     public:
@@ -26,6 +26,7 @@ namespace CharacterMapCX
         property bool ShowColorGlyphs;
         property bool EnableReposition;
         property double Size;
+        property BrushTransition^ BackgroundTransition;
 
         property GlyphAnnotation Annotation
         {

@@ -101,10 +101,10 @@
 
                 </ResourceDictionary>
 
-                <ResourceDictionary Source="/Styles/Brushes.xaml" />
-                <ResourceDictionary Source="/Styles/TextBox.xaml" />
-                <ResourceDictionary Source="/Styles/Button.xaml" />
-                <ResourceDictionary Source="/Styles/ComboBox.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/Brushes.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/TextBox.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/Button.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/ComboBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

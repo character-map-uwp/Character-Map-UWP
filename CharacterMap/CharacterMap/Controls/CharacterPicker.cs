@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml;
+﻿using CharacterMapCX.Controls;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
@@ -64,8 +65,8 @@ public sealed partial class CharacterPicker : Control
         }
     }
 
-    private void ItemsGridView_ItemDoubleTapped(object sender, Character e)
+    private void ItemsGridView_ItemDoubleTapped(object sender, ICharacter e)
     {
-        CharacterSelected?.Invoke(this, e);
+        CharacterSelected?.Invoke(this, (Character)e);
     }
 }

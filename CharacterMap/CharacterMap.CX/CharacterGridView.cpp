@@ -25,6 +25,7 @@ using namespace Windows::UI::Xaml::Media;
 using namespace Microsoft::WRL;
 using namespace Windows::ApplicationModel;
 
+DependencyProperty^ CharacterGridView::_ItemBackgroundTransitionProperty = nullptr;
 DependencyProperty^ CharacterGridView::_RepositionAnimationCollectionProperty = nullptr;
 DependencyProperty^ CharacterGridView::_ItemSizeProperty = nullptr;
 DependencyProperty^ CharacterGridView::_ShowColorGlyphsProperty = nullptr;
@@ -42,10 +43,16 @@ CharacterGridView::CharacterGridView()
 
     m_tooltipLoadedHandler = ref new RoutedEventHandler(this, &CharacterGridView::ToolTipLoaded);
     m_doubleTapped = ref new DoubleTappedEventHandler(this, &CharacterGridView::OnItemDoubleTapped);
-    
+    m_contextRequested = ref new TypedEventHandler<UIElement^, ContextRequestedEventArgs^>(this, &CharacterGridView::OnContextRequested);
 
-    this->ContainerContentChanging +=
-        ref new TypedEventHandler<ListViewBase^, ContainerContentChangingEventArgs^>(this, &CharacterGridView::OnContainerContentChanging);
+    this->ChoosingItemContainer += ref new TypedEventHandler<ListViewBase^, ChoosingItemContainerEventArgs^>(this, &CharacterGridView::OnChoosingItemContainer);
+    this->ContainerContentChanging += ref new TypedEventHandler<ListViewBase^, ContainerContentChangingEventArgs^>(this, &CharacterGridView::OnContainerContentChanging);
+}
+
+void CharacterGridView::OnChoosingItemContainer(ListViewBase^ sender, ChoosingItemContainerEventArgs^ args)
+{
+    if (m_templateSettings->EnableReposition && args->ItemContainer != nullptr)
+        PokeZIndex(args->ItemContainer);
 }
 
 void CharacterGridView::OnContainerContentChanging(ListViewBase^ sender, ContainerContentChangingEventArgs^ args)
@@ -56,10 +63,7 @@ void CharacterGridView::OnContainerContentChanging(ListViewBase^ sender, Contain
         if (args->InRecycleQueue)
         {
             // 1.1. Poke Z-Index
-            auto o = m_xamlDirect->GetXamlDirectObject(args->ItemContainer);
-            auto i = m_xamlDirect->GetInt32Property(o, XamlPropertyIndex::Canvas_ZIndex);
-            m_xamlDirect->SetInt32Property(o, XamlPropertyIndex::Canvas_ZIndex, i + 1);
-            m_xamlDirect->SetInt32Property(o, XamlPropertyIndex::Canvas_ZIndex, i);
+            PokeZIndex(args->ItemContainer);
         }
         else
         {
@@ -76,6 +80,7 @@ void CharacterGridView::OnContainerContentChanging(ListViewBase^ sender, Contain
         return;
 
     GridViewItem^ item = (GridViewItem^)args->ItemContainer;
+    m_templateSettings->BackgroundTransition = ItemBackgroundTransition;
 
     // 2. Update item template
     ICharacter^ c = (ICharacter^)args->Item;
@@ -83,15 +88,18 @@ void CharacterGridView::OnContainerContentChanging(ListViewBase^ sender, Contain
     args->Handled = true;
 
     // 3. Ensure double tap
-    if (item->Tag != nullptr)
+    if (!DisableItemClicks && item->Tag == nullptr)
     {
-        // 3.1. Remove existing
-        Windows::Foundation::EventRegistrationToken token = static_cast<Windows::Foundation::EventRegistrationToken>(item->Tag);
-        item->DoubleTapped -= token;
+        //// 3.1. Remove existing
+        //Windows::Foundation::EventRegistrationToken token = static_cast<Windows::Foundation::EventRegistrationToken>(item->Tag);
+        //item->DoubleTapped -= token;
+        auto token = item->DoubleTapped += m_doubleTapped;
+        item->Tag = token;
+        item->ContextRequested += m_contextRequested;
     }
 
-    //// 3.2. re-add
-    item->Tag = item->DoubleTapped += m_doubleTapped;
+    ////// 3.2. re-add
+    //item->Tag = item->DoubleTapped += m_doubleTapped;
 
     // 4. Ensure tooltip
     if (ItemFontVariant == nullptr)
@@ -102,12 +110,14 @@ void CharacterGridView::OnContainerContentChanging(ListViewBase^ sender, Contain
     if (tt == nullptr)
     {
         // 4.1. Create default tooltip
-        t = ref new ToolTip();
-        t->PlacementTarget = item;
-        t->VerticalOffset = 4;
-        t->Placement = Windows::UI::Xaml::Controls::Primitives::PlacementMode::Top;
+        auto ot = m_xamlDirect->CreateInstance(XamlTypeIndex::ToolTip);
+        m_xamlDirect->SetObjectProperty(ot, XamlPropertyIndex::ToolTip_PlacementTarget, item);
+        m_xamlDirect->SetDoubleProperty(ot, XamlPropertyIndex::ToolTip_VerticalOffset, 4);
+        m_xamlDirect->SetEnumProperty(ot, XamlPropertyIndex::ToolTip_Placement, (unsigned int)Windows::UI::Xaml::Controls::Primitives::PlacementMode::Top);
+        m_xamlDirect->SetXamlDirectObjectProperty(m_xamlDirect->GetXamlDirectObject(item), XamlPropertyIndex::ToolTipService_ToolTip, ot);
+       
+        t = (ToolTip^)m_xamlDirect->GetObject(ot);
         t->Loaded += m_tooltipLoadedHandler;
-        ToolTipService::SetToolTip(item, t);
     }
     else
         t = (ToolTip^)tt;
@@ -118,6 +128,14 @@ void CharacterGridView::OnContainerContentChanging(ListViewBase^ sender, Contain
     d->Container = item;
     d->Variant = ItemFontVariant;
     t->Tag = d;
+}
+
+void CharacterMapCX::Controls::CharacterGridView::PokeZIndex(UIElement^ item)
+{
+    auto o = m_xamlDirect->GetXamlDirectObject(item);
+    auto i = m_xamlDirect->GetInt32Property(o, XamlPropertyIndex::Canvas_ZIndex);
+    m_xamlDirect->SetInt32Property(o, XamlPropertyIndex::Canvas_ZIndex, i + 1);
+    m_xamlDirect->SetInt32Property(o, XamlPropertyIndex::Canvas_ZIndex, i);
 }
 
 void CharacterGridView::ToolTipLoaded(Platform::Object^ sender, RoutedEventArgs^ e)
@@ -145,10 +163,7 @@ void CharacterGridView::OnItemDoubleTapped(Platform::Object^ sender, DoubleTappe
     ItemDoubleTapped(sender, (ICharacter^)((GridViewItem^)sender)->DataContext);
 }
 
-void CharacterGridView::OnChoosingItemContainer(ListViewBase^ sender, ChoosingItemContainerEventArgs^ args)
-{
 
-}
 
 
 void CharacterGridView::UpdateColorFonts(bool value)
@@ -205,4 +220,10 @@ void CharacterGridView::UpdateUnicode(GlyphAnnotation value)
         m_xamlDirect->SetStringProperty(tb, XamlPropertyIndex::TextBlock_Text, GridViewHelper::GetAnnotation(c, value));
         m_xamlDirect->SetEnumProperty(tb, XamlPropertyIndex::UIElement_Visibility, (unsigned int)(value != GlyphAnnotation::None ? 0 : 1));
     }
+}
+
+
+void CharacterGridView::OnContextRequested(UIElement^ sender, ContextRequestedEventArgs^ args)
+{
+    ItemContextRequested(sender, args);
 }
