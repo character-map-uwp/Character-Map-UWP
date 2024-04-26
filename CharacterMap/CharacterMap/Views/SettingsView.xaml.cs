@@ -5,6 +5,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Views;
 
+[DependencyProperty<int>("GridSize")]
 public sealed partial class SettingsView : ViewBase
 {
     public AppSettings Settings { get; }
@@ -15,15 +16,6 @@ public sealed partial class SettingsView : ViewBase
 
     [ObservableProperty]
     private GridLength _titleBarHeight = new(32);
-
-    public int GridSize
-    {
-        get { return (int)GetValue(GridSizeProperty); }
-        set { SetValue(GridSizeProperty, value); }
-    }
-
-    public static readonly DependencyProperty GridSizeProperty =
-        DependencyProperty.Register(nameof(GridSize), typeof(int), typeof(SettingsView), new PropertyMetadata(0d));
 
     private bool _themeSupportsShadows = false;
 
@@ -53,7 +45,7 @@ public sealed partial class SettingsView : ViewBase
         _navHelper.BackRequested += (s, e) => Hide();
     }
 
-    public void Show(FontVariant variant, InstalledFont font, int idx = 0)
+    public void Show(CharacterRenderingOptions options, InstalledFont font, int idx = 0)
     {
         if (IsOpen)
         {
@@ -80,7 +72,7 @@ public sealed partial class SettingsView : ViewBase
 #pragma warning restore CS0618
 
         // 3. Get the fonts used for Font List & Character Grid previews
-        ViewModel.UpdatePreviews(font, variant);
+        ViewModel.UpdatePreviews(font, options);
 
 
         Presenter.SetTitleBar();

@@ -5,108 +5,25 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-public sealed class ModalPagePresenter : ContentControl
+[DependencyProperty("TitleBarContent")]
+[DependencyProperty<bool>("AllowShadows")]
+[DependencyProperty<bool>("IsWindowRoot")]
+[DependencyProperty<string>("Title")]
+[DependencyProperty<Visibility>("CloseButtonVisibility")]
+[DependencyProperty<Visibility>("HeaderVisibility")]
+[DependencyProperty<GridLength>("TitleBarHeight", "new GridLength(32)")]
+[DependencyProperty<Brush>("TitleBackgroundBrush")]
+[DependencyProperty<Brush>("ContentBackground")]
+public sealed partial class ModalPagePresenter : ContentControl
 {
     public event RoutedEventHandler CloseClicked;
-
-    public object TitleBarContent
-    {
-        get { return (object)GetValue(TitleBarContentProperty); }
-        set { SetValue(TitleBarContentProperty, value); }
-    }
-
-    public static readonly DependencyProperty TitleBarContentProperty =
-        DependencyProperty.Register(nameof(TitleBarContent), typeof(object), typeof(ModalPagePresenter), new PropertyMetadata(null, (d, e) =>
-        {
-            ((ModalPagePresenter)d).OnTitleContentChanged();
-        }));
-
-    public Brush TitleBackgroundBrush
-    {
-        get { return (Brush)GetValue(TitleBackgroundBrushProperty); }
-        set { SetValue(TitleBackgroundBrushProperty, value); }
-    }
-
-    public static readonly DependencyProperty TitleBackgroundBrushProperty =
-        DependencyProperty.Register(nameof(TitleBackgroundBrush), typeof(Brush), typeof(ModalPagePresenter), new PropertyMetadata(null));
-
-
-    public Brush ContentBackground
-    {
-        get { return (Brush)GetValue(ContentBackgroundProperty); }
-        set { SetValue(ContentBackgroundProperty, value); }
-    }
-
-    public static readonly DependencyProperty ContentBackgroundProperty =
-        DependencyProperty.Register(nameof(ContentBackground), typeof(Brush), typeof(ModalPagePresenter), new PropertyMetadata(null));
-
-
-    public Visibility CloseButtonVisibility
-    {
-        get { return (Visibility)GetValue(CloseButtonVisibilityProperty); }
-        set { SetValue(CloseButtonVisibilityProperty, value); }
-    }
-
-    public static readonly DependencyProperty CloseButtonVisibilityProperty =
-        DependencyProperty.Register(nameof(CloseButtonVisibility), typeof(Visibility), typeof(ModalPagePresenter), new PropertyMetadata(Visibility.Visible));
-
-
-    public string Title
-    {
-        get { return (string)GetValue(TitleProperty); }
-        set { SetValue(TitleProperty, value); }
-    }
-
-    public static readonly DependencyProperty TitleProperty =
-        DependencyProperty.Register(nameof(Title), typeof(string), typeof(ModalPagePresenter), new PropertyMetadata(null));
-
-
-    public GridLength TitleBarHeight
-    {
-        get { return (GridLength)GetValue(TitleBarHeightProperty); }
-        set { SetValue(TitleBarHeightProperty, value); }
-    }
-
-    public static readonly DependencyProperty TitleBarHeightProperty =
-        DependencyProperty.Register(nameof(TitleBarHeight), typeof(GridLength), typeof(ModalPagePresenter), new PropertyMetadata(new GridLength(32)));
-
-
-    public bool AllowShadows
-    {
-        get { return (bool)GetValue(AllowShadowsProperty); }
-        set { SetValue(AllowShadowsProperty, value); }
-    }
-
-    public static readonly DependencyProperty AllowShadowsProperty =
-        DependencyProperty.Register(nameof(AllowShadows), typeof(bool), typeof(ModalPagePresenter), new PropertyMetadata(true));
-
-
-    public bool IsWindowRoot
-    {
-        get { return (bool)GetValue(IsWindowRootProperty); }
-        set { SetValue(IsWindowRootProperty, value); }
-    }
-
-    public static readonly DependencyProperty IsWindowRootProperty =
-        DependencyProperty.Register(nameof(IsWindowRoot), typeof(bool), typeof(ModalPagePresenter), new PropertyMetadata(false));
-
-
-    public Visibility HeaderVisibility
-    {
-        get { return (Visibility)GetValue(HeaderVisibilityProperty); }
-        set { SetValue(HeaderVisibilityProperty, value); }
-    }
-
-    public static readonly DependencyProperty HeaderVisibilityProperty =
-        DependencyProperty.Register(nameof(HeaderVisibility), typeof(Visibility), typeof(ModalPagePresenter), new PropertyMetadata(Visibility.Visible));
-
-
-
 
     public ModalPagePresenter()
     {
         this.DefaultStyleKey = typeof(ModalPagePresenter);
     }
+
+    partial void OnTitleBarContentChanged(object? oldValue, object newValue) => OnTitleContentChanged();
 
     protected override void OnApplyTemplate()
     {

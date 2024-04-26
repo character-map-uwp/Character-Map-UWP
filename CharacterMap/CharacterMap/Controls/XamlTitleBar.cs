@@ -1,4 +1,5 @@
-﻿using Windows.ApplicationModel.Core;
+﻿using Windows.ApplicationModel;
+using Windows.ApplicationModel.Core;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -45,58 +46,31 @@ public partial class XamlTitleBarTemplateSettings : ViewModelBase
     }
 }
 
-public sealed class XamlTitleBar : ContentControl
+[DependencyProperty<bool>("AutoUpdateTitle", true)]
+[DependencyProperty<bool>("IsAutoHeightEnabled", true)]
+[DependencyProperty<bool>("IsDragTarget", true)]
+public sealed partial class XamlTitleBar : ContentControl
 {
     private UISettings _settings;
     private CoreApplicationViewTitleBar _titleBar;
     private CoreWindow _window;
     private FrameworkElement _backgroundElement;
 
-    public bool IsDragTarget
-    {
-        get { return (bool)GetValue(IsDragTargetProperty); }
-        set { SetValue(IsDragTargetProperty, value); }
-    }
-
-    public static readonly DependencyProperty IsDragTargetProperty =
-        DependencyProperty.Register(nameof(IsDragTarget), typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true, (d, e) =>
-        {
-            if (d is XamlTitleBar bar)
-                bar.UpdateStates();
-        }));
-
-
-    public bool IsAutoHeightEnabled
-    {
-        get { return (bool)GetValue(IsAutoHeightEnabledProperty); }
-        set { SetValue(IsAutoHeightEnabledProperty, value); }
-    }
-
-    public static readonly DependencyProperty IsAutoHeightEnabledProperty =
-        DependencyProperty.Register(nameof(IsAutoHeightEnabled), typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true));
-
-
-    public bool AutoUpdateTitle
-    {
-        get { return (bool)GetValue(AutoUpdateTitleProperty); }
-        set { SetValue(AutoUpdateTitleProperty, value); }
-    }
-
-    public static readonly DependencyProperty AutoUpdateTitleProperty =
-        DependencyProperty.Register(nameof(AutoUpdateTitle), typeof(bool), typeof(XamlTitleBar), new PropertyMetadata(true));
-
-
-
-
-    public XamlTitleBarTemplateSettings TemplateSettings { get; } = new XamlTitleBarTemplateSettings();
+    public XamlTitleBarTemplateSettings TemplateSettings { get; } = new ();
 
     public XamlTitleBar()
     {
         DefaultStyleKey = typeof(XamlTitleBar);
         Loading += XamlTitleBar_Loading;
+
+        if (DesignMode.DesignModeEnabled)
+            return;
+
         Loaded += XamlTitleBar_Loaded;
         Unloaded += XamlTitleBar_Unloaded;
     }
+
+    partial void OnIsDragTargetChanged(bool? oldValue, bool newValue) => UpdateStates();
 
     private void XamlTitleBar_Loading(FrameworkElement sender, object args)
     {
@@ -112,7 +86,7 @@ public sealed class XamlTitleBar : ContentControl
         if (IsAutoHeightEnabled)
             Height = d;
 
-        TemplateSettings.GridHeight = new GridLength(d);
+        TemplateSettings.GridHeight = new (d);
         TemplateSettings.Height = d;
     }
 

@@ -5,30 +5,11 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-public class FlowAwareComboBox : ComboBox
+[DependencyProperty<bool>("IsColorFontEnabled", true)]
+[DependencyProperty<FlowDirection>("DetectedFlowDirection")]
+public partial class FlowAwareComboBox : ComboBox
 {
     public event EventHandler<FlowDirection> DetectedFlowDirectionChanged;
-
-    public bool IsColorFontEnabled
-    {
-        get { return (bool)GetValue(IsColorFontEnabledProperty); }
-        set { SetValue(IsColorFontEnabledProperty, value); }
-    }
-
-    public static readonly DependencyProperty IsColorFontEnabledProperty =
-        DependencyProperty.Register(nameof(IsColorFontEnabled), typeof(bool), typeof(FlowAwareComboBox), new PropertyMetadata(true));
-
-    public FlowDirection DetectedFlowDirection
-    {
-        get { return (FlowDirection)GetValue(DetectedFlowDirectionProperty); }
-        set { SetValue(DetectedFlowDirectionProperty, value); }
-    }
-
-    public static readonly DependencyProperty DetectedFlowDirectionProperty =
-        DependencyProperty.Register(nameof(DetectedFlowDirection), typeof(FlowDirection), typeof(FlowAwareComboBox), new PropertyMetadata(FlowDirection.LeftToRight, (d, e) =>
-        {
-            ((FlowAwareComboBox)d).DetectedFlowDirectionChanged?.Invoke(d, (FlowDirection)e.NewValue);
-        }));
 
     private Binding _colorFontBinding { get; }
 
@@ -39,6 +20,11 @@ public class FlowAwareComboBox : ComboBox
     public FlowAwareComboBox()
     {
         _colorFontBinding = new() { Source = this, Path = new(nameof(IsColorFontEnabled)) };
+    }
+
+    partial void OnDetectedFlowDirectionChanged(FlowDirection? oldValue, FlowDirection newValue)
+    {
+        DetectedFlowDirectionChanged?.Invoke(this, newValue);
     }
 
     protected override void OnApplyTemplate()

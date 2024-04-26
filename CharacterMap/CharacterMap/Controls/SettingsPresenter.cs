@@ -14,100 +14,16 @@ public enum ContentPlacement
 
 
 [ContentProperty(Name = nameof(Content))]
-public sealed class SettingsPresenter : ItemsControl, IThemeableControl
+[DependencyProperty("Title")]
+[DependencyProperty("Content")]
+[DependencyProperty("Description")]
+[DependencyProperty("Icon")]
+[DependencyProperty<double>("IconSize", 24d)]
+[DependencyProperty<ContentPlacement>("ContentPlacement", ContentPlacement.Right)]
+[DependencyProperty<bool>("HasItems", typeof(bool))]
+[DependencyProperty<CornerRadius>("BottomCornerRadius", "new CornerRadius()")]
+public sealed partial class SettingsPresenter : ItemsControl, IThemeableControl
 {
-    #region Dependency Properties 
-
-    public object Title
-    {
-        get { return (object)GetValue(TitleProperty); }
-        set { SetValue(TitleProperty, value); }
-    }
-
-    public static readonly DependencyProperty TitleProperty =
-        DependencyProperty.Register(nameof(Title), typeof(object), typeof(SettingsPresenter), new PropertyMetadata(null));
-
-
-    public object Description
-    {
-        get { return (object)GetValue(DescriptionProperty); }
-        set { SetValue(DescriptionProperty, value); }
-    }
-
-    public static readonly DependencyProperty DescriptionProperty =
-        DependencyProperty.Register(nameof(Description), typeof(object), typeof(SettingsPresenter), new PropertyMetadata(null, (d, e) =>
-        {
-            ((SettingsPresenter)d).UpdateDescriptionStates();
-        }));
-
-
-    public object Content
-    {
-        get { return (object)GetValue(ContentProperty); }
-        set { SetValue(ContentProperty, value); }
-    }
-
-    public static readonly DependencyProperty ContentProperty =
-        DependencyProperty.Register(nameof(Content), typeof(object), typeof(SettingsPresenter), new PropertyMetadata(null));
-
-
-    public object Icon
-    {
-        get { return (object)GetValue(IconProperty); }
-        set { SetValue(IconProperty, value); }
-    }
-
-    public static readonly DependencyProperty IconProperty =
-        DependencyProperty.Register(nameof(Icon), typeof(object), typeof(SettingsPresenter), new PropertyMetadata(null, (d, e) =>
-        {
-            ((SettingsPresenter)d).UpdateIconStates();
-        }));
-
-
-    public double IconSize
-    {
-        get { return (double)GetValue(IconSizeProperty); }
-        set { SetValue(IconSizeProperty, value); }
-    }
-
-    public static readonly DependencyProperty IconSizeProperty =
-        DependencyProperty.Register(nameof(IconSize), typeof(double), typeof(SettingsPresenter), new PropertyMetadata(24d));
-
-
-    public ContentPlacement ContentPlacement
-    {
-        get { return (ContentPlacement)GetValue(ContentPlacementProperty); }
-        set { SetValue(ContentPlacementProperty, value); }
-    }
-
-    public static readonly DependencyProperty ContentPlacementProperty =
-        DependencyProperty.Register(nameof(ContentPlacement), typeof(ContentPlacement), typeof(SettingsPresenter), new PropertyMetadata(ContentPlacement.Right, (d, e) =>
-        {
-            ((SettingsPresenter)d).UpdatePlacementStates();
-        }));
-
-
-    public bool HasItems
-    {
-        get { return (bool)GetValue(HasItemsProperty); }
-        private set { SetValue(HasItemsProperty, value); }
-    }
-
-    public static readonly DependencyProperty HasItemsProperty =
-        DependencyProperty.Register(nameof(HasItems), typeof(bool), typeof(SettingsPresenter), new PropertyMetadata(false));
-
-
-    public CornerRadius BottomCornerRadius
-    {
-        get { return (CornerRadius)GetValue(BottomCornerRadiusProperty); }
-        set { SetValue(BottomCornerRadiusProperty, value); }
-    }
-
-    public static readonly DependencyProperty BottomCornerRadiusProperty =
-        DependencyProperty.Register(nameof(BottomCornerRadius), typeof(CornerRadius), typeof(SettingsPresenter), new PropertyMetadata(new CornerRadius()));
-
-    #endregion
-
     private ThemeHelper _themer;
 
     private FrameworkElement _itemsRoot = null;
@@ -119,10 +35,11 @@ public sealed class SettingsPresenter : ItemsControl, IThemeableControl
         _themer = new ThemeHelper(this);
     }
 
-    protected override bool IsItemItsOwnContainerOverride(object item)
-    {
-        return false;
-    }
+    partial void OnDescriptionChanged(object o, object n) => UpdateDescriptionStates();
+    partial void OnIconChanged(object o, object n) => UpdateIconStates();
+    partial void OnContentPlacementChanged(ContentPlacement? o, ContentPlacement n) => UpdatePlacementStates();
+
+    protected override bool IsItemItsOwnContainerOverride(object item) => false;
 
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
     {

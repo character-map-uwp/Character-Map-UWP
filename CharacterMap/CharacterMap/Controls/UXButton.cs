@@ -3,8 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-[ObservableObject]
-public partial class UXButtonTemplateSettings
+public partial class UXButtonTemplateSettings : ObservableObject
 {
     [ObservableProperty]
     string _effectiveLabel;
@@ -20,73 +19,24 @@ public partial class UXButtonTemplateSettings
     }
 }
 
-public class UXButton : Button//, IThemeableControl
+[DependencyProperty<bool>("IsActive")]
+[DependencyProperty<bool>("IsHintVisible")]
+[DependencyProperty<bool>("IsLabelVisible")]
+[DependencyProperty<string>("Label")]
+[DependencyProperty<CharacterCasing>("LabelCasing")]
+public partial class UXButton : Button//, IThemeableControl
 {
-    public bool IsHintVisible
-    {
-        get { return (bool)GetValue(IsHintVisibleProperty); }
-        set { SetValue(IsHintVisibleProperty, value); }
-    }
+    partial void OnIsActiveChanged(bool? oldValue, bool newValue) => UpdateActive();
 
-    public static readonly DependencyProperty IsHintVisibleProperty =
-        DependencyProperty.Register(nameof(IsHintVisible), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
-        {
-            ((UXButton)d).UpdateHint();
-        }));
+    partial void OnIsHintVisibleChanged(bool? oldValue, bool newValue) => UpdateHint();
 
-    public bool IsLabelVisible
-    {
-        get { return (bool)GetValue(IsLabelVisibleProperty); }
-        set { SetValue(IsLabelVisibleProperty, value); }
-    }
+    partial void OnIsLabelVisibleChanged(bool? oldValue, bool newValue) => UpdateLabel();
 
-    public static readonly DependencyProperty IsLabelVisibleProperty =
-        DependencyProperty.Register(nameof(IsLabelVisible), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
-        {
-            ((UXButton)d).UpdateLabel();
-        }));
+    partial void OnLabelChanged(string oldValue, string newValue) => UpdateLabelText();
 
-    public CharacterCasing LabelCasing
-    {
-        get { return (CharacterCasing)GetValue(LabelCasingProperty); }
-        set { SetValue(LabelCasingProperty, value); }
-    }
+    partial void OnLabelCasingChanged(CharacterCasing? oldValue, CharacterCasing newValue) => UpdateLabelText();
 
-    public static readonly DependencyProperty LabelCasingProperty =
-        DependencyProperty.Register(nameof(LabelCasing), typeof(CharacterCasing), typeof(UXButton), new PropertyMetadata(CharacterCasing.Normal, (d, e) =>
-        {
-            ((UXButton)d).UpdateLabelText();
-        }));
-
-    public string Label
-    {
-        get { return (string)GetValue(LabelProperty); }
-        set { SetValue(LabelProperty, value); }
-    }
-
-    public static readonly DependencyProperty LabelProperty =
-        DependencyProperty.Register(nameof(Label), typeof(string), typeof(UXButton), new PropertyMetadata(null, (d, e) =>
-        {
-            ((UXButton)d).UpdateLabelText();
-        }));
-
-
-
-    public bool IsActive
-    {
-        get { return (bool)GetValue(IsActiveProperty); }
-        set { SetValue(IsActiveProperty, value); }
-    }
-
-    public static readonly DependencyProperty IsActiveProperty =
-        DependencyProperty.Register(nameof(IsActive), typeof(bool), typeof(UXButton), new PropertyMetadata(false, (d, e) =>
-        {
-            ((UXButton)d).UpdateActive();
-        }));
-
-
-
-    public UXButtonTemplateSettings TemplateSettings { get; } = new UXButtonTemplateSettings();
+    public UXButtonTemplateSettings TemplateSettings { get; } = new ();
 
     bool _isTemplateApplied = false;
 

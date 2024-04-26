@@ -20,6 +20,7 @@
     <x:Double x:Key="MinTitleBarHeight">32</x:Double>
     <CornerRadius x:Key="CardCornerRadius">0</CornerRadius>
     <CornerRadius x:Key="InfoBarCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="CommandToggleCornerRadius">0</CornerRadius>
 
 
 
@@ -545,6 +546,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style x:Key="DefaultThemeGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem" />
 
     <Style x:Key="FontListGridViewItemStyle" BasedOn="{StaticResource DefaultGridViewItemStyle}" TargetType="GridViewItem" />
 
@@ -2551,7 +2554,7 @@
 
     <!--  RADIO BUTTON  -->
 
-    <Style x:Key="DefaultRadioButtonStyle" TargetType="RadioButton">
+    <Style x:Key="DefaultThemeRadioButtonStyle" TargetType="RadioButton">
         <Setter Property="FontSize" Value="13.3333" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Padding" Value="0 6" />
@@ -3581,7 +3584,7 @@
 
     <!--  COMBOBOX  -->
 
-    <Style x:Key="DefaultComboBoxItemStyle" TargetType="ComboBoxItem">
+    <Style x:Key="DefaultThemeComboBoxItemStyle" TargetType="controls:UXComboBoxItem">
         <Setter Property="Foreground" Value="{ThemeResource ComboBoxForeground}" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Background" Value="{ThemeResource FlyoutPresenterBackground}" />
@@ -3594,7 +3597,7 @@
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ComboBoxItem">
+                <ControlTemplate TargetType="controls:UXComboBoxItem">
                     <Grid
                         x:Name="LayoutRoot"
                         Background="{TemplateBinding Background}"
@@ -3663,7 +3666,7 @@
                                 </VisualState>
 
                             </VisualStateGroup>
-                            <VisualStateGroup x:Name="InputModeStates">
+                            <!--<VisualStateGroup x:Name="InputModeStates">
                                 <VisualState x:Name="InputModeDefault" />
                                 <VisualState x:Name="TouchInputMode">
                                     <VisualState.Setters>
@@ -3676,7 +3679,7 @@
                                     </VisualState.Setters>
                                 </VisualState>
 
-                            </VisualStateGroup>
+                            </VisualStateGroup>-->
 
                         </VisualStateManager.VisualStateGroups>
                         <ContentPresenter
@@ -3696,7 +3699,7 @@
         </Setter>
     </Style>
 
-    <Style x:Key="DefaultThemeComboBoxStyle" TargetType="ComboBox">
+    <Style x:Key="DefaultThemeComboBoxStyle" TargetType="controls:UXComboBox">
         <Setter Property="Padding" Value="12,5,12,7" />
         <Setter Property="MaxDropDownHeight" Value="504" />
         <Setter Property="Foreground" Value="{ThemeResource ComboBoxForeground}" />
@@ -3705,6 +3708,7 @@
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="TabNavigation" Value="Once" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource DefaultThemeComboBoxItemStyle}" />
         <Setter Property="CornerRadius" Value="0" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
@@ -3730,7 +3734,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="ComboBox">
+                <ControlTemplate TargetType="controls:UXComboBox">
                     <Grid x:Name="LayoutRoot">
 
                         <Grid.Resources>
@@ -4004,9 +4008,9 @@
         </Setter>
     </Style>
 
-    <Style BasedOn="{StaticResource DefaultComboBoxItemStyle}" TargetType="ComboBoxItem" />
+    <Style BasedOn="{StaticResource DefaultThemeComboBoxItemStyle}" TargetType="ComboBoxItem" />
 
-    <Style BasedOn="{StaticResource DefaultComboBoxItemStyle}" TargetType="controls:UXComboBoxItem" />
+    <Style BasedOn="{StaticResource DefaultThemeComboBoxItemStyle}" TargetType="controls:UXComboBoxItem" />
 
     <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox" />
 

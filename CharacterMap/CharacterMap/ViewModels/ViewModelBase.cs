@@ -109,7 +109,7 @@ public abstract class BaseNotifyingModel
                     case nameof(AppSettings.AllowExpensiveAnimations):
                         Notify(nameof(AllowExpensiveAnimation));
                         break;
-                    case nameof(AppSettings.UseFluentPointerOverAnimations):
+                    case nameof(AppSettings.UseFluentPointerOverAnimations1):
                         Notify(nameof(AllowFluentAnimation));
                         break;
                 }

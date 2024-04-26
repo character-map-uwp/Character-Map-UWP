@@ -4,6 +4,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:h="using:CharacterMap.Helpers"
+    xmlns:models="using:CharacterMap.Models"
     xmlns:toolkit="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml">
 
@@ -404,6 +405,9 @@
                                 Height="45"
                                 HorizontalAlignment="Right"
                                 h:FluentAnimation.PointerDownScale="0.8"
+                                h:FluentAnimation.PointerOver="FluentContentPresenter"
+                                h:FluentAnimation.PointerOverOffset="-2"
+                                h:FluentAnimation.UsePointerOver="True"
                                 Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                                 Visibility="{TemplateBinding CloseButtonVisibility}">
                                 <FontIcon Glyph="&#xE10A;" />
@@ -737,7 +741,7 @@
                             </AutoSuggestBox.Resources>
                             <AutoSuggestBox.ItemTemplate>
                                 <DataTemplate>
-                                    <StackPanel>
+                                    <StackPanel Name="TemplateContent">
                                         <TextBlock
                                             core:Properties.Uppercase="{Binding Title}"
                                             FontSize="10.666"
@@ -753,8 +757,16 @@
                                 </DataTemplate>
                             </AutoSuggestBox.ItemTemplate>
                             <core:Properties.Footer>
-                                <ListViewItem x:Name="EditButton">
+                                <ListViewItem
+                                    x:Name="EditButton"
+                                    h:FluentAnimation.PointerDownScale="0.92"
+                                    h:FluentAnimation.PointerOver="Target"
+                                    h:FluentAnimation.PointerOverAxis="Vertical"
+                                    h:FluentAnimation.PointerOverOffset="-2"
+                                    h:FluentAnimation.Pressed="Target"
+                                    Style="{StaticResource DefaultThemeListViewItemStyle}">
                                     <StackPanel
+                                        Name="Target"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Orientation="Horizontal"
@@ -851,6 +863,7 @@
                             Padding="0 12 0 24"
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
+                            ItemContainerStyle="{StaticResource DefaultThemeGridViewItemStyle}"
                             ItemContainerTransitions="{StaticResource NoTransitions}"
                             ItemFontFace="{Binding Options.Variant.Face, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                             ItemFontFamily="{Binding Options.Variant.Source, RelativeSource={RelativeSource Mode=TemplatedParent}}"
@@ -868,7 +881,7 @@
                             <GridView.ItemTemplate>
                                 <DataTemplate>
                                     <!--  For performance reasons, all bindings are done in C#  -->
-                                    <Grid Padding="4">
+                                    <Grid Name="TemplateContent" Padding="4">
                                         <TextBlock
                                             x:Name="Text"
                                             Margin="0 -2 0 0"
@@ -893,6 +906,9 @@
                             <Button
                                 x:Name="AddButton"
                                 HorizontalAlignment="Stretch"
+                                h:FluentAnimation.PointerOver="ContentPresenter.Content"
+                                h:FluentAnimation.PointerOverOffset="-2"
+                                h:FluentAnimation.Pressed="ContentPresenter"
                                 Content="{core:Localizer Key='AddButton/Label'}"
                                 Style="{StaticResource AccentButtonStyle}" />
                             <Button
@@ -948,6 +964,110 @@
                         </Grid>
 
                     </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="controls:GlyphNamingControl">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:GlyphNamingControl">
+                    <StackPanel
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <TextBlock x:Uid="GlyphNameToggleHeader" Style="{StaticResource HeaderStyle}" />
+
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox IsSpellCheckEnabled="False" Text="{Binding ViewModel.Template, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                            <Button
+                                x:Name="ResetButton"
+                                x:Uid="BtnReset"
+                                Grid.Column="1" />
+                        </Grid>
+
+                        <!--<TextBlock
+                            Margin="0 4 0 0"
+                            FontStyle="Italic"
+                            Opacity="0.7"
+                            Text="Preview" />-->
+                        <TextBlock
+                            Margin="0 2 0 0"
+                            FontSize="12.666"
+                            FontStyle="Normal"
+                            Opacity="0.7"
+                            Text="{Binding ViewModel.Example, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+
+                        <Button
+                            x:Name="ToggleButton"
+                            Margin="-4 12 -4 8"
+                            Padding="4 0"
+                            Style="{StaticResource ThemeTextBlockButtonStyle}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Uid="GlyphNameToggleLabel" OpticalMarginAlignment="TrimSideBearings" />
+                                <TextBlock
+                                    x:Name="Chevron"
+                                    Margin="4 2 0 0"
+                                    VerticalAlignment="Center"
+                                    core:Properties.RotationTransition="0:0:0.2"
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="12"
+                                    Text="&#xE019;"
+                                    TextLineBounds="Tight" />
+                            </StackPanel>
+                        </Button>
+
+                        <Grid x:Name="ToggleRoot" Visibility="Collapsed">
+                            <ItemsControl x:Name="ItemsRoot" FontSize="13">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="100" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock
+                                                FontFamily="Consolas"
+                                                IsTextScaleFactorEnabled="False"
+                                                IsTextSelectionEnabled="True"
+                                                Text="{Binding Match}"
+                                                TextWrapping="Wrap" />
+
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                Foreground="{StaticResource TextControlPlaceholderForeground}"
+                                                Text="{Binding}"
+                                                TextWrapping="Wrap" />
+                                        </Grid>
+
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="ExpansionStates">
+                                <VisualState x:Name="NonExpandedState" />
+                                <VisualState x:Name="ExpandedState">
+                                    <VisualState.StateTriggers>
+                                        <StateTrigger IsActive="{Binding ViewModel.IsExpanded, RelativeSource={RelativeSource Mode=TemplatedParent}, FallbackValue=False, TargetNullValue=False}" />
+                                    </VisualState.StateTriggers>
+                                    <VisualState.Setters>
+                                        <Setter Target="Chevron.(core:Properties.Rotation)" Value="180" />
+                                        <Setter Target="ToggleRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+
+                    </StackPanel>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

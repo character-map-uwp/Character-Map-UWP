@@ -411,6 +411,13 @@ public static class Composition
         return animation;
     }
 
+    public static T SetInitialValueBeforeDelay<T>(this T animation)
+       where T : KeyFrameAnimation
+    {
+        animation.DelayBehavior = AnimationDelayBehavior.SetInitialValueBeforeDelay;
+        return animation;
+    }
+
     #endregion
 
 
@@ -895,6 +902,11 @@ public static class Composition
 
 
     #region Extras
+
+    public static CubicBezierEasingFunction CreateEase(this Compositor c, float x1, float y1, float x2, float y2)
+    {
+        return c.CreateCubicBezierEasingFunction(new(x1, y1), new(x2, y2));
+    }
 
     public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
     {

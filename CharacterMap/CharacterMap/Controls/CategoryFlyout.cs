@@ -3,27 +3,11 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-public sealed class CategoryFlyout : Control
+[DependencyProperty("SourceCategories")]
+[DependencyProperty<Flyout>("Flyout")]
+public sealed partial class CategoryFlyout : Control
 {
     public event EventHandler<IList<UnicodeRangeModel>> AcceptClicked;
-
-    public object SourceCategories
-    {
-        get { return (object)GetValue(SourceCategoriesProperty); }
-        set { SetValue(SourceCategoriesProperty, value); }
-    }
-
-    public static readonly DependencyProperty SourceCategoriesProperty =
-        DependencyProperty.Register(nameof(SourceCategories), typeof(object), typeof(CategoryFlyout), new PropertyMetadata(null));
-
-    public Flyout Flyout
-    {
-        get { return (Flyout)GetValue(FlyoutProperty); }
-        set { SetValue(FlyoutProperty, value); }
-    }
-
-    public static readonly DependencyProperty FlyoutProperty =
-        DependencyProperty.Register(nameof(Flyout), typeof(Flyout), typeof(CategoryFlyout), new PropertyMetadata(null));
 
     private Button _appBtnSelectAll = null;
     private Button _appBtnClear = null;

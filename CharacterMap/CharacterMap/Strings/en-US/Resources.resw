@@ -1625,4 +1625,60 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
   <data name="FindCharButton.Text" xml:space="preserve">
     <value>Find in other fonts</value>
   </data>
+  <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
+    <value>Filter by family</value>
+  </data>
+  <data name="SettingsRememberFilter.Description" xml:space="preserve">
+    <value>If enabled, the app will remember the last selected collection or filter and restore it when the app is restarted. 
+
+Otherwise, "All Fonts" is selected by default on every launch.</value>
+  </data>
+  <data name="SettingsRememberFilter.Title" xml:space="preserve">
+    <value>Remember selected font list filter between sessions</value>
+  </data>
+  <data name="GlyphNameToggleHeader.Text" xml:space="preserve">
+    <value>File Name Template</value>
+  </data>
+  <data name="GlyphNameToggleLabel.Text" xml:space="preserve">
+    <value>Show template parts</value>
+  </data>
+  <data name="FileNameWriterCharDescDesc" xml:space="preserve">
+    <value>Glyph Unicode description, or Unicode string if none</value>
+  </data>
+  <data name="FileNameWriterExtensionDesc" xml:space="preserve">
+    <value>File Extension</value>
+  </data>
+  <data name="FileNameWriterFaceDesc" xml:space="preserve">
+    <value>Name of current font face</value>
+  </data>
+  <data name="FileNameWriterFamilyDesc" xml:space="preserve">
+    <value>Name of font family</value>
+  </data>
+  <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
+    <value>Size in pixels</value>
+  </data>
+  <data name="FileNameWriterStringFormat" xml:space="preserve">
+    <value>{0}, e.g. {1}</value>
+  </data>
+  <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
+    <value>Unicode index/codepoint value</value>
+  </data>
+  <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
+    <value>Unicode hex value</value>
+  </data>
+  <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
+    <value>XAML glyph code</value>
+  </data>
+  <data name="SettingsGlyphNaming.Description" xml:space="preserve">
+    <value>Choose how exported character files are named.</value>
+  </data>
+  <data name="SettingsGlyphNaming.Title" xml:space="preserve">
+    <value>Glyph Export Naming</value>
+  </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>e.g. {0}</value>
+  </data>
+  <data name="FileNameWriterFontVerDesc" xml:space="preserve">
+    <value>Font version number, if applicable</value>
+  </data>
 </root>

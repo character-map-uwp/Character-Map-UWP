@@ -25,7 +25,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     public MainViewModel ViewModel { get; }
 
-    private Debouncer _fontListDebouncer { get; } = new Debouncer();
+    private Debouncer _fontListDebouncer { get; } = new ();
 
     private UISettings _uiSettings { get; }
 
@@ -136,7 +136,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                 if (ViewModel.SelectedFont != null)
                 {
                     SetSelectedItem(ViewModel.SelectedFont);
-                    if (ViewModel.TabIndex >= 0 && !ViewModel.IsCreating)
+                    if (ViewModel.TabIndex > -1 && !ViewModel.IsCreating)
                     {
                         ViewModel.Fonts[ViewModel.TabIndex].SetFont(ViewModel.SelectedFont);
                         FontMap.Font = ViewModel.Fonts[ViewModel.TabIndex];
@@ -256,7 +256,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         {
             Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseSelectionAnimations)));
             Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.AllowExpensiveAnimations)));
-            Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseFluentPointerOverAnimations)));
+            Messenger.Send(new AppSettingsChangedMessage(nameof(AppSettings.UseFluentPointerOverAnimations1)));
         });
     }
 
@@ -273,7 +273,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             GoToState(nameof(FontsLoadedState), false);
             if (ResourceHelper.AllowAnimation)
             {
-                CompositionFactory.StartStartUpAnimation(
+                CompositionFactory.PlayStartUpAnimation(
                     new()
                     {
                         OpenFontPaneButton,
@@ -376,7 +376,9 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         DismissMenu();
 
         this.FindName(nameof(SettingsView));
-        SettingsView.Show(FontMap.ViewModel.SelectedVariant, ViewModel.SelectedFont, idx);
+        SettingsView.Show(
+            FontMap.ViewModel.RenderingOptions, 
+            ViewModel.SelectedFont, idx);
         OnModalOpened();
     }
 

@@ -8,10 +8,14 @@ public class ExportViewModel : ViewModelBase
 {
     #region Properties
 
+    public List<String> ExportFormats { get; } = ["PNG", "SVG"];
+
     protected override bool TrackAnimation => true;
 
-    private InstalledFont _font { get; }
-    public FontVariant Font { get; set; }
+    public GlyphFileNameViewModel GlyphNameModel { get; } = new();
+
+    public InstalledFont Font { get; }
+    public FontVariant Variant { get; set; }
 
     public CharacterRenderingOptions Options { get; set; }
 
@@ -44,9 +48,9 @@ public class ExportViewModel : ViewModelBase
 
     public ExportViewModel(FontMapViewModel viewModel)
     {
-        _font = viewModel.SelectedFont.Font;
+        Font = viewModel.SelectedFont.Font;
         Categories = viewModel.SelectedGlyphCategories.ToList(); // Makes a copy of the list
-        Font = viewModel.RenderingOptions.Variant;
+        Variant = viewModel.RenderingOptions.Variant;
         Options = viewModel.RenderingOptions;
         GlyphSize = viewModel.Settings.PngSize;
         ExportColor = viewModel.ShowColorGlyphs;
@@ -99,12 +103,12 @@ public class ExportViewModel : ViewModelBase
         // Fast path : all characters;
         if (!Categories.Any(c => !c.IsSelected) && !HideWhitespace)
         {
-            Characters = Font.Characters;
+            Characters = Variant.Characters;
             return;
         }
 
         // Filter characters
-        Characters = Unicode.FilterCharacters(Font.Characters, Categories, HideWhitespace);
+        Characters = Unicode.FilterCharacters(Variant.Characters, Categories, HideWhitespace);
     }
 
     public void UpdateCategories(IList<UnicodeRangeModel> value)
@@ -119,7 +123,7 @@ public class ExportViewModel : ViewModelBase
         SelectedText = Localization.Get(
             "ExportGlyphSelectedCharacters/Text",
             Characters.Count,
-            Font.Characters.Count);
+            Variant.Characters.Count);
 
         Summary = Localization.Get(
             "ExportGlyphsSummary/Text",
@@ -133,9 +137,12 @@ public class ExportViewModel : ViewModelBase
             (ExportFormat)SelectedFormat,
             ExportColor ? ExportStyle.ColorGlyph : ExportStyle.Black)
         {
+            FileNameTemplate = GlyphNameModel.Template,
             PreferredColor = GlyphColor,
             PreferredSize = GlyphSize,
-            SkipEmptyGlyphs = SkipBlankGlyphs
+            SkipEmptyGlyphs = SkipBlankGlyphs,
+            Font = Font,
+            Options = Options
         };
 
         IsExporting = true;
@@ -144,7 +151,7 @@ public class ExportViewModel : ViewModelBase
 
         int exported = 0;
         ExportGlyphsResult result = await ExportManager.ExportGlyphsToFolderAsync(
-            _font, Options, Characters, export, (index, count) =>
+            Characters, export, (index, count) =>
         {
             exported = index;
             _dispatcherQueue.TryEnqueue(() =>

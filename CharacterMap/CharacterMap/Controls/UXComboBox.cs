@@ -14,7 +14,7 @@ public class UXComboBoxItem : ComboBoxItem, IThemeableControl
     public ThemeHelper _themer;
     public UXComboBoxItem()
     {
-        Properties.SetStyleKey(this, "DefaultComboBoxItemStyle");
+        Properties.SetStyleKey(this, "DefaultThemeComboBoxItemStyle");
         _themer = new ThemeHelper(this);
     }
 
@@ -30,74 +30,30 @@ public class UXComboBoxItem : ComboBoxItem, IThemeableControl
     }
 }
 
-public class UXComboBox : ComboBox//, IThemeableControl
+[DependencyProperty<string>("ToolTipMemberPath")]
+[DependencyProperty<double>("ContentSpacing")]
+[DependencyProperty("PreContent")]
+[DependencyProperty("SecondaryContent")]
+[DependencyProperty<Orientation>("ContentOrientation")]
+public partial class UXComboBox : ComboBox//, IThemeableControl
 {
-    public string ToolTipMemberPath
-    {
-        get { return (string)GetValue(ToolTipMemberPathProperty); }
-        set { SetValue(ToolTipMemberPathProperty, value); }
-    }
+    partial void OnPreContentChanged(object oldValue, object newValue) => UpdateContentStates();
 
-    public static readonly DependencyProperty ToolTipMemberPathProperty =
-        DependencyProperty.Register(nameof(ToolTipMemberPath), typeof(string), typeof(UXComboBox), new PropertyMetadata(null));
-
-
-    public double ContentSpacing
-    {
-        get { return (double)GetValue(ContentSpacingProperty); }
-        set { SetValue(ContentSpacingProperty, value); }
-    }
-
-    public static readonly DependencyProperty ContentSpacingProperty =
-        DependencyProperty.Register("ContentSpacing", typeof(double), typeof(UXComboBox), new PropertyMetadata(0d));
-
-
-    public Orientation ContentOrientation
-    {
-        get { return (Orientation)GetValue(ContentOrientationProperty); }
-        set { SetValue(ContentOrientationProperty, value); }
-    }
-
-    public static readonly DependencyProperty ContentOrientationProperty =
-        DependencyProperty.Register("ContentOrientation", typeof(Orientation), typeof(UXComboBox), new PropertyMetadata(Orientation.Vertical));
-
-
-    public object PreContent
-    {
-        get { return (object)GetValue(PreContentProperty); }
-        set { SetValue(PreContentProperty, value); }
-    }
-
-    public static readonly DependencyProperty PreContentProperty =
-        DependencyProperty.Register("PreContent", typeof(object), typeof(UXComboBox), new PropertyMetadata(null, (d, e) =>
-        {
-            ((UXComboBox)d).UpdateContentStates();
-        }));
-
-
-    public object SecondaryContent
-    {
-        get { return (object)GetValue(SecondaryContentProperty); }
-        set { SetValue(SecondaryContentProperty, value); }
-    }
-
-    public static readonly DependencyProperty SecondaryContentProperty =
-        DependencyProperty.Register("SecondaryContent", typeof(object), typeof(UXComboBox), new PropertyMetadata(null, (d, e) =>
-        {
-            ((UXComboBox)d).UpdateContentStates();
-        }));
+    partial void OnSecondaryContentChanged(object oldValue, object newValue) => UpdateContentStates();
+  
 
     public ThemeHelper _themer;
     bool _isTemplateApplied = false;
     public UXComboBox()
     {
-        //Properties.SetStyleKey(this, "DefaultThemeComboBoxStyle");
-        //_themer = new ThemeHelper(this);
+        this.DefaultStyleKey = typeof(UXComboBox);
+        Properties.SetStyleKey(this, "DefaultThemeComboBoxStyle");
+        _themer = new ThemeHelper(this);
     }
 
     public void UpdateTheme()
     {
-        //_themer.Update();
+        _themer.Update();
     }
 
     protected override void OnApplyTemplate()
@@ -105,14 +61,14 @@ public class UXComboBox : ComboBox//, IThemeableControl
         _isTemplateApplied = true;
 
         base.OnApplyTemplate();
-        //_themer.Update();
+        _themer.Update();
 
         UpdateContentStates();
     }
 
     protected override DependencyObject GetContainerForItemOverride()
     {
-        return new UXComboBoxItem();
+        return new UXComboBoxItem { };// { Style = ItemContainerStyle };
     }
 
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)

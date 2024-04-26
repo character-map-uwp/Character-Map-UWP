@@ -5,6 +5,7 @@
     xmlns:controls="using:CharacterMap.Controls"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
@@ -24,7 +25,7 @@
             <Setter Property="MinWidth" Value="200" />
         </Style>
 
-        <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox">
+        <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="controls:UXComboBox">
             <Setter Property="MinWidth" Value="168" />
             <Setter Property="HeaderTemplate" Value="{StaticResource DefaultControlHeaderTemplate}" />
         </Style>
@@ -212,7 +213,7 @@
                                     Margin="{StaticResource HeaderMargin}"
                                     ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                                     HorizontalSpacing="24">
-                                    <ComboBox
+                                    <controls:UXComboBox
                                         x:Uid="CbListStyle"
                                         ItemsSource="{x:Bind Layouts}"
                                         SelectedIndex="0"
@@ -222,9 +223,9 @@
                                                 <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:PrintLayout))}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
-                                    </ComboBox>
+                                    </controls:UXComboBox>
 
-                                    <ComboBox
+                                    <controls:UXComboBox
                                         x:Uid="CbCharacterLabel"
                                         ItemsSource="{x:Bind Annotations}"
                                         SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
@@ -233,7 +234,7 @@
                                                 <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
-                                    </ComboBox>
+                                    </controls:UXComboBox>
                                 </toolkit:WrapPanel>
 
                             </controls:ContentGroup>
@@ -268,13 +269,13 @@
 
                                 <TextBlock Style="{StaticResource HintStyle}" Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
 
-                                <ComboBox
+                                <controls:UXComboBox
                                     x:Uid="PrintViewPageOrientation"
                                     SelectedIndex="0"
                                     SelectionChanged="RadioButtons_SelectionChanged">
-                                    <ComboBoxItem x:Uid="CbiPageOrientationPortrait" />
-                                    <ComboBoxItem x:Uid="CbiPageOrientationLandscape" />
-                                </ComboBox>
+                                    <controls:UXComboBoxItem x:Uid="CbiPageOrientationPortrait" />
+                                    <controls:UXComboBoxItem x:Uid="CbiPageOrientationLandscape" />
+                                </controls:UXComboBox>
 
                                 <TextBlock
                                     x:Uid="PrintViewHorizontalMarginHeader"
@@ -403,6 +404,9 @@
                             x:Name="BtnContinue"
                             x:Uid="BtnContinue"
                             Width="150"
+                            h:FluentAnimation.PointerOver="ContentPresenter.Content"
+                            h:FluentAnimation.PointerOverOffset="-2"
+                            h:FluentAnimation.Pressed="ContentPresenter"
                             Click="BtnContinue_Click"
                             IsEnabled="{x:Bind CanContinue, Mode=OneWay}"
                             Style="{StaticResource AccentButtonStyle}"

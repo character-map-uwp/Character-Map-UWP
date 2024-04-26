@@ -9,50 +9,11 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Core;
 
-public enum ExportFormat : int
-{
-    Png = 0,
-    Svg = 1
-}
+public enum ExportFormat : int { Png = 0, Svg = 1 }
 
-public enum ExportStyle
-{
-    Black,
-    White,
-    ColorGlyph
-}
+public enum ExportStyle { Black, White, ColorGlyph }
 
-public record ExportOptions
-{
-    public double PreferredSize { get; init; }
-    public ExportFormat PreferredFormat { get; init; }
-    public ExportStyle PreferredStyle { get; init; }
-    public Color PreferredColor { get; init; }
-    public StorageFolder TargetFolder { get; init; }
-    public bool SkipEmptyGlyphs { get; init; }
-
-    public ExportOptions() { }
-
-    public ExportOptions(ExportFormat format, ExportStyle style)
-    {
-        PreferredSize = ResourceHelper.AppSettings.PngSize;
-        PreferredFormat = format;
-        PreferredColor = style switch
-        {
-            ExportStyle.White => Colors.White,
-            _ => Colors.Black
-        };
-        PreferredStyle = style;
-    }
-
-}
-
-public enum ExportState
-{
-    Skipped,
-    Succeeded,
-    Failed
-}
+public enum ExportState { Skipped, Succeeded, Failed }
 
 public class ExportResult
 {
@@ -124,21 +85,19 @@ public class ExportFontFileResult
 public static partial class ExportManager
 {
     public static string GetSVG(
-        ExportStyle style,
-        Color textColor,
-        CharacterRenderingOptions options,
+        ExportOptions e,
         Character selectedChar,
         bool skipEmpty = false)
     {
-        // We want to prepare geometry at 1024px, so force this
-        options = options with { FontSize = 1024 };
+        // We want to prepare geometry at 1024px
+        var options = e.Options with { FontSize = 1024 };
         using var typography = options.CreateCanvasTypography();
 
         CanvasDevice device = Utils.CanvasDevice;
 
         // If COLR format (e.g. Segoe UI Emoji), we have special export path.
         // This path does not require UI thread.
-        if (style == ExportStyle.ColorGlyph
+        if (e.PreferredStyle == ExportStyle.ColorGlyph
             && options.Analysis.HasColorGlyphs
             && !options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Svg))
         {
@@ -179,7 +138,7 @@ public static partial class ExportManager
         {
             using CanvasSvgDocument document = string.IsNullOrWhiteSpace(data.Path)
                 ? new CanvasSvgDocument(Utils.CanvasDevice)
-                : Utils.GenerateSvgDocument(device, data.Bounds, data.Path, textColor);
+                : Utils.GenerateSvgDocument(device, data.Bounds, data.Path, e.PreferredColor);
             return document.GetXml();
         }
 
@@ -287,24 +246,21 @@ public static partial class ExportManager
     }
 
     public static Task<ExportResult> ExportGlyphAsync(
-        ExportOptions export,
-        InstalledFont selectedFont,
-        CharacterRenderingOptions options,
-        Character selectedChar,
-        StorageFolder targetFolder = null)
+        ExportOptions e,
+        Character selectedChar)
     {
         // To export a glyph as an SVG, it must be fully vector based.
         // If it is not, we force export as PNG regardless of choice.
-        if (export.PreferredFormat == ExportFormat.Png || options.Analysis.IsFullVectorBased is false)
-            return ExportPngAsync(export, selectedFont, options, selectedChar, ResourceHelper.AppSettings, targetFolder);
+        if (e.PreferredFormat == ExportFormat.Png || e.Options.Analysis.IsFullVectorBased is false)
+            return ExportPngAsync(e, selectedChar);
         else
             // NOTE: SVG Export may require UI thread
-            return ExportSvgAsync(export, selectedFont, options, selectedChar, targetFolder);
+            return ExportSvgAsync(e, selectedChar);
     }
 
-    public static Task<StorageFile> GetTargetFileAsync(InstalledFont font, FontVariant variant, Character c, string format, StorageFolder targetFolder)
+    public static Task<StorageFile> GetTargetFileAsync(ExportOptions e, Character c, string format, StorageFolder targetFolder)
     {
-        string name = GetFileName(font, variant, c, format);
+        string name = GetFileName(e, c, format);
         if (targetFolder != null)
             return targetFolder.CreateFileAsync(name, CreationCollisionOption.ReplaceExisting).AsTask();
         else
@@ -312,26 +268,23 @@ public static partial class ExportManager
     }
 
     public static async Task<ExportResult> ExportSvgAsync(
-        ExportOptions style,
-        InstalledFont selectedFont,
-        CharacterRenderingOptions options,
-        Character selectedChar,
-        StorageFolder targetFolder = null)
+        ExportOptions e,
+        Character selectedChar)
     {
         try
         {
             // 0. We want to prepare geometry at 1024px, so force this
-            options = options with { FontSize = 1024 };
+            var options = e.Options with { FontSize = 1024 };
             using var typography = options.CreateCanvasTypography();
 
             // 1. Check if we should actually save the file.
             //    Certain export modes will skip blank geometries
-            string svg = GetSVG(style.PreferredStyle, style.PreferredColor, options, selectedChar, style.SkipEmptyGlyphs);
-            if (string.IsNullOrWhiteSpace(svg) && style.SkipEmptyGlyphs)
+            string svg = GetSVG(e, selectedChar, e.SkipEmptyGlyphs);
+            if (string.IsNullOrWhiteSpace(svg) && e.SkipEmptyGlyphs)
                 return new ExportResult(ExportState.Skipped, null);
 
             // 2. Get the file we will save the image to.
-            var providedFile = await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "svg", targetFolder);
+            var providedFile = await GetTargetFileAsync(e, selectedChar, "svg", e.TargetFolder);
             if (providedFile is StorageFile file)
             {
                 try
@@ -348,7 +301,7 @@ public static partial class ExportManager
         }
         catch (Exception ex)
         {
-            if (targetFolder is null)
+            if (e.TargetFolder is null)
                 await Ioc.Default.GetService<IDialogService>()
                     .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
         }
@@ -357,12 +310,8 @@ public static partial class ExportManager
     }
 
     public static async Task<ExportResult> ExportPngAsync(
-        ExportOptions style,
-        InstalledFont selectedFont,
-        CharacterRenderingOptions options,
-        Character selectedChar,
-        AppSettings settings,
-        StorageFolder targetFolder = null)
+        ExportOptions e,
+        Character selectedChar)
     {
         try
         {
@@ -370,12 +319,12 @@ public static partial class ExportManager
             try
             {
                 // 1. Try to get the glyph data
-                stream = await GetGlyphPNGStreamAsync(style, options, selectedChar);
+                stream = await GetGlyphPNGStreamAsync(e, selectedChar);
                 if (stream is null)
                     return new ExportResult(ExportState.Skipped, null);
 
                 // 2. Get the file we will save the image to.
-                if (await GetTargetFileAsync(selectedFont, options.Variant, selectedChar, "png", targetFolder)
+                if (await GetTargetFileAsync(e, selectedChar, "png", e.TargetFolder)
                     is StorageFile file)
                 {
                     // 3. Write to the file
@@ -394,7 +343,7 @@ public static partial class ExportManager
         }
         catch (Exception ex)
         {
-            if (targetFolder is null)
+            if (e.TargetFolder is null)
                 await Ioc.Default.GetService<IDialogService>()
                     .ShowMessageAsync(ex.Message, Localization.Get("SaveImageError"));
         }
@@ -402,33 +351,33 @@ public static partial class ExportManager
         return ExportResult.CreatedFailed();
     }
 
-    public static async Task<IRandomAccessStream> GetGlyphPNGStreamAsync(ExportOptions style, CharacterRenderingOptions options, Character selectedChar)
+    public static async Task<IRandomAccessStream> GetGlyphPNGStreamAsync(ExportOptions e, Character selectedChar)
     {
         // 1. First we should check if we should actually render this
-        float size = style.PreferredSize > 0 ? (float)style.PreferredSize : (float)ResourceHelper.AppSettings.PngSize;
+        float size = e.PreferredSize > 0 ? (float)e.PreferredSize : (float)ResourceHelper.AppSettings.PngSize;
         var r = ResourceHelper.AppSettings.PngSize / 2;
 
-        var textColor = style.PreferredColor;
+        var textColor = e.PreferredColor;
 
         using CanvasTextLayout layout =
             CreateLayout(
-                options with { FontSize = size },
+                e.Options with { FontSize = size },
                 selectedChar,
-                style.PreferredStyle,
+                e.PreferredStyle,
                 size);
 
         var db = layout.DrawBounds;
 
-        if (style.SkipEmptyGlyphs && db.Height == 0 && db.Width == 0)
+        if (e.SkipEmptyGlyphs && db.Height == 0 && db.Width == 0)
             return null;
 
         IRandomAccessStream stream = null;
         // If the glyph is actually a PNG file inside the font we should export it directly.
         // TODO : We're not actually exporting with typography options here.
         //        Find a test PNG font with typography
-        if (options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
+        if (e.Options.Analysis.GlyphFormats.Contains(GlyphImageFormat.Png))
         {
-            IBuffer buffer = GetGlyphBuffer(options.Variant.Face, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
+            IBuffer buffer = GetGlyphBuffer(e.Options.Variant.Face, selectedChar.UnicodeIndex, GlyphImageFormat.Png);
             stream = buffer.AsStream().AsRandomAccessStream();
         }
         else
@@ -480,7 +429,6 @@ public static partial class ExportManager
             layout.Options = CanvasDrawTextOptions.EnableColorFont;
 
         layout.SetTypography(0, 1, options.CreateCanvasTypography());
-
         return layout;
     }
     private static IBuffer GetGlyphBuffer(DWriteFontFace fontface, uint unicodeIndex, GlyphImageFormat format)
@@ -488,25 +436,21 @@ public static partial class ExportManager
         return DirectWrite.GetImageDataBuffer(fontface, 1024, unicodeIndex, format);
     }
 
-    private static string GetFileName(
-        InstalledFont selectedFont,
-        FontVariant selectedVariant,
-        Character selectedChar,
-        string ext)
-    {
-        var chr = selectedVariant.GetDescription(selectedChar) ?? selectedChar.UnicodeString;
-        return $"{selectedFont.Name} {selectedVariant.PreferredName} - {chr}.{ext}";
-    }
+    internal static string GetFileName(
+        ExportOptions e,
+        Character c,
+        string ext) 
+        => e.GetFileName(c, ext);
 
     private static async Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values, PickerLocationId suggestedLocation = PickerLocationId.PicturesLibrary)
     {
-        var savePicker = new FileSavePicker
+        FileSavePicker savePicker = new()
         {
-            SuggestedStartLocation = suggestedLocation
+            SuggestedStartLocation = suggestedLocation,
+            SuggestedFileName = fileName
         };
 
         savePicker.FileTypeChoices.Add(key, values);
-        savePicker.SuggestedFileName = fileName;
 
         try
         {
@@ -531,15 +475,14 @@ public static partial class ExportManager
 
         using CanvasGeometry geom = CreateGeometry(selectedChar, options);
         var bounds = geom.ComputeBounds();
-        var interop = Utils.GetInterop();
-        var s = interop.GetPathData(geom);
+        var data = Utils.GetInterop().GetPathData(geom);
 
-        if (string.IsNullOrWhiteSpace(s.Path))
-            return (s.Path, bounds);
+        if (string.IsNullOrWhiteSpace(data.Path))
+            return (data.Path, bounds);
 
-        var t = s.Transform.Translation;
+        var t = data.Transform.Translation;
         bounds = new Rect(t.X - bounds.Left, -bounds.Top + t.Y, bounds.Width, bounds.Height);
-        return (s.Path, bounds);
+        return (data.Path, bounds);
     }
 
     public static CanvasGeometry CreateGeometry(
@@ -569,15 +512,14 @@ public static partial class ExportManager
     }
 
     internal static async Task<ExportGlyphsResult> ExportGlyphsToFolderAsync(
-        InstalledFont family,
-        CharacterRenderingOptions options,
         IReadOnlyList<Character> characters,
-        ExportOptions opts,
+        ExportOptions e,
         Action<int, int> callback,
         CancellationToken token)
     {
         if (await PickFolderAsync() is StorageFolder folder)
         {
+            e = e with { TargetFolder = folder };
             List<ExportResult> fails = new();
             List<ExportResult> skips = new();
             NativeInterop interop = Utils.GetInterop();
@@ -586,22 +528,23 @@ public static partial class ExportManager
             // TODO: Requires UI thread because SVG geometry parsing
             //       uses XAML geometry. See if we can find a faster path.
             int i = 0;
-            foreach (var c in characters)
+            foreach (Character c in characters)
             {
                 if (token.IsCancellationRequested)
                     break;
 
                 i++;
-
                 callback?.Invoke(i, characters.Count);
 
                 // We need to create a new analysis for each individual glyph to properly
                 // support export non-outline glyphs
-                using var layout = CreateLayout(options, c, opts.PreferredStyle, 1024f);
-                options = options with { Analysis = interop.AnalyzeCharacterLayout(layout) };
+                using var layout = CreateLayout(e.Options, c, e.PreferredStyle, 1024f);
+                e = e with { 
+                    Options = e.Options with { Analysis = interop.AnalyzeCharacterLayout(layout) } 
+                };
 
                 // Export the glyph
-                ExportResult result = await ExportGlyphAsync(opts, family, options, c, folder);
+                ExportResult result = await ExportGlyphAsync(e, c);
                 if (result is not null)
                 {
                     if (result.State == ExportState.Failed)

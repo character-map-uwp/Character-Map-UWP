@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
@@ -33,6 +34,8 @@ public sealed partial class FilterFlyout : MenuFlyout
 
     private MenuFlyoutSubItem _ops = null;
 
+    public static IReadOnlyList<BasicFontFilter> AllFilters { get; private set; }
+
     public FilterFlyout()
     {
         this.InitializeComponent();
@@ -61,8 +64,8 @@ public sealed partial class FilterFlyout : MenuFlyout
             design.Add(BasicFontFilter.ForDesignScriptTag(script.Key, script.Value), style);
 
         var unicode = AddSub("OptionUnicodeRange/Text", sub);
-        foreach (var range in UnicodeRanges.All)
-            unicode.Add(BasicFontFilter.ForNamedRange(range), style);
+        foreach (var filter in UnicodeRanges.AllFilters)
+            unicode.Add(filter, style);
 
         AddSep(sub);
         sub.Add(BasicFontFilter.ScriptArabic, style)
@@ -107,6 +110,11 @@ public sealed partial class FilterFlyout : MenuFlyout
 
         _defaultCount = Items.Count;
 
+        if (AllFilters is null)
+             AllFilters = AllMenuItems().Where(c => Properties.GetFilter(c) is not null)
+                .Select(c => Properties.GetFilter(c))
+                .ToList().AsReadOnly();
+
         #region Helpers
 
         MenuFlyout Add(BasicFontFilter filter)
@@ -147,6 +155,25 @@ public sealed partial class FilterFlyout : MenuFlyout
         }
 
         #endregion
+    }
+
+    public IEnumerable<MenuFlyoutItemBase> AllMenuItems()
+    {
+        var start = this;
+
+        Queue<MenuFlyoutItemBase> queue = [];
+        foreach (var item in this.Items)
+            queue.Enqueue(item);
+
+        while (queue.Count > 0)
+        {
+            var item = queue.Dequeue();
+            yield return item;
+
+            if (item is MenuFlyoutSubItem sub)
+                foreach (var i in sub.Items)
+                    queue.Enqueue(i);
+        }
     }
 
     private void MenuFlyout_Opening(object sender, object e)

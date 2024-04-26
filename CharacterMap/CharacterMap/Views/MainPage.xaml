@@ -62,7 +62,7 @@
                                 <Setter Property="Foreground" Value="{ThemeResource AppBarItemPointerOverForegroundThemeBrush}" />
                                 <Setter Property="ContentTemplate" Value="{StaticResource LabelButtonContentTemplate}" />
                                 <Setter Property="helpers:FluentAnimation.Pressed" Value="ContentRoot" />
-                                <Setter Property="helpers:FluentAnimation.PointerOver" Value="Icon" />
+                                <Setter Property="helpers:FluentAnimation.PointerOver" Value="LabelRoot" />
                                 <Setter Property="helpers:FluentAnimation.PointerDownScale" Value="0.95" />
                             </Style>
 
@@ -122,6 +122,7 @@
                                     <Style BasedOn="{StaticResource LabelButtonStyle}" TargetType="Button">
                                         <Setter Property="FontSize" Value="12" />
                                         <Setter Property="ContentTemplate" Value="{StaticResource CompactLabelButtonContentTemplate}" />
+                                        <Setter Property="helpers:FluentAnimation.PointerOver" Value="Icon" />
                                     </Style>
                                 </Control.Resources>
 
@@ -644,8 +645,14 @@
                                             MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                             Placement="Bottom">
                                             <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
-                                            <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportAsFolder}" />
-                                            <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
+                                            <MenuFlyoutItem
+                                                x:Uid="CollectionExportFolder"
+                                                Click="{x:Bind ViewModel.ExportAsFolder}"
+                                                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                            <MenuFlyoutItem
+                                                x:Uid="CollectionExportZip"
+                                                Click="{x:Bind ViewModel.ExportAsZip}"
+                                                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
                                         </MenuFlyout>
                                     </Button.Flyout>
                                     <Grid>
@@ -772,7 +779,7 @@
                                 <SemanticZoom.ZoomedInView>
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
-                                        core:Properties.ItemContainerBackgroundTransition="{StaticResource QuickBackgroundTransition}"
+                                        core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"

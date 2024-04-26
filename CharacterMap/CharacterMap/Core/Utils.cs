@@ -90,14 +90,14 @@ public static class Utils
         }
         else if (msg.DataType == CopyDataType.SVG)
         {
-            ExportOptions ops = new(ExportFormat.Svg, msg.Style);
-            var svg = ExportManager.GetSVG(msg.Style, ops.PreferredColor, viewModel.RenderingOptions, msg.RequestedItem);
+            ExportOptions ops = new(ExportFormat.Svg, msg.Style) { Options = viewModel.RenderingOptions };
+            var svg = ExportManager.GetSVG(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(svg, c, viewModel, msg.DataType);
         }
         else if (msg.DataType == CopyDataType.PNG)
         {
-            ExportOptions ops = new(ExportFormat.Png, msg.Style);
-            IRandomAccessStream data = await ExportManager.GetGlyphPNGStreamAsync(ops, viewModel.RenderingOptions, msg.RequestedItem);
+            ExportOptions ops = new(ExportFormat.Png, msg.Style) { Options = viewModel.RenderingOptions };
+            IRandomAccessStream data = await ExportManager.GetGlyphPNGStreamAsync(ops, msg.RequestedItem);
             return await TryCopyToClipboardInternalAsync(null, c, viewModel, msg.DataType, data);
         }
         else
@@ -293,6 +293,16 @@ public static class Utils
         var c = uiSettings.GetColorValue(UIColorType.Accent);
         var isDark = (5 * c.G + 2 * c.R + c.B) <= 8 * 128;
         return isDark;
+    }
+
+    public static string RemoveInvalidChars(string s)
+    {
+        var chars = Path.GetInvalidFileNameChars();
+
+        foreach (var c in chars)
+            s = s.Replace(c.ToString(), "");
+
+        return s;
     }
 
     public static string GetAppDescription()

@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml.Controls;
+using SQLite;
 using System.IO.Compression;
 using Windows.System;
 using Windows.UI.Core;
@@ -167,4 +168,31 @@ public static class Extensions
 
         return source;
     }
+
+
+
+
+    /// <summary>
+    /// Query for <see cref="SQLiteFontCollection"/>s  without using reflection
+    /// so we don't require any .NET Native metadata to be included
+    /// </summary>
+    /// <returns></returns>
+    public static List<SQLiteFontCollection> AsFontCollections(this SQLiteCommand cmd)
+    {
+        using var statement = cmd.Prepare();
+
+        List<SQLiteFontCollection> results = [];
+        while (SQLite3.Step(statement) == SQLite3.Result.Row)
+        {
+            results.Add(new()
+            {
+                Id = SQLite3.ColumnInt(statement, 0),
+                Name = SQLite3.ColumnString(statement, 1),
+                Fonts = SQLite3.ColumnString(statement, 2)
+            });
+        }
+
+        return results;
+    }
+
 }

@@ -9,12 +9,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     DataContext="{x:Bind}"
     Loaded="View_Loaded"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=viewmodels:SettingsViewModel}"
     d:DesignHeight="1880"
     d:DesignWidth="1920">
 
@@ -257,7 +259,7 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsCharLabelDesc/Text}">
                                     <StackPanel>
-                                        <ComboBox
+                                        <controls:UXComboBox
                                             MinWidth="160"
                                             ItemsSource="{x:Bind ViewModel.Annotations}"
                                             SelectedItem="{Binding Settings.GlyphAnnotation, Mode=TwoWay}">
@@ -266,7 +268,7 @@
                                                     <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
                                                 </DataTemplate>
                                             </ComboBox.ItemTemplate>
-                                        </ComboBox>
+                                        </controls:UXComboBox>
 
                                         <Border
                                             Margin="0 12 0 0"
@@ -409,7 +411,7 @@
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsLanguageHeader/Text}">
                                     <StackPanel>
-                                        <ComboBox
+                                        <controls:UXComboBox
                                             MinWidth="256"
                                             Margin="0 8 0 0"
                                             ItemsSource="{x:Bind ViewModel.SupportedLanguages}"
@@ -455,7 +457,7 @@
                                             x:Load="{x:Bind BasicAnimationToggle.IsOn, Mode=OneWay}"
                                             x:Uid="SettingsPointerOverAnimation"
                                             Style="{StaticResource SubItemSettingsPresenterStyle}">
-                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations, Mode=TwoWay}" />
+                                            <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.UseFluentPointerOverAnimations1, Mode=TwoWay}" />
                                         </controls:SettingsPresenter>
                                         <controls:SettingsPresenter
                                             x:Name="ExpensiveAnimationToggle"
@@ -510,18 +512,12 @@
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter x:Uid="SettingsDesignStyle">
-                                    <StackPanel>
-                                        <ComboBox
-                                            MinWidth="256"
-                                            Margin="0 8 0 0"
-                                            SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
-                                            SelectionChanged="Design_SelectionChanged">
-                                            <x:String>Windows 10</x:String>
-                                            <x:String>Windows 11</x:String>
-                                            <x:String>Classic Windows</x:String>
-                                            <x:String>Zune Desktop</x:String>
-                                        </ComboBox>
-                                    </StackPanel>
+                                    <controls:UXComboBox
+                                        Width="256"
+                                        Margin="0 8 0 0"
+                                        ItemsSource="{x:Bind ViewModel.Themes}"
+                                        SelectedIndex="{x:Bind Settings.ApplicationDesignTheme}"
+                                        SelectionChanged="Design_SelectionChanged" />
                                     <controls:SettingsPresenter.Items>
                                         <controls:UXButton
                                             x:Name="ThemeRestartButton"
@@ -582,7 +578,7 @@
                                                 <TextBlock>
                                                     <Run x:Uid="SettingsFontExportSystemLabel" />
                                                     <Run
-                                                        FontSize="13.333"
+                                                        FontSize="12.666"
                                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                         Text="e.g. MSOFFSYMB.ttf" />
                                                 </TextBlock>
@@ -591,7 +587,7 @@
                                                 <TextBlock>
                                                     <Run x:Uid="SettingsFontExportOptimizedLabel" />
                                                     <Run
-                                                        FontSize="13.333"
+                                                        FontSize="12.666"
                                                         Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                         Text=" e.g. MS Office Symbol Regular.ttf" />
                                                 </TextBlock>
@@ -601,19 +597,23 @@
                                         <CheckBox
                                             Margin="48 0 0 0"
                                             IsChecked="{x:Bind Settings.FontExportIncludeVersion, Mode=TwoWay}"
-                                            IsEnabled="{Binding ElementName=OptimisedRadio, Path=IsChecked}">
+                                            IsEnabled="{Binding ElementName=OptimisedRadio, Path=IsChecked}"
+                                            Style="{StaticResource DefaultThemeCheckBoxStyle}">
                                             <TextBlock TextWrapping="Wrap">
                                                 <Run x:Uid="SettingsFontExportVersionLabel" d:Text="{core:Localizer Key=SettingsFontExportVersionLabel/Text}" />
                                                 <Run
-                                                    FontSize="13.333"
+                                                    FontSize="12.666"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                     Text=" e.g. MS Office Symbol Regular v1.5.ttf" />
                                             </TextBlock>
                                         </CheckBox>
-
                                     </StackPanel>
 
 
+                                </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter x:Uid="SettingsGlyphNaming" ContentPlacement="Bottom">
+                                    <controls:GlyphNamingControl ViewModel="{x:Bind ViewModel.GlyphNameModel}" />
                                 </controls:SettingsPresenter>
 
                             </StackPanel>
@@ -691,12 +691,21 @@
                                 x:Load="False"
                                 Visibility="Collapsed">
                                 <TextBlock x:Uid="SettingsAdvancedOptionsLabel" Style="{StaticResource SectionHeaderTextBlockStyle}" />
+
                                 <controls:SettingsPresenter
                                     x:Uid="SettingsDeprecatedIconsPresenter"
                                     d:Description="If enabled, hides deprecated icons in Segoe MDL2 and Segoe Fluent Icon fonts by default. Icons can still be shown using the filter flyout."
                                     d:Title="Hide deprecated icons">
                                     <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.HideDeprecatedMDL2, Mode=TwoWay}" />
                                 </controls:SettingsPresenter>
+
+                                <controls:SettingsPresenter
+                                    x:Uid="SettingsRememberFilter"
+                                    d:Description="If enabled, the app will remember the last selected collection or filter and restore it when the app is restarted. Otherwise, All Fonts is selected by default on every launch."
+                                    d:Title="Remember selected font list filter between sessions">
+                                    <ToggleSwitch MinWidth="0" IsOn="{x:Bind Settings.RestoreLastCollectionOnLaunch, Mode=TwoWay}" />
+                                </controls:SettingsPresenter>
+
                             </StackPanel>
 
                             <StackPanel x:Name="ChangePanel">
@@ -755,8 +764,14 @@
                                                     AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                                     MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                                     Placement="Bottom">
-                                                    <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportSystemToFolder}" />
-                                                    <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportSystemAsZip}" />
+                                                    <MenuFlyoutItem
+                                                        x:Uid="CollectionExportFolder"
+                                                        Click="{x:Bind ViewModel.ExportSystemToFolder}"
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                                    <MenuFlyoutItem
+                                                        x:Uid="CollectionExportZip"
+                                                        Click="{x:Bind ViewModel.ExportSystemAsZip}"
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
                                                 </MenuFlyout>
                                             </core:Properties.Flyout>
                                         </controls:UXHyperlinkButton>
@@ -796,8 +811,14 @@
                                                     AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                                     MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                                     Placement="Bottom">
-                                                    <MenuFlyoutItem x:Uid="CollectionExportFolder" Click="{x:Bind ViewModel.ExportToFolder}" />
-                                                    <MenuFlyoutItem x:Uid="CollectionExportZip" Click="{x:Bind ViewModel.ExportAsZip}" />
+                                                    <MenuFlyoutItem
+                                                        x:Uid="CollectionExportFolder"
+                                                        Click="{x:Bind ViewModel.ExportToFolder}"
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                                    <MenuFlyoutItem
+                                                        x:Uid="CollectionExportZip"
+                                                        Click="{x:Bind ViewModel.ExportAsZip}"
+                                                        Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
                                                 </MenuFlyout>
                                             </core:Properties.Flyout>
                                         </controls:UXHyperlinkButton>
@@ -887,9 +908,10 @@
                                                 Text="{Binding ViewModel.RampInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <controls:UXButton
                                                 Grid.Column="1"
+                                                h:FluentAnimation.PointerOverOffset="-2"
                                                 Click="{x:Bind ViewModel.AddRamp}"
                                                 Style="{StaticResource MapInfoButtonStyle}">
-                                                <SymbolIcon Symbol="Add" />
+                                                <SymbolIcon Name="DropDownGlyph" Symbol="Add" />
                                             </controls:UXButton>
                                         </Grid>
 
@@ -916,9 +938,10 @@
                                                         <controls:UXButton
                                                             Grid.Column="1"
                                                             VerticalAlignment="Center"
+                                                            h:FluentAnimation.PointerOverOffset="-2"
                                                             Click="DeleteRampClick"
                                                             Style="{StaticResource MapInfoButtonStyle}">
-                                                            <SymbolIcon Symbol="Delete" />
+                                                            <SymbolIcon Name="DropDownGlyph" Symbol="Delete" />
                                                         </controls:UXButton>
                                                     </Grid>
                                                 </DataTemplate>

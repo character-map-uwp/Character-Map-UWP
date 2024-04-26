@@ -208,6 +208,7 @@
       <DependentUpon>FilterFlyout.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\FlowAwareComboBox.cs" />
+    <Compile Include="Controls\GlyphNamingControl.cs" />
     <Compile Include="Controls\InfoBar.cs" />
     <Compile Include="Controls\InstallFontDialog.xaml.cs">
       <DependentUpon>InstallFontDialog.xaml</DependentUpon>
@@ -241,11 +242,14 @@
     <Compile Include="Core\AppSettings.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Core\ExportManager.Font.cs" />
+    <Compile Include="Models\ExportOptions.cs" />
+    <Compile Include="Models\FileNameWriter.cs" />
     <Compile Include="Core\Index.cs" />
     <Compile Include="Core\Localizer.cs" />
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
+    <Compile Include="Models\NamedUnicodeRange.cs" />
     <Compile Include="Models\SearchResultsGroup.cs" />
     <Compile Include="Models\UnicodeRangeGroup.cs" />
     <Compile Include="GlobalSuppressions.cs" />
@@ -258,6 +262,7 @@
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\SystemInformation.cs" />
     <Compile Include="Helpers\Throttler.cs" />
+    <Compile Include="Models\UnicodeRanges.cs" />
     <Compile Include="Models\UnicodeScriptTags.cs" />
     <Compile Include="Helpers\WoffToOtf.cs" />
     <Compile Include="Helpers\Extensions.cs" />
@@ -341,6 +346,7 @@
     <Compile Include="ViewModels\FontMapViewModel.cs" />
     <Compile Include="Models\GlyphAnnotation.cs" />
     <Compile Include="Models\PrintLayout.cs" />
+    <Compile Include="ViewModels\GlyphFileNameViewModel.cs" />
     <Compile Include="ViewModels\PrintViewModel.cs" />
     <Compile Include="ViewModels\QuickCompareViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -593,6 +599,10 @@
     <ProjectReference Include="..\CharacterMap.CX\CharacterMap.CX.vcxproj">
       <Project>{3b9d858e-01e7-4706-8d87-2ac4e922a043}</Project>
       <Name>CharacterMap.CX</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CharacterMap.Generators\CharacterMap.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false">
+      <Project>{ad4b0c7d-5f3b-47d5-91df-c8b9a4dd0262}</Project>
+      <Name>CharacterMap.Generators</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -65,7 +65,14 @@ public abstract partial class ViewBase : Page
     /// <returns>**true** if the control is now in the named state</returns>
     protected bool GoToState(string state, bool tryAnimate = true)
     {
-        return VisualStateManager.GoToState(this, state, tryAnimate && ResourceHelper.AllowAnimation);
+        try
+        {
+            return VisualStateManager.GoToState(this, state, tryAnimate && ResourceHelper.AllowAnimation);
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     protected TransitionCollection GetRepositionCollection(bool b)

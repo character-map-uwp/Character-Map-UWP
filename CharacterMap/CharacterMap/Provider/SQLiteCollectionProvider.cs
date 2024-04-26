@@ -15,7 +15,7 @@ public class SQLiteCollectionProvider : ICollectionProvider
 
         try
         {
-            var cols = _conn.CreateCommand("SELECT * FROM \"Collections\" ORDER BY Name").AsCollections();
+            var cols = _conn.CreateCommand("SELECT * FROM \"Collections\" ORDER BY Name").AsFontCollections();
             foreach (var c in cols)
                 collections.Add(c.AsUserFontCollection());
         }

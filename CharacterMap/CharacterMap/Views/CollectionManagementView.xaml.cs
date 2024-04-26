@@ -12,7 +12,7 @@ public interface IActivateableControl
 
 public sealed partial class CollectionManagementView : UserControl, IActivateableControl
 {
-    CollectionManagementViewModel ViewModel { get; }
+    public CollectionManagementViewModel ViewModel { get; }
 
     public CollectionManagementView()
     {

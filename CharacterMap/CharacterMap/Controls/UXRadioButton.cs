@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-public class MenuButton : UXRadioButton
+public class MenuButton : UXRadioButtonBase
 {
     public IconElement Icon
     {
@@ -21,13 +21,20 @@ public class MenuButton : UXRadioButton
     }
 }
 
-
-public class UXRadioButton : RadioButton, IThemeableControl
+public class UXRadioButton : UXRadioButtonBase
 {
-    public ThemeHelper _themer;
     public UXRadioButton()
     {
-        Properties.SetStyleKey(this, "DefaultRadioButtonStyle");
+        Properties.SetStyleKey(this, "DefaultThemeRadioButtonStyle");
+    }
+}
+
+
+public abstract class UXRadioButtonBase : RadioButton, IThemeableControl
+{
+    public ThemeHelper _themer;
+    public UXRadioButtonBase()
+    {
         _themer = new ThemeHelper(this);
     }
 

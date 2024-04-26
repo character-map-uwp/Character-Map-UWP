@@ -32,6 +32,7 @@
     <x:Double x:Key="MinTitleBarHeight">40</x:Double>
     <CornerRadius x:Key="CardCornerRadius">8</CornerRadius>
     <CornerRadius x:Key="InfoBarCornerRadius">4</CornerRadius>
+    <CornerRadius x:Key="CommandToggleCornerRadius">3</CornerRadius>
 
     <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
@@ -84,7 +85,7 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="BorderThickness" Value="0 0.5 1 0.5" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
-        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="Padding" Value="2 1" />
         <Setter Property="Template">
             <Setter.Value>
@@ -121,6 +122,183 @@
                         SelectedPointerOverBackground="{ThemeResource ListViewItemBackgroundSelectedPointerOver}"
                         SelectedPressedBackground="{ThemeResource ListViewItemBackgroundSelectedPressed}"
                         SelectionCheckMarkVisualEnabled="{ThemeResource ListViewItemSelectionCheckMarkVisualEnabled}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup
+                                x:Name="CommonStates"
+                                h:FluentAnimation.PointerOver="TemplateContent"
+                                h:FluentAnimation.PointerOverAxis="Horizontal"
+                                h:FluentAnimation.Pressed="TemplateContent">
+                                <VisualState x:Name="Normal" />
+                                <VisualState x:Name="Selected" />
+                                <VisualState x:Name="PointerOver" />
+                                <VisualState x:Name="PointerOverSelected" />
+                                <VisualState x:Name="PointerOverPressed" />
+                                <VisualState x:Name="Pressed" />
+                                <VisualState x:Name="PressedSelected" />
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ListViewItemPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="TabNavigation" Value="Local" />
+        <Setter Property="IsHoldingEnabled" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="0,0,4,4" />
+        <Setter Property="AllowDrop" Value="False" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="h:FluentAnimation.Pressed" Value="TemplateContent" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="TemplateContent" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-3" />
+        <Setter Property="FocusVisualMargin" Value="-2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GridViewItem">
+                    <ContentPresenter
+                        x:Name="ContentPresenter"
+                        Margin="{TemplateBinding Padding}"
+                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                        Background="{TemplateBinding Background}"
+                        BackgroundTransition="{StaticResource QuickBrushTransition}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        Control.IsTemplateFocusTarget="True"
+                        CornerRadius="4"
+                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                        FocusVisualSecondaryBrush="{ThemeResource SystemControlHighlightListLowBrush}"
+                        FocusVisualSecondaryThickness="2">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CommonStates">
+                                <VisualState x:Name="Normal" />
+
+                                <VisualState x:Name="PointerOver">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                        <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Pressed">
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                        <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="PointerOverSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                        <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+
+                                <VisualState x:Name="PressedSelected">
+                                    <VisualState.Setters>
+                                        <Setter Target="ContentPresenter.BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                                        <Setter Target="ContentPresenter.BorderThickness" Value="1" />
+                                    </VisualState.Setters>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Background">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="DefaultThemeGridViewItemStyle2" TargetType="GridViewItem">
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="Background" Value="{ThemeResource GridViewItemBackground}" />
+        <Setter Property="Foreground" Value="{ThemeResource GridViewItemForeground}" />
+        <Setter Property="TabNavigation" Value="Local" />
+        <Setter Property="IsHoldingEnabled" Value="True" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,0,4,4" />
+        <Setter Property="MinWidth" Value="{ThemeResource GridViewItemMinWidth}" />
+        <Setter Property="MinHeight" Value="{ThemeResource GridViewItemMinHeight}" />
+        <Setter Property="AllowDrop" Value="False" />
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="FocusVisualMargin" Value="-2" />
+        <Setter Property="FocusVisualPrimaryBrush" Value="{ThemeResource GridViewItemFocusVisualPrimaryBrush}" />
+        <Setter Property="FocusVisualPrimaryThickness" Value="2" />
+        <Setter Property="FocusVisualSecondaryBrush" Value="{ThemeResource GridViewItemFocusVisualSecondaryBrush}" />
+        <Setter Property="FocusVisualSecondaryThickness" Value="1" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-3" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="GridViewItem">
+                    <ListViewItemPresenter
+                        x:Name="Root"
+                        HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                        VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                        CheckBoxBrush="{ThemeResource GridViewItemCheckBoxBrush}"
+                        CheckBrush="{ThemeResource GridViewItemCheckBrush}"
+                        CheckMode="{ThemeResource GridViewItemCheckMode}"
+                        ContentMargin="{TemplateBinding Padding}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        Control.IsTemplateFocusTarget="True"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        DisabledOpacity="{ThemeResource ListViewItemDisabledThemeOpacity}"
+                        DragBackground="{ThemeResource GridViewItemDragBackground}"
+                        DragForeground="{ThemeResource GridViewItemDragForeground}"
+                        DragOpacity="{ThemeResource ListViewItemDragThemeOpacity}"
+                        FocusBorderBrush="{ThemeResource GridViewItemFocusBorderBrush}"
+                        FocusSecondaryBorderBrush="{ThemeResource GridViewItemFocusSecondaryBorderBrush}"
+                        FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
+                        FocusVisualPrimaryBrush="{TemplateBinding FocusVisualPrimaryBrush}"
+                        FocusVisualPrimaryThickness="{TemplateBinding FocusVisualPrimaryThickness}"
+                        FocusVisualSecondaryBrush="{TemplateBinding FocusVisualSecondaryBrush}"
+                        FocusVisualSecondaryThickness="{TemplateBinding FocusVisualSecondaryThickness}"
+                        PlaceholderBackground="{ThemeResource GridViewItemPlaceholderBackground}"
+                        PointerOverBackground="{ThemeResource GridViewItemBackgroundPointerOver}"
+                        PointerOverForeground="{ThemeResource GridViewItemForegroundPointerOver}"
+                        PressedBackground="{ThemeResource GridViewItemBackgroundPressed}"
+                        ReorderHintOffset="{ThemeResource GridViewItemReorderHintThemeOffset}"
+                        SelectedBackground="{ThemeResource GridViewItemBackgroundSelected}"
+                        SelectedForeground="{ThemeResource GridViewItemForegroundSelected}"
+                        SelectedPointerOverBackground="{ThemeResource GridViewItemBackgroundSelectedPointerOver}"
+                        SelectedPressedBackground="{ThemeResource GridViewItemBackgroundSelectedPressed}"
+                        SelectionCheckMarkVisualEnabled="{ThemeResource GridViewItemSelectionCheckMarkVisualEnabled}">
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
@@ -189,6 +367,7 @@
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="MinHeight" Value="67" />
         <Setter Property="IconSize" Value="24" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
@@ -261,7 +440,7 @@
                         <Grid
                             x:Name="TopCardRoot"
                             Padding="{TemplateBinding Padding}"
-                            VerticalAlignment="Center"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                             Background="{TemplateBinding Background}"
                             BackgroundTransition="{StaticResource QuickBrushTransition}"
                             BorderBrush="{TemplateBinding BorderBrush}"
@@ -393,6 +572,7 @@
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Margin" Value="0 8 0 4" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-4" />
         <Setter Property="h:FluentAnimation.PointerOver" Value="ContentGroupRoot" />
         <Setter Property="Template">
             <Setter.Value>
@@ -440,6 +620,7 @@
 
     <Style x:Key="CompareCardStyle" TargetType="controls:ContentGroup">
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-4" />
         <Setter Property="h:FluentAnimation.PointerOver" Value="ContentBorder" />
         <Setter Property="Template">
             <Setter.Value>
@@ -668,7 +849,7 @@
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
-        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutItem">
@@ -807,11 +988,11 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
-        <Setter Property="core:Properties.PointerOverAnimation" Value="SubItemChevron|X" />
-        <Setter Property="core:Properties.PointerAnimationOffset" Value="4" />
+        <Setter Property="core:Properties.PointerOverAnimation" Value="SubItemChevron,TextBlock|X" />
+        <Setter Property="core:Properties.PointerAnimationOffset" Value="3" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
-        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
-        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
+        <!--<Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="4" />-->
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="MenuFlyoutSubItem">
@@ -826,10 +1007,7 @@
                         CornerRadius="{TemplateBinding CornerRadius}">
 
                         <VisualStateManager.VisualStateGroups>
-                            <VisualStateGroup
-                                x:Name="CommonStates"
-                                h:FluentAnimation.PointerOver="{Binding ElementName=TextBlock}"
-                                h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
+                            <VisualStateGroup x:Name="CommonStates" h:FluentAnimation.Pressed="{Binding ElementName=ContentRoot}">
                                 <VisualState x:Name="Normal" />
 
                                 <VisualState x:Name="PointerOver">
@@ -950,10 +1128,11 @@
     <!--  CHECKBOX  -->
     <Style x:Key="DefaultThemeCheckBoxStyle" BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
         <Setter Property="core:Properties.PointerOverAnimation" Value="ContentPresenter|X" />
-        <Setter Property="core:Properties.PointerAnimationOffset" Value="2" />
+        <Setter Property="core:Properties.PointerAnimationOffset" Value="3" />
         <Setter Property="core:Properties.PointerPressedAnimation" Value="ContentPresenter|Scale" />
         <Setter Property="core:Properties.ClickAnimation" Value="ContentPresenter|Scale" />
         <Setter Property="core:Properties.ClickAnimationOffset" Value="0.93" />
+        <Setter Property="Padding" Value="8,5,4,0" />
         <!--<Setter Property="h:FluentAnimation.PointerOver" Value="ContentPresenter" />
         <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.93" />-->
@@ -962,9 +1141,23 @@
 
 
 
+    <!--  RADIOBUTTON  -->
+    <Style x:Key="DefaultThemeRadioButtonStyle" BasedOn="{StaticResource DefaultRadioButtonStyle}" TargetType="controls:UXRadioButton">
+        <Setter Property="Padding" Value="8,6,3,0" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
+        <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
+    </Style>
+
+
+
+
     <!--  COMBOBOX  -->
 
-    <Style x:Key="DefaultThemeComboBoxStyle" BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
+    <Style x:Key="DefaultThemeComboBoxStyle" BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="controls:UXComboBox">
         <Setter Property="CornerRadius" Value="4" />
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="h:FluentAnimation.PointerOver" Value="DropDownGlyph" />
@@ -972,7 +1165,23 @@
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
     </Style>
 
-    <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="ComboBox" />
+    <Style BasedOn="{StaticResource DefaultThemeComboBoxStyle}" TargetType="controls:UXComboBox" />
+
+    <!--<Style x:Key="DefaultThemeComboBoxItemStyle" BasedOn="{StaticResource DefaultComboBoxItemStyle}" TargetType="ComboBoxItem">
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+    </Style>-->
+
+    <Style x:Key="DefaultThemeComboBoxItemStyle" BasedOn="{StaticResource DefaultComboBoxItemStyle}" TargetType="controls:UXComboBoxItem">
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
+        <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.95" />
+    </Style>
 
     <Style x:Key="VariantComboBoxStyle" TargetType="controls:UXComboBox">
         <Setter Property="Padding" Value="12,5,0,7" />
@@ -998,6 +1207,7 @@
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="UseSystemFocusVisuals" Value="{ThemeResource IsApplicationFocusVisualKindReveal}" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource DefaultThemeComboBoxItemStyle}" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -1244,6 +1454,8 @@
 
     <Style x:Key="DefaultThemeButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
         <Setter Property="h:FluentAnimation.Pressed" Value="ContentPresenter" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="ContentPresenter.Content" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />
     </Style>
 
     <Style BasedOn="{StaticResource DefaultThemeButtonStyle}" TargetType="controls:UXButton" />
@@ -1574,7 +1786,7 @@
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="MinHeight" Value="36" />
         <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
-        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="2" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="3" />
         <Setter Property="h:FluentAnimation.PointerOverAxis" Value="Horizontal" />
         <Setter Property="Template">
             <Setter.Value>
@@ -1867,7 +2079,7 @@
         <Setter Property="BorderThickness" Value="0 0 0 1" />
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
-                <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
+                <Style BasedOn="{StaticResource DefaultThemeListViewItemStyle}" TargetType="ListViewItem">
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
                     <Setter Property="Margin" Value="0 0 0 6" />

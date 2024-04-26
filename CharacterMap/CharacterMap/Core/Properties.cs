@@ -17,6 +17,42 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Core;
 
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+public class DependencyPropertyAttribute<T> : Attribute
+{
+    public string Name { get; set; }
+    public object Default { get; set; }
+    public Type Type => typeof(T);
+
+    public DependencyPropertyAttribute() { }
+
+    public DependencyPropertyAttribute(string name)
+    {
+        Name = name;
+    }
+
+    public DependencyPropertyAttribute(string name, object def)
+    {
+        Name = name;
+        Default = def;
+    }
+}
+
+public class DependencyPropertyAttribute : DependencyPropertyAttribute<object> {
+    public DependencyPropertyAttribute() { }
+    public DependencyPropertyAttribute(string name)
+    {
+        Name = name;
+    }
+
+    public DependencyPropertyAttribute(string name, object def)
+    {
+        Name = name;
+        Default = def;
+    }
+}
+    
+
 /// <summary>
 /// XAML Attached Properties
 /// </summary>
@@ -961,36 +997,46 @@ public class Properties : DependencyObject
     static void CompButtonAnimate(FrameworkElement source, string key, double offset, bool over = false)
     {
         var parts = key.Split("|");
-        if (source.GetDescendantsOfType<FrameworkElement>()
-            .FirstOrDefault(fe => fe.Name == parts[0]) is FrameworkElement target)
+        var targets = parts[0].Split(",");
+
+        foreach (var src in targets)
         {
-            if (parts.Length > 1 && parts[1] == "Scale")
+            if (source.GetDescendantsOfType<FrameworkElement>()
+                .FirstOrDefault(fe => fe.Name == src) is FrameworkElement target)
             {
-                Visual v = target.GetElementVisual();
-                v.StartAnimation(FluentAnimationHelper.CreatePointerUp(v));
-            }
-            else
-            {
-                Storyboard sb = new();
-                var ease = new BackEase { Amplitude = 0.5, EasingMode = EasingMode.EaseOut };
+                if (parts.Length > 1 && parts[1] == "Scale")
+                {
+                    Visual v = target.GetElementVisual();
+                    v.StartAnimation(FluentAnimationHelper.CreatePointerUp(v));
+                }
+                else
+                {
+                    Storyboard sb = new();
+                    var ease = new ElasticEase { Oscillations = 2, Springiness = 5, EasingMode = EasingMode.EaseOut };
 
-                bool hasPressed = string.IsNullOrEmpty(GetPointerPressedAnimation(source)) is false;
-                double duration = hasPressed ? 0.35 : 0.5;
+                    bool hasPressed = string.IsNullOrEmpty(GetPointerPressedAnimation(source)) is false;
+                    double duration = hasPressed ? 0.35 : 0.5;
 
-                // Create translate animation
-                string path = parts.Length > 1 && parts[1] == "X"
-                    ? TargetProperty.CompositeTransform.TranslateX
-                    : TargetProperty.CompositeTransform.TranslateY;
+                    // Create translate animation
+                    string path = parts.Length > 1 && parts[1] == "X"
+                        ? TargetProperty.CompositeTransform.TranslateX
+                        : TargetProperty.CompositeTransform.TranslateY;
 
-                var t = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, path);
-                if (over || hasPressed is false)
-                    t.AddKeyFrame(0.15, offset);
+                    var t = sb.CreateTimeline<DoubleAnimationUsingKeyFrames>(target, path);
+                    if (over || hasPressed is false)
+                    {
+                        if (offset == 0)
+                            t.AddKeyFrame(0.8, offset, ease);
+                        else
+                            t.AddKeyFrame(0.15, offset);
+                    }
 
-                t.AddKeyFrame(duration, 0, ease);
-
-                sb.Begin();
+                    sb.Begin();
+                }
             }
         }
+
+       
     }
 
     public static string GetPointerOverAnimation(DependencyObject obj)
@@ -1010,10 +1056,17 @@ public class Properties : DependencyObject
             {
                 // 1. Remove old handlers
                 f.RemoveHandler(UIElement.PointerEnteredEvent, (PointerEventHandler)PointerOverEntered);
+                f.RemoveHandler(UIElement.PointerExitedEvent, (PointerEventHandler)PointerOverExited);
+                f.RemoveHandler(UIElement.PointerCaptureLostEvent, (PointerEventHandler)PointerOverExited);
 
                 // 2. Add new handlers
                 if (e.NewValue is string s && !string.IsNullOrWhiteSpace(s))
+                {
                     f.AddHandler(FrameworkElement.PointerEnteredEvent, new PointerEventHandler(PointerOverEntered), true);
+                    f.AddHandler(FrameworkElement.PointerExitedEvent, new PointerEventHandler(PointerOverExited), true);
+                    f.AddHandler(FrameworkElement.PointerCaptureLostEvent, new PointerEventHandler(PointerOverExited), true);
+
+                }
 
                 static void PointerOverEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
                 {
@@ -1024,6 +1077,17 @@ public class Properties : DependencyObject
                         && Properties.GetPointerOverAnimation(e) is string s
                         && !string.IsNullOrWhiteSpace(s))
                         CompButtonAnimate(e, s, GetPointerAnimationOffset(e), true);
+                }
+
+                static void PointerOverExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs _)
+                {
+                    if (sender is FrameworkElement e
+                        && ResourceHelper.AllowAnimation
+                        && ResourceHelper.SupportFluentAnimation
+                        && ResourceHelper.UsePointerOverAnimations
+                        && Properties.GetPointerOverAnimation(e) is string s
+                        && !string.IsNullOrWhiteSpace(s))
+                        CompButtonAnimate(e, s, 0, true);
                 }
             }
         }));
@@ -1322,4 +1386,56 @@ public class Properties : DependencyObject
     }
 
     #endregion
+
+    #region Rotation
+
+    public static double GetRotation(DependencyObject obj)
+    {
+        return (double)obj.GetValue(RotationProperty);
+    }
+
+    public static void SetRotation(DependencyObject obj, double value)
+    {
+        obj.SetValue(RotationProperty, value);
+    }
+
+    public static readonly DependencyProperty RotationProperty =
+        AP<double, Properties>(0d, (d, e) =>
+        {
+            if (d is FrameworkElement f && f.GetElementVisual() is { } v && e.NewValue is double n)
+            {
+                v.CenterPoint = new(v.Size / 2f, 0f);
+                v.RotationAxis = Vector3.UnitZ;
+                v.RotationAngleInDegrees = (float)n;
+            }
+        });
+
+    public static KeyTime GetRotationTransition(DependencyObject obj)
+    {
+        return (KeyTime)obj.GetValue(RotationTransitionProperty);
+    }
+
+    public static void SetRotationTransition(DependencyObject obj, KeyTime value)
+    {
+        obj.SetValue(RotationTransitionProperty, value);
+    }
+
+    public static readonly DependencyProperty RotationTransitionProperty =
+        AP<KeyTime, Properties>(KeyTime.FromTimeSpan(TimeSpan.Zero), (d, e) =>
+        {
+            if (d is FrameworkElement f
+                && f.GetElementVisual() is { } v 
+                && e.NewValue is KeyTime n)
+            {
+                v.SetImplicitAnimation(nameof(Visual.RotationAngleInDegrees),
+                    v.CreateScalarKeyFrameAnimation(nameof(Visual.RotationAngleInDegrees))
+                    .AddKeyFrame(0, CompositionFactory.STARTING_VALUE)
+                    .AddKeyFrame(1, CompositionFactory.FINAL_VALUE)
+                    .SetDuration(n.TimeSpan));
+            }
+        });
+
+    #endregion
+
+
 }

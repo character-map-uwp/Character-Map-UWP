@@ -4,18 +4,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-public sealed class LabelButton : Button
+[DependencyProperty("IconContent")]
+public sealed partial class LabelButton : Button
 {
-    public object IconContent
-    {
-        get { return (object)GetValue(IconContentProperty); }
-        set { SetValue(IconContentProperty, value); }
-    }
-
-    public static readonly DependencyProperty IconContentProperty =
-        DependencyProperty.Register(nameof(IconContent), typeof(object), typeof(LabelButton), new PropertyMetadata(null));
-
-    static IReadOnlyList<string> _previewStates { get; } = new List<String> { "PointerOver", "Pressed" };
+    static IReadOnlyList<string> _previewStates { get; } = [ "PointerOver", "Pressed" ];
 
     FrameworkElement _iconPresenter = null;
 

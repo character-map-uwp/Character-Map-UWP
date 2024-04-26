@@ -82,14 +82,15 @@ public class FluentAnimationHelper
         _lastState = e.NewState;
 
 #if DEBUG
-        //System.Diagnostics.Debug.WriteLine($"From {e.OldState?.Name} to {e.NewState.Name}");
+        //if (sender is FrameworkElement se && se.GetFirstAncestorOfType<Control>() is MenuFlyoutSubItem m)
+           // System.Diagnostics.Debug.WriteLine($"From {e.OldState?.Name} to {e.NewState.Name}");
 #endif
 
         // 1. Handle "PointerOver"
         if (e.NewState is VisualState v
             && e.OldState is VisualState old
-            && old.Name is "Normal" or "Disabled"
-            && v.Name.StartsWith("PointerOver")
+            //&& old.Name is "Normal" or "Disabled" or "Selected" or "Checked"
+            && v.Name.Contains("PointerOver")
             && ResourceHelper.UsePointerOverAnimations
             && FluentAnimation.GetUsePointerOver(e.Control)
             && GetPointerTarget(e.Control) is FrameworkElement target)
@@ -99,6 +100,21 @@ public class FluentAnimationHelper
             Orientation axis = FluentAnimation.GetPointerOverAxis(e.Control);
             PlayPointerOver(visual, offset, axis);
         }
+        else if (
+            !e.NewState.Name.Contains("PointerOver")
+            && e.NewState.Name is not ("SubMenuOpened" or "Pressed")
+            && e.OldState is VisualState
+            && ResourceHelper.UsePointerOverAnimations
+            && FluentAnimation.GetUsePointerOver(e.Control)
+            && GetPointerTarget(e.Control) is FrameworkElement target2)
+        {
+            Visual visual = target2.EnableCompositionTranslation().GetElementVisual();
+            Orientation axis = FluentAnimation.GetPointerOverAxis(e.Control);
+            PlayPointerOverExit(visual);
+        }
+
+        var tr = GetPressedTarget(e.Control);
+        //Debug.WriteLine($"has pressed: {tr != null}");
 
         // 2. Handle "PressedDown"
         if (e.NewState is VisualState vp
@@ -150,28 +166,52 @@ public class FluentAnimationHelper
         // A Vector3Animation and a NaturalMotionAnimation can't be contained in 
         // the same CompositionAnimationGroup without breaking each other, so we
         // use a ScopedBatch to trigger the bounce back after the bounce away.
-        v.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
-            b =>
-            {
-                float x = axis == Orientation.Vertical ? 0 : offset;
-                float y = axis == Orientation.Vertical ? offset : 0;
-                v.StartAnimation(v.Compositor.GetCached($"__FAPO{offset}-{axis}", () =>
-                {
-                    return v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                        .AddKeyFrame(1, x, y, 0, v.Compositor.GetLinearEase())
-                        .SetDuration(0.15);
-                }));
-            },
-            b =>
-            {
-                v.StartAnimation(v.Compositor.GetCached($"__FAPOU", () =>
-                {
-                    return v.CreateSpringVector3Animation(CompositionFactory.TRANSLATION)
+        //v.Compositor.CreateScopedBatch(CompositionBatchTypes.Animation,
+        //    b =>
+        //    {
+        //        float x = axis == Orientation.Vertical ? 0 : offset;
+        //        float y = axis == Orientation.Vertical ? offset : 0;
+        //        v.StartAnimation(v.Compositor.GetCached($"__FAPO{offset}-{axis}", () =>
+        //        {
+        //            return v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+        //                .AddKeyFrame(1, x, y, 0, v.Compositor.GetLinearEase())
+        //                .SetDuration(0.15);
+        //        }));
+        //    },
+        //    b =>
+        //    {
+        //        v.StartAnimation(v.Compositor.GetCached($"__FAPOU", () =>
+        //        {
+        //            return v.CreateSpringVector3Animation(CompositionFactory.TRANSLATION)
+        //                .SetPeriod(0.04)
+        //                .SetFinalValue(new(0))
+        //                .SetDampingRatio(0.30f);
+        //        }));
+        //    });
+
+        float x = axis == Orientation.Vertical ? 0 : offset;
+        float y = axis == Orientation.Vertical ? offset : 0;
+        v.StartAnimation(v.Compositor.GetCached($"__FAPO{offset}-{axis}", () =>
+        {
+            return v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                .AddKeyFrame(1, x, y, 0, v.Compositor.GetLinearEase())
+                .SetDuration(0.15);
+        }));
+    }
+
+    public static void PlayPointerOverExit(Visual v)
+    {
+        v.StartAnimation(v.Compositor.GetCached($"__FAPOE", () =>
+        {
+            return v.CreateSpringVector3Animation(CompositionFactory.TRANSLATION)
                         .SetPeriod(0.04)
                         .SetFinalValue(new(0))
                         .SetDampingRatio(0.30f);
-                }));
-            });
+
+            //return v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+            //    .AddKeyFrame(1, 0, 0, 0, v.Compositor.GetLinearEase())
+            //    .SetDuration(0.15);
+        }));
     }
 
     #endregion
@@ -214,6 +254,17 @@ public class FluentAnimationHelper
             if (store is not null && store.Name == name)
                 return store;
             else
+            {
+                // Little hax to allow targeting a ContentPresenter.Content
+                if (name.Contains(".")
+                    && name.Split(".") is { Length: 2} parts
+                    && parts[1] == "Content"
+                    && c.GetDescendantsOfType<ContentPresenter>().FirstOrDefault(d => d.Name == parts[0]) is ContentPresenter pres)
+                {
+                    // This doesn't actually return "Content" but it suits our needs
+                    return pres.GetFirstDescendantOfType<FrameworkElement>();
+                }
+            }
                 return c.GetDescendantsOfType<FrameworkElement>().FirstOrDefault(d => d.Name == name);
         }
 

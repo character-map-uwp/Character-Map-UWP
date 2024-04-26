@@ -32,17 +32,26 @@
                     <Setter Property="VerticalAlignment" Value="Stretch" />
                     <Setter Property="Height" Value="40" />
                     <Setter Property="Width" Value="Auto" />
-                    <Setter Property="core:Properties.ClickAnimation" Value="Content|Scale" />
-                    <Setter Property="core:Properties.ClickAnimationOffset" Value="0.9" />
+                    <Setter Property="helpers:FluentAnimation.PointerOver" Value="ContentViewbox" />
+                    <Setter Property="helpers:FluentAnimation.PointerOverOffset" Value="-3" />
+                    <Setter Property="helpers:FluentAnimation.PointerOverAxis" Value="Vertical" />
+                    <Setter Property="helpers:FluentAnimation.Pressed" Value="ContentViewbox" />
+                    <Setter Property="helpers:FluentAnimation.PointerDownScale" Value="0.95" />
                 </Style>
                 <Style BasedOn="{StaticResource CommandBarFlyoutAppBarToggleButtonStyle}" TargetType="AppBarToggleButton">
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="HorizontalAlignment" Value="Stretch" />
                     <Setter Property="VerticalAlignment" Value="Stretch" />
+                    <Setter Property="CornerRadius" Value="{StaticResource CommandToggleCornerRadius}" />
                     <Setter Property="Height" Value="40" />
                     <Setter Property="Width" Value="Auto" />
-                    <Setter Property="core:Properties.ClickAnimation" Value="Content|Scale" />
-                    <Setter Property="core:Properties.ClickAnimationOffset" Value="0.9" />
+                    <Setter Property="helpers:FluentAnimation.PointerOver" Value="ContentViewbox" />
+                    <Setter Property="helpers:FluentAnimation.PointerOverOffset" Value="-3" />
+                    <Setter Property="helpers:FluentAnimation.PointerOverAxis" Value="Vertical" />
+                    <Setter Property="helpers:FluentAnimation.Pressed" Value="ContentViewbox" />
+                    <Setter Property="helpers:FluentAnimation.PointerDownScale" Value="0.95" />
+                    <!--<Setter Property="core:Properties.ClickAnimation" Value="Content|Scale" />
+                    <Setter Property="core:Properties.ClickAnimationOffset" Value="0.9" />-->
                 </Style>
             </Grid.Resources>
             <Grid
@@ -96,8 +105,6 @@
                     x:Name="IncreaseSizeButton"
                     x:Uid="IncreaseSizeButton"
                     Grid.Column="1"
-                    core:Properties.ClickAnimation="Content"
-                    core:Properties.ClickAnimationOffset="-3"
                     Click="{x:Bind ViewModel.IncreaseCharacterSize}">
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C7;" />
                 </AppBarButton>
@@ -105,8 +112,6 @@
                     x:Name="DecreaseSizeButton"
                     x:Uid="DecreaseSizeButton"
                     Grid.Column="2"
-                    core:Properties.ClickAnimation="Content"
-                    core:Properties.ClickAnimationOffset="3"
                     Click="{x:Bind ViewModel.DecreaseCharacterSize}">
                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C6;" />
                 </AppBarButton>
@@ -963,12 +968,12 @@
                                         SelectionMode="Single"
                                         ShowsScrollingPlaceholders="False"
                                         SingleSelectionFollowsFocus="True">
-                                        <ListView.ItemContainerStyle>
+                                        <!--<ListView.ItemContainerStyle>
                                             <Style BasedOn="{StaticResource DefaultThemeListViewItemStyle}" TargetType="ListViewItem">
                                                 <Setter Property="core:Properties.PointerOverAnimation" Value="Name" />
                                                 <Setter Property="VerticalContentAlignment" Value="Center" />
                                             </Style>
-                                        </ListView.ItemContainerStyle>
+                                        </ListView.ItemContainerStyle>-->
                                         <ListView.Header>
                                             <StackPanel Margin="12,4" Spacing="12">
                                                 <TextBlock
@@ -994,7 +999,7 @@
                                         <ListView.ItemTemplate>
                                             <DataTemplate x:DataType="core:TypographyFeatureInfo">
                                                 <TextBlock
-                                                    x:Name="Name"
+                                                    x:Name="TemplateContent"
                                                     Margin="12 0"
                                                     Text="{x:Bind DisplayName}" />
                                             </DataTemplate>
@@ -1425,6 +1430,7 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
                         helpers:FluentAnimation.PointerOver="FluentContentPresenter"
+                        helpers:FluentAnimation.PointerOverOffset="-2"
                         Click="TypeRampFlowButton_Click"
                         Style="{StaticResource MapInfoButtonStyle}">
                         <Path
@@ -1747,8 +1753,14 @@
                                                     FontSize="12"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                                     Text="{x:Bind Field.Name}"
-                                                    TextWrapping="Wrap"
-                                                    ToolTipService.ToolTip="{x:Bind Field.Description}" />
+                                                    TextWrapping="Wrap">
+                                                    <ToolTipService.ToolTip>
+                                                        <TextBlock
+                                                            FontSize="13"
+                                                            Text="{x:Bind Field.Description}"
+                                                            TextWrapping="Wrap" />
+                                                    </ToolTipService.ToolTip>
+                                                </TextBlock>
 
                                                 <TextBlock
                                                     Grid.Column="1"
@@ -1906,9 +1918,13 @@
                                                 AreOpenCloseAnimationsEnabled="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                                                 MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}"
                                                 Placement="Top">
-                                                <MenuFlyoutItem x:Uid="ExportPNGLabel" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
+                                                <MenuFlyoutItem
+                                                    x:Uid="ExportPNGLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
+                                                    Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
                                                 <MenuFlyoutItem
                                                     x:Uid="ColoredGlyphLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSavePng}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind ViewModel.SelectedCharAnalysis.HasColorGlyphs, Mode=OneWay}">
@@ -1918,6 +1934,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="BlackFill"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSavePng}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
@@ -1927,6 +1944,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="WhiteFill"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSavePng}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
@@ -1937,10 +1955,12 @@
 
                                                 <MenuFlyoutItem
                                                     x:Uid="ExportSVGLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
                                                     Visibility="{x:Bind ViewModel.SelectedCharAnalysis.IsFullVectorBased, Mode=OneWay}" />
                                                 <MenuFlyoutItem
                                                     x:Uid="ExportSVGGlyphLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSaveSvg}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind ViewModel.IsSvgChar, Mode=OneWay}">
@@ -1950,6 +1970,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="ColoredGlyphLabel"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSaveSvg}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.TrueAndTrueAndFalseToVis(ViewModel.SelectedCharAnalysis.HasColorGlyphs, ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
@@ -1959,6 +1980,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="BlackFill"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSaveSvg}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
@@ -1968,6 +1990,7 @@
                                                 </MenuFlyoutItem>
                                                 <MenuFlyoutItem
                                                     x:Uid="WhiteFill"
+                                                    helpers:FluentAnimation.PointerOverOffset="-2"
                                                     Command="{Binding CommandSaveSvg}"
                                                     Style="{StaticResource Mfi}"
                                                     Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">

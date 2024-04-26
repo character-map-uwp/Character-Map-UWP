@@ -11,6 +11,7 @@
 
     <DataTemplate x:Key="SearchResultTemplate" x:DataType="services:IGlyphData">
         <Grid
+            Name="TemplateContent"
             HorizontalAlignment="Stretch"
             Background="Transparent"
             ToolTipService.ToolTip="{x:Bind Description}">

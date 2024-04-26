@@ -120,12 +120,12 @@ public static class ResourceHelper
     public static bool SupportsShadows() => Get<bool>("SupportsShadows");
     public static bool AllowAnimation => AppSettings.UseSelectionAnimations && CompositionFactory.UISettings.AnimationsEnabled;
     public static bool AllowExpensiveAnimation => AllowAnimation && AppSettings.AllowExpensiveAnimations;
-    public static bool AllowFluentAnimation => AllowAnimation && SupportFluentAnimation && AppSettings.UseFluentPointerOverAnimations;
+    public static bool AllowFluentAnimation => AllowAnimation && SupportFluentAnimation && AppSettings.UseFluentPointerOverAnimations1;
 
     private static bool? _supportsFluentAnimation;
     public static bool SupportFluentAnimation => _supportsFluentAnimation ??= Get<bool>("SupportsFluentAnimation");
 
-    public static bool UsePointerOverAnimations => AppSettings.UseFluentPointerOverAnimations;
+    public static bool UsePointerOverAnimations => AppSettings.UseFluentPointerOverAnimations1;
 
 
 
@@ -241,6 +241,9 @@ public static class ResourceHelper
 
     public static bool TryResolveThemeStyle3(FrameworkElement element)
     {
+        if (element.ReadLocalValue(FrameworkElement.StyleProperty) != DependencyProperty.UnsetValue)
+            return false;
+
         if (Properties.GetStyleKey(element) is string styleKey)
         {
             // Find source dictionary for current theme

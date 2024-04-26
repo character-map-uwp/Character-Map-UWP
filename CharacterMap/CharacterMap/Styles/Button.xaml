@@ -24,6 +24,9 @@
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="h:FluentAnimation.Pressed" Value="Text" />
+        <Setter Property="h:FluentAnimation.PointerOver" Value="Text" />
+        <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />
+        <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">

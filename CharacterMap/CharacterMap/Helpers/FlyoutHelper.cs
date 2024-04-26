@@ -622,7 +622,9 @@ public static class FlyoutHelper
             {
                 if (item is MenuFlyoutSubItem sub)
                 {
-                    sub.Style = subStyle;
+                    if (subStyle is not null)
+                        sub.Style = subStyle;
+
                     SetContext(sub.Items, context, subStyle);
                 }
 
