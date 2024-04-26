@@ -2056,6 +2056,66 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <source>Remember selected font list filter between sessions</source>
           <target state="new">Remember selected font list filter between sessions</target>
         </trans-unit>
+        <trans-unit id="GlyphNameToggleHeader.Text" translate="yes" xml:space="preserve">
+          <source>File Name Template</source>
+          <target state="new">File Name Template</target>
+        </trans-unit>
+        <trans-unit id="GlyphNameToggleLabel.Text" translate="yes" xml:space="preserve">
+          <source>Show template parts</source>
+          <target state="new">Show template parts</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterCharDescDesc" translate="yes" xml:space="preserve">
+          <source>Glyph Unicode description, or Unicode string if none</source>
+          <target state="new">Glyph Unicode description, or Unicode string if none</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterExtensionDesc" translate="yes" xml:space="preserve">
+          <source>File Extension</source>
+          <target state="new">File Extension</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterFaceDesc" translate="yes" xml:space="preserve">
+          <source>Name of current font face</source>
+          <target state="new">Name of current font face</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterFamilyDesc" translate="yes" xml:space="preserve">
+          <source>Name of font family</source>
+          <target state="new">Name of font family</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterPixelSizeDesc" translate="yes" xml:space="preserve">
+          <source>Size in pixels</source>
+          <target state="new">Size in pixels</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterStringFormat" translate="yes" xml:space="preserve">
+          <source>{0}, e.g. {1}</source>
+          <target state="new">{0}, e.g. {1}</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterUnicodeCPDesc" translate="yes" xml:space="preserve">
+          <source>Unicode index/codepoint value</source>
+          <target state="new">Unicode index/codepoint value</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterUnicodeHexDesc" translate="yes" xml:space="preserve">
+          <source>Unicode hex value</source>
+          <target state="new">Unicode hex value</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterXamlGlyphDesc" translate="yes" xml:space="preserve">
+          <source>XAML glyph code</source>
+          <target state="new">XAML glyph code</target>
+        </trans-unit>
+        <trans-unit id="SettingsGlyphNaming.Description" translate="yes" xml:space="preserve">
+          <source>Choose how exported character files are named.</source>
+          <target state="new">Choose how exported character files are named.</target>
+        </trans-unit>
+        <trans-unit id="SettingsGlyphNaming.Title" translate="yes" xml:space="preserve">
+          <source>Glyph Export Naming</source>
+          <target state="new">Glyph Export Naming</target>
+        </trans-unit>
+        <trans-unit id="ExampleFormat" translate="yes" xml:space="preserve">
+          <source>e.g. {0}</source>
+          <target state="new">e.g. {0}</target>
+        </trans-unit>
+        <trans-unit id="FileNameWriterFontVerDesc" translate="yes" xml:space="preserve">
+          <source>Font version number, if applicable</source>
+          <target state="new">Font version number, if applicable</target>
+        </trans-unit>
       </group>
     </body>
   </file>
