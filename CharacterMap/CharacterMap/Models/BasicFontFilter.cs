@@ -1,4 +1,7 @@
-﻿namespace CharacterMap.Models;
+﻿using Microsoft.Graphics.Canvas.Text;
+
+namespace CharacterMap.Models;
+
 
 public partial class BasicFontFilter
 {
@@ -28,6 +31,19 @@ public partial class BasicFontFilter
             (f, c) => f.Where(i => i.Variants.Any(v => Unicode.ContainsRange(v, range.Range))),
             range.Name,
             true);
+    }
+
+    public static BasicFontFilter ForFilePath(string path)
+    {
+        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(
+            v => v.QuickFilePath.Contains(path, StringComparison.InvariantCultureIgnoreCase))), null, true);
+    }
+
+    public static BasicFontFilter ForFontInfo(string query, CanvasFontInformation info)
+    {
+        return new BasicFontFilter((f, c) => f.Where(v => v.Variants.Any(
+            v => v.TryGetInfo(info)?.Value is string f
+            && f.Contains(query, StringComparison.InvariantCultureIgnoreCase))), null, true);
     }
 
     public static BasicFontFilter ForChar(Character ch)

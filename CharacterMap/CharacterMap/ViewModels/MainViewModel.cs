@@ -309,24 +309,9 @@ public partial class MainViewModel : ViewModelBase
 
             if (!string.IsNullOrWhiteSpace(FontSearch))
             {
-                if (FontSearch.StartsWith("char:", StringComparison.OrdinalIgnoreCase)
-                    && FontSearch.Remove(0, 5).Trim() is string q
-                    && !string.IsNullOrWhiteSpace(q))
-                {
-                    foreach (var ch in q)
-                    {
-                        if (ch == ' ')
-                            continue;
-                        fontList = BasicFontFilter.ForChar(new(ch)).Query(fontList, FontCollections);
-                    }
-                    FilterTitle = $"{FontListFilter.FilterTitle} \"{q}\"";
-                }
-                else
-                {
-                    fontList = fontList.Where(f => f.Name.Contains(FontSearch, StringComparison.OrdinalIgnoreCase));
-                    string prefix = FontListFilter == BasicFontFilter.All ? "" : FontListFilter.FilterTitle + " ";
-                    FilterTitle = $"{(collection != null ? collection.Name + " " : prefix)}\"{FontSearch}\"";
-                }
+                var results = FontFinder.QueryFontList(FontSearch, fontList, FontCollections, collection, FontListFilter);
+                fontList = results.FontList;
+                FilterTitle = results.FilterTitle;
                 IsSearchResults = true;
             }
             else

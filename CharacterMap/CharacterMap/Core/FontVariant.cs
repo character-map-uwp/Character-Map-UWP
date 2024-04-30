@@ -110,6 +110,8 @@ public partial class FontVariant : IDisposable
         if (IsImported)
             return Localization.Get("InstallTypeImported");
 
+
+
         return Localization.Get($"DWriteSource{DirectWriteProperties.Source}");
     }
 
@@ -152,6 +154,8 @@ public partial class FontVariant : IDisposable
     public uint[] GetGlyphUnicodeIndexes() => GetCharacters().Select(c => c.UnicodeIndex).ToArray();
 
     public FontAnalysis GetAnalysis() => _analysis ??= TypographyAnalyzer.Analyze(this);
+
+    public string QuickFilePath => GetAnalysisInternal().FilePath;
 
     /// <summary>
     /// Load an analysis without a glyph search map. Callers later using the cached analysis and expecting a search map should

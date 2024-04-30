@@ -91,10 +91,11 @@ public partial class CollectionManagementViewModel : ViewModelBase
 
     void RefreshFontList()
     {
+        // 1. Filter fonts
         var systemFonts = string.IsNullOrWhiteSpace(Query) 
-            ? _systemFontList
-            : _systemFontList.Where(f => f.Name.Contains(Query, StringComparison.InvariantCultureIgnoreCase)).ToList();
-
+            ?_systemFontList.AsEnumerable()
+            : FontFinder.QueryFontList(Query, _systemFontList, CollectionService).FontList;
+        
         // 2. Create binding lists
         FontList = new(systemFonts);
     }
