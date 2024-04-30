@@ -2,7 +2,7 @@
 
 public class AddToCollectionResult
 {
-    public AddToCollectionResult(bool success, IList<InstalledFont> fonts, UserFontCollection collection)
+    public AddToCollectionResult(bool success, IReadOnlyList<InstalledFont> fonts, UserFontCollection collection)
     {
         Success = success;
         Fonts = fonts;
@@ -12,7 +12,7 @@ public class AddToCollectionResult
     }
 
     public InstalledFont Font { get; }
-    public IList<InstalledFont> Fonts { get; }
+    public IReadOnlyList<InstalledFont> Fonts { get; }
     public bool Success { get; }
     public UserFontCollection Collection { get; }
 

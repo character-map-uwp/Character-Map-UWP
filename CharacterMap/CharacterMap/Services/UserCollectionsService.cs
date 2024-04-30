@@ -115,7 +115,7 @@ public class UserCollectionsService
         return AddToCollectionAsync(new List<InstalledFont> { font }, collection);
     }
 
-    public async Task<AddToCollectionResult> AddToCollectionAsync(IList<InstalledFont> fonts, UserFontCollection collection, Action onChanged = null)
+    public async Task<AddToCollectionResult> AddToCollectionAsync(IReadOnlyList<InstalledFont> fonts, UserFontCollection collection, Action onChanged = null)
     {
         bool changed = false;
 
@@ -140,7 +140,7 @@ public class UserCollectionsService
         return RemoveFromCollectionAsync(new List<InstalledFont> { font }, collection);
     }
 
-    public Task RemoveFromCollectionAsync(IList<InstalledFont> fonts, UserFontCollection collection)
+    public Task RemoveFromCollectionAsync(IReadOnlyList<InstalledFont> fonts, UserFontCollection collection)
     {
         bool removed = false;
         foreach (var font in fonts)

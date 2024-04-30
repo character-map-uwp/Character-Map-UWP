@@ -354,7 +354,7 @@ public static class FlyoutHelper
                     await _collections.RemoveFromCollectionAsync(fnt, collection);
                     WeakReferenceMessenger.Default.Send(
                         new AppNotificationMessage(true,
-                            new CollectionUpdatedArgs(new List<InstalledFont> { fnt }, collection, false)));
+                            new CollectionUpdatedArgs([fnt], collection, false)));
                     WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage { SourceCollection = collection });
                 }
             }
@@ -368,13 +368,13 @@ public static class FlyoutHelper
     /// <param name="menu"></param>
     /// <param name="font"></param>
     /// <returns></returns>
-    public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IList<InstalledFont> fonts, string key = null, FlyoutArgs args = null)
+    public static MenuFlyoutSubItem AddCollectionItems(MenuFlyout menu, InstalledFont font, IReadOnlyList<InstalledFont> fonts, string key = null, FlyoutArgs args = null)
     {
         #region Event Handlers
 
         static async void AddToSymbolFonts_Click(object sender, RoutedEventArgs e)
         {
-            if (sender is FrameworkElement f && f.DataContext is IList<InstalledFont> fnts)
+            if (sender is FrameworkElement f && f.DataContext is IReadOnlyList<InstalledFont> fnts)
             {
                 var result = await _collections.AddToCollectionAsync(
                     fnts,
@@ -391,7 +391,7 @@ public static class FlyoutHelper
 
         static void CreateCollection_Click(object sender, RoutedEventArgs e)
         {
-            var d = new CreateCollectionDialog
+            CreateCollectionDialog d = new ()
             {
                 DataContext = (sender as FrameworkElement)?.DataContext
             };
@@ -402,7 +402,7 @@ public static class FlyoutHelper
         #endregion
 
         bool multiMode = font is null && fonts is not null;
-        IList<InstalledFont> items = fonts ?? new List<InstalledFont> { font };
+        IReadOnlyList<InstalledFont> items = fonts ?? [font];
         Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
         Style substyle = ResourceHelper.Get<Style>("ThemeMenuFlyoutSubItemStyle");
 
@@ -470,7 +470,7 @@ public static class FlyoutHelper
                         m.Click += async (s, a) =>
                         {
                             if (s is FrameworkElement f
-                                && f.DataContext is IList<InstalledFont> fnts
+                                && f.DataContext is IReadOnlyList<InstalledFont> fnts
                                 && f.Tag is UserFontCollection clct)
                             {
                                 AddToCollectionResult result = await _collections.AddToCollectionAsync(fnts, clct);

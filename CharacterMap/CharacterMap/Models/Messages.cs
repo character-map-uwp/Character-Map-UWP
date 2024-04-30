@@ -2,19 +2,8 @@
 
 public class ModalClosedMessage { }
 
-public class CollectionUpdatedArgs
+public record class CollectionUpdatedArgs(IReadOnlyList<InstalledFont> Fonts, UserFontCollection Collection, bool IsAdd)
 {
-    public IList<InstalledFont> Fonts { get; }
-    public UserFontCollection Collection { get; }
-    public bool IsAdd { get; }
-
-    public CollectionUpdatedArgs(IList<InstalledFont> fonts, UserFontCollection collection, bool isAdd)
-    {
-        Fonts = fonts;
-        Collection = collection;
-        IsAdd = isAdd;
-    }
-
     public string GetTitle()
     {
         if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)
@@ -45,15 +34,7 @@ public class CollectionUpdatedArgs
 
 public class FontListCreatedMessage { }
 
-public class ImportMessage
-{
-    public ImportMessage(FontImportResult result)
-    {
-        Result = result;
-    }
-
-    public FontImportResult Result { get; }
-}
+public record class ImportMessage(FontImportResult Result);
 
 public class CollectionsUpdatedMessage
 {
@@ -84,29 +65,10 @@ public class AdvancedOptionsRequested { }
 
 public class ToggleCompactOverlayMessage { }
 
-public class AppSettingsChangedMessage
-{
-    public AppSettingsChangedMessage(string propertyName)
-    {
-        PropertyName = propertyName;
-    }
+public record class AppSettingsChangedMessage(string PropertyName);
 
-    public string PropertyName { get; }
-}
-
-public class AppNotificationMessage
-{
-    public AppNotificationMessage(bool local, object data, int durationMs = 0)
-    {
-        Local = local;
-        Data = data;
-        DurationInMilliseconds = durationMs;
-    }
-
-    public bool Local { get; }
-    public object Data { get; }
-    public int DurationInMilliseconds { get; }
-}
+public record class AppNotificationMessage(bool Local, object Data, int DurationInMilliseconds = 0);
+   
 
 public enum DevValueType
 {

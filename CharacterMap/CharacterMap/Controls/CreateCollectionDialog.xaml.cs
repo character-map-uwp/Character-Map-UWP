@@ -76,7 +76,7 @@ public sealed partial class CreateCollectionDialog : ContentDialog
 
             if (this.DataContext is InstalledFont font)
                 result = await collections.AddToCollectionAsync(font, collection);
-            else if (this.DataContext is IList<InstalledFont> fonts)
+            else if (this.DataContext is IReadOnlyList<InstalledFont> fonts)
                 result = await collections.AddToCollectionAsync(fonts, collection);
             else if (this.DataContext is null)
                 result = new AddToCollectionResult(true, null, collection);
