@@ -969,6 +969,18 @@
                                 Style="{ThemeResource CaptionTextBlockStyle}"
                                 Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
                                 Visibility="Collapsed" />
+
+                            <TextBlock
+                                Grid.Column="1"
+                                Margin="24,0,0,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                Foreground="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
+                                HorizontalTextAlignment="Right"
+                                Opacity="0.7"
+                                Style="{ThemeResource CaptionTextBlockStyle}"
+                                Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.IconString)}" />
                         </Grid>
 
                     </Border>

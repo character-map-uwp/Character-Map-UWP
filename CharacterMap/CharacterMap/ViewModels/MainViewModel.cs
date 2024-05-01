@@ -58,13 +58,13 @@ public partial class MainViewModel : ViewModelBase
     public FontItem CurrentFont => Fonts.Count > 0 && TabIndex < Fonts.Count && TabIndex > -1
         ? Fonts[TabIndex] : null;
 
-    private UserFontCollection _selectedCollection;
-    public UserFontCollection SelectedCollection
+    private IFontCollection _selectedCollection;
+    public IFontCollection SelectedCollection
     {
         get => _selectedCollection;
         set
         {
-            if (value != null && value.IsSystemSymbolCollection)
+            if (value is UserFontCollection c && c.IsSystemSymbolCollection)
             {
                 FontListFilter = BasicFontFilter.SymbolFonts;
                 return;
@@ -274,7 +274,7 @@ public partial class MainViewModel : ViewModelBase
         return FilterFlyout.AllFilters.FirstOrDefault(f => f.DisplayTitle == Settings.LastSelectedCollection);
     }
 
-    public async void RefreshFontList(UserFontCollection collection = null)
+    public async void RefreshFontList(IFontCollection collection = null)
     {
         if (CanFilter == false)
             return;
@@ -285,7 +285,7 @@ public partial class MainViewModel : ViewModelBase
             if (collection != null)
             {
                 FilterTitle = collection.Name;
-                fontList = fontList.Where(f => collection.Fonts.Contains(f.Name));
+                fontList = fontList.Where(f => collection.ContainsFamily(f.Name));
             }
             else
             {

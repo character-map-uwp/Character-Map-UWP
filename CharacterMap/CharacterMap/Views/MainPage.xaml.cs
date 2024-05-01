@@ -109,7 +109,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             if (!FontsSemanticZoom.IsZoomedInViewActive)
                 FontsSemanticZoom.IsZoomedInViewActive = true;
 
-            ViewModel.SelectedCollection = e as UserFontCollection;
+            ViewModel.SelectedCollection = e as IFontCollection;
         });
     }
 

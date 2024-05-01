@@ -2,7 +2,7 @@
 
 namespace CharacterMap.Controls;
 
-public class CreateCollectionDialogTemplateSettings : ViewModelBase
+public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
 {
     private string _collectionTitle;
     public string CollectionTitle
@@ -11,16 +11,55 @@ public class CreateCollectionDialogTemplateSettings : ViewModelBase
         set { if (Set(ref _collectionTitle, value)) OnCollectionTitleChanged(); }
     }
 
-    private bool _isCollectionTitleValid;
-    public bool IsCollectionTitleValid
-    {
-        get => _isCollectionTitleValid;
-        private set => Set(ref _isCollectionTitleValid, value);
-    }
+    [ObservableProperty] bool _isCollectionTitleValid;
+
+    [ObservableProperty] bool _isSmartCollection;
+    [ObservableProperty] string _filterFilePath;
+    [ObservableProperty] string _filterFoundry;
+    [ObservableProperty] string _filterDesigner;
+
 
     private void OnCollectionTitleChanged()
     {
         IsCollectionTitleValid = !string.IsNullOrWhiteSpace(CollectionTitle);
+    }
+
+    public void Populate(IFontCollection c)
+    {
+        CollectionTitle = c.Name;
+
+        if (c is SmartFontCollection u)
+        {
+            IsSmartCollection = true;
+
+            Populate("filepath:", s => FilterFilePath = s);
+            Populate("foundry:", s => FilterFoundry = s);
+            Populate("designer:", s => FilterDesigner = s);
+
+            void Populate(string id, Action<string> set)
+            {
+                foreach (var s in u.Filters)
+                {
+                    if (s.StartsWith(id))
+                        set(s.Replace(id, string.Empty).Trim());
+                }
+            }
+        }
+    }
+
+    public List<String> GetFilterList()
+    {
+        List<String> filters = [];
+        Add("filepath:", _filterFilePath);
+        Add("foundry:", _filterFoundry);
+        Add("designer:", _filterDesigner);
+        return filters;
+
+        void Add(string id, string field)
+        {
+            if (!String.IsNullOrWhiteSpace(field))
+                filters.Add($"{id} {field.Replace(id, string.Empty).Trim()}");
+        }
     }
 }
 
@@ -28,14 +67,14 @@ public sealed partial class CreateCollectionDialog : ContentDialog
 {
     public CreateCollectionDialogTemplateSettings TemplateSettings { get; }
 
-    public bool IsRenameMode { get; }
+    public bool IsEditMode { get; }
 
     public object Result { get; private set; }
 
 
-    private UserFontCollection _collection = null;
+    private IFontCollection _collection = null;
 
-    public CreateCollectionDialog(UserFontCollection collection = null)
+    public CreateCollectionDialog(IFontCollection collection = null)
     {
         _collection = collection;
         TemplateSettings = new CreateCollectionDialogTemplateSettings();
@@ -43,10 +82,10 @@ public sealed partial class CreateCollectionDialog : ContentDialog
 
         if (_collection != null)
         {
-            IsRenameMode = true;
+            IsEditMode = true;
             this.Title = Localization.Get("DigRenameCollection/Title");
             this.PrimaryButtonText = Localization.Get("DigRenameCollection/PrimaryButtonText");
-            TemplateSettings.CollectionTitle = _collection.Name;
+            TemplateSettings.Populate(_collection);
         }
     }
 
@@ -57,13 +96,18 @@ public sealed partial class CreateCollectionDialog : ContentDialog
 
         var collections = Ioc.Default.GetService<UserCollectionsService>();
 
-        if (IsRenameMode)
+        if (IsEditMode)
         {
             this.IsPrimaryButtonEnabled = false;
             this.IsSecondaryButtonEnabled = false;
             InputBox.IsEnabled = false;
 
-            await collections.RenameCollectionAsync(TemplateSettings.CollectionTitle, _collection);
+            _collection.Name = TemplateSettings.CollectionTitle;
+
+            if (_collection is SmartFontCollection s)
+                s.Filters = TemplateSettings.GetFilterList();
+
+            await collections.UpdateCollectionAsync(_collection);
             d.Complete();
 
             await Task.Yield();
@@ -72,21 +116,34 @@ public sealed partial class CreateCollectionDialog : ContentDialog
         else
         {
             AddToCollectionResult result = null;
-            UserFontCollection collection = await collections.CreateCollectionAsync(TemplateSettings.CollectionTitle);
 
-            if (this.DataContext is InstalledFont font)
-                result = await collections.AddToCollectionAsync(font, collection);
-            else if (this.DataContext is IReadOnlyList<InstalledFont> fonts)
-                result = await collections.AddToCollectionAsync(fonts, collection);
-            else if (this.DataContext is null)
-                result = new AddToCollectionResult(true, null, collection);
-            
-            Result = result;
-            d.Complete();
-            await Task.Yield();
-            if (result is not null && result.Success && result.Fonts is not null)
-                WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
+            // Check if we are creating a Smart Filter
+            if (TemplateSettings.GetFilterList() is { Count: > 0} filters)
+            {
+                SmartFontCollection collection = await collections.CreateSmartCollectionAsync(
+                    TemplateSettings.CollectionTitle,
+                    filters);
 
+                d.Complete();
+            }
+            else
+            {
+                UserFontCollection collection = await collections.CreateCollectionAsync(TemplateSettings.CollectionTitle);
+
+                if (this.DataContext is InstalledFont font)
+                    result = await collections.AddToCollectionAsync(font, collection);
+                else if (this.DataContext is IReadOnlyList<InstalledFont> fonts)
+                    result = await collections.AddToCollectionAsync(fonts, collection);
+                else if (this.DataContext is null)
+                    result = new AddToCollectionResult(true, null, collection);
+
+                Result = result;
+                d.Complete();
+                await Task.Yield();
+                if (result is not null && result.Success && result.Fonts is not null)
+                    WeakReferenceMessenger.Default.Send(new AppNotificationMessage(true, result));
+
+            }
         }
     }
 }

@@ -7,9 +7,9 @@ public interface ICollectionProvider
     /// Returns an ordered List of collection
     /// </summary>
     /// <returns></returns>
-    Task<List<UserFontCollection>> LoadCollectionsAsync();
-    Task SaveCollectionAsync(UserFontCollection collection);
-    Task<bool> DeleteCollectionAsync(UserFontCollection collection);
+    Task<IReadOnlyList<IFontCollection>> LoadCollectionsAsync();
+    Task SaveCollectionAsync(IFontCollection collection);
+    Task<bool> DeleteCollectionAsync(IFontCollection collection);
     Task FlushAsync();
 }
 
@@ -22,7 +22,10 @@ public class UserCollectionsService
         set { value.IsSystemSymbolCollection = true; _symbolCollection = value; }
     }
 
-    public List<UserFontCollection> Items { get; private set; } = new();
+    public IReadOnlyList<IFontCollection> All { get; private set; } = [];
+
+    public List<UserFontCollection> Items { get; private set; } = [];
+    public List<SmartFontCollection> SmartCollections { get; private set; } = [];
 
     private ICollectionProvider _provider { get; }
 
@@ -49,17 +52,26 @@ public class UserCollectionsService
         if (ResourceHelper.AppSettings.HasSQLiteCollections is false)
             await UpgradeToSQLiteAsync().ConfigureAwait(false);
 
-        List<UserFontCollection> collections = new();
+        List<UserFontCollection> collections = [];
+        List<SmartFontCollection> smart = [];
 
         await Task.Run(async () =>
         {
             var cols = await _provider.LoadCollectionsAsync().ConfigureAwait(false);
-            foreach (var c in cols)
+            foreach (var col in cols)
             {
-                if (c.Name == "Symbol")
-                    SymbolCollection = c;
-                else
-                    collections.Add(c);
+                if (col is UserFontCollection c)
+                {
+                    if (c.Name == "Symbol")
+                        SymbolCollection = c;
+                    else
+                        collections.Add(c);
+                }
+                else if (col is SmartFontCollection s)
+                {
+                    smart.Add(s);
+                }
+                
             }
 
             if (SymbolCollection == null)
@@ -68,11 +80,46 @@ public class UserCollectionsService
 
         Items.Clear();
         Items.AddRange(collections);
+
+        SmartCollections.Clear();
+        SmartCollections.AddRange(smart);
+
+        // Populates "All" list
+        Add(null);
     }
 
-    public UserFontCollection TryGetCollection(string name)
+    //public UserFontCollection TryGetCollection(string name)
+    //{
+    //    return Items.FirstOrDefault(i => string.CompareOrdinal(i.Name, name) > 0);
+    //}
+
+    public async Task<SmartFontCollection> CreateSmartCollectionAsync(string name, IReadOnlyList<string> filters)
     {
-        return Items.FirstOrDefault(i => string.CompareOrdinal(i.Name, name) > 0);
+        if (name == "Symbol") name = "My Symbols";
+
+        SmartFontCollection collection = new() { Name = name, Filters = filters.ToList() };
+        await SaveCollectionAsync(collection).ConfigureAwait(false);
+        collection.UpdateFonts();
+
+        Add(collection);
+
+        return collection;
+    }
+
+    internal void Add(IFontCollection c)
+    {
+        if (c is UserFontCollection u)
+        {
+            Items.Add(u);
+            Items = Items.OrderBy(i => i.Name).ToList();
+        }
+        else if (c is SmartFontCollection s)
+        {
+            SmartCollections.Add(s);
+            SmartCollections = SmartCollections.OrderBy(i => i.Name).ToList();
+        }
+
+        All = Items.Cast<IFontCollection>().Concat(SmartCollections).OrderBy(c => c.Name).ToList();
     }
 
     public async Task<UserFontCollection> CreateCollectionAsync(string name, bool symbol = false)
@@ -84,35 +131,45 @@ public class UserCollectionsService
         await SaveCollectionAsync(collection).ConfigureAwait(false);
 
         if (!symbol)
-        {
-            Items.Add(collection);
-            Items = Items.OrderBy(i => i.Name).ToList();
-        }
+            Add(collection);
 
         return collection;
     }
 
-    public async Task DeleteCollectionAsync(UserFontCollection collection)
+    void Remove(IFontCollection collection)
+    {
+        if (collection is UserFontCollection u)
+            Items.Remove(u);
+        else if (collection is SmartFontCollection s)
+            SmartCollections.Remove(s);
+
+        Add(null);
+    }
+
+    public async Task DeleteCollectionAsync(IFontCollection collection)
     {
         if (await _provider.DeleteCollectionAsync(collection))
-            Items.Remove(collection);
+            Remove(collection);
     }
 
-    public async Task RenameCollectionAsync(string name, UserFontCollection collection)
+    public async Task UpdateCollectionAsync(IFontCollection collection)
     {
-        collection.Name = name;
         await SaveCollectionAsync(collection).ConfigureAwait(false);
-        Items = Items.OrderBy(i => i.Name).ToList();
+
+        if (collection is SmartFontCollection smart)
+            smart.UpdateFonts();
+
+        Add(null);
     }
 
-    public Task SaveCollectionAsync(UserFontCollection collection)
+    public Task SaveCollectionAsync(IFontCollection collection)
     {
         return _provider.SaveCollectionAsync(collection);
     }
 
     public Task<AddToCollectionResult> AddToCollectionAsync(InstalledFont font, UserFontCollection collection)
     {
-        return AddToCollectionAsync(new List<InstalledFont> { font }, collection);
+        return AddToCollectionAsync([font], collection);
     }
 
     public async Task<AddToCollectionResult> AddToCollectionAsync(IReadOnlyList<InstalledFont> fonts, UserFontCollection collection, Action onChanged = null)
@@ -173,6 +230,8 @@ public class UserCollectionsService
     // Legacy Format Conversions
     //
     //------------------------------------------------------
+
+    #region Legacy
 
     [Obsolete]
     private IAsyncOperation<StorageFolder> GetCollectionsFolderAsync()
@@ -296,4 +355,6 @@ public class UserCollectionsService
         await file.DeleteAsync().AsTask().ConfigureAwait(false);
         return collection;
     }
+
+    #endregion
 }

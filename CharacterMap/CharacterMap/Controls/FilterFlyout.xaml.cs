@@ -179,7 +179,7 @@ public sealed partial class FilterFlyout : MenuFlyout
     private void MenuFlyout_Opening(object sender, object e)
     {
         this.AreOpenCloseAnimationsEnabled = ResourceHelper.AllowAnimation;
-        var collections = Ioc.Default.GetService<UserCollectionsService>().Items;
+        var collections = Ioc.Default.GetService<UserCollectionsService>().All;
         Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
 
         // Reset to default menu
@@ -197,9 +197,10 @@ public sealed partial class FilterFlyout : MenuFlyout
             foreach (var item in collections)
             {
                 MenuFlyoutItem m = new() { DataContext = item, Text = item.Name, Style = style };
+                Properties.SetIconString(m, item.Icon);
                 m.Click += (s, a) =>
                 {
-                    if (m.DataContext is UserFontCollection u)
+                    if (m.DataContext is IFontCollection u)
                         CollectionSelectedCommand?.Execute(u);
                 };
                 Items.Add(m);

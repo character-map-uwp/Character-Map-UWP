@@ -2,6 +2,7 @@
     x:Class="CharacterMap.Controls.CreateCollectionDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="DigCreateCollection"
@@ -14,10 +15,91 @@
     Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d">
 
-    <TextBox
-        x:Name="InputBox"
-        x:Uid="CreateCollectionEntryBox"
-        DataContext="{x:Bind TemplateSettings}"
-        Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    <StackPanel DataContext="{x:Bind TemplateSettings}">
+        <TextBox
+            x:Name="InputBox"
+            x:Uid="CreateCollectionEntryBox"
+            Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <CheckBox
+            x:Name="SmartCollectionCheckbox"
+            x:Load="{x:Bind core:Converters.False(IsEditMode)}"
+            Content="Is Smart Collection"
+            IsChecked="{x:Bind TemplateSettings.IsSmartCollection, Mode=TwoWay}"
+            Style="{StaticResource DefaultThemeCheckBoxStyle}" />
+
+        <StackPanel
+            x:Name="SmartFilters"
+            x:Load="{x:Bind TemplateSettings.IsSmartCollection, Mode=OneWay}"
+            Margin="0 24 0 0"
+            Spacing="12">
+            <TextBox Text="{Binding FilterFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Header>
+                    <StackPanel
+                        Margin="0 -2"
+                        Orientation="Horizontal"
+                        Spacing="4">
+                        <TextBlock VerticalAlignment="Center" Text="File Path Filter" />
+                        <Border
+                            Padding="4 2"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                            CornerRadius="4">
+                            <TextBlock
+                                FontFamily="Consolas"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="filepath:" />
+                        </Border>
+                    </StackPanel>
+                </TextBox.Header>
+            </TextBox>
+            <TextBox Text="{Binding FilterFoundry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Header>
+                    <StackPanel
+                        Margin="0 -2"
+                        Orientation="Horizontal"
+                        Spacing="4">
+                        <TextBlock VerticalAlignment="Center" Text="Foundry Filter" />
+                        <Border
+                            Padding="4 2"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                            CornerRadius="4">
+                            <TextBlock
+                                FontFamily="Consolas"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="foundry:" />
+                        </Border>
+                    </StackPanel>
+                </TextBox.Header>
+            </TextBox>
+            <TextBox Text="{Binding FilterDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Header>
+                    <StackPanel
+                        Margin="0 -2"
+                        Orientation="Horizontal"
+                        Spacing="4">
+                        <TextBlock VerticalAlignment="Center" Text="Designer Filter" />
+                        <Border
+                            Padding="4 2"
+                            VerticalAlignment="Center"
+                            Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                            CornerRadius="4">
+                            <TextBlock
+                                FontFamily="Consolas"
+                                FontSize="12"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="designer:" />
+                        </Border>
+                    </StackPanel>
+                </TextBox.Header>
+            </TextBox>
+        </StackPanel>
+
+
+    </StackPanel>
+
 
 </ContentDialog>

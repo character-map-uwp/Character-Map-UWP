@@ -129,7 +129,6 @@ namespace CharacterMapCX
 		{
 			m_font = font;
 			m_dwProperties = properties;
-
 		};
 
 		ComPtr<IDWriteFontCollection3> GetFontCollection()

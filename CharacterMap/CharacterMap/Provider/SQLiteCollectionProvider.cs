@@ -7,17 +7,27 @@ public class SQLiteCollectionProvider : ICollectionProvider
     private SQLiteConnection _conn { get; set; }
 
     private PreparedSqlLiteInsertCommand _ins { get; set; }
+    private PreparedSqlLiteInsertCommand _smins { get; set; }
 
-    public Task<List<UserFontCollection>> LoadCollectionsAsync()
+    private PreparedSqlLiteInsertCommand GetInsert(IFontCollection c) => c is UserFontCollection ? _ins : _smins;
+    private string GetTable(IFontCollection c) => c is UserFontCollection ? "Collections" : "SmartCollections";
+    private string GetArgs(IFontCollection c) => c is UserFontCollection ? "Fonts" : "Filters";
+
+
+    public Task<IReadOnlyList<IFontCollection>> LoadCollectionsAsync()
     {
         PrepareConnection();
-        List<UserFontCollection> collections = new();
+        List<IFontCollection> collections = [];
 
         try
         {
             var cols = _conn.CreateCommand("SELECT * FROM \"Collections\" ORDER BY Name").AsFontCollections();
             foreach (var c in cols)
                 collections.Add(c.AsUserFontCollection());
+
+            var smarts = _conn.CreateCommand("SELECT * FROM \"SmartCollections\" ORDER BY Name").AsSmartFontCollections();
+            foreach (var c in smarts)
+                collections.Add(c.AsSmartFontCollection());
         }
         catch (Exception ex) when (ex.Message.StartsWith("no such table"))
         {
@@ -27,13 +37,14 @@ public class SQLiteCollectionProvider : ICollectionProvider
             return LoadCollectionsAsync();
         }
 
-        return Task.FromResult(collections);
+        return Task.FromResult((IReadOnlyList<IFontCollection>)collections);
     }
 
-    public async Task<bool> DeleteCollectionAsync(UserFontCollection collection)
+    public async Task<bool> DeleteCollectionAsync(IFontCollection collection)
     {
         PrepareConnection();
-        if (1 == _conn.Execute($"DELETE FROM \"Collections\" WHERE Id = ?", collection.Id))
+
+        if (1 == _conn.Execute($"DELETE FROM \"{GetTable(collection)}\" WHERE Id = ?", collection.Id))
         {
             await VacuumAsync();
             return true;
@@ -42,26 +53,30 @@ public class SQLiteCollectionProvider : ICollectionProvider
         return false;
     }
 
-    public Task SaveCollectionAsync(UserFontCollection collection)
+    
+
+    public Task SaveCollectionAsync(IFontCollection c)
     {
         return Task.Run(() =>
         {
             PrepareConnection();
 
-            if (collection.Id == 0)
+            // If Id == 0 we create a new collection
+            if (c.Id == 0)
             {
                 var obs = new object[2];
-                obs[0] = collection.Name;
-                obs[1] = collection.GetFlatFonts();
+                obs[0] = c.Name;
+                obs[1] = c.GetFlatArgs();
 
-                _ins.ExecuteNonQuery(obs);
-                collection.Id = SQLite3.LastInsertRowid(_conn.Handle);
+                GetInsert(c).ExecuteNonQuery(obs);
+                c.Id = SQLite3.LastInsertRowid(_conn.Handle);
             }
             else
             {
-                var cmd = _conn.CreateCommand("UPDATE \"Collections\" Set Name = ?, Fonts = ? WHERE Id = ?",
-                    collection.Name, collection.GetFlatFonts(), collection.Id);
-                cmd.ExecuteNonQuery();
+                // Otherwise update existing collection
+                _conn.CreateCommand(
+                         $"UPDATE \"{GetTable(c)}\" Set Name = ?, {GetArgs(c)} = ? WHERE Id = ?", c.Name, c.GetFlatArgs(), c.Id)
+                     .ExecuteNonQuery();
             }
         });
     }
@@ -70,6 +85,9 @@ public class SQLiteCollectionProvider : ICollectionProvider
     {
         string create = "CREATE TABLE IF NOT EXISTS \"Collections\" (\r\n\"Id\" integer primary key autoincrement not null ,\r\n\"Name\" varchar ,\r\n\"Fonts\" varchar )";
         _conn.Execute(create);
+
+        string create2 = "CREATE TABLE IF NOT EXISTS \"SmartCollections\" (\r\n\"Id\" integer primary key autoincrement not null ,\r\n\"Name\" varchar ,\r\n\"Filters\" varchar )";
+        _conn.Execute(create2);
     }
 
     public Task StoreMigrationAsync(List<UserFontCollection> collections)
@@ -106,6 +124,7 @@ public class SQLiteCollectionProvider : ICollectionProvider
                 .SetSynchronousNormal();
 
             _ins = new(_conn, "INSERT INTO \"Collections\" (Name, Fonts) VALUES (?, ?)");
+            _smins = new(_conn, "INSERT INTO \"SmartCollections\" (Name, Filters) VALUES (?, ?)");
         }
     }
 

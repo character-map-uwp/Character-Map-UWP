@@ -646,7 +646,7 @@ public class FontFinder
         string query, 
         IEnumerable<InstalledFont> fontList, 
         UserCollectionsService fontCollections,
-        UserFontCollection collection = null,
+        IFontCollection collection = null,
         BasicFontFilter filter = null)
     {
         filter ??= BasicFontFilter.All;
@@ -701,7 +701,6 @@ public class FontFinder
                 string prefix = filter == BasicFontFilter.All ? "" : filter.FilterTitle + " ";
                 filterTitle = $"{(collection != null ? collection.Name + " " : prefix)}\"{query}\"";
             }
-
 
             return new(fontList, filterTitle, true);
         }

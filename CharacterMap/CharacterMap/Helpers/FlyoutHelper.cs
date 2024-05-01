@@ -323,9 +323,9 @@ public static class FlyoutHelper
         return item;
     }
 
-    public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, UserFontCollection collection, BasicFontFilter filter)
+    public static void TryAddRemoveFromCollection(MenuFlyout menu, InstalledFont font, IFontCollection col, BasicFontFilter filter)
     {
-        if (collection is null)
+        if (col is not UserFontCollection collection)
             return;
 
         if ((collection != null || (filter == BasicFontFilter.SymbolFonts && !font.IsSymbolFont))

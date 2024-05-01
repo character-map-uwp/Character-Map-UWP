@@ -13,7 +13,7 @@ public static class GeneratorExtensions
 
     public static AttributeArgumentSyntax GetArgument(this AttributeSyntax attribute, string name)
     {
-        return attribute.ArgumentList.Arguments.FirstOrDefault(a => a.NameEquals?.Name.Identifier.ValueText == name);
+        return attribute.ArgumentList?.Arguments.FirstOrDefault(a => a.NameEquals?.Name?.Identifier.ValueText == name);
     }
 
     public static PropertyDeclarationSyntax GetProperty(this AttributeSyntax attribute, string name)

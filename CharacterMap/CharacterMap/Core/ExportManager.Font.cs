@@ -40,7 +40,7 @@ public static partial class ExportManager
 
     internal static Task ExportCollectionAsZipAsync(
         IList<InstalledFont> fontList,
-        UserFontCollection selectedCollection,
+        IFontCollection selectedCollection,
         Action<string> callback = null)
     {
         var fonts = fontList.SelectMany(f => f.Variants).ToList();
