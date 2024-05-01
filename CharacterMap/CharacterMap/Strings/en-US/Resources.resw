@@ -1681,4 +1681,41 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="FileNameWriterFontVerDesc" xml:space="preserve">
     <value>Font version number, if applicable</value>
   </data>
+  <data name="CanvasFontInformationCopyrightNotice" xml:space="preserve">
+    <value>Copyright Notice</value>
+  </data>
+  <data name="CanvasFontInformationDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="CanvasFontInformationDesigner" xml:space="preserve">
+    <value>Designer</value>
+  </data>
+  <data name="CanvasFontInformationDesignerUrl" xml:space="preserve">
+    <value>Designer URL</value>
+  </data>
+  <data name="CanvasFontInformationFontVendorUrl" xml:space="preserve">
+    <value>Font Vendor URL</value>
+  </data>
+  <data name="CanvasFontInformationFullName" xml:space="preserve">
+    <value>Full Name</value>
+  </data>
+  <data name="CanvasFontInformationLicenseDescription" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="CanvasFontInformationLicenseInfoUrl" xml:space="preserve">
+    <value>License URL</value>
+  </data>
+  <data name="CanvasFontInformationManufacturer" xml:space="preserve">
+    <value>Manufacturer</value>
+  </data>
+  <data name="CanvasFontInformationTrademark" xml:space="preserve">
+    <value>Trademark</value>
+  </data>
+  <data name="CanvasFontInformationVersionStrings" xml:space="preserve">
+    <value>Version Strings</value>
+  </data>
+  <data name="RestoreLabel.Text" xml:space="preserve">
+    <value>Restore</value>
+    <comment>Opposite of Fullscreen</comment>
+  </data>
 </root>

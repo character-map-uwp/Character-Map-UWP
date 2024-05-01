@@ -14,7 +14,7 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
 public partial class FontVariant : IDisposable
 {
     /* Using a character cache avoids a lot of unnecessary allocations */
-    private static Dictionary<int, Character> _characters { get; } = new();
+    private static Dictionary<int, Character> _characters { get; } = [];
 
     private IReadOnlyList<NamedUnicodeRange> _ranges = null;
     private IReadOnlyList<FaceMetadataInfo> _fontInformation = null;
@@ -110,8 +110,6 @@ public partial class FontVariant : IDisposable
         if (IsImported)
             return Localization.Get("InstallTypeImported");
 
-
-
         return Localization.Get($"DWriteSource{DirectWriteProperties.Source}");
     }
 
@@ -125,7 +123,7 @@ public partial class FontVariant : IDisposable
     {
         if (Characters == null)
         {
-            List<Character> characters = new();
+            List<Character> characters = [];
             foreach (var range in UnicodeRanges)
             {
                 CharacterHash += range.First;
@@ -254,15 +252,16 @@ public partial class FontVariant : IDisposable
         if (infos.Count == 0)
             return null;
 
-        var name = info == CanvasFontInformation.DesignScriptLanguageTag
-            ? Localization.Get($"CanvasFontInformation{info}")
-            : info.Humanise();
+        // Get localised field name
+        var name = Localization.Get($"CanvasFontInformation{info}") ?? info.Humanise();
 
+        // Get localised value name
         var dic = infos.ToDictionary(k => k.Key, k => k.Value);
         if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
             || infos.TryGetValue("en-us", out value))
             return new(name, new string[1] { value }, info);
 
+        // For design tag, cache the full language names (metadata only stores short tags)
         if (info is CanvasFontInformation.DesignScriptLanguageTag
             && _designLangRawSearch is null)
         {
@@ -319,7 +318,7 @@ public partial class FontVariant
         return new FontVariant(face, null)
         {
             PreferredName = "",
-            Characters = new List<Character> { new(0) }
+            Characters = [ new(0) ]
         };
     }
 

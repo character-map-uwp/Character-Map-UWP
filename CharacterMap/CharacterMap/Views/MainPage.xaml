@@ -1382,7 +1382,7 @@
                     <VisualState.Setters>
                         <Setter Target="ToggleFullscreenIcon.Glyph" Value="&#xE1D8;" />
                         <Setter Target="FullscreenLabel.Glyph" Value="&#xE1D8;" />
-                        <Setter Target="FullscreenLabel.Title" Value="Restore" />
+                        <Setter Target="FullscreenLabel.Title" Value="{core:Localizer Key='RestoreLabel/Text'}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
