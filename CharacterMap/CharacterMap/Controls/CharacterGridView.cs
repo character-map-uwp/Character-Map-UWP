@@ -64,17 +64,11 @@ public partial class CharacterGridView : GridView
         UpdateAnimation(n);
     }
 
-    //public GlyphAnnotation ItemAnnotation
-    //{
-    //    get { return (GlyphAnnotation)GetValue(ItemAnnotationProperty); }
-    //    set { SetValue(ItemAnnotationProperty, value); }
-    //}
-
-    //public static readonly DP ItemAnnotationProperty = DP<GlyphAnnotation, CharacterGridView>(GlyphAnnotation.None, (d, o, n) =>
-    //{
-    //    d._templateSettings.Annotation = n;
-    //    d.UpdateUnicode(n);
-    //});
+    partial void OnItemAnnotationChanged(GlyphAnnotation o, GlyphAnnotation n)
+    {
+        _templateSettings.Annotation = n;
+        UpdateUnicode(n);
+    }
 
     #endregion
 
