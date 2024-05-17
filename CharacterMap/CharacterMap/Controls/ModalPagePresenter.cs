@@ -5,7 +5,7 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-[DependencyProperty("TitleBarContent")]
+[DependencyProperty("TitleBarContent", null, nameof(OnTitleContentChanged))]
 [DependencyProperty<bool>("AllowShadows")]
 [DependencyProperty<bool>("IsWindowRoot")]
 [DependencyProperty<string>("Title")]
@@ -22,8 +22,6 @@ public sealed partial class ModalPagePresenter : ContentControl
     {
         this.DefaultStyleKey = typeof(ModalPagePresenter);
     }
-
-    partial void OnTitleBarContentChanged(object? oldValue, object newValue) => OnTitleContentChanged();
 
     protected override void OnApplyTemplate()
     {

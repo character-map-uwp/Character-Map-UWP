@@ -240,6 +240,7 @@
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
+    <Compile Include="Core\DependencyPropertyAttribute.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Core\ExportManager.Font.cs" />
     <Compile Include="Models\ExportOptions.cs" />

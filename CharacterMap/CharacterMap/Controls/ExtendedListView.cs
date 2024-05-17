@@ -43,7 +43,22 @@ public partial class ExtendedListView : ListView
         this.Unloaded += ExtendedListView_Unloaded;
     }
 
-    partial void OnBindableSelectedItemsChanged(INotifyCollectionChanged o, INotifyCollectionChanged n) => OnSelectedItemsChanged(o, n);
+    partial void OnBindableSelectedItemsChanged(INotifyCollectionChanged o, INotifyCollectionChanged n)
+    {
+        if (o is not null)
+        {
+            o.CollectionChanged -= SelectedItems_CollectionChanged;
+        }
+
+        if (this is null)
+            return;
+
+        if (n is not null)
+        {
+            n.CollectionChanged -= SelectedItems_CollectionChanged;
+            n.CollectionChanged += SelectedItems_CollectionChanged;
+        }
+    }
 
     private void ExtendedListView_Loaded(object sender, RoutedEventArgs e)
     {
@@ -104,19 +119,7 @@ public partial class ExtendedListView : ListView
 
     private void OnSelectedItemsChanged(object old, object nw)
     {
-        if (old is INotifyCollectionChanged c)
-        {
-            c.CollectionChanged -= SelectedItems_CollectionChanged;
-        }
-
-        if (this is null)
-            return;
-
-        if (nw is INotifyCollectionChanged n)
-        {
-            n.CollectionChanged -= SelectedItems_CollectionChanged;
-            n.CollectionChanged += SelectedItems_CollectionChanged;
-        }
+        
     }
 
     void ItemsSourceChanged(DependencyObject source, DependencyProperty property)

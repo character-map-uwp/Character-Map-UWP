@@ -37,7 +37,7 @@ public partial class CharacterGridView : GridView
 
     #region Dependency Properties
 
-    partial void OnItemSizeChanged(double? oldValue, double n) => _templateSettings.Size = n;
+    partial void OnItemSizeChanged(double oldValue, double n) => _templateSettings.Size = n;
 
     partial void OnItemFontFamilyChanged(FontFamily oldValue, FontFamily n) => _templateSettings.FontFamily = n;
 
@@ -52,13 +52,13 @@ public partial class CharacterGridView : GridView
         }
     }
 
-    partial void OnShowColorGlyphsChanged(bool? oldValue, bool n)
+    partial void OnShowColorGlyphsChanged(bool oldValue, bool n)
     {
         _templateSettings.ShowColorGlyphs = n;
         UpdateColorsFonts(n);
     }
 
-    partial void OnEnableResizeAnimationChanged(bool? oldValue, bool n)
+    partial void OnEnableResizeAnimationChanged(bool oldValue, bool n)
     {
         _templateSettings.EnableReposition = n && CompositionFactory.UISettings.AnimationsEnabled;
         UpdateAnimation(n);

@@ -1,10 +1,12 @@
 ﻿using CharacterMap.Controls;
 using CharacterMapCX.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.Foundation.Collections;
 using Windows.UI.Composition;
 using Windows.UI.Core;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -16,58 +18,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Core;
-
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-public class DependencyPropertyAttribute<T> : Attribute
-{
-    public string Name { get; set; }
-    public object Default { get; set; }
-    public Type Type => typeof(T);
-
-    public DependencyPropertyAttribute() { }
-
-    public DependencyPropertyAttribute(string name)
-    {
-        Name = name;
-    }
-
-    public DependencyPropertyAttribute(string name, object def)
-    {
-        Name = name;
-        Default = def;
-    }
-}
-
-public class AttachedPropertyAttribute<T> : DependencyPropertyAttribute<T>
-{
-    public AttachedPropertyAttribute() { }
-
-    public AttachedPropertyAttribute(string name)
-    {
-        Name = name;
-    }
-
-    public AttachedPropertyAttribute(string name, object def)
-    {
-        Name = name;
-        Default = def;
-    }
-}
-
-public class DependencyPropertyAttribute : DependencyPropertyAttribute<object> {
-    public DependencyPropertyAttribute() { }
-    public DependencyPropertyAttribute(string name)
-    {
-        Name = name;
-    }
-
-    public DependencyPropertyAttribute(string name, object def)
-    {
-        Name = name;
-        Default = def;
-    }
-}
-    
 
 /// <summary>
 /// XAML Attached Properties
@@ -110,6 +60,11 @@ public class DependencyPropertyAttribute : DependencyPropertyAttribute<object> {
 [AttachedProperty<double>("RenderScale", 1d)] // Sets CompositeTransform ScaleX/Y
 [AttachedProperty<double>("Rotation", 0d)] // Sets RotationAngleInDegrees on elements handout visual
 [AttachedProperty<KeyTime>("RotationTransition", "KeyTime.FromTimeSpan(TimeSpan.Zero)")] // Sets transition duration for changes to elements handout visual RotationAngleInDegrees property
+[AttachedProperty<string>("Text")] // Sets the text on a RichEditBox
+[AttachedProperty<FontStretch>("FontStretch", FontStretch.Normal)] // Sets the FontStretch on a RichEditBox
+[AttachedProperty<FontStyle>("FontStyle", FontStyle.Normal)] // Sets the FontStyle on a RichEditBox
+[AttachedProperty<FontWeight>("FontWeight", "FontWeights.Normal")] // Sets the FontWeight on a RichEditBox
+[AttachedProperty<FontFamily>("FontFamily")] // Sets the FontFamily on a RichEditBox
 
 public partial class Properties : DependencyObject
 {
@@ -1013,6 +968,87 @@ public partial class Properties : DependencyObject
                 .AddKeyFrame(1, CompositionFactory.FINAL_VALUE)
                 .SetDuration(n.TimeSpan));
         }
+    }
+
+    #endregion
+
+    #region RichEditBox Text, FontStretch, FontWeight, FontStyle
+
+    static partial void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RichEditBox r)
+        {
+            r.TextChanged -= RichEditBox_TextChanged;
+
+            r.TextDocument.GetText(TextGetOptions.None, out string t);
+
+            if (t.Trim() == ((string)e.NewValue).Trim())
+                return;
+
+            r.TextDocument.SetText(Windows.UI.Text.TextSetOptions.None, e.NewValue as string);
+            UpdateFormat(r);
+            r.TextChanged += RichEditBox_TextChanged;
+        }
+    }
+
+    private static void RichEditBox_TextChanged(object sender, RoutedEventArgs e)
+    {
+        if (sender is RichEditBox r)
+        {
+            r.TextDocument.GetText(TextGetOptions.None, out string t);
+            SetText(r, t.TrimEnd('\r', '\n'));
+        }
+    }
+
+    static partial void OnFontFamilyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RichEditBox r)
+            UpdateFormat(r);
+    }
+
+    static partial void OnFontStretchChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RichEditBox r)
+            UpdateFormat(r);
+    }
+
+    static partial void OnFontStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RichEditBox r)
+            UpdateFormat(r);
+    }
+
+    static partial void OnFontWeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is RichEditBox r)
+            UpdateFormat(r);
+    }
+
+    static FontFamily __BLANK { get; } = new FontFamily("ms-appx:///Assets/AdobeBlank.otf");
+
+    static void UpdateFormat(RichEditBox r)
+    {
+        // This is *NOT* good for performance, but RichEditBox has a lot of problems
+        // we need to workaround. It is however the only way we can actually get proper
+        // font display on a TextBox, so we need to deal with it.
+
+        r.UpdateLayout();
+
+        r.TextDocument.BatchDisplayUpdates();
+
+        r.FontFamily = __BLANK;
+
+        ITextCharacterFormat format = r.TextDocument.GetDefaultCharacterFormat();
+        format.FontStyle = GetFontStyle(r);
+        format.FontStretch = GetFontStretch(r);
+        format.Weight = GetFontWeight(r).Weight;
+        r.TextDocument.SetDefaultCharacterFormat(format);
+
+        r.TextDocument.ApplyDisplayUpdates();
+        r.FontFamily = GetFontFamily(r);
+
+        r.UpdateLayout();
+
     }
 
     #endregion

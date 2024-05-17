@@ -5,27 +5,11 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
+[DependencyProperty<ICommand>("FilterCommand")]
+[DependencyProperty<ICommand>("CollectionSelectedCommand")]
 public sealed partial class FilterFlyout : MenuFlyout
 {
     private int _defaultCount = 0;
-
-    public ICommand FilterCommand
-    {
-        get { return (ICommand)GetValue(FilterCommandProperty); }
-        set { SetValue(FilterCommandProperty, value); }
-    }
-
-    public static readonly DependencyProperty FilterCommandProperty =
-        DependencyProperty.Register(nameof(FilterCommand), typeof(ICommand), typeof(FilterFlyout), new PropertyMetadata(null));
-
-    public ICommand CollectionSelectedCommand
-    {
-        get { return (ICommand)GetValue(CollectionSelectedCommandProperty); }
-        set { SetValue(CollectionSelectedCommandProperty, value); }
-    }
-
-    public static readonly DependencyProperty CollectionSelectedCommandProperty =
-        DependencyProperty.Register(nameof(CollectionSelectedCommand), typeof(ICommand), typeof(FilterFlyout), new PropertyMetadata(null));
 
     private MenuFlyoutItemBase _variableOption = null;
     private MenuFlyoutItemBase _remoteOption = null;

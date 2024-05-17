@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-[DependencyProperty<bool>("EnableAnimation", true)]
+[DependencyProperty<bool>("EnableAnimation", true, nameof(UpdateAnimationStates))]
 public partial class ExtendedSplitView : SplitView
 {
     FrameworkElement _contentRoot = null;
@@ -15,8 +15,6 @@ public partial class ExtendedSplitView : SplitView
         this.Loaded += ExtendedSplitView_Loaded;
         this.Unloaded += ExtendedSplitView_Unloaded;
     }
-
-    partial void OnEnableAnimationChanged(bool? oldValue, bool newValue) => UpdateAnimationStates();
 
     protected override void OnApplyTemplate()
     {
