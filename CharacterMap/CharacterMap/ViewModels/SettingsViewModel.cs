@@ -64,6 +64,7 @@ public partial class SettingsViewModel : ViewModelBase
 
     public void UpdatePreviews(InstalledFont font, CharacterRenderingOptions options)
     {
+        font ??= FontFinder.DefaultFont;
         GlyphNameModel.SetOptions(font, options);
         GlyphNameModel.Template = Settings.FileNameTemplate;
 

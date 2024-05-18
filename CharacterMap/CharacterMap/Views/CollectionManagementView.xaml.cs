@@ -38,6 +38,7 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
     async void NewCollection_Click(object sender, RoutedEventArgs e)
     {
         CreateCollectionDialog d = new();
+        d.SetDataContext(null); // Do not remove
         await d.ShowAsync();
 
         if (d.Result is AddToCollectionResult result && result.Success)

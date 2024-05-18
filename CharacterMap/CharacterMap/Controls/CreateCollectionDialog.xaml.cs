@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
@@ -63,11 +64,14 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
     }
 }
 
+//[DependencyProperty<bool>("AllowSmartCollection")]
 public sealed partial class CreateCollectionDialog : ContentDialog
 {
     public CreateCollectionDialogTemplateSettings TemplateSettings { get; }
 
     public bool IsEditMode { get; }
+
+    public bool AllowSmartCollection { get; private set; }
 
     public object Result { get; private set; }
 
@@ -77,7 +81,7 @@ public sealed partial class CreateCollectionDialog : ContentDialog
     public CreateCollectionDialog(IFontCollection collection = null)
     {
         _collection = collection;
-        TemplateSettings = new CreateCollectionDialogTemplateSettings();
+        TemplateSettings = new ();
         this.InitializeComponent();
 
         if (_collection != null)
@@ -87,6 +91,14 @@ public sealed partial class CreateCollectionDialog : ContentDialog
             this.PrimaryButtonText = Localization.Get("DigRenameCollection/PrimaryButtonText");
             TemplateSettings.Populate(_collection);
         }
+    }
+
+    public CreateCollectionDialog SetDataContext(object o)
+    {
+        this.DataContext = o;
+        if (o is null)
+            AllowSmartCollection = IsEditMode is false;
+        return this;
     }
 
 

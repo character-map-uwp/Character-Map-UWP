@@ -391,12 +391,9 @@ public static class FlyoutHelper
 
         static void CreateCollection_Click(object sender, RoutedEventArgs e)
         {
-            CreateCollectionDialog d = new ()
-            {
-                DataContext = (sender as FrameworkElement)?.DataContext
-            };
-
-            _ = d.ShowAsync();
+            _ = new CreateCollectionDialog()
+                   .SetDataContext(((FrameworkElement)sender).DataContext)
+                   .ShowAsync();
         }
 
         #endregion

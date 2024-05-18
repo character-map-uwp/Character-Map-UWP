@@ -109,7 +109,7 @@ public class CompositionFactory : DependencyObject
             var g = c.CreateAnimationGroup();
             g.Add(c.CreateVector3KeyFrameAnimation()
                         .SetTarget(nameof(Visual.Offset))
-                        .AddKeyFrame(1f, "this.FinalValue")
+                        .AddKeyFrame(1f, FINAL_VALUE)
                         .SetDuration(CompositionFactory.DefaultOffsetDuration));
 
             var s = c.CreateImplicitAnimationCollection();
@@ -123,7 +123,7 @@ public class CompositionFactory : DependencyObject
         return c.GetCached("ScaleAni", () =>
         {
             return c.CreateVector3KeyFrameAnimation()
-                .AddKeyFrame(1f, "this.FinalValue")
+                .AddKeyFrame(1f, FINAL_VALUE)
                 .SetDuration(CompositionFactory.DefaultOffsetDuration)
                 .SetTarget(nameof(Visual.Scale));
         });

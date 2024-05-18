@@ -23,15 +23,16 @@
 
         <CheckBox
             x:Name="SmartCollectionCheckbox"
-            x:Load="{x:Bind core:Converters.False(IsEditMode)}"
-            Content="Is Smart Collection"
+            x:Load="{x:Bind AllowSmartCollection}"
+            Margin="0 12 0 0"
+            Content="Create Smart Collection"
             IsChecked="{x:Bind TemplateSettings.IsSmartCollection, Mode=TwoWay}"
             Style="{StaticResource DefaultThemeCheckBoxStyle}" />
 
         <StackPanel
             x:Name="SmartFilters"
             x:Load="{x:Bind TemplateSettings.IsSmartCollection, Mode=OneWay}"
-            Margin="0 24 0 0"
+            Margin="0 12 0 0"
             Spacing="12">
             <TextBox Text="{Binding FilterFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.Header>

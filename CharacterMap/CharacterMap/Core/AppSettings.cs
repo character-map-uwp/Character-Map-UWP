@@ -101,7 +101,7 @@ public class AppSettings : INotifyPropertyChanged
 
     public int MaxSearchResult
     {
-        get => Get(51, "MSR");
+        get => Get(101, "MSR");
         set => Set(value, "MSR");
     }
 

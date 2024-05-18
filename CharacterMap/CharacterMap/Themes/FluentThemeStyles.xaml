@@ -958,6 +958,7 @@
                                 TextTrimming="{ThemeResource MenuFlyoutItemTextTrimming}" />
                             <TextBlock
                                 x:Name="KeyboardAcceleratorTextBlock"
+                                x:Load="False"
                                 Grid.Column="1"
                                 MinWidth="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=TemplateSettings.KeyboardAcceleratorTextMinWidth}"
                                 Margin="24,4,0,0"

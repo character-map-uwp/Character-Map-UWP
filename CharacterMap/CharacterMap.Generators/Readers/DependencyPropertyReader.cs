@@ -147,6 +147,9 @@ public class DependencyPropertyReader : SyntaxReader
             string target = group.First().ParentClass;
             List<string> usings = group.First().Usings;
 
+            if (usings.Contains("using Windows.UI.Xaml;") is false)
+                usings.Add("using Windows.UI.Xaml;");
+
             StringBuilder sb = new();
 
             foreach (DPData dp in group)
