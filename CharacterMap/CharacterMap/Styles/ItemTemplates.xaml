@@ -10,11 +10,7 @@
     mc:Ignorable="d">
 
     <DataTemplate x:Key="SearchResultTemplate" x:DataType="services:IGlyphData">
-        <Grid
-            Name="TemplateContent"
-            HorizontalAlignment="Stretch"
-            Background="Transparent"
-            ToolTipService.ToolTip="{x:Bind Description}">
+        <Grid Name="TemplateContent" HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="*" />
@@ -24,8 +20,12 @@
                 Margin="4,0,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                FontFamily="{Binding ElementName=SearchBox, Path=Tag}"
+                DataContext="{Binding ElementName=SearchBox}"
+                FontFamily="{Binding Path=(core:Properties.FontFamily)}"
                 FontSize="16"
+                FontStretch="{Binding Path=(core:Properties.FontStretch)}"
+                FontStyle="{Binding Path=(core:Properties.FontStyle)}"
+                FontWeight="{Binding Path=(core:Properties.FontWeight)}"
                 IsColorFontEnabled="True"
                 Text="{x:Bind core:Converters.ToHex(UnicodeIndex)}" />
             <TextBlock

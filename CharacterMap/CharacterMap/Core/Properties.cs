@@ -65,7 +65,7 @@ namespace CharacterMap.Core;
 [AttachedProperty<FontStyle>("FontStyle", FontStyle.Normal)] // Sets the FontStyle on a RichEditBox
 [AttachedProperty<FontWeight>("FontWeight", "FontWeights.Normal")] // Sets the FontWeight on a RichEditBox
 [AttachedProperty<FontFamily>("FontFamily")] // Sets the FontFamily on a RichEditBox
-
+[AttachedProperty<string>("ToolTipMemberPath")] // PropertyPath on an ItemContainer's Content to use as the ItemContainer's ToolTip
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1049,6 +1049,56 @@ public partial class Properties : DependencyObject
 
         r.UpdateLayout();
 
+    }
+
+    #endregion
+
+    #region ToolTipMemberPath
+
+    static partial void OnToolTipMemberPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ListViewBase lvb)
+        {
+            // 1. Ensure content changes during recycling
+            lvb.ContainerContentChanging -= ContainerContentChanging;
+            lvb.ContainerContentChanging += ContainerContentChanging;
+
+            // 2. Update any existing containers
+            if (lvb.ItemsPanelRoot is null)
+                return;
+            string path = e.NewValue.ToString();
+            foreach (var item in lvb.ItemsPanelRoot.Children.Cast<SelectorItem>())
+                if (item.Content is not null)
+                    Set(lvb, item, path);
+
+            static void Set(ListViewBase sender, SelectorItem item, string path = null)
+            {
+                path ??= GetToolTipMemberPath(sender);
+
+                if (string.IsNullOrWhiteSpace(path))
+                    item.ClearValue(ToolTipService.ToolTipProperty);
+                else
+                {
+                    item.SetBinding(ToolTipService.ToolTipProperty, new Binding()
+                    {
+                        Source = item,
+                        Path = new($"Content.{path}")
+                    });
+                }
+            }
+
+            static void ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+            {
+                if (args.ItemContainer is null)
+                    return;
+
+                string path = GetToolTipMemberPath(sender);
+                if (args.InRecycleQueue || string.IsNullOrWhiteSpace(path))
+                    Set(sender, args.ItemContainer, string.Empty);
+                else
+                    Set(sender, args.ItemContainer, path);
+            }
+        }
     }
 
     #endregion

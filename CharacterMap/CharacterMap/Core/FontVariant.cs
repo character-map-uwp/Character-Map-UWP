@@ -189,7 +189,16 @@ public partial class FontVariant : IDisposable
         return _designLangRawSearch?.Values.Contains(tag, StringComparer.OrdinalIgnoreCase) ?? false;
     }
 
-    /* SEARCHING */
+    public bool CouldContainUnihan() => UnicodeRanges.Any(r => Unicode.UNIHAN_IDX >= r.First && Unicode.UNIHAN_IDX <= r.Last);
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Searching
+    //
+    //------------------------------------------------------
 
     public Dictionary<Character, string> SearchMap { get; set; }
 
@@ -217,7 +226,11 @@ public partial class FontVariant : IDisposable
 
 
 
-    /* INTERNAL  */
+    //------------------------------------------------------
+    //
+    // Internal
+    //
+    //------------------------------------------------------
 
     private IReadOnlyList<TypographyFeatureInfo> LoadTypographyFeatures(bool isXaml = false)
     {
@@ -298,16 +311,9 @@ public partial class FontVariant : IDisposable
 
     /* .NET */
 
-    public void Dispose()
-    {
-        FontFace?.Dispose();
-        //FontFace = null;
-    }
+    public void Dispose() => FontFace?.Dispose();
 
-    public override string ToString()
-    {
-        return PreferredName;
-    }
+    public override string ToString() => PreferredName;
 }
 
 

@@ -31,6 +31,7 @@ internal class CharacterGridViewTemplateSettings
 [DependencyProperty<TypographyFeatureInfo>("ItemTypography")]
 [DependencyProperty<FontVariant>("ItemFontVariant")]
 [DependencyProperty<GlyphAnnotation>("ItemAnnotation")]
+[AttachedProperty<ItemTooltipData>("ToolTipData")]
 public partial class CharacterGridView : GridView
 {
     public event EventHandler<Character> ItemDoubleTapped;
@@ -85,7 +86,7 @@ public partial class CharacterGridView : GridView
         this.ChoosingItemContainer += OnChoosingItemContainer;
     }
 
-    private class ItemTooltipData
+    public class ItemTooltipData
     {
         public Character Char { get; set; }
         public FontVariant Variant { get; set; }
@@ -119,7 +120,7 @@ public partial class CharacterGridView : GridView
                     t.Placement = Windows.UI.Xaml.Controls.Primitives.PlacementMode.Top;
                     t.Loaded += (d, e) =>
                     {
-                        if (d is ToolTip tt && tt.Tag is ItemTooltipData data)
+                        if (d is ToolTip tt && CharacterGridView.GetToolTipData(tt) is ItemTooltipData data)
                         {
                             tt.PlacementRect = new(0, 0, data.Container.ActualWidth, data.Container.ActualHeight);
 
@@ -136,7 +137,8 @@ public partial class CharacterGridView : GridView
                     };
                     ToolTipService.SetToolTip(item, t);
                 }
-                t.Tag = new ItemTooltipData { Char = c, Container = item, Variant = ItemFontVariant };
+
+                CharacterGridView.SetToolTipData(t, new ItemTooltipData { Char = c, Container = item, Variant = ItemFontVariant });
             }
         }
 

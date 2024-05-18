@@ -325,6 +325,7 @@
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\LeakTrackingService.cs" />
     <Compile Include="Provider\SQLiteCollectionProvider.cs" />
+    <Compile Include="Services\SQLite3Extensions.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />
     <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />

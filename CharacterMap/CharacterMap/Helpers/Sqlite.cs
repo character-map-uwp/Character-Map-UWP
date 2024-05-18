@@ -47,6 +47,7 @@ using Sqlite3BackupHandle = SQLitePCL.sqlite3_backup;
 using Sqlite3Statement = SQLitePCL.sqlite3_stmt;
 using Sqlite3 = SQLitePCL.raw;
 using SQLitePCL;
+using System.Diagnostics.Contracts;
 #else
 using Sqlite3DatabaseHandle = System.IntPtr;
 using Sqlite3BackupHandle = System.IntPtr;
@@ -351,90 +352,6 @@ namespace SQLite
         {
             Execute("PRAGMA vacuum");
             return this;
-        }
-
-        public List<IGlyphData> GetGlyphData(string table, string sql, string query)
-        {
-            var cmd = this.CreateCommand(sql, query);
-            var stmt = cmd.Prepare();
-
-            int columnDesc = table == "UnicodeGlyphData" ? 3 : 2;
-
-            List<IGlyphData> data = new();
-            while (SQLite3.Step(stmt) == SQLite3.Result.Row)
-            {
-                data.Add(new GlyphDescription()
-                {
-                    UnicodeIndex = SQLite3.ColumnInt(stmt, 0),
-                    UnicodeHex = SQLite3.ColumnString(stmt, 1),
-                    Description = SQLite3.ColumnString(stmt, columnDesc)
-                });
-            }
-
-            return data;
-        }
-
-        public List<UnihanReading> GetUnihanReadings(int idx)
-        {
-            var cmd = this.CreateCommand("SELECT * FROM UnihanReading WHERE Ix = ?", idx);
-            var stmt = cmd.Prepare();
-
-            List<UnihanReading> data = new();
-            while (SQLite3.Step(stmt) == SQLite3.Result.Row)
-            {
-                data.Add(
-                    new UnihanReading(
-                            SQLite3.ColumnInt(stmt, 0),
-                            (UnihanFieldType)SQLite3.ColumnInt(stmt, 1),
-                            SQLite3.ColumnString(stmt, 2)));
-            }
-
-            return data;
-        }
-
-        public AdobeGlyphListMapping GetGlyphListMapping(string name)
-        {
-            var cmd = this.CreateCommand("SELECT * FROM AdobeGlyphListMapping WHERE S = ? LIMIT 1", name);
-            var stmt = cmd.Prepare();
-
-            try
-            {
-                if (SQLite3.Step(stmt) == SQLite3.Result.Row)
-                {
-                    return new AdobeGlyphListMapping
-                    {
-                        UnicodeIndex = SQLite3.ColumnInt(stmt, 0),
-                        UnicodeIndex2 = SQLite3.ColumnInt(stmt, 1),
-                        UnicodeIndex3 = SQLite3.ColumnInt(stmt, 2),
-                        UnicodeIndex4 = SQLite3.ColumnInt(stmt, 3),
-                    };
-                }
-            }
-            finally
-            {
-                SQLite3.Finalize(stmt);
-            }
-
-            return null;
-        }
-
-
-        public string GetUnicodeDescription(int index, string table = "UnicodeGlyphData")
-        {
-            var cmd = this.CreateCommand($"SELECT Description FROM \"{table}\" WHERE Ix = ?", index);
-            var stmt = cmd.Prepare();
-
-            try
-            {
-                if (SQLite3.Step(stmt) == SQLite3.Result.Row)
-                    return SQLite3.ColumnString(stmt, 0);
-            }
-            finally
-            {
-                SQLite3.Finalize(stmt);
-            }
-
-            return null;
         }
 
         /// <summary>
