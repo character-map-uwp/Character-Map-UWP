@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Composition;
 using Windows.UI.Core;
 using Windows.UI.Text;
@@ -66,6 +67,9 @@ namespace CharacterMap.Core;
 [AttachedProperty<FontWeight>("FontWeight", "FontWeights.Normal")] // Sets the FontWeight on a RichEditBox
 [AttachedProperty<FontFamily>("FontFamily")] // Sets the FontFamily on a RichEditBox
 [AttachedProperty<string>("ToolTipMemberPath")] // PropertyPath on an ItemContainer's Content to use as the ItemContainer's ToolTip
+[AttachedProperty<string>("GridDefinitions", "string.Empty")]
+[AttachedProperty<string>("Hyperlink")]
+[AttachedProperty<CoreCursorType>("Cursor", CoreCursorType.Arrow)]
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1026,6 +1030,8 @@ public partial class Properties : DependencyObject
 
     static FontFamily __BLANK { get; } = new FontFamily("ms-appx:///Assets/AdobeBlank.otf");
 
+    public static Dictionary<CoreCursorType, CoreCursor> Cursors => _cursors;
+
     static void UpdateFormat(RichEditBox r)
     {
         // This is *NOT* good for performance, but RichEditBox has a lot of problems
@@ -1098,6 +1104,175 @@ public partial class Properties : DependencyObject
                 else
                     Set(sender, args.ItemContainer, path);
             }
+        }
+    }
+
+    #endregion
+
+    #region GridDefinitions
+
+    static partial void OnGridDefinitionsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f && e.NewValue is string s)
+        {
+            char c = s.Contains(",") ? ',' : ' ';
+            string[] parts = s.Split(c, StringSplitOptions.RemoveEmptyEntries);
+
+            Grid g = f as Grid;
+            g?.RowDefinitions?.Clear();
+            g?.ColumnDefinitions?.Clear();
+
+            foreach (var part in parts)
+            {
+                if (g is not null)
+                {
+                    // Create Grid Column or Row definitions
+
+                    if (part.StartsWith("cs"))
+                    {
+                        g.ColumnSpacing = Convert.ToDouble(part.Remove(0, 2));
+                    }
+                    else if (part.StartsWith("rs"))
+                    {
+                        g.RowSpacing = Convert.ToDouble(part.Remove(0, 2));
+                    }
+                    else if (part.StartsWith('c'))
+                    {
+                        var p = part.Remove(0, 1);
+                        ColumnDefinition cd = new();
+                        if (p == "*")
+                            cd.Width = new(1, GridUnitType.Star);
+                        else if (p.EndsWith("*"))
+                            cd.Width = new(Convert.ToDouble(p.Remove(p.Length - 1)), GridUnitType.Star);
+                        else if (p == "Auto")
+                            cd.Width = GridLength.Auto;
+                        else
+                            cd.Width = new(Convert.ToDouble(p));
+
+                        g.ColumnDefinitions.Add(cd);
+                    }
+                    else if (part.StartsWith('r'))
+                    {
+                        var p = part.Remove(0, 1);
+                        RowDefinition cd = new();
+                        if (p == "*")
+                            cd.Height = new(1, GridUnitType.Star);
+                        else if (p.EndsWith("*"))
+                            cd.Height = new(Convert.ToDouble(p.Remove(p.Length - 1)), GridUnitType.Star);
+                        else if (p == "Auto")
+                            cd.Height = GridLength.Auto;
+                        else
+                            cd.Height = new(Convert.ToDouble(p));
+
+                        g.RowDefinitions.Add(cd);
+                    }
+                }
+                else
+                {
+                    // Set Column or Row attached properties
+                    if (part.StartsWith('c'))
+                    {
+                        string p = part.Remove(0, 1);
+                        Grid.SetColumn(f, Convert.ToInt32(p));
+                    }
+                    else if (part.StartsWith('r'))
+                    {
+                        string p = part.Remove(0, 1);
+                        Grid.SetRow(f, Convert.ToInt32(p));
+                    }
+                    if (part.StartsWith("cs"))
+                    {
+                        string p = part.Remove(0, 2);
+                        Grid.SetColumnSpan(f, Convert.ToInt32(p));
+                    }
+                    else if (part.StartsWith("rs"))
+                    {
+                        string p = part.Remove(0, 2);
+                        Grid.SetRowSpan(f, Convert.ToInt32(p));
+                    }
+                }
+            }
+
+            f.InvalidateArrange();
+        }
+    }
+
+    #endregion
+
+    #region Hyperlink
+
+    static partial void OnHyperlinkChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ButtonBase b)
+        {
+            b.Click -= B_Click;
+            b.Click += B_Click;
+
+            static void B_Click(object sender, RoutedEventArgs e)
+            {
+                var link = GetHyperlink((DependencyObject)sender);
+                if (!string.IsNullOrWhiteSpace(link) 
+                    && Uri.TryCreate(link, UriKind.RelativeOrAbsolute, out Uri uri))
+                    _ = Launcher.LaunchUriAsync(uri);
+            }
+        }
+    }
+
+
+    #endregion
+
+    #region Cursor
+
+    private static readonly object _cursorLock = new ();
+    private static readonly CoreCursor _defaultCursor = new (CoreCursorType.Arrow, 1);
+    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors =
+        new () { { CoreCursorType.Arrow, _defaultCursor } };
+
+    static partial void OnCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not FrameworkElement element)
+            return;
+
+        var value = (CoreCursorType)e.NewValue;
+
+        // lock ensures CoreCursor creation and event handlers attachment/detachment is atomic
+        lock (_cursorLock)
+        {
+            if (!Cursors.ContainsKey(value))
+                Cursors[value] = new CoreCursor(value, 1);
+
+            // make sure event handlers are not attached twice to element
+            element.PointerEntered -= Element_PointerEntered;
+            element.PointerEntered += Element_PointerEntered;
+            element.PointerExited -= Element_PointerExited;
+            element.PointerExited += Element_PointerExited;
+            element.Unloaded -= ElementOnUnloaded;
+            element.Unloaded += ElementOnUnloaded;
+        }
+
+        static void Element_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            CoreCursorType cursor = GetCursor((FrameworkElement)sender);
+            Window.Current.CoreWindow.PointerCursor = Cursors[cursor];
+        }
+
+        static void Element_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            // when exiting change the cursor to the target Mouse.Cursor value of the new element
+            CoreCursor cursor;
+            if (e.OriginalSource is FrameworkElement newElement)
+                cursor = Cursors[GetCursor(newElement)];
+            else
+                cursor = _defaultCursor;
+
+            Window.Current.CoreWindow.PointerCursor = cursor;
+        }
+
+        static void ElementOnUnloaded(object sender, RoutedEventArgs routedEventArgs)
+        {
+            // when the element is programatically unloaded, reset the cursor back to default
+            // this is necessary when click triggers immediate change in layout and PointerExited is not called
+            Window.Current.CoreWindow.PointerCursor = _defaultCursor;
         }
     }
 

@@ -1718,4 +1718,35 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
     <value>Restore</value>
     <comment>Opposite of Fullscreen</comment>
   </data>
+  <data name="CharFilter" xml:space="preserve">
+    <value>char:</value>
+    <comment>Command used for character searches. Should be short.</comment>
+  </data>
+  <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
+    <value>Create as Smart Collection</value>
+  </data>
+  <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>View online documentation for Smart Collections</value>
+  </data>
+  <data name="DesignerFilter" xml:space="preserve">
+    <value>designer:</value>
+    <comment>Command used for designer searches. Should be short.</comment>
+  </data>
+  <data name="FilePathFilter" xml:space="preserve">
+    <value>filepath:</value>
+    <comment>Command used for file path searches. Should be short.</comment>
+  </data>
+  <data name="FoundryFilter" xml:space="preserve">
+    <value>foundry:</value>
+    <comment>Command used for foundry searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionDesignerFilter.Text" xml:space="preserve">
+    <value>Designer Filter</value>
+  </data>
+  <data name="SmartCollectionFilePathFilter.Text" xml:space="preserve">
+    <value>File Path Filter</value>
+  </data>
+  <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
+    <value>Foundry Filter</value>
+  </data>
 </root>

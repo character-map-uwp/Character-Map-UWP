@@ -590,7 +590,6 @@
                     RenderTransformOrigin="0.5,0.5"
                     Style="{ThemeResource DefaultThemeAutoSuggestBoxStyle}"
                     SuggestionChosen="SearchBox_SuggestionChosen"
-                    Tag="{x:Bind ViewModel.FontFamily, Mode=OneWay}"
                     Text="{Binding SearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     TextChanged="SearchBox_TextChanged"
                     TextMemberPath="Description"

@@ -266,7 +266,6 @@ public class FontFinder
         }
         var temp = Path.GetDirectoryName(path).EndsWith(TEMP);
         return $"ms-appdata:///local/{(temp ? $"{TEMP}/" : string.Empty)}{Path.GetFileName(path)}";
-
     }
 
     internal static Task<FontImportResult> ImportFontsAsync(IReadOnlyList<IStorageItem> items)
@@ -669,7 +668,7 @@ public class FontFinder
         if (!string.IsNullOrWhiteSpace(query))
         {
             string q;
-            if (Is(query, "char:", out q))
+            if (Is(query, Localization.Get("CharFilter"), out q))
             {
                 foreach (var ch in q)
                 {
@@ -679,18 +678,18 @@ public class FontFinder
                 }
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
-            else if (Is(query, "filepath:", out q))
+            else if (Is(query, Localization.Get("FilePathFilter"), out q))
             {
                 fontList = BasicFontFilter.ForFilePath(q).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
 
             }
-            else if (Is(query, "foundry:", out q))
+            else if (Is(query, Localization.Get("FoundryFilter"), out q))
             {
                 fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Manufacturer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
-            else if (Is(query, "designer:", out q))
+            else if (Is(query, Localization.Get("DesignerFilter"), out q))
             {
                 fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Designer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
