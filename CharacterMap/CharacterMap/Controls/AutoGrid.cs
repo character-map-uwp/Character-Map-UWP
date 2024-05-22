@@ -4,7 +4,7 @@ using Windows.UI.Xaml.Controls;
 namespace CharacterMap.Controls;
 
 [DependencyProperty<string>("Definitions")]
-[DependencyProperty<Orientation>("Orientation", Orientation.Horizontal, nameof(InvalidateArrange))]
+[DependencyProperty<Orientation>("Orientation", Orientation.Vertical, nameof(InvalidateArrange))]
 public partial class AutoGrid : Grid
 {
     partial void OnDefinitionsChanged(string o, string n) => Properties.SetGridDefinitions(this, n);
@@ -43,7 +43,8 @@ public partial class AutoGrid : Grid
                 if (Grid.GetRow(child) == 0)
                     col++;
 
-                Grid.SetColumn(child, col);
+                if (child.ReadLocalValue(Grid.ColumnProperty) == DependencyProperty.UnsetValue)
+                    Grid.SetColumn(child, col);
             }
         }
 

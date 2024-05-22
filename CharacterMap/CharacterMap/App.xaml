@@ -33,6 +33,8 @@
                     <converters:CasingConverter x:Key="CasingConverter" />
                     <converters:VisibilityConverter x:Key="VisConverter" />
 
+                    <FontFamily x:Key="BLANK">"ms-appx:///Assets/AdobeBlank.otf"</FontFamily>
+
                     <Style TargetType="FontIcon">
                         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
                     </Style>

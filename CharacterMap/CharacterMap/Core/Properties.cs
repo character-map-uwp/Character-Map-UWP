@@ -1028,8 +1028,6 @@ public partial class Properties : DependencyObject
             UpdateFormat(r);
     }
 
-    static FontFamily __BLANK { get; } = new FontFamily("ms-appx:///Assets/AdobeBlank.otf");
-
     public static Dictionary<CoreCursorType, CoreCursor> Cursors => _cursors;
 
     static void UpdateFormat(RichEditBox r)
@@ -1042,7 +1040,7 @@ public partial class Properties : DependencyObject
 
         r.TextDocument.BatchDisplayUpdates();
 
-        r.FontFamily = __BLANK;
+        r.FontFamily = ResourceHelper.Get<FontFamily>("BLANK");
 
         ITextCharacterFormat format = r.TextDocument.GetDefaultCharacterFormat();
         format.FontStyle = GetFontStyle(r);
