@@ -39,11 +39,10 @@ public static partial class ExportManager
     }
 
     internal static Task ExportCollectionAsZipAsync(
-        IList<InstalledFont> fontList,
         IFontCollection selectedCollection,
         Action<string> callback = null)
     {
-        var fonts = fontList.SelectMany(f => f.Variants).ToList();
+        var fonts = selectedCollection.GetFontFamilies().SelectMany(f => f.Variants).ToList();
         return ExportFontsAsZipAsync(fonts, selectedCollection.Name, callback);
     }
 
@@ -86,10 +85,10 @@ public static partial class ExportManager
     }
 
     internal static Task ExportCollectionToFolderAsync(
-        IList<InstalledFont> fontList,
+        IFontCollection selectedCollection,
         Action<string> callback = null)
     {
-        var fonts = fontList.SelectMany(f => f.Variants).ToList();
+        var fonts = selectedCollection.GetFontFamilies().SelectMany(f => f.Variants).ToList();
         return ExportFontsToFolderAsync(fonts, callback);
     }
 

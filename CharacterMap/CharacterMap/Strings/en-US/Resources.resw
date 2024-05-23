@@ -1749,4 +1749,16 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
     <value>Foundry Filter</value>
   </data>
+  <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="DigEditCollection.Title" xml:space="preserve">
+    <value>Edit Collection</value>
+  </data>
+  <data name="EditCollectionButton.Label" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Edit Collection</value>
+  </data>
 </root>

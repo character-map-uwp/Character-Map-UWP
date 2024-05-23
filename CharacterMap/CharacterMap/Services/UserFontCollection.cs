@@ -1,4 +1,6 @@
-﻿namespace CharacterMap.Models;
+﻿using System.Collections.ObjectModel;
+
+namespace CharacterMap.Models;
 
 public interface IFontCollection
 {
@@ -11,6 +13,8 @@ public interface IFontCollection
     bool ContainsFamily(string fontName);
 
     string Icon { get; }
+
+    IReadOnlyList<InstalledFont> GetFontFamilies();
 }
 
 public class SQLiteFontCollection
@@ -61,6 +65,9 @@ public class UserFontCollection : IFontCollection
     public bool ContainsFamily(string fontName) => Fonts.Contains(fontName);
 
     public string Icon => null;
+
+    public IReadOnlyList<InstalledFont> GetFontFamilies() =>
+        FontFinder.Fonts.Where(f => Fonts.Contains(f.Name)).ToList();
 }
 
 [DebuggerDisplay("({Id}) Name: {Name}, {Filters.Count} Filters")]
@@ -86,6 +93,8 @@ public class SmartFontCollection : IFontCollection
         FontNames = Fonts.Select(f => f.Name).ToHashSet();
         return Fonts;
     }
+
+    public IReadOnlyList<InstalledFont> GetFontFamilies() => UpdateFonts();
 
     public string GetFlatArgs() => string.Join("\r\n", Filters);
 

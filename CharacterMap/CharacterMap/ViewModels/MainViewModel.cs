@@ -646,7 +646,6 @@ public partial class MainViewModel : ViewModelBase
         try
         {
             await ExportManager.ExportCollectionAsZipAsync(
-                FontList,
                 SelectedCollection,
                 p => OnSyncContext(() => CollectionExportProgress = p));
         }
@@ -663,7 +662,7 @@ public partial class MainViewModel : ViewModelBase
         try
         {
             await ExportManager.ExportCollectionToFolderAsync(
-                FontList,
+                SelectedCollection,
                 p => OnSyncContext(() => CollectionExportProgress = p));
         }
         finally

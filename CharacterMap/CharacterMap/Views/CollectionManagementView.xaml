@@ -42,7 +42,7 @@
                         DisplayMemberPath="Name"
                         ItemsSource="{x:Bind ViewModel.Collections, Mode=OneWay}"
                         SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=TwoWay}"
-                        SelectionChanged="CollectionSelector_SelectionChanged"
+                        SelectionChanged="{x:Bind ViewModel.RefreshFontLists}"
                         d:PlaceholderText="Select exisiting" />
                     <TextBlock
                         x:Uid="OrLabel"
@@ -63,12 +63,12 @@
                     Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}"
                     d:Visibility="Visible">
                     <controls:UXButton
-                        x:Uid="RenameCollectionButton"
+                        x:Uid="EditCollectionButton"
                         Height="Auto"
                         VerticalAlignment="Stretch"
                         Click="RenameFontCollection_Click"
                         Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                        IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay}"
+                        IsEnabled="{x:Bind ViewModel.IsSelectedEditable, Mode=OneWay}"
                         Style="{StaticResource MapInfoButtonStyle}"
                         ToolTipService.Placement="Bottom"
                         d:Label="Rename">
@@ -80,7 +80,7 @@
                         VerticalAlignment="Stretch"
                         Click="DeleteCollection_Click"
                         Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                        IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay}"
+                        IsEnabled="{x:Bind ViewModel.IsSelectedEditable, Mode=OneWay}"
                         Style="{StaticResource MapInfoButtonStyle}"
                         ToolTipService.Placement="Bottom"
                         d:Label="Delete">
@@ -154,7 +154,7 @@
         <Grid
             Grid.Row="2"
             ColumnSpacing="12"
-            Visibility="{x:Bind core:Converters.IsNotNullToVis(ViewModel.SelectedCollection), Mode=OneWay, FallbackValue=Collapsed}"
+            Visibility="{x:Bind ViewModel.IsUserCollection, Mode=OneWay, FallbackValue=Collapsed}"
             d:Visibility="Visible">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />

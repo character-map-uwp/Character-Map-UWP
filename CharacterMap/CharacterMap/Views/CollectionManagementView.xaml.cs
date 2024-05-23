@@ -48,7 +48,7 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
         }
     }
 
-    void SelectCollection(UserFontCollection collection)
+    void SelectCollection(IFontCollection collection)
     {
         ViewModel.Activate();
         ViewModel.SelectedCollection = collection;

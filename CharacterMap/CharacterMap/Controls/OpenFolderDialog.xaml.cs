@@ -60,7 +60,6 @@ public class OpenFolderDialogTemplateSettings : ViewModelBase
     }
 }
 
-
 public sealed partial class OpenFolderDialog : ContentDialog
 {
     public OpenFolderDialogTemplateSettings TemplateSettings { get; }

@@ -87,8 +87,8 @@ public sealed partial class CreateCollectionDialog : ContentDialog
         if (_collection != null)
         {
             IsEditMode = true;
-            this.Title = Localization.Get("DigRenameCollection/Title");
-            this.PrimaryButtonText = Localization.Get("DigRenameCollection/PrimaryButtonText");
+            this.Title = Localization.Get("DigEditCollection/Title");
+            this.PrimaryButtonText = Localization.Get("DigEditCollection/PrimaryButtonText");
             TemplateSettings.Populate(_collection);
         }
     }
