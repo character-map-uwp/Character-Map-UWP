@@ -4,13 +4,20 @@ namespace CharacterMap.Helpers;
 
 public static class Unicode
 {
+    public const uint UNIHAN_IDX = 0x3000;
+
     public static bool IsWhiteSpace(int c)
     {
         return ((c == ' ') || (c >= 0x0009 && c <= 0x000d) || c == 0x00a0 || c == 0x0085);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool CouldBeUnihan(uint index) => index >= UNIHAN_IDX;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetHexValue(uint i) => (i <= 0x10FFFF && (i < 0xD800 || i > 0xDFFF)) ? char.ConvertFromUtf32((int)i) : new string((char)i, 1);
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool RequiresSurrogates(Character c) => c.UnicodeIndex >= 0x010000;
 
     public static bool IsWhiteSpaceOrControl(uint c)
@@ -23,17 +30,20 @@ public static class Unicode
             or UnicodeGeneralCategory.ParagraphSeparator;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool ContainsRange(FontVariant v, UnicodeRange range)
     {
         return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool SupportsScript(FontVariant v, UnicodeRange range)
     {
         // Filters out fonts that support less than two glyphs in the script range
         return v.UnicodeRanges.Any(r => r.First <= range.End && range.Start <= r.Last && ((r.Last - r.First) > 1));
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool ContainsEmoji(FontVariant v)
     {
         return ContainsRange(v, UnicodeRange.Emoticons)
@@ -41,6 +51,7 @@ public static class Unicode
             || ContainsEmojiSymbols(v);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool ContainsEmojiSymbols(FontVariant v)
     {
         return ContainsRange(v, UnicodeRange.SymbolsExtended)

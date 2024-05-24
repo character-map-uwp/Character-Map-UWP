@@ -3,17 +3,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
-public class MenuButton : UXRadioButtonBase
+[DependencyProperty<IconElement>("Icon")]
+public partial class MenuButton : UXRadioButtonBase
 {
-    public IconElement Icon
-    {
-        get { return (IconElement)GetValue(IconProperty); }
-        set { SetValue(IconProperty, value); }
-    }
-
-    public static readonly DependencyProperty IconProperty =
-        DependencyProperty.Register(nameof(Icon), typeof(IconElement), typeof(MenuButton), new PropertyMetadata(null));
-
     public MenuButton()
     {
         Properties.SetStyleKey(this, "DefaultMenuButtonStyle");

@@ -266,7 +266,6 @@ public class FontFinder
         }
         var temp = Path.GetDirectoryName(path).EndsWith(TEMP);
         return $"ms-appdata:///local/{(temp ? $"{TEMP}/" : string.Empty)}{Path.GetFileName(path)}";
-
     }
 
     internal static Task<FontImportResult> ImportFontsAsync(IReadOnlyList<IStorageItem> items)
@@ -640,4 +639,71 @@ public class FontFinder
 
     public static bool IsSystemSymbolFamily(FontVariant variant) => variant != null && (
         variant.FamilyName.Equals("Segoe MDL2 Assets") || variant.FamilyName.Equals("Segoe Fluent Icons"));
+
+
+    public static FontQueryResults QueryFontList(
+        string query, 
+        IEnumerable<InstalledFont> fontList, 
+        UserCollectionsService fontCollections,
+        IFontCollection collection = null,
+        BasicFontFilter filter = null)
+    {
+        filter ??= BasicFontFilter.All;
+        string filterTitle = null;
+
+        static bool Is(string q, string i, out string o)
+        {
+            if (q.StartsWith(i, StringComparison.OrdinalIgnoreCase)
+                && q.Remove(0, i.Length).Trim() is string t
+                && !string.IsNullOrWhiteSpace(t))
+            {
+                o = t;
+                return true;
+            }
+
+            o = null;
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(query))
+        {
+            string q;
+            if (Is(query, Localization.Get("CharFilter"), out q))
+            {
+                foreach (var ch in q)
+                {
+                    if (ch == ' ')
+                        continue;
+                    fontList = BasicFontFilter.ForChar(new(ch)).Query(fontList, fontCollections);
+                }
+                filterTitle = $"{filter.FilterTitle} \"{q}\"";
+            }
+            else if (Is(query, Localization.Get("FilePathFilter"), out q))
+            {
+                fontList = BasicFontFilter.ForFilePath(q).Query(fontList, fontCollections);
+                filterTitle = $"{filter.FilterTitle} \"{q}\"";
+
+            }
+            else if (Is(query, Localization.Get("FoundryFilter"), out q))
+            {
+                fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Manufacturer).Query(fontList, fontCollections);
+                filterTitle = $"{filter.FilterTitle} \"{q}\"";
+            }
+            else if (Is(query, Localization.Get("DesignerFilter"), out q))
+            {
+                fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Designer).Query(fontList, fontCollections);
+                filterTitle = $"{filter.FilterTitle} \"{q}\"";
+            }
+            else
+            {
+                fontList = fontList.Where(f => f.Name.Contains(query, StringComparison.OrdinalIgnoreCase));
+                string prefix = filter == BasicFontFilter.All ? "" : filter.FilterTitle + " ";
+                filterTitle = $"{(collection != null ? collection.Name + " " : prefix)}\"{query}\"";
+            }
+
+            return new(fontList, filterTitle, true);
+        }
+        
+        return new(fontList, null, false);
+    }
 }

@@ -240,6 +240,7 @@
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Core\AlphaKeyGroup.cs" />
     <Compile Include="Core\AppSettings.cs" />
+    <Compile Include="Core\DependencyPropertyAttribute.cs" />
     <Compile Include="Core\ExceptionHandlingSynchronizationContext.cs" />
     <Compile Include="Core\ExportManager.Font.cs" />
     <Compile Include="Models\ExportOptions.cs" />
@@ -249,6 +250,7 @@
     <Compile Include="Core\Properties.cs" />
     <Compile Include="Core\SVGPathReciever.cs" />
     <Compile Include="Core\TypographyFeatureInfo.cs" />
+    <Compile Include="Models\Records.cs" />
     <Compile Include="Models\NamedUnicodeRange.cs" />
     <Compile Include="Models\SearchResultsGroup.cs" />
     <Compile Include="Models\UnicodeRangeGroup.cs" />
@@ -323,6 +325,7 @@
     <Compile Include="Services\IDialogService.cs" />
     <Compile Include="Services\LeakTrackingService.cs" />
     <Compile Include="Provider\SQLiteCollectionProvider.cs" />
+    <Compile Include="Services\SQLite3Extensions.cs" />
     <Compile Include="Services\UserCollectionsService.cs" />
     <Compile Include="Services\GlyphService.cs" />
     <Compile Include="Services\NavigationServiceEx.cs" />

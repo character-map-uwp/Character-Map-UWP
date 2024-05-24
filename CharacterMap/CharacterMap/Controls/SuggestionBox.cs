@@ -9,7 +9,7 @@ namespace CharacterMap.Controls;
 [DependencyProperty("ItemsSource")]
 [DependencyProperty<string>("Text", "string.Empty")]
 [DependencyProperty<string>("PlaceholderText", "string.Empty")]
-[DependencyProperty<bool>("IsCharacterPickerEnabled", true)]
+[DependencyProperty<bool>("IsCharacterPickerEnabled", true, nameof(UpdatePickerState))]
 [DependencyProperty<CharacterRenderingOptions>("RenderingOptions")]
 [DependencyProperty<FlowDirection>("DetectedFlowDirection")]
 public sealed partial class SuggestionBox : Control
@@ -32,9 +32,7 @@ public sealed partial class SuggestionBox : Control
         this.DefaultStyleKey = typeof(SuggestionBox);
     }
 
-    partial void OnIsCharacterPickerEnabledChanged(bool? oldValue, bool newValue) => UpdatePickerState(true);
-
-    partial void OnDetectedFlowDirectionChanged(FlowDirection? oldValue, FlowDirection newValue)
+    partial void OnDetectedFlowDirectionChanged(FlowDirection oldValue, FlowDirection newValue)
     {
         DetectedFlowDirectionChanged?.Invoke(this, (FlowDirection)newValue);
     }
@@ -103,7 +101,7 @@ public sealed partial class SuggestionBox : Control
             VisualStateManager.GoToState(_suggestBox, "Opened", ResourceHelper.AllowAnimation);
     }
 
-    void UpdatePickerState(bool animate)
+    void UpdatePickerState(bool animate = true)
     {
         VisualStateManager.GoToState(this, IsCharacterPickerEnabled ? "PickerVisibleState" : "PickerHiddenState", animate);
     }

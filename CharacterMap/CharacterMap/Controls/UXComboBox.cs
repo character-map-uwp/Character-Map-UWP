@@ -32,16 +32,11 @@ public class UXComboBoxItem : ComboBoxItem, IThemeableControl
 
 [DependencyProperty<string>("ToolTipMemberPath")]
 [DependencyProperty<double>("ContentSpacing")]
-[DependencyProperty("PreContent")]
-[DependencyProperty("SecondaryContent")]
+[DependencyProperty("PreContent", null, nameof(UpdateContentStates))]
+[DependencyProperty("SecondaryContent", null, nameof(UpdateContentStates))]
 [DependencyProperty<Orientation>("ContentOrientation")]
 public partial class UXComboBox : ComboBox//, IThemeableControl
 {
-    partial void OnPreContentChanged(object oldValue, object newValue) => UpdateContentStates();
-
-    partial void OnSecondaryContentChanged(object oldValue, object newValue) => UpdateContentStates();
-  
-
     public ThemeHelper _themer;
     bool _isTemplateApplied = false;
     public UXComboBox()

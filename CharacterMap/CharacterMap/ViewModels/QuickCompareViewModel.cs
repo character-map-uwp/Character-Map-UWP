@@ -14,7 +14,7 @@ public class QuickCompareArgs
 
     public bool IsFolderView => Folder is not null;
 
-    public UserFontCollection SelectedCollection { get; init; }
+    public IFontCollection SelectedCollection { get; init; }
 
     public QuickCompareArgs(bool isQuickCompare, FolderContents folder = null)
     {
@@ -51,13 +51,13 @@ public partial class QuickCompareViewModel : ViewModelBase
 
     public ObservableCollection<CharacterRenderingOptions> QuickFonts { get; }
 
-    private UserFontCollection _selectedCollection;
-    public UserFontCollection SelectedCollection
+    private IFontCollection _selectedCollection;
+    public IFontCollection SelectedCollection
     {
         get => _selectedCollection;
         set
         {
-            if (value != null && value.IsSystemSymbolCollection)
+            if (value is UserFontCollection u && u.IsSystemSymbolCollection)
             {
                 FontListFilter = BasicFontFilter.SymbolFonts;
                 return;
@@ -127,9 +127,7 @@ public partial class QuickCompareViewModel : ViewModelBase
             RefreshFontList(SelectedCollection);
 
             FilterCommand = new RelayCommand<object>(e => OnFilterClick(e));
-            CollectionSelectedCommand = new RelayCommand<object>(e => SelectedCollection = e as UserFontCollection);
-
-
+            CollectionSelectedCommand = new RelayCommand<object>(e => SelectedCollection = e as IFontCollection);
         }
 
         UpdateTextOptions();
@@ -178,7 +176,7 @@ public partial class QuickCompareViewModel : ViewModelBase
         }
     }
 
-    internal void RefreshFontList(UserFontCollection collection = null)
+    internal void RefreshFontList(IFontCollection collection = null)
     {
         try
         {
@@ -187,7 +185,7 @@ public partial class QuickCompareViewModel : ViewModelBase
             if (collection != null)
             {
                 FilterTitle = collection.Name;
-                fontList = fontList.Where(f => collection.Fonts.Contains(f.Name));
+                fontList = fontList.Where(f => collection.ContainsFamily(f.Name));
             }
             else
             {

@@ -31,13 +31,14 @@ internal class CharacterGridViewTemplateSettings
 [DependencyProperty<TypographyFeatureInfo>("ItemTypography")]
 [DependencyProperty<FontVariant>("ItemFontVariant")]
 [DependencyProperty<GlyphAnnotation>("ItemAnnotation")]
+[AttachedProperty<ItemTooltipData>("ToolTipData")]
 public partial class CharacterGridView : GridView
 {
     public event EventHandler<Character> ItemDoubleTapped;
 
     #region Dependency Properties
 
-    partial void OnItemSizeChanged(double? oldValue, double n) => _templateSettings.Size = n;
+    partial void OnItemSizeChanged(double oldValue, double n) => _templateSettings.Size = n;
 
     partial void OnItemFontFamilyChanged(FontFamily oldValue, FontFamily n) => _templateSettings.FontFamily = n;
 
@@ -52,29 +53,23 @@ public partial class CharacterGridView : GridView
         }
     }
 
-    partial void OnShowColorGlyphsChanged(bool? oldValue, bool n)
+    partial void OnShowColorGlyphsChanged(bool oldValue, bool n)
     {
         _templateSettings.ShowColorGlyphs = n;
         UpdateColorsFonts(n);
     }
 
-    partial void OnEnableResizeAnimationChanged(bool? oldValue, bool n)
+    partial void OnEnableResizeAnimationChanged(bool oldValue, bool n)
     {
         _templateSettings.EnableReposition = n && CompositionFactory.UISettings.AnimationsEnabled;
         UpdateAnimation(n);
     }
 
-    //public GlyphAnnotation ItemAnnotation
-    //{
-    //    get { return (GlyphAnnotation)GetValue(ItemAnnotationProperty); }
-    //    set { SetValue(ItemAnnotationProperty, value); }
-    //}
-
-    //public static readonly DP ItemAnnotationProperty = DP<GlyphAnnotation, CharacterGridView>(GlyphAnnotation.None, (d, o, n) =>
-    //{
-    //    d._templateSettings.Annotation = n;
-    //    d.UpdateUnicode(n);
-    //});
+    partial void OnItemAnnotationChanged(GlyphAnnotation o, GlyphAnnotation n)
+    {
+        _templateSettings.Annotation = n;
+        UpdateUnicode(n);
+    }
 
     #endregion
 
@@ -91,7 +86,7 @@ public partial class CharacterGridView : GridView
         this.ChoosingItemContainer += OnChoosingItemContainer;
     }
 
-    private class ItemTooltipData
+    public class ItemTooltipData
     {
         public Character Char { get; set; }
         public FontVariant Variant { get; set; }
@@ -125,7 +120,7 @@ public partial class CharacterGridView : GridView
                     t.Placement = Windows.UI.Xaml.Controls.Primitives.PlacementMode.Top;
                     t.Loaded += (d, e) =>
                     {
-                        if (d is ToolTip tt && tt.Tag is ItemTooltipData data)
+                        if (d is ToolTip tt && CharacterGridView.GetToolTipData(tt) is ItemTooltipData data)
                         {
                             tt.PlacementRect = new(0, 0, data.Container.ActualWidth, data.Container.ActualHeight);
 
@@ -142,7 +137,8 @@ public partial class CharacterGridView : GridView
                     };
                     ToolTipService.SetToolTip(item, t);
                 }
-                t.Tag = new ItemTooltipData { Char = c, Container = item, Variant = ItemFontVariant };
+
+                CharacterGridView.SetToolTipData(t, new ItemTooltipData { Char = c, Container = item, Variant = ItemFontVariant });
             }
         }
 

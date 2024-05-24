@@ -31,6 +31,8 @@ public class GlyphDescription : IGlyphData
     public string Description { get; set; }
 }
 
+
+
 public class MDL2Glyph : GlyphDescription { }
 public class WebdingsGlyph : GlyphDescription { }
 public class WingdingsGlyph : GlyphDescription { }
@@ -92,7 +94,7 @@ public static class GlyphService
 
     public static UnihanData GetUnihanData(uint unicodeIndex)
     {
-        if (unicodeIndex >= 0x3000)
+        if (Unicode.CouldBeUnihan(unicodeIndex))
         {
             var readings = _provider.GetUnihanReadings((int)unicodeIndex);
             if (readings is not null && readings.Count > 0)

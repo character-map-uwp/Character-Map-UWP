@@ -7,45 +7,11 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-public sealed class DirectTextBlock : Control
+[DependencyProperty<string>("Text", null, nameof(Update))]
+[DependencyProperty<CanvasFontFace>("FontFace", null, nameof(Update))]
+[DependencyProperty<TypographyFeatureInfo>("Typography", null, nameof(Update))]
+public sealed partial class DirectTextBlock : Control
 {
-    public CanvasFontFace FontFace
-    {
-        get { return (CanvasFontFace)GetValue(FontFaceProperty); }
-        set { SetValue(FontFaceProperty, value); }
-    }
-
-    public static readonly DependencyProperty FontFaceProperty =
-        DependencyProperty.Register(nameof(FontFace), typeof(CanvasFontFace), typeof(DirectTextBlock), new PropertyMetadata(null, (d, e) =>
-        {
-            ((DirectTextBlock)d).Update();
-        }));
-
-
-    public TypographyFeatureInfo Typography
-    {
-        get { return (TypographyFeatureInfo)GetValue(TypographyProperty); }
-        set { SetValue(TypographyProperty, value); }
-    }
-
-    public static readonly DependencyProperty TypographyProperty =
-        DependencyProperty.Register(nameof(Typography), typeof(TypographyFeatureInfo), typeof(DirectTextBlock), new PropertyMetadata(null, (d, e) =>
-        {
-            ((DirectTextBlock)d).Update();
-        }));
-
-    public string Text
-    {
-        get { return (string)GetValue(TextProperty); }
-        set { SetValue(TextProperty, value); }
-    }
-
-    public static readonly DependencyProperty TextProperty =
-        DependencyProperty.Register(nameof(Text), typeof(string), typeof(DirectTextBlock), new PropertyMetadata(null, (d, e) =>
-        {
-            ((DirectTextBlock)d).Update();
-        }));
-
     private CanvasControl m_canvas = null;
     private CanvasTextLayout m_layout = null;
     bool m_isStale = true;

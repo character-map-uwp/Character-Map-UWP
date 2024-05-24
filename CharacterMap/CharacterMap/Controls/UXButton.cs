@@ -19,23 +19,13 @@ public partial class UXButtonTemplateSettings : ObservableObject
     }
 }
 
-[DependencyProperty<bool>("IsActive")]
-[DependencyProperty<bool>("IsHintVisible")]
-[DependencyProperty<bool>("IsLabelVisible")]
-[DependencyProperty<string>("Label")]
-[DependencyProperty<CharacterCasing>("LabelCasing")]
+[DependencyProperty<bool>("IsActive", false, nameof(UpdateActive))]
+[DependencyProperty<bool>("IsHintVisible", false, nameof(UpdateHint))]
+[DependencyProperty<bool>("IsLabelVisible", false, nameof(UpdateLabel))]
+[DependencyProperty<string>("Label", null, nameof(UpdateLabelText))]
+[DependencyProperty<CharacterCasing>("LabelCasing", default, nameof(UpdateLabelText))]
 public partial class UXButton : Button//, IThemeableControl
 {
-    partial void OnIsActiveChanged(bool? oldValue, bool newValue) => UpdateActive();
-
-    partial void OnIsHintVisibleChanged(bool? oldValue, bool newValue) => UpdateHint();
-
-    partial void OnIsLabelVisibleChanged(bool? oldValue, bool newValue) => UpdateLabel();
-
-    partial void OnLabelChanged(string oldValue, string newValue) => UpdateLabelText();
-
-    partial void OnLabelCasingChanged(CharacterCasing? oldValue, CharacterCasing newValue) => UpdateLabelText();
-
     public UXButtonTemplateSettings TemplateSettings { get; } = new ();
 
     bool _isTemplateApplied = false;

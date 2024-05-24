@@ -623,7 +623,7 @@
                                 </Panel.Resources>
                                 <controls:UXButton
                                     x:Name="RenameButton"
-                                    x:Uid="RenameCollectionButton"
+                                    x:Uid="EditCollectionButton"
                                     Click="RenameFontCollection_Click"
                                     d:Label="Rename">
                                     <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE13E;" />
@@ -1382,7 +1382,7 @@
                     <VisualState.Setters>
                         <Setter Target="ToggleFullscreenIcon.Glyph" Value="&#xE1D8;" />
                         <Setter Target="FullscreenLabel.Glyph" Value="&#xE1D8;" />
-                        <Setter Target="FullscreenLabel.Title" Value="Restore" />
+                        <Setter Target="FullscreenLabel.Title" Value="{core:Localizer Key='RestoreLabel/Text'}" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

@@ -75,6 +75,8 @@ public class UnihanFieldData
 [DebuggerDisplay("{Type} {Description}")]
 public class UnihanReading
 {
+    public UnihanReading() { }
+
     public UnihanReading(int index, UnihanFieldType type, string description)
     {
         Index = index;

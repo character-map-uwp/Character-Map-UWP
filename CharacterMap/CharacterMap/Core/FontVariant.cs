@@ -14,7 +14,7 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
 public partial class FontVariant : IDisposable
 {
     /* Using a character cache avoids a lot of unnecessary allocations */
-    private static Dictionary<int, Character> _characters { get; } = new();
+    private static Dictionary<int, Character> _characters { get; } = [];
 
     private IReadOnlyList<NamedUnicodeRange> _ranges = null;
     private IReadOnlyList<FaceMetadataInfo> _fontInformation = null;
@@ -123,7 +123,7 @@ public partial class FontVariant : IDisposable
     {
         if (Characters == null)
         {
-            List<Character> characters = new();
+            List<Character> characters = [];
             foreach (var range in UnicodeRanges)
             {
                 CharacterHash += range.First;
@@ -152,6 +152,8 @@ public partial class FontVariant : IDisposable
     public uint[] GetGlyphUnicodeIndexes() => GetCharacters().Select(c => c.UnicodeIndex).ToArray();
 
     public FontAnalysis GetAnalysis() => _analysis ??= TypographyAnalyzer.Analyze(this);
+
+    public string QuickFilePath => GetAnalysisInternal().FilePath;
 
     /// <summary>
     /// Load an analysis without a glyph search map. Callers later using the cached analysis and expecting a search map should
@@ -187,7 +189,16 @@ public partial class FontVariant : IDisposable
         return _designLangRawSearch?.Values.Contains(tag, StringComparer.OrdinalIgnoreCase) ?? false;
     }
 
-    /* SEARCHING */
+    public bool CouldContainUnihan() => UnicodeRanges.Any(r => Unicode.UNIHAN_IDX >= r.First && Unicode.UNIHAN_IDX <= r.Last);
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Searching
+    //
+    //------------------------------------------------------
 
     public Dictionary<Character, string> SearchMap { get; set; }
 
@@ -215,7 +226,11 @@ public partial class FontVariant : IDisposable
 
 
 
-    /* INTERNAL  */
+    //------------------------------------------------------
+    //
+    // Internal
+    //
+    //------------------------------------------------------
 
     private IReadOnlyList<TypographyFeatureInfo> LoadTypographyFeatures(bool isXaml = false)
     {
@@ -250,15 +265,16 @@ public partial class FontVariant : IDisposable
         if (infos.Count == 0)
             return null;
 
-        var name = info == CanvasFontInformation.DesignScriptLanguageTag
-            ? Localization.Get($"CanvasFontInformation{info}")
-            : info.Humanise();
+        // Get localised field name
+        var name = Localization.Get($"CanvasFontInformation{info}") ?? info.Humanise();
 
+        // Get localised value name
         var dic = infos.ToDictionary(k => k.Key, k => k.Value);
         if (infos.TryGetValue(CultureInfo.CurrentCulture.Name, out string value)
             || infos.TryGetValue("en-us", out value))
             return new(name, new string[1] { value }, info);
 
+        // For design tag, cache the full language names (metadata only stores short tags)
         if (info is CanvasFontInformation.DesignScriptLanguageTag
             && _designLangRawSearch is null)
         {
@@ -295,16 +311,9 @@ public partial class FontVariant : IDisposable
 
     /* .NET */
 
-    public void Dispose()
-    {
-        FontFace?.Dispose();
-        //FontFace = null;
-    }
+    public void Dispose() => FontFace?.Dispose();
 
-    public override string ToString()
-    {
-        return PreferredName;
-    }
+    public override string ToString() => PreferredName;
 }
 
 
@@ -315,7 +324,7 @@ public partial class FontVariant
         return new FontVariant(face, null)
         {
             PreferredName = "",
-            Characters = new List<Character> { new(0) }
+            Characters = [ new(0) ]
         };
     }
 

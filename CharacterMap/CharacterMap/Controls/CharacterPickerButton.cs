@@ -7,7 +7,7 @@ namespace CharacterMap.Controls;
 
 [DependencyProperty<Control>("Target", typeof(Control))]
 [DependencyProperty<CharacterRenderingOptions>("Options", typeof(CharacterRenderingOptions))]
-[DependencyProperty<FlyoutPlacementMode>("Placement", FlyoutPlacementMode.Bottom)]
+[DependencyProperty<FlyoutPlacementMode>("Placement", FlyoutPlacementMode.Bottom, nameof(UpdatePlacement))]
 public sealed partial class CharacterPickerButton : ContentControl
 {
     private static PropertyMetadata NULL_META = new(null);
@@ -18,8 +18,6 @@ public sealed partial class CharacterPickerButton : ContentControl
     {
         this.DefaultStyleKey = typeof(CharacterPickerButton);
     }
-
-    partial void OnPlacementChanged(FlyoutPlacementMode? o, FlyoutPlacementMode n) => UpdatePlacement();
 
     protected override void OnApplyTemplate()
     {

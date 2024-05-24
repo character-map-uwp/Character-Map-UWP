@@ -15,9 +15,9 @@ public enum ContentPlacement
 
 [ContentProperty(Name = nameof(Content))]
 [DependencyProperty("Title")]
-[DependencyProperty("Content")]
-[DependencyProperty("Description")]
-[DependencyProperty("Icon")]
+[DependencyProperty("Content", null, nameof(UpdatePlacementStates))]
+[DependencyProperty("Description", null, nameof(UpdateDescriptionStates))]
+[DependencyProperty("Icon", null, nameof(UpdateIconStates))]
 [DependencyProperty<double>("IconSize", 24d)]
 [DependencyProperty<ContentPlacement>("ContentPlacement", ContentPlacement.Right)]
 [DependencyProperty<bool>("HasItems", typeof(bool))]
@@ -34,10 +34,6 @@ public sealed partial class SettingsPresenter : ItemsControl, IThemeableControl
         this.DefaultStyleKey = typeof(SettingsPresenter);
         _themer = new ThemeHelper(this);
     }
-
-    partial void OnDescriptionChanged(object o, object n) => UpdateDescriptionStates();
-    partial void OnIconChanged(object o, object n) => UpdateIconStates();
-    partial void OnContentPlacementChanged(ContentPlacement? o, ContentPlacement n) => UpdatePlacementStates();
 
     protected override bool IsItemItsOwnContainerOverride(object item) => false;
 
