@@ -1761,6 +1761,9 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Edit Collection</value>
   </data>
+  <data name="BtnHelpAndTips.Content" xml:space="preserve">
+    <value>Help &amp; Tips</value>
+  </data>
   <data name="SmartCollectionEditHint.Text" xml:space="preserve">
     <value>To modify smart collections use the edit button above.</value>
   </data>

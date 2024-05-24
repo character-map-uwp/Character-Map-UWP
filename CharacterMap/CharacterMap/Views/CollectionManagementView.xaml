@@ -48,7 +48,7 @@
                                 <controls:AutoGrid Definitions="c* cAuto" Orientation="Horizontal">
                                     <TextBlock Text="{Binding Name}" />
                                     <TextBlock
-                                        Margin="24,0,0,0"
+                                        Margin="12,0,0,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"

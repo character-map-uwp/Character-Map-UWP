@@ -131,7 +131,9 @@ public partial class SettingsViewModel : ViewModelBase
              new("Latest Update (June 2024)", // June 2024
                 "- Added ability to create automatically updating Smart Collections in Settings->Collections\n" +
                 "- Added support for managing fonts in Symbol font collection in Settings->Collections\n" +
-                "- The Unicode character search box now supports searching Unihan descriptions"),
+                "- Added additional search filters to \"Find a font family\" search box - \"filepath:\", \"foundry\", \"designer:\"\n" +
+                "- The Unicode character search box now supports searching Unihan descriptions\n" +
+                "- Added a link for Helps and Tips at our Wiki in Settings->About"),
             new("2024.2.0.0 (April 2024)", // April 2024
                 "- Support searching font families in Settings->Collections\n" +
                 "- Added option to restore last selected font filter / collection on app launch in Settings->Advanced\n" +
