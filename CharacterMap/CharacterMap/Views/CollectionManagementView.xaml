@@ -39,11 +39,28 @@
                         x:Name="CollectionSelector"
                         x:Uid="CollectionSelector"
                         Width="200"
-                        DisplayMemberPath="Name"
                         ItemsSource="{x:Bind ViewModel.Collections, Mode=OneWay}"
                         SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=TwoWay}"
                         SelectionChanged="{x:Bind ViewModel.RefreshFontLists}"
-                        d:PlaceholderText="Select exisiting" />
+                        d:PlaceholderText="Select exisiting">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <controls:AutoGrid Definitions="c* cAuto" Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" />
+                                    <TextBlock
+                                        Margin="24,0,0,0"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                        Foreground="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForeground}"
+                                        HorizontalTextAlignment="Right"
+                                        Opacity="0.7"
+                                        Style="{ThemeResource CaptionTextBlockStyle}"
+                                        Text="{Binding Icon}" />
+                                </controls:AutoGrid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </controls:UXComboBox>
                     <TextBlock
                         x:Uid="OrLabel"
                         VerticalAlignment="Center"
@@ -274,6 +291,13 @@
             </controls:SettingsPresenter>
         </Grid>
 
+        <TextBlock
+            x:Name="SmartCollectionEditHint"
+            x:Load="{x:Bind ViewModel.IsSmartCollection, Mode=OneWay, FallbackValue=False, TargetNullValue=False}"
+            x:Uid="SmartCollectionEditHint"
+            Grid.Row="2"
+            Style="{StaticResource DescriptionStyle}"
+            Text="" />
 
     </Grid>
 </UserControl>

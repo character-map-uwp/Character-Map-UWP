@@ -51,7 +51,6 @@ public class SQLiteSmartFontCollection
     }
 }
 
-
 [DebuggerDisplay("({Id}) Name: {Name}, {Fonts.Count} Fonts")]
 public class UserFontCollection : IFontCollection
 {
@@ -73,7 +72,7 @@ public class UserFontCollection : IFontCollection
 [DebuggerDisplay("({Id}) Name: {Name}, {Filters.Count} Filters")]
 public class SmartFontCollection : IFontCollection
 {
-    static string ICON { get; } = new string('\uE945', 1);
+    static string ICON { get; } = new ('\uE945', 1);
 
     public long Id { get; set; }
     public string Name { get; set; }
