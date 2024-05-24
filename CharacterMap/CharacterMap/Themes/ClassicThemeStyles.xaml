@@ -521,8 +521,8 @@
                         </Grid.ColumnDefinitions>
                         <Viewbox
                             x:Name="IconRoot"
-                            Width="32"
-                            Height="32"
+                            Width="16"
+                            Height="16"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Visibility="Collapsed">
