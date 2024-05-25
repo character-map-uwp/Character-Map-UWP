@@ -1023,6 +1023,12 @@
                                         </StackPanel>
 
                                         <controls:UXButton
+                                            x:Uid="BtnHelpAndTips"
+                                            Width="200"
+                                            HorizontalAlignment="Left"
+                                            core:Properties.Hyperlink="https://github.com/character-map-uwp/Character-Map-UWP/wiki" />
+
+                                        <controls:UXButton
                                             x:Name="BtnReview"
                                             x:Uid="BtnRateAndReview"
                                             Width="200"

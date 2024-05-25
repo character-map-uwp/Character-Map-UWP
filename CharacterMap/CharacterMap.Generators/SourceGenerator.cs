@@ -25,6 +25,12 @@ public class SourceGenerator : ISourceGenerator
 
                 // 3. Create Dependency Properties
                 new DependencyPropertyReader().Process(tree, context);
+
+                // 4. Create Attached Properties
+                new AttachedPropertyReader().Process(tree, context);
+
+                // 5. Generate SQLite Readers
+                new SqliteStatementReader().Process(tree, context);
             }
         }
         catch (Exception)

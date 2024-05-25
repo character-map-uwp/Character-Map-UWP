@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using System.Globalization;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 
@@ -6,7 +7,6 @@ namespace CharacterMap.Provider;
 
 public partial class SQLiteGlyphProvider : IGlyphDataProvider
 {
-
     /* Used for FTS searches */
     internal const string FONTAWESOME_SEARCH_TABLE = "fontawesomesearch";
     internal const string MDL2_SEARCH_TABLE = "mdl2search";
@@ -16,7 +16,7 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
     internal const string WINGDINGS2_SEARCH_TABLE = "wng2search";
     internal const string WINGDINGS3_SEARCH_TABLE = "wng3search";
 
-    private int SEARCH_LIMIT => new AppSettings().MaxSearchResult;
+    private int SEARCH_LIMIT => ResourceHelper.AppSettings.MaxSearchResult;
 
     private SQLiteConnection _connection { get; set; }
 
@@ -147,7 +147,7 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
              * Step 3: Perform LIKE search if still space for results
              */
 
-          
+
 
             // 1. Decide if hex or FTS4 search
             //    If hex, search the main table (UnicodeIndex column is indexed)
@@ -228,14 +228,6 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
             }
             sb.Append(")");
 
-            // 2.1. A helper method to inject the hex result for ambiguous searches
-            List<IGlyphData> InsertHex(List<IGlyphData> list)
-            {
-                if (hexResult != null)
-                    list.Insert(0, hexResult);
-                return list;
-            }
-
             List<IGlyphData> results = new();
 
             // 3. If the font has a local search map, we should do a text search inside that
@@ -250,10 +242,10 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
             }
 
             if (results.Count == SEARCH_LIMIT)
-                return results;
+                goto End;
 
             // 3.1. Otherwise, perform a multi-step text search. First perform an FTS4 search
-            int limit = results == null ? SEARCH_LIMIT : SEARCH_LIMIT - results.Count;
+            int limit = SEARCH_LIMIT - results.Count;
 
             // 3.2. We need to exclude anything already found above
             string extra = string.Empty;
@@ -295,7 +287,7 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
 
             // 5. Perform a partial search on non-FTS table. Only search for what we need.
             //    This means limit the amount of results, and exclude anything we've already matched.
-            limit = results == null ? SEARCH_LIMIT : SEARCH_LIMIT - results.Count;
+            limit = SEARCH_LIMIT - results.Count;
             if (limit != SEARCH_LIMIT)
             {
                 // 5.1. We need to exclude anything already found above
@@ -306,14 +298,33 @@ public partial class SQLiteGlyphProvider : IGlyphDataProvider
             // 6. Execute on the non FTS tables
             string sql2 = $"SELECT * FROM {table} {sb.ToString()} AND Description LIKE ? LIMIT {limit}";
             var results2 = _connection.GetGlyphData(table, sql2, $"%{query}%");
+            results.AddRange(results2);
+            limit = SEARCH_LIMIT - results.Count;
 
-            if (results != null)
+            if (limit <= 0)
+                goto End;
+
+            // 7. Check Unihan data
+            if (variant.CouldContainUnihan())
             {
-                results.AddRange(results2);
-                return InsertHex(results);
+                string sql3 = $"SELECT * FROM {nameof(UnihanReading)} {sb.ToString()} AND Type == {(int)UnihanFieldType.Definition} AND Description LIKE ? LIMIT {limit}";
+                var results3 = _connection.GetUnihanReadingsByDescription(sql3, $"%{query}%");
+
+                results.AddRange(results3.Select(u =>
+                {
+                    return new GlyphDescription
+                    {
+                        Description = u.Description,
+                        UnicodeIndex = u.Index,
+                        UnicodeHex = u.Index.ToString("X")
+                    };
+                }));
             }
-            else
-                return InsertHex(results2);
+
+        End:
+            if (hexResult is not null)
+                results.Insert(0, hexResult);
+            return results;
         });
     }
 

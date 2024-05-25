@@ -38,6 +38,7 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
     async void NewCollection_Click(object sender, RoutedEventArgs e)
     {
         CreateCollectionDialog d = new();
+        d.SetDataContext(null); // Do not remove
         await d.ShowAsync();
 
         if (d.Result is AddToCollectionResult result && result.Success)
@@ -47,7 +48,7 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
         }
     }
 
-    void SelectCollection(UserFontCollection collection)
+    void SelectCollection(IFontCollection collection)
     {
         ViewModel.Activate();
         ViewModel.SelectedCollection = collection;
@@ -82,7 +83,7 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
         CollectionSelector.SelectedIndex = -1;
         //SelectCollection(null);
         ViewModel.RefreshCollections();
-        ViewModel.Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
+        ViewModel.Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCollectionDeleted", name)));
     }
 
     string GetCountLabel(int fontCount, int selectedCount)

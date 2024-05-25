@@ -18,21 +18,21 @@ namespace CharacterMapCX
 	{
 	public:
 
-		property bool HasBitmapGlyphs { bool get() { return m_hasBitmap; } }
+		property bool HasBitmapGlyphs { bool get() { ReadTables(); return m_hasBitmap; } }
 
-		property bool HasCOLRGlyphs { bool get() { return m_hasCOLR; } }
+		property bool HasCOLRGlyphs { bool get() { ReadTables(); return m_hasCOLR; } }
 
-		property bool HasSVGGlyphs { bool get() { return m_hasSVG; } }
+		property bool HasSVGGlyphs { bool get() { ReadTables(); return m_hasSVG; } }
 
-		property bool ContainsVectorColorGlyphs { bool get() { return m_hasSVG || m_hasCOLR; } }
+		property bool ContainsVectorColorGlyphs { bool get() { ReadTables(); return m_hasSVG || m_hasCOLR; } }
 		
-		property bool HasGlyphNames { bool get() { return m_hasGlyphNames; } }
+		property bool HasGlyphNames { bool get() { ReadTables(); return m_hasGlyphNames; } }
 
-		property int COLRVersion { int get() { return m_colrVersion; } }
+		property int COLRVersion { int get() { ReadTables(); return m_colrVersion; } }
 
-		property bool SupportsCOLRv1 { bool get() { return m_colrVersion >= 1; } }
+		property bool SupportsCOLRv1 { bool get() { ReadTables(); return m_colrVersion >= 1; } }
 
-		property bool HasVariationAxis { bool get() { return m_variableAxis != nullptr && m_variableAxis->Size > 0; } }
+		property bool HasVariationAxis { bool get() { GetVariableProperties(); return m_variableAxis != nullptr && m_variableAxis->Size > 0; } }
 
 		property bool IsRemote { bool get() { return m_isRemote; } }
 
@@ -52,16 +52,19 @@ namespace CharacterMapCX
 
 		property IVectorView<DWriteFontAxis^>^ Axis
 		{
-			IVectorView<DWriteFontAxis^>^ get() { return m_axis; }
+			IVectorView<DWriteFontAxis^>^ get() { GetVariableProperties(); return m_axis; }
 		}
 
 		property IVectorView<DWriteFontAxis^>^ VariableAxis
 		{
-			IVectorView<DWriteFontAxis^>^ get() { return m_variableAxis; }
+			IVectorView<DWriteFontAxis^>^ get() { GetVariableProperties(); return m_variableAxis; }
 		}
 
 		void ResetVariableAxis()
 		{
+			if (m_variableAxis == nullptr)
+				return;
+
 			for each (auto a in m_variableAxis)
 				a->Value = a->DefaultValue; 
 		}
@@ -69,16 +72,15 @@ namespace CharacterMapCX
 		/// <summary>
 		/// Mappings of glyph index to font-provided glyph names
 		/// </summary>
-		property IMapView<int, String^>^ GlyphNameMappings;
+		property IMapView<int, String^>^ GlyphNameMappings { IMapView<int, String^>^ get() { ReadTables(); return m_mappings; } }
 
 
 		FontAnalysis() { }
 
 		FontAnalysis(DWriteFontFace^ fontFace)
 		{
-			ComPtr<IDWriteFontFaceReference> ref = fontFace->GetReference();
-			AnalyseTables(ref);
-			GetFileProperties(ref);
+			m_ref = fontFace->GetReference();
+			GetFileProperties(m_ref);
 		}
 
 	private:
@@ -97,9 +99,30 @@ namespace CharacterMapCX
 		IVectorView<DWriteFontAxis^>^ m_variableAxis;
 		IVectorView<DWriteFontAxis^>^ m_axis;
 
-		void GetFileProperties(ComPtr<IDWriteFontFaceReference> faceRef)
+		IMapView<int, String^>^ m_mappings;
+		ComPtr<IDWriteFontFaceReference> m_ref;
+
+		bool m_tables = false;
+		bool m_var = false;
+
+		void ReadTables()
 		{
-			m_axis = DirectWrite::GetAxis(faceRef);
+			if (m_tables)
+				return;
+
+			m_tables = true;
+			AnalyseTables();
+		}
+
+
+		void GetVariableProperties()
+		{
+			if (m_var)
+				return;
+
+			m_var = true;
+
+			m_axis = DirectWrite::GetAxis(m_ref);
 
 			// Check for variable font axis
 			Vector<DWriteFontAxis^>^ variable = ref new Vector<DWriteFontAxis^>();
@@ -109,7 +132,10 @@ namespace CharacterMapCX
 					variable->Append(a);
 			}
 			m_variableAxis = variable->GetView();
+		}
 
+		void GetFileProperties(ComPtr<IDWriteFontFaceReference> faceRef)
+		{
 			// Get File Size
 			m_fileSize = faceRef->GetFileSize();
 
@@ -138,6 +164,8 @@ namespace CharacterMapCX
 							{
 								m_filePath = ref new Platform::String(buffer);
 							}
+
+							delete[] buffer;
 						}
 					}
 				}
@@ -148,10 +176,10 @@ namespace CharacterMapCX
 			}
 		}
 
-		void AnalyseTables(ComPtr<IDWriteFontFaceReference> faceRef)
+		void AnalyseTables()
 		{
 			ComPtr<IDWriteFontFace3> f3;
-			faceRef->CreateFontFace(&f3);
+			m_ref->CreateFontFace(&f3);
 
 			ComPtr<IDWriteFontFace5> face;
 			f3.As(&face);
@@ -228,7 +256,7 @@ namespace CharacterMapCX
 			if (exists)
 			{
 				auto reader = ref new PostTableReader(tableData, tableSize);
-				GlyphNameMappings = reader->Mapping;
+				m_mappings = reader->Mapping;
 				m_hasGlyphNames = GlyphNameMappings != nullptr && GlyphNameMappings->Size > 0;
 				delete reader;
 			}

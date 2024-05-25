@@ -22,7 +22,7 @@ public partial class FlowAwareComboBox : ComboBox
         _colorFontBinding = new() { Source = this, Path = new(nameof(IsColorFontEnabled)) };
     }
 
-    partial void OnDetectedFlowDirectionChanged(FlowDirection? oldValue, FlowDirection newValue)
+    partial void OnDetectedFlowDirectionChanged(FlowDirection oldValue, FlowDirection newValue)
     {
         DetectedFlowDirectionChanged?.Invoke(this, newValue);
     }

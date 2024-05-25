@@ -109,7 +109,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             if (!FontsSemanticZoom.IsZoomedInViewActive)
                 FontsSemanticZoom.IsZoomedInViewActive = true;
 
-            ViewModel.SelectedCollection = e as UserFontCollection;
+            ViewModel.SelectedCollection = e as IFontCollection;
         });
     }
 
@@ -703,7 +703,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     public void CharacterSearch(string s)
     {
-        ViewModel.FontSearch = $"char: {s}";
+        ViewModel.FontSearch = $"{Localization.Get("CharFilter")} {s}";
         FontListSearchBox.Focus(FocusState.Keyboard);
     }
 

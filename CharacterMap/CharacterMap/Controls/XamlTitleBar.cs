@@ -48,7 +48,7 @@ public partial class XamlTitleBarTemplateSettings : ViewModelBase
 
 [DependencyProperty<bool>("AutoUpdateTitle", true)]
 [DependencyProperty<bool>("IsAutoHeightEnabled", true)]
-[DependencyProperty<bool>("IsDragTarget", true)]
+[DependencyProperty<bool>("IsDragTarget", true, nameof(UpdateStates))]
 public sealed partial class XamlTitleBar : ContentControl
 {
     private UISettings _settings;
@@ -69,8 +69,6 @@ public sealed partial class XamlTitleBar : ContentControl
         Loaded += XamlTitleBar_Loaded;
         Unloaded += XamlTitleBar_Unloaded;
     }
-
-    partial void OnIsDragTargetChanged(bool? oldValue, bool newValue) => UpdateStates();
 
     private void XamlTitleBar_Loading(FrameworkElement sender, object args)
     {

@@ -58,13 +58,13 @@ public partial class MainViewModel : ViewModelBase
     public FontItem CurrentFont => Fonts.Count > 0 && TabIndex < Fonts.Count && TabIndex > -1
         ? Fonts[TabIndex] : null;
 
-    private UserFontCollection _selectedCollection;
-    public UserFontCollection SelectedCollection
+    private IFontCollection _selectedCollection;
+    public IFontCollection SelectedCollection
     {
         get => _selectedCollection;
         set
         {
-            if (value != null && value.IsSystemSymbolCollection)
+            if (value is UserFontCollection c && c.IsSystemSymbolCollection)
             {
                 FontListFilter = BasicFontFilter.SymbolFonts;
                 return;
@@ -274,7 +274,7 @@ public partial class MainViewModel : ViewModelBase
         return FilterFlyout.AllFilters.FirstOrDefault(f => f.DisplayTitle == Settings.LastSelectedCollection);
     }
 
-    public async void RefreshFontList(UserFontCollection collection = null)
+    public async void RefreshFontList(IFontCollection collection = null)
     {
         if (CanFilter == false)
             return;
@@ -285,7 +285,7 @@ public partial class MainViewModel : ViewModelBase
             if (collection != null)
             {
                 FilterTitle = collection.Name;
-                fontList = fontList.Where(f => collection.Fonts.Contains(f.Name));
+                fontList = fontList.Where(f => collection.ContainsFamily(f.Name));
             }
             else
             {
@@ -309,24 +309,9 @@ public partial class MainViewModel : ViewModelBase
 
             if (!string.IsNullOrWhiteSpace(FontSearch))
             {
-                if (FontSearch.StartsWith("char:", StringComparison.OrdinalIgnoreCase)
-                    && FontSearch.Remove(0, 5).Trim() is string q
-                    && !string.IsNullOrWhiteSpace(q))
-                {
-                    foreach (var ch in q)
-                    {
-                        if (ch == ' ')
-                            continue;
-                        fontList = BasicFontFilter.ForChar(new(ch)).Query(fontList, FontCollections);
-                    }
-                    FilterTitle = $"{FontListFilter.FilterTitle} \"{q}\"";
-                }
-                else
-                {
-                    fontList = fontList.Where(f => f.Name.Contains(FontSearch, StringComparison.OrdinalIgnoreCase));
-                    string prefix = FontListFilter == BasicFontFilter.All ? "" : FontListFilter.FilterTitle + " ";
-                    FilterTitle = $"{(collection != null ? collection.Name + " " : prefix)}\"{FontSearch}\"";
-                }
+                var results = FontFinder.QueryFontList(FontSearch, fontList, FontCollections, collection, FontListFilter);
+                fontList = results.FontList;
+                FilterTitle = results.FilterTitle;
                 IsSearchResults = true;
             }
             else
@@ -661,7 +646,6 @@ public partial class MainViewModel : ViewModelBase
         try
         {
             await ExportManager.ExportCollectionAsZipAsync(
-                FontList,
                 SelectedCollection,
                 p => OnSyncContext(() => CollectionExportProgress = p));
         }
@@ -678,7 +662,7 @@ public partial class MainViewModel : ViewModelBase
         try
         {
             await ExportManager.ExportCollectionToFolderAsync(
-                FontList,
+                SelectedCollection,
                 p => OnSyncContext(() => CollectionExportProgress = p));
         }
         finally

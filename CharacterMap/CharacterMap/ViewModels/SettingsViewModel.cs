@@ -12,14 +12,14 @@ public partial class SettingsViewModel : ViewModelBase
 
     protected override bool TrackAnimation => true;
 
-    public List<GlyphAnnotation> Annotations { get; } = 
+    public IReadOnlyList<GlyphAnnotation> Annotations { get; } = 
     [
         GlyphAnnotation.None,
         GlyphAnnotation.UnicodeHex,
         GlyphAnnotation.UnicodeIndex
     ];
 
-    public List<String> Themes { get; } =
+    public IReadOnlyList<String> Themes { get; } =
         [
             "Windows 10",
             "Windows 11",
@@ -64,6 +64,7 @@ public partial class SettingsViewModel : ViewModelBase
 
     public void UpdatePreviews(InstalledFont font, CharacterRenderingOptions options)
     {
+        font ??= FontFinder.DefaultFont;
         GlyphNameModel.SetOptions(font, options);
         GlyphNameModel.Template = Settings.FileNameTemplate;
 
@@ -123,13 +124,17 @@ public partial class SettingsViewModel : ViewModelBase
     private List<ChangelogItem> CreateChangelog()
     {
         // Could read this from a text file, but that's a waste of performance.
-        // Naught wrong with this :P
-
         // Not including bug fixes in here, just key features. The main idea
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-            new("Latest Update (April 2024)", // April 2024
+             new("Latest Update (June 2024)", // June 2024
+                "- Added ability to create automatically updating Smart Collections in Settings->Collections\n" +
+                "- Added support for managing fonts in Symbol font collection in Settings->Collections\n" +
+                "- Added additional search filters to \"Find a font family\" search box - \"filepath:\", \"foundry\", \"designer:\"\n" +
+                "- The Unicode character search box now supports searching Unihan descriptions\n" +
+                "- Added a link for Helps and Tips at our Wiki in Settings->About"),
+            new("2024.2.0.0 (April 2024)", // April 2024
                 "- Support searching font families in Settings->Collections\n" +
                 "- Added option to restore last selected font filter / collection on app launch in Settings->Advanced\n" +
                 "- Added option to define how exported glyph files are named by default in Settings->Export"),
