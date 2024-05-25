@@ -374,7 +374,7 @@
         </trans-unit>
         <trans-unit id="StatusBarFontCount" translate="yes" xml:space="preserve">
           <source>{0} Font Families</source>
-          <target state="translated">{0} 个字体家族</target>
+          <target state="translated">{0} 种字体家族</target>
         </trans-unit>
         <trans-unit id="FontPropFileSize.Text" translate="yes" xml:space="preserve">
           <source>File Size</source>
@@ -1012,11 +1012,11 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="SettingsLicensesLabel.Text" translate="yes" xml:space="preserve">
           <source>Licenses</source>
-          <target state="translated">协议</target>
+          <target state="translated">许可协议</target>
         </trans-unit>
         <trans-unit id="ImportDragDropDescriptionLabel.Text" translate="yes" xml:space="preserve">
           <source>Drag files from File Explorer or your desktop and drop them here to import them.</source>
-          <target state="translated">从文件资源管理器中拖放文件到此处以导入</target>
+          <target state="translated">将文件从文件资源管理器中拖放到此处导入</target>
         </trans-unit>
         <trans-unit id="ImportDragDropLabel.Text" translate="yes" xml:space="preserve">
           <source>Drag and drop to import</source>
@@ -1038,7 +1038,7 @@ Please consider posting details about this error to GitHub so we can help you fi
           <source>You can import fonts into the application to view them without installing them in Windows. 
 
 Imported font files are copied into the app's private storage, so will still show if you delete the original file on your computer.</source>
-          <target state="translated">您可将字体导入本应用查看，不用安装到 Windows 中。
+          <target state="translated">您可将字体导入本应用查看，而不用安装到 Windows 中。
 
 导入的字体文件会被复制到应用的私有存储中，因此即便将计算机上的原文件删除，应用仍能显示该字体。</target>
         </trans-unit>
@@ -1896,7 +1896,7 @@ Referencing deprecated icons by unicode codepoint is not recommended, and all de
 Readings expressed in Hiragana are generally considered Kun-yomi (訓読み), and readings expressed in Katakana are generally considered On-yomi (音読み).</source>
           <target state="translated">该字以假名表示的日语读音。
 
-用平假名表示的读法通常为训读，用片假名表示的读法通常为音读。</target>
+以平假名表示的读法为常规训读，以片假名表示的读法为常规音读。</target>
         </trans-unit>
         <trans-unit id="UnihanTypeDescriptionJapaneseKun" translate="yes" xml:space="preserve">
           <source>The Japanese pronunciation(s) of this ideograph in the Hepburn romanization.</source>
@@ -1930,13 +1930,13 @@ Mandarin readings are in hànyǔ pīnyīn. Cantonese readings are in jyutping. N
 If an ideograph has multiple entries, it means that the ideograph has multiple definitions and the readings are grouped in order of those definitions.</source>
           <target state="translated">这代表《商务新字典》中该字的普通话和粤语读法。
 
-普通话读法以汉语拼音表示。粤语读法为粤拼表示。注意，部分字的读法，如多音节读法，往往被认为是错的。
+普通话读法以汉语拼音表示。粤语读法为粤拼表示。注意，部分字的读法并非如此 (例如，其在多音节中的实际读法可能会有所变化)。
 
 若某一字有多个条目，则表示该字有多个定义，并且读法按这些定义的顺序分组。</target>
         </trans-unit>
         <trans-unit id="UnihanTypeDescriptionTang" translate="yes" xml:space="preserve">
           <source>The Tang dynasty pronunciation(s) of this ideograph, derived from or consistent with T’ang Poetic Vocabulary by Hugh M. Stimson, Far Eastern Publications, Yale University 1976.</source>
-          <target state="translated">基于 1976 年耶鲁大学 Hugh M. Stimson 的《唐诗词汇》(T’ang Poetic Vocabulary, Far Eastern Publications) 推测的，该字的唐代发音。</target>
+          <target state="translated">源于或基于 1976 年耶鲁大学 Hugh M. Stimson 的《唐诗词汇》(T’ang Poetic Vocabulary, Far Eastern Publications)，该字的唐代发音。</target>
         </trans-unit>
         <trans-unit id="UnihanTypeDescriptionTGHZ2013" translate="yes" xml:space="preserve">
           <source>One or more Hànyǔ Pīnyīn readings as given in Tōngyòng Guīfàn Hànzì Zìdiǎn.</source>
@@ -2036,192 +2036,192 @@ If an ideograph has multiple entries, it means that the ideograph has multiple d
         </trans-unit>
         <trans-unit id="FontFamilyFilterInput.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Filter by family</source>
-          <target state="new">按字体家族筛选</target>
+          <target state="translated">按字体家族筛选</target>
         </trans-unit>
         <trans-unit id="SettingsRememberFilter.Description" translate="yes" xml:space="preserve">
           <source>If enabled, the app will remember the last selected collection or filter and restore it when the app is restarted. 
 
 Otherwise, "All Fonts" is selected by default on every launch.</source>
-          <target state="new">若启用，应用将记住最近选择的收藏集或筛选器，并在应用重启后将其恢复。
+          <target state="translated">若启用，应用将记住最近选择的收藏集或筛选器，并在应用重启后将其恢复。
 
 否则，每次启动时都会默认选择 "所有字体"。</target>
         </trans-unit>
         <trans-unit id="SettingsRememberFilter.Title" translate="yes" xml:space="preserve">
           <source>Remember selected font list filter between sessions</source>
-          <target state="new">记住选中的字体列表筛选器</target>
+          <target state="translated">记住选中的字体列表筛选器</target>
         </trans-unit>
         <trans-unit id="GlyphNameToggleHeader.Text" translate="yes" xml:space="preserve">
           <source>File Name Template</source>
-          <target state="new">文件名称模板</target>
+          <target state="translated">文件名称模板</target>
         </trans-unit>
         <trans-unit id="GlyphNameToggleLabel.Text" translate="yes" xml:space="preserve">
           <source>Show template parts</source>
-          <target state="new">显示模板部件</target>
+          <target state="translated">显示模板部件</target>
         </trans-unit>
         <trans-unit id="FileNameWriterCharDescDesc" translate="yes" xml:space="preserve">
           <source>Glyph Unicode description, or Unicode string if none</source>
-          <target state="new">字形 Unicode 描述，若无则为 Unicode 字符串</target>
+          <target state="translated">字形 Unicode 描述，若无则为 Unicode 字符串</target>
         </trans-unit>
         <trans-unit id="FileNameWriterExtensionDesc" translate="yes" xml:space="preserve">
           <source>File Extension</source>
-          <target state="new">文件扩展名</target>
+          <target state="translated">文件扩展名</target>
         </trans-unit>
         <trans-unit id="FileNameWriterFaceDesc" translate="yes" xml:space="preserve">
           <source>Name of current font face</source>
-          <target state="new">当前字体名称</target>
+          <target state="translated">当前字体名称</target>
         </trans-unit>
         <trans-unit id="FileNameWriterFamilyDesc" translate="yes" xml:space="preserve">
           <source>Name of font family</source>
-          <target state="new">字体家族名称</target>
+          <target state="translated">字体家族名称</target>
         </trans-unit>
         <trans-unit id="FileNameWriterPixelSizeDesc" translate="yes" xml:space="preserve">
           <source>Size in pixels</source>
-          <target state="new">尺寸像素值</target>
+          <target state="translated">尺寸像素值</target>
         </trans-unit>
         <trans-unit id="FileNameWriterStringFormat" translate="yes" xml:space="preserve">
           <source>{0}, e.g. {1}</source>
-          <target state="new">{0}，例如 {1}</target>
+          <target state="translated">{0}，例如 {1}</target>
         </trans-unit>
         <trans-unit id="FileNameWriterUnicodeCPDesc" translate="yes" xml:space="preserve">
           <source>Unicode index/codepoint value</source>
-          <target state="new">10 进制 Unicode 序号/码点值</target>
+          <target state="translated">10 进制 Unicode 序号/码点值</target>
         </trans-unit>
         <trans-unit id="FileNameWriterUnicodeHexDesc" translate="yes" xml:space="preserve">
           <source>Unicode hex value</source>
-          <target state="new">16 进制 Unicode 值</target>
+          <target state="translated">16 进制 Unicode 值</target>
         </trans-unit>
         <trans-unit id="FileNameWriterXamlGlyphDesc" translate="yes" xml:space="preserve">
           <source>XAML glyph code</source>
-          <target state="new">XAML 字形代码</target>
+          <target state="translated">XAML 字形代码</target>
         </trans-unit>
         <trans-unit id="SettingsGlyphNaming.Description" translate="yes" xml:space="preserve">
           <source>Choose how exported character files are named.</source>
-          <target state="new">选择要如何命名导出的字符文件。</target>
+          <target state="translated">选择要如何命名导出的字符文件。</target>
         </trans-unit>
         <trans-unit id="SettingsGlyphNaming.Title" translate="yes" xml:space="preserve">
           <source>Glyph Export Naming</source>
-          <target state="new">字形导出命名</target>
+          <target state="translated">字形导出命名</target>
         </trans-unit>
         <trans-unit id="ExampleFormat" translate="yes" xml:space="preserve">
           <source>e.g. {0}</source>
-          <target state="new">例如 {0}</target>
+          <target state="translated">例如 {0}</target>
         </trans-unit>
         <trans-unit id="FileNameWriterFontVerDesc" translate="yes" xml:space="preserve">
           <source>Font version number, if applicable</source>
-          <target state="new">字体版本号 (若可用)</target>
+          <target state="translated">字体版本号 (若可用)</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationCopyrightNotice" translate="yes" xml:space="preserve">
           <source>Copyright Notice</source>
-          <target state="new">Copyright Notice</target>
+          <target state="translated">版权告示</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationDescription" translate="yes" xml:space="preserve">
           <source>Description</source>
-          <target state="new">Description</target>
+          <target state="translated">描述</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationDesigner" translate="yes" xml:space="preserve">
           <source>Designer</source>
-          <target state="new">Designer</target>
+          <target state="translated">设计者</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationDesignerUrl" translate="yes" xml:space="preserve">
           <source>Designer URL</source>
-          <target state="new">Designer URL</target>
+          <target state="translated">设计者 URL</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationFontVendorUrl" translate="yes" xml:space="preserve">
           <source>Font Vendor URL</source>
-          <target state="new">Font Vendor URL</target>
+          <target state="translated">字体供应商 URL</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationFullName" translate="yes" xml:space="preserve">
           <source>Full Name</source>
-          <target state="new">Full Name</target>
+          <target state="translated">全名</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationLicenseDescription" translate="yes" xml:space="preserve">
           <source>License</source>
-          <target state="new">License</target>
+          <target state="translated">许可协议</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationLicenseInfoUrl" translate="yes" xml:space="preserve">
           <source>License URL</source>
-          <target state="new">License URL</target>
+          <target state="translated">许可协议 URL</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationManufacturer" translate="yes" xml:space="preserve">
           <source>Manufacturer</source>
-          <target state="new">Manufacturer</target>
+          <target state="translated">厂商</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationTrademark" translate="yes" xml:space="preserve">
           <source>Trademark</source>
-          <target state="new">Trademark</target>
+          <target state="translated">商标</target>
         </trans-unit>
         <trans-unit id="CanvasFontInformationVersionStrings" translate="yes" xml:space="preserve">
           <source>Version Strings</source>
-          <target state="new">Version Strings</target>
+          <target state="translated">版本字符串</target>
         </trans-unit>
         <trans-unit id="RestoreLabel.Text" translate="yes" xml:space="preserve">
           <source>Restore</source>
-          <target state="new">Restore</target>
+          <target state="translated">恢复</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Opposite of Fullscreen</note>
         </trans-unit>
         <trans-unit id="CharFilter" translate="yes" xml:space="preserve">
           <source>char:</source>
-          <target state="new">char:</target>
+          <target state="translated">char:</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Command used for character searches. Should be short.</note>
         </trans-unit>
         <trans-unit id="CreateSmartCollectionCheck.Content" translate="yes" xml:space="preserve">
           <source>Create as Smart Collection</source>
-          <target state="new">Create as Smart Collection</target>
+          <target state="translated">创建智能收藏集</target>
         </trans-unit>
         <trans-unit id="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>View online documentation for Smart Collections</source>
-          <target state="new">View online documentation for Smart Collections</target>
+          <target state="translated">联网查看智能收藏集的文档</target>
         </trans-unit>
         <trans-unit id="DesignerFilter" translate="yes" xml:space="preserve">
           <source>designer:</source>
-          <target state="new">designer:</target>
+          <target state="translated">designer:</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Command used for designer searches. Should be short.</note>
         </trans-unit>
         <trans-unit id="FilePathFilter" translate="yes" xml:space="preserve">
           <source>filepath:</source>
-          <target state="new">filepath:</target>
+          <target state="translated">filepath:</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Command used for file path searches. Should be short.</note>
         </trans-unit>
         <trans-unit id="FoundryFilter" translate="yes" xml:space="preserve">
           <source>foundry:</source>
-          <target state="new">foundry:</target>
+          <target state="translated">foundry:</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Command used for foundry searches. Should be short.</note>
         </trans-unit>
         <trans-unit id="SmartCollectionDesignerFilter.Text" translate="yes" xml:space="preserve">
           <source>Designer Filter</source>
-          <target state="new">Designer Filter</target>
+          <target state="translated">设计者筛选器</target>
         </trans-unit>
         <trans-unit id="SmartCollectionFilePathFilter.Text" translate="yes" xml:space="preserve">
           <source>File Path Filter</source>
-          <target state="new">File Path Filter</target>
+          <target state="translated">文件路径筛选器</target>
         </trans-unit>
         <trans-unit id="SmartCollectionFoundryFilter.Text" translate="yes" xml:space="preserve">
           <source>Foundry Filter</source>
-          <target state="new">Foundry Filter</target>
+          <target state="translated">厂商筛选器</target>
         </trans-unit>
         <trans-unit id="DigEditCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Edit</source>
-          <target state="new">Edit</target>
+          <target state="translated">编辑</target>
         </trans-unit>
         <trans-unit id="DigEditCollection.Title" translate="yes" xml:space="preserve">
           <source>Edit Collection</source>
-          <target state="new">Edit Collection</target>
+          <target state="translated">编辑收藏集</target>
         </trans-unit>
         <trans-unit id="EditCollectionButton.Label" translate="yes" xml:space="preserve">
           <source>Edit</source>
-          <target state="new">Edit</target>
+          <target state="translated">编辑</target>
         </trans-unit>
         <trans-unit id="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Edit Collection</source>
-          <target state="new">Edit Collection</target>
+          <target state="translated">编辑收藏集</target>
         </trans-unit>
         <trans-unit id="BtnHelpAndTips.Content" translate="yes" xml:space="preserve">
           <source>Help &amp; Tips</source>
-          <target state="new">Help &amp; Tips</target>
+          <target state="translated">帮助与提示</target>
         </trans-unit>
         <trans-unit id="SmartCollectionEditHint.Text" translate="yes" xml:space="preserve">
           <source>To modify smart collections use the edit button above.</source>
-          <target state="new">To modify smart collections use the edit button above.</target>
+          <target state="translated">要修改智能收藏集，请点击上方的编辑按钮。</target>
         </trans-unit>
       </group>
     </body>
