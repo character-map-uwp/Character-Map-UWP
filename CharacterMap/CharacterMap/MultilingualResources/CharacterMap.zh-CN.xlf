@@ -2170,7 +2170,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</source>
         </trans-unit>
         <trans-unit id="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>View online documentation for Smart Collections</source>
-          <target state="translated">联网查看智能收藏集的文档</target>
+          <target state="translated">查看智能收藏集的在线文档</target>
         </trans-unit>
         <trans-unit id="DesignerFilter" translate="yes" xml:space="preserve">
           <source>designer:</source>
