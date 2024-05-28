@@ -266,6 +266,59 @@
 
     <!--  DEFAULT TEMPLATES  -->
 
+    <Style TargetType="ToolTip">
+        <Setter Property="Foreground" Value="{StaticResource ControlForegroundBrush}" />
+        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="BorderBrush" Value="{StaticResource ComboBoxBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="{StaticResource ThemeFontFamily}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <ContentPresenter
+                        x:Name="LayoutRoot"
+                        MaxWidth="{TemplateBinding MaxWidth}"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        TextWrapping="Wrap">
+                        <ContentPresenter.RenderTransform>
+                            <CompositeTransform />
+                        </ContentPresenter.RenderTransform>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="OpenStates">
+                                <VisualState x:Name="Closed">
+                                    <Storyboard>
+                                        <FadeOutThemeAnimation TargetName="LayoutRoot" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Opened">
+                                    <Storyboard>
+                                        <FadeInThemeAnimation TargetName="LayoutRoot" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="10" />
+                                            <SplineDoubleKeyFrame KeySpline="0.1 0.9 0.2 1" KeyTime="0:0:0.7" Value="0" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="SettingsMenuStyle" TargetType="StackPanel">
         <Setter Target="Spacing" Value="8" />
         <Setter Target="Padding" Value="20 0 0 0" />
@@ -2651,8 +2704,6 @@
         <Setter Property="SelectionHighlightColor" Value="{ThemeResource TextControlSelectionHighlightColor}" />
         <Setter Property="BorderThickness" Value="{ThemeResource TextControlBorderThemeThickness}" />
         <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="Header" Value="{x:Null}" />
-        <Setter Property="HeaderTemplate" Value="{StaticResource DefaultControlHeaderTemplate}" />
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto" />
@@ -2844,12 +2895,12 @@
                             Grid.ColumnSpan="2"
                             Margin="{ThemeResource TextBoxTopHeaderMargin}"
                             VerticalAlignment="Top"
-                            Content="{TemplateBinding Header}"
-                            ContentTemplate="{TemplateBinding HeaderTemplate}"
-                            FontWeight="Normal"
-                            Foreground="{ThemeResource TextControlHeaderForeground}"
-                            TextWrapping="Wrap"
-                            Visibility="Collapsed" />
+                            Content="{Binding Header, RelativeSource={RelativeSource Mode=TemplatedParent}, Converter={StaticResource Upper}}"
+                            FontFamily="Zegoe Caps, XamlAutoFontFamily"
+                            FontSize="11"
+                            FontWeight="Black"
+                            Foreground="#828689"
+                            TextWrapping="Wrap" />
                         <Border
                             x:Name="BorderElement"
                             Grid.Row="1"
@@ -3361,7 +3412,6 @@
 
                                 <VisualState x:Name="PointerOver">
                                     <VisualState.Setters>
-                                        <Setter Target="LayoutRoot.(RevealBrush.State)" Value="PointerOver" />
                                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemRevealBackgroundPointerOver}" />
                                         <Setter Target="LayoutRoot.BorderBrush" Value="{ThemeResource MenuFlyoutItemRevealBorderBrushPointerOver}" />
                                         <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
@@ -3376,7 +3426,6 @@
 
                                 <VisualState x:Name="Pressed">
                                     <VisualState.Setters>
-                                        <Setter Target="LayoutRoot.(RevealBrush.State)" Value="Pressed" />
                                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemRevealBackgroundPressed}" />
                                         <Setter Target="LayoutRoot.BorderBrush" Value="{ThemeResource MenuFlyoutItemRevealBorderBrushPressed}" />
                                         <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
@@ -3409,7 +3458,7 @@
                                 </VisualState>
                                 <VisualState x:Name="IconPlaceholder">
                                     <VisualState.Setters>
-                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource LanguageSwitcherMenuFlyoutItemPlaceholderThemeThickness}" />
+                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
                                         <Setter Target="IconRoot.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -3441,11 +3490,8 @@
                                         <Setter Target="KeyboardAcceleratorTextBlock.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                 </VisualState>
-
                             </VisualStateGroup>
-
                         </VisualStateManager.VisualStateGroups>
-
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -3478,7 +3524,6 @@
                             Style="{ThemeResource CaptionTextBlockStyle}"
                             Text="{TemplateBinding KeyboardAcceleratorTextOverride}"
                             Visibility="Collapsed" />
-
                         <TextBlock
                             Grid.Column="1"
                             Margin="24,0,0,0"
@@ -3490,9 +3535,7 @@
                             Opacity="0.7"
                             Style="{ThemeResource CaptionTextBlockStyle}"
                             Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.IconString)}" />
-
                     </Grid>
-
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
