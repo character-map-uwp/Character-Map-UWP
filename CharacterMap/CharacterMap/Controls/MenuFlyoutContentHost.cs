@@ -6,8 +6,5 @@ namespace CharacterMap.Controls;
 [DependencyProperty("Content")]
 public sealed partial class MenuFlyoutContentHost : MenuFlyoutSeparator
 {
-    public MenuFlyoutContentHost()
-    {
-        this.DefaultStyleKey = typeof(MenuFlyoutContentHost);
-    }
+    public MenuFlyoutContentHost() => this.DefaultStyleKey = typeof(MenuFlyoutContentHost);
 }

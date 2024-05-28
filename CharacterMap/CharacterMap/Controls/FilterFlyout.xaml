@@ -2,9 +2,26 @@
     x:Class="CharacterMap.Controls.FilterFlyout"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:CharacterMap.Controls"
     MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
     Opening="MenuFlyout_Opening"
     Placement="BottomEdgeAlignedLeft">
+
+    <controls:FilterFlyout.UnicodeRangeSortHeader>
+        <controls:AutoGrid
+            Margin="16 8"
+            Definitions="c* cAuto"
+            Orientation="Horizontal">
+            <TextBlock
+                Margin="-1 0 0 0"
+                VerticalAlignment="Center"
+                Foreground="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
+                Text="Sorted by Range" />
+            <controls:UXButton ToolTipService.ToolTip="Change sort">
+                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE8CB;" />
+            </controls:UXButton>
+        </controls:AutoGrid>
+    </controls:FilterFlyout.UnicodeRangeSortHeader>
 
     <!--  Menu created in code-behind due to x:Bind limitations  -->
 
