@@ -2115,6 +2115,119 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <source>Font version number, if applicable</source>
           <target state="new">Font version number, if applicable</target>
         </trans-unit>
+        <trans-unit id="CanvasFontInformationCopyrightNotice" translate="yes" xml:space="preserve">
+          <source>Copyright Notice</source>
+          <target state="new">Copyright Notice</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationDescription" translate="yes" xml:space="preserve">
+          <source>Description</source>
+          <target state="new">Description</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationDesigner" translate="yes" xml:space="preserve">
+          <source>Designer</source>
+          <target state="new">Designer</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationDesignerUrl" translate="yes" xml:space="preserve">
+          <source>Designer URL</source>
+          <target state="new">Designer URL</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationFontVendorUrl" translate="yes" xml:space="preserve">
+          <source>Font Vendor URL</source>
+          <target state="new">Font Vendor URL</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationFullName" translate="yes" xml:space="preserve">
+          <source>Full Name</source>
+          <target state="new">Full Name</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationLicenseDescription" translate="yes" xml:space="preserve">
+          <source>License</source>
+          <target state="new">License</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationLicenseInfoUrl" translate="yes" xml:space="preserve">
+          <source>License URL</source>
+          <target state="new">License URL</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationManufacturer" translate="yes" xml:space="preserve">
+          <source>Manufacturer</source>
+          <target state="new">Manufacturer</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationTrademark" translate="yes" xml:space="preserve">
+          <source>Trademark</source>
+          <target state="new">Trademark</target>
+        </trans-unit>
+        <trans-unit id="CanvasFontInformationVersionStrings" translate="yes" xml:space="preserve">
+          <source>Version Strings</source>
+          <target state="new">Version Strings</target>
+        </trans-unit>
+        <trans-unit id="RestoreLabel.Text" translate="yes" xml:space="preserve">
+          <source>Restore</source>
+          <target state="new">Restore</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Opposite of Fullscreen</note>
+        </trans-unit>
+        <trans-unit id="CharFilter" translate="yes" xml:space="preserve">
+          <source>char:</source>
+          <target state="new">char:</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Command used for character searches. Should be short.</note>
+        </trans-unit>
+        <trans-unit id="CreateSmartCollectionCheck.Content" translate="yes" xml:space="preserve">
+          <source>Create as Smart Collection</source>
+          <target state="new">Create as Smart Collection</target>
+        </trans-unit>
+        <trans-unit id="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>View online documentation for Smart Collections</source>
+          <target state="new">View online documentation for Smart Collections</target>
+        </trans-unit>
+        <trans-unit id="DesignerFilter" translate="yes" xml:space="preserve">
+          <source>designer:</source>
+          <target state="new">designer:</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Command used for designer searches. Should be short.</note>
+        </trans-unit>
+        <trans-unit id="FilePathFilter" translate="yes" xml:space="preserve">
+          <source>filepath:</source>
+          <target state="new">filepath:</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Command used for file path searches. Should be short.</note>
+        </trans-unit>
+        <trans-unit id="FoundryFilter" translate="yes" xml:space="preserve">
+          <source>foundry:</source>
+          <target state="new">foundry:</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Command used for foundry searches. Should be short.</note>
+        </trans-unit>
+        <trans-unit id="SmartCollectionDesignerFilter.Text" translate="yes" xml:space="preserve">
+          <source>Designer Filter</source>
+          <target state="new">Designer Filter</target>
+        </trans-unit>
+        <trans-unit id="SmartCollectionFilePathFilter.Text" translate="yes" xml:space="preserve">
+          <source>File Path Filter</source>
+          <target state="new">File Path Filter</target>
+        </trans-unit>
+        <trans-unit id="SmartCollectionFoundryFilter.Text" translate="yes" xml:space="preserve">
+          <source>Foundry Filter</source>
+          <target state="new">Foundry Filter</target>
+        </trans-unit>
+        <trans-unit id="DigEditCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
+          <source>Edit</source>
+          <target state="new">Edit</target>
+        </trans-unit>
+        <trans-unit id="DigEditCollection.Title" translate="yes" xml:space="preserve">
+          <source>Edit Collection</source>
+          <target state="new">Edit Collection</target>
+        </trans-unit>
+        <trans-unit id="EditCollectionButton.Label" translate="yes" xml:space="preserve">
+          <source>Edit</source>
+          <target state="new">Edit</target>
+        </trans-unit>
+        <trans-unit id="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Edit Collection</source>
+          <target state="new">Edit Collection</target>
+        </trans-unit>
+        <trans-unit id="BtnHelpAndTips.Content" translate="yes" xml:space="preserve">
+          <source>Help &amp; Tips</source>
+          <target state="new">Help &amp; Tips</target>
+        </trans-unit>
+        <trans-unit id="SmartCollectionEditHint.Text" translate="yes" xml:space="preserve">
+          <source>To modify smart collections use the edit button above.</source>
+          <target state="new">To modify smart collections use the edit button above.</target>
+        </trans-unit>
       </group>
     </body>
   </file>
