@@ -16,118 +16,194 @@
     Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d">
 
-    <StackPanel DataContext="{x:Bind TemplateSettings}">
-        <TextBox
-            x:Name="InputBox"
-            x:Uid="CreateCollectionEntryBox"
-            Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+    <Grid
+        MinWidth="{Binding MinWidth}"
+        core:Properties.GridDefinitions="c* cAuto"
+        DataContext="{x:Bind TemplateSettings}">
+        <StackPanel>
+            <TextBox
+                x:Name="InputBox"
+                x:Uid="CreateCollectionEntryBox"
+                Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-        <controls:AutoGrid
-            x:Name="SmartCollectionHeaderContainer"
-            x:Load="{x:Bind AllowSmartCollection}"
-            Margin="0 12 0 0"
-            Definitions="c* cAuto"
-            Orientation="Horizontal">
-            <CheckBox
-                x:Name="SmartCollectionCheckbox"
-                x:Uid="CreateSmartCollectionCheck"
-                HorizontalAlignment="Stretch"
-                IsChecked="{x:Bind TemplateSettings.IsSmartCollection, Mode=TwoWay}"
-                Style="{StaticResource DefaultThemeCheckBoxStyle}"
-                d:Content="Create as Smart Collection" />
-            <controls:UXButton
-                x:Uid="CreateSmartCollectionHint"
-                MinWidth="0"
-                MinHeight="0"
-                Padding="4"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                core:Properties.Cursor="Hand"
-                core:Properties.Hyperlink="https://github.com/character-map-uwp/Character-Map-UWP/wiki/Smart-Collections"
-                CornerRadius="10"
-                FontSize="12">
-                <TextBlock
-                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                    Foreground="{ThemeResource AccentFillColorDefaultBrush}"
-                    Text="&#xE897;" />
-            </controls:UXButton>
+            <controls:AutoGrid
+                x:Name="SmartCollectionHeaderContainer"
+                x:Load="{x:Bind AllowSmartCollection}"
+                Margin="0 12 0 0"
+                Definitions="c* cAuto"
+                Orientation="Horizontal">
+                <CheckBox
+                    x:Name="SmartCollectionCheckbox"
+                    x:Uid="CreateSmartCollectionCheck"
+                    HorizontalAlignment="Stretch"
+                    IsChecked="{x:Bind TemplateSettings.IsSmartCollection, Mode=TwoWay}"
+                    Style="{StaticResource DefaultThemeCheckBoxStyle}"
+                    d:Content="Create as Smart Collection" />
+                <controls:UXButton
+                    x:Uid="CreateSmartCollectionHint"
+                    MinWidth="0"
+                    MinHeight="0"
+                    Padding="4"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    core:Properties.Cursor="Hand"
+                    core:Properties.Hyperlink="https://github.com/character-map-uwp/Character-Map-UWP/wiki/Smart-Collections"
+                    CornerRadius="10"
+                    FontSize="12">
+                    <TextBlock
+                        FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                        Text="&#xE897;" />
+                </controls:UXButton>
 
-        </controls:AutoGrid>
+            </controls:AutoGrid>
 
-
-
-        <StackPanel
-            x:Name="SmartFilters"
-            x:Load="{x:Bind TemplateSettings.IsSmartCollection, Mode=OneWay}"
-            Margin="0 12 0 0"
-            Spacing="12">
-            <TextBox Text="{Binding FilterFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.Header>
-                    <StackPanel
-                        Margin="0 -2"
-                        Orientation="Horizontal"
-                        Spacing="4">
-                        <TextBlock x:Uid="SmartCollectionFilePathFilter" VerticalAlignment="Center" />
-                        <Border
-                            Padding="4 2"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
-                            CornerRadius="4">
-                            <TextBlock
-                                FontFamily="Consolas"
-                                FontSize="12"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{core:Localizer Key=FilePathFilter}" />
-                        </Border>
-                    </StackPanel>
-                </TextBox.Header>
-            </TextBox>
-            <TextBox Text="{Binding FilterFoundry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.Header>
-                    <StackPanel
-                        Margin="0 -2"
-                        Orientation="Horizontal"
-                        Spacing="4">
-                        <TextBlock x:Uid="SmartCollectionFoundryFilter" VerticalAlignment="Center" />
-                        <Border
-                            Padding="4 2"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
-                            CornerRadius="4">
-                            <TextBlock
-                                FontFamily="Consolas"
-                                FontSize="12"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{core:Localizer Key=FoundryFilter}" />
-                        </Border>
-                    </StackPanel>
-                </TextBox.Header>
-            </TextBox>
-            <TextBox Text="{Binding FilterDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.Header>
-                    <StackPanel
-                        Margin="0 -2"
-                        Orientation="Horizontal"
-                        Spacing="4">
-                        <TextBlock x:Uid="SmartCollectionDesignerFilter" VerticalAlignment="Center" />
-                        <Border
-                            Padding="4 2"
-                            VerticalAlignment="Center"
-                            Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
-                            CornerRadius="4">
-                            <TextBlock
-                                FontFamily="Consolas"
-                                FontSize="12"
-                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                Text="{core:Localizer Key=DesignerFilter}" />
-                        </Border>
-                    </StackPanel>
-                </TextBox.Header>
-            </TextBox>
+            <StackPanel
+                x:Name="SmartFilters"
+                x:Load="{x:Bind TemplateSettings.IsSmartCollection, Mode=OneWay}"
+                Margin="0 12 0 0"
+                Spacing="12">
+                <TextBox HeaderTemplate="{x:Null}" Text="{Binding FilterFilePath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Header>
+                        <StackPanel
+                            Margin="0 -2"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <TextBlock x:Uid="SmartCollectionFilePathFilter" VerticalAlignment="Center" />
+                            <Border
+                                Padding="4 2"
+                                VerticalAlignment="Center"
+                                Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                                CornerRadius="4">
+                                <TextBlock
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{core:Localizer Key=FilePathFilter}" />
+                            </Border>
+                        </StackPanel>
+                    </TextBox.Header>
+                </TextBox>
+                <TextBox Text="{Binding FilterFoundry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Header>
+                        <StackPanel
+                            Margin="0 -2"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <TextBlock x:Uid="SmartCollectionFoundryFilter" VerticalAlignment="Center" />
+                            <Border
+                                Padding="4 2"
+                                VerticalAlignment="Center"
+                                Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                                CornerRadius="4">
+                                <TextBlock
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{core:Localizer Key=FoundryFilter}" />
+                            </Border>
+                        </StackPanel>
+                    </TextBox.Header>
+                </TextBox>
+                <TextBox Text="{Binding FilterDesigner, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Header>
+                        <StackPanel
+                            Margin="0 -2"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <TextBlock x:Uid="SmartCollectionDesignerFilter" VerticalAlignment="Center" />
+                            <Border
+                                Padding="4 2"
+                                VerticalAlignment="Center"
+                                Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                                CornerRadius="4">
+                                <TextBlock
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{core:Localizer Key=DesignerFilter}" />
+                            </Border>
+                        </StackPanel>
+                    </TextBox.Header>
+                </TextBox>
+                <TextBox Text="{Binding FilterCharacters, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.Header>
+                        <StackPanel
+                            Margin="0 -2"
+                            Orientation="Horizontal"
+                            Spacing="4">
+                            <TextBlock VerticalAlignment="Center" Text="Character filter" />
+                            <Border
+                                Padding="4 2"
+                                VerticalAlignment="Center"
+                                Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                                CornerRadius="4">
+                                <TextBlock
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="char:" />
+                            </Border>
+                        </StackPanel>
+                    </TextBox.Header>
+                </TextBox>
+            </StackPanel>
         </StackPanel>
 
+        <controls:AutoGrid
+            x:Name="FilterPreview"
+            x:Load="{x:Bind TemplateSettings.IsSmartCollection, Mode=OneWay}"
+            Grid.Column="1"
+            Width="208"
+            Margin="16 0 -8 0"
+            Padding="8"
+            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+            CornerRadius="8"
+            Definitions="rAuto r* rAuto rs12"
+            Orientation="Vertical">
 
-    </StackPanel>
+            <TextBlock
+                FontStyle="Italic"
+                Opacity="0.7"
+                TextAlignment="Center">
+                <Run Text="{Binding ResultsPreview.Count}" />
+                <Run Text="results" />
+            </TextBlock>
+
+            <ListView
+                MaxHeight="238"
+                ItemTemplate="{StaticResource FontListItemTemplateSimple}"
+                ItemsSource="{Binding ResultsPreview}"
+                SelectionMode="None">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <ContentPresenter Content="{TemplateBinding Content}" />
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+
+            <controls:UXButton
+                HorizontalAlignment="Stretch"
+                Click="{x:Bind TemplateSettings.UpdateResults}"
+                Style="{StaticResource DefaultThemeButtonStyle}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon FontSize="12" Glyph="&#57673;" />
+                    <TextBlock
+                        Margin="0 -2 0 0"
+                        VerticalAlignment="Center"
+                        Text="Refresh results" />
+                </StackPanel>
+            </controls:UXButton>
+        </controls:AutoGrid>
+
+    </Grid>
+
 
 
 </ContentDialog>

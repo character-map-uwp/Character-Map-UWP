@@ -194,7 +194,7 @@ public class UserCollectionsService
 
     public Task RemoveFromCollectionAsync(InstalledFont font, UserFontCollection collection)
     {
-        return RemoveFromCollectionAsync(new List<InstalledFont> { font }, collection);
+        return RemoveFromCollectionAsync([font], collection);
     }
 
     public Task RemoveFromCollectionAsync(IReadOnlyList<InstalledFont> fonts, UserFontCollection collection)

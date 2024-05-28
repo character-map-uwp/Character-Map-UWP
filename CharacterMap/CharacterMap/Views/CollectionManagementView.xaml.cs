@@ -20,20 +20,9 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
         ViewModel = new();
     }
 
-    public void Activate()
-    {
-        ViewModel.Activate();
-    }
+    public void Activate() => ViewModel.Activate();
 
-    public void Deactivate()
-    {
-        ViewModel.Deactivate();
-    }
-
-    void CollectionSelector_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        ViewModel.RefreshFontLists();
-    }
+    public void Deactivate() => ViewModel.Deactivate();
 
     async void NewCollection_Click(object sender, RoutedEventArgs e)
     {

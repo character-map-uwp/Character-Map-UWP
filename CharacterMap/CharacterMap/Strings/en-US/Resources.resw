@@ -1767,4 +1767,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="SmartCollectionEditHint.Text" xml:space="preserve">
     <value>To modify smart collections use the edit button above.</value>
   </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>char:</value>
+  </data>
 </root>
