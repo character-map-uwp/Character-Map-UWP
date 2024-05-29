@@ -55,8 +55,8 @@ public static class SQLite3Extensions
     }
 
 
-    
-    
+
+
     //------------------------------------------------------
     //
     // Source Generator Shims
@@ -64,6 +64,18 @@ public static class SQLite3Extensions
     // - Shims will be removed by compiler
     //
     //------------------------------------------------------
+
+    [SQLReader<SQLiteFontCollection>("SQLFontCollection")]
+    [SQLReaderMapping<int>(nameof(SQLiteFontCollection.Id))]
+    [SQLReaderMapping<string>(nameof(SQLiteFontCollection.Name))]
+    [SQLReaderMapping<string>(nameof(SQLiteFontCollection.Fonts))]
+    private class Shim0 : Object { }
+
+    [SQLReader<SQLiteSmartFontCollection>("SQLSmartCollection")]
+    [SQLReaderMapping<int>(nameof(SQLiteSmartFontCollection.Id))]
+    [SQLReaderMapping<string>(nameof(SQLiteSmartFontCollection.Name))]
+    [SQLReaderMapping<string>(nameof(SQLiteSmartFontCollection.Filters))]
+    private class Shim00 : Object { }
 
     [SQLReader<GlyphDescription>("UnicodeGlyphData")]
     [SQLReaderMapping<int>(nameof(GlyphDescription.UnicodeIndex))]
