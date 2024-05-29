@@ -134,7 +134,9 @@ public static class ResourceHelper
 
     #region Dynamic Theming
 
-    public static void GoToThemeState(Control control)
+    public static bool IsZuneTheme() => AppSettings.ApplicationDesignTheme == 3;
+
+    public static void GoToThemeState(this Control control)
     {
         string state = AppSettings.ApplicationDesignTheme switch
         {

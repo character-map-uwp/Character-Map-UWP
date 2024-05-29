@@ -273,7 +273,12 @@ public sealed partial class SettingsView : ViewBase
 
             // 6. Start child animation
             if (ResourceHelper.AllowAnimation)
-                CompositionFactory.PlayEntrance(GetChildren(panel), 10, 80);
+            {
+                if (ThemeStatesGroup.CurrentState == ZuneThemeState)
+                    CompositionFactory.PlayEntrance(GetChildren(panel), 10, 0, 140, staggerMs: 120);
+                else
+                    CompositionFactory.PlayEntrance(GetChildren(panel), 10, 80);
+            }
 
             // 7. Show selected panel
             panel.Opacity = 1;
@@ -316,14 +321,9 @@ public sealed partial class SettingsView : ViewBase
 
         //ResourceHelper.SendThemeChanged();
 
-        string key = Settings.ApplicationDesignTheme switch
-        {
-            1 => "FUI",
-            2 => "Zune",
-            _ => "Default"
-        };
-        bool t = GoToState($"{key}ThemeState");
+        this.GoToThemeState();
     }
+
 
 
 
@@ -332,7 +332,12 @@ public sealed partial class SettingsView : ViewBase
     private void UpdateAnimation()
     {
         if (ResourceHelper.AllowAnimation)
-            CompositionFactory.SetupOverlayPanelAnimation(this);
+        {
+            if (ResourceHelper.IsZuneTheme())
+                CompositionFactory.SetupOverlayPanelAnimationX(this);
+            else
+                CompositionFactory.SetupOverlayPanelAnimation(this);
+        }
         else
         {
             this.SetShowAnimation(null);
@@ -346,9 +351,14 @@ public sealed partial class SettingsView : ViewBase
             return;
 
         List<UIElement> elements = new() { this, MenuColumn, ContentBorder };
-        CompositionFactory.PlayEntrance(elements, 0, 200);
+        if (ResourceHelper.IsZuneTheme())
+            CompositionFactory.PlayEntrance(elements, 0, 0, 40);
+        else
+            CompositionFactory.PlayEntrance(elements, 0, 200);
+
         UpdateStyle();
     }
+
 
 
 
