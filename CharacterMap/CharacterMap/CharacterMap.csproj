@@ -168,9 +168,6 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="Assets\ColourIcon.png" />
     <Content Include="Assets\Data\GlyphData.db" />
-    <PRIResource Include="Strings\zh-TW\Resources.resw" />
-    <PRIResource Include="Strings\zh-CN\Resources.resw" />
-    <PRIResource Include="Strings\en-US\Resources.resw" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)' == 'Debug'">
     <Content Include="Assets\Data\glyphlist.txt" />
@@ -465,12 +462,16 @@
     <Content Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <None Include="CharacterMap_TemporaryKey.pfx" />
+    <PRIResource Include="Strings\en-US\Resources.resw" />
+    <PRIResource Include="Strings\en-GB\Resources.resw" />
     <PRIResource Include="Strings\de-DE\Resources.resw" />
     <PRIResource Include="Strings\pl-PL\Resources.resw" />
-    <PRIResource Include="Strings\ta\Resources.resw" />
+    <PRIResource Include="Strings\pt-PT\Resources.resw" />
     <PRIResource Include="Strings\it-IT\Resources.resw" />
+    <PRIResource Include="Strings\ta\Resources.resw" />
     <PRIResource Include="Strings\th-TH\Resources.resw" />
-    <PRIResource Include="Strings\en-GB\Resources.resw" />
+    <PRIResource Include="Strings\zh-CN\Resources.resw" />
+    <PRIResource Include="Strings\zh-TW\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -614,6 +615,7 @@
     <XliffResource Include="MultilingualResources\CharacterMap.fr-FR.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.it-IT.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.pl-PL.xlf" />
+    <XliffResource Include="MultilingualResources\CharacterMap.pt-PT.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.ru-RU.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.ta.xlf" />
     <XliffResource Include="MultilingualResources\CharacterMap.th-TH.xlf" />
