@@ -7,7 +7,7 @@ namespace CharacterMap.Controls;
 public class OpenFolderDialogTemplateSettings : ViewModelBase
 {
     public bool CanContinue => HasFolder is true && IsLoading is false;
-    public string Contents { get => Get<string>(() => "Select Folder"); set => Set(value); }
+    public string Contents { get => Get<string>(() => Localization.Get("DigOpenFolderContent/SelectFolderButtonContent")); set => Set(value); }
     public bool HasFolder { get => GetV(false); set => Set(value); }
     public bool IsLoading { get => GetV(false); set => Set(value); }
     public bool AllowZip { get => GetV(false); set => Set(value); }
@@ -28,7 +28,7 @@ public class OpenFolderDialogTemplateSettings : ViewModelBase
         else
         {
             HasFolder = false;
-            Contents = "Select Folder";
+            Contents = Localization.Get("DigOpenFolderContent/SelectFolderButtonContent");
         }
     }
 

@@ -2223,6 +2223,10 @@ Otherwise, "All Fonts" is selected by default on every launch.</source>
           <source>To modify smart collections use the edit button above.</source>
           <target state="translated">要修改智能收藏集，请点击上方的编辑按钮。</target>
         </trans-unit>
+        <trans-unit id="DigOpenFolderContent.SelectFolderButtonContent" translate="yes" xml:space="preserve">
+          <source>Select Folder</source>
+          <target state="translated">选择文件夹</target>
+        </trans-unit>
       </group>
     </body>
   </file>

@@ -2223,6 +2223,10 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
           <source>To modify smart collections use the edit button above.</source>
           <target state="translated">Para modificar as coleções inteligentes, utilize o botão de editar acima.</target>
         </trans-unit>
+        <trans-unit id="DigOpenFolderContent.SelectFolderButtonContent" translate="yes" xml:space="preserve">
+          <source>Select Folder</source>
+          <target state="translated">Selecionar pasta</target>
+        </trans-unit>
       </group>
     </body>
   </file>

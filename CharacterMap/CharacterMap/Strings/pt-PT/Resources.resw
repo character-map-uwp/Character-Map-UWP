@@ -1602,4 +1602,7 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
   <data name="SmartCollectionEditHint.Text" xml:space="preserve">
     <value>Para modificar as coleções inteligentes, utilize o botão de editar acima.</value>
   </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>Selecionar pasta</value>
+  </data>
 </root>
