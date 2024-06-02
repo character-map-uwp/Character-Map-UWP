@@ -1066,4 +1066,7 @@
   <data name="FontFolderMenuItem.Text" xml:space="preserve">
     <value>โฟลเดอร์ฟ้อนต์</value>
   </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>เลือกโฟลเดอร์r</value>
+  </data>
 </root>

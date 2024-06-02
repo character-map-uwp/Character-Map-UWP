@@ -1231,4 +1231,7 @@ Tippen und halten zum umsortieren.</value>
   <data name="NotificationCopiedSVG" xml:space="preserve">
     <value>Als SVG kopiert</value>
   </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>Ordner auswählen</value>
+  </data>
 </root>

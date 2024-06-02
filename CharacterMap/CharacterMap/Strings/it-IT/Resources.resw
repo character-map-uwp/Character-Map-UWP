@@ -1231,4 +1231,7 @@ Tocca e tieni premuto per disporre.</value>
   <data name="NotificationCopiedSVG" xml:space="preserve">
     <value>Copiato come SVG</value>
   </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>Selezione cartella</value>
+  </data>
 </root>

@@ -251,4 +251,7 @@
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>設置</value>
   </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>選取資料夾</value>
+  </data>
 </root>
