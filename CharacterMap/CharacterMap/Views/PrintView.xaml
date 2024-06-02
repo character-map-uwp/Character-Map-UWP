@@ -14,7 +14,7 @@
     Background="Transparent"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
-    d:DesignHeight="720"
+    d:DesignHeight="1024"
     d:DesignWidth="1280">
 
     <UserControl.Resources>
@@ -271,8 +271,11 @@
 
                                 <controls:UXComboBox
                                     x:Uid="PrintViewPageOrientation"
+                                    Margin="{StaticResource HeaderMargin}"
                                     SelectedIndex="0"
-                                    SelectionChanged="RadioButtons_SelectionChanged">
+                                    SelectionChanged="RadioButtons_SelectionChanged"
+                                    d:Header="Page Orientation"
+                                    d:PlaceholderText="Portrait">
                                     <controls:UXComboBoxItem x:Uid="CbiPageOrientationPortrait" />
                                     <controls:UXComboBoxItem x:Uid="CbiPageOrientationLandscape" />
                                 </controls:UXComboBox>

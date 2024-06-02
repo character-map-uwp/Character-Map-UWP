@@ -2226,6 +2226,10 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <source>To modify smart collections use the edit button above.</source>
           <target state="new">To modify smart collections use the edit button above.</target>
         </trans-unit>
+        <trans-unit id="DigOpenFolderContent.SelectFolderButtonContent" translate="yes" xml:space="preserve">
+          <source>Select Folder</source>
+          <target state="translated">Sélectionner un dossier</target>
+        </trans-unit>
       </group>
     </body>
   </file>
