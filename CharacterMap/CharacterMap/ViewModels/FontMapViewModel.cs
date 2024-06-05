@@ -62,6 +62,9 @@ public partial class FontMapViewModel : ViewModelBase
     public List<UnicodeRangeModel> SelectedGlyphCategories { get => Get<List<UnicodeRangeModel>>(); private set => Set(value); }
     public List<RampOption> Ramps { get; }
 
+    [ObservableProperty] Uri _fontUri;
+    [ObservableProperty] IReadOnlyList<int> _glyphs;
+
     [ObservableProperty] CharacterRenderingOptions _renderingOptions;
     [ObservableProperty] CanvasTextLayoutAnalysis _selectedCharAnalysis;
     [ObservableProperty] List<TypographyFeatureInfo> _selectedCharVariations;
@@ -340,6 +343,8 @@ public partial class FontMapViewModel : ViewModelBase
             SearchResults = null;
             DebounceSearch(SearchQuery, 100);
             IsLoadingCharacters = false;
+
+            UpdateFontUri();
         }
         catch
         {
@@ -358,6 +363,24 @@ public partial class FontMapViewModel : ViewModelBase
             });
         }
     }
+
+    private async Task UpdateFontUri()
+    {
+        var v = SelectedVariant;
+
+        var file = await ApplicationData.Current.TemporaryFolder.CreateFileAsync($"{Path.GetRandomFileName()}.otf");
+        using (var s = await file.OpenAsync(FileAccessMode.ReadWrite))
+        {
+            await DirectWrite.WriteToStreamAsync(SelectedVariant.Face, s);
+        }
+
+        if (SelectedVariant != v)
+            return;
+
+        FontUri = new Uri($"ms-appdata:///temp/{file.Name}");
+        Glyphs = Enumerable.Range(0, (int)SelectedVariant.Face.GlyphCount).ToList();
+    }
+
     private IReadOnlyList<Suggestion> GetRampOptions(FontVariant variant)
     {
         if (variant == null)
@@ -522,6 +545,8 @@ public partial class FontMapViewModel : ViewModelBase
     public void ChangeDisplayMode()
     {
         if (DisplayMode == FontDisplayMode.TypeRamp)
+            DisplayMode = FontDisplayMode.GlyphMap;
+        else if (DisplayMode == FontDisplayMode.GlyphMap)
             DisplayMode = FontDisplayMode.CharacterMap;
         else
             DisplayMode = FontDisplayMode.TypeRamp;

@@ -961,7 +961,7 @@
 
                                             <FontIcon
                                                 x:Name="CharMapIcon"
-                                                x:Load="{x:Bind core:Converters.False(IsTypeRamp)}"
+                                                x:Load="{x:Bind core:Converters.FalseFalse(IsTypeRamp, IsGlyphMap)}"
                                                 Margin="0 2 0 0"
                                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 FontSize="12"
@@ -974,6 +974,14 @@
                                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 FontSize="11"
                                                 Glyph="&#xEA37;" />
+
+                                            <FontIcon
+                                                x:Name="GlyphMapIcon"
+                                                x:Load="{x:Bind IsGlyphMap}"
+                                                Margin="0 2 0 0"
+                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                                FontSize="11"
+                                                Glyph="&#xF6BA;" />
 
                                             <TextBlock
                                                 x:Name="TitleText"

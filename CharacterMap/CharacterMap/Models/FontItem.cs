@@ -18,6 +18,7 @@ public partial class FontItem : ObservableObject
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsTypeRamp))]
+    [NotifyPropertyChangedFor(nameof(IsGlyphMap))]
     private FontDisplayMode _displayMode = FontDisplayMode.CharacterMap;
 
     [ObservableProperty]
@@ -26,6 +27,8 @@ public partial class FontItem : ObservableObject
     public string Tooltip => $"{Font.Name} {_subTitle}";
 
     public bool IsTypeRamp => DisplayMode == FontDisplayMode.TypeRamp;
+
+    public bool IsGlyphMap => DisplayMode == FontDisplayMode.GlyphMap;
 
     private FontVariant _selected;
     public FontVariant Selected

@@ -388,6 +388,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
                 UpdateGridToRampTransition();
             GoToState(TypeRampState.Name, animate);
         }
+        else if (ViewModel.DisplayMode == FontDisplayMode.GlyphMap)
+        {
+            GoToState(GlyphMapState.Name, animate);
+        }
         else
         {
             if (animate)
@@ -503,6 +507,20 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             return string.Empty;
 
         string s = Localization.Get("StatusBarCharacterCount", variant.GetCharacters().Count);
+
+        // Hack for Zune Theme.
+        if (!keepCasing)
+            s = s.ToUpper();
+
+        return s;
+    }
+
+    private string UpdateGlyphCountLabel(FontVariant variant, bool keepCasing)
+    {
+        if (variant == null)
+            return string.Empty;
+
+        string s = string.Format("{0} glyphs", variant.Face.GlyphCount);
 
         // Hack for Zune Theme.
         if (!keepCasing)
@@ -1030,6 +1048,8 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
 
     /* Character Grid Binding Helpers */
+
+    double FontSizeConverter(double d) => d / 2d;
 
     private void UpdateDisplay()
     {

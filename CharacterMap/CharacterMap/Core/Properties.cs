@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Documents;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Markup;
 using Windows.UI.Xaml.Media;
@@ -70,6 +71,10 @@ namespace CharacterMap.Core;
 [AttachedProperty<string>("GridDefinitions", "string.Empty")]
 [AttachedProperty<string>("Hyperlink")]
 [AttachedProperty<CoreCursorType>("Cursor", CoreCursorType.Arrow)]
+[AttachedProperty<string>("HTML")]
+[AttachedProperty<Uri>("FontUri")] // Sets Glyphs.FontUri which cannot be set in XAML
+[AttachedProperty<double>("Double")] // Any double value 
+[AttachedProperty<double>("FontSize")] 
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1272,6 +1277,30 @@ public partial class Properties : DependencyObject
             // this is necessary when click triggers immediate change in layout and PointerExited is not called
             Window.Current.CoreWindow.PointerCursor = _defaultCursor;
         }
+    }
+
+    #endregion
+
+    #region HTML
+
+    static partial void OnHTMLChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is TextBlock textBlock)
+        {
+            textBlock.Inlines.Clear();
+            foreach (var inline in HTMLParser.Parse((string)e.NewValue))
+                textBlock.Inlines.Add(inline);
+        }
+    }
+
+    #endregion
+
+    #region Glyph FontUri
+
+    static partial void OnFontUriChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Glyphs g)
+            g.FontUri = e.NewValue as Uri;
     }
 
     #endregion

@@ -716,10 +716,11 @@
                                 <ItemsControl ItemsSource="{x:Bind ViewModel.Changelog}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate x:DataType="models:ChangelogItem">
-                                            <controls:SettingsPresenter
-                                                Title="{x:Bind Header}"
-                                                Margin="0 0 0 8"
-                                                Description="{x:Bind Content}" />
+                                            <controls:SettingsPresenter Title="{x:Bind Header}" Margin="0 0 0 8">
+                                                <controls:SettingsPresenter.Description>
+                                                    <TextBlock core:Properties.HTML="{x:Bind Content}" TextWrapping="Wrap" />
+                                                </controls:SettingsPresenter.Description>
+                                            </controls:SettingsPresenter>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>

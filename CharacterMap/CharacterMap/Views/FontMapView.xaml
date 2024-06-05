@@ -715,12 +715,22 @@
                         Style="{StaticResource VariantComboBoxStyle}"
                         ToolTipMemberPath="PreferredName">
                         <controls:UXComboBox.SecondaryContent>
-                            <TextBlock
-                                x:Name="SelectorLabel"
-                                FontSize="12"
-                                FontWeight="Normal"
-                                Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}" />
+                            <Grid>
+                                <TextBlock
+                                    x:Name="SelectorLabel"
+                                    FontSize="12"
+                                    FontWeight="Normal"
+                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                    Text="{x:Bind UpdateStatusBarLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}" />
+                                <TextBlock
+                                    x:Name="GlyphSelectorLabel"
+                                    x:Load="False"
+                                    FontSize="12"
+                                    FontWeight="Normal"
+                                    Foreground="{ThemeResource TextControlPlaceholderForeground}"
+                                    Text="{x:Bind UpdateGlyphCountLabel(ViewModel.SelectedVariant, SelectorLabel.IsHitTestVisible), Mode=OneWay}"
+                                    Visibility="Collapsed" />
+                            </Grid>
                         </controls:UXComboBox.SecondaryContent>
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="core:FontVariant">
@@ -1384,6 +1394,39 @@
                     </Grid>
                 </Border>
             </Grid>
+
+            <GridView
+                x:Name="GlyphRepeater"
+                x:Load="False"
+                Grid.Row="2"
+                Grid.ColumnSpan="1"
+                core:Properties.Double="{x:Bind ViewModel.Settings.GridSize, Mode=OneWay}"
+                core:Properties.FontSize="{x:Bind FontSizeConverter(ViewModel.Settings.GridSize), Mode=OneWay}"
+                core:Properties.FontUri="{Binding FontUri}"
+                ContainerContentChanging="CharGrid_ContainerContentChanging"
+                ItemsSource="{x:Bind ViewModel.Glyphs, Mode=OneWay}"
+                ShowsScrollingPlaceholders="False"
+                Visibility="Collapsed">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid
+                            Width="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}"
+                            Height="{Binding ElementName=GlyphRepeater, Path=(core:Properties.Double)}"
+                            Padding="4">
+                            <Glyphs
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                core:Properties.FontUri="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontUri)}"
+                                Fill="{ThemeResource ApplicationForegroundThemeBrush}"
+                                FontRenderingEmSize="{Binding ElementName=GlyphRepeater, Path=(core:Properties.FontSize)}"
+                                Indices="{Binding}" />
+                            <TextBlock Style="{StaticResource CharItemUnicodeStyle}" Text="{Binding}" />
+                        </Grid>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
+
+
 
             <!--  Type Ramp  -->
             <Grid
@@ -2351,6 +2394,22 @@
                 <VisualState x:Name="CharacterMapState">
                     <VisualState.Setters>
                         <!--<Setter Target="SwitchToTypeRampButton.Visibility" Value="Visible" />-->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="GlyphMapState">
+                    <VisualState.Setters>
+                        <Setter Target="SelectorLabel.Visibility" Value="Collapsed" />
+                        <Setter Target="GlyphSelectorLabel.Visibility" Value="Visible" />
+
+                        <Setter Target="CharGridRoot.Visibility" Value="Collapsed" />
+                        <Setter Target="SearchBox.Visibility" Value="Collapsed" />
+                        <Setter Target="CharacterFilterButton.Visibility" Value="Collapsed" />
+                        <Setter Target="GlyphRepeater.Visibility" Value="Visible" />
+
+                        <!--  Don't disable this button, breaks the binding  -->
+                        <Setter Target="ToggleCopyPaneButton.IsHitTestVisible" Value="False" />
+                        <Setter Target="ToggleCopyPaneButton.Opacity" Value="0.4" />
+                        <Setter Target="ToggleCopyPaneButton.IsTabStop" Value="False" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="TypeRampState">
