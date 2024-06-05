@@ -155,10 +155,10 @@ public static class Utils
                 dp.SetRtf(rtf);
 
                 var longName = v.FontFamily.Source;
-                if (v.SelectedVariant.FontInformation.FirstOrDefault(i => i.Key == "Full Name") is var p)
+                if (v.SelectedVariant.TryGetInfo(CanvasFontInformation.FullName) is { } info
+                    && info.Value != longName)
                 {
-                    if (p.Value != longName)
-                        longName = $"{v.FontFamily.Source}, {p.Value}";
+                    longName = $"{v.FontFamily.Source}, {info.Value}";
                 }
                 dp.SetHtmlFormat($"<p style=\"font-family:'{longName}'; \">{raw}</p>");
             }
@@ -497,7 +497,7 @@ public static class Utils
         string path,
         Color color)
     {
-        return GenerateSvgDocument(device, rect, new List<string> { path }, new List<Color> { color });
+        return GenerateSvgDocument(device, rect, [path], [color]);
     }
 
     /// <summary>
