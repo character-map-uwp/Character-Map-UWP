@@ -187,6 +187,27 @@ public class CompositionFactory : DependencyObject
         e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
     }
 
+    public static void SetupOverlayPanelAnimationX(UIElement e)
+    {
+        if (!UISettings.AnimationsEnabled)
+            return;
+
+        Visual v = e.EnableTranslation(true).GetElementVisual();
+
+        var g = v.GetCached("OPAX", () =>
+        {
+            var t = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                    .AddKeyFrame(1, 200, 0)
+                    .SetDuration(0.375);
+
+            var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 200);
+            return v.Compositor.CreateAnimationGroup(t, o);
+        });
+
+        e.SetHideAnimation(g);
+        e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(200, 0, 0), 0, 550));
+    }
+
     public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffsetY = 40, int fromOffsetX = 0, int durationMs = 1000)
     {
         if (!UISettings.AnimationsEnabled)

@@ -1770,4 +1770,22 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>Select Folder</value>
   </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>char:</value>
+  </data>
+  <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Change sort</value>
+  </data>
+  <data name="SortedByRangeLabel.Text" xml:space="preserve">
+    <value>Sorted by Range</value>
+  </data>
+  <data name="RefreshResultsLabel.Text" xml:space="preserve">
+    <value>Refresh results</value>
+  </data>
+  <data name="ResultsCountLabel" xml:space="preserve">
+    <value>{0} results</value>
+  </data>
+  <data name="SortedByNameLabel.Text" xml:space="preserve">
+    <value>Sorted by Name</value>
+  </data>
 </root>

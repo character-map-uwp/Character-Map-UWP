@@ -21,11 +21,11 @@ public class SQLiteCollectionProvider : ICollectionProvider
 
         try
         {
-            var cols = _conn.CreateCommand("SELECT * FROM \"Collections\" ORDER BY Name").AsFontCollections();
+            var cols = _conn.CreateCommand("SELECT * FROM \"Collections\" ORDER BY Name").ReadAsSQLFontCollections();
             foreach (var c in cols)
                 collections.Add(c.AsUserFontCollection());
 
-            var smarts = _conn.CreateCommand("SELECT * FROM \"SmartCollections\" ORDER BY Name").AsSmartFontCollections();
+            var smarts = _conn.CreateCommand("SELECT * FROM \"SmartCollections\" ORDER BY Name").ReadAsSQLSmartCollections();
             foreach (var c in smarts)
                 collections.Add(c.AsSmartFontCollection());
         }
@@ -95,7 +95,7 @@ public class SQLiteCollectionProvider : ICollectionProvider
         PrepareConnection();
 
         // 1. Create Collections Table
-        CreateCollectionsTable();
+        //CreateCollectionsTable();
 
         // 2. Insert old collections into Database
         var obs = new object[2];
@@ -125,6 +125,8 @@ public class SQLiteCollectionProvider : ICollectionProvider
 
             _ins = new(_conn, "INSERT INTO \"Collections\" (Name, Fonts) VALUES (?, ?)");
             _smins = new(_conn, "INSERT INTO \"SmartCollections\" (Name, Filters) VALUES (?, ?)");
+
+            CreateCollectionsTable();
         }
     }
 

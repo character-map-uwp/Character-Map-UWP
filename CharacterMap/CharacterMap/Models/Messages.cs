@@ -43,11 +43,11 @@ public class CollectionsUpdatedMessage
 
 public class CollectionRequestedMessage
 {
-    public UserFontCollection Collection { get; }
+    public IFontCollection Collection { get; }
 
     public bool Handled { get; set; }
 
-    public CollectionRequestedMessage(UserFontCollection sourceCollection)
+    public CollectionRequestedMessage(IFontCollection sourceCollection)
     {
         Collection = sourceCollection;
     }

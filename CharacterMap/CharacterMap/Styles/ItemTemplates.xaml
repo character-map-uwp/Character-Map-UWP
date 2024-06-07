@@ -43,6 +43,25 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="FontListItemTemplateSimple" x:DataType="core:InstalledFont">
+        <Grid
+            Padding="0 4"
+            Background="Transparent"
+            ToolTipService.ToolTip="{x:Bind Name}">
+            <TextBlock
+                Padding="5"
+                VerticalAlignment="Center"
+                FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
+                FontSize="{ThemeResource FontListFontSize}"
+                Text="{x:Bind Name}"
+                TextAlignment="Center"
+                TextTrimming="CharacterEllipsis"
+                TextWrapping="NoWrap" />
+
+        </Grid>
+    </DataTemplate>
+
+
     <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
         <Grid
             Name="TemplateContent"

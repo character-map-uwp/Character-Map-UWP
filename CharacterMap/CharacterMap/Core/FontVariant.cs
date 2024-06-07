@@ -210,8 +210,8 @@ public partial class FontVariant : IDisposable
         {
             string name = GlyphService.GetCharacterDescription(c.UnicodeIndex, this);
             if (string.IsNullOrWhiteSpace(name)
-                && c.UnicodeIndex > 0x3000
                 && allowUnihan
+                && Unicode.CouldBeUnihan(c.UnicodeIndex)
                 && GlyphService.GetUnihanData(c.UnicodeIndex)?.Definition
                     is { } def)
                 name = def.Description;

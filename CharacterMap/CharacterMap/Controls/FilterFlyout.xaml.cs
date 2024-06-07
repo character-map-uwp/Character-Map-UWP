@@ -1,12 +1,14 @@
 ﻿using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
 [DependencyProperty<ICommand>("FilterCommand")]
 [DependencyProperty<ICommand>("CollectionSelectedCommand")]
+[AttachedProperty<FrameworkElement>("UnicodeRangeSortHeader")]
 public sealed partial class FilterFlyout : MenuFlyout
 {
     private int _defaultCount = 0;
@@ -47,10 +49,45 @@ public sealed partial class FilterFlyout : MenuFlyout
         foreach (var script in UnicodeScriptTags.Scripts)
             design.Add(BasicFontFilter.ForDesignScriptTag(script.Key, script.Value), style);
 
+        // 2.1. Add Unicode ranges
         var unicode = AddSub("OptionUnicodeRange/Text", sub);
+        var ush = GetUnicodeRangeSortHeader(this);
+        if (ush.GetFirstDescendantOfType<Button>() is Button b)
+        {
+            // 2.1.1. Implement sorting logic
+            b.Click += (s, e) =>
+            {
+                var tb = ush.GetFirstDescendantOfType<TextBlock>();
+                var items = unicode.Items.ToList();
+                unicode.Items.Clear();
+
+                if (items[0].Tag is List<MenuFlyoutItemBase> exist)
+                {
+                    items[0].Tag = null;
+                    foreach (var item in exist)
+                        unicode.Items.Add(item);
+
+                    tb.Text = Localization.Get("SortedByRangeLabel/Text");
+                }
+                else
+                {
+                    items[0].Tag = items;
+                    foreach (var item in items.OrderBy(g => Properties.GetFilter(g)?.DisplayTitle ?? "-1"))
+                        unicode.Items.Add(item);
+
+                    tb.Text = Localization.Get("SortedByNameLabel/Text");
+                }
+            };
+
+            unicode.Items.Add(new MenuFlyoutContentHost() { Content = ush });
+            unicode.Items.Add(new MenuFlyoutSeparator());
+        }
+
+       // 2.1.2. Add *all* supported unicode ranges to the submenu
         foreach (var filter in UnicodeRanges.AllFilters)
             unicode.Add(filter, style);
 
+        // 2.1.3. Add quick-access ranges to the top level menu
         AddSep(sub);
         sub.Add(BasicFontFilter.ScriptArabic, style)
             .Add(BasicFontFilter.ScriptBengali, style)

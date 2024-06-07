@@ -67,13 +67,16 @@ public class UpperConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
-        if (parameter is string p)
+        if (parameter is string p && value is not FrameworkElement)
             value = Localization.Get(p).ToUpper();
 
         if (value is string s)
             return s.ToUpper();
 
-        return null;
+        if (value is FrameworkElement)
+            return value;
+
+        return value;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, string language)

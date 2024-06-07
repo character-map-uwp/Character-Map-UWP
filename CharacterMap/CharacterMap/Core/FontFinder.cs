@@ -5,8 +5,6 @@ using WoffToOtf;
 
 namespace CharacterMap.Core;
 
-public record FontImportResult(List<StorageFile> Imported, List<StorageFile> Existing, List<(IStorageItem, string)> Invalid);
-
 public class FontFinder
 {
     private const string PENDING = nameof(PENDING);
@@ -616,6 +614,7 @@ public class FontFinder
         }
         else
         {
+            // Attempt to convert .woff & .woff2 to OTF
             var convert = await FontConverter.TryConvertAsync(f, dest).ConfigureAwait(false);
             if (convert.Result is not ConversionStatus.OK || options.IsCancelled)
                 goto Exit;
@@ -651,10 +650,14 @@ public class FontFinder
         filter ??= BasicFontFilter.All;
         string filterTitle = null;
 
-        static bool Is(string q, string i, out string o)
+        static bool Is(string q, string i, string i2, out string o)
         {
-            if (q.StartsWith(i, StringComparison.OrdinalIgnoreCase)
-                && q.Remove(0, i.Length).Trim() is string t
+            string s = i;
+            if (q.StartsWith(s, StringComparison.OrdinalIgnoreCase) is false)
+                s = i2;
+
+            if (q.StartsWith(s, StringComparison.OrdinalIgnoreCase)
+                && q.Remove(0, s.Length).Trim() is string t
                 && !string.IsNullOrWhiteSpace(t))
             {
                 o = t;
@@ -668,7 +671,7 @@ public class FontFinder
         if (!string.IsNullOrWhiteSpace(query))
         {
             string q;
-            if (Is(query, Localization.Get("CharFilter"), out q))
+            if (Is(query, Localization.Get("CharFilter"), "char:", out q))
             {
                 foreach (var ch in q)
                 {
@@ -678,18 +681,18 @@ public class FontFinder
                 }
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
-            else if (Is(query, Localization.Get("FilePathFilter"), out q))
+            else if (Is(query, Localization.Get("FilePathFilter"), "filepath:", out q))
             {
                 fontList = BasicFontFilter.ForFilePath(q).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
 
             }
-            else if (Is(query, Localization.Get("FoundryFilter"), out q))
+            else if (Is(query, Localization.Get("FoundryFilter"), "foundry:", out q))
             {
                 fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Manufacturer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
-            else if (Is(query, Localization.Get("DesignerFilter"), out q))
+            else if (Is(query, Localization.Get("DesignerFilter"), "designer:", out q))
             {
                 fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Designer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";

@@ -41,6 +41,8 @@
 
     <StaticResource x:Key="InfoBarBackgroundBrush" ResourceKey="SystemControlBackgroundAccentBrush" />
 
+    
+    
 
     <!--  TEXT STYLES  -->
     <Style x:Key="HeaderStyle" TargetType="TextBlock">
@@ -69,6 +71,75 @@
 
 
     <!--  MISC CONTROLS  -->
+
+    <Style x:Name="NumberBoxSpinButtonStyle" TargetType="RepeatButton">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="MinWidth" Value="34" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="Background" Value="{ThemeResource TextControlBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource TextControlBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+    </Style>
+
+    <Style TargetType="ToolTip">
+        <Setter Property="Foreground" Value="{ThemeResource ToolTipForegroundBrush}" />
+        <Setter Property="Background" Value="{ThemeResource ToolTipBackgroundBrush}" />
+        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ToolTipBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource ToolTipBorderThemeThickness}" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ToolTipContentThemeFontSize}" />
+        <Setter Property="Padding" Value="{StaticResource ToolTipBorderPadding}" />
+        <Setter Property="MaxWidth" Value="{StaticResource ToolTipMaxWidth}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToolTip">
+                    <ContentPresenter
+                        x:Name="LayoutRoot"
+                        MaxWidth="{TemplateBinding MaxWidth}"
+                        Padding="{TemplateBinding Padding}"
+                        Background="{TemplateBinding Background}"
+                        BackgroundSizing="{TemplateBinding BackgroundSizing}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Content="{TemplateBinding Content}"
+                        ContentTemplate="{TemplateBinding ContentTemplate}"
+                        ContentTransitions="{TemplateBinding ContentTransitions}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        RenderTransformOrigin="0.5 0.5"
+                        TextWrapping="Wrap">
+                        <ContentPresenter.RenderTransform>
+                            <CompositeTransform />
+                        </ContentPresenter.RenderTransform>
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="OpenStates">
+                                <VisualState x:Name="Closed">
+                                    <Storyboard>
+                                        <FadeOutThemeAnimation TargetName="LayoutRoot" />
+                                    </Storyboard>
+                                </VisualState>
+                                <VisualState x:Name="Opened">
+                                    <Storyboard>
+                                        <FadeInThemeAnimation TargetName="LayoutRoot" />
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0.1" />
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                            <EasingDoubleKeyFrame KeyTime="0" Value="0.1" />
+                                            <EasingDoubleKeyFrame KeyTime="0:0:0.3" Value="1" />
+                                        </DoubleAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </ContentPresenter>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <Style TargetType="controls:ModalPagePresenter">
         <Setter Property="ContentBackground" Value="Transparent" />
@@ -872,7 +943,6 @@
                                     <VisualState.Setters>
                                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundPointerOver}" />
                                         <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
-                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
                                         <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -880,7 +950,6 @@
                                     <VisualState.Setters>
                                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundPressed}" />
                                         <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
-                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
                                         <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -888,7 +957,6 @@
                                     <VisualState.Setters>
                                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemBackgroundDisabled}" />
                                         <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
-                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
                                         <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -942,12 +1010,13 @@
                             </Grid.ColumnDefinitions>
                             <Viewbox
                                 x:Name="IconRoot"
+                                x:Load="False"
                                 Width="16"
                                 Height="16"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 Visibility="Collapsed">
-                                <ContentPresenter x:Name="IconContent" Content="{TemplateBinding Icon}" />
+                                <ContentPresenter Content="{TemplateBinding Icon}" Foreground="{Binding ElementName=TextBlock, Path=Foreground}" />
                             </Viewbox>
                             <TextBlock
                                 x:Name="TextBlock"

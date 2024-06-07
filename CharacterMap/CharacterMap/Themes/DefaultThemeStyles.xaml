@@ -96,7 +96,6 @@
                                         <Setter Target="LayoutRoot.(RevealBrush.State)" Value="PointerOver" />
                                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemRevealBackgroundPointerOver}" />
                                         <Setter Target="LayoutRoot.BorderBrush" Value="{ThemeResource MenuFlyoutItemRevealBorderBrushPointerOver}" />
-                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
                                         <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPointerOver}" />
                                         <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPointerOver}" />
                                     </VisualState.Setters>
@@ -111,7 +110,6 @@
                                         <Setter Target="LayoutRoot.(RevealBrush.State)" Value="Pressed" />
                                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemRevealBackgroundPressed}" />
                                         <Setter Target="LayoutRoot.BorderBrush" Value="{ThemeResource MenuFlyoutItemRevealBorderBrushPressed}" />
-                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
                                         <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundPressed}" />
                                         <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundPressed}" />
                                     </VisualState.Setters>
@@ -125,7 +123,6 @@
                                     <VisualState.Setters>
                                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource MenuFlyoutItemRevealBackgroundDisabled}" />
                                         <Setter Target="LayoutRoot.BorderBrush" Value="{ThemeResource MenuFlyoutItemRevealBorderBrushDisabled}" />
-                                        <Setter Target="IconContent.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
                                         <Setter Target="TextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemForegroundDisabled}" />
                                         <Setter Target="KeyboardAcceleratorTextBlock.Foreground" Value="{ThemeResource MenuFlyoutItemKeyboardAcceleratorTextForegroundDisabled}" />
                                     </VisualState.Setters>
@@ -141,7 +138,7 @@
                                 </VisualState>
                                 <VisualState x:Name="IconPlaceholder">
                                     <VisualState.Setters>
-                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource LanguageSwitcherMenuFlyoutItemPlaceholderThemeThickness}" />
+                                        <Setter Target="TextBlock.Margin" Value="{ThemeResource MenuFlyoutItemPlaceholderThemeThickness}" />
                                         <Setter Target="IconRoot.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                 </VisualState>
@@ -184,12 +181,13 @@
                         </Grid.ColumnDefinitions>
                         <Viewbox
                             x:Name="IconRoot"
+                            x:Load="False"
                             Width="16"
                             Height="16"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Visibility="Collapsed">
-                            <ContentPresenter x:Name="IconContent" Content="{TemplateBinding Icon}" />
+                            <ContentPresenter Content="{TemplateBinding Icon}" Foreground="{Binding ElementName=TextBlock, Path=Foreground}" />
                         </Viewbox>
                         <TextBlock
                             x:Name="TextBlock"

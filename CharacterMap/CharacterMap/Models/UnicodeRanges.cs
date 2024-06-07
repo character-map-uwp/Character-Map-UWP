@@ -2,18 +2,14 @@
 
 public class MakeBasicFilterAttribute : Attribute
 {
-
-}
-
-public static partial class UnicodeRanges
-{
-   
     /*
      * "All" & "AllFilters" are generated in CharacterMap.Generators.FilterGen based on 
      * any NamedUnicodeRange with a [MakeBasicFilter] Attribute.
      */
+}
 
-
+public static partial class UnicodeRanges
+{
     /* Created using https://dotnetfiddle.net/jexT5V */
 
     [MakeBasicFilter] public static NamedUnicodeRange BasicLatin = new(0x0000, 0x007F, "Basic Latin");

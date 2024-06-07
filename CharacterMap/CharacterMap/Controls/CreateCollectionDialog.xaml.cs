@@ -14,10 +14,16 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
 
     [ObservableProperty] bool _isCollectionTitleValid;
 
-    [ObservableProperty] bool _isSmartCollection;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(MinWidth))] bool _isSmartCollection;
+    [ObservableProperty] string _filterCharacters;
     [ObservableProperty] string _filterFilePath;
     [ObservableProperty] string _filterFoundry;
     [ObservableProperty] string _filterDesigner;
+    [ObservableProperty] string _resultsLabel;
+    
+    [ObservableProperty] IReadOnlyList<InstalledFont> _resultsPreview = [];
+
+    public double MinWidth => IsSmartCollection ? 450 : 0;
 
 
     private void OnCollectionTitleChanged()
@@ -33,18 +39,23 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
         {
             IsSmartCollection = true;
 
-            Populate("filepath:", s => FilterFilePath = s);
-            Populate("foundry:", s => FilterFoundry = s);
-            Populate("designer:", s => FilterDesigner = s);
+            Populate("char:",       Localization.Get("CharacterFilter"),    s => FilterCharacters = s);
+            Populate("filepath:",   Localization.Get("FilePathFilter"),     s => FilterFilePath = s);
+            Populate("foundry:",    Localization.Get("FoundryFilter"),      s => FilterFoundry = s);
+            Populate("designer:",   Localization.Get("DesignerFilter"),     s => FilterDesigner = s);
 
-            void Populate(string id, Action<string> set)
+            void Populate(string id, string loc, Action<string> set)
             {
                 foreach (var s in u.Filters)
                 {
                     if (s.StartsWith(id))
                         set(s.Replace(id, string.Empty).Trim());
+                    else if (s.StartsWith(loc))
+                        set(s.Replace(loc, string.Empty).Trim());
                 }
             }
+
+            UpdateResults();
         }
     }
 
@@ -54,6 +65,7 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
         Add("filepath:", _filterFilePath);
         Add("foundry:", _filterFoundry);
         Add("designer:", _filterDesigner);
+        Add("char:", _filterCharacters);
         return filters;
 
         void Add(string id, string field)
@@ -62,9 +74,15 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
                 filters.Add($"{id} {field.Replace(id, string.Empty).Trim()}");
         }
     }
+
+    public void UpdateResults()
+    {
+        SmartFontCollection collection = new () { Filters = GetFilterList() };
+        ResultsPreview = collection.GetFontFamilies();
+        ResultsLabel = Localization.Get("ResultsCountLabel", ResultsPreview.Count);
+    }
 }
 
-//[DependencyProperty<bool>("AllowSmartCollection")]
 public sealed partial class CreateCollectionDialog : ContentDialog
 {
     public CreateCollectionDialogTemplateSettings TemplateSettings { get; }
@@ -91,6 +109,13 @@ public sealed partial class CreateCollectionDialog : ContentDialog
             this.PrimaryButtonText = Localization.Get("DigEditCollection/PrimaryButtonText");
             TemplateSettings.Populate(_collection);
         }
+
+        this.Closed += OnClosed;
+    }
+
+    private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+    {
+        this.Bindings.StopTracking();
     }
 
     public CreateCollectionDialog SetDataContext(object o)
@@ -137,6 +162,9 @@ public sealed partial class CreateCollectionDialog : ContentDialog
                     filters);
 
                 d.Complete();
+
+                result = new AddToCollectionResult(true, null, collection);
+                Result = result;
             }
             else
             {
