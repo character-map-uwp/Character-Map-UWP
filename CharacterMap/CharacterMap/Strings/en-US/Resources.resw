@@ -1767,7 +1767,15 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="SmartCollectionEditHint.Text" xml:space="preserve">
     <value>To modify smart collections use the edit button above.</value>
   </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>Select Folder</value>
   <data name="CharacterFilter" xml:space="preserve">
     <value>char:</value>
+  </data>
+   <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Change sort</value>
+  </data>
+  <data name="SortedByRangeLabel.Text" xml:space="preserve">
+    <value>Sorted by Range</value>
   </data>
 </root>

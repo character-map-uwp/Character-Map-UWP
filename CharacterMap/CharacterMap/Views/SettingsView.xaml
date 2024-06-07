@@ -832,8 +832,7 @@
 
                                         <Grid
                                             x:Name="ImportFontsRegion"
-                                            Width="340"
-                                            Height="80"
+                                            MaxWidth="352"
                                             HorizontalAlignment="Left">
                                             <Rectangle
                                                 Opacity="0.8"
@@ -841,28 +840,28 @@
                                                 StrokeDashArray="2 2"
                                                 StrokeThickness="1" />
 
-                                            <Grid>
+                                            <Grid ColumnSpacing="12" Padding="16">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="*" />
                                                 </Grid.ColumnDefinitions>
 
                                                 <FontIcon
-                                                    Margin="12 12 0 12"
                                                     VerticalAlignment="Top"
                                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                     FontSize="30"
                                                     Glyph="&#xE1E3;" />
 
-                                                <StackPanel Grid.Column="1" Margin="12">
+                                                <StackPanel Grid.Column="1">
                                                     <TextBlock
                                                         x:Uid="ImportDragDropLabel"
                                                         FontWeight="SemiBold"
-                                                        Opacity="0.8" />
+                                                        Opacity="0.8"
+                                                        TextWrapping="Wrap" />
                                                     <TextBlock
                                                         x:Uid="ImportDragDropDescriptionLabel"
                                                         FontSize="12"
-                                                        Opacity="0.8"
+                                                        Opacity="0.6"
                                                         TextWrapping="Wrap" />
                                                 </StackPanel>
 

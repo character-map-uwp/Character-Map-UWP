@@ -88,7 +88,7 @@
     <value>重启应用</value>
   </data>
   <data name="RestartHeader.Text" xml:space="preserve">
-    <value>需要重启应用以生效。</value>
+    <value>需重启应用才可生效。</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
     <value>搜索字符、Unicode 名称或 16 进制序号</value>
@@ -177,10 +177,10 @@
     <value>创建</value>
   </data>
   <data name="DigCreateCollection.Title" xml:space="preserve">
-    <value>创建收藏</value>
+    <value>创建收藏集</value>
   </data>
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>删除收藏</value>
+    <value>删除收藏集</value>
   </data>
   <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
     <value>取消</value>
@@ -192,13 +192,13 @@
     <value>取消</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
-    <value>确定要删除该收藏吗？</value>
+    <value>确定要删除该收藏集吗？</value>
   </data>
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>重命名</value>
   </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
-    <value>重命名收藏</value>
+    <value>重命名收藏集</value>
   </data>
   <data name="OptionAllFonts.Text" xml:space="preserve">
     <value>所有字体</value>
@@ -210,7 +210,7 @@
     <value>符号字体</value>
   </data>
   <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>重命名收藏</value>
+    <value>重命名收藏集</value>
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>字体显示</value>
@@ -228,13 +228,13 @@
     <value>衬线字体</value>
   </data>
   <data name="NewCollectionItem.Text" xml:space="preserve">
-    <value>新收藏</value>
+    <value>新建收藏集</value>
   </data>
   <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
-    <value>从收藏中删除</value>
+    <value>从收藏集中删除</value>
   </data>
   <data name="AddToCollectionFlyout.Text" xml:space="preserve">
-    <value>添加到收藏</value>
+    <value>添加到收藏集</value>
   </data>
   <data name="InstantSearchToggle.OffContent" xml:space="preserve">
     <value>即时搜索已关闭</value>
@@ -279,16 +279,16 @@
     <value>有色字体</value>
   </data>
   <data name="OptionDecorativeFonts.Text" xml:space="preserve">
-    <value>装饰字体</value>
+    <value>装饰体</value>
   </data>
   <data name="OptionMoreFilters.Text" xml:space="preserve">
     <value>更多</value>
   </data>
   <data name="OptionScriptFonts.Text" xml:space="preserve">
-    <value>文字字体</value>
+    <value>书写体</value>
   </data>
   <data name="StatusBarFontCount" xml:space="preserve">
-    <value>{0} 个字体家族</value>
+    <value>{0} 种字体家族</value>
   </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
     <value>文件大小</value>
@@ -309,7 +309,7 @@
     <value>保存到</value>
   </data>
   <data name="NotificationAddedToCollection" xml:space="preserve">
-    <value>{0} 已添加到 "{1}" 收藏</value>
+    <value>{0} 已添加到收藏集 "{1}"</value>
   </data>
   <data name="BtnOpenFile.Content" xml:space="preserve">
     <value>打开文件</value>
@@ -324,10 +324,10 @@
     <value>导入失败</value>
   </data>
   <data name="NotificationMultipleFontsAdded" xml:space="preserve">
-    <value>{0} 个文件被添加到您的收藏中</value>
+    <value>已将 {0} 个文件添加到您的收藏集中</value>
   </data>
   <data name="NotificationSingleFontAdded" xml:space="preserve">
-    <value>{0} 被添加到您的收藏中</value>
+    <value>已将 {0} 添加到您的收藏集中</value>
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>显示字体面板 (Ctrl+L)</value>
@@ -345,7 +345,7 @@
     <value>你确定要将该字体从库中删除吗？ </value>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
-    <value>"{0}" 收藏已删除</value>
+    <value>收藏集 "{0}" 已删除</value>
   </data>
   <data name="DlgException.PrimaryButtonText" xml:space="preserve">
     <value>确定</value>
@@ -421,7 +421,7 @@
   </data>
   <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
     <value>调整窗口时，字符网格的动画效果。
-开启此项后，调整窗口大小时性能消耗很大。</value>
+开启此项后，调整窗口尺寸时性能消耗很大。</value>
   </data>
   <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
     <value>启动窗口尺寸调整动画</value>
@@ -446,7 +446,7 @@
     <value>语言</value>
   </data>
   <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
-    <value>导出的 PNG 像素数。</value>
+    <value>导出的 PNG 尺寸的像素值。</value>
   </data>
   <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
     <value>PNG 导出图片尺寸</value>
@@ -663,13 +663,13 @@
     <value>适配字符</value>
   </data>
   <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
-    <value>被移除自</value>
+    <value>已移除自</value>
   </data>
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
-    <value>被添加到</value>
+    <value>已添加到</value>
   </data>
   <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>收藏名称</value>
+    <value>收藏集名称</value>
   </data>
   <data name="ExportFontFile.Text" xml:space="preserve">
     <value>字体文件</value>
@@ -763,10 +763,10 @@
     <value>字体管理</value>
   </data>
   <data name="SettingsLicensesLabel.Text" xml:space="preserve">
-    <value>协议</value>
+    <value>许可协议</value>
   </data>
   <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
-    <value>从文件资源管理器中拖放文件到此处以导入</value>
+    <value>将文件从文件资源管理器中拖放到此处导入</value>
   </data>
   <data name="ImportDragDropLabel.Text" xml:space="preserve">
     <value>拖放以导入</value>
@@ -781,7 +781,7 @@
     <value>系统</value>
   </data>
   <data name="SettingsFontImportDescription.Text" xml:space="preserve">
-    <value>您可将字体导入本应用查看，不用安装到 Windows 中。
+    <value>您可将字体导入本应用查看，而不用安装到 Windows 中。
 
 导入的字体文件会被复制到应用的私有存储中，因此即便将计算机上的原文件删除，应用仍能显示该字体。</value>
   </data>
@@ -852,7 +852,7 @@
     <value>添加</value>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
-    <value>双击某个字符或用 "添加" 按钮</value>
+    <value>双击某个字符或点击 "添加" 按钮</value>
   </data>
   <data name="AddSelectionItem.Text" xml:space="preserve">
     <value>添加到选择</value>
@@ -1005,7 +1005,7 @@
     <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>添加到收藏</value>
+    <value>添加到收藏集</value>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
     <value>清除选择</value>
@@ -1017,13 +1017,13 @@
     <value>或</value>
   </data>
   <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>从收藏中移除</value>
+    <value>从收藏集中移除</value>
   </data>
   <data name="SelectCollectionLabel" xml:space="preserve">
-    <value>选择收藏</value>
+    <value>选择收藏集</value>
   </data>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
-    <value>收藏</value>
+    <value>收藏集</value>
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>打开字体</value>
@@ -1119,10 +1119,10 @@
     <value>谚文</value>
   </data>
   <data name="AddActiveToCollectionItem.Text" xml:space="preserve">
-    <value>将活动添加到收藏集</value>
+    <value>将已打开的标签页的字体添加到收藏集</value>
   </data>
   <data name="CompareActiveItem.Text" xml:space="preserve">
-    <value>对比活动字体</value>
+    <value>对比已打开的标签页的字体</value>
   </data>
   <data name="OptionEmoji.Text" xml:space="preserve">
     <value>Emoji</value>
@@ -1180,7 +1180,7 @@
     <value>打开某文件夹内能找到的所有字体文件</value>
   </data>
   <data name="OpenFontDescription.Text" xml:space="preserve">
-    <value>打开 TTF、OTF、OTC、TTC、WOFF、WOFF 或 ZIP 文件</value>
+    <value>打开 TTF、OTF、OTC、TTC、WOFF、WOFF2 或 ZIP 文件</value>
   </data>
   <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
     <value>启用鼠标指针经过按钮时的精细弹跳动画效果。</value>
@@ -1343,7 +1343,7 @@
     <value>按设计的语言</value>
   </data>
   <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
-    <value>已弃用的图标字形依您的设置默认隐藏。您可以使用上面的过滤器按钮显示它们。</value>
+    <value>已弃用的图标字形依您的设置默认隐藏。您可以使用上面的筛选器按钮显示它们。</value>
   </data>
   <data name="InstallDialog.SecondaryButtonText" xml:space="preserve">
     <value>关闭</value>
@@ -1409,7 +1409,7 @@
     <value>该字最惯用的粤拼 (粤语) 读法。</value>
   </data>
   <data name="UnihanTypeDescriptionHangul" xml:space="preserve">
-    <value>该字在谚文中的现代韩语发音，括号内有其来源。</value>
+    <value>该字以谚文表示的现代韩语发音，括号内为其来源。</value>
   </data>
   <data name="UnihanTypeDescriptionHanyuPinlu" xml:space="preserve">
     <value>该字的发音和频率，部分基于《现代汉语频率词典》</value>
@@ -1418,18 +1418,18 @@
     <value>(参照) 列于 kHanYu 属性描述内，出现在《汉语大字典》发行版中的汉语拼音读法。</value>
   </data>
   <data name="UnihanTypeDescriptionJapanese" xml:space="preserve">
-    <value>该字用假名表达的日语读音。
+    <value>该字以假名表示的日语读音。
 
-用平假名表示的读法通常为训读，用片假名表示的读法通常为是音读。</value>
+以平假名表示的读法为常规训读，以片假名表示的读法为常规音读。</value>
   </data>
   <data name="UnihanTypeDescriptionJapaneseKun" xml:space="preserve">
     <value>该字以平文式转写 (Hepburn romanization) 的日语发音。</value>
   </data>
   <data name="UnihanTypeDescriptionJapaneseOn" xml:space="preserve">
-    <value>该字的日语发音。</value>
+    <value>该字的日本汉字音。</value>
   </data>
   <data name="UnihanTypeDescriptionKorean" xml:space="preserve">
-    <value>该字用耶鲁式转写 (Yale romanization) 系统的朝鲜/韩语发音。</value>
+    <value>该字用耶鲁式转写 (Yale romanization) 系统表示的朝鲜/韩语发音。</value>
   </data>
   <data name="UnihanTypeDescriptionMandarin" xml:space="preserve">
     <value>该字的最惯用读法的拼音。
@@ -1441,12 +1441,12 @@
   <data name="UnihanTypeDescriptionSMSZD2003Readings" xml:space="preserve">
     <value>这代表《商务新字典》中该字的普通话和粤语读法。
 
-普通话读法以汉语拼音表示。粤语读法为粤拼表示。注意，部分字的读法，如多音节读法，往往被认为是错的。
+普通话读法以汉语拼音表示。粤语读法为粤拼表示。注意，部分字的读法并非如此 (例如，其在多音节中的实际读法可能会有所变化)。
 
 若某一字有多个条目，则表示该字有多个定义，并且读法按这些定义的顺序分组。</value>
   </data>
   <data name="UnihanTypeDescriptionTang" xml:space="preserve">
-    <value>该字的唐代发音，源自或相同于 1976 年耶鲁大学 Hugh M. Stimson 的《唐诗词汇》(T’ang Poetic Vocabulary, Far Eastern Publications)。</value>
+    <value>源于或基于 1976 年耶鲁大学 Hugh M. Stimson 的《唐诗词汇》(T’ang Poetic Vocabulary, Far Eastern Publications)，该字的唐代发音。</value>
   </data>
   <data name="UnihanTypeDescriptionTGHZ2013" xml:space="preserve">
     <value>《通用规范汉字字典》中给出的汉语拼音单音或多音读法。</value>
@@ -1473,10 +1473,10 @@
     <value>日语</value>
   </data>
   <data name="UnihanTypeNameJapaneseKun" xml:space="preserve">
-    <value>日语 (训读)</value>
+    <value>日语训读</value>
   </data>
   <data name="UnihanTypeNameJapaneseOn" xml:space="preserve">
-    <value>日语 (音读)</value>
+    <value>日语音读</value>
   </data>
   <data name="UnihanTypeNameKorean" xml:space="preserve">
     <value>朝/韩语</value>
@@ -1503,7 +1503,7 @@
     <value>隐藏</value>
   </data>
   <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
-    <value>简体中文</value>
+    <value>中文 (简体)</value>
   </data>
   <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
     <value>所选的字符当前已被所选的筛选器隐藏</value>
@@ -1512,12 +1512,157 @@
     <value>设计的目标语言</value>
   </data>
   <data name="CollectionManagementHint.Text" xml:space="preserve">
-    <value>创建收藏，可同时对比、导出或管理多种字体。开始前，请选择现有的收藏，或新建收藏。</value>
+    <value>创建收藏集，可用于同时对比、导出或管理多种字体。开始前，请选择现有的收藏集，或新建收藏集。</value>
   </data>
   <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
     <value>选择现有的</value>
   </data>
   <data name="FindCharButton.Text" xml:space="preserve">
     <value>在其他字体内查找</value>
+  </data>
+  <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
+    <value>按字体家族筛选</value>
+  </data>
+  <data name="SettingsRememberFilter.Description" xml:space="preserve">
+    <value>若启用，应用将记住最近选择的收藏集或筛选器，并在应用重启后将其恢复。
+
+否则，每次启动时都会默认选择 "所有字体"。</value>
+  </data>
+  <data name="SettingsRememberFilter.Title" xml:space="preserve">
+    <value>记住选中的字体列表筛选器</value>
+  </data>
+  <data name="GlyphNameToggleHeader.Text" xml:space="preserve">
+    <value>文件名称模板</value>
+  </data>
+  <data name="GlyphNameToggleLabel.Text" xml:space="preserve">
+    <value>显示模板部件</value>
+  </data>
+  <data name="FileNameWriterCharDescDesc" xml:space="preserve">
+    <value>字形 Unicode 描述，若无则为 Unicode 字符串</value>
+  </data>
+  <data name="FileNameWriterExtensionDesc" xml:space="preserve">
+    <value>文件扩展名</value>
+  </data>
+  <data name="FileNameWriterFaceDesc" xml:space="preserve">
+    <value>当前字体名称</value>
+  </data>
+  <data name="FileNameWriterFamilyDesc" xml:space="preserve">
+    <value>字体家族名称</value>
+  </data>
+  <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
+    <value>尺寸像素值</value>
+  </data>
+  <data name="FileNameWriterStringFormat" xml:space="preserve">
+    <value>{0}，例如 {1}</value>
+  </data>
+  <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
+    <value>10 进制 Unicode 序号/码点值</value>
+  </data>
+  <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
+    <value>16 进制 Unicode 值</value>
+  </data>
+  <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
+    <value>XAML 字形代码</value>
+  </data>
+  <data name="SettingsGlyphNaming.Description" xml:space="preserve">
+    <value>选择要如何命名导出的字符文件。</value>
+  </data>
+  <data name="SettingsGlyphNaming.Title" xml:space="preserve">
+    <value>字形导出命名</value>
+  </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>例如 {0}</value>
+  </data>
+  <data name="FileNameWriterFontVerDesc" xml:space="preserve">
+    <value>字体版本号 (若可用)</value>
+  </data>
+  <data name="CanvasFontInformationCopyrightNotice" xml:space="preserve">
+    <value>版权告示</value>
+  </data>
+  <data name="CanvasFontInformationDescription" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="CanvasFontInformationDesigner" xml:space="preserve">
+    <value>设计者</value>
+  </data>
+  <data name="CanvasFontInformationDesignerUrl" xml:space="preserve">
+    <value>设计者 URL</value>
+  </data>
+  <data name="CanvasFontInformationFontVendorUrl" xml:space="preserve">
+    <value>字体供应商 URL</value>
+  </data>
+  <data name="CanvasFontInformationFullName" xml:space="preserve">
+    <value>全名</value>
+  </data>
+  <data name="CanvasFontInformationLicenseDescription" xml:space="preserve">
+    <value>许可协议</value>
+  </data>
+  <data name="CanvasFontInformationLicenseInfoUrl" xml:space="preserve">
+    <value>许可协议 URL</value>
+  </data>
+  <data name="CanvasFontInformationManufacturer" xml:space="preserve">
+    <value>厂商</value>
+  </data>
+  <data name="CanvasFontInformationTrademark" xml:space="preserve">
+    <value>商标</value>
+  </data>
+  <data name="CanvasFontInformationVersionStrings" xml:space="preserve">
+    <value>版本字符串</value>
+  </data>
+  <data name="RestoreLabel.Text" xml:space="preserve">
+    <value>恢复</value>
+    <comment>Opposite of Fullscreen</comment>
+  </data>
+  <data name="CharFilter" xml:space="preserve">
+    <value>char:</value>
+    <comment>Command used for character searches. Should be short.</comment>
+  </data>
+  <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
+    <value>创建智能收藏集</value>
+  </data>
+  <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>查看智能收藏集的在线文档</value>
+  </data>
+  <data name="DesignerFilter" xml:space="preserve">
+    <value>designer:</value>
+    <comment>Command used for designer searches. Should be short.</comment>
+  </data>
+  <data name="FilePathFilter" xml:space="preserve">
+    <value>filepath:</value>
+    <comment>Command used for file path searches. Should be short.</comment>
+  </data>
+  <data name="FoundryFilter" xml:space="preserve">
+    <value>foundry:</value>
+    <comment>Command used for foundry searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionDesignerFilter.Text" xml:space="preserve">
+    <value>设计者筛选器</value>
+  </data>
+  <data name="SmartCollectionFilePathFilter.Text" xml:space="preserve">
+    <value>文件路径筛选器</value>
+  </data>
+  <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
+    <value>厂商筛选器</value>
+  </data>
+  <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="DigEditCollection.Title" xml:space="preserve">
+    <value>编辑收藏集</value>
+  </data>
+  <data name="EditCollectionButton.Label" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>编辑收藏集</value>
+  </data>
+  <data name="BtnHelpAndTips.Content" xml:space="preserve">
+    <value>帮助与提示</value>
+  </data>
+  <data name="SmartCollectionEditHint.Text" xml:space="preserve">
+    <value>要修改智能收藏集，请点击上方的编辑按钮。</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>选择文件夹</value>
   </data>
 </root>

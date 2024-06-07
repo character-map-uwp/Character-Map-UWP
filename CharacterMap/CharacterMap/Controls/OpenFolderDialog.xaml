@@ -47,7 +47,7 @@
 
             <TextBlock Margin="0 -8 0 0" HorizontalAlignment="Center">
                 <Run Text="{core:Localizer Key=DigOpenFolderContent/PrefixLabel}" d:Text="Found" />
-                <Run Text="{x:Bind TemplateSettings.Count, Mode=OneWay}" />
+                <Run Text="{x:Bind TemplateSettings.Count, Mode=OneWay}" d:Text="11" />
                 <Run Text="{core:Localizer Key=DigOpenFolderContent/SuffixLabel}" d:Text="font files" />
             </TextBlock>
         </StackPanel>

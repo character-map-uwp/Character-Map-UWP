@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -13,58 +13,58 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddToCollectionHint.Text" xml:space="preserve">
-    <value>Adicionar à Biblioteca</value>
+    <value>Adicionar à biblioteca</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Mapa de Carateres</value>
+    <value>Mapa de caracteres UWP</value>
   </data>
   <data name="BlackFill.Text" xml:space="preserve">
-    <value>Preenchimento Preto</value>
+    <value>Preenchimento preto</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
-    <value>Copiar como Texto</value>
+    <value>Copiar como texto</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Selecionar</value>
   </data>
   <data name="ColoredGlyphLabel.Text" xml:space="preserve">
-    <value>Colored Glyph</value>
+    <value>Glifo colorido</value>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
-    <value>Monochrome glyphs</value>
+    <value>Glifo monocromático</value>
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
-    <value>Color glyphs</value>
+    <value>Glifos coloridos</value>
   </data>
   <data name="FontDisplayHeader.Text" xml:space="preserve">
-    <value>Opções de Visualização da Fonte</value>
+    <value>Opções de visualização do tipo de letra</value>
   </data>
   <data name="FontOptionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Opções de Renderização da Fonte</value>
+    <value>Opções de composição do tipo de letra</value>
   </data>
   <data name="FontPropertiesButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Propriedades do Rosto da Fonte</value>
+    <value>Propriedades do tipo de letra</value>
   </data>
   <data name="FontPropFace.Text" xml:space="preserve">
-    <value>Nome do Rosto</value>
+    <value>Nome da variante</value>
   </data>
   <data name="FontPropFamily.Text" xml:space="preserve">
-    <value>Nome da Familia</value>
+    <value>Nome da família</value>
   </data>
   <data name="FontPropMonospaced.Text" xml:space="preserve">
-    <value>É Monoespaçado</value>
+    <value>Monoespaçada</value>
   </data>
   <data name="FontPropStretch.Text" xml:space="preserve">
-    <value>Esticar</value>
+    <value>Largura</value>
   </data>
   <data name="FontPropStyle.Text" xml:space="preserve">
     <value>Estilo</value>
   </data>
   <data name="FontPropSymbol.Text" xml:space="preserve">
-    <value>É Fonte de Símbolo</value>
+    <value>Símbolos</value>
   </data>
   <data name="FontPropTitle.Text" xml:space="preserve">
-    <value>Propriedades do Rosto da Fonte</value>
+    <value>Propriedades do tipo de letra</value>
   </data>
   <data name="FontPropType.Text" xml:space="preserve">
     <value>Tipo</value>
@@ -73,117 +73,106 @@
     <value>Peso</value>
   </data>
   <data name="InvalidFontMessage" xml:space="preserve">
-    <value>Pedimos desculpa, não encontramos nenhum dado de fonte suportado neste ficheiro.</value>
+    <value>Pedimos desculpa, mas não conseguimos encontrar nenhum dado de tipo de letra suportado neste ficheiro.</value>
   </data>
   <data name="InvalidFontTitle" xml:space="preserve">
-    <value>Ficheiro não Suportado</value>
+    <value>Ficheiro não suportado</value>
   </data>
   <data name="OpenInNewWindow.Text" xml:space="preserve">
-    <value>Abrir numa Nova Janela</value>
+    <value>Abrir numa nova janela</value>
   </data>
   <data name="RemoveFontFlyout.Text" xml:space="preserve">
-    <value>Eliminar Fonte</value>
+    <value>Eliminar tipo de letra</value>
   </data>
   <data name="RestartButton.Content" xml:space="preserve">
-    <value>Reiniciar aplicação</value>
+    <value>Reiniciar a aplicação</value>
   </data>
   <data name="RestartHeader.Text" xml:space="preserve">
-    <value>Requer reinicialização da aplicação para fazer efeito.</value>
+    <value>Verá a sua alteração quando voltar a iniciar a aplicação.</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
-    <value>Pesquise o nome do caráter ou o unicode hex</value>
+    <value>Procurar por nome ou hexadecimal unicode</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>Acerca desta aplicação</value>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>Esta aplicação foi projetada para substituir o Mapa de carateres do Windows Win32. É mais consciente do DPI em ecrãs de DPI alto.</value>
+    <value>Esta aplicação foi projetada para substituir o Mapa de carateres (Win32) do Windows. É mais consciente do PPP em ecrãs com PPP alto.</value>
   </data>
   <data name="TxtCopiedMessage.Text" xml:space="preserve">
     <value>Copiado</value>
   </data>
-  <data name="TxtFontIcon.Header" xml:space="preserve">
-    <value>Font Icon</value>
-    <comment>Xaml FontIcon. Does not need translation.</comment>
-  </data>
-  <data name="TxtSymbolIcon.Header" xml:space="preserve">
-    <value>Symbol Icon</value>
-    <comment>Xaml SymbolIcon. Does not need translation.</comment>
-  </data>
   <data name="TxtTitle.Text" xml:space="preserve">
-    <value>Mapa de Carateres</value>
+    <value>Mapa de caracteres</value>
   </data>
   <data name="TxtUnicode.Header" xml:space="preserve">
     <value>Unicode</value>
   </data>
   <data name="TxtXamlCode.Header" xml:space="preserve">
-    <value>Glyph Code</value>
+    <value>Código do glifo</value>
   </data>
   <data name="TypographyVariantsHeader.Text" xml:space="preserve">
-    <value>Glyph Variants</value>
+    <value>Alternativas estilísticas</value>
   </data>
   <data name="WhiteFill.Text" xml:space="preserve">
-    <value>Preenchimento Branco</value>
+    <value>Preenchimento branco</value>
   </data>
   <data name="ImportNotAFile" xml:space="preserve">
     <value>Não é um ficheiro</value>
   </data>
   <data name="ImportPendingDelete" xml:space="preserve">
-    <value>Fonte existente pendente para eliminação. Por favor, reinicie a aplicação.</value>
+    <value>Eliminação do tipo de letra pendente. Reinicie a aplicação.</value>
   </data>
   <data name="ImportUnavailableFile" xml:space="preserve">
     <value>Ficheiro não disponível</value>
   </data>
   <data name="ImportUnsupportedFileType" xml:space="preserve">
-    <value>Tipo de Ficheiro não Suportado</value>
+    <value>Ficheiro não suportado</value>
   </data>
   <data name="ImportUnsupportedFontType" xml:space="preserve">
-    <value>Tipo de Fonte não Suportado</value>
+    <value>Tipo de letra não suportado</value>
   </data>
   <data name="FontsClearedOnNextLaunchNotice" xml:space="preserve">
-    <value>Algumas fontes não podem ser completamente eliminadas agora. Essas fontes não vão aparecer na aplicação e serão completamente eliminadas na próxima vez que a aplicação for iniciado.</value>
+    <value>Alguns tipos de letra não foram completamente removidos. Esses tipos de letra não vão aparecer na aplicação e serão completamente removidos na próxima vez que voltar a iniciar a aplicação.</value>
   </data>
   <data name="SaveImageError" xml:space="preserve">
-    <value>Pedimos desculpa, aconteceu algo de errado enquanto estávamos a tentar guardar a imagem.</value>
+    <value>Pedimos desculpa, ocorreu um erro ao tentar guardar a imagem.</value>
   </data>
   <data name="LoadingFontListError" xml:space="preserve">
-    <value>Erro ao Carregar Lista de Fontes</value>
+    <value>Erro ao carregar a lista de tipos de letra</value>
   </data>
   <data name="NoticeLabel.Text" xml:space="preserve">
     <value>Atenção</value>
   </data>
   <data name="ImportFileCopyFail" xml:space="preserve">
-    <value>Aconteceu algo de errado. Por favor, tente novamente mais tarde.</value>
+    <value>Ocorreu um problema. Tente novamente.</value>
   </data>
   <data name="ImportFontHelpBlock.Text" xml:space="preserve">
-    <value>Arraste fontes para a aplicação para copiá-las na sua biblioteca.</value>
-  </data>
-  <data name="FontPropXaml.Text" xml:space="preserve">
-    <value>XAML FontFamily Source</value>
+    <value>Arraste ficheiros de tipo de letra e largue-os na aplicação para copiar tipos de letra à sua biblioteca.</value>
   </data>
   <data name="FilePickerConfirm" xml:space="preserve">
     <value>Importar</value>
   </data>
   <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Importar Fontes</value>
+    <value>Importar tipos de letra</value>
   </data>
   <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Abrir Fonte</value>
+    <value>Abrir tipo de letra</value>
   </data>
   <data name="OpenFontPickerConfirm" xml:space="preserve">
     <value>Abrir</value>
   </data>
   <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>Nome da Coleção</value>
+    <value>Nome da coleção</value>
   </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>Criar</value>
   </data>
   <data name="DigCreateCollection.Title" xml:space="preserve">
-    <value>Criar Coleção</value>
+    <value>Criar coleção</value>
   </data>
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Eliminar Coleção</value>
+    <value>Eliminar coleção</value>
   </data>
   <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
     <value>Cancelar</value>
@@ -195,160 +184,160 @@
     <value>Cancelar</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
-    <value>Tem a certeza de que quer eliminar esta coleção?</value>
+    <value>Tem a certeza de que pretende eliminar esta coleção?</value>
   </data>
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>Mudar o nome</value>
   </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
-    <value>Mudar o nome da Coleção</value>
+    <value>Mudar o nome da coleção</value>
   </data>
   <data name="OptionAllFonts.Text" xml:space="preserve">
-    <value>Todas as Fontes</value>
+    <value>Todos os tipos de letra</value>
   </data>
   <data name="OptionImportedFonts.Text" xml:space="preserve">
-    <value>Fontes Importadas</value>
+    <value>Tipos de letra importados</value>
   </data>
   <data name="OptionSymbolFonts.Text" xml:space="preserve">
-    <value>Fontes de Símbolos</value>
+    <value>Tipos de letra de símbolos</value>
   </data>
   <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Mudar o nome da Coleção</value>
+    <value>Mudar o nome da coleção</value>
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
-    <value>Visualização da Lista de Fontes</value>
+    <value>Visualizador da lista de tipos de letra</value>
   </data>
   <data name="FontPropCount.Text" xml:space="preserve">
-    <value>Glyph Count</value>
+    <value>Número de glifos</value>
   </data>
   <data name="OptionMonospacedFonts.Text" xml:space="preserve">
-    <value>Fontes Monoespaçadas</value>
+    <value>Tipos de letra monoespaçada</value>
   </data>
   <data name="OptionSansSerifFonts.Text" xml:space="preserve">
-    <value>Fontes sem Serifa</value>
+    <value>Tipos de letra sem serifa</value>
   </data>
   <data name="OptionSerifFonts.Text" xml:space="preserve">
-    <value>Fontes Serifadas</value>
+    <value>Tipos de letra serifa</value>
   </data>
   <data name="NewCollectionItem.Text" xml:space="preserve">
-    <value>Nova Coleção</value>
+    <value>Nova coleção</value>
   </data>
   <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
-    <value>Remover da Coleção</value>
+    <value>Remover da coleção</value>
   </data>
   <data name="AddToCollectionFlyout.Text" xml:space="preserve">
-    <value>Adicionar à Coleção</value>
+    <value>Adicionar à coleção</value>
   </data>
   <data name="InstantSearchToggle.OffContent" xml:space="preserve">
-    <value>Pesquisa instantânea desativada</value>
+    <value>Procura instantânea desligada</value>
   </data>
   <data name="InstantSearchToggle.OnContent" xml:space="preserve">
-    <value>Pesquisa instantânea ativada</value>
+    <value>Procura instantânea ligada</value>
   </data>
   <data name="SearchResultsSlider.Header" xml:space="preserve">
-    <value>Resultados máximos da pesquisa</value>
+    <value>Máximo de resultados da procura</value>
   </data>
   <data name="FontPropCharCount.Text" xml:space="preserve">
-    <value>Contagem de Carateres</value>
+    <value>Número de caracteres</value>
   </data>
   <data name="FontPropFilePath.Text" xml:space="preserve">
-    <value>Localização do Ficheiro</value>
+    <value>Localização do ficheiro</value>
   </data>
   <data name="DWriteSourceAppxPackage" xml:space="preserve">
     <value>Microsoft Store</value>
   </data>
   <data name="DWriteSourcePerMachine" xml:space="preserve">
-    <value>Todos os Utilizadores</value>
+    <value>Todos os utilizadores</value>
   </data>
   <data name="DWriteSourcePerUser" xml:space="preserve">
-    <value>Apenas o Utilizador Atual</value>
+    <value>Apenas o utilizador atual</value>
   </data>
   <data name="DWriteSourceRemoteFontProvider" xml:space="preserve">
-    <value>Fornecedor de Nuvem</value>
+    <value>Fornecedor de nuvem</value>
   </data>
   <data name="DWriteSourceUnknown" xml:space="preserve">
-    <value>Indefinido</value>
+    <value>Indeterminada</value>
   </data>
   <data name="FontPropInstallType.Text" xml:space="preserve">
-    <value>Instalar Tipo</value>
+    <value>Tipo de instalação</value>
   </data>
   <data name="OptionAppxFonts.Text" xml:space="preserve">
     <value>Da Microsoft Store</value>
   </data>
   <data name="OptionCloudFonts.Text" xml:space="preserve">
-    <value>Fontes baseadas em Nuvem</value>
+    <value>Tipos de letra da nuvem</value>
   </data>
   <data name="OptionColorFonts.Text" xml:space="preserve">
-    <value>Fontes de Cor</value>
+    <value>Tipos de letra de cor</value>
   </data>
   <data name="OptionDecorativeFonts.Text" xml:space="preserve">
-    <value>Fontes Decorativas</value>
+    <value>Tipos de letra decorativa</value>
   </data>
   <data name="OptionMoreFilters.Text" xml:space="preserve">
     <value>Mais</value>
   </data>
   <data name="OptionScriptFonts.Text" xml:space="preserve">
-    <value>Fontes de Script</value>
+    <value>Tipos de letra manuscrita</value>
   </data>
   <data name="StatusBarFontCount" xml:space="preserve">
-    <value>{0} Famílias de Fontes</value>
+    <value>{0} família(s) tipográfica(s)</value>
   </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
-    <value>Tamanho do Ficheiro</value>
+    <value>Tamanho do ficheiro</value>
   </data>
   <data name="InstallTypeImported" xml:space="preserve">
-    <value>Não Instalado (Importado)</value>
+    <value>Não instalada (importada)</value>
   </data>
   <data name="StatusBarCharacterCount" xml:space="preserve">
-    <value>{0} Carater(es)</value>
+    <value>{0} caracteres</value>
   </data>
   <data name="SearchDelaySelector.Header" xml:space="preserve">
-    <value>Atraso antes da pesquisa (ms)</value>
+    <value>Atraso antes da procura (ms)</value>
   </data>
   <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
-    <value>Pesquisa Instantânea</value>
+    <value>Procura instantânea</value>
   </data>
   <data name="CharacterSavedMessage.Text" xml:space="preserve">
-    <value>Guardado para</value>
+    <value>Guardado em</value>
   </data>
   <data name="NotificationAddedToCollection" xml:space="preserve">
-    <value>{0} foi adicionado para a coleção "{1}"</value>
+    <value>{0} foi adicionada à coleção "{1}"</value>
   </data>
   <data name="BtnOpenFile.Content" xml:space="preserve">
-    <value>Abrir Ficheiro</value>
+    <value>Abrir ficheiro</value>
   </data>
   <data name="BtnOpenFolder.Content" xml:space="preserve">
-    <value>Mostrar numa Pasta</value>
+    <value>Mostrar numa pasta</value>
   </data>
   <data name="BtnHidePane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Ocultar painel de fontes (Ctrl+L)</value>
+    <value>Ocultar painel de tipos de letra (Ctrl+L)</value>
   </data>
   <data name="NotificationImportFailed" xml:space="preserve">
-    <value>Importação Falhada</value>
+    <value>A importação falhou</value>
   </data>
   <data name="NotificationMultipleFontsAdded" xml:space="preserve">
-    <value>{0} ficheiros foram adicionados para a sua coleção</value>
+    <value>{0} ficheiros foram adicionados à tua coleção</value>
   </data>
   <data name="NotificationSingleFontAdded" xml:space="preserve">
-    <value>{0} foi adicionado para a sua coleção</value>
+    <value>{0} foi adicionado à tua coleção</value>
   </data>
   <data name="BtnShowPane.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Mostrar painel de fontes (Ctrl + L)</value>
+    <value>Mostrar painel de tipos de letra (Ctrl+L)</value>
   </data>
   <data name="BtnMoreIcon.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Mais</value>
   </data>
   <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Filtrar fontes</value>
+    <value>Filtrar tipos de letra</value>
   </data>
   <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Alternar Ecrã Inteiro</value>
+    <value>Alternar ecrã inteiro</value>
   </data>
   <data name="DlgDeleteFont.Title" xml:space="preserve">
-    <value>Tem a certeza de que quer apagar esta fonte da sua biblioteca?</value>
+    <value>Tem a certeza de que pretende eliminar este tipo de letra da biblioteca?</value>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
-    <value>Coleção "{0}" eliminada</value>
+    <value>"{0}" coleção eliminada</value>
   </data>
   <data name="DlgException.PrimaryButtonText" xml:space="preserve">
     <value>OK</value>
@@ -357,13 +346,13 @@
     <value>Algo correu mal</value>
   </data>
   <data name="DlgExceptionCopyMessage.Text" xml:space="preserve">
-    <value>Copiar erro para a Área de Transferências e abrir GitHub</value>
+    <value>Copiar erro para a Área de Transferência e abrir o GitHub</value>
   </data>
   <data name="DlgExceptionExpander.Header" xml:space="preserve">
-    <value>Ver Detalhes Completos da Exceção</value>
+    <value>Ver detalhes completos da excepção</value>
   </data>
   <data name="DlgExceptionMessage.Text" xml:space="preserve">
-    <value>Para nos ajudar a depurar e corrigir isto para si, por favor, considere abrir um problema na nossa página GitHub e afixar os detalhes. Tentaremos corrigi-lo de imediato!</value>
+    <value>Para nos ajudar a depurar e a resolvê-lo, considere criar uma relatório de erro que nos pode enviar os detalhes na nossa página no GitHub. Tentaremos corrigir imediatamente!</value>
   </data>
   <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Fechar</value>
@@ -372,10 +361,10 @@
     <value>Copiar</value>
   </data>
   <data name="BtnRateAndReview.Content" xml:space="preserve">
-    <value>Classifique &amp; Avalie</value>
+    <value>Classifique &amp; critique</value>
   </data>
   <data name="BtnXAMLGeometry.Content" xml:space="preserve">
-    <value>Clique para ver</value>
+    <value>Premir para ver</value>
   </data>
   <data name="RbThemeDark.Content" xml:space="preserve">
     <value>Escuro</value>
@@ -384,112 +373,108 @@
     <value>Claro</value>
   </data>
   <data name="RbThemeSystem.Content" xml:space="preserve">
-    <value>Predefinição do Windows</value>
+    <value>Utilizar definição do sistema</value>
   </data>
   <data name="RbUseActualFont.Content" xml:space="preserve">
-    <value>Utilizar fonte atual</value>
+    <value>Utilizar tipo de letra atual</value>
   </data>
   <data name="RbUseSystemFont.Content" xml:space="preserve">
-    <value>Utilizar fonte do sistema</value>
+    <value>Utilizar tipo de letra do sistema</value>
   </data>
   <data name="SettingsCharacterSearchDescription.Text" xml:space="preserve">
-    <value>Alternar para a pesquisa instantânea. Se desativado, você pode iniciar uma pesquisa utilizando a tecla Enter ou pressionando o ícone de pesquisar.</value>
+    <value>Mudar procura instantânea. Ao desligar, a procura inicia ao premir a tecla Enter ou o ícone de procura.</value>
   </data>
   <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
-    <value>Pesquisa de Carateres</value>
+    <value>Procura de caracteres</value>
   </data>
   <data name="SettingsCharGridDescription.Text" xml:space="preserve">
-    <value>O tamanho dos carateres individuais dentro da grelha de carateres. Tamanhos menores podem afetar o desempenho.</value>
+    <value>O tamanho dos caracteres individuais dentro da grelha de caracteres. Tamanhos menores podem afetar o desempenho.</value>
   </data>
   <data name="SettingsCharGridHeader.Text" xml:space="preserve">
-    <value>Tamanho da Grelha de Carateres</value>
+    <value>Tamanho da grelha de caracteres</value>
   </data>
   <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
-    <value>Pré-visualização da grelha de carateres</value>
+    <value>Pré-visualização da grelha de caracteres</value>
   </data>
   <data name="SettingsDevToolsDescription.Text" xml:space="preserve">
-    <value>Mostrar ferramentas para desenvolvedores XAML, como Ícone de Símbolo e Ícone de Fonte.</value>
+    <value>Mostrar as ferramentas para programdores XAML, como Symbol Icon e Font Icon.</value>
   </data>
   <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
-    <value>Funcionalidades de Desenvolvedor</value>
+    <value>Funcionalidades de programador</value>
   </data>
   <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
-    <value>Mostrar funcionalidades de desenvolvedor</value>
+    <value>Mostrar funcionalidades de programador</value>
   </data>
   <data name="SettingsDevToolsLangDescription.Text" xml:space="preserve">
-    <value>Escolha a linguagem de desenvolvimento para o conteúdo das funcionalidades do desenvolvedor.</value>
+    <value>Escolha a linguagem de programação para o conteúdo das funcionalidades de programador.</value>
   </data>
   <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
-    <value>Linguagem</value>
+    <value>Idioma</value>
   </data>
   <data name="SettingsExpensiveAnimationDescription.Text" xml:space="preserve">
-    <value>Anima a grelha de carateres ao redimensionar a janela.
-Ao ativar isto pode incorrer uma grande penalização de desempenho ao redimensionar a janela.</value>
+    <value>Anima a grelha de caracteres ao redimensionar a janela.
+Ativar esta definição pode incorrer uma grande penalização de desempenho ao redimensionar a janela.</value>
   </data>
   <data name="SettingsExpensiveAnimationHeader.Text" xml:space="preserve">
-    <value>Ativar animações de redimensionamento de janelas</value>
+    <value>Animações de redimensionamento da janela</value>
   </data>
   <data name="SettingsExportHeader.Text" xml:space="preserve">
     <value>Exportar</value>
   </data>
   <data name="SettingsFontListDescription.Text" xml:space="preserve">
-    <value>Escolha a fonte utilizada para exibir os nomes das fontes na lista de fontes.</value>
+    <value>Escolhe o tipo de letra utilizado para exibir os nomes dos tipos de letra na lista de tipos de letra.</value>
   </data>
   <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
-    <value>Pré-visualização da lista de fontes</value>
+    <value>Pré-visualização da lista de tipos de letra</value>
   </data>
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>Definições</value>
   </data>
   <data name="SettingsLanguageDescription.Text" xml:space="preserve">
     <value>Substituir o idioma na aplicação.
-Requer a reinicialização para ter efeito.</value>
+Verá a sua alteração quando voltar a iniciar a aplicação.</value>
   </data>
   <data name="SettingsLanguageHeader.Text" xml:space="preserve">
     <value>Substituição do idioma</value>
   </data>
   <data name="SettingsPNGExportDescription.Text" xml:space="preserve">
-    <value>O tamanho em pixels das imagens PNG exportadas.</value>
+    <value>O tamanho, em píxeis, das imagens PNG exportadas.</value>
   </data>
   <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
-    <value>Tamanho da Exportação PNG</value>
+    <value>Tamanho da exportação PNG</value>
   </data>
   <data name="SettingsShadowsDescription.Text" xml:space="preserve">
-    <value>Permite sombras subtis de profundidade na IU. Apenas perceptível quando se utiliza o tema Claro.
-Ativar isto pode ter um pequeno impacto no desempenho de dispositivos mais fracos.
-Requer a reinicialização para ter efeito.</value>
+    <value>Ativa sombras de profundidade subtis na IU. Apenas percetível ao utilizar o tema claro.
+Ativar esta opção pode ter um pequeno impacto no desempenho em dispositivos mais fracos.
+Verá a sua alteração quando voltar a iniciar a aplicação.</value>
   </data>
   <data name="SettingsShadowsHeader.Text" xml:space="preserve">
-    <value>Ativar sombras</value>
+    <value>Sombras</value>
   </data>
   <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
-    <value>Controla a animação para carregar a lista de fontes, mudar as fontes e mudar os carateres.
-Ativar isto tem um impacto de desempenho negligenciável.</value>
+    <value>Controla a maioria das animações dentro da aplicação. Desligar esta opção desativa a maioria das animações.
+Ativar esta opção tem um impacto insignificante no desempenho.</value>
   </data>
   <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
-    <value>Ativar animações simples</value>
+    <value>Animações</value>
   </data>
   <data name="SettingsThemeHeader.Text" xml:space="preserve">
     <value>Tema</value>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
-    <value>Interface de Utilizador</value>
-  </data>
-  <data name="TxtPathGeometry.Text" xml:space="preserve">
-    <value>Path Geometry</value>
-    <comment>Xaml PathGeometry. Does not need translation.</comment>
+    <value>Esquema</value>
   </data>
   <data name="UseSystemLanguage" xml:space="preserve">
-    <value>Utilizar definição de idioma do sistema</value>
+    <value>Utilizar o idioma de apresentação do sistema</value>
   </data>
   <data name="SettingsNeedRestart.Text" xml:space="preserve">
-    <value>A alteração será aplicada após reinício</value>
+    <value>Verá a sua alteração quando voltar a iniciar a aplicação</value>
   </data>
   <data name="BtnContributors.Content" xml:space="preserve">
     <value>Contribuidores</value>
   </data>
   <data name="TxtLoadingFonts.Text" xml:space="preserve">
-    <value>A Carregar Fontes</value>
+    <value>A carregar tipos de letra</value>
   </data>
   <data name="AppBtnClear.Label" xml:space="preserve">
     <value>Limpar</value>
@@ -498,7 +483,7 @@ Ativar isto tem um impacto de desempenho negligenciável.</value>
     <value>Repor</value>
   </data>
   <data name="AppBtnSelectAll.Label" xml:space="preserve">
-    <value>Selecionar Tudo</value>
+    <value>Selecionar tudo</value>
   </data>
   <data name="BtnApply.Content" xml:space="preserve">
     <value>Aplicar</value>
@@ -513,104 +498,104 @@ Ativar isto tem um impacto de desempenho negligenciável.</value>
     <value>Imprimir</value>
   </data>
   <data name="CbCharacterLabel.Header" xml:space="preserve">
-    <value>Etiqueta do Carater</value>
+    <value>Etiqueta do carácter</value>
   </data>
   <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
-    <value>Paisagem</value>
+    <value>Vertical</value>
   </data>
   <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
-    <value>Retrato</value>
+    <value>Horizontal</value>
   </data>
   <data name="CbListStyle.Header" xml:space="preserve">
-    <value>Estilo da Lista</value>
+    <value>Estilo da lista</value>
   </data>
   <data name="CbShowMargins.Content" xml:space="preserve">
-    <value>Mostrar Margens</value>
+    <value>Mostrar margens</value>
   </data>
   <data name="ChkBxHideWhitespace.Content" xml:space="preserve">
-    <value>Ocultar espaços em branco e controlar carateres</value>
+    <value>Ocultar espaços em branco e caracteres de controlo</value>
   </data>
   <data name="ChkBxShowBorders.Content" xml:space="preserve">
     <value>Mostrar bordas</value>
   </data>
   <data name="GlyphAnnotation_None" xml:space="preserve">
-    <value>Nenhum</value>
+    <value>Nenhuma</value>
   </data>
   <data name="GlyphAnnotation_UnicodeHex" xml:space="preserve">
-    <value>Unicode Hex</value>
+    <value>Hexademical Unicode</value>
   </data>
   <data name="GlyphAnnotation_UnicodeIndex" xml:space="preserve">
-    <value>Unicode Index</value>
+    <value>Índice Unicode</value>
   </data>
   <data name="PrintCharacterFilterContent.Text" xml:space="preserve">
-    <value>Escolha os grupos de carateres a exibir</value>
+    <value>Escolhe o grupo de caracteres a apresentar</value>
   </data>
   <data name="PrintDataHeader.Text" xml:space="preserve">
-    <value>Dado</value>
+    <value>Dados</value>
   </data>
   <data name="PrintViewCharSize.Text" xml:space="preserve">
-    <value>Tamanho do Carater</value>
+    <value>Tamanho do carácter</value>
   </data>
   <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
-    <value>Margem Horizontal</value>
+    <value>Margem horizontal</value>
   </data>
   <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
-    <value>Layout</value>
+    <value>Esquema</value>
   </data>
   <data name="PrintViewOfLabel.Text" xml:space="preserve">
     <value>de</value>
   </data>
   <data name="PrintViewPageOrientation.Header" xml:space="preserve">
-    <value>Orientação da Página</value>
+    <value>Orientação da página</value>
   </data>
   <data name="PrintViewPageRange.Text" xml:space="preserve">
-    <value>Intervalo da Página</value>
+    <value>Intervalo de páginas</value>
   </data>
   <data name="PrintViewPageRangeDesc.Text" xml:space="preserve">
-    <value>Podem ser imprimido até 50 páginas de cada vez. Selecione aqui o intervalo de páginas a imprimir.</value>
+    <value>Podem ser impressas até 50 páginas de uma vez. Selecione aqui o intervalo de páginas a imprimir.</value>
   </data>
   <data name="PrintViewPageRangeSelector.Header" xml:space="preserve">
     <value>Páginas para imprimir:</value>
   </data>
   <data name="PrintViewPageSelector.Header" xml:space="preserve">
-    <value>Iniciar da página:</value>
+    <value>Iniciar na página:</value>
   </data>
   <data name="PrintViewPageSetupHeader.Text" xml:space="preserve">
-    <value>Definição da Página</value>
+    <value>Configuração da página</value>
   </data>
   <data name="PrintViewPreviewingLabel.Text" xml:space="preserve">
-    <value>Pré-visualizando a página</value>
+    <value>Pré-visualização da página</value>
   </data>
   <data name="PrintViewPreviewOutOfBoundsLabel.Text" xml:space="preserve">
-    <value>Esta página está fora do intervalo de páginas atual e não será imprimido.
-Pode alterar o intervalo de páginas na secção Definição da Página.</value>
+    <value>Esta página está fora do intervalo de páginas atual e não será impressa.
+Pode alterar o intervalo de páginas na secção Configuração da página.</value>
   </data>
   <data name="PrintViewPrintingLabel" xml:space="preserve">
-    <value>Imprimindo páginas {0} - {1}</value>
+    <value>A imprimir página {0} - {1}</value>
   </data>
   <data name="PrintViewTitle.Text" xml:space="preserve">
-    <value>Definição de Impressão</value>
+    <value>Configuração de impressão</value>
   </data>
   <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
-    <value>Margem Vertical</value>
+    <value>Margem vertical</value>
   </data>
   <data name="SettingsCharLabel.Text" xml:space="preserve">
-    <value>Etiqueta do Carater</value>
+    <value>Etiqueta do carácter</value>
   </data>
   <data name="SettingsCharLabelDesc.Text" xml:space="preserve">
-    <value>Escolha a etiqueta a mostrar sob cada carater. Pode ter um efeito menor no desempenho de deslocamento.</value>
+    <value>Escolhe a etiqueta a mostrar debaixo de cada carácter. Pode ter um efeito menor no desempenho do deslocamento.</value>
   </data>
   <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
-    <value>Gerir fontes instaladas</value>
+    <value>Gerir tipos de letra instalados</value>
   </data>
   <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
-    <value>Fontes Instaladas</value>
+    <value>Tipos de letra instalados</value>
   </data>
   <data name="SettingsWindowsThemeSettings.Content" xml:space="preserve">
     <value>Definições do tema do Windows</value>
   </data>
   <data name="UnicodeFiltersTitle.Text" xml:space="preserve">
-    <value>FILTROS DA CATEGORIA UNICODE</value>
+    <value>FILTROS DE CATEGORIA UNICODE</value>
   </data>
   <data name="PrintLayout_Grid" xml:space="preserve">
     <value>Grelha</value>
@@ -619,27 +604,27 @@ Pode alterar o intervalo de páginas na secção Definição da Página.</value>
     <value>Lista</value>
   </data>
   <data name="PrintLayout_TwoColumn" xml:space="preserve">
-    <value>Duas Colunas</value>
+    <value>Duas colunas</value>
   </data>
   <data name="SettingsTransparencyDescription.Text" xml:space="preserve">
-    <value>Ativa os efeitos de transparência na IU. Se a transparência for desativada nas definições do Windows, isto não terá qualquer efeito.
-Pode ter um efeito menor no desempenho em dispositivos mais antigos ou mais fracos.</value>
+    <value>Ativa efeitos de transparência na IU. Se os efeitos de transparência estiverem desligados nas definições do Windows, esta opção não terá qualquer efeito.
+Pode ter um pequeno efeito no desempenho em dispositivos mais antigos ou fracos.</value>
   </data>
   <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
-    <value>Ativar transparência</value>
+    <value>Transparência</value>
   </data>
   <data name="StartupFailedButton.Content" xml:space="preserve">
-    <value>Mostrar Detalhes</value>
+    <value>Mostrar detalhes</value>
   </data>
   <data name="StartupFailedHeader.Text" xml:space="preserve">
-    <value>Uh Oh</value>
+    <value>Ups</value>
   </data>
   <data name="StartupFailedMessage.Text" xml:space="preserve">
-    <value>Ocorreu algo de errado e não pudemos iniciar a aplicação neste momento.
-Por favor, considere a possibilidade de colocar detalhes sobre este erro no GitHub para que o possamos ajudar a corrigi-lo.</value>
+    <value>Ocorreu um erro e não foi possível iniciar a aplicação neste momento.
+Considere colocar detalhes sobre este erro no GitHub para lhe podermos ajudar a corrigi-lo.</value>
   </data>
   <data name="CharacterKeystrokeLabel" xml:space="preserve">
-    <value>Pressionamento de teclas: Alt + {0: 0000}</value>
+    <value>Combinação de tecla: Alt + {0:0000}</value>
   </data>
   <data name="ExportSVGLabel.Text" xml:space="preserve">
     <value>Guardar como Imagem SVG</value>
@@ -648,13 +633,13 @@ Por favor, considere a possibilidade de colocar detalhes sobre este erro no GitH
     <value>Guardar como Imagem PNG</value>
   </data>
   <data name="ExportSVGGlyphLabel.Text" xml:space="preserve">
-    <value>Glyph SVG</value>
+    <value>Glifo SVG</value>
   </data>
   <data name="BtnCopyGlyph.Label" xml:space="preserve">
     <value>Copiar</value>
   </data>
   <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Copiar para a Área de Transferências</value>
+    <value>Copiar para a área de transferência</value>
   </data>
   <data name="BtnSaveGlyph.Label" xml:space="preserve">
     <value>Guardar como</value>
@@ -663,50 +648,46 @@ Por favor, considere a possibilidade de colocar detalhes sobre este erro no GitH
     <value>Guardar como</value>
   </data>
   <data name="BtnFit.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Carater Adaptado</value>
+    <value>Ajustar carácter</value>
   </data>
   <data name="NotificationFontRemovedBody.Text" xml:space="preserve">
     <value>foi removido de</value>
   </data>
   <data name="NotificationFontAddedBody.Text" xml:space="preserve">
-    <value>foi adicionado para</value>
+    <value>foi adicionado a</value>
   </data>
   <data name="ExportFontFile.Text" xml:space="preserve">
-    <value>Ficheiro da Fonte</value>
+    <value>Ficheiro de tipo de letra</value>
   </data>
   <data name="ExportFontFileLabel.Text" xml:space="preserve">
-    <value>Guardar Ficheiro da Fonte como</value>
+    <value>Guardar tipo de letra como</value>
   </data>
   <data name="FontExportedMessage" xml:space="preserve">
     <value>{0} exportado</value>
   </data>
   <data name="CollectionExportButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Exportar Fontes</value>
+    <value>Exportar tipos de letra</value>
   </data>
   <data name="CollectionExportFolder.Text" xml:space="preserve">
-    <value>para a Pasta</value>
+    <value>Para a pasta</value>
   </data>
   <data name="CollectionExportHeader.Text" xml:space="preserve">
-    <value>Exportar Fontes</value>
+    <value>Exportar tipos de letra</value>
   </data>
   <data name="CollectionExportZip.Text" xml:space="preserve">
-    <value>como Ficheiro Zip</value>
+    <value>Como pasta comprimida (zipada)</value>
   </data>
   <data name="SystemFontsExpiredMessage.Text" xml:space="preserve">
-    <value>As listas das fontes estão desatualizadas. Clique para reiniciar a aplicação.</value>
+    <value>As listas dos tipos de letra estão desatualizadas. Premir para voltar a iniciar a aplicação.</value>
   </data>
   <data name="BtnToggleDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Alternar Utilitários de Desenvolvimento</value>
-  </data>
-  <data name="TxtPathIcon.Text" xml:space="preserve">
-    <value>Path Icon</value>
-    <comment>Xaml PathIcon. Does not need translation.</comment>
+    <value>Ativar/desativar ferramentas de programador</value>
   </data>
   <data name="OptionAllEmoji.Text" xml:space="preserve">
-    <value>Todas as Categorias</value>
+    <value>Todas as categorias</value>
   </data>
   <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
-    <value>Todos os Emojis</value>
+    <value>Todos os emojis</value>
   </data>
   <data name="OptionEmojiDingbats.Text" xml:space="preserve">
     <value>Dingbats</value>
@@ -715,16 +696,16 @@ Por favor, considere a possibilidade de colocar detalhes sobre este erro no GitH
     <value>Emoticons</value>
   </data>
   <data name="OptionEmojiSymbols.Text" xml:space="preserve">
-    <value>Símbolos &amp; Pictogramas</value>
+    <value>Símbolos &amp; pictogramas</value>
   </data>
   <data name="OptionScriptArabic.Text" xml:space="preserve">
-    <value>Arábico</value>
+    <value>Árabe</value>
   </data>
   <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
-    <value>Latin</value>
+    <value>Latim</value>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
-    <value>CJK</value>
+    <value>CJK (Chinês/Japonês/Coreano)</value>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>Cirílico</value>
@@ -739,13 +720,13 @@ Por favor, considere a possibilidade de colocar detalhes sobre este erro no GitH
     <value>Tailandês</value>
   </data>
   <data name="CultureSpecificPangram.Text" xml:space="preserve">
-    <value>Já fiz vinho com toque de kiwi para belga sexy. 1234567890</value>
+    <value>Bancos fúteis pagavam-lhe queijo, whisky e xadrez. 1234567890</value>
   </data>
   <data name="LblSwitchToCharMap.Text" xml:space="preserve">
-    <value>Mudar para a Visualização Mapa de Carateres (Ctrl+T)</value>
+    <value>Mudar para a visualização Mapa de Carácter (Ctrl+T)</value>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
-    <value>Mudar para a Visualização Tipo Rampa (Ctrl+T)</value>
+    <value>Mudar para a visualização Rampa (Ctrl+T)</value>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>Introduza ou escolha texto a partir do menu suspenso</value>
@@ -754,48 +735,48 @@ Por favor, considere a possibilidade de colocar detalhes sobre este erro no GitH
     <value>Exportado para {0}</value>
   </data>
   <data name="ImportDragDropDescriptionLabel.Text" xml:space="preserve">
-    <value>Arraste os ficheiros do Explorador de Ficheiros ou do seu ambiente de trabalho e largue-os aqui para os importar.</value>
+    <value>Arraste ficheiros do Explorador de Ficheiros ou do seu ambiente de trabalho e largue-os aqui para importar.</value>
   </data>
   <data name="ImportDragDropLabel.Text" xml:space="preserve">
     <value>Arraste e largue para importar</value>
   </data>
   <data name="SettingsAboutLabel.Text" xml:space="preserve">
-    <value>Acerca de</value>
+    <value>Acerca</value>
   </data>
   <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
-    <value>Interface de Utilizador Avançado</value>
+    <value>Aspeto &amp; Feel</value>
   </data>
   <data name="SettingsExportImportedLabel.Text" xml:space="preserve">
-    <value>Exportar todas as fontes importadas</value>
+    <value>Exportar todos os tipos de letra importados</value>
   </data>
   <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
-    <value>Otimizado</value>
+    <value>Optimizado</value>
   </data>
   <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
     <value>Sistema</value>
   </data>
   <data name="SettingsFontImportDescription.Text" xml:space="preserve">
-    <value>Pode importar fontes para a aplicação para as visualizar sem as instalar no Windows. 
+    <value>Pode importar tipos de letra para os visualizar sem os instalar no Windows. 
 
-Os ficheiros de fontes importadas são copiados para o armazenamento privado da aplicação, pelo que continuará a aparecer se apagar o ficheiro original no seu computador.</value>
+Os ficheiros de tipo de letra importados são copiados para o armazenamento privado da aplicação, pelo que continuam a ser exibidos mesmo que elimine o ficheiro original no seu dispositivo.</value>
   </data>
   <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
-    <value>Gestão de Fontes</value>
+    <value>Gestão de tipos de letra</value>
   </data>
   <data name="SettingsFontNameExportDescription.Text" xml:space="preserve">
-    <value>Escolha como nomear os ficheiros da fonte quando os exportar.
+    <value>Escolhe como nomear os ficheiros de tipo de letra na exportação.
 
-O sistema devolverá o nome do ficheiro da fonte que o Windows usa em maiúsculas.
-Otimizado irá criar um nome inteligente baseado na Família da Fonte e no Nome da Fonte.</value>
+Sistema devolverá o nome do tipo de letra que o Windows utiliza em maiúsculas.
+Optimizado cria um nome inteligente baseado no nome da família e no nome do tipo de letra.</value>
   </data>
   <data name="SettingsFontNameExportLabel.Text" xml:space="preserve">
-    <value>Nomeação da Exportação de Ficheiros das Fontes</value>
+    <value>Nomenclatura da exportação dos ficheiros de tipo de letra</value>
   </data>
   <data name="SettingsImportedFontsLabel.Text" xml:space="preserve">
-    <value>Fontes Importadas</value>
+    <value>Tipos de letra importados</value>
   </data>
   <data name="SettingsLicensesDescriptionLabel.Text" xml:space="preserve">
-    <value>Esta aplicação faz uso das seguintes bibliotecas de código-fonte aberto</value>
+    <value>Esta aplicação utiliza as seguintes bibliotecas de código aberto</value>
   </data>
   <data name="SettingsLicensesLabel.Text" xml:space="preserve">
     <value>Licenças</value>
@@ -804,43 +785,43 @@ Otimizado irá criar um nome inteligente baseado na Família da Fonte e no Nome 
     <value>Repor</value>
   </data>
   <data name="OptionVariableFonts.Text" xml:space="preserve">
-    <value>Fontes Variáveis</value>
+    <value>Tipos de letra variável</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
-    <value>Esta fonte tem caraterísticas variáveis. Para as explorar, mude para a vista Tipo Rampa utilizando o botão de troca acima.</value>
+    <value>Este tipo de letra tem características variáveis. Para explorar as características, mude para a visualização Rampa utilizando o botão ativar/desativar acima.</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
-    <value>Mostra ou oculta o painel de pré-visualização no lado direito do ecrã. Se desativado, muitas funções ainda podem ser acedidas clicando com o botão direito do rato ou segurando o toque num carater dentro da grelha de carateres.</value>
+    <value>Mostra ou oculta o painel de pré-visualização no lado direito do ecrã. Se oculto, ainda pode aceder a algumas das funções ao clicar com o botão direito do rato ou tocar sem soltar no carácter dentro da grelha.</value>
   </data>
   <data name="SettingsEnablePaneHeader.Text" xml:space="preserve">
-    <value>Pré-visualização do Painel de Visualização</value>
+    <value>Visualização do painel de pré-visualização</value>
   </data>
   <data name="CopyFontIconCode.Text" xml:space="preserve">
-    <value>Copiar FontIcon Code</value>
+    <value>Copiar código FontIcon</value>
   </data>
   <data name="CopyGlyphCode.Text" xml:space="preserve">
-    <value>Copiar Glyph Code</value>
+    <value>Copiar código do glifo</value>
   </data>
   <data name="CopyPathIconCode.Text" xml:space="preserve">
-    <value>Copiar PathIcon Code</value>
+    <value>Copiar código PathIcon</value>
   </data>
   <data name="SearchBoxShorter" xml:space="preserve">
-    <value>Pesquisar...</value>
+    <value>Procurar...</value>
   </data>
   <data name="CopyUnicodeValue.Text" xml:space="preserve">
-    <value>Copiar Valor Unicode</value>
+    <value>Copiar valor Unicode</value>
   </data>
   <data name="DecreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Diminuir o Tamanho do Carater (Ctrl+-)</value>
+    <value>Diminuir tamanho do carácter (Ctrl+-)</value>
   </data>
   <data name="IncreaseSizeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Aumentar o Tamanho do Carater (Ctrl++)</value>
+    <value>Aumentar tamanho do carácter (Ctrl++)</value>
   </data>
   <data name="SwitchViewButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Trocar Visualização (Ctrl+T)</value>
+    <value>Mudar vista (Ctrl+T)</value>
   </data>
   <data name="TogglePaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Trocar Painel de Pré-visualização (Ctrl+R)</value>
+    <value>Ativar/desativar painel de pré-visualização (Ctrl+R)</value>
   </data>
   <data name="NotificationCopied" xml:space="preserve">
     <value>Copiado</value>
@@ -849,44 +830,44 @@ Otimizado irá criar um nome inteligente baseado na Família da Fonte e no Nome 
     <value>Adicionar</value>
   </data>
   <data name="AddSelectionItem.Text" xml:space="preserve">
-    <value>Adicionar à Seleção</value>
+    <value>Adicionar à seleção</value>
   </data>
   <data name="CopySequencePlaceholder.Text" xml:space="preserve">
-    <value>clique duas vezes em um carater ou utilize o botão Adicionar</value>
+    <value>fazer duplo clique num carácter ou utilize o botão Adicionar</value>
   </data>
   <data name="ToggleCopyPaneButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Trocar Painel de Cópia (Ctrl+B)</value>
+    <value>Ativar/desativar painel de cópia (Ctrl+B)</value>
   </data>
   <data name="CompactOverlayButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Manter no topo</value>
   </data>
   <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
-    <value>Variações Tipográficas</value>
+    <value>variações de tipografia</value>
   </data>
   <data name="ToggleDevDefaultLabel" xml:space="preserve">
     <value>Ferramentas</value>
   </data>
   <data name="BtnFit.Label" xml:space="preserve">
-    <value>Adaptar</value>
+    <value>Ajustar</value>
   </data>
   <data name="TxtCopiedVariantMessage.Text" xml:space="preserve">
-    <value>As variações do glyph não podem ser copiadas.
-Variante predefinida copiada.</value>
+    <value>Não é possível copiar variações de glifo.
+Foi copiada a variante predefinida.</value>
   </data>
   <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
-    <value>Ainda não existem fontes nesta coleção.</value>
+    <value>Ainda não existem tipos de letra nesta coleção.</value>
   </data>
   <data name="SearchFontHelpBlock.Text" xml:space="preserve">
-    <value>Não foram encontrados resultados para esta pesquisa. Tente outra coisa.</value>
+    <value>Não conseguimos encontrar o que procurava. Tente algo diferente.</value>
   </data>
   <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
-    <value>Encontrar uma família de fontes</value>
+    <value>Localizar uma família tipográfica</value>
   </data>
   <data name="BtnToggleDev.Label" xml:space="preserve">
     <value>Ferramentas</value>
   </data>
   <data name="DevPopupHeader.Text" xml:space="preserve">
-    <value>Mostrar Ferramentas de Desenvolvedor</value>
+    <value>Mostrar ferramentas de programação</value>
   </data>
   <data name="ContextMenuDevCopyCommand" xml:space="preserve">
     <value>Copiar {0}</value>
@@ -896,73 +877,732 @@ Variante predefinida copiada.</value>
     <value>Nenhum</value>
   </data>
   <data name="SettingsChangelogLabel.Text" xml:space="preserve">
-    <value>Registo de Alterações</value>
-  </data>
-  <data name="TxtFontImageSource.Text" xml:space="preserve">
-    <value>Font Image Source</value>
-    <comment>Xamarin FontImageSource. Does not need translation.</comment>
+    <value>Notas de versão</value>
   </data>
   <data name="ImportFailedWoff" xml:space="preserve">
-    <value>A fonte WOFF não pôde ser convertida para uma fonte OTF válida.</value>
+    <value>Não foi possível converter o tipo de letra WOFF para um tipo de letra OTF válido.</value>
   </data>
   <data name="ImportWOFF2NotSupported" xml:space="preserve">
-    <value>Os ficheiros WOFF2 não são suportados</value>
+    <value>Ficheiros WOFF2 não são suportados</value>
   </data>
   <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Filtrar Carateres</value>
+    <value>Filtrar caracteres</value>
   </data>
   <data name="CompareFontsTitle.Text" xml:space="preserve">
-    <value>Comparar Fontes</value>
+    <value>Comparar tipos de letra</value>
   </data>
   <data name="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Layout da Grelha</value>
+    <value>Esquema grelha</value>
   </data>
   <data name="LayoutListToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Layout da Lista</value>
+    <value>Esquema lista</value>
   </data>
   <data name="QuickCompareTitle.Text" xml:space="preserve">
-    <value>Comparação Rápida</value>
+    <value>Comparação rápida</value>
   </data>
   <data name="AddToQuickCompare.Text" xml:space="preserve">
-    <value>Adicionar para Comparação Rápida</value>
+    <value>Adicionar à comparação rápida</value>
   </data>
   <data name="CompareFontsButton.Text" xml:space="preserve">
-    <value>Comparar todas as Fontes</value>
+    <value>Comparar todos os tipos de letra</value>
   </data>
   <data name="BtnGithubCommits.Content" xml:space="preserve">
-    <value>Veja os últimos commits no Github</value>
+    <value>Ver as revisões mais recentes no Github</value>
   </data>
   <data name="ExportGlyphsHeader.Text" xml:space="preserve">
-    <value>Exportar Carateres</value>
+    <value>Exportar caracteres</value>
   </data>
   <data name="ExportGlyphsSummary.Text" xml:space="preserve">
-    <value>Pronto para exportar {0} carateres como {1}</value>
+    <value>Pronto para exportar {0} caracteres como {1}</value>
   </data>
   <data name="ExportCharactersLabel.Text" xml:space="preserve">
-    <value>Exportar Carateres</value>
+    <value>Exportar caracteres</value>
   </data>
   <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
-    <value>{0} carater(es) exportado(s)</value>
+    <value>{0} caracteres exportados</value>
   </data>
   <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
-    <value>Exportar carater {0} de {1}</value>
+    <value>A exportar carácter {0} de {1}</value>
   </data>
   <data name="ExportAllowColor.Content" xml:space="preserve">
-    <value>Permitir que a fonte utilize as suas próprias cores, se definidas</value>
+    <value>Permitir, se presentes, que o tipo de letra utilize as suas próprias cores</value>
   </data>
   <data name="ExportColorHeader.Text" xml:space="preserve">
     <value>Cor predefinida</value>
   </data>
   <data name="ExportGlyphFormatDescription.Text" xml:space="preserve">
-    <value>Os glyphs armazenados em formatos binários serão exportados como o seu formato nativo, independentemente desta escolha.</value>
+    <value>Os glifos armazenados em formato binário serão exportados no seu formato nativo, independentemente desta escolha.</value>
   </data>
   <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
-    <value>{0} de {1} carateres selecionado(s)</value>
+    <value>{0} de {1} caracteres selecionados</value>
   </data>
   <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
-    <value>Opções de Ficheiros</value>
+    <value>Opções do ficheiro</value>
   </data>
   <data name="ExportSkipBlank.Content" xml:space="preserve">
-    <value>Ignorar exportação de glyphs sem conteúdo visível</value>
+    <value>Ignorar a exportação de glifos sem conteúdo perceptível</value>
+  </data>
+  <data name="CharacterFilterButton.Label" xml:space="preserve">
+    <value>Filtrar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="CollectionExportButton.Label" xml:space="preserve">
+    <value>Exportar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="DeleteCollectionButton.Label" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontOptionsButton.Label" xml:space="preserve">
+    <value>Opções</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontPropertiesButton.Label" xml:space="preserve">
+    <value>Info</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="OpenFontButton.Label" xml:space="preserve">
+    <value>Abrir</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="RenameCollectionButton.Label" xml:space="preserve">
+    <value>Renomear</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="SettingsDesignStyle.Description" xml:space="preserve">
+    <value>Alterar o estilo de desenho da aplicação.
+Verá a sua alteração quando voltar a iniciar a aplicação.</value>
+  </data>
+  <data name="SettingsDesignStyle.Title" xml:space="preserve">
+    <value>Estilo de desenho</value>
+  </data>
+  <data name="ViewToggleButton.Label" xml:space="preserve">
+    <value>Mudar</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Adicionar à coleção</value>
+  </data>
+  <data name="ClearSelectionLabel" xml:space="preserve">
+    <value>Limpar seleção</value>
+  </data>
+  <data name="CreateNewButton.Content" xml:space="preserve">
+    <value>Criar nova</value>
+  </data>
+  <data name="OrLabel.Text" xml:space="preserve">
+    <value>ou</value>
+  </data>
+  <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remover da coleção</value>
+  </data>
+  <data name="SelectCollectionLabel" xml:space="preserve">
+    <value>Selecionar coleção</value>
+  </data>
+  <data name="SettingsCollectionsHeader" xml:space="preserve">
+    <value>Coleções</value>
+  </data>
+  <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
+    <value>Abrir tipos de letra</value>
+  </data>
+  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="DigOpenFolder.Title" xml:space="preserve">
+    <value>Abrir pasta com tipos de letra</value>
+  </data>
+  <data name="DigOpenFolderContent.CheckRecursiveContent" xml:space="preserve">
+    <value>Incluir pastas subordinadas</value>
+  </data>
+  <data name="DigOpenFolderContent.CheckZipContent" xml:space="preserve">
+    <value>Incluir ficheiros comprimidos ZIP</value>
+  </data>
+  <data name="DigOpenFolderContent.FindDescription" xml:space="preserve">
+    <value>Ativar opções poder aumentar drasticamente o tempo necessário para abrir a pasta</value>
+  </data>
+  <data name="DigOpenFolderContent.FindHeader" xml:space="preserve">
+    <value>Opções de procura</value>
+  </data>
+  <data name="DigOpenFolderContent.FindingFontsLabel" xml:space="preserve">
+    <value>A procurar tipos de letra...</value>
+  </data>
+  <data name="DigOpenFolderContent.PrefixLabel" xml:space="preserve">
+    <value>Encontrou</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectHeader" xml:space="preserve">
+    <value>Pasta selecionada (premir para mudar)</value>
+  </data>
+  <data name="DigOpenFolderContent.SuffixLabel" xml:space="preserve">
+    <value>ficheiro(s) de tipo de letra</value>
+  </data>
+  <data name="FontFileMenuItem.Text" xml:space="preserve">
+    <value>Abrir tipo de letra</value>
+  </data>
+  <data name="FontFolderMenuItem.Text" xml:space="preserve">
+    <value>Abrir pasta</value>
+  </data>
+  <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Adicionar ao histórico</value>
+  </data>
+  <data name="CalligraphyLabel.Text" xml:space="preserve">
+    <value>Caligrafia</value>
+  </data>
+  <data name="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Limpar tudo</value>
+  </data>
+  <data name="ClearAllItem.Text" xml:space="preserve">
+    <value>Limpar tudo</value>
+  </data>
+  <data name="GuideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mostrar guias</value>
+  </data>
+  <data name="HistoryLabel.Text" xml:space="preserve">
+    <value>Histórico</value>
+  </data>
+  <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Refazer (Ctrl+Y)</value>
+  </data>
+  <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Remover</value>
+  </data>
+  <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Guardar (Ctrl+S)</value>
+  </data>
+  <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Lado a lado</value>
+  </data>
+  <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Anular (Ctrl+Z)</value>
+  </data>
+  <data name="GuideFontSlider.Header" xml:space="preserve">
+    <value>Tamanho da guia</value>
+  </data>
+  <data name="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Abrir seleccionador de caracteres</value>
+  </data>
+  <data name="GuideHeaderLabel.Text" xml:space="preserve">
+    <value>Texto da guia</value>
+  </data>
+  <data name="GuideSizeLabel.Text" xml:space="preserve">
+    <value>Tamanho da guia</value>
+  </data>
+  <data name="MenuToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mostrar ou ocultar painel de tipos de letra (Ctrl+L)</value>
+  </data>
+  <data name="OpenInNewTab.Text" xml:space="preserve">
+    <value>Abrir num separador novo</value>
+  </data>
+  <data name="OptionScriptKorean.Text" xml:space="preserve">
+    <value>Coreano</value>
+  </data>
+  <data name="AddActiveToCollectionItem.Text" xml:space="preserve">
+    <value>Adicionar activos à Coleção</value>
+  </data>
+  <data name="CompareActiveItem.Text" xml:space="preserve">
+    <value>Comparar os tipos de letra activos</value>
+  </data>
+  <data name="OptionEmoji.Text" xml:space="preserve">
+    <value>Emoji</value>
+  </data>
+  <data name="OptionSupportedScripts.Text" xml:space="preserve">
+    <value>Escritas suportadas</value>
+  </data>
+  <data name="CompareFontFaceTitle.Text" xml:space="preserve">
+    <value>A comparar tipos de letra</value>
+  </data>
+  <data name="CompareFacesCountLabel.Text" xml:space="preserve">
+    <value>Comparar {0} tipos de letra</value>
+  </data>
+  <data name="CompareFamilyTitle.Text" xml:space="preserve">
+    <value>A comparar {0}</value>
+  </data>
+  <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Abrir menu</value>
+  </data>
+  <data name="FontsSelectedCountLabel" xml:space="preserve">
+    <value>{0} tipo(s) de letra, {1} selecionado(s)</value>
+  </data>
+  <data name="CompareShortLabel" xml:space="preserve">
+    <value>Comparar</value>
+  </data>
+  <data name="AllFontsLabel.Text" xml:space="preserve">
+    <value>Todos os tipos de letra</value>
+  </data>
+  <data name="ImportLabel.Text" xml:space="preserve">
+    <value>Importar</value>
+  </data>
+  <data name="PreferredFormatGroup.Text" xml:space="preserve">
+    <value>Formato preferencial</value>
+    <comment>Preferred export format</comment>
+  </data>
+  <data name="RemoveLabel.Text" xml:space="preserve">
+    <value>Remover</value>
+  </data>
+  <data name="UndoLabel" xml:space="preserve">
+    <value>Anular</value>
+  </data>
+  <data name="CalligraphyDescription.Text" xml:space="preserve">
+    <value>Praticar a escrita no estilo do tipo de letra atual</value>
+  </data>
+  <data name="CompareFontsDescription.Text" xml:space="preserve">
+    <value>Veja e compare todos os seus tipos de letra lado-a-lado</value>
+  </data>
+  <data name="DoMoreLabel.Text" xml:space="preserve">
+    <value>Efectuar mais</value>
+  </data>
+  <data name="FullscreenLabel.Text" xml:space="preserve">
+    <value>Ecrã inteiro</value>
+  </data>
+  <data name="OpenFolderDescription.Text" xml:space="preserve">
+    <value>Abrir todos os tipos de letra dentro da pasta</value>
+  </data>
+  <data name="OpenFontDescription.Text" xml:space="preserve">
+    <value>Abrir ficheiros TTF, OTF, OTC, TTC, WOFF, WOFF2 ou ZIP</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Description" xml:space="preserve">
+    <value>Ativa animações subtis de ressalto sempre que o ponteiro do rato passa sobre determinados botões.</value>
+  </data>
+  <data name="SettingsPointerOverAnimation.Title" xml:space="preserve">
+    <value>Animções sob o ponteiro do rato</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
+    <value>Adiciona e organiza sugestões de texto personalizadas para mostrar na visualização Rampa e na janela de Comparação.
+Tocar e manter premido para organizar.</value>
+  </data>
+  <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
+    <value>Opções personalizadas</value>
+  </data>
+  <data name="SettingsSuggestionsHeader.Text" xml:space="preserve">
+    <value>Pré-visualizar sugestões</value>
+  </data>
+  <data name="SettingsSuggestionTextBox.PlaceholderText" xml:space="preserve">
+    <value>Introduz a tua sugestão aqui</value>
+  </data>
+  <data name="FontPropPanoseTitle.Text" xml:space="preserve">
+    <value>Valores PANOSE</value>
+  </data>
+  <data name="CharacterGroupingToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Agrupar caracteres por intervalo de Unicode (Ctrl+G)</value>
+  </data>
+  <data name="PixelUnits.Text" xml:space="preserve">
+    <value>px</value>
+  </data>
+  <data name="SettingsCharGrouping.Description" xml:space="preserve">
+    <value>Se estiver ativado, os caracteres são agrupados por intervalo de Unicode no mapa de caracteres, caso contrário eles são mostrados numa única lista desagrupada.</value>
+  </data>
+  <data name="SettingsCharGrouping.Title" xml:space="preserve">
+    <value>Agrupar caracteres</value>
+  </data>
+  <data name="CopyAsImageItem.Text" xml:space="preserve">
+    <value>Copiar como imagem</value>
+  </data>
+  <data name="CopyAsPngItem.Text" xml:space="preserve">
+    <value>Copiar como PNG</value>
+  </data>
+  <data name="CopyAsSvgItem.Text" xml:space="preserve">
+    <value>Copiar como SVG</value>
+  </data>
+  <data name="NotificationCopiedPNG" xml:space="preserve">
+    <value>Copiado como PNG</value>
+  </data>
+  <data name="NotificationCopiedSVG" xml:space="preserve">
+    <value>Copiado como SVG</value>
+  </data>
+  <data name="ColrV1SupportMessage.Text" xml:space="preserve">
+    <value>Este tipo de letra contém glifos COLRv1. Para os pré-visualizar com a composição adequada, mude para a visualização Rampa utilizando o botão acima.</value>
+  </data>
+  <data name="FontPropCOLRVersion.Text" xml:space="preserve">
+    <value>Versão COLR</value>
+  </data>
+  <data name="FontPropColourFormats.Text" xml:space="preserve">
+    <value>Formatos de glifos coloridos</value>
+  </data>
+  <data name="GlyphTypeBitmap" xml:space="preserve">
+    <value>Mapa de bits</value>
+  </data>
+  <data name="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alterar sentido do fluxo</value>
+  </data>
+  <data name="TxtUniCodepoint.Header" xml:space="preserve">
+    <value>Ponto de código Unicode</value>
+  </data>
+  <data name="TxtUTF16.Header" xml:space="preserve">
+    <value>Valor UTF-16</value>
+  </data>
+  <data name="EditSuggestionsItem.Text" xml:space="preserve">
+    <value>Editar sugestões</value>
+  </data>
+  <data name="OptionScriptHiraganaAndKatakana.Text" xml:space="preserve">
+    <value>Hiragana &amp; Katakana</value>
+  </data>
+  <data name="OptionsScriptBengali.Text" xml:space="preserve">
+    <value>Bangla</value>
+  </data>
+  <data name="OptionsScriptDevanagari.Text" xml:space="preserve">
+    <value>Devanágari</value>
+  </data>
+  <data name="BtnTextClose.Content" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="EditSuggestionsLabel.Text" xml:space="preserve">
+    <value>Editar sugestões personalizadas</value>
+  </data>
+  <data name="ShowSuggestionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Mostrar sugestões</value>
+  </data>
+  <data name="SuggestOptionArabic.Text" xml:space="preserve">
+    <value>Árabe</value>
+  </data>
+  <data name="SuggestOptionBengali.Text" xml:space="preserve">
+    <value>Bangla</value>
+  </data>
+  <data name="SuggestOptionBulgarian.Text" xml:space="preserve">
+    <value>Búlgaro</value>
+  </data>
+  <data name="SuggestOptionChineseTraditional.Text" xml:space="preserve">
+    <value>Chinês (Tradicional)</value>
+  </data>
+  <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
+    <value>Português</value>
+  </data>
+  <data name="SuggestOptionCustom.Text" xml:space="preserve">
+    <value>Personalizada</value>
+  </data>
+  <data name="SuggestOptionCyrillicAlpha.Text" xml:space="preserve">
+    <value>Alfabeto cirílico</value>
+  </data>
+  <data name="SuggestOptionEmoji.Text" xml:space="preserve">
+    <value>Emoji</value>
+  </data>
+  <data name="SuggestOptionEnglish.Text" xml:space="preserve">
+    <value>Inglês</value>
+  </data>
+  <data name="SuggestOptionGreek.Text" xml:space="preserve">
+    <value>Grego</value>
+  </data>
+  <data name="SuggestOptionHebrew.Text" xml:space="preserve">
+    <value>Hebraico</value>
+  </data>
+  <data name="SuggestOptionHindi.Text" xml:space="preserve">
+    <value>Hindi</value>
+  </data>
+  <data name="SuggestOptionJapanese.Text" xml:space="preserve">
+    <value>Japonês</value>
+  </data>
+  <data name="SuggestOptionKorean.Text" xml:space="preserve">
+    <value>Coreano</value>
+  </data>
+  <data name="SuggestOptionLatinAlpha.Text" xml:space="preserve">
+    <value>Alfabeto latim</value>
+  </data>
+  <data name="SuggestOptionLatinSymbols.Text" xml:space="preserve">
+    <value>Números &amp; símbolos latim</value>
+  </data>
+  <data name="SuggestOptionSample.Text" xml:space="preserve">
+    <value>Texto de exemplo do tipo de letra</value>
+  </data>
+  <data name="SuggestOptionThai.Text" xml:space="preserve">
+    <value>Tailandês</value>
+  </data>
+  <data name="SuggestOptionVietnamese.Text" xml:space="preserve">
+    <value>Vietnamita</value>
+  </data>
+  <data name="InstallCountLabel" xml:space="preserve">
+    <value>{0} famílias tipográficas, {1} tipos de letra instalados no seu computador</value>
+  </data>
+  <data name="OptionSystemFonts.Text" xml:space="preserve">
+    <value>Tipos de letra instalados</value>
+  </data>
+  <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
+    <value>Exportar tipos de letra instalados</value>
+  </data>
+  <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
+    <value>Com base nas suas definições, os ícones preteridos estão ocultos por predefinição. Utiliza o botão de filtro acima para os mostrar.</value>
+  </data>
+  <data name="InstallDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Fechar</value>
+  </data>
+  <data name="InstallDialog.Title" xml:space="preserve">
+    <value>Instalar tipo de letra</value>
+  </data>
+  <data name="InstallFontInstructions.Text" xml:space="preserve">
+    <value>Leia todas as instruções antes de continuar com a instalação do tipo de letra
+
+1. Prima "Iniciar" abaixo
+2. Selecione "Visual. Letras Windows" e escolha "Apenas uma vez"
+3. Prima "Instalar" na parte superior da janela do visualizador de letras
+
+O tipo de letra da Web será convertida num formato OTF para a instalação.</value>
+    <comment>Word in such a way that encourages the user to read all the steps before continuing</comment>
+  </data>
+  <data name="InstallLabel.Text" xml:space="preserve">
+    <value>Instalar</value>
+  </data>
+  <data name="OptionUnicodeRange/Text" xml:space="preserve">
+    <value>Por intervalo Unicode</value>
+  </data>
+  <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
+    <value>Avançado</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Description" xml:space="preserve">
+    <value>Se estiver ativado, oculta os ícones preteridos dos tipos de letra Segoe MDL2 e Segoe Fluent por predefinição. Os ícones ainda podem ser mostrados ao utilizar o filtro na lista de opções.
+
+Não é recomendado referenciar os ícones preteridos através do código unicode, todos os ícones preteridos tem um equivalente não preterido.</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Title" xml:space="preserve">
+    <value>Esconder ícones preteridos</value>
+  </data>
+  <data name="StartLabel.Text" xml:space="preserve">
+    <value>Iniciar</value>
+  </data>
+  <data name="TxtUniHexValue.Text" xml:space="preserve">
+    <value>Valor hexadecimal</value>
+  </data>
+  <data name="FileExplorerFileToolTip" xml:space="preserve">
+    <value>Pré-visualizar ficheiro</value>
+  </data>
+  <data name="ImportCountLabel" xml:space="preserve">
+    <value>{0} família(s) tipográfica(s), {1} tipo(s) de letra importado(s)</value>
+  </data>
+  <data name="SettingsFontExportVersionLabel.Text" xml:space="preserve">
+    <value>Incluir número da versão no nome do ficheiro</value>
+  </data>
+  <data name="HideUnihanLabel.Text" xml:space="preserve">
+    <value>Ocultar dados Unihan</value>
+  </data>
+  <data name="ShowUnihanLabel.Text" xml:space="preserve">
+    <value>Mostrar dados Unihan</value>
+  </data>
+  <data name="UnihanDefinition.Text" xml:space="preserve">
+    <value>Definição</value>
+  </data>
+  <data name="UnihanPronunciations.Text" xml:space="preserve">
+    <value>Pronunciações</value>
+  </data>
+  <data name="UnihanTypeDescriptionCantonese" xml:space="preserve">
+    <value>A leitura mais frequente em jyutping (cantonês) para este ideograma.</value>
+  </data>
+  <data name="UnihanTypeDescriptionHangul" xml:space="preserve">
+    <value>Pronúncia(s) de coreano moderno deste ideograma em hangul, com a(s) sua(s) fonte(s) entre parênteses.</value>
+  </data>
+  <data name="UnihanTypeDescriptionHanyuPinlu" xml:space="preserve">
+    <value>Pronúncia(s) e frequência(s) deste ideograma, em parte com base em aparecerem no 《現代漢語頻率詞典》 &lt;Xiandai Hanyu Pinlu Cidian&gt;</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapanese" xml:space="preserve">
+    <value>A leitura deste ideograma, expressa em Kana, em japonês. 
+
+As leituras expressas em hiragana são, geralmente, consideradas Kun-yomi (訓読み), e as expressas em katakana são, geralmente, consideradas On-yomi (音読み).</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseKun" xml:space="preserve">
+    <value>Pronúncia(s) de japonês para este ideograma na romanização Hepburn.</value>
+  </data>
+  <data name="UnihanTypeDescriptionJapaneseOn" xml:space="preserve">
+    <value>Pronúncia(s) de sino-japonês para este ideograma.</value>
+  </data>
+  <data name="UnihanTypeDescriptionKorean" xml:space="preserve">
+    <value>Pronúncia(s) do ideograma em coreano, utilizando o sistema de romanização de Yale.</value>
+  </data>
+  <data name="UnihanTypeDescriptionMandarin" xml:space="preserve">
+    <value>A leitura mais frequente deste ideograma em pīnyīn. 
+
+Assim que existir dois valores, o chinês simplificado (zh-Hans (CN)) é o primeiro valor preferido seguido do chinês tradicional (zh-Hant (TW)). 
+
+Quando existe apenas um valor, ele é adequado para ambos.</value>
+  </data>
+  <data name="UnihanTypeDescriptionTang" xml:space="preserve">
+    <value>A(s) pronúncia(s) deste ideograma na dinastia Tang, derivada ou consistente com o T’ang Poetic Vocabulary por Hugh M. Stimson, Far Eastern Publications, Yale University 1976.</value>
+  </data>
+  <data name="UnihanTypeDescriptionTGHZ2013" xml:space="preserve">
+    <value>Uma ou mais leituras de Hànyǔ Pīnyīn conforme indicado no Tōngyòng Guīfàn Hànzì Zìdiǎn.</value>
+  </data>
+  <data name="UnihanTypeDescriptionVietnamese" xml:space="preserve">
+    <value>Pronúncia(s) do ideograma em Quốc ngữ.</value>
+  </data>
+  <data name="UnihanTypeDescriptionXHC1983" xml:space="preserve">
+    <value>Uma ou mais leituras de Hànyǔ Pīnyīn conforme indicado no Xiàndài Hànyǔ Cídiǎn</value>
+  </data>
+  <data name="UnihanTypeNameCantonese" xml:space="preserve">
+    <value>Cantonês</value>
+  </data>
+  <data name="UnihanTypeNameHangul" xml:space="preserve">
+    <value>Hangul</value>
+  </data>
+  <data name="UnihanTypeNameJapanese" xml:space="preserve">
+    <value>Japonês</value>
+  </data>
+  <data name="UnihanTypeNameJapaneseKun" xml:space="preserve">
+    <value>Japonês Kun</value>
+  </data>
+  <data name="UnihanTypeNameJapaneseOn" xml:space="preserve">
+    <value>Japonês On</value>
+  </data>
+  <data name="UnihanTypeNameKorean" xml:space="preserve">
+    <value>Coreano</value>
+  </data>
+  <data name="UnihanTypeNameMandarin" xml:space="preserve">
+    <value>Mandarim</value>
+  </data>
+  <data name="UnihanTypeNameVietnamese" xml:space="preserve">
+    <value>Vietnamita</value>
+  </data>
+  <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
+    <value>OCULTO</value>
+  </data>
+  <data name="NotificationSearchSelectedCharHidden" xml:space="preserve">
+    <value>O carácter selecionado está atualmente oculto pelo seu filtro selecionado</value>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>Chinês (Simplificado)</value>
+  </data>
+  <data name="CollectionManagementHint.Text" xml:space="preserve">
+    <value>Cria coleções para comparar, exportar ou gerir vários tipos de letra de uma só vez. Para começar, acima selecione uma coleção existente ou crie uma nova.</value>
+  </data>
+  <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
+    <value>Escolher existente</value>
+  </data>
+  <data name="FindCharButton.Text" xml:space="preserve">
+    <value>Procurar noutros tipos de letra</value>
+  </data>
+  <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
+    <value>Filtrar por família</value>
+  </data>
+  <data name="SettingsRememberFilter.Description" xml:space="preserve">
+    <value>Se esta opção estiver ativada, vai ser guardada a última coleção ou filtro selecionado e vai ser restaurada quando voltar a iniciar a aplicação. 
+
+Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em todos os inícios.</value>
+  </data>
+  <data name="SettingsRememberFilter.Title" xml:space="preserve">
+    <value>Memorizar o filtro da lista dos tipos de letra selecionados entre sessões</value>
+  </data>
+  <data name="GlyphNameToggleHeader.Text" xml:space="preserve">
+    <value>Modelo de nome de ficheiro</value>
+  </data>
+  <data name="GlyphNameToggleLabel.Text" xml:space="preserve">
+    <value>Mostrar partes do modelo</value>
+  </data>
+  <data name="FileNameWriterCharDescDesc" xml:space="preserve">
+    <value>Descrição Unicode do glifo ou, se nenhuma, cadeia Unicode</value>
+  </data>
+  <data name="FileNameWriterExtensionDesc" xml:space="preserve">
+    <value>Extensão do ficheiro</value>
+  </data>
+  <data name="FileNameWriterFaceDesc" xml:space="preserve">
+    <value>Nome da variação do tipo de letra atual</value>
+  </data>
+  <data name="FileNameWriterFamilyDesc" xml:space="preserve">
+    <value>Nome da família do tipo de letra</value>
+  </data>
+  <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
+    <value>Tamanho em píxeis</value>
+  </data>
+  <data name="FileNameWriterStringFormat" xml:space="preserve">
+    <value>{0}, ex. {1}</value>
+  </data>
+  <data name="FileNameWriterUnicodeCPDesc" xml:space="preserve">
+    <value>Índice Unicode/valor ponto de código</value>
+  </data>
+  <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
+    <value>Valor hexadecimal Unicode</value>
+  </data>
+  <data name="FileNameWriterXamlGlyphDesc" xml:space="preserve">
+    <value>Código de glifo XAML</value>
+  </data>
+  <data name="SettingsGlyphNaming.Description" xml:space="preserve">
+    <value>Escolha o nome dos ficheiros de caracteres exportados.</value>
+  </data>
+  <data name="SettingsGlyphNaming.Title" xml:space="preserve">
+    <value>Nomenclatura da exportação de glifos</value>
+  </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>ex. {0}</value>
+  </data>
+  <data name="FileNameWriterFontVerDesc" xml:space="preserve">
+    <value>Se aplicável, o numéro da versão do tipo de letra</value>
+  </data>
+  <data name="CanvasFontInformationCopyrightNotice" xml:space="preserve">
+    <value>Direitos de autor</value>
+  </data>
+  <data name="CanvasFontInformationDescription" xml:space="preserve">
+    <value>Descrição</value>
+  </data>
+  <data name="CanvasFontInformationDesigner" xml:space="preserve">
+    <value>Autor</value>
+  </data>
+  <data name="CanvasFontInformationDesignerUrl" xml:space="preserve">
+    <value>URL do autor</value>
+  </data>
+  <data name="CanvasFontInformationFontVendorUrl" xml:space="preserve">
+    <value>URL do fornecedor do tipo de letra</value>
+  </data>
+  <data name="CanvasFontInformationFullName" xml:space="preserve">
+    <value>Nome completo</value>
+  </data>
+  <data name="CanvasFontInformationLicenseDescription" xml:space="preserve">
+    <value>Licença</value>
+  </data>
+  <data name="CanvasFontInformationLicenseInfoUrl" xml:space="preserve">
+    <value>URL da licença</value>
+  </data>
+  <data name="CanvasFontInformationManufacturer" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
+  <data name="CanvasFontInformationTrademark" xml:space="preserve">
+    <value>Marca registada</value>
+  </data>
+  <data name="RestoreLabel.Text" xml:space="preserve">
+    <value>Restaurar</value>
+    <comment>Opposite of Fullscreen</comment>
+  </data>
+  <data name="CharFilter" xml:space="preserve">
+    <value>car:</value>
+    <comment>Command used for character searches. Should be short.</comment>
+  </data>
+  <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
+    <value>Criar como coleção inteligente</value>
+  </data>
+  <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ver online a documentação para coleções inteligentes</value>
+  </data>
+  <data name="DesignerFilter" xml:space="preserve">
+    <value>autor:</value>
+    <comment>Command used for designer searches. Should be short.</comment>
+  </data>
+  <data name="FilePathFilter" xml:space="preserve">
+    <value>caminho:</value>
+    <comment>Command used for file path searches. Should be short.</comment>
+  </data>
+  <data name="FoundryFilter" xml:space="preserve">
+    <value>empresa:</value>
+    <comment>Command used for foundry searches. Should be short.</comment>
+  </data>
+  <data name="SmartCollectionDesignerFilter.Text" xml:space="preserve">
+    <value>Filtro de autor</value>
+  </data>
+  <data name="SmartCollectionFilePathFilter.Text" xml:space="preserve">
+    <value>Fitro de caminho do ficheiro</value>
+  </data>
+  <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
+    <value>Fitro de empresa</value>
+  </data>
+  <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="DigEditCollection.Title" xml:space="preserve">
+    <value>Editar coleção</value>
+  </data>
+  <data name="EditCollectionButton.Label" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Editar coleção</value>
+  </data>
+  <data name="BtnHelpAndTips.Content" xml:space="preserve">
+    <value>Ajuda &amp; sugestões</value>
+  </data>
+  <data name="SmartCollectionEditHint.Text" xml:space="preserve">
+    <value>Para modificar as coleções inteligentes, utilize o botão de editar acima.</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>Selecionar pasta</value>
   </data>
 </root>

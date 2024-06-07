@@ -1204,4 +1204,7 @@ Dotknij i przytrzymaj, aby rozmieścić.</value>
   <data name="FontPropPanoseTitle.Text" xml:space="preserve">
     <value>Wartości PANOSE</value>
   </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>Wybierz folder</value>
+  </data>
 </root>
