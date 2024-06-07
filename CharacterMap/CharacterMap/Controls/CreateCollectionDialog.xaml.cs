@@ -19,6 +19,7 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
     [ObservableProperty] string _filterFilePath;
     [ObservableProperty] string _filterFoundry;
     [ObservableProperty] string _filterDesigner;
+    [ObservableProperty] string _resultsLabel;
     
     [ObservableProperty] IReadOnlyList<InstalledFont> _resultsPreview = [];
 
@@ -38,10 +39,10 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
         {
             IsSmartCollection = true;
 
-            Populate("char:", Localization.Get("CharacterFilter"), s => FilterCharacters = s);
-            Populate("filepath:", Localization.Get("FilePathFilter"), s => FilterFilePath = s);
-            Populate("foundry:", Localization.Get("FoundryFilter"), s => FilterFoundry = s);
-            Populate("designer:", Localization.Get("DesignerFilter"), s => FilterDesigner = s);
+            Populate("char:",       Localization.Get("CharacterFilter"),    s => FilterCharacters = s);
+            Populate("filepath:",   Localization.Get("FilePathFilter"),     s => FilterFilePath = s);
+            Populate("foundry:",    Localization.Get("FoundryFilter"),      s => FilterFoundry = s);
+            Populate("designer:",   Localization.Get("DesignerFilter"),     s => FilterDesigner = s);
 
             void Populate(string id, string loc, Action<string> set)
             {
@@ -78,10 +79,10 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
     {
         SmartFontCollection collection = new () { Filters = GetFilterList() };
         ResultsPreview = collection.GetFontFamilies();
+        ResultsLabel = Localization.Get("ResultsCountLabel", ResultsPreview.Count);
     }
 }
 
-//[DependencyProperty<bool>("AllowSmartCollection")]
 public sealed partial class CreateCollectionDialog : ContentDialog
 {
     public CreateCollectionDialogTemplateSettings TemplateSettings { get; }
@@ -108,6 +109,13 @@ public sealed partial class CreateCollectionDialog : ContentDialog
             this.PrimaryButtonText = Localization.Get("DigEditCollection/PrimaryButtonText");
             TemplateSettings.Populate(_collection);
         }
+
+        this.Closed += OnClosed;
+    }
+
+    private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
+    {
+        this.Bindings.StopTracking();
     }
 
     public CreateCollectionDialog SetDataContext(object o)
@@ -154,6 +162,8 @@ public sealed partial class CreateCollectionDialog : ContentDialog
                     filters);
 
                 d.Complete();
+
+                result = new AddToCollectionResult(true, null, collection);
             }
             else
             {

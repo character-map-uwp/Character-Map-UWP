@@ -67,7 +67,7 @@ public sealed partial class FilterFlyout : MenuFlyout
                     foreach (var item in exist)
                         unicode.Items.Add(item);
 
-                    tb.Text = "Sorted by Range";
+                    tb.Text = Localization.Get("SortedByRangeLabel/Text");
                 }
                 else
                 {
@@ -75,7 +75,7 @@ public sealed partial class FilterFlyout : MenuFlyout
                     foreach (var item in items.OrderBy(g => Properties.GetFilter(g)?.DisplayTitle ?? "-1"))
                         unicode.Items.Add(item);
 
-                    tb.Text = "Sorted by Name";
+                    tb.Text = Localization.Get("SortedByNameLabel/Text");
                 }
             };
 

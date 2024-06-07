@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:CharacterMap.Controls"
+    xmlns:core="using:CharacterMap.Core"
     MenuFlyoutPresenterStyle="{StaticResource FontListFlyoutStyle}"
     Opening="MenuFlyout_Opening"
     Placement="BottomEdgeAlignedLeft">
@@ -16,8 +17,8 @@
                 Margin="-1 0 0 0"
                 VerticalAlignment="Center"
                 Foreground="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
-                Text="Sorted by Range" />
-            <controls:UXButton ToolTipService.ToolTip="Change sort">
+                Text="{core:Localizer Key=SortedByRangeLabel/Text}" />
+            <controls:UXButton x:Uid="ChangeSortToggle">
                 <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE8CB;" />
             </controls:UXButton>
         </controls:AutoGrid>
