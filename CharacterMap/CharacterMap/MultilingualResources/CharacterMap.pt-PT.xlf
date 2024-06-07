@@ -2227,6 +2227,30 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
           <source>Select Folder</source>
           <target state="translated">Selecionar pasta</target>
         </trans-unit>
+        <trans-unit id="CharacterFilter" translate="yes" xml:space="preserve">
+          <source>char:</source>
+          <target state="new">char:</target>
+        </trans-unit>
+        <trans-unit id="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+          <source>Change sort</source>
+          <target state="new">Change sort</target>
+        </trans-unit>
+        <trans-unit id="SortedByRangeLabel.Text" translate="yes" xml:space="preserve">
+          <source>Sorted by Range</source>
+          <target state="new">Sorted by Range</target>
+        </trans-unit>
+        <trans-unit id="RefreshResultsLabel.Text" translate="yes" xml:space="preserve">
+          <source>Refresh results</source>
+          <target state="new">Refresh results</target>
+        </trans-unit>
+        <trans-unit id="ResultsCountLabel" translate="yes" xml:space="preserve">
+          <source>{0} results</source>
+          <target state="new">{0} results</target>
+        </trans-unit>
+        <trans-unit id="SortedByNameLabel.Text" translate="yes" xml:space="preserve">
+          <source>Sorted by Name</source>
+          <target state="new">Sorted by Name</target>
+        </trans-unit>
       </group>
     </body>
   </file>
