@@ -130,9 +130,9 @@ public sealed partial class ItemTemplates : ResourceDictionary
             }
             else if (b.Tag is AddToCollectionResult result)
             {
-                if (result.Success)
+                if (result.Success && result.Collection is UserFontCollection user)
                 {
-                    await collections.RemoveFromCollectionAsync(result.Font, result.Collection);
+                    await collections.RemoveFromCollectionAsync(result.Font, user);
                     WeakReferenceMessenger.Default.Send(new CollectionsUpdatedMessage());
                 }
             }

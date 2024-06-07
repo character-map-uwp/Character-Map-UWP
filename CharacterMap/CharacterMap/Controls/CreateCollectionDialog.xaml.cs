@@ -164,6 +164,7 @@ public sealed partial class CreateCollectionDialog : ContentDialog
                 d.Complete();
 
                 result = new AddToCollectionResult(true, null, collection);
+                Result = result;
             }
             else
             {

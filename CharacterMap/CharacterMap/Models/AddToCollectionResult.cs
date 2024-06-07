@@ -2,7 +2,7 @@
 
 public class AddToCollectionResult
 {
-    public AddToCollectionResult(bool success, IReadOnlyList<InstalledFont> fonts, UserFontCollection collection)
+    public AddToCollectionResult(bool success, IReadOnlyList<InstalledFont> fonts, IFontCollection collection)
     {
         Success = success;
         Fonts = fonts;
@@ -14,7 +14,7 @@ public class AddToCollectionResult
     public InstalledFont Font { get; }
     public IReadOnlyList<InstalledFont> Fonts { get; }
     public bool Success { get; }
-    public UserFontCollection Collection { get; }
+    public IFontCollection Collection { get; }
 
     public string GetTitle()
     {
@@ -34,7 +34,7 @@ public class AddToCollectionResult
 
         if (Font is null && Fonts is not null)
             return $"{Fonts.Count} fonts have been added to {Collection.Name}";
-        else if (Collection.IsSystemSymbolCollection)
+        else if (Collection is UserFontCollection u && u.IsSystemSymbolCollection)
             return Localization.Get("NotificationAddedToCollection", Font.Name, Localization.Get("OptionSymbolFonts/Text"));
         else
             return Localization.Get("NotificationAddedToCollection", Font.Name, Collection.Name);
