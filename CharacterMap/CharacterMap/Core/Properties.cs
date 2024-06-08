@@ -75,6 +75,8 @@ namespace CharacterMap.Core;
 [AttachedProperty<string>("Hyperlink")]
 [AttachedProperty<object>("Tag")]
 [AttachedProperty<CoreCursorType>("Cursor", CoreCursorType.Arrow)]
+[AttachedProperty<FrameworkElement>("Receiver")]
+[AttachedProperty<double>("Depth")]
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1419,6 +1421,22 @@ public partial class Properties : DependencyObject
             // this is necessary when click triggers immediate change in layout and PointerExited is not called
             Window.Current.CoreWindow.PointerCursor = _defaultCursor;
         }
+    }
+
+    #endregion
+
+    #region Shadow
+
+    static partial void OnReceiverChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ThemeShadow s && e.NewValue is FrameworkElement f)
+            s.Receivers.Add(f);
+    }
+
+    static partial void OnDepthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f && e.NewValue is double v)
+            f.Translation = new Vector3(0, 0, (float)v);
     }
 
     #endregion

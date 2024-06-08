@@ -780,8 +780,6 @@
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
                                         core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
-                                        core:Properties.ToolTipPlacement="Bottom"
-                                        core:Properties.ToolTipTemplate="{StaticResource FontListToolTipTemplate}"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
@@ -1070,6 +1068,14 @@
                         </Border>
                     </views:FontMapView.TitleRightContent>
                 </views:FontMapView>
+
+                <controls:PreviewTip
+                    Grid.RowSpan="30"
+                    Grid.ColumnSpan="30"
+                    Margin="2"
+                    core:Properties.Receiver="{x:Bind LstFontFamily}"
+                    ContentTemplate="{StaticResource FontListToolTipTemplate}"
+                    Target="{x:Bind LstFontFamily}" />
 
             </Grid>
         </controls:ExtendedSplitView>

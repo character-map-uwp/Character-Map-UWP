@@ -1072,4 +1072,92 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="controls:PreviewTip">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="IsHitTestVisible" Value="False" />
+        <Setter Property="Width" Value="300" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Foreground" Value="{ThemeResource ToolTipForegroundBrush}" />
+        <Setter Property="Background" Value="{ThemeResource ToolTipBackgroundBrush}" />
+        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="BorderBrush" Value="{ThemeResource ToolTipBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource ToolTipBorderThemeThickness}" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ToolTipContentThemeFontSize}" />
+        <Setter Property="Padding" Value="{StaticResource ToolTipBorderPadding}" />
+        <Setter Property="MaxWidth" Value="400" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:PreviewTip">
+                    <Border
+                        x:Name="LayoutRoot"
+                        Margin="{TemplateBinding Margin}"
+                        Padding="{TemplateBinding Padding}"
+                        core:Properties.Depth="30"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Visibility="Collapsed">
+                        <Border.Shadow>
+                            <ThemeShadow core:Properties.Receiver="{Binding (core:Properties.Receiver), RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                        </Border.Shadow>
+                        <Border.RenderTransform>
+                            <CompositeTransform />
+                        </Border.RenderTransform>
+                        <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="OpenStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="Opened" To="Closed">
+                                        <Storyboard>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <FadeOutThemeAnimation TargetName="LayoutRoot" />
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                                <SplineDoubleKeyFrame KeySpline="0.7 0.0 1.0 0.5" KeyTime="0:0:0.2" Value="0.7" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                                <SplineDoubleKeyFrame KeySpline="0.7 0.0 1.0 0.5" KeyTime="0:0:0.2" Value="0.7" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="Closed" To="Opened">
+                                        <Storyboard>
+                                            <FadeInThemeAnimation TargetName="LayoutRoot" />
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleX)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.00001" Value="0.7" />
+                                                <SplineDoubleKeyFrame KeySpline="0 0 0 1" KeyTime="0:0:0.5" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.ScaleY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="1" />
+                                                <EasingDoubleKeyFrame KeyTime="0:0:0.00001" Value="0.7" />
+                                                <SplineDoubleKeyFrame KeySpline="0 0 0 1" KeyTime="0:0:0.5" Value="1" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
+                                <VisualState x:Name="Closed" />
+                                <VisualState x:Name="Opened">
+                                    <VisualState.Setters>
+                                        <Setter Target="LayoutRoot.Visibility" Value="Visible" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>
