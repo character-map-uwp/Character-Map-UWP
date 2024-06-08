@@ -65,7 +65,7 @@ public sealed partial class SettingsPresenter : ItemsControl, IThemeableControl
                 && VisualTreeHelperExtensions.GetImplementationRoot(_itemsRoot) is FrameworkElement target)
             {
                 Visual v = target.EnableCompositionTranslation().GetElementVisual();
-                var ease = v.Compositor.GetCachedEntranceEase();
+                var ease = v.Compositor.GetCachedFluentEntranceEase();
                 v.StartAnimation(
                     v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
                         .AddKeyFrame(0, "Vector3(0, -this.Target.Size.Y - 8, 0)")

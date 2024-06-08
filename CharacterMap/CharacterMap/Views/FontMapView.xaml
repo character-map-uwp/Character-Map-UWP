@@ -492,12 +492,12 @@
                 Grid.Column="1"
                 Margin="24 0 8 0"
                 VerticalAlignment="Center"
+                core:Properties.ToolTip="{x:Bind ViewModel.SelectedFont.Font.Name, FallbackValue='', TargetNullValue='', Mode=OneWay}"
                 core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}"
                 IsTextSelectionEnabled="True"
                 Style="{StaticResource TitleTextStyle}"
                 Text="{Binding SelectedFont.Font.Name, Converter={StaticResource TitleConverter}}"
                 TextTrimming="CharacterEllipsis"
-                ToolTipService.ToolTip="{Binding SelectedFont.Font.Name}"
                 d:Text="Font Name" />
 
             <toolkit:WrapPanel
@@ -581,6 +581,7 @@
                     core:Properties.FontStyle="{x:Bind ViewModel.SelectedVariant.FontFace.Style, Mode=OneWay}"
                     core:Properties.FontWeight="{x:Bind ViewModel.SelectedVariant.FontFace.Weight, Mode=OneWay}"
                     core:Properties.ToolTipMemberPath="Description"
+                    core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                     GotFocus="SearchBox_GotFocus"
                     ItemTemplate="{StaticResource SearchResultTemplate}"
                     ItemsSource="{Binding Source={StaticResource SearchResultsSource}}"
@@ -2365,7 +2366,7 @@
                         <Setter Target="CharGridHeader.ColumnSpan" Value="3" />
                         <!--<Setter Target="SwitchToCharacterMapButton.Visibility" Value="Visible" />
                         <Setter Target="SwitchToTypeRampButton.Visibility" Value="Collapsed" />-->
-                        <Setter Target="ViewToggleButton.(ToolTipService.ToolTip)" Value="{core:Localizer Key='LblSwitchToCharMap/Text'}" />
+                        <Setter Target="ViewToggleButton.(core:Properties.ToolTip)" Value="{core:Localizer Key='LblSwitchToCharMap/Text'}" />
                         <Setter Target="TypeRampHints.Visibility" Value="Collapsed" />
                         <!--  Popup menu options  -->
                         <Setter Target="IncreaseSizeButton.IsEnabled" Value="False" />

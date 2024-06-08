@@ -422,13 +422,13 @@
                                     core:Properties.ClickAnimationOffset="0.87"
                                     core:Properties.PointerOverAnimation="Content"
                                     core:Properties.PointerPressedAnimation="Content|Scale"
+                                    core:Properties.ToolTip="Calligraphy pen"
                                     CustomPen="{StaticResource CalligraphyPen}"
                                     MaxStrokeWidth="10"
                                     MinStrokeWidth="3"
                                     Palette="{x:Bind BallpointPen.Palette, Mode=OneWay}"
                                     SelectedBrushIndex="0"
-                                    SelectedStrokeWidth="4"
-                                    ToolTipService.ToolTip="Calligraphy pen">
+                                    SelectedStrokeWidth="4">
                                     <Border>
                                         <Grid>
                                             <TextBlock
@@ -451,12 +451,14 @@
                                     core:Properties.ClickAnimationOffset="0.87"
                                     core:Properties.PointerOverAnimation="Content"
                                     core:Properties.PointerPressedAnimation="Content|Scale"
+                                    core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     MaxStrokeWidth="10"
                                     MinStrokeWidth="3" />
                                 <InkToolbarEraserButton
                                     core:Properties.ClickAnimationOffset="0.87"
                                     core:Properties.PointerOverAnimation="Content"
                                     core:Properties.PointerPressedAnimation="Content|Scale"
+                                    core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     IsClearAllVisible="False"
                                     IsExtensionGlyphShown="False" />
                             </InkToolbar>
@@ -492,6 +494,7 @@
                                 core:Properties.ClickAnimation="Content|Scale"
                                 core:Properties.ClickAnimationOffset="0.87"
                                 core:Properties.PointerOverAnimation="Content"
+                                core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                 IsChecked="{x:Bind ViewModel.IsOverlayVisible, Mode=TwoWay}"
                                 d:ToolTipService.ToolTip="Show Guide">
                                 <TextBlock
@@ -507,6 +510,7 @@
                                 core:Properties.ClickAnimation="Content|Scale"
                                 core:Properties.ClickAnimationOffset="0.87"
                                 core:Properties.PointerOverAnimation="Content"
+                                core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                 Click="Button_Click">
                                 <PathIcon
                                     Margin="0 -4 0 0"

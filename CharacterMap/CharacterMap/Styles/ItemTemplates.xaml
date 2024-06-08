@@ -7,6 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:services="using:CharacterMap.Services"
+    xmlns:viewmodels="using:CharacterMap.ViewModels"
     mc:Ignorable="d">
 
     <DataTemplate x:Key="SearchResultTemplate" x:DataType="services:IGlyphData">
@@ -44,10 +45,7 @@
     </DataTemplate>
 
     <DataTemplate x:Key="FontListItemTemplateSimple" x:DataType="core:InstalledFont">
-        <Grid
-            Padding="0 4"
-            Background="Transparent"
-            ToolTipService.ToolTip="{x:Bind Name}">
+        <Grid Padding="0 4" Background="Transparent">
             <TextBlock
                 Padding="5"
                 VerticalAlignment="Center"
@@ -61,14 +59,46 @@
         </Grid>
     </DataTemplate>
 
+    <DataTemplate x:Key="FontListToolTipTemplate" x:DataType="core:InstalledFont">
+        <StackPanel Spacing="8">
+            <TextBlock
+                FontSize="12.666"
+                Opacity="0.71"
+                Text="{x:Bind Name}"
+                TextWrapping="Wrap" />
+            <TextBlock
+                FontFamily="{x:Bind DefaultVariant.Source}"
+                FontSize="32"
+                Text="The quick brown fox jumps over the lazy dog."
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="FontListItemToolTipTemplate" x:DataType="viewmodels:FontItem">
+        <StackPanel Spacing="8">
+            <TextBlock
+                FontSize="12.666"
+                Opacity="0.7"
+                Text="{x:Bind Font.Name}"
+                TextWrapping="Wrap" />
+            <TextBlock
+                FontFamily="{x:Bind Font.DefaultVariant.Source}"
+                FontSize="32"
+                Text="The quick brown fox jumps over the lazy dog."
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </DataTemplate>
+
 
     <DataTemplate x:Key="FontListItemTemplate" x:DataType="core:InstalledFont">
         <Grid
             Name="TemplateContent"
             ColumnSpacing="12"
             Padding="12 4"
-            Background="Transparent"
-            ToolTipService.ToolTip="{x:Bind Name}">
+            Background="Transparent">
+            <!--
+                ToolTipService.ToolTip="{x:Bind Name}"
+            -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

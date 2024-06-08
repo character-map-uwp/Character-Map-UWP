@@ -18,7 +18,7 @@
                 VerticalAlignment="Center"
                 Foreground="{ThemeResource MenuFlyoutSeparatorThemeBrush}"
                 Text="{core:Localizer Key=SortedByRangeLabel/Text}" />
-            <controls:UXButton x:Uid="ChangeSortToggle">
+            <controls:UXButton x:Uid="ChangeSortToggle" core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle">
                 <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE8CB;" />
             </controls:UXButton>
         </controls:AutoGrid>

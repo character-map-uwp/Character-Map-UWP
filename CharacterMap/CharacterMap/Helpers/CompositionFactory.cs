@@ -243,7 +243,7 @@ public class CompositionFactory : DependencyObject
         return c.GetCached(key, () =>
         {
             TimeSpan delay = TimeSpan.FromMilliseconds(delayMs);
-            var e = c.GetCachedEntranceEase();
+            var e = c.GetCachedFluentEntranceEase();
             var t = c.CreateVector3KeyFrameAnimation()
                 .SetTarget(TRANSLATION)
                 .SetInitialValueBeforeDelay()
@@ -294,7 +294,7 @@ public class CompositionFactory : DependencyObject
             if (from != null && from.HasValue)
                 o.AddKeyFrame(0, from.Value);
 
-            o.AddKeyFrame(1, to, c.GetCachedEntranceEase())
+            o.AddKeyFrame(1, to, c.GetCachedFluentEntranceEase())
              .SetInitialValueBeforeDelay()
              .SetDelayTime(TimeSpan.FromMilliseconds(delayMs))
              .SetDuration(TimeSpan.FromMilliseconds(durationMs));
@@ -401,7 +401,7 @@ public class CompositionFactory : DependencyObject
         double delay = 0.15;
 
         var bv = background.EnableTranslation(true).GetElementVisual();
-        var ease = bv.Compositor.GetCachedEntranceEase();
+        var ease = bv.Compositor.GetCachedFluentEntranceEase();
 
         var bt = bv.CreateVector3KeyFrameAnimation(TRANSLATION)
             .AddKeyFrame(0, "Vector3(0, -this.Target.Size.Y, 0)")

@@ -117,6 +117,12 @@ public static class Composition
             () => c.CreateEntranceEasingFunction());
     }
 
+    public static CubicBezierEasingFunction GetCachedFluentEntranceEase(this Compositor c)
+    {
+        return c.GetCached<CubicBezierEasingFunction>("FluentEntranceEase",
+            () => c.CreateFluentEntranceEasingFunction());
+    }
+
     #endregion
 
 
@@ -911,6 +917,11 @@ public static class Composition
     public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
     {
         return c.CreateCubicBezierEasingFunction(new(.1f, .9f), new(.2f, 1));
+    }
+
+    public static CubicBezierEasingFunction CreateFluentEntranceEasingFunction(this Compositor c)
+    {
+        return c.CreateCubicBezierEasingFunction(new(0f, 0f), new(0f, 1));
     }
 
     public static CompositionAnimationGroup CreateAnimationGroup(this Compositor c, params CompositionAnimation[] animations)

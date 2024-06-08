@@ -27,6 +27,7 @@
         <Setter Property="h:FluentAnimation.PointerOver" Value="Text" />
         <Setter Property="h:FluentAnimation.PointerOverOffset" Value="-2" />
         <Setter Property="h:FluentAnimation.UsePointerOver" Value="True" />
+        <Setter Property="core:Properties.ToolTipStyleKey" Value="DefaultThemeToolTipStyle" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">
@@ -110,6 +111,7 @@
         <Setter Property="Padding" Value="0,0,0,0" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="h:FluentAnimation.PointerDownScale" Value="0.87" />
+        <Setter Property="core:Properties.ToolTipStyleKey" Value="DefaultThemeToolTipStyle" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -177,6 +179,7 @@
         <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="core:Properties.ToolTipStyleKey" Value="DefaultThemeToolTipStyle" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -248,8 +251,8 @@
                 <ControlTemplate TargetType="Button">
                     <Grid
                         x:Name="RootGrid"
-                        Background="{TemplateBinding Background}"
-                        ToolTipService.ToolTip="{TemplateBinding Content}">
+                        core:Properties.ToolTip="{TemplateBinding Content}"
+                        Background="{TemplateBinding Background}">
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="CommonStates">
@@ -444,6 +447,7 @@
         <Setter Property="Padding" Value="0" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="core:Properties.ToolTipStyleKey" Value="DefaultThemeToolTipStyle" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ButtonBase">

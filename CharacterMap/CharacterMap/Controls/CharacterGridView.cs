@@ -118,6 +118,9 @@ public partial class CharacterGridView : GridView
                     t.PlacementTarget = item;
                     t.VerticalOffset = 4;
                     t.Placement = Windows.UI.Xaml.Controls.Primitives.PlacementMode.Top;
+                    if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+                        t.Style = style;
+
                     t.Loaded += (d, e) =>
                     {
                         if (d is ToolTip tt && CharacterGridView.GetToolTipData(tt) is ItemTooltipData data)

@@ -170,6 +170,7 @@
 
             <ListView
                 MaxHeight="238"
+                core:Properties.ToolTipTemplate="{StaticResource FontListToolTipTemplate}"
                 ItemTemplate="{StaticResource FontListItemTemplateSimple}"
                 ItemsSource="{Binding ResultsPreview}"
                 SelectionMode="None">
