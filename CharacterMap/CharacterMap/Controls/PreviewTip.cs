@@ -23,16 +23,18 @@ public partial class PreviewTip : ContentControl
     public PreviewPlacement Placement { get; set; } = PreviewPlacement.RightEdgeTopAligned;
     public FrameworkElement Target { get; set; }
 
-    ListViewBase _parent = null;
-
     Debouncer _debouncer = new();
 
-    Visual _v = null;
-    Visual _rv = null;
+    Visual _v = null; // Visual of control itself
+    Visual _rv = null; // Visual of control's internal LayoutRoot
 
+    ListViewBase _parent = null;
     FrameworkElement _root = null;
 
     CompositionAnimationGroup _hide = null;
+
+
+
 
     public PreviewTip()
     {
@@ -44,7 +46,21 @@ public partial class PreviewTip : ContentControl
     protected override void OnApplyTemplate()
     {
         _root = this.GetTemplateChild("LayoutRoot") as FrameworkElement;
-        _rv = _root.GetElementVisual();
+        _rv = _root.EnableCompositionTranslation().GetElementVisual();
+        
+        TrySetClamping();
+
+        // Prepare closing animation
+        var s = _v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                       .AddKeyFrame(1, new Vector3(0.3f, 0.3f, 1f), CubicBezierPoints.FluentAccelerate)
+                       .SetDuration(0.15);
+
+        var o = _v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
+                    .AddKeyFrame(0.5f, 1)
+                    .AddKeyFrame(1, 0, _v.Compositor.GetLinearEase())
+                    .SetDuration(0.15);
+
+        _hide = _v.Compositor.CreateAnimationGroup(s, o);
     }
 
     private void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -73,29 +89,14 @@ public partial class PreviewTip : ContentControl
         listView.ContainerContentChanging += ListView_ContainerContentChanging;
     }
 
-    private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        Hide();
-    }
 
-    private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
-    {
-        if (args.InRecycleQueue is false)
-        {
-            args.ItemContainer.PointerEntered -= ItemContainer_PointerEntered;
-            args.ItemContainer.PointerEntered += ItemContainer_PointerEntered;
-        }
-    }
 
-    private void ItemContainer_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
-    {
-        Trigger(sender as SelectorItem);
-    }
 
-    private void PointerHide(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
-    {
-        Hide();
-    }
+    //------------------------------------------------------
+    //
+    // Logic
+    //
+    //------------------------------------------------------
 
     void Trigger(SelectorItem item)
     {
@@ -104,6 +105,7 @@ public partial class PreviewTip : ContentControl
 
         if (_root.Visibility is Visibility.Collapsed)
         {
+            // Like a ToolTip we will only show after a short delay
             _debouncer.Debounce(800, () =>
             {
                 MoveTo(item);
@@ -112,10 +114,76 @@ public partial class PreviewTip : ContentControl
         }
         else
         {
+            // If we're already open we move right away
             MoveTo(item);
         }
     }
 
+    void MoveTo(SelectorItem item)
+    {
+        this.Content = item.Content ?? item.DataContext;
+        Vector3 t;
+        
+        if (Placement == PreviewPlacement.RightEdgeTopAligned)
+        {
+            var rect = item.GetBoundingRect((FrameworkElement)Window.Current.Content);
+
+            // Let CenterPoint animation know item size
+            _rv.Properties.InsertVector2("ItemSize", new Vector2((float)rect.Value.Width, (float)rect.Value.Height));
+            
+            // Position to the top edge of the item
+            var y = (rect.Value.Top + VerticalOffset);
+            t = new Vector3((float)HorizontalOffset, (float)y, 0f);
+        }
+        else
+        {
+            // This path is used for the main view TabBar
+            var rect = item.GetBoundingRect((FrameworkElement)Target);
+            t = new Vector3((float)(rect.Value.Left + HorizontalOffset), (float)VerticalOffset, 0f);
+        }
+
+        // If we're open we animate to the new position.
+        // If we're closed set it immediately so we don't see half an animation when opening.
+        if (_root.Visibility is Visibility.Visible && ResourceHelper.AllowAnimation)
+            _v.Properties.StartAnimation(
+                _v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                    .AddKeyFrame(1, t)
+                    .SetDuration(0.1));
+        else
+            _v.SetTranslation(t);
+    }
+
+    void TrySetClamping()
+    {
+        // Current logic only supports clamping for FontList
+        if (Placement is not PreviewPlacement.RightEdgeTopAligned)
+            return;
+
+        var parent = ((FrameworkElement)this.Parent).GetElementVisual();
+        var props = _v.Properties;
+
+        // Clamp Y translation
+        string exp = "Vector3(0f, Min(0f, p.Size.Y - rv.Size.Y - props.Translation.Y - 8), 0f)";
+        _rv.Properties.StartAnimation(
+            _v.CreateExpressionAnimation(CompositionFactory.TRANSLATION)
+                .SetExpression(exp)
+                .SetParameter("p", parent)
+                .SetParameter("rv", _rv)
+                .SetParameter("props", props));
+
+        // Set centre point to sync with the middle of the highlighted item taking into 
+        // account the offset induced by the clamping set above
+        string exp2 = "(props.ItemSize.Y / 2f) - props.Translation.Y";
+        _rv.Properties.InsertVector2("ItemSize", new Vector2(0)); // Ensure there is a default value
+        _rv.StartAnimation(
+            _v.CreateExpressionAnimation("CenterPoint.Y")
+                .SetExpression(exp2)
+                .SetParameter("props", _rv.Properties));
+    }
+
+    /// <summary>
+    /// Causes the PreviewTip to be displayed (if Enabled)
+    /// </summary>
     void Show()
     {
         if (IsEnabled is false)
@@ -124,6 +192,7 @@ public partial class PreviewTip : ContentControl
         if (_root.Visibility is Visibility.Collapsed)
         {
             _root.Visibility = Visibility.Visible;
+
             if (ResourceHelper.AllowAnimation)
             {
                 _rv.StartAnimation(_v.GetCached("_PreTipShowScale", () =>
@@ -142,45 +211,17 @@ public partial class PreviewTip : ContentControl
                         .SetDuration(0.1);
                 }));
             }
+            else
+            {
+                _rv.Scale = new Vector3(1);
+                _rv.Opacity = 1;
+            }
         }
     }
 
-    void MoveTo(SelectorItem item)
-    {
-        this.Content = item.Content ?? item.DataContext;
-        Vector3 t;
-        
-        if (Placement == PreviewPlacement.RightEdgeTopAligned)
-        {
-            var rect = item.GetBoundingRect((FrameworkElement)Window.Current.Content);
-            _rv.CenterPoint = new Vector3(0f, (float)rect.Value.Height / 2f, 0f);
-
-            // Clamp Y
-            //var cp = this.GetFirstDescendantOfType<ContentPresenter>();
-            //cp.Measure(((FrameworkElement)this.Parent).ActualSize.ToSize());
-            //var y = Math.Min(
-            //    ((FrameworkElement)this.Parent).ActualHeight - cp.DesiredSize.Height- - Padding.Top - Padding.Bottom - 8,
-            //    );
-
-            // TODO : Clamp to fit in display area whilst maintaining animations. How? :')
-            var y = (rect.Value.Top + VerticalOffset);
-            t = new Vector3((float)HorizontalOffset, (float)y, 0f);
-        }
-        else
-        {
-            var rect = item.GetBoundingRect((FrameworkElement)Target);
-            t = new Vector3((float)(rect.Value.Left + HorizontalOffset), (float)VerticalOffset, 0f);
-        }
-
-        if (_root.Visibility is Visibility.Visible && ResourceHelper.AllowAnimation)
-            _v.Properties.StartAnimation(
-                _v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                    .AddKeyFrame(1, t)
-                    .SetDuration(0.1));
-        else
-            _v.SetTranslation(t);
-    }
-
+    /// <summary>
+    /// Dismisses the PreviewTip
+    /// </summary>
     void Hide()
     {
         _debouncer.Cancel();
@@ -191,29 +232,49 @@ public partial class PreviewTip : ContentControl
         if (_root.Visibility is Visibility.Visible)
         {
             if (ResourceHelper.AllowAnimation)
-            {
-                if (_hide is null)
-                {
-                    var s = _v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
-                                .AddKeyFrame(1, new Vector3(0.3f, 0.3f, 1f), CubicBezierPoints.FluentAccelerate)
-                                .SetDuration(0.15);
-
-                    var o = _v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
-                                .AddKeyFrame(0.5f, 1)
-                                .AddKeyFrame(1, 0, _v.Compositor.GetLinearEase())
-                                .SetDuration(0.15);
-
-                    _hide = _v.Compositor.CreateAnimationGroup(s, o);
-                }
-
                 _root.SetHideAnimation(_hide);
-            }
             else
-            {
                 _root.SetHideAnimation(null);
-            }
           
             _root.Visibility = Visibility.Collapsed;
         }
     }
+
+
+
+
+    //------------------------------------------------------
+    //
+    // Internal Events
+    //
+    //------------------------------------------------------
+
+    #region Internal Events
+
+    private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+    {
+        if (args.InRecycleQueue is false)
+        {
+            args.ItemContainer.PointerEntered -= ItemContainer_PointerEntered;
+            args.ItemContainer.PointerEntered += ItemContainer_PointerEntered;
+        }
+    }
+
+    private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        Hide();
+    }
+
+
+    private void ItemContainer_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+        Trigger(sender as SelectorItem);
+    }
+
+    private void PointerHide(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+    {
+        Hide();
+    }
+
+    #endregion
 }

@@ -14,7 +14,7 @@ public static class CompositionExtensions
 
     public static UIElement SetTranslation(this UIElement element, Vector3 value)
     {
-        element.GetElementVisual().Properties.InsertVector3("Translation", value);
+        element.GetElementVisual().Properties.InsertVector3(CompositionFactory.TRANSLATION, value);
         return element;
     }
 
@@ -32,6 +32,9 @@ public static class CompositionExtensions
     {
         return c.GetCached("LINEAREASE", () => c.CreateLinearEasingFunction());
     }
+
+
+
 
     //------------------------------------------------------
     //

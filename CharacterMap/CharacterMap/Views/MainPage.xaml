@@ -779,7 +779,6 @@
                                 <SemanticZoom.ZoomedInView>
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
-                                        Padding="0 0 0 160"
                                         core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
                                         core:Properties.ToolTipPlacement="Bottom"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
