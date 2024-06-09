@@ -566,6 +566,12 @@ public static class Composition
         return animation;
     }
 
+    public static Vector3KeyFrameAnimation AddKeyFrame(this Vector3KeyFrameAnimation animation, float normalizedProgressKey, Vector3 value, CubicBezierPoints ease)
+    {
+        animation.InsertKeyFrame(normalizedProgressKey, value, animation.Compositor.CreateCubicBezierEasingFunction(ease));
+        return animation;
+    }
+
     /// <summary>
     /// Adds a Vector3KeyFrame where the X & Y components are set to the input value and the Z component defaults to 0f.
     /// </summary>
@@ -738,6 +744,11 @@ public static class Composition
     public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(this Compositor compositor, Windows.UI.Xaml.Media.Animation.KeySpline spline)
     {
         return compositor.CreateCubicBezierEasingFunction(spline);
+    }
+
+    public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(this Compositor compositor, CubicBezierPoints points)
+    {
+        return compositor.CreateCubicBezierEasingFunction(points.Start, points.End);
     }
 
     #endregion

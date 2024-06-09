@@ -780,6 +780,7 @@
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
                                         core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
+                                        core:Properties.ToolTipPlacement="Bottom"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
@@ -1070,6 +1071,7 @@
                 </views:FontMapView>
 
                 <controls:PreviewTip
+                    x:Name="PreviewTip"
                     Grid.RowSpan="30"
                     Grid.ColumnSpan="30"
                     Margin="2"
@@ -1184,6 +1186,8 @@
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
+                        <Setter Target="PreviewTip.IsEnabled" Value="False" />
+                        <Setter Target="LstFontFamily.(core:Properties.ToolTipTemplate)" Value="{StaticResource FontListToolTipTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="CollapsedViewState">
@@ -1198,6 +1202,8 @@
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
                         <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
+                        <Setter Target="PreviewTip.IsEnabled" Value="False" />
+                        <Setter Target="LstFontFamily.(core:Properties.ToolTipTemplate)" Value="{StaticResource FontListToolTipTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DefaultViewState">

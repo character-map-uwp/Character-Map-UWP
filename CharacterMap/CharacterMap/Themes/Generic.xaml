@@ -1076,7 +1076,7 @@
     <Style TargetType="controls:PreviewTip">
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="IsHitTestVisible" Value="False" />
-        <Setter Property="Width" Value="300" />
+        <Setter Property="Width" Value="350" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="Foreground" Value="{ThemeResource ToolTipForegroundBrush}" />
@@ -1105,11 +1105,11 @@
                         <Border.Shadow>
                             <ThemeShadow core:Properties.Receiver="{Binding (core:Properties.Receiver), RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                         </Border.Shadow>
-                        <Border.RenderTransform>
+                        <!--<Border.RenderTransform>
                             <CompositeTransform />
-                        </Border.RenderTransform>
+                        </Border.RenderTransform>-->
                         <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        <VisualStateManager.VisualStateGroups>
+                        <!--<VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="OpenStates">
                                 <VisualStateGroup.Transitions>
                                     <VisualTransition From="Opened" To="Closed">
@@ -1128,7 +1128,10 @@
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
                                     </VisualTransition>
-                                    <VisualTransition From="Closed" To="Opened">
+
+                        -->
+                        <!--  Have to use composition here to avoid visual artefacts  -->
+                        <!--<VisualTransition From="Closed" To="Opened">
                                         <Storyboard>
                                             <FadeInThemeAnimation TargetName="LayoutRoot" />
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="Visibility">
@@ -1145,7 +1148,8 @@
                                                 <SplineDoubleKeyFrame KeySpline="0 0 0 1" KeyTime="0:0:0.5" Value="1" />
                                             </DoubleAnimationUsingKeyFrames>
                                         </Storyboard>
-                                    </VisualTransition>
+                                    </VisualTransition>-->
+                        <!--
                                 </VisualStateGroup.Transitions>
                                 <VisualState x:Name="Closed" />
                                 <VisualState x:Name="Opened">
@@ -1154,7 +1158,7 @@
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>
-                        </VisualStateManager.VisualStateGroups>
+                        </VisualStateManager.VisualStateGroups>-->
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

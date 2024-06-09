@@ -1078,7 +1078,7 @@ public partial class Properties : DependencyObject
             if (lvb.ItemsPanelRoot is null)
                 return;
             string path = e.NewValue.ToString();
-            foreach (var item in lvb.ItemsPanelRoot.Children.Cast<SelectorItem>())
+            foreach (var item in lvb.ItemsPanelRoot.Children.OfType<SelectorItem>())
                 if (item.Content is not null)
                     Set(lvb, item, path);
 
@@ -1135,12 +1135,27 @@ public partial class Properties : DependencyObject
             lvb.ContainerContentChanging += ContainerContentChanging;
 
             // 2. Update any existing containers
-            if (lvb.ItemsPanelRoot is null )
+            if (lvb.ItemsPanelRoot is null)
                 return;
-            string path = e.NewValue.ToString();
-            foreach (var item in lvb.ItemsPanelRoot.Children.Cast<SelectorItem>())
-                if (ToolTipService.GetToolTip(item) is ToolTip t)
-                    t.Placement = GetToolTipPlacement(lvb);
+            foreach (var item in lvb.ItemsPanelRoot.Children.OfType<SelectorItem>())
+            {
+                var tooltip = ToolTipService.GetToolTip(item) as ToolTip;
+                if (e.NewValue is null)
+                {
+                    // Remove tool tip
+                    if (tooltip is not null)
+                        tooltip.Opened -= OnToolTipOpened;
+
+                    ToolTipService.SetToolTip(item, null);
+                }
+                else
+                {
+                    // Ensure there is a tooltip
+                    if (tooltip is null)
+                        tooltip = Create(item, lvb);
+                    tooltip.Placement = GetToolTipPlacement(lvb);
+                }
+            }
 
             static void ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
             {
@@ -1151,14 +1166,18 @@ public partial class Properties : DependencyObject
                 {
                     if (ToolTipService.GetToolTip(args.ItemContainer) is ToolTip rtt)
                         rtt.Opened -= OnToolTipOpened;
-                    return;
                 }
+                else
+                    Create(args.ItemContainer, sender);
+            }
 
+            static ToolTip Create(SelectorItem item, ListViewBase sender)
+            {
                 // TabViewItem's create their own blank ToolTip, so we specifically 
                 // want to override that default empty ToolTip so we can show our own.
                 bool tabViewHack = sender is TabViewListView;
 
-                if (ToolTipService.GetToolTip(args.ItemContainer) is not ToolTip t
+                if (ToolTipService.GetToolTip(item) is not ToolTip t
                     // Default TabViewItem TT is disabled and empty
                     || (tabViewHack && t.IsEnabled is false && t.Content is null))
                 {
@@ -1170,14 +1189,15 @@ public partial class Properties : DependencyObject
                     t.Tag = sender;
 
                     t.Placement = GetToolTipPlacement(sender);
-                    ToolTipService.SetToolTip(args.ItemContainer, t);
+                    ToolTipService.SetToolTip(item, t);
                 }
 
                 t.Opened -= OnToolTipOpened;
                 t.Opened += OnToolTipOpened;
 
+                SetTag(t, item);
 
-                SetTag(t, args.ItemContainer);
+                return t;
             }
 
             static void OnToolTipOpened(object sender, RoutedEventArgs e)

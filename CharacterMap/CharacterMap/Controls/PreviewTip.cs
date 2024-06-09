@@ -1,4 +1,5 @@
-﻿using Windows.UI.Composition;
+﻿using Windows.ApplicationModel;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -7,9 +8,9 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-[DependencyProperty<ListView>("Target")]
 public partial class PreviewTip : ContentControl
 {
+    public ListView Target { get; set; }
 
     ListView _parent = null;
 
@@ -17,26 +18,25 @@ public partial class PreviewTip : ContentControl
 
     Visual _v = null;
 
-    bool _isOpen = false;
-
     Vector3Transition _transition { get; }
+
+    FrameworkElement _root = null;
 
     public PreviewTip()
     {
         this.DefaultStyleKey = typeof(PreviewTip);
         this.Loaded += OnLoaded;
-
-        _transition = new Vector3Transition()
-        {
-            Components = Vector3TransitionComponents.X | Vector3TransitionComponents.Y,
-            Duration = TimeSpan.FromSeconds(0.2)
-        };
+        _v = this.EnableCompositionTranslation().GetElementVisual();
     }
+    //partial void OnIsEnabledChanged(bool o, bool n)
+    //{
+    //    if (n is false)
+    //        Hide();
+    //}
 
     protected override void OnApplyTemplate()
     {
-        VisualStateManager.GoToState(this, "Closed", false);
-        _v = ((FrameworkElement)this.GetTemplateChild("LayoutRoot")).EnableCompositionTranslation().GetElementVisual();
+        _root = this.GetTemplateChild("LayoutRoot") as FrameworkElement;
     }
 
     private void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -47,11 +47,14 @@ public partial class PreviewTip : ContentControl
 
     public void AttachTo(ListView listView)
     {
+        if (DesignMode.DesignModeEnabled)
+            return;
+
         _parent = listView;
 
-        listView.PointerCanceled += ListView_PointerCanceled;
-        listView.PointerExited += ListView_PointerExited;
-        listView.PointerCaptureLost += ListView_PointerCaptureLost;
+        listView.PointerCanceled += PointerHide;
+        listView.PointerExited += PointerHide;
+        listView.PointerCaptureLost += PointerHide;
         listView.ContainerContentChanging += ListView_ContainerContentChanging;
     }
 
@@ -69,26 +72,19 @@ public partial class PreviewTip : ContentControl
         Trigger(sender as SelectorItem);
     }
 
-    private void ListView_PointerCaptureLost(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
-    {
-        Hide();
-    }
-
-    private void ListView_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
-    {
-        Hide();
-    }
-
-    private void ListView_PointerCanceled(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+    private void PointerHide(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
         Hide();
     }
 
     void Trigger(SelectorItem item)
     {
-        if (_isOpen is false)
+        if (IsEnabled is false)
+            return;
+
+        if (_root.Visibility is Visibility.Collapsed)
         {
-            _debouncer.Debounce(900, () =>
+            _debouncer.Debounce(800, () =>
             {
                 MoveTo(item);
                 Show();
@@ -96,26 +92,75 @@ public partial class PreviewTip : ContentControl
         }
         else
         {
+            //_debouncer.Debounce(50, () => MoveTo(item));
             MoveTo(item);
         }
     }
 
     void Show()
     {
-        _isOpen = VisualStateManager.GoToState(this, "Opened", true);
+        if (IsEnabled is false)
+            return;
+
+        if (_root.Visibility is Visibility.Collapsed)
+        {
+            _root.Visibility = Visibility.Visible;
+            if (ResourceHelper.AllowAnimation)
+            {
+                _v.StartAnimation(
+                   _v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                      .AddKeyFrame(0, new Vector3(0.7f, 0.7f, 1f))
+                      .AddKeyFrame(1, new Vector3(1f), CubicBezierPoints.FluentEntrance)
+                      .SetDuration(0.5));
+
+                _v.StartAnimation(
+                     _v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
+                        .AddKeyFrame(0, 0)
+                        .AddKeyFrame(1, 1, _v.Compositor.GetLinearEase())
+                        .SetDuration(0.2));
+            }
+
+        }
     }
 
     void MoveTo(SelectorItem item)
     {
         var rect = item.GetBoundingRect((FrameworkElement)Window.Current.Content);
         this.Content = item.Content;
-        this.TranslationTransition = _isOpen ? _transition : null; ;
-        this.Translation = new Vector3(0, (float)rect.Value.Top, 30f);
+        //this.TranslationTransition = _isOpen ? _transition : null; ;
+        Vector3 t = new Vector3(0f, (float)rect.Value.Top, 0f);
+
+        if (_root.Visibility is Visibility.Visible)
+            _v.Properties.StartAnimation(
+                _v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                    .AddKeyFrame(1, t)
+                    .SetDuration(0.1));
+        else
+            _v.SetTranslation(t);
+
+       // _v.SetTranslation(0, );
     }
 
     void Hide()
     {
         _debouncer.Cancel();
-        _isOpen = !VisualStateManager.GoToState(this, "Closed", true);
+
+        if (_root is null)
+            return;
+
+        if (_root.Visibility is Visibility.Visible)
+        {
+            var s =_v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
+                        .AddKeyFrame(1, new Vector3(0.7f, 0.7f, 1f), CubicBezierPoints.FluentAccelerate)
+                        .SetDuration(0.2);
+
+            var o = _v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
+                        .AddKeyFrame(0.5f, 1)
+                        .AddKeyFrame(1, 0)
+                        .SetDuration(0.2);
+
+            _root.SetHideAnimation(_v.Compositor.CreateAnimationGroup(s, o));
+            _root.Visibility = Visibility.Collapsed;
+        }
     }
 }
