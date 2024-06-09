@@ -11,6 +11,7 @@ public class AppSettings : INotifyPropertyChanged
     public string StartupLanugage { get; }
 
     public const string UserCollectionIdentifier = "||UC:||";
+    public const string FAMILY_PREVIEW_TOOLTIP = "The quick brown dog jumps over the lazy fox. 123456!?";
 
     public string FileNameTemplate
     {
@@ -177,6 +178,19 @@ public class AppSettings : INotifyPropertyChanged
     {
         get => Get("", "AppLang2");
         set => Set(value, "AppLang2");
+    }
+
+    public string FamilyPreviewString
+    {
+        get => Get(FAMILY_PREVIEW_TOOLTIP);
+        set => Set(value);
+    }
+
+    public string GetFamilyPreviewString()
+    {
+        if (string.IsNullOrWhiteSpace(FamilyPreviewString))
+            return FAMILY_PREVIEW_TOOLTIP;
+        return FamilyPreviewString;
     }
 
     public ExportNamingScheme ExportNamingScheme

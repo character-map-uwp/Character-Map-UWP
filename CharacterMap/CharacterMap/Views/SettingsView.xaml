@@ -886,6 +886,10 @@
                                     Margin="0 16 0 0"
                                     Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
+                                <controls:SettingsPresenter x:Uid="SettingsFontListToolTip" ContentPlacement="Bottom">
+                                    <TextBox Text="{Binding Settings.FamilyPreviewString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </controls:SettingsPresenter>
+
                                 <controls:SettingsPresenter x:Uid="SettingsCustomSuggestions" ContentPlacement="Bottom">
 
                                     <Grid RowSpacing="12" Padding="4">

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:core="using:CharacterMap.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:h="using:CharacterMap.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:CharacterMap.Models"
     xmlns:services="using:CharacterMap.Services"
@@ -69,7 +70,10 @@
             <TextBlock
                 FontFamily="{x:Bind DefaultVariant.Source}"
                 FontSize="32"
-                Text="The quick brown fox jumps over the lazy dog."
+                FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
+                FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
+                FontWeight="{x:Bind DefaultVariant.DirectWriteProperties.Weight}"
+                Text="{x:Bind h:ResourceHelper.AppSettings.GetFamilyPreviewString()}"
                 TextWrapping="Wrap" />
         </StackPanel>
     </DataTemplate>
@@ -79,12 +83,15 @@
             <TextBlock
                 FontSize="12.666"
                 Opacity="0.7"
-                Text="{x:Bind Font.Name}"
+                Text="{x:Bind Tooltip}"
                 TextWrapping="Wrap" />
             <TextBlock
-                FontFamily="{x:Bind Font.DefaultVariant.Source}"
+                FontFamily="{x:Bind Selected.Source}"
                 FontSize="32"
-                Text="The quick brown fox jumps over the lazy dog."
+                FontStretch="{x:Bind Selected.DirectWriteProperties.Stretch}"
+                FontStyle="{x:Bind Selected.DirectWriteProperties.Style}"
+                FontWeight="{x:Bind Selected.DirectWriteProperties.Weight}"
+                Text="{x:Bind h:ResourceHelper.AppSettings.GetFamilyPreviewString()}"
                 TextWrapping="Wrap" />
         </StackPanel>
     </DataTemplate>

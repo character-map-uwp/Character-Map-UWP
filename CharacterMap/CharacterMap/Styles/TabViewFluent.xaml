@@ -316,11 +316,11 @@
                                 Grid.Column="0"
                                 Content="{TemplateBinding TabStripHeader}"
                                 ContentTemplate="{TemplateBinding TabStripHeaderTemplate}" />
+                            <!--core:Properties.ToolTipTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.ToolTipTemplate)}"-->
                             <primitives:TabViewListView
                                 x:Name="TabListView"
                                 Grid.Column="1"
                                 MaxWidth="{Binding ElementName=TabColumn, Path=MaxWidth}"
-                                core:Properties.ToolTipTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.ToolTipTemplate)}"
                                 AllowDrop="{TemplateBinding AllowDropTabs}"
                                 Background="{x:Null}"
                                 CanDragItems="{TemplateBinding CanDragTabs}"

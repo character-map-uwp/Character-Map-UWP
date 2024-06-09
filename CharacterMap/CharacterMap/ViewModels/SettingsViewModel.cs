@@ -53,7 +53,7 @@ public partial class SettingsViewModel : ViewModelBase
 
     private int _originalDesign { get; }
 
-    private AppSettings Settings { get; } = ResourceHelper.AppSettings;
+    public AppSettings Settings { get; } = ResourceHelper.AppSettings;
 
   
 

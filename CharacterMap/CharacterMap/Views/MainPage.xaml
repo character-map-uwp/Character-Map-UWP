@@ -1074,10 +1074,25 @@
                     x:Name="PreviewTip"
                     Grid.RowSpan="30"
                     Grid.ColumnSpan="30"
-                    Margin="2"
-                    core:Properties.Receiver="{x:Bind LstFontFamily}"
+                    core:Properties.Receiver="{x:Bind FontMap}"
                     ContentTemplate="{StaticResource FontListToolTipTemplate}"
-                    Target="{x:Bind LstFontFamily}" />
+                    HorizontalOffset="4"
+                    Target="{x:Bind LstFontFamily}"
+                    VerticalOffset="2" />
+
+                <controls:PreviewTip
+                    x:Name="TabPreviewTip"
+                    x:Load="{x:Bind helpers:ResourceHelper.SupportsTabs}"
+                    Grid.Row="2"
+                    Grid.RowSpan="30"
+                    Grid.ColumnSpan="30"
+                    core:Properties.Receiver="{x:Bind FontMap}"
+                    BorderThickness="1 0 1 1"
+                    ContentTemplate="{StaticResource FontListItemToolTipTemplate}"
+                    CornerRadius="0 4 4 4"
+                    HorizontalOffset="5"
+                    Placement="BottomEdgeLeftAligned"
+                    Target="{x:Bind FontsTabBar}" />
 
             </Grid>
         </controls:ExtendedSplitView>
