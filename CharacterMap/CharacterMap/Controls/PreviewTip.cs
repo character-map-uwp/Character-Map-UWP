@@ -28,6 +28,7 @@ public partial class PreviewTip : ContentControl
     Debouncer _debouncer = new();
 
     Visual _v = null;
+    Visual _rv = null;
 
     FrameworkElement _root = null;
 
@@ -43,6 +44,7 @@ public partial class PreviewTip : ContentControl
     protected override void OnApplyTemplate()
     {
         _root = this.GetTemplateChild("LayoutRoot") as FrameworkElement;
+        _rv = _root.GetElementVisual();
     }
 
     private void OnLoaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
@@ -64,10 +66,16 @@ public partial class PreviewTip : ContentControl
 
         _parent = listView;
 
+        listView.SelectionChanged += ListView_SelectionChanged;
         listView.PointerCanceled += PointerHide;
         listView.PointerExited += PointerHide;
         listView.PointerCaptureLost += PointerHide;
         listView.ContainerContentChanging += ListView_ContainerContentChanging;
+    }
+
+    private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        Hide();
     }
 
     private void ListView_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
@@ -118,7 +126,7 @@ public partial class PreviewTip : ContentControl
             _root.Visibility = Visibility.Visible;
             if (ResourceHelper.AllowAnimation)
             {
-                _v.StartAnimation(_v.GetCached("_PreTipShowScale", () =>
+                _rv.StartAnimation(_v.GetCached("_PreTipShowScale", () =>
                 {
                     return _v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
                       .AddKeyFrame(0, new Vector3(0.3f, 0.3f, 1f))
@@ -126,7 +134,7 @@ public partial class PreviewTip : ContentControl
                       .SetDuration(0.5);
                 }));
 
-                _v.StartAnimation(_v.GetCached("_PreTipShowOp", () =>
+                _rv.StartAnimation(_v.GetCached("_PreTipShowOp", () =>
                 {
                     return _v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
                         .AddKeyFrame(0, 0)
@@ -145,7 +153,18 @@ public partial class PreviewTip : ContentControl
         if (Placement == PreviewPlacement.RightEdgeTopAligned)
         {
             var rect = item.GetBoundingRect((FrameworkElement)Window.Current.Content);
-            t = new Vector3((float)HorizontalOffset, (float)(rect.Value.Top + VerticalOffset), 0f);
+            _rv.CenterPoint = new Vector3(0f, (float)rect.Value.Height / 2f, 0f);
+
+            // Clamp Y
+            //var cp = this.GetFirstDescendantOfType<ContentPresenter>();
+            //cp.Measure(((FrameworkElement)this.Parent).ActualSize.ToSize());
+            //var y = Math.Min(
+            //    ((FrameworkElement)this.Parent).ActualHeight - cp.DesiredSize.Height- - Padding.Top - Padding.Bottom - 8,
+            //    );
+
+            // TODO : Clamp to fit in display area whilst maintaining animations. How? :')
+            var y = (rect.Value.Top + VerticalOffset);
+            t = new Vector3((float)HorizontalOffset, (float)y, 0f);
         }
         else
         {
@@ -176,13 +195,13 @@ public partial class PreviewTip : ContentControl
                 if (_hide is null)
                 {
                     var s = _v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
-                     .AddKeyFrame(1, new Vector3(0.3f, 0.3f, 1f), CubicBezierPoints.FluentAccelerate)
-                     .SetDuration(0.2);
+                                .AddKeyFrame(1, new Vector3(0.3f, 0.3f, 1f), CubicBezierPoints.FluentAccelerate)
+                                .SetDuration(0.15);
 
                     var o = _v.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
                                 .AddKeyFrame(0.5f, 1)
-                                .AddKeyFrame(1, 0)
-                                .SetDuration(0.2);
+                                .AddKeyFrame(1, 0, _v.Compositor.GetLinearEase())
+                                .SetDuration(0.15);
 
                     _hide = _v.Compositor.CreateAnimationGroup(s, o);
                 }

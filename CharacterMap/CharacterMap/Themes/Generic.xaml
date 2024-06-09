@@ -1079,16 +1079,14 @@
         <Setter Property="Width" Value="350" />
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="Foreground" Value="{ThemeResource ToolTipForegroundBrush}" />
-        <Setter Property="Background" Value="{ThemeResource ToolTipBackgroundBrush}" />
         <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="MaxWidth" Value="400" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="Background" Value="{ThemeResource ToolTipBackground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource ToolTipBorderBrush}" />
         <Setter Property="BorderThickness" Value="{ThemeResource ToolTipBorderThemeThickness}" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontSize" Value="{ThemeResource ToolTipContentThemeFontSize}" />
-        <Setter Property="Padding" Value="{StaticResource ToolTipBorderPadding}" />
-        <Setter Property="MaxWidth" Value="400" />
-        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="CornerRadius" Value="4" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:PreviewTip">

@@ -269,6 +269,17 @@
 
     <!--  DEFAULT TEMPLATES  -->
 
+    <Style TargetType="controls:PreviewTip">
+        <Setter Property="Foreground" Value="{StaticResource ControlForegroundBrush}" />
+        <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
+        <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
+        <Setter Property="BorderBrush" Value="{StaticResource ComboBoxBorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontFamily" Value="{StaticResource ThemeFontFamily}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="CornerRadius" Value="0" />
+    </Style>
+
     <Style TargetType="ToolTip">
         <Setter Property="Foreground" Value="{StaticResource ControlForegroundBrush}" />
         <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}" />
