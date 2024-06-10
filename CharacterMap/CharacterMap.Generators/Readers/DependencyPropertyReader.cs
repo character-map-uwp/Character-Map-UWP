@@ -30,6 +30,9 @@ internal record class DPData
             && Default.StartsWith("nameof") is false)
             return $"\"{Default}\"";
 
+        if (Default == "default")
+            return $"default({Type})";
+
         return Default;
     }
 
