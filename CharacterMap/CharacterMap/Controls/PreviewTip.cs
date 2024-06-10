@@ -87,6 +87,16 @@ public partial class PreviewTip : ContentControl
         listView.PointerExited += PointerHide;
         listView.PointerCaptureLost += PointerHide;
         listView.ContainerContentChanging += ListView_ContainerContentChanging;
+
+        // Hook any existing containers (this path is hit in secondary windows)
+        if (listView.ItemsPanelRoot is { Children.Count: > 0 } panel)
+        {
+            foreach (var item in panel.Children.OfType<SelectorItem>())
+            {
+                item.PointerEntered -= ItemContainer_PointerEntered;
+                item.PointerEntered += ItemContainer_PointerEntered;
+            }
+        }
     }
 
 
