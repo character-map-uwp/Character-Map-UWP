@@ -1665,4 +1665,22 @@
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>选择文件夹</value>
   </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>char:</value>
+  </data>
+  <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>更改次序</value>
+  </data>
+  <data name="SortedByRangeLabel.Text" xml:space="preserve">
+    <value>按范围排序</value>
+  </data>
+  <data name="RefreshResultsLabel.Text" xml:space="preserve">
+    <value>刷新结果</value>
+  </data>
+  <data name="ResultsCountLabel" xml:space="preserve">
+    <value>{0} 个结果</value>
+  </data>
+  <data name="SortedByNameLabel.Text" xml:space="preserve">
+    <value>按名称排序</value>
+  </data>
 </root>
