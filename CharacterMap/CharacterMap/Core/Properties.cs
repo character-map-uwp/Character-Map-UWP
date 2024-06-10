@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Controls;
+using CharacterMap.Views;
 using CharacterMapCX.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -28,12 +29,12 @@ namespace CharacterMap.Core;
 [AttachedProperty<TypographyFeatureInfo>("Typography")] // Helper to apply TypographyFeatureInfo to a TextBlock */
 [AttachedProperty<CharacterRenderingOptions>("Options")] // Applies CharacterRenderingOptions to a DirectText control
 [AttachedProperty<bool>("ClipToBounds")]
-[AttachedProperty<InsetClip>("InsetClip", "new Thickness(0d)")]
+[AttachedProperty<Thickness>("InsetClip")]
 [AttachedProperty<bool>("IsMouseInputEnabled")] // Enables Mouse & Touch input on an InkCanvas
 [AttachedProperty<InkToolbarToolButton>("DefaultTool")] // Sets the default tool for an InkToolbar
 [AttachedProperty<string>("Name")]
 [AttachedProperty<string>("Uppercase", "string.Empty")]
-[AttachedProperty<object>("Footer")]
+[AttachedProperty<object>("Footer")] // Generic object storage. Intended for List footers.
 [AttachedProperty<string>("StyleKey")]
 [AttachedProperty<string>("IconString")]
 [AttachedProperty<IconElement>("Icon")]
@@ -65,18 +66,19 @@ namespace CharacterMap.Core;
 [AttachedProperty<FontStretch>("FontStretch", FontStretch.Normal)] // Sets the FontStretch on a RichEditBox
 [AttachedProperty<FontStyle>("FontStyle", FontStyle.Normal)] // Sets the FontStyle on a RichEditBox
 [AttachedProperty<FontWeight>("FontWeight", "FontWeights.Normal")] // Sets the FontWeight on a RichEditBox
-[AttachedProperty<FontFamily>("FontFamily")] // Sets the FontFamily on a RichEditBox
+[AttachedProperty<FontFamily>] // Sets the FontFamily on a RichEditBox
 [AttachedProperty<string>("ToolTipMemberPath")] // PropertyPath on an ItemContainer's Content to use as the ItemContainer's ToolTip
 [AttachedProperty<DataTemplate>("ToolTipTemplate")] // ToolTip DataTemplate for ItemsControl
 [AttachedProperty<PlacementMode>("ToolTipPlacement", PlacementMode.Mouse)]
 [AttachedProperty<object>("ToolTip")] // Sets ToolTip with default Theme style
-[AttachedProperty<string>("ToolTipStyleKey")]
+[AttachedProperty<string>("ToolTipStyleKey")] // Helper to attempt force-overriding ToolTip style that is broken by MUXC
 [AttachedProperty<string>("GridDefinitions", "string.Empty")]
-[AttachedProperty<string>("Hyperlink")]
-[AttachedProperty<object>("Tag")]
+[AttachedProperty<string>("Hyperlink")] // Adds clickable hyperlink behaviour to ButtonBase
+[AttachedProperty<object>("Tag")] // Additional object storage
 [AttachedProperty<CoreCursorType>("Cursor", CoreCursorType.Arrow)]
-[AttachedProperty<FrameworkElement>("Receiver")]
-[AttachedProperty<double>("Depth")]
+[AttachedProperty<FrameworkElement>("Receiver")] // Adds a receiver to ThemeShadow.Receivers
+[AttachedProperty<double>("Depth")] // Sets UIElement.Translation.Z
+[AttachedProperty<string>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1064,7 +1066,7 @@ public partial class Properties : DependencyObject
 
     #endregion
 
-    #region ToolTip MemberPath & Template
+    #region ToolTip MemberPath, Template, StyleKey
 
     static partial void OnToolTipMemberPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -1457,6 +1459,32 @@ public partial class Properties : DependencyObject
     {
         if (d is FrameworkElement f && e.NewValue is double v)
             f.Translation = new Vector3(0, 0, (float)v);
+    }
+
+    #endregion
+
+    #region SetPreviewString
+
+    static partial void OnPreviewStringTriggerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is TextBlock t)
+        {
+            // Get the default preview string
+            string text = ResourceHelper.AppSettings.GetFamilyPreviewString();
+
+            //var l = t.GetFirstAncestorOfType<PreviewTip>();
+            //var v = GetTag(l);
+
+            // If we have an active "char" search we want to show this characters in the ToolTip instead
+            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt 
+                && GetTag(pt) is MainViewModel vm
+                && vm.FontSearch is { Length: > 4 } query
+                && FontFinder.IsQuery(query, Localization.Get("CharFilter"), "char:", out string q))
+                text = q;
+
+            // Set TextBlock text
+            t.Text = text;
+        }
     }
 
     #endregion

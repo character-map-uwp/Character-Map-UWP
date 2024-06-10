@@ -68,12 +68,12 @@
                 Text="{x:Bind Name}"
                 TextWrapping="Wrap" />
             <TextBlock
+                core:Properties.PreviewStringTrigger="{x:Bind Name}"
                 FontFamily="{x:Bind DefaultVariant.Source}"
                 FontSize="32"
                 FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
                 FontStyle="{x:Bind DefaultVariant.DirectWriteProperties.Style}"
                 FontWeight="{x:Bind DefaultVariant.DirectWriteProperties.Weight}"
-                Text="{x:Bind h:ResourceHelper.AppSettings.GetFamilyPreviewString()}"
                 TextWrapping="Wrap" />
         </StackPanel>
     </DataTemplate>
