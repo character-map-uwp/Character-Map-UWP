@@ -235,7 +235,7 @@ public class CompositionFactory : DependencyObject
             e.GetElementVisual().StartAnimationGroup(CreateEntranceAnimation(e, new Vector3(100, 0, 0), 200));
     }
 
-    public static ICompositionAnimationBase CreateEntranceAnimation(UIElement target, Vector3 from, int delayMs, int durationMs = 1000)
+    public static ICompositionAnimationBase CreateEntranceAnimation(UIElement target, Vector3 from, int delayMs, int durationMs = 700)
     {
         string key = $"CEA{from.X}{from.Y}{delayMs}{durationMs}";
         Compositor c = target.EnableTranslation(true).GetElementVisual().Compositor;

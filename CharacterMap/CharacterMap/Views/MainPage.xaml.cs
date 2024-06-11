@@ -978,14 +978,13 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
         CompositionFactory.StartCentering(v);
 
-        int duration = 350;
-        var ani = v.Compositor.CreateVector3KeyFrameAnimation();
-        ani.Target = nameof(v.Scale);
-        ani.InsertKeyFrame(1, new(1.15f, 1.15f, 0));
-        ani.Duration = TimeSpan.FromMilliseconds(duration);
+        var group = v.Compositor.CreateAnimationGroup();
+        group.CreateVector3KeyFrameAnimation(nameof(v.Scale))
+            .AddKeyFrame(1, new Vector3(1.15f, 1.15f, 0))
+            .SetDuration(0.35);
+        group.Add(CompositionFactory.CreateFade(v.Compositor, 0, null, 350));
 
-        var op = CompositionFactory.CreateFade(v.Compositor, 0, null, duration);
-        sender.SetHideAnimation(v.Compositor.CreateAnimationGroup(ani, op));
+        sender.SetHideAnimation(group);
 
         // Animate in Loading items
         CompositionFactory.PlayEntrance(LoadingStack.Children.ToList(), 60);
