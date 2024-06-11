@@ -28,12 +28,12 @@ namespace CharacterMap.Core;
 [AttachedProperty<BasicFontFilter>("Filter")]  // Used to apply a filter to MenuFlyoutItem's on the filter list */
 [AttachedProperty<TypographyFeatureInfo>("Typography")] // Helper to apply TypographyFeatureInfo to a TextBlock */
 [AttachedProperty<CharacterRenderingOptions>("Options")] // Applies CharacterRenderingOptions to a DirectText control
-[AttachedProperty<bool>("ClipToBounds")]
-[AttachedProperty<Thickness>("InsetClip")]
+[AttachedProperty<bool>("ClipToBounds")] // Clips an element using a blank Composition InsetClip
+[AttachedProperty<Thickness>("InsetClip")] // Applies a composition InsetClip with the given insets
 [AttachedProperty<bool>("IsMouseInputEnabled")] // Enables Mouse & Touch input on an InkCanvas
 [AttachedProperty<InkToolbarToolButton>("DefaultTool")] // Sets the default tool for an InkToolbar
 [AttachedProperty<string>("Name")]
-[AttachedProperty<string>("Uppercase", "string.Empty")]
+[AttachedProperty<string>("Uppercase", "string.Empty")] // Sets text on a TextBlock in UpperCase
 [AttachedProperty<object>("Footer")] // Generic object storage. Intended for List footers.
 [AttachedProperty<string>("StyleKey")]
 [AttachedProperty<string>("IconString")]
@@ -132,7 +132,7 @@ public partial class Properties : DependencyObject
         if (d is FrameworkElement f && e.NewValue is Thickness t)
         {
             Visual v = f.GetElementVisual();
-            if (t.Left > 0 || t.Right > 0 || t.Top > 0 || t.Bottom > 0)
+            if (t.Left != 0 || t.Right != 0 || t.Top != 0 || t.Bottom != 0)
                 v.Clip = v.Compositor.CreateInsetClip((float)t.Left, (float)t.Top, (float)t.Right, (float)t.Bottom);
             else
                 v.Clip = null;

@@ -275,7 +275,6 @@ public partial class PreviewTip : ContentControl
         Hide();
     }
 
-
     private void ItemContainer_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
     {
         Trigger(sender as SelectorItem);

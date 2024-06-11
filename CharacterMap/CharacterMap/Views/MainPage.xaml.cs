@@ -756,7 +756,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         await ViewModel.FontCollections.DeleteCollectionAsync(ViewModel.SelectedCollection);
         ViewModel.RefreshFontList();
 
-        Messenger.Send(new AppNotificationMessage(true, $"\"{name}\" collection deleted"));
+        Messenger.Send(new AppNotificationMessage(true, Localization.Get("NotificationCollectionDeleted", name)));
     }
 
 
