@@ -1665,9 +1665,6 @@
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>选择文件夹</value>
   </data>
-  <data name="CharacterFilter" xml:space="preserve">
-    <value>char:</value>
-  </data>
   <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>更改次序</value>
   </data>

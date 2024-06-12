@@ -2227,10 +2227,6 @@ Otherwise, "All Fonts" is selected by default on every launch.</source>
           <source>Select Folder</source>
           <target state="translated">选择文件夹</target>
         </trans-unit>
-        <trans-unit id="CharacterFilter" translate="yes" xml:space="preserve">
-          <source>char:</source>
-          <target state="translated">char:</target>
-        </trans-unit>
         <trans-unit id="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Change sort</source>
           <target state="translated">更改次序</target>
@@ -2250,6 +2246,14 @@ Otherwise, "All Fonts" is selected by default on every launch.</source>
         <trans-unit id="SortedByNameLabel.Text" translate="yes" xml:space="preserve">
           <source>Sorted by Name</source>
           <target state="translated">按名称排序</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontListToolTip.Description" translate="yes" xml:space="preserve">
+          <source>Default text used in ToolTips that are shown whilst hovering over the font list or tabs.</source>
+          <target state="new">Default text used in ToolTips that are shown whilst hovering over the font list or tabs.</target>
+        </trans-unit>
+        <trans-unit id="SettingsFontListToolTip.Title" translate="yes" xml:space="preserve">
+          <source>Font List Preview ToolTip</source>
+          <target state="new">Font List Preview ToolTip</target>
         </trans-unit>
       </group>
     </body>

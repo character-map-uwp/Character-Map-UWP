@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5" IgnorableNamespaces="uap mp">
-  <Identity Name="58027.265370AB8DB33" Publisher="CN=DB299AFD-CD90-4B49-8407-33F11AF0C784" Version="2024.4.6.0" />
+  <Identity Name="58027.265370AB8DB33" Publisher="CN=DB299AFD-CD90-4B49-8407-33F11AF0C784" Version="2024.5.0.0" />
   <mp:PhoneIdentity PhoneProductId="c3a59f67-c12f-4cd8-9d1e-2419f77ee8ae" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>Character Map UWP</DisplayName>
