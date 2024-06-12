@@ -11,6 +11,7 @@ public class Localizer : MarkupExtension
     public CharacterCasing Casing { get; set; } = CharacterCasing.Normal;
 
     public bool ZuneTitle { get; set; }
+    public bool ZuneButton { get; set; }
 
     protected override object ProvideValue()
     {
@@ -18,10 +19,9 @@ public class Localizer : MarkupExtension
 
         if (ZuneTitle)
             Casing = ResourceHelper.Get<CharacterCasing>("TitleCasing");
+        else if (ZuneButton)
+            Casing = CharacterCasing.Upper;
 
-        if (Casing != CharacterCasing.Normal)
-        {
-        }
         text = Casing switch
         {
             CharacterCasing.Upper => text.ToUpper(),

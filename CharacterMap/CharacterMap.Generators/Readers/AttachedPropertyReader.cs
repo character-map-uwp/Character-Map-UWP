@@ -73,7 +73,7 @@ public class AttachedPropertyReader : SyntaxReader
 
             foreach (DPData dp in group)
                 sb.AppendLine(
-                    string.Format(TEMPLATE, dp.Name, dp.ParentClass, dp.Type, dp.Default, dp.GetCastType("e.OldValue"), dp.GetCastType("e.NewValue")));
+                    string.Format(TEMPLATE, dp.Name, dp.ParentClass, dp.Type, dp.GetDefault(), dp.GetCastType("e.OldValue"), dp.GetCastType("e.NewValue")));
 
             var s = sb.ToString();
             context.AddSource(file, SourceText.From(
@@ -85,6 +85,7 @@ partial class {target}
 {{
 {sb}
 }}", Encoding.UTF8));
+
         }
     }
 }

@@ -975,7 +975,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
         if (sender is MenuFlyoutItem { DataContext: Character c }
             && this.IsStandalone == false
             && this.GetFirstAncestorOfType<MainPage>() is { } m)
+        {
+            SelectCharacter(c);
             m.CharacterSearch(c.Char);
+        }
     }
 
 

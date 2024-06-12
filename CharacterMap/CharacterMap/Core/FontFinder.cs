@@ -650,28 +650,10 @@ public class FontFinder
         filter ??= BasicFontFilter.All;
         string filterTitle = null;
 
-        static bool Is(string q, string i, string i2, out string o)
-        {
-            string s = i;
-            if (q.StartsWith(s, StringComparison.OrdinalIgnoreCase) is false)
-                s = i2;
-
-            if (q.StartsWith(s, StringComparison.OrdinalIgnoreCase)
-                && q.Remove(0, s.Length).Trim() is string t
-                && !string.IsNullOrWhiteSpace(t))
-            {
-                o = t;
-                return true;
-            }
-
-            o = null;
-            return false;
-        }
-
         if (!string.IsNullOrWhiteSpace(query))
         {
             string q;
-            if (Is(query, Localization.Get("CharFilter"), "char:", out q))
+            if (IsQuery(query, Localization.Get("CharFilter"), "char:", out q))
             {
                 foreach (var ch in q)
                 {
@@ -681,18 +663,18 @@ public class FontFinder
                 }
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
-            else if (Is(query, Localization.Get("FilePathFilter"), "filepath:", out q))
+            else if (IsQuery(query, Localization.Get("FilePathFilter"), "filepath:", out q))
             {
                 fontList = BasicFontFilter.ForFilePath(q).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
 
             }
-            else if (Is(query, Localization.Get("FoundryFilter"), "foundry:", out q))
+            else if (IsQuery(query, Localization.Get("FoundryFilter"), "foundry:", out q))
             {
                 fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Manufacturer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
             }
-            else if (Is(query, Localization.Get("DesignerFilter"), "designer:", out q))
+            else if (IsQuery(query, Localization.Get("DesignerFilter"), "designer:", out q))
             {
                 fontList = BasicFontFilter.ForFontInfo(q, Microsoft.Graphics.Canvas.Text.CanvasFontInformation.Designer).Query(fontList, fontCollections);
                 filterTitle = $"{filter.FilterTitle} \"{q}\"";
@@ -708,5 +690,23 @@ public class FontFinder
         }
         
         return new(fontList, null, false);
+    }
+
+    public static bool IsQuery(string q, string i, string i2, out string o)
+    {
+        string s = i;
+        if (q.StartsWith(s, StringComparison.OrdinalIgnoreCase) is false)
+            s = i2;
+
+        if (q.StartsWith(s, StringComparison.OrdinalIgnoreCase)
+            && q.Remove(0, s.Length).Trim() is string t
+            && !string.IsNullOrWhiteSpace(t))
+        {
+            o = t;
+            return true;
+        }
+
+        o = null;
+        return false;
     }
 }

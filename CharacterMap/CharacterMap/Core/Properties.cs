@@ -1,4 +1,5 @@
 ﻿using CharacterMap.Controls;
+using CharacterMap.Views;
 using CharacterMapCX.Controls;
 using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
@@ -27,13 +28,13 @@ namespace CharacterMap.Core;
 [AttachedProperty<BasicFontFilter>("Filter")]  // Used to apply a filter to MenuFlyoutItem's on the filter list */
 [AttachedProperty<TypographyFeatureInfo>("Typography")] // Helper to apply TypographyFeatureInfo to a TextBlock */
 [AttachedProperty<CharacterRenderingOptions>("Options")] // Applies CharacterRenderingOptions to a DirectText control
-[AttachedProperty<bool>("ClipToBounds")]
-[AttachedProperty<InsetClip>("InsetClip", "new Thickness(0d)")]
+[AttachedProperty<bool>("ClipToBounds")] // Clips an element using a blank Composition InsetClip
+[AttachedProperty<Thickness>("InsetClip")] // Applies a composition InsetClip with the given insets
 [AttachedProperty<bool>("IsMouseInputEnabled")] // Enables Mouse & Touch input on an InkCanvas
 [AttachedProperty<InkToolbarToolButton>("DefaultTool")] // Sets the default tool for an InkToolbar
 [AttachedProperty<string>("Name")]
-[AttachedProperty<string>("Uppercase", "string.Empty")]
-[AttachedProperty<object>("Footer")]
+[AttachedProperty<string>("Uppercase", "string.Empty")] // Sets text on a TextBlock in UpperCase
+[AttachedProperty<object>("Footer")] // Generic object storage. Intended for List footers.
 [AttachedProperty<string>("StyleKey")]
 [AttachedProperty<string>("IconString")]
 [AttachedProperty<IconElement>("Icon")]
@@ -65,11 +66,19 @@ namespace CharacterMap.Core;
 [AttachedProperty<FontStretch>("FontStretch", FontStretch.Normal)] // Sets the FontStretch on a RichEditBox
 [AttachedProperty<FontStyle>("FontStyle", FontStyle.Normal)] // Sets the FontStyle on a RichEditBox
 [AttachedProperty<FontWeight>("FontWeight", "FontWeights.Normal")] // Sets the FontWeight on a RichEditBox
-[AttachedProperty<FontFamily>("FontFamily")] // Sets the FontFamily on a RichEditBox
+[AttachedProperty<FontFamily>] // Sets the FontFamily on a RichEditBox
 [AttachedProperty<string>("ToolTipMemberPath")] // PropertyPath on an ItemContainer's Content to use as the ItemContainer's ToolTip
+[AttachedProperty<DataTemplate>("ToolTipTemplate")] // ToolTip DataTemplate for ItemsControl
+[AttachedProperty<PlacementMode>("ToolTipPlacement", PlacementMode.Mouse)]
+[AttachedProperty<object>("ToolTip")] // Sets ToolTip with default Theme style
+[AttachedProperty<string>("ToolTipStyleKey")] // Helper to attempt force-overriding ToolTip style that is broken by MUXC
 [AttachedProperty<string>("GridDefinitions", "string.Empty")]
-[AttachedProperty<string>("Hyperlink")]
+[AttachedProperty<string>("Hyperlink")] // Adds clickable hyperlink behaviour to ButtonBase
+[AttachedProperty<object>("Tag")] // Additional object storage
 [AttachedProperty<CoreCursorType>("Cursor", CoreCursorType.Arrow)]
+[AttachedProperty<FrameworkElement>("Receiver")] // Adds a receiver to ThemeShadow.Receivers
+[AttachedProperty<double>("Depth")] // Sets UIElement.Translation.Z
+[AttachedProperty<string>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -123,7 +132,7 @@ public partial class Properties : DependencyObject
         if (d is FrameworkElement f && e.NewValue is Thickness t)
         {
             Visual v = f.GetElementVisual();
-            if (t.Left > 0 || t.Right > 0 || t.Top > 0 || t.Bottom > 0)
+            if (t.Left != 0 || t.Right != 0 || t.Top != 0 || t.Bottom != 0)
                 v.Clip = v.Compositor.CreateInsetClip((float)t.Left, (float)t.Top, (float)t.Right, (float)t.Bottom);
             else
                 v.Clip = null;
@@ -1057,7 +1066,7 @@ public partial class Properties : DependencyObject
 
     #endregion
 
-    #region ToolTipMemberPath
+    #region ToolTip MemberPath, Template, StyleKey
 
     static partial void OnToolTipMemberPathChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -1071,7 +1080,7 @@ public partial class Properties : DependencyObject
             if (lvb.ItemsPanelRoot is null)
                 return;
             string path = e.NewValue.ToString();
-            foreach (var item in lvb.ItemsPanelRoot.Children.Cast<SelectorItem>())
+            foreach (var item in lvb.ItemsPanelRoot.Children.OfType<SelectorItem>())
                 if (item.Content is not null)
                     Set(lvb, item, path);
 
@@ -1083,11 +1092,24 @@ public partial class Properties : DependencyObject
                     item.ClearValue(ToolTipService.ToolTipProperty);
                 else
                 {
-                    item.SetBinding(ToolTipService.ToolTipProperty, new Binding()
+                    Binding b = new()
                     {
                         Source = item,
                         Path = new($"Content.{path}")
-                    });
+                    };
+
+                    // Hack to support overriding tooltip style with MUXC themes
+                    if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+                    {
+                        ToolTip t = new() { Style = style };
+                        t.SetBinding(ToolTip.ContentProperty, b);
+                        ToolTipService.SetToolTip(item, t);
+                    }
+                    else
+                    {
+                        // Fast path
+                        item.SetBinding(ToolTipService.ToolTipProperty, b);
+                    }
                 }
             }
 
@@ -1102,6 +1124,157 @@ public partial class Properties : DependencyObject
                 else
                     Set(sender, args.ItemContainer, path);
             }
+        }
+    }
+
+    // Provides template-able ToolTips for ListViewItems
+    static partial void OnToolTipTemplateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ListViewBase lvb)
+        {
+            // 1. Ensure content changes during recycling
+            lvb.ContainerContentChanging -= ContainerContentChanging;
+            lvb.ContainerContentChanging += ContainerContentChanging;
+
+            // 2. Update any existing containers
+            if (lvb.ItemsPanelRoot is null)
+                return;
+            foreach (var item in lvb.ItemsPanelRoot.Children.OfType<SelectorItem>())
+            {
+                var tooltip = ToolTipService.GetToolTip(item) as ToolTip;
+                if (e.NewValue is null)
+                {
+                    // Remove tool tip
+                    if (tooltip is not null)
+                        tooltip.Opened -= OnToolTipOpened;
+
+                    ToolTipService.SetToolTip(item, null);
+                }
+                else
+                {
+                    // Ensure there is a tooltip
+                    if (tooltip is null)
+                        tooltip = Create(item, lvb);
+                    tooltip.Placement = GetToolTipPlacement(lvb);
+                }
+            }
+
+            static void ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+            {
+                if (args.ItemContainer is null)
+                    return;
+
+                if (args.InRecycleQueue)
+                {
+                    if (ToolTipService.GetToolTip(args.ItemContainer) is ToolTip rtt)
+                        rtt.Opened -= OnToolTipOpened;
+                }
+                else
+                    Create(args.ItemContainer, sender);
+            }
+
+            static ToolTip Create(SelectorItem item, ListViewBase sender)
+            {
+                // TabViewItem's create their own blank ToolTip, so we specifically 
+                // want to override that default empty ToolTip so we can show our own.
+                bool tabViewHack = sender is TabViewListView;
+
+                if (ToolTipService.GetToolTip(item) is not ToolTip t
+                    // Default TabViewItem TT is disabled and empty
+                    || (tabViewHack && t.IsEnabled is false && t.Content is null))
+                {
+                    t = new() { Tag = sender };
+
+                    if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+                        t.Style = style;
+
+                    t.Tag = sender;
+
+                    t.Placement = GetToolTipPlacement(sender);
+                    ToolTipService.SetToolTip(item, t);
+                }
+
+                t.Opened -= OnToolTipOpened;
+                t.Opened += OnToolTipOpened;
+
+                SetTag(t, item);
+
+                return t;
+            }
+
+            static void OnToolTipOpened(object sender, RoutedEventArgs e)
+            {
+                if (sender is ToolTip t
+                    && t.Tag is ListViewBase lb
+                    && GetTag(t) is SelectorItem item
+                    && GetToolTipTemplate(lb) is DataTemplate template)
+                {
+                    var content = (FrameworkElement)template.LoadContent();
+                    content.DataContext = item.DataContext ?? item.Content;
+                    t.Content = content;
+                }
+            }
+        }
+    }
+
+    static async partial void OnToolTipStyleKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // MUXC styles don't allow overriding default tooltip style in XAML
+        // so we use this code to force
+        if (e.NewValue is string key && !string.IsNullOrWhiteSpace(key)
+            && ResourceHelper.TryGet(key, out Style style))
+        {
+            if (d is ToolTip st)
+            {
+                st.Style = style;
+                return;
+            }
+
+            var temp = ToolTipService.GetToolTip(d);
+            if (temp is null) // Bad little hack to allow x:UID setters (or equivalent) to run
+                await Task.Yield();
+            
+            if (ToolTipService.GetToolTip(d) is { } tt)
+            {
+                if (tt is ToolTip t)
+                    t.Style = style;
+                else
+                {
+                    // Most of our tooltips will be strings set automatically
+                    // by x:UID, so we need to create a shell ToolTip around
+                    // them to place the style on.
+                    ToolTipService.SetToolTip(d, null);
+                    t = new ToolTip();
+                    t.Content = tt;
+                    t.Placement = ToolTipService.GetPlacement(d);
+                    t.Style = style;
+
+                    ToolTipService.SetToolTip(d, t);
+                }
+            }
+        }
+    }
+
+    static partial void OnToolTipChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        // Workaround an MUXC bug that does not allow overriding ToolTip style in XAML
+        if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+        {
+            if (ToolTipService.GetToolTip(d) is not ToolTip t)
+            {
+                t = new();
+                ToolTipService.SetToolTip(d, null);
+            }
+
+            t.Style = style;
+            t.Content = e.NewValue;
+
+            ToolTipService.SetToolTip(d, t);
+        }
+        else
+        {
+            // Fast path
+            ToolTipService.SetToolTip(d, e.NewValue);
         }
     }
 
@@ -1216,15 +1389,13 @@ public partial class Properties : DependencyObject
         }
     }
 
-
     #endregion
 
     #region Cursor
 
     private static readonly object _cursorLock = new ();
     private static readonly CoreCursor _defaultCursor = new (CoreCursorType.Arrow, 1);
-    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors =
-        new () { { CoreCursorType.Arrow, _defaultCursor } };
+    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors = new () { { CoreCursorType.Arrow, _defaultCursor } };
 
     static partial void OnCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -1271,6 +1442,48 @@ public partial class Properties : DependencyObject
             // when the element is programatically unloaded, reset the cursor back to default
             // this is necessary when click triggers immediate change in layout and PointerExited is not called
             Window.Current.CoreWindow.PointerCursor = _defaultCursor;
+        }
+    }
+
+    #endregion
+
+    #region Shadow
+
+    static partial void OnReceiverChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is ThemeShadow s && e.NewValue is FrameworkElement f)
+            s.Receivers.Add(f);
+    }
+
+    static partial void OnDepthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f && e.NewValue is double v)
+            f.Translation = new Vector3(0, 0, (float)v);
+    }
+
+    #endregion
+
+    #region SetPreviewString
+
+    static partial void OnPreviewStringTriggerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is TextBlock t)
+        {
+            // Get the default preview string
+            string text = ResourceHelper.AppSettings.GetFamilyPreviewString();
+
+            //var l = t.GetFirstAncestorOfType<PreviewTip>();
+            //var v = GetTag(l);
+
+            // If we have an active "char" search we want to show this characters in the ToolTip instead
+            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt 
+                && GetTag(pt) is MainViewModel vm
+                && vm.FontSearch is { Length: > 4 } query
+                && FontFinder.IsQuery(query, Localization.Get("CharFilter"), "char:", out string q))
+                text = q;
+
+            // Set TextBlock text
+            t.Text = text;
         }
     }
 

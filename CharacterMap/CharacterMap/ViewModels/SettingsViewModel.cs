@@ -53,7 +53,7 @@ public partial class SettingsViewModel : ViewModelBase
 
     private int _originalDesign { get; }
 
-    private AppSettings Settings { get; } = ResourceHelper.AppSettings;
+    public AppSettings Settings { get; } = ResourceHelper.AppSettings;
 
   
 
@@ -129,6 +129,7 @@ public partial class SettingsViewModel : ViewModelBase
         // application rather than bug-fixes or visual changes.
         return [
              new("Latest Update (June 2024)", // June 2024
+                "- Added preview ToolTips to the font list and tabs\n" +
                 "- Added ability to create automatically updating Smart Collections in Settings->Collections\n" +
                 "- Added support for managing fonts in Symbol font collection in Settings->Collections\n" +
                 "- Added additional search filters to \"Find a font family\" search box - \"filepath:\", \"foundry\", \"designer:\"\n" +

@@ -264,10 +264,10 @@
             <controls:ContentGroup VerticalAlignment="Stretch">
                 <controls:ContentGroup.Text>
                     <TextBlock
+                        core:Properties.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}"
                         FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                         Text="{x:Bind GetName()}"
-                        TextTrimming="CharacterEllipsis"
-                        ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Text}" />
+                        TextTrimming="CharacterEllipsis" />
                 </controls:ContentGroup.Text>
                 <controls:ContentGroup.SecondaryContent>
                     <Grid>
@@ -307,6 +307,7 @@
             <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
             <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
             <Setter Property="FocusVisualMargin" Value="-7,-3,-7,-3" />
+            <Setter Property="core:Properties.ToolTipStyleKey" Value="DefaultThemeToolTipStyle" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
@@ -532,11 +533,15 @@
                                 MaxColumns="2">
                                 <RadioButton
                                     x:Uid="LayoutGridToggle"
+                                    core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     Click="GridView_Click"
                                     IsChecked="True">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
                                 </RadioButton>
-                                <RadioButton x:Uid="LayoutListToggle" Click="ListView_Click">
+                                <RadioButton
+                                    x:Uid="LayoutListToggle"
+                                    core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
+                                    Click="ListView_Click">
                                     <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
                                 </RadioButton>
                             </muxc:RadioButtons>
@@ -664,11 +669,11 @@
                                     d:Text="Segoe UI" />
                                 <Button
                                     Grid.Column="1"
+                                    core:Properties.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}"
                                     Click="{x:Bind ViewModel.OpenCurrentFont}"
                                     Content="{core:Localizer Key='OpenFontButton/Label'}"
                                     Foreground="{StaticResource SystemColorControlAccentBrush}"
-                                    Style="{StaticResource ThemeTextBlockButtonStyle}"
-                                    ToolTipService.ToolTip="{core:Localizer Key='OpenInNewWindow/Text'}" />
+                                    Style="{StaticResource ThemeTextBlockButtonStyle}" />
                             </Grid>
 
                             <ScrollViewer

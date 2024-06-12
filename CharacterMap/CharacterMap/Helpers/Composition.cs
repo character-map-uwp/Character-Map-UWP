@@ -117,6 +117,12 @@ public static class Composition
             () => c.CreateEntranceEasingFunction());
     }
 
+    public static CubicBezierEasingFunction GetCachedFluentEntranceEase(this Compositor c)
+    {
+        return c.GetCached<CubicBezierEasingFunction>("FluentEntranceEase",
+            () => c.CreateFluentEntranceEasingFunction());
+    }
+
     #endregion
 
 
@@ -560,6 +566,12 @@ public static class Composition
         return animation;
     }
 
+    public static Vector3KeyFrameAnimation AddKeyFrame(this Vector3KeyFrameAnimation animation, float normalizedProgressKey, Vector3 value, CubicBezierPoints ease)
+    {
+        animation.InsertKeyFrame(normalizedProgressKey, value, animation.Compositor.CreateCubicBezierEasingFunction(ease));
+        return animation;
+    }
+
     /// <summary>
     /// Adds a Vector3KeyFrame where the X & Y components are set to the input value and the Z component defaults to 0f.
     /// </summary>
@@ -732,6 +744,11 @@ public static class Composition
     public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(this Compositor compositor, Windows.UI.Xaml.Media.Animation.KeySpline spline)
     {
         return compositor.CreateCubicBezierEasingFunction(spline);
+    }
+
+    public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(this Compositor compositor, CubicBezierPoints points)
+    {
+        return compositor.CreateCubicBezierEasingFunction(points.Start, points.End);
     }
 
     #endregion
@@ -911,6 +928,11 @@ public static class Composition
     public static CubicBezierEasingFunction CreateEntranceEasingFunction(this Compositor c)
     {
         return c.CreateCubicBezierEasingFunction(new(.1f, .9f), new(.2f, 1));
+    }
+
+    public static CubicBezierEasingFunction CreateFluentEntranceEasingFunction(this Compositor c)
+    {
+        return c.CreateCubicBezierEasingFunction(new(0f, 0f), new(0f, 1));
     }
 
     public static CompositionAnimationGroup CreateAnimationGroup(this Compositor c, params CompositionAnimation[] animations)

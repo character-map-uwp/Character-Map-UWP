@@ -225,6 +225,7 @@
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="Width" Value="{ThemeResource TabViewItemAddButtonWidth}" />
         <Setter Property="Height" Value="{ThemeResource TabViewItemAddButtonHeight}" />
+        <Setter Property="core:Properties.ToolTipStyleKey" Value="DefaultThemeToolTipStyle" />
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
@@ -315,6 +316,7 @@
                                 Grid.Column="0"
                                 Content="{TemplateBinding TabStripHeader}"
                                 ContentTemplate="{TemplateBinding TabStripHeaderTemplate}" />
+                            <!--core:Properties.ToolTipTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.ToolTipTemplate)}"-->
                             <primitives:TabViewListView
                                 x:Name="TabListView"
                                 Grid.Column="1"
@@ -1103,8 +1105,7 @@
                                 x:Name="TabContainer"
                                 Padding="{ThemeResource TabViewItemHeaderPadding}"
                                 Control.IsTemplateFocusTarget="True"
-                                FocusVisualMargin="{TemplateBinding FocusVisualMargin}"
-                                ToolTipService.ToolTip="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(ToolTipService.ToolTip)}">
+                                FocusVisualMargin="{TemplateBinding FocusVisualMargin}">
 
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -1136,6 +1137,7 @@
                                 <Border x:Name="CloseButtonContainer" Grid.Column="1">
                                     <Button
                                         x:Name="CloseButton"
+                                        core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                         Content="&#xE711;"
                                         HighContrastAdjustment="None"
                                         IsTabStop="False"

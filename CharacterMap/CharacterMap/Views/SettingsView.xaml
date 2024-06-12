@@ -886,6 +886,10 @@
                                     Margin="0 16 0 0"
                                     Style="{StaticResource SectionHeaderTextBlockStyle}" />
 
+                                <controls:SettingsPresenter x:Uid="SettingsFontListToolTip" ContentPlacement="Bottom">
+                                    <TextBox Text="{Binding Settings.FamilyPreviewString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                </controls:SettingsPresenter>
+
                                 <controls:SettingsPresenter x:Uid="SettingsCustomSuggestions" ContentPlacement="Bottom">
 
                                     <Grid RowSpacing="12" Padding="4">
@@ -907,6 +911,7 @@
                                                 Text="{Binding ViewModel.RampInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             <controls:UXButton
                                                 Grid.Column="1"
+                                                core:Properties.ToolTip="{core:Localizer Key='AddButton/Label'}"
                                                 h:FluentAnimation.PointerOverOffset="-2"
                                                 Click="{x:Bind ViewModel.AddRamp}"
                                                 Style="{StaticResource MapInfoButtonStyle}">
@@ -1019,13 +1024,8 @@
                                         <StackPanel>
                                             <controls:UXHyperlinkButton Content="GitHub" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP" />
                                             <controls:UXHyperlinkButton x:Uid="BtnContributors" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/graphs/contributors" />
+                                            <controls:UXHyperlinkButton x:Uid="BtnHelpAndTips" NavigateUri="https://github.com/character-map-uwp/Character-Map-UWP/wiki" />
                                         </StackPanel>
-
-                                        <controls:UXButton
-                                            x:Uid="BtnHelpAndTips"
-                                            Width="200"
-                                            HorizontalAlignment="Left"
-                                            core:Properties.Hyperlink="https://github.com/character-map-uwp/Character-Map-UWP/wiki" />
 
                                         <controls:UXButton
                                             x:Name="BtnReview"

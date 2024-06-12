@@ -780,6 +780,7 @@
                                     <controls:ExtendedListView
                                         x:Name="LstFontFamily"
                                         core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
+                                        core:Properties.ToolTipPlacement="Bottom"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
@@ -834,8 +835,8 @@
                             x:Name="FontCompareButton"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Stretch"
-                            Click="FontCompareButton_Click"
-                            ToolTipService.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}">
+                            core:Properties.ToolTip="{core:Localizer Key='CompareFontsTitle/Text'}"
+                            Click="FontCompareButton_Click">
                             <controls:LabelButton.IconContent>
                                 <FontIcon
                                     Width="45"
@@ -931,6 +932,7 @@
                         core:Properties.ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                         core:Properties.IsTabOpenAnimationEnabled="True"
                         core:Properties.RequireOpenTab="True"
+                        core:Properties.ToolTipTemplate="{StaticResource FontListItemToolTipTemplate}"
                         AddTabButtonClick="FontMapContainer_AddTabButtonClick"
                         AllowDropTabs="True"
                         Background="{x:Null}"
@@ -950,8 +952,7 @@
                                     core:Properties.TargetContextFlyout="{StaticResource TabContextMenu}"
                                     DoubleTapped="TabViewItem_DoubleTapped"
                                     IsDoubleTapEnabled="True"
-                                    Tag="{Binding ElementName=FontsTabBar, Path=DataContext.AllowFluentAnimation}"
-                                    ToolTipService.ToolTip="{x:Bind Tooltip}">
+                                    Tag="{Binding ElementName=FontsTabBar, Path=DataContext.AllowFluentAnimation}">
                                     <muxc:TabViewItem.Header>
                                         <Grid ColumnSpacing="8">
                                             <Grid.ColumnDefinitions>
@@ -1069,6 +1070,33 @@
                     </views:FontMapView.TitleRightContent>
                 </views:FontMapView>
 
+                <controls:PreviewTip
+                    x:Name="PreviewTip"
+                    Grid.RowSpan="30"
+                    Grid.ColumnSpan="30"
+                    Width="Auto"
+                    MaxWidth="350"
+                    core:Properties.Receiver="{x:Bind FontMap}"
+                    core:Properties.Tag="{x:Bind ViewModel}"
+                    ContentTemplate="{StaticResource FontListToolTipTemplate}"
+                    HorizontalOffset="4"
+                    Target="{x:Bind LstFontFamily}"
+                    VerticalOffset="2" />
+
+                <controls:PreviewTip
+                    x:Name="TabPreviewTip"
+                    x:Load="{x:Bind helpers:ResourceHelper.SupportsTabs}"
+                    Grid.Row="2"
+                    Grid.RowSpan="30"
+                    Grid.ColumnSpan="30"
+                    core:Properties.Receiver="{x:Bind FontMap}"
+                    BorderThickness="1 0 1 1"
+                    ContentTemplate="{StaticResource FontListItemToolTipTemplate}"
+                    CornerRadius="0 4 4 4"
+                    HorizontalOffset="5"
+                    Placement="BottomEdgeLeftAligned"
+                    Target="{x:Bind FontsTabBar}" />
+
             </Grid>
         </controls:ExtendedSplitView>
 
@@ -1176,6 +1204,8 @@
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
+                        <Setter Target="PreviewTip.IsEnabled" Value="False" />
+                        <Setter Target="LstFontFamily.(core:Properties.ToolTipTemplate)" Value="{StaticResource FontListToolTipTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="CollapsedViewState">
@@ -1190,6 +1220,8 @@
                         <Setter Target="TitleHidePaneButton.Visibility" Value="Collapsed" />
                         <Setter Target="TitleShowPaneButton.Visibility" Value="Visible" />
                         <Setter Target="OverlayPaneRootBackground.Visibility" Value="Visible" />
+                        <Setter Target="PreviewTip.IsEnabled" Value="False" />
+                        <Setter Target="LstFontFamily.(core:Properties.ToolTipTemplate)" Value="{StaticResource FontListToolTipTemplate}" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="DefaultViewState">

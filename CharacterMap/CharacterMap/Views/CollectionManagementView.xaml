@@ -194,10 +194,10 @@
                             Orientation="Horizontal"
                             Spacing="8">
                             <controls:UXButton
+                                core:Properties.ToolTip="{core:Localizer Key=ClearSelectionLabel}"
                                 Click="{x:Bind AllFontsList.ClearSelection}"
                                 IsEnabled="{x:Bind AllFontsList.HasSelection, Mode=OneWay}"
-                                RelativePanel.AlignRightWithPanel="True"
-                                ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}">
+                                RelativePanel.AlignRightWithPanel="True">
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
                             </controls:UXButton>
                             <controls:UXButton
@@ -227,6 +227,7 @@
                     <controls:ExtendedListView
                         x:Name="AllFontsList"
                         Grid.Row="2"
+                        core:Properties.ToolTipTemplate="{StaticResource FontListToolTipTemplate}"
                         BindableSelectedItems="{x:Bind ViewModel.SelectedFonts, Mode=TwoWay}"
                         IsMultiSelectCheckBoxEnabled="False"
                         IsSelectionBindingEnabled="True"
@@ -250,10 +251,10 @@
                             Orientation="Horizontal"
                             Spacing="8">
                             <controls:UXButton
+                                core:Properties.ToolTip="{core:Localizer Key=ClearSelectionLabel}"
                                 Click="{x:Bind CollectionFontsList.ClearSelection}"
                                 IsEnabled="{x:Bind CollectionFontsList.HasSelection, Mode=OneWay}"
-                                RelativePanel.AlignRightWithPanel="True"
-                                ToolTipService.ToolTip="{core:Localizer Key=ClearSelectionLabel}">
+                                RelativePanel.AlignRightWithPanel="True">
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
                             </controls:UXButton>
                             <controls:UXButton
@@ -280,6 +281,7 @@
                     <controls:ExtendedListView
                         x:Name="CollectionFontsList"
                         Grid.Row="1"
+                        core:Properties.ToolTipTemplate="{StaticResource FontListToolTipTemplate}"
                         BindableSelectedItems="{x:Bind ViewModel.SelectedCollectionFonts, Mode=TwoWay}"
                         IsMultiSelectCheckBoxEnabled="False"
                         IsSelectionBindingEnabled="True"

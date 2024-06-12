@@ -215,6 +215,7 @@
       <DependentUpon>OpenFolderDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\CharacterPickerButton.cs" />
+    <Compile Include="Controls\PreviewTip.cs" />
     <Compile Include="Controls\SuggestionBox.cs" />
     <Compile Include="Controls\Toolkit\AdaptiveGridView.cs" />
     <Compile Include="Controls\UXButton.cs" />

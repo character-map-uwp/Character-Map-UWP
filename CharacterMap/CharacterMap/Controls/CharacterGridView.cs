@@ -2,7 +2,9 @@
 
 using CharacterMapCX.Controls;
 using Microsoft.Graphics.Canvas.Text;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using Windows.Foundation.Metadata;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Core.Direct;
@@ -35,6 +37,8 @@ internal class CharacterGridViewTemplateSettings
 public partial class CharacterGridView : GridView
 {
     public event EventHandler<Character> ItemDoubleTapped;
+
+    public bool ShowVariationsInToolTips { get; set; }
 
     #region Dependency Properties
 
@@ -102,7 +106,7 @@ public partial class CharacterGridView : GridView
         if (!args.InRecycleQueue && args.ItemContainer is GridViewItem item)
         {
             Character c = ((Character)args.Item);
-            UpdateContainer(item, c);
+            UpdateContainer(item.ContentTemplateRoot, c);
             args.Handled = true;
 
             item.DataContext = c;
@@ -118,6 +122,9 @@ public partial class CharacterGridView : GridView
                     t.PlacementTarget = item;
                     t.VerticalOffset = 4;
                     t.Placement = Windows.UI.Xaml.Controls.Primitives.PlacementMode.Top;
+                    if (ResourceHelper.TryGet("DefaultThemeToolTipStyle", out Style style))
+                        t.Style = style;
+
                     t.Loaded += (d, e) =>
                     {
                         if (d is ToolTip tt && CharacterGridView.GetToolTipData(tt) is ItemTooltipData data)
@@ -132,7 +139,65 @@ public partial class CharacterGridView : GridView
                                 ? data.Variant.GetDescription(data.Char, allowUnihan: true)
                                 : string.Empty;
                             t.Text = txt ?? data.Char.UnicodeString;
-                            tt.Content = t;
+
+                            // Manually construct the variations popup
+                            if (ShowVariationsInToolTips && TypographyAnalyzer.GetCharacterVariants(data.Variant, data.Char) is { Count: > 1 } list)
+                            {
+                                // Store current template settings - we need to change these to render the variations
+                                var size = _templateSettings.Size;
+                                var typo = _templateSettings.Typography;
+                                var anno = _templateSettings.Annotation;
+
+                                // Set values we will use for the variations
+                                _templateSettings.Size = 40;
+                                _templateSettings.Annotation = GlyphAnnotation.None;
+                                
+                                // Brush we will as BG use to show each variation
+                                SolidColorBrush bg = new ()  { 
+                                    Color = tt.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black, 
+                                    Opacity =  0.05 
+                                };
+
+                                StackPanel s = new();
+                                s.Children.Add(t);
+
+                                // Add variation header block
+                                s.Children.Add(new TextBlock
+                                {
+                                    Margin = new Thickness(0, 8, 0, 4),
+                                    Text = $"{list.Count} {Localization.Get("TypographyVariationsSelectorRun/Text")}",
+                                    Opacity = 0.7
+                                });
+
+                                // add variation container panel
+                                WrapPanel panel = new() { HorizontalSpacing = 4, VerticalSpacing = 4 };
+                                s.Children.Add(panel);
+
+                                // Manually add each character
+                                foreach (var variation in list)
+                                {
+                                    _templateSettings.Typography = variation;
+
+                                    var item = (Grid)this.ItemTemplate.LoadContent();
+                                    item.DataContext = data.Char;
+                                    item.CornerRadius = new CornerRadius(4);
+                                    item.Background = bg;
+                                    panel.Children.Add(item);
+                                    UpdateContainer(item, data.Char);
+                                }
+
+                                // Add everything to the tooltip
+                                tt.Content = s;
+
+                                // Restore template settings
+                                _templateSettings.Size = size;
+                                _templateSettings.Typography = typo;
+                                _templateSettings.Annotation = anno;
+                            }
+                            else
+                            {
+                                tt.Content = t;
+                            }
                         }
                     };
                     ToolTipService.SetToolTip(item, t);
@@ -170,7 +235,7 @@ public partial class CharacterGridView : GridView
     #region Item Template Handling
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    void UpdateContainer(GridViewItem item, Character c)
+    void UpdateContainer(UIElement item, Character c)
     {
         // Perf considerations:
         // 1 - Batch rendering updates by suspending rendering until all properties are set
@@ -189,7 +254,7 @@ public partial class CharacterGridView : GridView
 
         XamlBindingHelper.SuspendRendering(item);
 
-        IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(item.ContentTemplateRoot);
+        IXamlDirectObject go = _xamlDirect.GetXamlDirectObject(item);
 
         _xamlDirect.SetObjectProperty(go, XamlPropertyIndex.FrameworkElement_Tag, c);
         _xamlDirect.SetDoubleProperty(go, XamlPropertyIndex.FrameworkElement_Width, _templateSettings.Size);
