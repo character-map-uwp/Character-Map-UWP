@@ -2259,6 +2259,10 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
           <source>Font List Preview ToolTip</source>
           <target state="translated">Descrição na pré-visualização da lista de tipos de letra</target>
         </trans-unit>
+        <trans-unit id="CalligraphyPenInkToolbarButtonToolTip" translate="yes" xml:space="preserve">
+          <source>Calligraphy pen</source>
+          <target state="new">Calligraphy pen</target>
+        </trans-unit>
       </group>
     </body>
   </file>

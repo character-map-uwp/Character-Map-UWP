@@ -2259,6 +2259,10 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <source>Font List Preview ToolTip</source>
           <target state="new">Font List Preview ToolTip</target>
         </trans-unit>
+        <trans-unit id="CalligraphyPenInkToolbarButtonToolTip" translate="yes" xml:space="preserve">
+          <source>Calligraphy pen</source>
+          <target state="new">Calligraphy pen</target>
+        </trans-unit>
       </group>
     </body>
   </file>

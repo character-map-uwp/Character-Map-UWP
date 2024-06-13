@@ -1794,4 +1794,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="SettingsFontListToolTip.Title" xml:space="preserve">
     <value>Font List Preview ToolTip</value>
   </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>Calligraphy pen</value>
+  </data>
 </root>
