@@ -1553,15 +1553,15 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
     <value>Restaurar</value>
     <comment>Opposite of Fullscreen</comment>
   </data>
-  <data name="CharFilter" xml:space="preserve">
-    <value>car:</value>
-    <comment>Command used for character searches. Should be short.</comment>
-  </data>
   <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
     <value>Criar como coleção inteligente</value>
   </data>
   <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Ver online a documentação para coleções inteligentes</value>
+  </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>car:</value>
+    <comment>Command used for character searches. Should be short.</comment>
   </data>
   <data name="DesignerFilter" xml:space="preserve">
     <value>autor:</value>

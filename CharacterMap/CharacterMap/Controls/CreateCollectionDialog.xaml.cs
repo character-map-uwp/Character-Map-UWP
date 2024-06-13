@@ -39,7 +39,7 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
         {
             IsSmartCollection = true;
 
-            Populate("char:",       Localization.Get("CharFilter"),    s => FilterCharacters = s);
+            Populate("char:",       Localization.Get("CharacterFilter"),    s => FilterCharacters = s);
             Populate("filepath:",   Localization.Get("FilePathFilter"),     s => FilterFilePath = s);
             Populate("foundry:",    Localization.Get("FoundryFilter"),      s => FilterFoundry = s);
             Populate("designer:",   Localization.Get("DesignerFilter"),     s => FilterDesigner = s);

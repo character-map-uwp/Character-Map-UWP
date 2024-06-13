@@ -2161,11 +2161,6 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <target state="new">Restore</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Opposite of Fullscreen</note>
         </trans-unit>
-        <trans-unit id="CharFilter" translate="yes" xml:space="preserve">
-          <source>char:</source>
-          <target state="new">char:</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">Command used for character searches. Should be short.</note>
-        </trans-unit>
         <trans-unit id="CreateSmartCollectionCheck.Content" translate="yes" xml:space="preserve">
           <source>Create as Smart Collection</source>
           <target state="new">Create as Smart Collection</target>
@@ -2173,6 +2168,11 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         <trans-unit id="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>View online documentation for Smart Collections</source>
           <target state="new">View online documentation for Smart Collections</target>
+        </trans-unit>
+        <trans-unit id="CharacterFilter" translate="yes" xml:space="preserve">
+          <source>char:</source>
+          <target state="new">char:</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Command used for character searches. Should be short.</note>
         </trans-unit>
         <trans-unit id="DesignerFilter" translate="yes" xml:space="preserve">
           <source>designer:</source>

@@ -1613,15 +1613,15 @@
     <value>恢复</value>
     <comment>Opposite of Fullscreen</comment>
   </data>
-  <data name="CharFilter" xml:space="preserve">
-    <value>char:</value>
-    <comment>Command used for character searches. Should be short.</comment>
-  </data>
   <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
     <value>创建智能收藏集</value>
   </data>
   <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>查看智能收藏集的在线文档</value>
+  </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>char:</value>
+    <comment>Command used for character searches. Should be short.</comment>
   </data>
   <data name="DesignerFilter" xml:space="preserve">
     <value>designer:</value>

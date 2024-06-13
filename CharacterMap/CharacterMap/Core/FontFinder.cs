@@ -653,7 +653,7 @@ public class FontFinder
         if (!string.IsNullOrWhiteSpace(query))
         {
             string q;
-            if (IsQuery(query, Localization.Get("CharFilter"), "char:", out q))
+            if (IsQuery(query, Localization.Get("CharacterFilter"), "char:", out q))
             {
                 foreach (var ch in q)
                 {
