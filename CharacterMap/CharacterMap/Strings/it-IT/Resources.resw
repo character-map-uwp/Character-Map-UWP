@@ -16,7 +16,7 @@
     <value>Aggiungi alla Libreria</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Mappa Caratteri UWP</value>
+    <value>Mappa caratteri UWP</value>
   </data>
   <data name="BlackFill.Text" xml:space="preserve">
     <value>Sfondo Nero</value>
@@ -31,7 +31,7 @@
     <value>Glifo colorato</value>
   </data>
   <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
-    <value>Glifo monocromo</value>
+    <value>Glifi monocromi</value>
   </data>
   <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
     <value>Colore glifo</value>
@@ -91,7 +91,7 @@
     <value>Riavvio dell'app necessario per apportare le modifiche.</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
-    <value>Cerca tramite nome o codice unicode</value>
+    <value>Cerca per nome o esadecimale Unicode</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
     <value>Informazioni sull'app</value>
@@ -174,16 +174,16 @@
     <value>Apri</value>
   </data>
   <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
-    <value>Nome Collezione</value>
+    <value>Nome raccolta</value>
   </data>
   <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
     <value>Crea</value>
   </data>
   <data name="DigCreateCollection.Title" xml:space="preserve">
-    <value>Crea Collezione</value>
+    <value>Crea raccolta</value>
   </data>
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Elimina Collezione</value>
+    <value>Elimina raccolta</value>
   </data>
   <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
     <value>Annulla</value>
@@ -195,13 +195,13 @@
     <value>Annulla</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
-    <value>Sei sicuro di voler eliminare questa collezione?</value>
+    <value>Sei sicuro di voler eliminare questa raccolta?</value>
   </data>
   <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
     <value>Rinomina</value>
   </data>
   <data name="DigRenameCollection.Title" xml:space="preserve">
-    <value>Rinomina Collezione</value>
+    <value>Rinomina raccolta</value>
   </data>
   <data name="OptionAllFonts.Text" xml:space="preserve">
     <value>Tutti i caratteri</value>
@@ -213,7 +213,7 @@
     <value>Caratteri Simbolo</value>
   </data>
   <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Rinomina collezione</value>
+    <value>Rinomina raccolta</value>
   </data>
   <data name="FontListDisplayHeader.Text" xml:space="preserve">
     <value>Visualizzazione elenco caratteri</value>
@@ -231,13 +231,13 @@
     <value>Caretteri Serif</value>
   </data>
   <data name="NewCollectionItem.Text" xml:space="preserve">
-    <value>Nuova Collezione</value>
+    <value>Nuova raccolta</value>
   </data>
   <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
-    <value>Rimuovi dalla Collezione</value>
+    <value>Rimuovi dalla raccolta</value>
   </data>
   <data name="AddToCollectionFlyout.Text" xml:space="preserve">
-    <value>Aggiungi alla Collezione</value>
+    <value>Aggiungi alla raccolta</value>
   </data>
   <data name="InstantSearchToggle.OffContent" xml:space="preserve">
     <value>Ricerca istantanea disabilitata</value>
@@ -348,7 +348,7 @@
     <value>Sei sicuro di voler eliminare questo carattere dalla tua libreria?</value>
   </data>
   <data name="NotificationCollectionDeleted" xml:space="preserve">
-    <value>"{0}" raccolta eliminata</value>
+    <value>Raccolta "{0}" eliminata</value>
   </data>
   <data name="DlgException.PrimaryButtonText" xml:space="preserve">
     <value>Ok</value>
@@ -462,17 +462,17 @@ Riavvio dell'app necessario.</value>
     <value>Abilita ombre</value>
   </data>
   <data name="SettingsSimpleAnimationDescription.Text" xml:space="preserve">
-    <value>Controlla l'animazione durante il caricamento dell'elenco dei caratteri, il cambio tra caratteri e la modifica dei caratteri.
+    <value>Controlla la maggior parte delle animazioni dell'applicazione. Disattivando questa opzione si disabiliterà la la maggior parte delle animazioni.
 L'abilitazione dell'animazione ha un impatto trascurabile sulle prestazioni.</value>
   </data>
   <data name="SettingsSimpleAnimationHeader.Text" xml:space="preserve">
-    <value>Abilita animazioni</value>
+    <value>Abilitare le animazioni</value>
   </data>
   <data name="SettingsThemeHeader.Text" xml:space="preserve">
     <value>Tema</value>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
-    <value>Interfaccia utente</value>
+    <value>Layout</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
@@ -723,7 +723,7 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
     <value>Latino</value>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
-    <value>Cinese Giapponese Coreano</value>
+    <value>CJK (Cinese/Giapponese/Coreano)</value>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>Cirillico</value>
@@ -756,7 +756,7 @@ Ti consigliamo di pubblicare i dettagli di questo errore su GitHub in modo che p
     <value>About</value>
   </data>
   <data name="SettingsAdvancedUILabel.Text" xml:space="preserve">
-    <value>Interfaccia Utente Avanzata</value>
+    <value>Aspetto &amp; sensazione</value>
   </data>
   <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
     <value>Gestione Caratteri</value>
@@ -874,7 +874,7 @@ La funzione di ottimizzazione creerà un nome intelligente basato sulla famiglia
 Variante predefinita copiata.</value>
   </data>
   <data name="CollectionFontHelpBlock.Text" xml:space="preserve">
-    <value>Non sono presenti caratteri in questa collezione.</value>
+    <value>Non sono presenti caratteri in questa raccolta.</value>
   </data>
   <data name="SearchFontHelpBlock.Text" xml:space="preserve">
     <value>Nessun risultato trovato.</value>
@@ -1005,10 +1005,10 @@ Riavvio necessario.</value>
     <comment>Labels must be as short as possible</comment>
   </data>
   <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Aggiungi alla collezione</value>
+    <value>Aggiungi alla raccolta</value>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
-    <value>Selezione chiara</value>
+    <value>Cancella selezione</value>
   </data>
   <data name="CreateNewButton.Content" xml:space="preserve">
     <value>Crea nuovo</value>
@@ -1020,10 +1020,10 @@ Riavvio necessario.</value>
     <value>Rimuovi dalla raccolta</value>
   </data>
   <data name="SelectCollectionLabel" xml:space="preserve">
-    <value>Seleziona Collezione</value>
+    <value>Seleziona raccolta</value>
   </data>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
-    <value>Collezioni</value>
+    <value>Riscossioni</value>
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>Apri font</value>

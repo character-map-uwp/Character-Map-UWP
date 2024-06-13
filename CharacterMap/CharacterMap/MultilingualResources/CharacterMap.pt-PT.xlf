@@ -2199,6 +2199,10 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
           <source>Foundry Filter</source>
           <target state="translated">Fitro de empresa</target>
         </trans-unit>
+        <trans-unit id="SmartCollectionCharacterFilter.Text" translate="yes" xml:space="preserve">
+          <source>Character Filter</source>
+          <target state="translated">Filtro de carácter</target>
+        </trans-unit>
         <trans-unit id="DigEditCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Edit</source>
           <target state="translated">Editar</target>

@@ -1,0 +1,818 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddToCollectionHint.Text" xml:space="preserve">
+    <value>Ajouter à la bibliothèque</value>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Table des caractères UWP</value>
+  </data>
+  <data name="BlackFill.Text" xml:space="preserve">
+    <value>Remplissage noir</value>
+  </data>
+  <data name="BtnCopy.Text" xml:space="preserve">
+    <value>Copier comme texte</value>
+  </data>
+  <data name="BtnSelect.Content" xml:space="preserve">
+    <value>Sélectionner</value>
+  </data>
+  <data name="ColoredGlyphLabel.Text" xml:space="preserve">
+    <value>Glyphe coloré</value>
+  </data>
+  <data name="ColorGlyphToggle.OffContent" xml:space="preserve">
+    <value>Glyphes monochromes</value>
+  </data>
+  <data name="ColorGlyphToggle.OnContent" xml:space="preserve">
+    <value>Glyphes de couleur</value>
+  </data>
+  <data name="FontPropFamily.Text" xml:space="preserve">
+    <value>Nom de la famille</value>
+  </data>
+  <data name="FontPropMonospaced.Text" xml:space="preserve">
+    <value>Chasse fixe</value>
+  </data>
+  <data name="InvalidFontTitle" xml:space="preserve">
+    <value>Fichier non pris en charge</value>
+  </data>
+  <data name="OpenInNewWindow.Text" xml:space="preserve">
+    <value>Ouvrir dans une nouvelle fenêtre</value>
+  </data>
+  <data name="RemoveFontFlyout.Text" xml:space="preserve">
+    <value>Supprimer la police</value>
+  </data>
+  <data name="RestartButton.Content" xml:space="preserve">
+    <value>Redémarrer l'application</value>
+  </data>
+  <data name="RestartHeader.Text" xml:space="preserve">
+    <value>Requires application restart to take effect.</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>Rechercher par nom ou hexadécimal unicode</value>
+  </data>
+  <data name="Settings_About.Text" xml:space="preserve">
+    <value>À propos de cette application</value>
+  </data>
+  <data name="Settings_AboutDescription.Text" xml:space="preserve">
+    <value>Cette application est conçue pour remplacer le programme Win32 "Table des caractères" intégré dans le système. Elle apporte un meilleur respect de la résolution sur des écrans de haute définition.</value>
+  </data>
+  <data name="TxtCopiedMessage.Text" xml:space="preserve">
+    <value>Copié</value>
+  </data>
+  <data name="TxtTitle.Text" xml:space="preserve">
+    <value>Table des caractères</value>
+  </data>
+  <data name="TxtXamlCode.Header" xml:space="preserve">
+    <value>Code du glyphe</value>
+  </data>
+  <data name="TypographyVariantsHeader.Text" xml:space="preserve">
+    <value>Variantes du glyphe</value>
+  </data>
+  <data name="WhiteFill.Text" xml:space="preserve">
+    <value>Remplissage blanc</value>
+  </data>
+  <data name="ImportUnavailableFile" xml:space="preserve">
+    <value>Le fichier n'est pas disponible</value>
+  </data>
+  <data name="ImportUnsupportedFileType" xml:space="preserve">
+    <value>Type de fichier non pris en charge</value>
+  </data>
+  <data name="ImportUnsupportedFontType" xml:space="preserve">
+    <value>Type de police non pris en charge</value>
+  </data>
+  <data name="NoticeLabel.Text" xml:space="preserve">
+    <value>Préavis</value>
+  </data>
+  <data name="ImportFileCopyFail" xml:space="preserve">
+    <value>Un problème est survenu. Veuillez réessayer ultérieurement.</value>
+  </data>
+  <data name="FilePickerConfirm" xml:space="preserve">
+    <value>Importer</value>
+  </data>
+  <data name="ImportFontsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Importer polices</value>
+  </data>
+  <data name="OpenFontButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ouvrir police</value>
+  </data>
+  <data name="OpenFontPickerConfirm" xml:space="preserve">
+    <value>Ouvrir</value>
+  </data>
+  <data name="DigCreateCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="DigCreateCollection.Title" xml:space="preserve">
+    <value>Créer une collection</value>
+  </data>
+  <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Supprimer la collection</value>
+  </data>
+  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="DigRenameCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Renommer</value>
+  </data>
+  <data name="DigRenameCollection.Title" xml:space="preserve">
+    <value>Renommer la collection</value>
+  </data>
+  <data name="OptionAllFonts.Text" xml:space="preserve">
+    <value>Toutes les polices</value>
+  </data>
+  <data name="OptionImportedFonts.Text" xml:space="preserve">
+    <value>Polices importées</value>
+  </data>
+  <data name="RenameCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Renommer la collection</value>
+  </data>
+  <data name="FontPropCount.Text" xml:space="preserve">
+    <value>Nombre de glyphes</value>
+  </data>
+  <data name="OptionMonospacedFonts.Text" xml:space="preserve">
+    <value>Polices à chasse fixe</value>
+  </data>
+  <data name="OptionSansSerifFonts.Text" xml:space="preserve">
+    <value>Polices sans empattement </value>
+  </data>
+  <data name="OptionSerifFonts.Text" xml:space="preserve">
+    <value>Polices avec empattement</value>
+  </data>
+  <data name="NewCollectionItem.Text" xml:space="preserve">
+    <value>Nouveau collection</value>
+  </data>
+  <data name="RemoveFromCollectionItem.Text" xml:space="preserve">
+    <value>Supprimer de la collection</value>
+  </data>
+  <data name="AddToCollectionFlyout.Text" xml:space="preserve">
+    <value>Ajouter à la collection</value>
+  </data>
+  <data name="InstantSearchToggle.OffContent" xml:space="preserve">
+    <value>Recherche instantanée désactivé</value>
+  </data>
+  <data name="InstantSearchToggle.OnContent" xml:space="preserve">
+    <value>Recherche instantanée activé</value>
+  </data>
+  <data name="SearchResultsSlider.Header" xml:space="preserve">
+    <value>Résultats de recherche maximum</value>
+  </data>
+  <data name="FontPropCharCount.Text" xml:space="preserve">
+    <value>Nombre de caractères</value>
+  </data>
+  <data name="FontPropFilePath.Text" xml:space="preserve">
+    <value>Chemin d'accès au fichier</value>
+  </data>
+  <data name="DWriteSourcePerMachine" xml:space="preserve">
+    <value>Tous les utilisateurs</value>
+  </data>
+  <data name="DWriteSourcePerUser" xml:space="preserve">
+    <value>Uniquement l'utilisateur actuel</value>
+  </data>
+  <data name="DWriteSourceUnknown" xml:space="preserve">
+    <value>Indéfini</value>
+  </data>
+  <data name="FontPropInstallType.Text" xml:space="preserve">
+    <value>Type d'installation</value>
+  </data>
+  <data name="OptionAppxFonts.Text" xml:space="preserve">
+    <value>De Microsoft Store</value>
+  </data>
+  <data name="StatusBarFontCount" xml:space="preserve">
+    <value>{0} polices de caractères</value>
+  </data>
+  <data name="FontPropFileSize.Text" xml:space="preserve">
+    <value>Taille du fichier</value>
+  </data>
+  <data name="StatusBarCharacterCount" xml:space="preserve">
+    <value>{0} caractères</value>
+  </data>
+  <data name="InstantSearchToggleHeader.Text" xml:space="preserve">
+    <value>Recherche instantanée</value>
+  </data>
+  <data name="CharacterSavedMessage.Text" xml:space="preserve">
+    <value>Enregistré dans</value>
+  </data>
+  <data name="NotificationAddedToCollection" xml:space="preserve">
+    <value>{0} a été ajouté à la collection "{1}"</value>
+  </data>
+  <data name="BtnOpenFile.Content" xml:space="preserve">
+    <value>Ouvrir le fichier</value>
+  </data>
+  <data name="NotificationImportFailed" xml:space="preserve">
+    <value>Échec de l'importation</value>
+  </data>
+  <data name="FontListFilter.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Filtrer les polices</value>
+  </data>
+  <data name="ToggleFullScreenModeButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Basculer le plein écran</value>
+  </data>
+  <data name="NotificationCollectionDeleted" xml:space="preserve">
+    <value>Collection "{0}" supprimée</value>
+  </data>
+  <data name="DlgException.Title" xml:space="preserve">
+    <value>Un problème est survenu</value>
+  </data>
+  <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Copier</value>
+  </data>
+  <data name="BtnXAMLGeometry.Content" xml:space="preserve">
+    <value>Cliquer pour afficher</value>
+  </data>
+  <data name="RbThemeDark.Content" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="RbThemeLight.Content" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="RbThemeSystem.Content" xml:space="preserve">
+    <value>Windows par défaut</value>
+  </data>
+  <data name="SettingsCharacterSearchHeader.Text" xml:space="preserve">
+    <value>Recherche de caractère</value>
+  </data>
+  <data name="SettingsCharGridHeader.Text" xml:space="preserve">
+    <value>Taille de la grille de caractère</value>
+  </data>
+  <data name="SettingsCharPreviewHint.Text" xml:space="preserve">
+    <value>Aperçu de la grille de caractère</value>
+  </data>
+  <data name="SettingsDevToolsGroupHeader.Text" xml:space="preserve">
+    <value>Fonctionnalités du développeur</value>
+  </data>
+  <data name="SettingsDevToolsHeader.Text" xml:space="preserve">
+    <value>Afficher les fonctionnalités des développeurs</value>
+  </data>
+  <data name="SettingsDevToolsLangHeader.Text" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="SettingsExportHeader.Text" xml:space="preserve">
+    <value>Exporter</value>
+  </data>
+  <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
+    <value>Aperçu de la liste des policesw</value>
+  </data>
+  <data name="SettingsHeader.Text" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="SettingsLanguageHeader.Text" xml:space="preserve">
+    <value>Remplacement de la langue</value>
+  </data>
+  <data name="SettingsPNGExportHeader.Text" xml:space="preserve">
+    <value>Taille d'exportation de PNG</value>
+  </data>
+  <data name="SettingsThemeHeader.Text" xml:space="preserve">
+    <value>Thème</value>
+  </data>
+  <data name="SettingsUIHeader.Text" xml:space="preserve">
+    <value>Disposition</value>
+  </data>
+  <data name="BtnContributors.Content" xml:space="preserve">
+    <value>Contributeurs</value>
+  </data>
+  <data name="TxtLoadingFonts.Text" xml:space="preserve">
+    <value>Chargement des polices</value>
+  </data>
+  <data name="AppBtnClear.Label" xml:space="preserve">
+    <value>Effacer</value>
+  </data>
+  <data name="AppBtnReset.Label" xml:space="preserve">
+    <value>Réinitialiser</value>
+  </data>
+  <data name="AppBtnSelectAll.Label" xml:space="preserve">
+    <value>Sélectionner tout</value>
+  </data>
+  <data name="BtnApply.Content" xml:space="preserve">
+    <value>Appliquer</value>
+  </data>
+  <data name="BtnCancel.Content" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="BtnContinue.Content" xml:space="preserve">
+    <value>Continuer</value>
+  </data>
+  <data name="CbCharacterLabel.Header" xml:space="preserve">
+    <value>Étiquette de caractère</value>
+  </data>
+  <data name="CbiPageOrientationLandscape.Content" xml:space="preserve">
+    <value>Paysage</value>
+  </data>
+  <data name="CbiPageOrientationPortrait.Content" xml:space="preserve">
+    <value>Portrait</value>
+  </data>
+  <data name="CbShowMargins.Content" xml:space="preserve">
+    <value>Afficher les marges</value>
+  </data>
+  <data name="GlyphAnnotation_None" xml:space="preserve">
+    <value>Aucun</value>
+  </data>
+  <data name="PrintViewCharSize.Text" xml:space="preserve">
+    <value>Taille du caractère</value>
+  </data>
+  <data name="PrintViewHorizontalMarginHeader.Text" xml:space="preserve">
+    <value>Marge horizontale</value>
+  </data>
+  <data name="PrintViewLayoutHeader.Text" xml:space="preserve">
+    <value>Mise en page</value>
+  </data>
+  <data name="PrintViewOfLabel.Text" xml:space="preserve">
+    <value>de</value>
+  </data>
+  <data name="PrintViewPageOrientation.Header" xml:space="preserve">
+    <value>Orientation de la page</value>
+  </data>
+  <data name="PrintViewPageRange.Text" xml:space="preserve">
+    <value>Étendue de pages</value>
+  </data>
+  <data name="PrintViewPrintingLabel" xml:space="preserve">
+    <value>Impression des pages {0} - {1}</value>
+  </data>
+  <data name="PrintViewTitle.Text" xml:space="preserve">
+    <value>Configuration de l'impression</value>
+  </data>
+  <data name="PrintViewVerticalMarginHeader.Text" xml:space="preserve">
+    <value>Marge verticale</value>
+  </data>
+  <data name="SettingsManageSystemFonts.Content" xml:space="preserve">
+    <value>Gérer les polices installées</value>
+  </data>
+  <data name="SettingsSystemFontHeader.Text" xml:space="preserve">
+    <value>Polices installées</value>
+  </data>
+  <data name="BtnPrint.Content" xml:space="preserve">
+    <value>Imprimer</value>
+  </data>
+  <data name="PrintLayout_TwoColumn" xml:space="preserve">
+    <value>Deux colonnes</value>
+  </data>
+  <data name="SettingsTransparencyHeader.Text" xml:space="preserve">
+    <value>Activer la transparence</value>
+  </data>
+  <data name="StartupFailedButton.Content" xml:space="preserve">
+    <value>Afficher les détails</value>
+  </data>
+  <data name="StartupFailedHeader.Text" xml:space="preserve">
+    <value>Bouh, bouh</value>
+  </data>
+  <data name="BtnCopyGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Copier dans le Presse-papiers</value>
+  </data>
+  <data name="BtnSaveGlyph.Label" xml:space="preserve">
+    <value>Enregistrer sous</value>
+  </data>
+  <data name="BtnSaveGlyph.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Enregistrer sous</value>
+  </data>
+  <data name="CreateCollectionEntryBox.Header" xml:space="preserve">
+    <value>Nom de la collection</value>
+  </data>
+  <data name="ExportFontFile.Text" xml:space="preserve">
+    <value>Fichier de police</value>
+  </data>
+  <data name="ExportFontFileLabel.Text" xml:space="preserve">
+    <value>Enregistrer le fichier de police sous</value>
+  </data>
+  <data name="FontExportedMessage" xml:space="preserve">
+    <value>{0} exportée</value>
+  </data>
+  <data name="OptionAllEmoji.Text" xml:space="preserve">
+    <value>Toutes les catégories</value>
+  </data>
+  <data name="OptionAllEmojiTitle.Text" xml:space="preserve">
+    <value>Tous les émoji</value>
+  </data>
+  <data name="OptionScriptArabic.Text" xml:space="preserve">
+    <value>Arabe</value>
+  </data>
+  <data name="OptionScriptBasicLatin.Text" xml:space="preserve">
+    <value>Latin</value>
+  </data>
+  <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
+    <value>CJK (Chinois/Japonais/Coréen)</value>
+  </data>
+  <data name="OptionScriptCyrillic.Text" xml:space="preserve">
+    <value>Cyrillique</value>
+  </data>
+  <data name="OptionScriptHebrew.Text" xml:space="preserve">
+    <value>Hébreu</value>
+  </data>
+  <data name="OptionScriptThai.Text" xml:space="preserve">
+    <value>Thaï</value>
+  </data>
+  <data name="SettingsAboutLabel.Text" xml:space="preserve">
+    <value>À propos</value>
+  </data>
+  <data name="SettingsLicensesLabel.Text" xml:space="preserve">
+    <value>Licences</value>
+  </data>
+  <data name="ImportDragDropLabel.Text" xml:space="preserve">
+    <value>Glisser-déposer pour importer</value>
+  </data>
+  <data name="NotificationCopied" xml:space="preserve">
+    <value>Copié</value>
+  </data>
+  <data name="AddButton.Label" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="AddSelectionItem.Text" xml:space="preserve">
+    <value>Ajouter à la sélection</value>
+  </data>
+  <data name="ContextMenuDevCopyCommand" xml:space="preserve">
+    <value>Copier {0}</value>
+    <comment>Examples: "Copy Font Icon" or "Copy Glyph Code"</comment>
+  </data>
+  <data name="ProviderNone" xml:space="preserve">
+    <value>Aucun</value>
+  </data>
+  <data name="SettingsChangelogLabel.Text" xml:space="preserve">
+    <value>Journal des modifications</value>
+  </data>
+  <data name="CharacterFilterButton.Label" xml:space="preserve">
+    <value>Filtre</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="CollectionExportButton.Label" xml:space="preserve">
+    <value>Exporter</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="DeleteCollectionButton.Label" xml:space="preserve">
+    <value>Supprimer</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontOptionsButton.Label" xml:space="preserve">
+    <value>Options</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="FontPropertiesButton.Label" xml:space="preserve">
+    <value>Info</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="OpenFontButton.Label" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="RenameCollectionButton.Label" xml:space="preserve">
+    <value>Renommer</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="ViewToggleButton.Label" xml:space="preserve">
+    <value>Basculer</value>
+    <comment>Labels must be as short as possible</comment>
+  </data>
+  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ajouter à la collection</value>
+  </data>
+  <data name="ClearSelectionLabel" xml:space="preserve">
+    <value>Effacer la sélection</value>
+  </data>
+  <data name="CreateNewButton.Content" xml:space="preserve">
+    <value>Créer nouveau</value>
+  </data>
+  <data name="SettingsCollectionsHeader" xml:space="preserve">
+    <value>Collections</value>
+  </data>
+  <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
+    <value>Ouvrir polices</value>
+  </data>
+  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="DigOpenFolder.Title" xml:space="preserve">
+    <value>Ouvrir le dossier des polices</value>
+  </data>
+  <data name="DigOpenFolderContent.FindHeader" xml:space="preserve">
+    <value>Options de recherche</value>
+  </data>
+  <data name="DigOpenFolderContent.FindingFontsLabel" xml:space="preserve">
+    <value>Recherche de polices...</value>
+  </data>
+  <data name="DigOpenFolderContent.PrefixLabel" xml:space="preserve">
+    <value>Trouvé</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectHeader" xml:space="preserve">
+    <value>Dossier sélectionné (cliquez pour modifier)</value>
+  </data>
+  <data name="DigOpenFolderContent.SuffixLabel" xml:space="preserve">
+    <value>fichiers de police</value>
+  </data>
+  <data name="FontFileMenuItem.Text" xml:space="preserve">
+    <value>Ouvrir un fichier de police</value>
+  </data>
+  <data name="FontFolderMenuItem.Text" xml:space="preserve">
+    <value>Ouvrir un dossier de police</value>
+  </data>
+  <data name="AddHistoryButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ajouter à l'historique</value>
+  </data>
+  <data name="CalligraphyLabel.Text" xml:space="preserve">
+    <value>Calligraphie</value>
+  </data>
+  <data name="ClearAllButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Effacer tout</value>
+  </data>
+  <data name="ClearAllItem.Text" xml:space="preserve">
+    <value>Effacer tout</value>
+  </data>
+  <data name="HistoryLabel.Text" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="RedoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Rétablir (Ctrl+Y)</value>
+  </data>
+  <data name="RemoveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="SaveButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Enregistrer (Ctrl+S)</value>
+  </data>
+  <data name="SideBySideToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Côte à côte</value>
+  </data>
+  <data name="UndoButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Annuler (Ctrl+Z)</value>
+  </data>
+  <data name="CharacterPickerButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ouvrir le sélecteur de caractère</value>
+  </data>
+  <data name="OpenInNewTab.Text" xml:space="preserve">
+    <value>Ouvrir dans un nouvel onglet</value>
+  </data>
+  <data name="OptionScriptKorean.Text" xml:space="preserve">
+    <value>Coréen</value>
+  </data>
+  <data name="OptionEmoji.Text" xml:space="preserve">
+    <value>Émoji</value>
+  </data>
+  <data name="MenuButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Ouvrir le menu</value>
+  </data>
+  <data name="FontsSelectedCountLabel" xml:space="preserve">
+    <value>{0} polices, {1} sélectionné</value>
+  </data>
+  <data name="AllFontsLabel.Text" xml:space="preserve">
+    <value>Toutes les polices</value>
+  </data>
+  <data name="ImportLabel.Text" xml:space="preserve">
+    <value>Importer</value>
+  </data>
+  <data name="PreferredFormatGroup.Text" xml:space="preserve">
+    <value>Format préféré</value>
+    <comment>Preferred export format</comment>
+  </data>
+  <data name="RemoveLabel.Text" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="UndoLabel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="FullscreenLabel.Text" xml:space="preserve">
+    <value>Plein écran</value>
+  </data>
+  <data name="FontPropPanoseTitle.Text" xml:space="preserve">
+    <value>Valeurs PANOSE</value>
+  </data>
+  <data name="FontPropCOLRVersion.Text" xml:space="preserve">
+    <value>Version COLR</value>
+  </data>
+  <data name="GlyphTypeBitmap" xml:space="preserve">
+    <value>Matricielle</value>
+  </data>
+  <data name="TypeRampFlowButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Modifier la direction du flux</value>
+  </data>
+  <data name="TxtUTF16.Header" xml:space="preserve">
+    <value>Valeur UTF-16</value>
+  </data>
+  <data name="OptionScriptHiraganaAndKatakana.Text" xml:space="preserve">
+    <value>Hiragana &amp; Katakana</value>
+  </data>
+  <data name="OptionsScriptBengali.Text" xml:space="preserve">
+    <value>Bengali</value>
+  </data>
+  <data name="OptionsScriptDevanagari.Text" xml:space="preserve">
+    <value>Devanagari</value>
+  </data>
+  <data name="BtnTextClose.Content" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="ShowSuggestionsButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Afficher les suggestions</value>
+  </data>
+  <data name="SuggestOptionArabic.Text" xml:space="preserve">
+    <value>Arabe</value>
+  </data>
+  <data name="SuggestOptionBengali.Text" xml:space="preserve">
+    <value>Bengali</value>
+  </data>
+  <data name="SuggestOptionBulgarian.Text" xml:space="preserve">
+    <value>Bulgare</value>
+  </data>
+  <data name="SuggestOptionChineseTraditional.Text" xml:space="preserve">
+    <value>Chinois (traditionnel)</value>
+  </data>
+  <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
+    <value>Anglais</value>
+  </data>
+  <data name="SuggestOptionCustom.Text" xml:space="preserve">
+    <value>Personnalisé</value>
+  </data>
+  <data name="SuggestOptionCyrillicAlpha.Text" xml:space="preserve">
+    <value>Alphabet cyrillique</value>
+  </data>
+  <data name="SuggestOptionEmoji.Text" xml:space="preserve">
+    <value>Émoji</value>
+  </data>
+  <data name="SuggestOptionEnglish.Text" xml:space="preserve">
+    <value>Anglais</value>
+  </data>
+  <data name="SuggestOptionGreek.Text" xml:space="preserve">
+    <value>Grec</value>
+  </data>
+  <data name="SuggestOptionHebrew.Text" xml:space="preserve">
+    <value>Hébreu</value>
+  </data>
+  <data name="SuggestOptionHindi.Text" xml:space="preserve">
+    <value>Hindi</value>
+  </data>
+  <data name="SuggestOptionJapanese.Text" xml:space="preserve">
+    <value>Japonais</value>
+  </data>
+  <data name="SuggestOptionKorean.Text" xml:space="preserve">
+    <value>Coréen</value>
+  </data>
+  <data name="SuggestOptionLatinAlpha.Text" xml:space="preserve">
+    <value>Alphabet latin</value>
+  </data>
+  <data name="SuggestOptionLatinSymbols.Text" xml:space="preserve">
+    <value>Chiffres et symboles latins</value>
+  </data>
+  <data name="SuggestOptionThai.Text" xml:space="preserve">
+    <value>Thaï</value>
+  </data>
+  <data name="SuggestOptionVietnamese.Text" xml:space="preserve">
+    <value>Vietnamien</value>
+  </data>
+  <data name="OptionSystemFonts.Text" xml:space="preserve">
+    <value>Polices installées</value>
+  </data>
+  <data name="SettingsExportInstalledLabel.Text" xml:space="preserve">
+    <value>Exporter les polices installées</value>
+  </data>
+  <data name="InstallDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="InstallDialog.Title" xml:space="preserve">
+    <value>Installer police</value>
+  </data>
+  <data name="InstallLabel.Text" xml:space="preserve">
+    <value>Installer</value>
+  </data>
+  <data name="SettingsAdvancedOptionsLabel.Text" xml:space="preserve">
+    <value>Avancé</value>
+  </data>
+  <data name="SettingsDeprecatedIconsPresenter.Title" xml:space="preserve">
+    <value>Masquer les icônes déconseillés</value>
+  </data>
+  <data name="StartLabel.Text" xml:space="preserve">
+    <value>Commencer</value>
+  </data>
+  <data name="TxtUniHexValue.Text" xml:space="preserve">
+    <value>Valeur hexadécimale</value>
+  </data>
+  <data name="HideUnihanLabel.Text" xml:space="preserve">
+    <value>Masquer les données d'Unihan</value>
+  </data>
+  <data name="ShowUnihanLabel.Text" xml:space="preserve">
+    <value>Afficher les données d'Unihan</value>
+  </data>
+  <data name="UnihanDefinition.Text" xml:space="preserve">
+    <value>Définition</value>
+  </data>
+  <data name="UnihanTypeNameCantonese" xml:space="preserve">
+    <value>Cantonais</value>
+  </data>
+  <data name="UnihanTypeNameHangul" xml:space="preserve">
+    <value>Hangeul</value>
+  </data>
+  <data name="UnihanTypeNameJapanese" xml:space="preserve">
+    <value>Japonais</value>
+  </data>
+  <data name="UnihanTypeNameKorean" xml:space="preserve">
+    <value>Coréen</value>
+  </data>
+  <data name="UnihanTypeNameMandarin" xml:space="preserve">
+    <value>Mandarin</value>
+  </data>
+  <data name="UnihanTypeNameVietnamese" xml:space="preserve">
+    <value>Vietnamien</value>
+  </data>
+  <data name="HiddenSearchResultsLabel.Text" xml:space="preserve">
+    <value>MASQUÉ</value>
+  </data>
+  <data name="SuggestOptionChineseSimplified.Text" xml:space="preserve">
+    <value>Chinois (simplifié)</value>
+  </data>
+  <data name="CollectionSelector.PlaceholderText" xml:space="preserve">
+    <value>Choisir une existante</value>
+  </data>
+  <data name="FindCharButton.Text" xml:space="preserve">
+    <value>Rechercher dans d'autres polices</value>
+  </data>
+  <data name="FontFamilyFilterInput.PlaceholderText" xml:space="preserve">
+    <value>Filtrer par polices</value>
+  </data>
+  <data name="FileNameWriterExtensionDesc" xml:space="preserve">
+    <value>Extension de fichier</value>
+  </data>
+  <data name="FileNameWriterFamilyDesc" xml:space="preserve">
+    <value>Nom de la famille de polices</value>
+  </data>
+  <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
+    <value>Taille en pixels</value>
+  </data>
+  <data name="FileNameWriterStringFormat" xml:space="preserve">
+    <value>{0}, par ex. {1}</value>
+  </data>
+  <data name="FileNameWriterUnicodeHexDesc" xml:space="preserve">
+    <value>Valeur hexadécimale Unicode</value>
+  </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>par ex. {0}</value>
+  </data>
+  <data name="CanvasFontInformationCopyrightNotice" xml:space="preserve">
+    <value>Avis de droit d'auteur</value>
+  </data>
+  <data name="CanvasFontInformationDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="CanvasFontInformationFullName" xml:space="preserve">
+    <value>Nom complet</value>
+  </data>
+  <data name="CanvasFontInformationLicenseDescription" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="CanvasFontInformationLicenseInfoUrl" xml:space="preserve">
+    <value>URL de license</value>
+  </data>
+  <data name="CanvasFontInformationTrademark" xml:space="preserve">
+    <value>Marque déposée</value>
+  </data>
+  <data name="RestoreLabel.Text" xml:space="preserve">
+    <value>Quitter</value>
+    <comment>Opposite of Fullscreen</comment>
+  </data>
+  <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
+    <value>Filtre de fonderie</value>
+  </data>
+  <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="DigEditCollection.Title" xml:space="preserve">
+    <value>Modifier la collection</value>
+  </data>
+  <data name="EditCollectionButton.Label" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="EditCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Modifier la collection</value>
+  </data>
+  <data name="BtnHelpAndTips.Content" xml:space="preserve">
+    <value>Aide &amp; conseils</value>
+  </data>
+  <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
+    <value>Sélectionner un dossier</value>
+  </data>
+  <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Modifier le tri</value>
+  </data>
+  <data name="SortedByRangeLabel.Text" xml:space="preserve">
+    <value>Trié par intervalle</value>
+  </data>
+  <data name="RefreshResultsLabel.Text" xml:space="preserve">
+    <value>Actualiser les résultats</value>
+  </data>
+  <data name="ResultsCountLabel" xml:space="preserve">
+    <value>{0} résultats</value>
+  </data>
+  <data name="SortedByNameLabel.Text" xml:space="preserve">
+    <value>Trié par nom</value>
+  </data>
+</root>

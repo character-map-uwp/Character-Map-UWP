@@ -16,13 +16,13 @@
     <value>Dodaj do biblioteki</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>Character Map UWP</value>
+    <value>Tablica znaków UWP</value>
   </data>
   <data name="BlackFill.Text" xml:space="preserve">
     <value>Czarne wypełnienie</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
-    <value>Kopiuj (tylko znak)</value>
+    <value>Kopiuj jako tekst</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Zaznacz</value>
@@ -91,10 +91,10 @@
     <value>Wymaga ponownego uruchomienia aplikacji, aby zaczęło obowiązywać.</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
-    <value>Szukaj Unicode np. E12B</value>
+    <value>Wyszukaj wg nazwy lub szesnastkowy Unicode</value>
   </data>
   <data name="Settings_About.Text" xml:space="preserve">
-    <value>O aplikacji</value>
+    <value>Informacje o tej aplikacji</value>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
     <value>Ta aplikacja została zaprojektowana by zastąpić domyślną Tablicę znaków dostępną w systemie Windows. Wyróżnia się lepszą obsługą DPI na ekranach wysokiej rozdzielczości.</value>
@@ -724,7 +724,7 @@ Rozważ opublikowanie szczegółów dotyczących tego błędu w usłudze GitHub,
     <value>Łacina</value>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
-    <value>CJK</value>
+    <value>CJK (Chiński/Japoński/Koreański)</value>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>Cyrylica</value>

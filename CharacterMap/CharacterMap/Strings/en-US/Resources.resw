@@ -1749,6 +1749,9 @@ Otherwise, "All Fonts" is selected by default on every launch.</value>
   <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
     <value>Foundry Filter</value>
   </data>
+  <data name="SmartCollectionCharacterFilter.Text" xml:space="preserve">
+    <value>Character Filter</value>
+  </data>
   <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
     <value>Edit</value>
   </data>

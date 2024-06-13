@@ -2199,6 +2199,10 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <source>Foundry Filter</source>
           <target state="translated">Filtre de fonderie</target>
         </trans-unit>
+        <trans-unit id="SmartCollectionCharacterFilter.Text" translate="yes" xml:space="preserve">
+          <source>Character Filter</source>
+          <target state="new">Character Filter</target>
+        </trans-unit>
         <trans-unit id="DigEditCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Edit</source>
           <target state="translated">Modifier</target>

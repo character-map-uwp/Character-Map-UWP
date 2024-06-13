@@ -470,7 +470,7 @@
     <value>ชุดรูปแบบ</value>
   </data>
   <data name="SettingsUIHeader.Text" xml:space="preserve">
-    <value>หน้าตาแอป</value>
+    <value>เค้าโครง</value>
   </data>
   <data name="TxtPathGeometry.Text" xml:space="preserve">
     <value>Path Geometry</value>
@@ -726,7 +726,7 @@
     <value>ละติน</value>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
-    <value>จีน/ญี่ปุ่น/เกาหลี</value>
+    <value>CJK (จีน/ญี่ปุ่น/เกาหลี)</value>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>ซิริลลิก</value>

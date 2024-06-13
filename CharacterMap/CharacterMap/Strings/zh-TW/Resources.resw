@@ -16,13 +16,13 @@
     <value>添加到庫</value>
   </data>
   <data name="AppName" xml:space="preserve">
-    <value>字符映射表</value>
+    <value>字元對應表</value>
   </data>
   <data name="BlackFill.Text" xml:space="preserve">
     <value>黑色填充</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
-    <value>復制 (僅字符)</value>
+    <value>複製為文字</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>選擇</value>

@@ -1680,4 +1680,10 @@
   <data name="SortedByNameLabel.Text" xml:space="preserve">
     <value>按名称排序</value>
   </data>
+  <data name="SettingsFontListToolTip.Description" xml:space="preserve">
+    <value>用于指向字体列表或标签页时，所显示悬浮提示的默认文本。</value>
+  </data>
+  <data name="SettingsFontListToolTip.Title" xml:space="preserve">
+    <value>字体列表提示</value>
+  </data>
 </root>

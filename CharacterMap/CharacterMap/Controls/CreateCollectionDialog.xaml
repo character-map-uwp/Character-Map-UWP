@@ -14,7 +14,10 @@
     SecondaryButtonClick="{x:Bind Hide}"
     SecondaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    d:PrimaryButtonText="Create"
+    d:SecondaryButtonText="Cancel"
+    d:Title="Create Collection">
 
     <Grid
         MinWidth="{Binding MinWidth}"
@@ -53,6 +56,7 @@
                     <TextBlock
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                         Foreground="{ThemeResource AccentFillColorDefaultBrush}"
+                        IsTextScaleFactorEnabled="False"
                         Text="&#xE897;" />
                 </controls:UXButton>
 
@@ -69,7 +73,10 @@
                             Margin="0 -2"
                             Orientation="Horizontal"
                             Spacing="4">
-                            <TextBlock x:Uid="SmartCollectionFilePathFilter" VerticalAlignment="Center" />
+                            <TextBlock
+                                x:Uid="SmartCollectionFilePathFilter"
+                                VerticalAlignment="Center"
+                                d:Text="File Path Filter" />
                             <Border
                                 Padding="4 2"
                                 VerticalAlignment="Center"
@@ -90,7 +97,10 @@
                             Margin="0 -2"
                             Orientation="Horizontal"
                             Spacing="4">
-                            <TextBlock x:Uid="SmartCollectionFoundryFilter" VerticalAlignment="Center" />
+                            <TextBlock
+                                x:Uid="SmartCollectionFoundryFilter"
+                                VerticalAlignment="Center"
+                                d:Text="Foundry Filter" />
                             <Border
                                 Padding="4 2"
                                 VerticalAlignment="Center"
@@ -111,7 +121,10 @@
                             Margin="0 -2"
                             Orientation="Horizontal"
                             Spacing="4">
-                            <TextBlock x:Uid="SmartCollectionDesignerFilter" VerticalAlignment="Center" />
+                            <TextBlock
+                                x:Uid="SmartCollectionDesignerFilter"
+                                VerticalAlignment="Center"
+                                d:Text="Designer Filter" />
                             <Border
                                 Padding="4 2"
                                 VerticalAlignment="Center"
@@ -132,7 +145,10 @@
                             Margin="0 -2"
                             Orientation="Horizontal"
                             Spacing="4">
-                            <TextBlock VerticalAlignment="Center" Text="Character filter" />
+                            <TextBlock
+                                x:Uid="SmartCollectionCharacterFilter"
+                                VerticalAlignment="Center"
+                                d:Text="Character Filter" />
                             <Border
                                 Padding="4 2"
                                 VerticalAlignment="Center"
@@ -142,7 +158,8 @@
                                     FontFamily="Consolas"
                                     FontSize="12"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="char:" />
+                                    Text="{core:Localizer Key=CharacterFilter}"
+                                    d:Text="char:" />
                             </Border>
                         </StackPanel>
                     </TextBox.Header>
@@ -154,7 +171,7 @@
             x:Name="FilterPreview"
             x:Load="{x:Bind TemplateSettings.IsSmartCollection, Mode=OneWay}"
             Grid.Column="1"
-            Width="208"
+            Width="256"
             Margin="16 0 -8 0"
             Padding="8"
             Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
