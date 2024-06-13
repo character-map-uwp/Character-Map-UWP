@@ -1243,4 +1243,7 @@ Tippen und halten zum umsortieren.</value>
   <data name="RefreshResultsLabel.Text" xml:space="preserve">
     <value>Ergebnisse aktualisieren</value>
   </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>Füllfederhalter</value>
+  </data>
 </root>

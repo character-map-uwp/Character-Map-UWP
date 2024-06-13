@@ -1629,4 +1629,7 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
   <data name="SettingsFontListToolTip.Title" xml:space="preserve">
     <value>Descrição na pré-visualização da lista de tipos de letra</value>
   </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>Estilógrafo</value>
+  </data>
 </root>

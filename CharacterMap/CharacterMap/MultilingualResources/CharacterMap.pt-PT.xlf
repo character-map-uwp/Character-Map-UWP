@@ -2261,7 +2261,7 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
         </trans-unit>
         <trans-unit id="CalligraphyPenInkToolbarButtonToolTip" translate="yes" xml:space="preserve">
           <source>Calligraphy pen</source>
-          <target state="new">Calligraphy pen</target>
+          <target state="translated">Estilógrafo</target>
         </trans-unit>
       </group>
     </body>

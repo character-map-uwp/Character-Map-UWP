@@ -2261,7 +2261,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         </trans-unit>
         <trans-unit id="CalligraphyPenInkToolbarButtonToolTip" translate="yes" xml:space="preserve">
           <source>Calligraphy pen</source>
-          <target state="new">Calligraphy pen</target>
+          <target state="translated">Penna stilografica</target>
         </trans-unit>
       </group>
     </body>

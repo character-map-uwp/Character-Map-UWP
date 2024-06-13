@@ -815,4 +815,7 @@
   <data name="SortedByNameLabel.Text" xml:space="preserve">
     <value>Trié par nom</value>
   </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>Stylo à plume</value>
+  </data>
 </root>
