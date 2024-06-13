@@ -623,8 +623,7 @@ Turning this on has negligible performance impact.</source>
         </trans-unit>
         <trans-unit id="SettingsUIHeader.Text" translate="yes" xml:space="preserve">
           <source>Layout</source>
-          <target state="needs-review-translation">หน้าตาแอป</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">เค้าโครง</target>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>
@@ -966,8 +965,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
           <source>CJK (Chinese/Japanese/Korean)</source>
-          <target state="needs-review-translation">จีน/ญี่ปุ่น/เกาหลี</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">CJK (จีน/ญี่ปุ่น/เกาหลี)</target>
         </trans-unit>
         <trans-unit id="OptionScriptCyrillic.Text" translate="yes" xml:space="preserve">
           <source>Cyrillic</source>

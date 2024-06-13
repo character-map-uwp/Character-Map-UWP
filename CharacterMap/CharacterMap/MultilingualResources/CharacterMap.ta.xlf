@@ -632,8 +632,7 @@ Turning this on has negligible performance impact.</source>
         </trans-unit>
         <trans-unit id="SettingsUIHeader.Text" translate="yes" xml:space="preserve">
           <source>Layout</source>
-          <target state="needs-review-translation" state-qualifier="tm-suggestion">பயனர் இடைமுகம்</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">தளவமைப்பு</target>
         </trans-unit>
         <trans-unit id="TxtPathGeometry.Text" translate="yes" xml:space="preserve">
           <source>Path Geometry</source>

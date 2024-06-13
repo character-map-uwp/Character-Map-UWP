@@ -984,11 +984,11 @@ Considere colocar detalhes sobre este erro no GitHub para lhe podermos ajudar a 
         </trans-unit>
         <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
           <source>Switch to Character Map view (Ctrl+T)</source>
-          <target state="translated">Mudar para a visualização Mapa de Carácter (Ctrl+T)</target>
+          <target state="translated">Mudar para a vista Mapa de Carácter (Ctrl+T)</target>
         </trans-unit>
         <trans-unit id="LblSwitchToTypeRamp.Text" translate="yes" xml:space="preserve">
           <source>Switch to Type Ramp view (Ctrl+T)</source>
-          <target state="translated">Mudar para a visualização Rampa (Ctrl+T)</target>
+          <target state="translated">Mudar para a vista Rampa (Ctrl+T)</target>
         </trans-unit>
         <trans-unit id="TypeRampInputBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Enter or choose text from the dropdown</source>
@@ -1074,7 +1074,7 @@ Optimizado cria um nome inteligente baseado no nome da família e no nome do tip
         </trans-unit>
         <trans-unit id="VariableFeaturesMessage.Text" translate="yes" xml:space="preserve">
           <source>This font has variable features. To explore them, switch to Type Ramp view using the switch button above.</source>
-          <target state="translated">Este tipo de letra tem características variáveis. Para explorar as características, mude para a visualização Rampa utilizando o botão ativar/desativar acima.</target>
+          <target state="translated">Este tipo de letra tem características variáveis. Para explorar as características, mude para a vista Rampa utilizando o botão ativar/desativar acima.</target>
         </trans-unit>
         <trans-unit id="SettingsEnablePaneDescription.Text" translate="yes" xml:space="preserve">
           <source>Shows or hides the preview pane on the right of the screen. If turned off, many functions can still be accessed by right clicking or touch holding on a character inside the character grid.</source>
@@ -1582,7 +1582,7 @@ Verá a sua alteração quando voltar a iniciar a aplicação.</target>
         <trans-unit id="SettingsCustomSuggestions.Description" translate="yes" xml:space="preserve">
           <source>Add and manage custom options to show in Type Ramp view and Comparison window text suggestions.
 Tap and hold to arrange.</source>
-          <target state="translated">Adiciona e organiza sugestões de texto personalizadas para mostrar na visualização Rampa e na janela de Comparação.
+          <target state="translated">Adiciona e organiza sugestões de texto personalizadas para mostrar na vista Rampa e na janela de Comparação.
 Tocar e manter premido para organizar.</target>
         </trans-unit>
         <trans-unit id="SettingsCustomSuggestions.Title" translate="yes" xml:space="preserve">
@@ -1639,7 +1639,7 @@ Tocar e manter premido para organizar.</target>
         </trans-unit>
         <trans-unit id="ColrV1SupportMessage.Text" translate="yes" xml:space="preserve">
           <source>This font contains COLRv1 glyphs. To preview them with proper rendering support, switch to Type Ramp view using the switch button above.</source>
-          <target state="translated">Este tipo de letra contém glifos COLRv1. Para os pré-visualizar com a composição adequada, mude para a visualização Rampa utilizando o botão acima.</target>
+          <target state="translated">Este tipo de letra contém glifos COLRv1. Para os pré-visualizar com a composição adequada, mude para a vista Rampa utilizando o botão acima.</target>
         </trans-unit>
         <trans-unit id="FontPropCOLRVersion.Text" translate="yes" xml:space="preserve">
           <source>COLR Version</source>
@@ -2229,31 +2229,31 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
         </trans-unit>
         <trans-unit id="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Change sort</source>
-          <target state="new">Change sort</target>
+          <target state="translated">Alterar ordenação</target>
         </trans-unit>
         <trans-unit id="SortedByRangeLabel.Text" translate="yes" xml:space="preserve">
           <source>Sorted by Range</source>
-          <target state="new">Sorted by Range</target>
+          <target state="translated">Ordenado por intervalo</target>
         </trans-unit>
         <trans-unit id="RefreshResultsLabel.Text" translate="yes" xml:space="preserve">
           <source>Refresh results</source>
-          <target state="new">Refresh results</target>
+          <target state="translated">Atualizar resultados</target>
         </trans-unit>
         <trans-unit id="ResultsCountLabel" translate="yes" xml:space="preserve">
           <source>{0} results</source>
-          <target state="new">{0} results</target>
+          <target state="translated">{0} resultado(s)</target>
         </trans-unit>
         <trans-unit id="SortedByNameLabel.Text" translate="yes" xml:space="preserve">
           <source>Sorted by Name</source>
-          <target state="new">Sorted by Name</target>
+          <target state="translated">Ordenado por nome</target>
         </trans-unit>
         <trans-unit id="SettingsFontListToolTip.Description" translate="yes" xml:space="preserve">
           <source>Default text used in ToolTips that are shown whilst hovering over the font list or tabs.</source>
-          <target state="new">Default text used in ToolTips that are shown whilst hovering over the font list or tabs.</target>
+          <target state="translated">Texto predefinido utilizado nas descrições que são mostradas quando paira sobre a lista de tipos de letra ou os separadores.</target>
         </trans-unit>
         <trans-unit id="SettingsFontListToolTip.Title" translate="yes" xml:space="preserve">
           <source>Font List Preview ToolTip</source>
-          <target state="new">Font List Preview ToolTip</target>
+          <target state="translated">Descrição na pré-visualização da lista de tipos de letra</target>
         </trans-unit>
       </group>
     </body>

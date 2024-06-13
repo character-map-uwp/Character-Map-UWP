@@ -12,8 +12,7 @@
         </trans-unit>
         <trans-unit id="AppName" translate="yes" xml:space="preserve">
           <source>Character Map UWP</source>
-          <target state="needs-review-translation">字符映射表</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">字元對應表</target>
         </trans-unit>
         <trans-unit id="BlackFill.Text" translate="yes" xml:space="preserve">
           <source>Black Fill</source>
@@ -21,8 +20,7 @@
         </trans-unit>
         <trans-unit id="BtnCopy.Text" translate="yes" xml:space="preserve">
           <source>Copy as text</source>
-          <target state="needs-review-translation">復制 (僅字符)</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">複製為文字</target>
         </trans-unit>
         <trans-unit id="BtnSelect.Content" translate="yes" xml:space="preserve">
           <source>Select</source>

@@ -20,7 +20,7 @@
         </trans-unit>
         <trans-unit id="BtnCopy.Text" translate="yes" xml:space="preserve">
           <source>Copy as text</source>
-          <target state="translated">Kopie (nur Zeichen)</target>
+          <target state="translated">Als Text kopieren</target>
         </trans-unit>
         <trans-unit id="BtnSelect.Content" translate="yes" xml:space="preserve">
           <source>Select</source>
@@ -32,8 +32,7 @@
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Monochrome Glyphs</source>
-          <target state="needs-review-translation">Monochrome Glyphen</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">Monochrome Glyphen</target>
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Color glyphs</source>
@@ -961,8 +960,7 @@ Erwäge, die Details über diesen Fehler bei GitHub mitzuteilen, damit wir dir b
         </trans-unit>
         <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
           <source>CJK (Chinese/Japanese/Korean)</source>
-          <target state="needs-review-translation">CJK</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">CJK (Chinesisch/Japanisch/Koreanisch)</target>
         </trans-unit>
         <trans-unit id="OptionScriptCyrillic.Text" translate="yes" xml:space="preserve">
           <source>Cyrillic</source>
@@ -2082,7 +2080,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         </trans-unit>
         <trans-unit id="FileNameWriterStringFormat" translate="yes" xml:space="preserve">
           <source>{0}, e.g. {1}</source>
-          <target state="new">{0}, e.g. {1}</target>
+          <target state="translated">{0}, z. B. {1}</target>
         </trans-unit>
         <trans-unit id="FileNameWriterUnicodeCPDesc" translate="yes" xml:space="preserve">
           <source>Unicode index/codepoint value</source>
@@ -2106,7 +2104,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         </trans-unit>
         <trans-unit id="ExampleFormat" translate="yes" xml:space="preserve">
           <source>e.g. {0}</source>
-          <target state="new">e.g. {0}</target>
+          <target state="translated">z. B. {0}</target>
         </trans-unit>
         <trans-unit id="FileNameWriterFontVerDesc" translate="yes" xml:space="preserve">
           <source>Font version number, if applicable</source>
@@ -2239,7 +2237,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         </trans-unit>
         <trans-unit id="RefreshResultsLabel.Text" translate="yes" xml:space="preserve">
           <source>Refresh results</source>
-          <target state="new">Refresh results</target>
+          <target state="translated">Ergebnisse aktualisieren</target>
         </trans-unit>
         <trans-unit id="ResultsCountLabel" translate="yes" xml:space="preserve">
           <source>{0} results</source>
