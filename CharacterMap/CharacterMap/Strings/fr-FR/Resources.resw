@@ -55,7 +55,7 @@
     <value>Redémarrer l'application</value>
   </data>
   <data name="RestartHeader.Text" xml:space="preserve">
-    <value>Requires application restart to take effect.</value>
+    <value>Redémarrez l'application est nécessaire pour qu'elle prenne effet.</value>
   </data>
   <data name="SearchBox.PlaceholderText" xml:space="preserve">
     <value>Rechercher par nom ou hexadécimal unicode</value>
@@ -151,7 +151,7 @@
     <value>Polices sans empattement </value>
   </data>
   <data name="OptionSerifFonts.Text" xml:space="preserve">
-    <value>Polices avec empattement</value>
+    <value>Polices à empattement</value>
   </data>
   <data name="NewCollectionItem.Text" xml:space="preserve">
     <value>Nouveau collection</value>
@@ -193,10 +193,13 @@
     <value>De Microsoft Store</value>
   </data>
   <data name="StatusBarFontCount" xml:space="preserve">
-    <value>{0} polices de caractères</value>
+    <value>{0} familles de polices</value>
   </data>
   <data name="FontPropFileSize.Text" xml:space="preserve">
     <value>Taille du fichier</value>
+  </data>
+  <data name="InstallTypeImported" xml:space="preserve">
+    <value>N'est pas installé (Importé)</value>
   </data>
   <data name="StatusBarCharacterCount" xml:space="preserve">
     <value>{0} caractères</value>
@@ -268,7 +271,7 @@
     <value>Exporter</value>
   </data>
   <data name="SettingsFontListPreviewHint.Text" xml:space="preserve">
-    <value>Aperçu de la liste des policesw</value>
+    <value>Aperçu de la liste des polices</value>
   </data>
   <data name="SettingsHeader.Text" xml:space="preserve">
     <value>Paramètres</value>
@@ -417,14 +420,29 @@
   <data name="OptionScriptThai.Text" xml:space="preserve">
     <value>Thaï</value>
   </data>
+  <data name="CultureSpecificPangram.Text" xml:space="preserve">
+    <value>Voix ambiguë d'un cœur qui, au zéphyr, préfère les jattes de kiwis. 1234567890</value>
+  </data>
+  <data name="ExportedToFolderMessage" xml:space="preserve">
+    <value>Exporté vers le {0}</value>
+  </data>
   <data name="SettingsAboutLabel.Text" xml:space="preserve">
     <value>À propos</value>
+  </data>
+  <data name="SettingsFontManagementLabel.Text" xml:space="preserve">
+    <value>Gestion des polices</value>
   </data>
   <data name="SettingsLicensesLabel.Text" xml:space="preserve">
     <value>Licences</value>
   </data>
   <data name="ImportDragDropLabel.Text" xml:space="preserve">
     <value>Glisser-déposer pour importer</value>
+  </data>
+  <data name="SettingsFontExportOptimizedLabel.Text" xml:space="preserve">
+    <value>Optimisé</value>
+  </data>
+  <data name="SettingsFontExportSystemLabel.Text" xml:space="preserve">
+    <value>Système</value>
   </data>
   <data name="NotificationCopied" xml:space="preserve">
     <value>Copié</value>
@@ -435,6 +453,18 @@
   <data name="AddSelectionItem.Text" xml:space="preserve">
     <value>Ajouter à la sélection</value>
   </data>
+  <data name="ToggleDevDefaultLabel" xml:space="preserve">
+    <value>Outils</value>
+  </data>
+  <data name="FontListSearchBox.PlaceholderText" xml:space="preserve">
+    <value>Rechercher une famille de police</value>
+  </data>
+  <data name="BtnToggleDev.Label" xml:space="preserve">
+    <value>Outils</value>
+  </data>
+  <data name="DevPopupHeader.Text" xml:space="preserve">
+    <value>Afficher les outils de développement</value>
+  </data>
   <data name="ContextMenuDevCopyCommand" xml:space="preserve">
     <value>Copier {0}</value>
     <comment>Examples: "Copy Font Icon" or "Copy Glyph Code"</comment>
@@ -444,6 +474,39 @@
   </data>
   <data name="SettingsChangelogLabel.Text" xml:space="preserve">
     <value>Journal des modifications</value>
+  </data>
+  <data name="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Filtre des caractères</value>
+  </data>
+  <data name="CompareFontsTitle.Text" xml:space="preserve">
+    <value>Comparer les polices</value>
+  </data>
+  <data name="CompareFontsButton.Text" xml:space="preserve">
+    <value>Comparer toutes les polices</value>
+  </data>
+  <data name="ExportGlyphsHeader.Text" xml:space="preserve">
+    <value>Exporter les caractères</value>
+  </data>
+  <data name="ExportGlyphsSummary.Text" xml:space="preserve">
+    <value>Prêt à exporter {0} caractères au format {1}</value>
+  </data>
+  <data name="ExportCharactersLabel.Text" xml:space="preserve">
+    <value>Exporter les caractères</value>
+  </data>
+  <data name="ExportGlyphsResultMessage.Text" xml:space="preserve">
+    <value>{0} caractères exportées</value>
+  </data>
+  <data name="ExportGlyphsProgressMessage.Text" xml:space="preserve">
+    <value>Exportation du caractère {0} de {1}</value>
+  </data>
+  <data name="ExportColorHeader.Text" xml:space="preserve">
+    <value>Couleur par défaut</value>
+  </data>
+  <data name="ExportGlyphSelectedCharacters.Text" xml:space="preserve">
+    <value>{0} des {1} caractères sélectionnés</value>
+  </data>
+  <data name="ExportFileOptionsHeader.Text" xml:space="preserve">
+    <value>Options de fichier</value>
   </data>
   <data name="CharacterFilterButton.Label" xml:space="preserve">
     <value>Filtre</value>
@@ -485,6 +548,15 @@
   </data>
   <data name="CreateNewButton.Content" xml:space="preserve">
     <value>Créer nouveau</value>
+  </data>
+  <data name="OrLabel.Text" xml:space="preserve">
+    <value>ou</value>
+  </data>
+  <data name="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Supprimer de la collection</value>
+  </data>
+  <data name="SelectCollectionLabel" xml:space="preserve">
+    <value>Sélectionnez la collection</value>
   </data>
   <data name="SettingsCollectionsHeader" xml:space="preserve">
     <value>Collections</value>
@@ -629,7 +701,7 @@
     <value>Chinois (traditionnel)</value>
   </data>
   <data name="SuggestOptionCultureSpecific.Text" xml:space="preserve">
-    <value>Anglais</value>
+    <value>Français</value>
   </data>
   <data name="SuggestOptionCustom.Text" xml:space="preserve">
     <value>Personnalisé</value>
@@ -663,6 +735,9 @@
   </data>
   <data name="SuggestOptionLatinSymbols.Text" xml:space="preserve">
     <value>Chiffres et symboles latins</value>
+  </data>
+  <data name="SuggestOptionSample.Text" xml:space="preserve">
+    <value>Texte d’exemple de police</value>
   </data>
   <data name="SuggestOptionThai.Text" xml:space="preserve">
     <value>Thaï</value>
@@ -743,7 +818,7 @@
     <value>Extension de fichier</value>
   </data>
   <data name="FileNameWriterFamilyDesc" xml:space="preserve">
-    <value>Nom de la famille de polices</value>
+    <value>Nom de la famille de police</value>
   </data>
   <data name="FileNameWriterPixelSizeDesc" xml:space="preserve">
     <value>Taille en pixels</value>
