@@ -861,7 +861,7 @@
     <value>保持前置</value>
   </data>
   <data name="TypographyVariationsSelectorRun.Text" xml:space="preserve">
-    <value>排印变体</value>
+    <value>种排印变体</value>
   </data>
   <data name="ToggleDevDefaultLabel" xml:space="preserve">
     <value>工具</value>
@@ -1644,6 +1644,9 @@
   <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
     <value>厂商筛选器</value>
   </data>
+  <data name="SmartCollectionCharacterFilter.Text" xml:space="preserve">
+    <value>字符筛选器</value>
+  </data>
   <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
     <value>编辑</value>
   </data>
@@ -1685,5 +1688,8 @@
   </data>
   <data name="SettingsFontListToolTip.Title" xml:space="preserve">
     <value>字体列表提示</value>
+  </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>书法笔</value>
   </data>
 </root>
