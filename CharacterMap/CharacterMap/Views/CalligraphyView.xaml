@@ -421,7 +421,7 @@
                                     x:Name="calligraphyPen"
                                     core:Properties.ClickAnimationOffset="0.87"
                                     core:Properties.PointerOverAnimation="Content"
-                                    core:Properties.PointerPressedAnimation="Content|Scale"
+                                    core:Properties.PointerPressedAnimation="RootElement|Scale"
                                     core:Properties.ToolTip="{core:Localizer Key=CalligraphyPenInkToolbarButtonToolTip}"
                                     CustomPen="{StaticResource CalligraphyPen}"
                                     MaxStrokeWidth="10"
@@ -451,15 +451,15 @@
                                 <InkToolbarBallpointPenButton
                                     x:Name="BallpointPen"
                                     core:Properties.ClickAnimationOffset="0.87"
-                                    core:Properties.PointerOverAnimation="Content,ContentFillGlyph"
-                                    core:Properties.PointerPressedAnimation="Content|Scale"
+                                    core:Properties.PointerOverAnimation="Content,ContentFillGlyph,CheckedContent"
+                                    core:Properties.PointerPressedAnimation="RootElement|Scale"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     MaxStrokeWidth="10"
                                     MinStrokeWidth="3" />
                                 <InkToolbarEraserButton
                                     core:Properties.ClickAnimationOffset="0.87"
                                     core:Properties.PointerOverAnimation="Content"
-                                    core:Properties.PointerPressedAnimation="Content|Scale"
+                                    core:Properties.PointerPressedAnimation="RootElement|Scale"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     IsClearAllVisible="False"
                                     IsExtensionGlyphShown="False" />
