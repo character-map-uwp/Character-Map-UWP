@@ -1479,7 +1479,7 @@ public partial class Properties : DependencyObject
             if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt 
                 && GetTag(pt) is MainViewModel vm
                 && vm.FontSearch is { Length: > 4 } query
-                && FontFinder.IsQuery(query, Localization.Get("CharFilter"), "char:", out string q))
+                && FontFinder.IsQuery(query, Localization.Get("CharacterFilter"), "char:", out string q))
                 text = q;
 
             // Set TextBlock text

@@ -723,10 +723,10 @@ Considere colocar detalhes sobre este erro no GitHub para lhe podermos ajudar a 
     <value>Bancos fúteis pagavam-lhe queijo, whisky e xadrez. 1234567890</value>
   </data>
   <data name="LblSwitchToCharMap.Text" xml:space="preserve">
-    <value>Mudar para a visualização Mapa de Carácter (Ctrl+T)</value>
+    <value>Mudar para a vista Mapa de Carácter (Ctrl+T)</value>
   </data>
   <data name="LblSwitchToTypeRamp.Text" xml:space="preserve">
-    <value>Mudar para a visualização Rampa (Ctrl+T)</value>
+    <value>Mudar para a vista Rampa (Ctrl+T)</value>
   </data>
   <data name="TypeRampInputBox.PlaceholderText" xml:space="preserve">
     <value>Introduza ou escolha texto a partir do menu suspenso</value>
@@ -788,7 +788,7 @@ Optimizado cria um nome inteligente baseado no nome da família e no nome do tip
     <value>Tipos de letra variável</value>
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
-    <value>Este tipo de letra tem características variáveis. Para explorar as características, mude para a visualização Rampa utilizando o botão ativar/desativar acima.</value>
+    <value>Este tipo de letra tem características variáveis. Para explorar as características, mude para a vista Rampa utilizando o botão ativar/desativar acima.</value>
   </data>
   <data name="SettingsEnablePaneDescription.Text" xml:space="preserve">
     <value>Mostra ou oculta o painel de pré-visualização no lado direito do ecrã. Se oculto, ainda pode aceder a algumas das funções ao clicar com o botão direito do rato ou tocar sem soltar no carácter dentro da grelha.</value>
@@ -1166,7 +1166,7 @@ Verá a sua alteração quando voltar a iniciar a aplicação.</value>
     <value>Animções sob o ponteiro do rato</value>
   </data>
   <data name="SettingsCustomSuggestions.Description" xml:space="preserve">
-    <value>Adiciona e organiza sugestões de texto personalizadas para mostrar na visualização Rampa e na janela de Comparação.
+    <value>Adiciona e organiza sugestões de texto personalizadas para mostrar na vista Rampa e na janela de Comparação.
 Tocar e manter premido para organizar.</value>
   </data>
   <data name="SettingsCustomSuggestions.Title" xml:space="preserve">
@@ -1209,7 +1209,7 @@ Tocar e manter premido para organizar.</value>
     <value>Copiado como SVG</value>
   </data>
   <data name="ColrV1SupportMessage.Text" xml:space="preserve">
-    <value>Este tipo de letra contém glifos COLRv1. Para os pré-visualizar com a composição adequada, mude para a visualização Rampa utilizando o botão acima.</value>
+    <value>Este tipo de letra contém glifos COLRv1. Para os pré-visualizar com a composição adequada, mude para a vista Rampa utilizando o botão acima.</value>
   </data>
   <data name="FontPropCOLRVersion.Text" xml:space="preserve">
     <value>Versão COLR</value>
@@ -1553,15 +1553,15 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
     <value>Restaurar</value>
     <comment>Opposite of Fullscreen</comment>
   </data>
-  <data name="CharFilter" xml:space="preserve">
-    <value>car:</value>
-    <comment>Command used for character searches. Should be short.</comment>
-  </data>
   <data name="CreateSmartCollectionCheck.Content" xml:space="preserve">
     <value>Criar como coleção inteligente</value>
   </data>
   <data name="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Ver online a documentação para coleções inteligentes</value>
+  </data>
+  <data name="CharacterFilter" xml:space="preserve">
+    <value>car:</value>
+    <comment>Command used for character searches. Should be short.</comment>
   </data>
   <data name="DesignerFilter" xml:space="preserve">
     <value>autor:</value>
@@ -1584,6 +1584,9 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
   <data name="SmartCollectionFoundryFilter.Text" xml:space="preserve">
     <value>Fitro de empresa</value>
   </data>
+  <data name="SmartCollectionCharacterFilter.Text" xml:space="preserve">
+    <value>Filtro de carácter</value>
+  </data>
   <data name="DigEditCollection.PrimaryButtonText" xml:space="preserve">
     <value>Editar</value>
   </data>
@@ -1604,5 +1607,29 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
   </data>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>Selecionar pasta</value>
+  </data>
+  <data name="ChangeSortToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+    <value>Alterar ordenação</value>
+  </data>
+  <data name="SortedByRangeLabel.Text" xml:space="preserve">
+    <value>Ordenado por intervalo</value>
+  </data>
+  <data name="RefreshResultsLabel.Text" xml:space="preserve">
+    <value>Atualizar resultados</value>
+  </data>
+  <data name="ResultsCountLabel" xml:space="preserve">
+    <value>{0} resultado(s)</value>
+  </data>
+  <data name="SortedByNameLabel.Text" xml:space="preserve">
+    <value>Ordenado por nome</value>
+  </data>
+  <data name="SettingsFontListToolTip.Description" xml:space="preserve">
+    <value>Texto predefinido utilizado nas descrições que são mostradas quando paira sobre a lista de tipos de letra ou os separadores.</value>
+  </data>
+  <data name="SettingsFontListToolTip.Title" xml:space="preserve">
+    <value>Descrição na pré-visualização da lista de tipos de letra</value>
+  </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>Estilógrafo</value>
   </data>
 </root>

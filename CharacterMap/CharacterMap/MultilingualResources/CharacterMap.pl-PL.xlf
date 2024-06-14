@@ -12,8 +12,7 @@
         </trans-unit>
         <trans-unit id="AppName" translate="yes" xml:space="preserve">
           <source>Character Map UWP</source>
-          <target state="needs-review-translation">Character Map UWP</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">Tablica znaków UWP</target>
         </trans-unit>
         <trans-unit id="BlackFill.Text" translate="yes" xml:space="preserve">
           <source>Black Fill</source>
@@ -21,8 +20,7 @@
         </trans-unit>
         <trans-unit id="BtnCopy.Text" translate="yes" xml:space="preserve">
           <source>Copy as text</source>
-          <target state="needs-review-translation">Kopiuj (tylko znak)</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">Kopiuj jako tekst</target>
         </trans-unit>
         <trans-unit id="BtnSelect.Content" translate="yes" xml:space="preserve">
           <source>Select</source>
@@ -34,8 +32,7 @@
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OffContent" translate="yes" xml:space="preserve">
           <source>Monochrome Glyphs</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Glify monochromatyczne</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">Glify monochromatyczne</target>
         </trans-unit>
         <trans-unit id="ColorGlyphToggle.OnContent" translate="yes" xml:space="preserve">
           <source>Color glyphs</source>
@@ -99,7 +96,7 @@
         </trans-unit>
         <trans-unit id="OpenInNewWindow.Text" translate="yes" xml:space="preserve">
           <source>Open in New Window</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Otwórz w nowym oknie</target>
+          <target state="translated">Otwórz w nowym oknie</target>
         </trans-unit>
         <trans-unit id="RemoveFontFlyout.Text" translate="yes" xml:space="preserve">
           <source>Delete Font</source>
@@ -115,12 +112,11 @@
         </trans-unit>
         <trans-unit id="SearchBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Search by name or unicode hex</source>
-          <target state="needs-review-translation">Szukaj Unicode np. E12B</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">Wyszukaj wg nazwy lub szesnastkowy Unicode</target>
         </trans-unit>
         <trans-unit id="Settings_About.Text" translate="yes" xml:space="preserve">
           <source>About this application</source>
-          <target state="translated">O aplikacji</target>
+          <target state="translated">Informacje o tej aplikacji</target>
         </trans-unit>
         <trans-unit id="Settings_AboutDescription.Text" translate="yes" xml:space="preserve">
           <source>This app is designed to replace the Windows Win32 Character Map. It is more DPI aware on high DPI screens.</source>
@@ -956,7 +952,7 @@ Rozważ opublikowanie szczegółów dotyczących tego błędu w usłudze GitHub,
         </trans-unit>
         <trans-unit id="OptionScriptArabic.Text" translate="yes" xml:space="preserve">
           <source>Arabic</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Arabski</target>
+          <target state="translated">Arabski</target>
         </trans-unit>
         <trans-unit id="OptionScriptBasicLatin.Text" translate="yes" xml:space="preserve">
           <source>Latin</source>
@@ -964,8 +960,7 @@ Rozważ opublikowanie szczegółów dotyczących tego błędu w usłudze GitHub,
         </trans-unit>
         <trans-unit id="OptionScriptCJKUnifiedIdeographs.Text" translate="yes" xml:space="preserve">
           <source>CJK (Chinese/Japanese/Korean)</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">CJK</target>
-          <note from="MultilingualUpdate" annotates="source" priority="2">Please verify the translation’s accuracy as the source string was updated after it was translated.</note>
+          <target state="translated">CJK (Chiński/Japoński/Koreański)</target>
         </trans-unit>
         <trans-unit id="OptionScriptCyrillic.Text" translate="yes" xml:space="preserve">
           <source>Cyrillic</source>
@@ -2164,11 +2159,6 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <target state="new">Restore</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Opposite of Fullscreen</note>
         </trans-unit>
-        <trans-unit id="CharFilter" translate="yes" xml:space="preserve">
-          <source>char:</source>
-          <target state="new">char:</target>
-          <note from="MultilingualBuild" annotates="source" priority="2">Command used for character searches. Should be short.</note>
-        </trans-unit>
         <trans-unit id="CreateSmartCollectionCheck.Content" translate="yes" xml:space="preserve">
           <source>Create as Smart Collection</source>
           <target state="new">Create as Smart Collection</target>
@@ -2176,6 +2166,11 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         <trans-unit id="CreateSmartCollectionHint.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>View online documentation for Smart Collections</source>
           <target state="new">View online documentation for Smart Collections</target>
+        </trans-unit>
+        <trans-unit id="CharacterFilter" translate="yes" xml:space="preserve">
+          <source>char:</source>
+          <target state="new">char:</target>
+          <note from="MultilingualBuild" annotates="source" priority="2">Command used for character searches. Should be short.</note>
         </trans-unit>
         <trans-unit id="DesignerFilter" translate="yes" xml:space="preserve">
           <source>designer:</source>
@@ -2203,6 +2198,10 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         <trans-unit id="SmartCollectionFoundryFilter.Text" translate="yes" xml:space="preserve">
           <source>Foundry Filter</source>
           <target state="new">Foundry Filter</target>
+        </trans-unit>
+        <trans-unit id="SmartCollectionCharacterFilter.Text" translate="yes" xml:space="preserve">
+          <source>Character Filter</source>
+          <target state="new">Character Filter</target>
         </trans-unit>
         <trans-unit id="DigEditCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Edit</source>
@@ -2259,6 +2258,10 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         <trans-unit id="SettingsFontListToolTip.Title" translate="yes" xml:space="preserve">
           <source>Font List Preview ToolTip</source>
           <target state="new">Font List Preview ToolTip</target>
+        </trans-unit>
+        <trans-unit id="CalligraphyPenInkToolbarButtonToolTip" translate="yes" xml:space="preserve">
+          <source>Calligraphy pen</source>
+          <target state="new">Calligraphy pen</target>
         </trans-unit>
       </group>
     </body>

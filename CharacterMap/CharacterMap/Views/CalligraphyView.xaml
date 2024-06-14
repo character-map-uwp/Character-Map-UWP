@@ -422,7 +422,7 @@
                                     core:Properties.ClickAnimationOffset="0.87"
                                     core:Properties.PointerOverAnimation="Content"
                                     core:Properties.PointerPressedAnimation="Content|Scale"
-                                    core:Properties.ToolTip="Calligraphy pen"
+                                    core:Properties.ToolTip="{core:Localizer Key=CalligraphyPenInkToolbarButtonToolTip}"
                                     CustomPen="{StaticResource CalligraphyPen}"
                                     MaxStrokeWidth="10"
                                     MinStrokeWidth="3"
@@ -433,13 +433,15 @@
                                         <Grid>
                                             <TextBlock
                                                 AutomationProperties.AccessibilityView="Raw"
-                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                Foreground="{x:Bind calligraphyPen.SelectedBrush, Mode=OneWay}"
-                                                Text="&#xF0C7;" />
+                                                Canvas.ZIndex="1"
+                                                Style="{StaticResource InkToolbarGlyphFontStyle}"
+                                                Text="&#xEDFB;" />
                                             <TextBlock
                                                 AutomationProperties.AccessibilityView="Raw"
-                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                Text="&#xEDFB;" />
+                                                Canvas.ZIndex="0"
+                                                Foreground="{x:Bind calligraphyPen.SelectedBrush, Mode=OneWay}"
+                                                Style="{StaticResource InkToolbarGlyphFillFontStyle}"
+                                                Text="&#xF0C7;" />
                                         </Grid>
                                     </Border>
                                     <InkToolbarCustomPenButton.ConfigurationContent>

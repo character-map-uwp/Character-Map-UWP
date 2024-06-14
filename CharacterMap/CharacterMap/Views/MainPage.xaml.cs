@@ -703,7 +703,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     public void CharacterSearch(string s)
     {
-        ViewModel.FontSearch = $"{Localization.Get("CharFilter")} {s}";
+        ViewModel.FontSearch = $"{Localization.Get("CharacterFilter")} {s}";
         FontListSearchBox.Focus(FocusState.Keyboard);
     }
 

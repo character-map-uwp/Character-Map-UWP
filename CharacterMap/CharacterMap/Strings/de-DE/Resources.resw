@@ -22,7 +22,7 @@
     <value>Schwarze Füllung</value>
   </data>
   <data name="BtnCopy.Text" xml:space="preserve">
-    <value>Kopie (nur Zeichen)</value>
+    <value>Als Text kopieren</value>
   </data>
   <data name="BtnSelect.Content" xml:space="preserve">
     <value>Auswählen</value>
@@ -724,7 +724,7 @@ Erwäge, die Details über diesen Fehler bei GitHub mitzuteilen, damit wir dir b
     <value>Latein</value>
   </data>
   <data name="OptionScriptCJKUnifiedIdeographs.Text" xml:space="preserve">
-    <value>CJK</value>
+    <value>CJK (Chinesisch/Japanisch/Koreanisch)</value>
   </data>
   <data name="OptionScriptCyrillic.Text" xml:space="preserve">
     <value>Kyrillisch</value>
@@ -1231,7 +1231,19 @@ Tippen und halten zum umsortieren.</value>
   <data name="NotificationCopiedSVG" xml:space="preserve">
     <value>Als SVG kopiert</value>
   </data>
+  <data name="FileNameWriterStringFormat" xml:space="preserve">
+    <value>{0}, z. B. {1}</value>
+  </data>
+  <data name="ExampleFormat" xml:space="preserve">
+    <value>z. B. {0}</value>
+  </data>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>Ordner auswählen</value>
+  </data>
+  <data name="RefreshResultsLabel.Text" xml:space="preserve">
+    <value>Ergebnisse aktualisieren</value>
+  </data>
+  <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
+    <value>Füllfederhalter</value>
   </data>
 </root>
