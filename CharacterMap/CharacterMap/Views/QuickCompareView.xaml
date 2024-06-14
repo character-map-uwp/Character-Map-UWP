@@ -416,7 +416,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                Glyph="&#xE0A6;" />
+                                Glyph="&#xE72B;" />
                         </Button>
                     </controls:XamlTitleBar>
 
@@ -470,6 +470,7 @@
                                     <Run
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         FontSize="10"
+                                        IsTextScaleFactorEnabled="False"
                                         Text="&#xE70D;" />
                                 </TextBlock>
 
@@ -542,7 +543,7 @@
                                     x:Uid="LayoutListToggle"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     Click="ListView_Click">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE14C;" />
+                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
                                 </RadioButton>
                             </muxc:RadioButtons>
 

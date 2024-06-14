@@ -149,7 +149,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsExportHeader/Text')}"
                         Tag="ExportPanel">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE2B4;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8A7;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -158,7 +158,7 @@
                         Content="{x:Bind h:Localization.Get('SettingsCharacterSearchHeader/Text')}"
                         Tag="SearchPanel">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE11A;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE721;" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -850,7 +850,7 @@
                                                     VerticalAlignment="Top"
                                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                     FontSize="30"
-                                                    Glyph="&#xE1E3;" />
+                                                    Glyph="&#xE7C9;" />
 
                                                 <StackPanel Grid.Column="1">
                                                     <TextBlock

@@ -104,7 +104,7 @@
                                     <controls:ButtonLabel
                                         Title="{core:Localizer Key='CompareFontsTitle/Text'}"
                                         Description="{core:Localizer Key='CompareFontsDescription/Text'}"
-                                        Glyph="&#xE1D3;"
+                                        Glyph="&#xE8F1;"
                                         Shortcut="Ctrl+K" />
                                 </Button>
                             </controls:ButtonGroup>
@@ -145,7 +145,7 @@
                                     x:Name="AppMenuSettings"
                                     x:Load="{x:Bind core:Converters.False(ViewModel.IsSecondaryView)}"
                                     Click="BtnSettings_OnClick">
-                                    <controls:ButtonLabel Title="{core:Localizer Key='SettingsHeader/Text'}" Glyph="&#xE115;" />
+                                    <controls:ButtonLabel Title="{core:Localizer Key='SettingsHeader/Text'}" Glyph="&#xE713;" />
                                 </Button>
 
                                 <Button
@@ -201,7 +201,7 @@
                     <FontIcon
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
-                        Glyph="&#xE1D3;" />
+                        Glyph="&#xE8F1;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
@@ -244,7 +244,7 @@
                     <FontIcon
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
-                        Glyph="&#xE115;" />
+                        Glyph="&#xE713;" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
@@ -357,7 +357,7 @@
                             x:Uid="MenuToggle"
                             core:Properties.ClickAnimation="Text"
                             Click="OpenFontPaneButton_Click"
-                            Content="&#xE169;"
+                            Content="&#xE8C4;"
                             Foreground="{Binding ElementName=TitleButtonsPresenter, Path=Foreground}"
                             Style="{StaticResource TitleBarButtonStyle}"
                             Visibility="Collapsed">
@@ -626,13 +626,13 @@
                                     x:Uid="EditCollectionButton"
                                     Click="RenameFontCollection_Click"
                                     d:Label="Rename">
-                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE13E;" />
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8AC;" />
                                 </controls:UXButton>
                                 <controls:UXButton
                                     x:Uid="DeleteCollectionButton"
                                     Click="DeleteCollection_Click"
                                     d:Label="Delete">
-                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE107;" />
+                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE74D;" />
                                 </controls:UXButton>
                                 <controls:UXButton
                                     x:Name="CollectionExportButton"
@@ -692,7 +692,7 @@
                                     <FontIcon
                                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                                         FontSize="16"
-                                        Glyph="&#xE1D3;" />
+                                        Glyph="&#xE8F1;" />
                                 </controls:UXButton>
                             </wct:WrapPanel>
                         </Grid>
@@ -844,7 +844,7 @@
                                     VerticalAlignment="Center"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     FontSize="14"
-                                    Glyph="&#xE1D3;" />
+                                    Glyph="&#xE8F1;" />
                             </controls:LabelButton.IconContent>
                             <TextBlock
                                 x:Uid="CompareFontsTitle"
@@ -861,7 +861,7 @@
                         <!--<FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="16"
-                                Glyph="&#xE1D3;" />-->
+                                Glyph="&#xE8F1;" />-->
                         <!--
                         </AppBarButton>-->
 
@@ -877,7 +877,7 @@
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="18"
-                                Glyph="&#xE127;" />
+                                Glyph="&#xE8A0;" />
                         </controls:UXButton>
 
                         <controls:UXButton
@@ -893,7 +893,7 @@
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="18"
-                                Glyph="&#xE126;" />
+                                Glyph="&#xE89F;" />
                         </controls:UXButton>
 
                     </Grid>
@@ -966,7 +966,7 @@
                                                 Margin="0 2 0 0"
                                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 FontSize="12"
-                                                Glyph="&#xE154;" />
+                                                Glyph="&#xE8A9;" />
 
                                             <FontIcon
                                                 x:Name="TypeRampIcon"
@@ -1047,7 +1047,7 @@
                                             VerticalAlignment="Center"
                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
                                             FontSize="16"
-                                            Glyph="&#xE115;" />
+                                            Glyph="&#xE713;" />
                                         <muxc:AnimatedIcon
                                             x:Name="SettingsButtonAnimatedIcon"
                                             x:Load="False"
@@ -1059,7 +1059,7 @@
                                                 <muxc:FontIconSource
                                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                     FontSize="16"
-                                                    Glyph="&#xE115;" />
+                                                    Glyph="&#xE713;" />
                                             </muxc:AnimatedIcon.FallbackIconSource>
                                         </muxc:AnimatedIcon>
                                     </Grid>
@@ -1412,8 +1412,8 @@
                 <VisualState x:Name="WindowState" />
                 <VisualState x:Name="FullscreenState">
                     <VisualState.Setters>
-                        <Setter Target="ToggleFullscreenIcon.Glyph" Value="&#xE1D8;" />
-                        <Setter Target="FullscreenLabel.Glyph" Value="&#xE1D8;" />
+                        <Setter Target="ToggleFullscreenIcon.Glyph" Value="&#xE73F;" />
+                        <Setter Target="FullscreenLabel.Glyph" Value="&#xE73F;" />
                         <Setter Target="FullscreenLabel.Title" Value="{core:Localizer Key='RestoreLabel/Text'}" />
                     </VisualState.Setters>
                 </VisualState>

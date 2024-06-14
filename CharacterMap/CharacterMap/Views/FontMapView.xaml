@@ -89,7 +89,7 @@
                     <FontIcon
                         x:Name="MOIcon"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        Glyph="&#xE13C;"
+                        Glyph="&#xE8AB;"
                         RenderTransformOrigin="0.5 0.5">
                         <FontIcon.RenderTransform>
                             <CompositeTransform />
@@ -106,14 +106,14 @@
                     x:Uid="IncreaseSizeButton"
                     Grid.Column="1"
                     Click="{x:Bind ViewModel.IncreaseCharacterSize}">
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C7;" />
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8E8;" />
                 </AppBarButton>
                 <AppBarButton
                     x:Name="DecreaseSizeButton"
                     x:Uid="DecreaseSizeButton"
                     Grid.Column="2"
                     Click="{x:Bind ViewModel.DecreaseCharacterSize}">
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C6;" />
+                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8E7;" />
                 </AppBarButton>
                 <AppBarToggleButton
                     x:Name="ToggleCopyPaneButton"
@@ -134,7 +134,7 @@
                     Loaded="PaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.ShowPane}">
                     <AppBarToggleButton.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE126;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE89F;" />
                     </AppBarToggleButton.Icon>
                 </AppBarToggleButton>
             </Grid>
@@ -248,7 +248,7 @@
                     Tag="Copy"
                     Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                        <FontIcon Foreground="Black" Glyph="&#xE73B;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -259,7 +259,7 @@
                     Tag="Copy"
                     Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="White" Glyph="&#xE002;" />
+                        <FontIcon Foreground="White" Glyph="&#xE73B;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -287,7 +287,7 @@
                     Tag="Copy"
                     Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                        <FontIcon Foreground="Black" Glyph="&#xE73B;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -298,7 +298,7 @@
                     Tag="Copy"
                     Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="White" Glyph="&#xE002;" />
+                        <FontIcon Foreground="White" Glyph="&#xE73B;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyoutSubItem>
@@ -352,7 +352,7 @@
                     CommandParameter="{x:Bind ViewModel.BlackColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                        <FontIcon Foreground="Black" Glyph="&#xE73B;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -361,7 +361,7 @@
                     CommandParameter="{x:Bind ViewModel.WhiteColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="White" Glyph="&#xE002;" />
+                        <FontIcon Foreground="White" Glyph="&#xE73B;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyoutSubItem>
@@ -385,7 +385,7 @@
                     CommandParameter="{x:Bind ViewModel.BlackColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="Black" Glyph="&#xE002;" />
+                        <FontIcon Foreground="Black" Glyph="&#xE73B;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -394,7 +394,7 @@
                     CommandParameter="{x:Bind ViewModel.WhiteColor}"
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="White" Glyph="&#xE002;" />
+                        <FontIcon Foreground="White" Glyph="&#xE73B;" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyoutSubItem>
@@ -445,7 +445,7 @@
                     Click="{x:Bind ToggleCompactOverlay}"
                     Foreground="{Binding Foreground, ElementName=TitleBar}"
                     Style="{StaticResource IconToggleButtonStyle}">
-                    <FontIcon FontSize="14" Glyph="&#xE2B4;" />
+                    <FontIcon FontSize="14" Glyph="&#xE8A7;" />
                 </ToggleButton>
             </StackPanel>-->
         </controls:XamlTitleBar>
@@ -546,7 +546,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE109;" />
+                        <FontIcon Glyph="&#xE710;" />
                         <TextBlock
                             x:Uid="AddToCollectionHint"
                             Grid.Column="1"
@@ -599,7 +599,7 @@
                         <CompositeTransform />
                     </AutoSuggestBox.RenderTransform>
                     <AutoSuggestBox.QueryIcon>
-                        <FontIcon Glyph="&#xE11A;" />
+                        <FontIcon Glyph="&#xE721;" />
                     </AutoSuggestBox.QueryIcon>
                     <AutoSuggestBox.KeyboardAccelerators>
                         <KeyboardAccelerator
@@ -1046,7 +1046,7 @@
                             Margin="0,0,-2,0"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="18"
-                            Glyph="&#xE13C;"
+                            Glyph="&#xE8AB;"
                             RenderTransformOrigin="0.5 0.5">
                             <FontIcon.RenderTransform>
                                 <CompositeTransform />
@@ -1067,7 +1067,7 @@
                             Margin="0,0,-2,0"
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="18"
-                            Glyph="&#xE16E;" />
+                            Glyph="&#xE71C;" />
                         <Button.Flyout>
                             <Flyout
                                 x:Name="CatFlyout"
@@ -1116,7 +1116,7 @@
                         Margin="0,-2,-2,-2"
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="18"
-                        Glyph="&#xE10C;" />
+                        Glyph="&#xE712;" />
                 </controls:UXButton>
 
 
@@ -1185,7 +1185,7 @@
                                         <FontIcon
                                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                             FontSize="13.333"
-                                            Glyph="&#xE13C;" />
+                                            Glyph="&#xE8AB;" />
                                     </Button>
                                 </controls:InfoBar.SecondaryContent>
                             </controls:InfoBar>
@@ -1202,7 +1202,7 @@
                                         <FontIcon
                                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                             FontSize="13.333"
-                                            Glyph="&#xE13C;" />
+                                            Glyph="&#xE8AB;" />
                                     </Button>
                                 </controls:InfoBar.SecondaryContent>
                             </controls:InfoBar>
@@ -1585,6 +1585,7 @@
                         FontSize="18"
                         Foreground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
                         IsHitTestVisible="False"
+                        IsTextScaleFactorEnabled="False"
                         OpticalMarginAlignment="TrimSideBearings"
                         Text="&#xE784;" />
                 </Grid>
@@ -1880,7 +1881,7 @@
                                     <FontIcon
                                         x:Name="CopyIcon"
                                         FontSize="18"
-                                        Glyph="&#xE16F;"
+                                        Glyph="&#xE8C8;"
                                         RenderTransformOrigin="0.5,0.5">
                                         <FontIcon.RenderTransform>
                                             <CompositeTransform />
@@ -1917,7 +1918,7 @@
                                     </controls:UXButton>-->
 
                                     <controls:UXButton x:Uid="BtnSaveGlyph" d:Label="Save">
-                                        <FontIcon Glyph="&#xE105;" />
+                                        <FontIcon Glyph="&#xE74E;" />
                                         <Button.Flyout>
                                             <MenuFlyout
                                                 x:Name="SaveAsFlyout"
@@ -2197,7 +2198,7 @@
                                                                 <FontIcon
                                                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                                     FontSize="16"
-                                                                    Glyph="&#xE16F;" />
+                                                                    Glyph="&#xE8C8;" />
                                                             </controls:UXButton>
 
                                                             <!--
@@ -2233,7 +2234,7 @@
                                             <FontIcon
                                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 FontSize="16"
-                                                Glyph="&#xE16F;" />
+                                                Glyph="&#xE8C8;" />
                                         </controls:UXButton>
                                     </Grid>
                                 </DataTemplate>

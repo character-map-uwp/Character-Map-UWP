@@ -209,13 +209,13 @@
                                         x:Name="DeleteButton"
                                         x:Uid="RemoveButton"
                                         Click="DeleteButton_Click"
-                                        Content="&#xE107;"
+                                        Content="&#xE74D;"
                                         DataContext="{TemplateBinding Content}"
                                         Style="{StaticResource SmolButton}"
                                         d:ToolTipService.ToolTip="Remove" />
                                     <Button
                                         x:Uid="SaveButton"
-                                        Content="&#xE105;"
+                                        Content="&#xE74E;"
                                         DataContext="{TemplateBinding Content}"
                                         Style="{StaticResource SmolButton}"
                                         d:ToolTipService.ToolTip="Save">
@@ -382,7 +382,7 @@
                                 x:Name="UndoButton"
                                 x:Uid="UndoButton"
                                 Click="{x:Bind ViewModel.InkManager.Undo}"
-                                Content="&#xE10E;"
+                                Content="&#xE7A7;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.CanUndo, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
@@ -395,7 +395,7 @@
                                 x:Name="RedoButton"
                                 x:Uid="RedoButton"
                                 Click="{x:Bind ViewModel.InkManager.Redo}"
-                                Content="&#xE10D;"
+                                Content="&#xE7A6;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.CanRedo, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
@@ -468,7 +468,7 @@
                             <Button
                                 x:Name="ClearAllButton"
                                 x:Uid="ClearAllButton"
-                                Content="&#xE107;"
+                                Content="&#xE74D;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False">
@@ -502,6 +502,7 @@
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    IsTextScaleFactorEnabled="False"
                                     Text="&#xE80A;" />
                             </InkToolbarCustomToggleButton>
 
@@ -530,7 +531,7 @@
                             <Button
                                 x:Name="SaveButton"
                                 x:Uid="SaveButton"
-                                Content="&#xE105;"
+                                Content="&#xE74E;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}">
                                 <Button.KeyboardAccelerators>
@@ -556,7 +557,7 @@
                                 x:Uid="AddHistoryButton"
                                 HorizontalAlignment="Right"
                                 Click="AddHistoryButton_Click"
-                                Content="&#xE109;"
+                                Content="&#xE710;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False"
@@ -622,6 +623,7 @@
                             <TextBlock
                                 VerticalAlignment="Center"
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                IsTextScaleFactorEnabled="False"
                                 Text="&#xE81C;"
                                 TextLineBounds="Tight" />
                             <TextBlock
