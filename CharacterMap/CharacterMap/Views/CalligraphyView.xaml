@@ -451,7 +451,7 @@
                                 <InkToolbarBallpointPenButton
                                     x:Name="BallpointPen"
                                     core:Properties.ClickAnimationOffset="0.87"
-                                    core:Properties.PointerOverAnimation="Content"
+                                    core:Properties.PointerOverAnimation="Content,ContentFillGlyph"
                                     core:Properties.PointerPressedAnimation="Content|Scale"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     MaxStrokeWidth="10"
@@ -502,6 +502,7 @@
                                 <TextBlock
                                     AutomationProperties.AccessibilityView="Raw"
                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
+                                    FontSize="16"
                                     IsTextScaleFactorEnabled="False"
                                     Text="&#xE80A;" />
                             </InkToolbarCustomToggleButton>
@@ -515,11 +516,12 @@
                                 core:Properties.PointerOverAnimation="Content"
                                 core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                 Click="Button_Click">
-                                <PathIcon
-                                    Margin="0 -4 0 0"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Data="F1 M 0 7.861328 L 4.111328 3.75 L 8.75 3.75 L 8.75 16.25 L 0 16.25 Z M 3.75 5.888672 L 2.138672 7.5 L 3.75 7.5 Z M 7.5 15 L 7.5 5 L 5 5 L 5 8.75 L 1.25 8.75 L 1.25 15 Z M 15.888672 3.75 L 20 7.861328 L 20 16.25 L 11.25 16.25 L 11.25 3.75 Z M 16.25 5.888672 L 16.25 7.5 L 17.861328 7.5 Z M 12.5 15 L 18.75 15 L 18.75 8.75 L 15 8.75 L 15 5 L 12.5 5 Z " />
+                                <TextBlock
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                    FontSize="16"
+                                    IsTextScaleFactorEnabled="False"
+                                    Text="&#xE89A;" />
                             </InkToolbarCustomToggleButton>
                         </toolkit:WrapPanel>
 
@@ -624,8 +626,7 @@
                                 VerticalAlignment="Center"
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 IsTextScaleFactorEnabled="False"
-                                Text="&#xE81C;"
-                                TextLineBounds="Tight" />
+                                Text="&#xE81C;" />
                             <TextBlock
                                 x:Uid="HistoryLabel"
                                 VerticalAlignment="Center"
