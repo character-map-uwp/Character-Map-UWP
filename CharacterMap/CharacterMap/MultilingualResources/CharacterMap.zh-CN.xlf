@@ -1146,7 +1146,7 @@ Optimized will create a smart name based on Font Family and Font Name.</source>
         </trans-unit>
         <trans-unit id="TypographyVariationsSelectorRun.Text" translate="yes" xml:space="preserve">
           <source>Typography Variations</source>
-          <target state="translated">排印变体</target>
+          <target state="translated">种排印变体</target>
         </trans-unit>
         <trans-unit id="ToggleDevDefaultLabel" translate="yes" xml:space="preserve">
           <source>Tools</source>
@@ -2201,7 +2201,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</source>
         </trans-unit>
         <trans-unit id="SmartCollectionCharacterFilter.Text" translate="yes" xml:space="preserve">
           <source>Character Filter</source>
-          <target state="new">Character Filter</target>
+          <target state="translated">字符筛选器</target>
         </trans-unit>
         <trans-unit id="DigEditCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Edit</source>
@@ -2261,7 +2261,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</source>
         </trans-unit>
         <trans-unit id="CalligraphyPenInkToolbarButtonToolTip" translate="yes" xml:space="preserve">
           <source>Calligraphy pen</source>
-          <target state="new">Calligraphy pen</target>
+          <target state="translated">书法笔</target>
         </trans-unit>
       </group>
     </body>
