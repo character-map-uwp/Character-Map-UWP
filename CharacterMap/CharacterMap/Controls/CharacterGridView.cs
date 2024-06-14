@@ -1,9 +1,7 @@
 ﻿//#define DX
 
-using CharacterMapCX.Controls;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Toolkit.Uwp.UI.Controls;
-using Windows.Foundation.Metadata;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -84,7 +82,7 @@ public partial class CharacterGridView : GridView
     public CharacterGridView()
     {
         _xamlDirect = XamlDirect.GetDefault();
-        _templateSettings = new ();
+        _templateSettings = new();
 
         this.ContainerContentChanging += OnContainerContentChanging;
         this.ChoosingItemContainer += OnChoosingItemContainer;
@@ -151,11 +149,12 @@ public partial class CharacterGridView : GridView
                                 // Set values we will use for the variations
                                 _templateSettings.Size = 40;
                                 _templateSettings.Annotation = GlyphAnnotation.None;
-                                
+
                                 // Brush we will as BG use to show each variation
-                                SolidColorBrush bg = new ()  { 
-                                    Color = tt.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black, 
-                                    Opacity =  0.05 
+                                SolidColorBrush bg = new()
+                                {
+                                    Color = tt.ActualTheme == ElementTheme.Dark ? Colors.White : Colors.Black,
+                                    Opacity = 0.05
                                 };
 
                                 StackPanel s = new();

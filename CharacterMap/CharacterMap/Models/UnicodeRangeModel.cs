@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace CharacterMap.Models;
+﻿namespace CharacterMap.Models;
 
 [DebuggerDisplay("{Range.Name}, Selected: {IsSelected}")]
 public partial class UnicodeRangeModel : ObservableObject

@@ -1,5 +1,4 @@
 ﻿using Microsoft.UI.Xaml.Controls;
-using SQLite;
 using System.IO.Compression;
 using Windows.System;
 using Windows.UI.Core;

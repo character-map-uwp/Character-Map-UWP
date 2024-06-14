@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Windows.Storage.Search;
 using Windows.UI.Text;
 using WoffToOtf;
@@ -641,8 +640,8 @@ public class FontFinder
 
 
     public static FontQueryResults QueryFontList(
-        string query, 
-        IEnumerable<InstalledFont> fontList, 
+        string query,
+        IEnumerable<InstalledFont> fontList,
         UserCollectionsService fontCollections,
         IFontCollection collection = null,
         BasicFontFilter filter = null)
@@ -688,7 +687,7 @@ public class FontFinder
 
             return new(fontList, filterTitle, true);
         }
-        
+
         return new(fontList, null, false);
     }
 

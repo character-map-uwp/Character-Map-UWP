@@ -439,7 +439,7 @@ public static partial class ExportManager
     internal static string GetFileName(
         ExportOptions e,
         Character c,
-        string ext) 
+        string ext)
         => e.GetFileName(c, ext);
 
     private static async Task<StorageFile> PickFileAsync(string fileName, string key, IList<string> values, PickerLocationId suggestedLocation = PickerLocationId.PicturesLibrary)
@@ -539,8 +539,9 @@ public static partial class ExportManager
                 // We need to create a new analysis for each individual glyph to properly
                 // support export non-outline glyphs
                 using var layout = CreateLayout(e.Options, c, e.PreferredStyle, 1024f);
-                e = e with { 
-                    Options = e.Options with { Analysis = interop.AnalyzeCharacterLayout(layout) } 
+                e = e with
+                {
+                    Options = e.Options with { Analysis = interop.AnalyzeCharacterLayout(layout) }
                 };
 
                 // Export the glyph

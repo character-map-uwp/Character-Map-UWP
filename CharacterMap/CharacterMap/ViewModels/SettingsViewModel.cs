@@ -1,5 +1,4 @@
-﻿using SQLitePCL;
-using Windows.ApplicationModel.Core;
+﻿using Windows.ApplicationModel.Core;
 using Windows.Globalization;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -8,11 +7,11 @@ namespace CharacterMap.ViewModels;
 
 public partial class SettingsViewModel : ViewModelBase
 {
-    private Random _random { get; } = new ();
+    private Random _random { get; } = new();
 
     protected override bool TrackAnimation => true;
 
-    public IReadOnlyList<GlyphAnnotation> Annotations { get; } = 
+    public IReadOnlyList<GlyphAnnotation> Annotations { get; } =
     [
         GlyphAnnotation.None,
         GlyphAnnotation.UnicodeHex,
@@ -55,7 +54,7 @@ public partial class SettingsViewModel : ViewModelBase
 
     public AppSettings Settings { get; } = ResourceHelper.AppSettings;
 
-  
+
 
     public SettingsViewModel()
     {
@@ -104,7 +103,7 @@ public partial class SettingsViewModel : ViewModelBase
         ImportedFaceCount = FontFinder.ImportedFaceCount;
     }
 
-   
+
 
     private void RampOptions_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
     {

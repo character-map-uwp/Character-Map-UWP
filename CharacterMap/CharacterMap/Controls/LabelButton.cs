@@ -7,7 +7,7 @@ namespace CharacterMap.Controls;
 [DependencyProperty("IconContent")]
 public sealed partial class LabelButton : Button
 {
-    static IReadOnlyList<string> _previewStates { get; } = [ "PointerOver", "Pressed" ];
+    static IReadOnlyList<string> _previewStates { get; } = ["PointerOver", "Pressed"];
 
     FrameworkElement _iconPresenter = null;
 

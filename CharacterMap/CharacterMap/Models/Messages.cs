@@ -68,7 +68,7 @@ public class ToggleCompactOverlayMessage { }
 public record class AppSettingsChangedMessage(string PropertyName);
 
 public record class AppNotificationMessage(bool Local, object Data, int DurationInMilliseconds = 0);
-   
+
 
 public enum DevValueType
 {

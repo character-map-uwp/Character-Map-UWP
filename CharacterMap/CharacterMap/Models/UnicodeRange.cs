@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace CharacterMap.Models;
+﻿namespace CharacterMap.Models;
 
 public partial struct UnicodeRange
 {

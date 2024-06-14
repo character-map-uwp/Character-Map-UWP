@@ -26,7 +26,7 @@ public partial class UXButtonTemplateSettings : ObservableObject
 [DependencyProperty<CharacterCasing>("LabelCasing", default, nameof(UpdateLabelText))]
 public partial class UXButton : Button//, IThemeableControl
 {
-    public UXButtonTemplateSettings TemplateSettings { get; } = new ();
+    public UXButtonTemplateSettings TemplateSettings { get; } = new();
 
     bool _isTemplateApplied = false;
 
