@@ -119,7 +119,7 @@ public partial class ExtendedListView : ListView
 
     private void OnSelectedItemsChanged(object old, object nw)
     {
-        
+
     }
 
     void ItemsSourceChanged(DependencyObject source, DependencyProperty property)

@@ -3,9 +3,7 @@ using CharacterMap.Views;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Specialized;
 using System.Globalization;
-using System.Runtime.ConstrainedExecution;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation.Diagnostics;
 
 namespace CharacterMap.ViewModels;
 
@@ -13,9 +11,9 @@ public partial class MainViewModel : ViewModelBase
 {
     public event EventHandler FontListCreated;
 
-    private Debouncer _searchDebouncer { get; } = new ();
+    private Debouncer _searchDebouncer { get; } = new();
 
-    private Debouncer _settingsDebouncer { get; } = new ();
+    private Debouncer _settingsDebouncer { get; } = new();
 
     private Exception _startUpException = null;
 
@@ -152,7 +150,7 @@ public partial class MainViewModel : ViewModelBase
     private async Task LoadAsync(bool isFirstLoad = false)
     {
         IsLoadingFonts = true;
-       
+
         if (InitialLoad != null
             && InitialLoad.IsCompleted is false
             && Task.CurrentId != InitialLoad.Id)
@@ -178,11 +176,11 @@ public partial class MainViewModel : ViewModelBase
 
             // Restore selected filter on app launch
             // TODO: Doesn't work 100%. Why?
-            if (!IsSecondaryView 
-                && isFirstLoad 
+            if (!IsSecondaryView
+                && isFirstLoad
                 && Settings.RestoreLastCollectionOnLaunch)
             {
-                switch(GetLastUsedCollection())
+                switch (GetLastUsedCollection())
                 {
                     case UserFontCollection uc:
                         //Debug.WriteLine($"LAST USED COLLECTIN: {uc.Name}");

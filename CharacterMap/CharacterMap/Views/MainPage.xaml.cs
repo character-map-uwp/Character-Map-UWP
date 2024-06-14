@@ -25,7 +25,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
     public MainViewModel ViewModel { get; }
 
-    private Debouncer _fontListDebouncer { get; } = new ();
+    private Debouncer _fontListDebouncer { get; } = new();
 
     private UISettings _uiSettings { get; }
 
@@ -377,7 +377,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
         this.FindName(nameof(SettingsView));
         SettingsView.Show(
-            FontMap.ViewModel.RenderingOptions, 
+            FontMap.ViewModel.RenderingOptions,
             ViewModel.SelectedFont, idx);
         OnModalOpened();
     }

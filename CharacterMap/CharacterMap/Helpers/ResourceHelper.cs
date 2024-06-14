@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Windows.ApplicationModel;
+﻿using Windows.ApplicationModel;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;

@@ -1,5 +1,4 @@
 using CharacterMap.Controls;
-using CharacterMapCX.Controls;
 using SQLite;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.Core;

@@ -71,7 +71,7 @@ public class UserCollectionsService
                 {
                     smart.Add(s);
                 }
-                
+
             }
 
             if (SymbolCollection == null)
