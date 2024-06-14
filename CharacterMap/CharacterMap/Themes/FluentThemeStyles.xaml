@@ -1513,7 +1513,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                                Glyph="&#xE0E5;"
+                                Glyph="&#xE70D;"
                                 IsHitTestVisible="False" />
 
                         </Grid>
@@ -1710,7 +1710,7 @@
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                         FontSize="12"
                                         Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                                        Glyph="&#xE0E5;" />
+                                        Glyph="&#xE70D;" />
                                 </muxc:AnimatedIcon.FallbackIconSource>
                             </muxc:AnimatedIcon>
 
@@ -2159,7 +2159,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{Binding ElementName=PlaceholderTextContent, Path=Foreground}"
-                                Glyph="&#xE11A;" />
+                                Glyph="&#xE721;" />
                             <ContentControl
                                 x:Name="PlaceholderTextContent"
                                 Content="{TemplateBinding PlaceholderText}"

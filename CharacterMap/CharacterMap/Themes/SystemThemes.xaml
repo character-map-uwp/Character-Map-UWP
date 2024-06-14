@@ -702,7 +702,7 @@
                 x:Name="DownSpinButton"
                 Grid.Row="1"
                 BorderThickness="1 1 0 1"
-                Content="&#xE00E;"
+                Content="&#xE76B;"
                 CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource LeftCornerRadiusFilterConverter}}"
                 FontSize="{TemplateBinding FontSize}"
                 Style="{StaticResource NumberBoxSpinButtonStyle}" />
@@ -722,7 +722,7 @@
                 x:Name="UpSpinButton"
                 Grid.Row="1"
                 Grid.Column="2"
-                Content="&#xE00F;"
+                Content="&#xE76C;"
                 CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
                 FontSize="{TemplateBinding FontSize}"
                 Style="{StaticResource NumberBoxSpinButtonStyle}" />

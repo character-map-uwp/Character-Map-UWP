@@ -3059,7 +3059,8 @@
                                                     FontSize="12"
                                                     FontStyle="Normal"
                                                     Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
+                                                    IsTextScaleFactorEnabled="False"
+                                                    Text="&#xE711;" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -3337,7 +3338,8 @@
                                                     FontSize="{ThemeResource AutoSuggestBoxIconFontSize}"
                                                     FontStyle="Normal"
                                                     Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
+                                                    IsTextScaleFactorEnabled="False"
+                                                    Text="&#xE711;" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -3549,7 +3551,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Glyph="&#xE11A;" />
+                                Glyph="&#xE721;" />
 
                         </Grid>
 
@@ -4444,7 +4446,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                                Glyph="&#xE0E5;"
+                                Glyph="&#xE70D;"
                                 IsHitTestVisible="False" />-->
 
                         <Popup x:Name="Popup" RequestedTheme="Light">
@@ -4718,7 +4720,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
                             Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False" />
 
                         <Popup x:Name="Popup">
@@ -5274,7 +5276,7 @@
                                 FontSize="12"
                                 FontWeight="Black"
 
-                                Glyph="&#xE001;"
+                                Glyph="&#xE73E;"
                                  />-->
                         </Grid>
                         <ContentPresenter

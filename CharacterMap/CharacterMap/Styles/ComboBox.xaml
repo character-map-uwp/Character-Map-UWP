@@ -222,7 +222,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
                             Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False" />
 
                         <Popup x:Name="Popup">
@@ -624,7 +624,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
                             Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False" />
 
                         <Popup x:Name="Popup">

@@ -271,7 +271,7 @@
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
                                     Foreground="White"
-                                    Glyph="&#xE10A;" />
+                                    Glyph="&#xE711;" />
                             </controls:UXButton>
                         </Grid>
                     </Grid>
@@ -410,7 +410,7 @@
                                 h:FluentAnimation.UsePointerOver="True"
                                 Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                                 Visibility="{TemplateBinding CloseButtonVisibility}">
-                                <FontIcon Glyph="&#xE10A;" />
+                                <FontIcon Glyph="&#xE711;" />
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Escape" Modifiers="None" />
                                 </Button.KeyboardAccelerators>
@@ -518,7 +518,7 @@
                                         x:Uid="AppBtnSelectAll"
                                         Style="{StaticResource LabelAppBarButtonStyle}">
                                         <AppBarButton.Icon>
-                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE14E;" />
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B3;" />
                                         </AppBarButton.Icon>
                                     </AppBarButton>
                                     <AppBarButton
@@ -526,7 +526,7 @@
                                         x:Uid="AppBtnClear"
                                         Style="{StaticResource LabelAppBarButtonStyle}">
                                         <AppBarButton.Icon>
-                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
+                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8E6;" />
                                         </AppBarButton.Icon>
                                     </AppBarButton>
                                 </StackPanel>
@@ -536,7 +536,7 @@
                                     HorizontalAlignment="Right"
                                     Style="{StaticResource LabelAppBarButtonStyle}">
                                     <AppBarButton.Icon>
-                                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE149;" />
+                                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72C;" />
                                     </AppBarButton.Icon>
                                 </AppBarButton>
                             </Grid>
@@ -1018,7 +1018,8 @@
                                     core:Properties.RotationTransition="0:0:0.2"
                                     FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                     FontSize="12"
-                                    Text="&#xE019;"
+                                    IsTextScaleFactorEnabled="False"
+                                    Text="&#xE70D;"
                                     TextLineBounds="Tight" />
                             </StackPanel>
                         </Button>
