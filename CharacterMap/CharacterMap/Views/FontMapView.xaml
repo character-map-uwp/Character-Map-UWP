@@ -130,11 +130,11 @@
                     x:Name="TogglePaneButton"
                     x:Uid="TogglePaneButton"
                     Grid.Column="4"
-                    Checked="{x:Bind ViewModel.HidePane}"
+                    Checked="{x:Bind ViewModel.ShowPane}"
                     Loaded="PaneButton_Loaded"
-                    Unchecked="{x:Bind ViewModel.ShowPane}">
+                    Unchecked="{x:Bind ViewModel.HidePane}">
                     <AppBarToggleButton.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE89F;" />
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90D;" />
                     </AppBarToggleButton.Icon>
                 </AppBarToggleButton>
             </Grid>

@@ -891,7 +891,7 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void PaneButton_Loaded(object sender, RoutedEventArgs e)
     {
-        ((AppBarToggleButton)sender).IsChecked = !ResourceHelper.AppSettings.EnablePreviewPane;
+        ((AppBarToggleButton)sender).IsChecked = ResourceHelper.AppSettings.EnablePreviewPane;
     }
 
     private void ToggleCopyPaneButton_Loaded(object sender, RoutedEventArgs e)
