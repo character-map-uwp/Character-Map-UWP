@@ -52,7 +52,7 @@ internal record class DPData
                 or "FlowDirection" or "ContentPlacement" or "GridLength"
                 or "Orientation" or "GlyphAnnotation" or "FlyoutPlacementMode"
                 or "TextWrapping" or "Stretch" or "Thickness"
-                or "TextAlignment" or "TimeSpan" or "BlendEffectMode"
+                or "TextAlignment" or "TimeSpan" or "BlendEffectMode" 
                 or "Point" or "TextLineBounds";
     }
 }

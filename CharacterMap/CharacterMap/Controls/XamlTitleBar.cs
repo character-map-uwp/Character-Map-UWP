@@ -56,7 +56,7 @@ public sealed partial class XamlTitleBar : ContentControl
     private CoreWindow _window;
     private FrameworkElement _backgroundElement;
 
-    public XamlTitleBarTemplateSettings TemplateSettings { get; } = new();
+    public XamlTitleBarTemplateSettings TemplateSettings { get; } = new ();
 
     public XamlTitleBar()
     {
@@ -84,7 +84,7 @@ public sealed partial class XamlTitleBar : ContentControl
         if (IsAutoHeightEnabled)
             Height = d;
 
-        TemplateSettings.GridHeight = new(d);
+        TemplateSettings.GridHeight = new (d);
         TemplateSettings.Height = d;
     }
 

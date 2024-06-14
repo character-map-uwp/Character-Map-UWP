@@ -1,6 +1,7 @@
 ﻿// Ignore Spelling: Unihan
 
 using SQLite;
+using System.Diagnostics;
 
 namespace CharacterMap.Models;
 

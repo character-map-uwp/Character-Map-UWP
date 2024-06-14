@@ -298,7 +298,7 @@ public class CompositionFactory : DependencyObject
              .SetInitialValueBeforeDelay()
              .SetDelayTime(TimeSpan.FromMilliseconds(delayMs))
              .SetDuration(TimeSpan.FromMilliseconds(durationMs));
-
+           
             return o;
         });
     }

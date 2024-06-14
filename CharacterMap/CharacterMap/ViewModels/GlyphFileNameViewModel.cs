@@ -43,7 +43,7 @@ public partial class GlyphFileNameViewModel : ObservableObject
             FileNameTemplate = Template
         };
 
-        Example = $"{Localization.Get("ExampleFormat", options.GetFileName(_defaultChar, "png"))}\n" +
+        Example =  $"{Localization.Get("ExampleFormat", options.GetFileName(_defaultChar, "png"))}\n" +
                    $"{Localization.Get("ExampleFormat", options.GetFileName(_defaultChar2, "png"))}";
     }
 }

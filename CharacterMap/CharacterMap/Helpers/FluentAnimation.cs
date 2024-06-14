@@ -83,7 +83,7 @@ public class FluentAnimationHelper
 
 #if DEBUG
         //if (sender is FrameworkElement se && se.GetFirstAncestorOfType<Control>() is MenuFlyoutSubItem m)
-        // System.Diagnostics.Debug.WriteLine($"From {e.OldState?.Name} to {e.NewState.Name}");
+           // System.Diagnostics.Debug.WriteLine($"From {e.OldState?.Name} to {e.NewState.Name}");
 #endif
 
         // 1. Handle "PointerOver"
@@ -257,7 +257,7 @@ public class FluentAnimationHelper
             {
                 // Little hax to allow targeting a ContentPresenter.Content
                 if (name.Contains(".")
-                    && name.Split(".") is { Length: 2 } parts
+                    && name.Split(".") is { Length: 2} parts
                     && parts[1] == "Content"
                     && c.GetDescendantsOfType<ContentPresenter>().FirstOrDefault(d => d.Name == parts[0]) is ContentPresenter pres)
                 {
@@ -265,7 +265,7 @@ public class FluentAnimationHelper
                     return pres.GetFirstDescendantOfType<FrameworkElement>();
                 }
             }
-            return c.GetDescendantsOfType<FrameworkElement>().FirstOrDefault(d => d.Name == name);
+                return c.GetDescendantsOfType<FrameworkElement>().FirstOrDefault(d => d.Name == name);
         }
 
         return null;

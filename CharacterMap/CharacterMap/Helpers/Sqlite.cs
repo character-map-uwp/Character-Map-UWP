@@ -26,6 +26,7 @@
 #define USE_SQLITEPCL_RAW
 
 using System.Collections;
+using System.Diagnostics;
 #if !USE_SQLITEPCL_RAW
 using System.Runtime.InteropServices;
 #endif
@@ -46,6 +47,7 @@ using Sqlite3BackupHandle = SQLitePCL.sqlite3_backup;
 using Sqlite3Statement = SQLitePCL.sqlite3_stmt;
 using Sqlite3 = SQLitePCL.raw;
 using SQLitePCL;
+using System.Diagnostics.Contracts;
 #else
 using Sqlite3DatabaseHandle = System.IntPtr;
 using Sqlite3BackupHandle = System.IntPtr;

@@ -59,7 +59,7 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
 
     public static InstalledFont CreateDefault(DWriteFontFace face)
     {
-        InstalledFont font = new("Segoe UI");
+        InstalledFont font = new ("Segoe UI");
         font._variants.Add(FontVariant.CreateDefault(face));
         return font;
     }

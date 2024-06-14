@@ -1,8 +1,10 @@
 ﻿using Windows.ApplicationModel;
+using Windows.Foundation;
 using Windows.UI.Composition;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
@@ -45,7 +47,7 @@ public partial class PreviewTip : ContentControl
     {
         _root = this.GetTemplateChild("LayoutRoot") as FrameworkElement;
         _rv = _root.EnableCompositionTranslation().GetElementVisual();
-
+        
         TrySetClamping();
 
         // Prepare closing animation
@@ -131,14 +133,14 @@ public partial class PreviewTip : ContentControl
     {
         this.Content = item.Content ?? item.DataContext;
         Vector3 t;
-
+        
         if (Placement == PreviewPlacement.RightEdgeTopAligned)
         {
             var rect = item.GetBoundingRect((FrameworkElement)Window.Current.Content);
 
             // Let CenterPoint animation know item size
             _rv.Properties.InsertVector2("ItemSize", new Vector2((float)rect.Value.Width, (float)rect.Value.Height));
-
+            
             // Position to the top edge of the item
             var y = (rect.Value.Top + VerticalOffset);
             t = new Vector3((float)HorizontalOffset, (float)y, 0f);
@@ -243,7 +245,7 @@ public partial class PreviewTip : ContentControl
                 _root.SetHideAnimation(_hide);
             else
                 _root.SetHideAnimation(null);
-
+          
             _root.Visibility = Visibility.Collapsed;
         }
     }

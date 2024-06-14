@@ -1,4 +1,5 @@
-﻿using Windows.System;
+﻿using System.Diagnostics;
+using Windows.System;
 using Windows.UI.Xaml;
 
 namespace CharacterMap.Services;

@@ -1,4 +1,5 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace CharacterMap.Controls;
 
@@ -13,13 +14,13 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
 
     [ObservableProperty] bool _isCollectionTitleValid;
 
-    [ObservableProperty][NotifyPropertyChangedFor(nameof(MinWidth))] bool _isSmartCollection;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(MinWidth))] bool _isSmartCollection;
     [ObservableProperty] string _filterCharacters;
     [ObservableProperty] string _filterFilePath;
     [ObservableProperty] string _filterFoundry;
     [ObservableProperty] string _filterDesigner;
     [ObservableProperty] string _resultsLabel;
-
+    
     [ObservableProperty] IReadOnlyList<InstalledFont> _resultsPreview = [];
 
     public double MinWidth => IsSmartCollection ? 450 : 0;
@@ -38,10 +39,10 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
         {
             IsSmartCollection = true;
 
-            Populate("char:", Localization.Get("CharacterFilter"), s => FilterCharacters = s);
-            Populate("filepath:", Localization.Get("FilePathFilter"), s => FilterFilePath = s);
-            Populate("foundry:", Localization.Get("FoundryFilter"), s => FilterFoundry = s);
-            Populate("designer:", Localization.Get("DesignerFilter"), s => FilterDesigner = s);
+            Populate("char:",       Localization.Get("CharacterFilter"),    s => FilterCharacters = s);
+            Populate("filepath:",   Localization.Get("FilePathFilter"),     s => FilterFilePath = s);
+            Populate("foundry:",    Localization.Get("FoundryFilter"),      s => FilterFoundry = s);
+            Populate("designer:",   Localization.Get("DesignerFilter"),     s => FilterDesigner = s);
 
             void Populate(string id, string loc, Action<string> set)
             {
@@ -76,7 +77,7 @@ public partial class CreateCollectionDialogTemplateSettings : ViewModelBase
 
     public void UpdateResults()
     {
-        SmartFontCollection collection = new() { Filters = GetFilterList() };
+        SmartFontCollection collection = new () { Filters = GetFilterList() };
         ResultsPreview = collection.GetFontFamilies();
         ResultsLabel = Localization.Get("ResultsCountLabel", ResultsPreview.Count);
     }
@@ -98,7 +99,7 @@ public sealed partial class CreateCollectionDialog : ContentDialog
     public CreateCollectionDialog(IFontCollection collection = null)
     {
         _collection = collection;
-        TemplateSettings = new();
+        TemplateSettings = new ();
         this.InitializeComponent();
 
         if (_collection != null)
@@ -154,7 +155,7 @@ public sealed partial class CreateCollectionDialog : ContentDialog
             AddToCollectionResult result = null;
 
             // Check if we are creating a Smart Filter
-            if (TemplateSettings.GetFilterList() is { Count: > 0 } filters)
+            if (TemplateSettings.GetFilterList() is { Count: > 0} filters)
             {
                 SmartFontCollection collection = await collections.CreateSmartCollectionAsync(
                     TemplateSettings.CollectionTitle,

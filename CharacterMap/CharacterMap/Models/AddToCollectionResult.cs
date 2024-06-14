@@ -18,7 +18,7 @@ public class AddToCollectionResult
 
     public string GetTitle()
     {
-        if (Fonts is null)
+        if (Fonts is null) 
             return string.Empty;
 
         if (Fonts.Count == 1 && Fonts[0] is InstalledFont font)

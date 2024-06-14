@@ -40,7 +40,7 @@ public class SqliteStatementReader : SyntaxReader
         foreach (var n in nodes.OfType<ClassDeclarationSyntax>()
                                .Where(c => c.HasGenericAttribute("SQLReader")))
         {
-            string type = null;
+            string type = null; 
             string name = null;
             bool single = false;
 
@@ -157,8 +157,8 @@ public class SqliteStatementReader : SyntaxReader
         if (data.Count == 0)
             return;
 
-        StringBuilder main = new();
-        StringBuilder sb = new();
+        StringBuilder main = new ();
+        StringBuilder sb = new ();
 
         foreach (var item in data)
         {
@@ -176,8 +176,8 @@ public class SqliteStatementReader : SyntaxReader
             main.AppendLine(
                 string.Format(
                     item.Single ? TEMPLATE_S : TEMPLATE,
-                    item.Type,
-                    item.Name,
+                    item.Type, 
+                    item.Name, 
                     sb.ToString().TrimEnd().TrimEnd(',')));
         }
 
@@ -187,7 +187,7 @@ public class SqliteStatementReader : SyntaxReader
         }
 
 
-        context.AddSource("SQLite3Readers.g.cs",
+        context.AddSource("SQLite3Readers.g.cs", 
             SourceText.From(string.Format(TEMPLATE_0, main.ToString().TrimEnd()), Encoding.UTF8));
     }
 }

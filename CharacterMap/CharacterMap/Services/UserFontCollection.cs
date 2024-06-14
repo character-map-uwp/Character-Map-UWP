@@ -1,4 +1,6 @@
-﻿namespace CharacterMap.Models;
+﻿using System.Collections.ObjectModel;
+
+namespace CharacterMap.Models;
 
 public interface IFontCollection
 {
@@ -70,7 +72,7 @@ public class UserFontCollection : IFontCollection
 [DebuggerDisplay("({Id}) Name: {Name}, {Filters.Count} Filters")]
 public class SmartFontCollection : IFontCollection
 {
-    static string ICON { get; } = new('\uE945', 1);
+    static string ICON { get; } = new ('\uE945', 1);
 
     public long Id { get; set; }
     public string Name { get; set; }
@@ -80,7 +82,7 @@ public class SmartFontCollection : IFontCollection
     public IReadOnlyList<InstalledFont> Fonts { get; private set; } = [];
 
     public IReadOnlyList<InstalledFont> UpdateFonts()
-    {
+    { 
         var fonts = FontFinder.Fonts.AsEnumerable();
 
         foreach (var filter in Filters)

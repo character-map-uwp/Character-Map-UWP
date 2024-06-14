@@ -5,7 +5,7 @@ public partial class CollectionManagementViewModel : ViewModelBase
     protected override bool CaptureContext => true;
 
     #region Properties
-    List<InstalledFont> _systemFontList;
+    List <InstalledFont> _systemFontList;
 
     [ObservableProperty] string _collectionExportProgress;
     [ObservableProperty] bool _isSaving = false;
@@ -107,10 +107,10 @@ public partial class CollectionManagementViewModel : ViewModelBase
     void RefreshFontList()
     {
         // 1. Filter fonts
-        var systemFonts = string.IsNullOrWhiteSpace(Query)
-            ? _systemFontList.AsEnumerable()
+        var systemFonts = string.IsNullOrWhiteSpace(Query) 
+            ?_systemFontList.AsEnumerable()
             : FontFinder.QueryFontList(Query, _systemFontList, CollectionService).FontList;
-
+        
         // 2. Create binding lists
         FontList = new(systemFonts);
     }
@@ -151,7 +151,7 @@ public partial class CollectionManagementViewModel : ViewModelBase
 
     async Task SaveAsync()
     {
-        if (SelectedCollection is null || IsSaving)
+        if (SelectedCollection is  null || IsSaving)
             return;
 
         IsSaving = true;
@@ -160,7 +160,7 @@ public partial class CollectionManagementViewModel : ViewModelBase
         {
             if (SelectedCollection is UserFontCollection user)
             {
-                user.Fonts = [.. CollectionFonts.Select(c => c.Name)];
+                user.Fonts = [..CollectionFonts.Select(c => c.Name)];
             }
             await CollectionService.SaveCollectionAsync(SelectedCollection);
         }

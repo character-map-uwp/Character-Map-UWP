@@ -324,7 +324,7 @@ public partial class FontVariant
         return new FontVariant(face, null)
         {
             PreferredName = "",
-            Characters = [new(0)]
+            Characters = [ new(0) ]
         };
     }
 

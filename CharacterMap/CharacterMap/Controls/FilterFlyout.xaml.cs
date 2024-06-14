@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
@@ -82,7 +83,7 @@ public sealed partial class FilterFlyout : MenuFlyout
             unicode.Items.Add(new MenuFlyoutSeparator());
         }
 
-        // 2.1.2. Add *all* supported unicode ranges to the submenu
+       // 2.1.2. Add *all* supported unicode ranges to the submenu
         foreach (var filter in UnicodeRanges.AllFilters)
             unicode.Add(filter, style);
 
@@ -131,9 +132,9 @@ public sealed partial class FilterFlyout : MenuFlyout
         _defaultCount = Items.Count;
 
         if (AllFilters is null)
-            AllFilters = AllMenuItems().Where(c => Properties.GetFilter(c) is not null)
-               .Select(c => Properties.GetFilter(c))
-               .ToList().AsReadOnly();
+             AllFilters = AllMenuItems().Where(c => Properties.GetFilter(c) is not null)
+                .Select(c => Properties.GetFilter(c))
+                .ToList().AsReadOnly();
 
         #region Helpers
 

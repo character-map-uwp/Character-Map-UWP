@@ -11,6 +11,7 @@ global using CharacterMap.Models;
 global using CharacterMap.Provider;
 global using CharacterMap.Services;
 global using CharacterMap.ViewModels;
+global using CharacterMapCX;
 global using CommunityToolkit.Mvvm.ComponentModel;
 global using CommunityToolkit.Mvvm.DependencyInjection;
 global using CommunityToolkit.Mvvm.Messaging;
@@ -30,6 +31,8 @@ global using Windows.Foundation;
 global using Windows.Storage;
 global using Windows.Storage.Pickers;
 global using Windows.Storage.Streams;
+
+global using static CharacterMap.Controls.ControlBase;
 global using DP = Windows.UI.Xaml.DependencyProperty;
 
 using System.Diagnostics.CodeAnalysis;

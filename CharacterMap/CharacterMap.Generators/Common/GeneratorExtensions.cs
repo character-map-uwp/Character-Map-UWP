@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,17 +56,17 @@ public static class GeneratorExtensions
     }
 
     public static IEnumerable<ClassDeclarationSyntax> OfNamedClass<T>
-        (this IEnumerable<T> src, string name) where T : SyntaxNode
+        (this IEnumerable<T> src, string name) where T: SyntaxNode
     {
         return src.OfType<ClassDeclarationSyntax>()
                   .Where(c => c.Identifier.ValueText == name);
     }
 
-    public static bool HasAttribute<T>(this T field, string name) where T : MemberDeclarationSyntax
+    public static bool HasAttribute<T>(this T field, string name) where T: MemberDeclarationSyntax
     {
         string full = $"{name}Attribute";
         return field.AttributeLists.Any(t => t.Attributes.Any(
-            a => a.Name is IdentifierNameSyntax i
+            a => a.Name is IdentifierNameSyntax i 
             && (i.Identifier.ValueText == name || i.Identifier.ValueText == full)));
     }
 
@@ -91,7 +92,7 @@ public static class GeneratorExtensions
     public static string GetNamespace(this ClassDeclarationSyntax c)
     {
         if (c.Parent is FileScopedNamespaceDeclarationSyntax f)
-            return f.Name.ToString();
+            return f.Name.ToString(); 
 
         return ((NamespaceDeclarationSyntax)c.Parent).Name.ToString();
     }

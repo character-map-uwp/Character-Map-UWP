@@ -1,4 +1,7 @@
 ﻿using CharacterMap.Controls;
+using CharacterMap.Views;
+using CharacterMapCX.Controls;
+using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Windows.Foundation.Collections;
@@ -36,9 +39,9 @@ namespace CharacterMap.Core;
 [AttachedProperty<string>("IconString")]
 [AttachedProperty<IconElement>("Icon")]
 [AttachedProperty<DevOption>]
-[AttachedProperty<FlyoutBase>("TargetContextFlyout")]
-[AttachedProperty<TransitionCollection>("ItemContainerTransitions")]
-[AttachedProperty<TransitionCollection>("ChildrenTransitions")]
+[AttachedProperty<FlyoutBase>("TargetContextFlyout")]  
+[AttachedProperty<TransitionCollection>("ItemContainerTransitions")]  
+[AttachedProperty<TransitionCollection>("ChildrenTransitions")]  
 [AttachedProperty<bool>("UseAttachedStates")] // Allows an element to run Storyboards from it's own resources on VisualState events
 [AttachedProperty<bool>("SetContainerBackgroundTransition")] // Helper property for ItemContainerBackgroundTransition
 [AttachedProperty<BrushTransition>("ItemContainerBackgroundTransition")] // When attached to a ListView, automatically sets ItemContainer BackgroundTransitions
@@ -219,7 +222,7 @@ public partial class Properties : DependencyObject
         if (d is InkToolbar t && e.NewValue is InkToolbarToolButton b)
             t.ActiveTool = b;
     }
-
+    
     #endregion
 
     #region TabViewItem IsCompact
@@ -745,7 +748,7 @@ public partial class Properties : DependencyObject
             }
         }
 
-
+       
     }
 
     static partial void OnPointerOverAnimationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -1230,7 +1233,7 @@ public partial class Properties : DependencyObject
             var temp = ToolTipService.GetToolTip(d);
             if (temp is null) // Bad little hack to allow x:UID setters (or equivalent) to run
                 await Task.Yield();
-
+            
             if (ToolTipService.GetToolTip(d) is { } tt)
             {
                 if (tt is ToolTip t)
@@ -1379,7 +1382,7 @@ public partial class Properties : DependencyObject
             static void B_Click(object sender, RoutedEventArgs e)
             {
                 var link = GetHyperlink((DependencyObject)sender);
-                if (!string.IsNullOrWhiteSpace(link)
+                if (!string.IsNullOrWhiteSpace(link) 
                     && Uri.TryCreate(link, UriKind.RelativeOrAbsolute, out Uri uri))
                     _ = Launcher.LaunchUriAsync(uri);
             }
@@ -1390,9 +1393,9 @@ public partial class Properties : DependencyObject
 
     #region Cursor
 
-    private static readonly object _cursorLock = new();
-    private static readonly CoreCursor _defaultCursor = new(CoreCursorType.Arrow, 1);
-    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors = new() { { CoreCursorType.Arrow, _defaultCursor } };
+    private static readonly object _cursorLock = new ();
+    private static readonly CoreCursor _defaultCursor = new (CoreCursorType.Arrow, 1);
+    private static readonly Dictionary<CoreCursorType, CoreCursor> _cursors = new () { { CoreCursorType.Arrow, _defaultCursor } };
 
     static partial void OnCursorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
@@ -1473,7 +1476,7 @@ public partial class Properties : DependencyObject
             //var v = GetTag(l);
 
             // If we have an active "char" search we want to show this characters in the ToolTip instead
-            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt
+            if (t.GetFirstAncestorOfType<PreviewTip>() is { } pt 
                 && GetTag(pt) is MainViewModel vm
                 && vm.FontSearch is { Length: > 4 } query
                 && FontFinder.IsQuery(query, Localization.Get("CharacterFilter"), "char:", out string q))

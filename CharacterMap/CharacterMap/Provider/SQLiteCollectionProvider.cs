@@ -53,7 +53,7 @@ public class SQLiteCollectionProvider : ICollectionProvider
         return false;
     }
 
-
+    
 
     public Task SaveCollectionAsync(IFontCollection c)
     {

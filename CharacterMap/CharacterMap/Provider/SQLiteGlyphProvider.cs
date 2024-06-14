@@ -1,4 +1,5 @@
 ﻿using SQLite;
+using System.Globalization;
 using Windows.ApplicationModel;
 using Windows.UI.Xaml.Controls;
 
