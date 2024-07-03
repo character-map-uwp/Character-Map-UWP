@@ -805,7 +805,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="10"
                             Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False"
                             Visibility="Collapsed" />
                     </Grid>
@@ -1393,7 +1393,7 @@
                                 HorizontalAlignment="Right"
                                 Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                                 Visibility="{TemplateBinding CloseButtonVisibility}">
-                                <FontIcon Glyph="&#xE10A;" />
+                                <FontIcon Glyph="&#xE711;" />
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Escape" Modifiers="None" />
                                 </Button.KeyboardAccelerators>
@@ -1899,7 +1899,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="8"
                             Foreground="{TemplateBinding Foreground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False" />
                         <ContentPresenter
                             x:Name="DescriptionPresenter"
@@ -2184,7 +2184,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="8"
                             Foreground="{TemplateBinding Foreground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False" />
 
                         <Popup x:Name="Popup">
@@ -3020,7 +3020,8 @@
                                                     FontSize="{ThemeResource AutoSuggestBoxIconFontSize}"
                                                     FontStyle="Normal"
                                                     Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
+                                                    IsTextScaleFactorEnabled="False"
+                                                    Text="&#xE711;" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -3229,7 +3230,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Glyph="&#xE11A;" />
+                                Glyph="&#xE721;" />
                             <ContentControl
                                 x:Name="PlaceholderTextContent"
                                 Content="{TemplateBinding PlaceholderText}"

@@ -550,7 +550,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                                Glyph="&#xE0E5;"
+                                Glyph="&#xE70D;"
                                 IsHitTestVisible="False" />-->
 
                             <Popup x:Name="Popup" RequestedTheme="Light">
@@ -1331,8 +1331,9 @@
                                     FontSize="16"
                                     FontWeight="Black"
                                     Foreground="{ThemeResource CheckBoxCheckGlyphForegroundUnchecked}"
+                                    IsTextScaleFactorEnabled="False"
                                     Opacity="0"
-                                    Text="&#xE001;" />
+                                    Text="&#xE73E;" />
                             </Grid>
                             <ContentPresenter
                                 x:Name="ContentPresenter"

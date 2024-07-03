@@ -590,7 +590,8 @@
                                             VerticalAlignment="Center"
                                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                             FontSize="12"
-                                            Text="&#xE019;"
+                                            IsTextScaleFactorEnabled="False"
+                                            Text="&#xE70D;"
                                             TextLineBounds="Tight" />
                                     </StackPanel>
                                 </Button.Content>

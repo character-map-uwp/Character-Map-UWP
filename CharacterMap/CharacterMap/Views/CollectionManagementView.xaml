@@ -89,7 +89,7 @@
                         Style="{StaticResource MapInfoButtonStyle}"
                         ToolTipService.Placement="Bottom"
                         d:Label="Rename">
-                        <FontIcon Glyph="&#xE13E;" />
+                        <FontIcon Glyph="&#xE8AC;" />
                     </controls:UXButton>
                     <controls:UXButton
                         x:Uid="DeleteCollectionButton"
@@ -101,7 +101,7 @@
                         Style="{StaticResource MapInfoButtonStyle}"
                         ToolTipService.Placement="Bottom"
                         d:Label="Delete">
-                        <FontIcon Glyph="&#xE107;" />
+                        <FontIcon Glyph="&#xE74D;" />
                     </controls:UXButton>
                     <controls:UXButton
                         x:Name="CollectionExportButton"
@@ -198,14 +198,14 @@
                                 Click="{x:Bind AllFontsList.ClearSelection}"
                                 IsEnabled="{x:Bind AllFontsList.HasSelection, Mode=OneWay}"
                                 RelativePanel.AlignRightWithPanel="True">
-                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE8E6;" />
                             </controls:UXButton>
                             <controls:UXButton
                                 x:Uid="AddTooButton"
                                 Click="{x:Bind ViewModel.AddToCollection}"
                                 IsEnabled="{x:Bind core:Converters.TrueFalse(AllFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}"
                                 IsLabelVisible="True">
-                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE109;" />
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
                             </controls:UXButton>
                         </StackPanel>
 
@@ -255,13 +255,13 @@
                                 Click="{x:Bind CollectionFontsList.ClearSelection}"
                                 IsEnabled="{x:Bind CollectionFontsList.HasSelection, Mode=OneWay}"
                                 RelativePanel.AlignRightWithPanel="True">
-                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE1C5;" />
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE8E6;" />
                             </controls:UXButton>
                             <controls:UXButton
                                 x:Uid="RemoveFromButton"
                                 Click="{x:Bind ViewModel.RemoveFromCollection}"
                                 IsEnabled="{x:Bind core:Converters.TrueFalse(CollectionFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}">
-                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE108;" />
+                                <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE738;" />
                             </controls:UXButton>
                         </StackPanel>
 

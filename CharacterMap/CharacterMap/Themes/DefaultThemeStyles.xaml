@@ -355,7 +355,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
                             Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False"
                             Visibility="Collapsed" />
                     </Grid>
@@ -1263,7 +1263,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
                             Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False" />
                         <ContentPresenter
                             x:Name="DescriptionPresenter"
@@ -1537,7 +1537,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
                             Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False" />
 
                         <Popup
@@ -2392,7 +2392,8 @@
                                                     FontSize="{ThemeResource AutoSuggestBoxIconFontSize}"
                                                     FontStyle="Normal"
                                                     Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
+                                                    IsTextScaleFactorEnabled="False"
+                                                    Text="&#xE711;" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -2600,7 +2601,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Glyph="&#xE11A;" />
+                                Glyph="&#xE721;" />
                             <ContentControl
                                 x:Name="PlaceholderTextContent"
                                 Content="{TemplateBinding PlaceholderText}"

@@ -148,7 +148,8 @@
                                                     FontSize="{ThemeResource AutoSuggestBoxIconFontSize}"
                                                     FontStyle="Normal"
                                                     Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
+                                                    IsTextScaleFactorEnabled="False"
+                                                    Text="&#xE711;" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -276,7 +277,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Glyph="&#xE11A;" />
+                                Glyph="&#xE721;" />
 
                             <ContentControl
                                 x:Name="PlaceholderTextContent"
@@ -394,7 +395,8 @@
                                                     FontSize="{ThemeResource AutoSuggestBoxIconFontSize}"
                                                     FontStyle="Normal"
                                                     Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
+                                                    IsTextScaleFactorEnabled="False"
+                                                    Text="&#xE711;" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>

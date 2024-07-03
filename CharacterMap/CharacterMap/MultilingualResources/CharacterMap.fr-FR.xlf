@@ -108,7 +108,7 @@
         </trans-unit>
         <trans-unit id="RestartHeader.Text" translate="yes" xml:space="preserve">
           <source>Requires application restart to take effect.</source>
-          <target state="translated">Requires application restart to take effect.</target>
+          <target state="translated">Redémarrez l'application est nécessaire pour qu'elle prenne effet.</target>
         </trans-unit>
         <trans-unit id="SearchBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Search by name or unicode hex</source>
@@ -290,7 +290,7 @@
         </trans-unit>
         <trans-unit id="OptionSerifFonts.Text" translate="yes" xml:space="preserve">
           <source>Serif Fonts</source>
-          <target state="translated">Polices avec empattement</target>
+          <target state="translated">Polices à empattement</target>
         </trans-unit>
         <trans-unit id="NewCollectionItem.Text" translate="yes" xml:space="preserve">
           <source>New Collection</source>
@@ -374,7 +374,7 @@
         </trans-unit>
         <trans-unit id="StatusBarFontCount" translate="yes" xml:space="preserve">
           <source>{0} Font Families</source>
-          <target state="translated">{0} polices de caractères</target>
+          <target state="translated">{0} familles de polices</target>
         </trans-unit>
         <trans-unit id="FontPropFileSize.Text" translate="yes" xml:space="preserve">
           <source>File Size</source>
@@ -382,7 +382,7 @@
         </trans-unit>
         <trans-unit id="InstallTypeImported" translate="yes" xml:space="preserve">
           <source>Not Installed (Imported)</source>
-          <target state="new">Not Installed (Imported)</target>
+          <target state="translated">N'est pas installé (Importé)</target>
         </trans-unit>
         <trans-unit id="StatusBarCharacterCount" translate="yes" xml:space="preserve">
           <source>{0} Characters</source>
@@ -568,7 +568,7 @@ Turning this on can incur a large performance penalty when resizing the window.<
         </trans-unit>
         <trans-unit id="SettingsFontListPreviewHint.Text" translate="yes" xml:space="preserve">
           <source>Font list preview</source>
-          <target state="translated">Aperçu de la liste des policesw</target>
+          <target state="translated">Aperçu de la liste des polices</target>
         </trans-unit>
         <trans-unit id="SettingsHeader.Text" translate="yes" xml:space="preserve">
           <source>Settings</source>
@@ -980,7 +980,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="CultureSpecificPangram.Text" translate="yes" xml:space="preserve">
           <source>How vexingly quick daft zebras jump! 1234567890</source>
-          <target state="new">How vexingly quick daft zebras jump! 1234567890</target>
+          <target state="translated">Voix ambiguë d'un cœur qui, au zéphyr, préfère les jattes de kiwis. 1234567890</target>
         </trans-unit>
         <trans-unit id="LblSwitchToCharMap.Text" translate="yes" xml:space="preserve">
           <source>Switch to Character Map view (Ctrl+T)</source>
@@ -996,7 +996,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="ExportedToFolderMessage" translate="yes" xml:space="preserve">
           <source>Exported to {0}</source>
-          <target state="new">Exported to {0}</target>
+          <target state="translated">Exporté vers le {0}</target>
         </trans-unit>
         <trans-unit id="SettingsAboutLabel.Text" translate="yes" xml:space="preserve">
           <source>About</source>
@@ -1008,7 +1008,7 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="SettingsFontManagementLabel.Text" translate="yes" xml:space="preserve">
           <source>Font Management</source>
-          <target state="new">Font Management</target>
+          <target state="translated">Gestion des polices</target>
         </trans-unit>
         <trans-unit id="SettingsLicensesLabel.Text" translate="yes" xml:space="preserve">
           <source>Licenses</source>
@@ -1028,11 +1028,11 @@ Please consider posting details about this error to GitHub so we can help you fi
         </trans-unit>
         <trans-unit id="SettingsFontExportOptimizedLabel.Text" translate="yes" xml:space="preserve">
           <source>Optimized</source>
-          <target state="new">Optimized</target>
+          <target state="translated">Optimisé</target>
         </trans-unit>
         <trans-unit id="SettingsFontExportSystemLabel.Text" translate="yes" xml:space="preserve">
           <source>System</source>
-          <target state="new">System</target>
+          <target state="translated">Système</target>
         </trans-unit>
         <trans-unit id="SettingsFontImportDescription.Text" translate="yes" xml:space="preserve">
           <source>You can import fonts into the application to view them without installing them in Windows. 
@@ -1150,7 +1150,7 @@ Optimized will create a smart name based on Font Family and Font Name.</target>
         </trans-unit>
         <trans-unit id="ToggleDevDefaultLabel" translate="yes" xml:space="preserve">
           <source>Tools</source>
-          <target state="new">Tools</target>
+          <target state="translated">Outils</target>
         </trans-unit>
         <trans-unit id="BtnFit.Label" translate="yes" xml:space="preserve">
           <source>Fit</source>
@@ -1172,15 +1172,15 @@ Default variant copied.</target>
         </trans-unit>
         <trans-unit id="FontListSearchBox.PlaceholderText" translate="yes" xml:space="preserve">
           <source>Find a font family</source>
-          <target state="new">Find a font family</target>
+          <target state="translated">Rechercher une famille de police</target>
         </trans-unit>
         <trans-unit id="BtnToggleDev.Label" translate="yes" xml:space="preserve">
           <source>Tools</source>
-          <target state="new">Tools</target>
+          <target state="translated">Outils</target>
         </trans-unit>
         <trans-unit id="DevPopupHeader.Text" translate="yes" xml:space="preserve">
           <source>Show Developer Tools</source>
-          <target state="new">Show Developer Tools</target>
+          <target state="translated">Afficher les outils de développement</target>
         </trans-unit>
         <trans-unit id="ContextMenuDevCopyCommand" translate="yes" xml:space="preserve">
           <source>Copy {0}</source>
@@ -1210,11 +1210,11 @@ Default variant copied.</target>
         </trans-unit>
         <trans-unit id="CharacterFilterButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Filter Characters</source>
-          <target state="new">Filter Characters</target>
+          <target state="translated">Filtre des caractères</target>
         </trans-unit>
         <trans-unit id="CompareFontsTitle.Text" translate="yes" xml:space="preserve">
           <source>Compare Fonts</source>
-          <target state="new">Compare Fonts</target>
+          <target state="translated">Comparer les polices</target>
         </trans-unit>
         <trans-unit id="LayoutGridToggle.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Grid Layout</source>
@@ -1234,7 +1234,7 @@ Default variant copied.</target>
         </trans-unit>
         <trans-unit id="CompareFontsButton.Text" translate="yes" xml:space="preserve">
           <source>Compare all Fonts</source>
-          <target state="new">Compare all Fonts</target>
+          <target state="translated">Comparer toutes les polices</target>
         </trans-unit>
         <trans-unit id="BtnGithubCommits.Content" translate="yes" xml:space="preserve">
           <source>View the latest commits on Github</source>
@@ -1242,23 +1242,23 @@ Default variant copied.</target>
         </trans-unit>
         <trans-unit id="ExportGlyphsHeader.Text" translate="yes" xml:space="preserve">
           <source>Export Characters</source>
-          <target state="new">Export Characters</target>
+          <target state="translated">Exporter les caractères</target>
         </trans-unit>
         <trans-unit id="ExportGlyphsSummary.Text" translate="yes" xml:space="preserve">
           <source>Ready to export {0} characters as {1}</source>
-          <target state="new">Ready to export {0} characters as {1}</target>
+          <target state="translated">Prêt à exporter {0} caractères au format {1}</target>
         </trans-unit>
         <trans-unit id="ExportCharactersLabel.Text" translate="yes" xml:space="preserve">
           <source>Export Characters</source>
-          <target state="new">Export Characters</target>
+          <target state="translated">Exporter les caractères</target>
         </trans-unit>
         <trans-unit id="ExportGlyphsResultMessage.Text" translate="yes" xml:space="preserve">
           <source>{0} characters exported</source>
-          <target state="new">{0} characters exported</target>
+          <target state="translated">{0} caractères exportées</target>
         </trans-unit>
         <trans-unit id="ExportGlyphsProgressMessage.Text" translate="yes" xml:space="preserve">
           <source>Exporting character {0} of {1}</source>
-          <target state="new">Exporting character {0} of {1}</target>
+          <target state="translated">Exportation du caractère {0} de {1}</target>
         </trans-unit>
         <trans-unit id="ExportAllowColor.Content" translate="yes" xml:space="preserve">
           <source>Allow font to use its own colors if defined</source>
@@ -1266,7 +1266,7 @@ Default variant copied.</target>
         </trans-unit>
         <trans-unit id="ExportColorHeader.Text" translate="yes" xml:space="preserve">
           <source>Default Color</source>
-          <target state="new">Default Color</target>
+          <target state="translated">Couleur par défaut</target>
         </trans-unit>
         <trans-unit id="ExportGlyphFormatDescription.Text" translate="yes" xml:space="preserve">
           <source>Glyphs stored in binary formats will be exported as their native format regardless of this choice.</source>
@@ -1274,11 +1274,11 @@ Default variant copied.</target>
         </trans-unit>
         <trans-unit id="ExportGlyphSelectedCharacters.Text" translate="yes" xml:space="preserve">
           <source>{0} of {1} characters selected</source>
-          <target state="new">{0} of {1} characters selected</target>
+          <target state="translated">{0} des {1} caractères sélectionnés</target>
         </trans-unit>
         <trans-unit id="ExportFileOptionsHeader.Text" translate="yes" xml:space="preserve">
           <source>File Options</source>
-          <target state="new">File Options</target>
+          <target state="translated">Options de fichier</target>
         </trans-unit>
         <trans-unit id="ExportSkipBlank.Content" translate="yes" xml:space="preserve">
           <source>Skip exporting glyphs with no visible content</source>
@@ -1348,15 +1348,15 @@ Requires a restart to take effect.</target>
         </trans-unit>
         <trans-unit id="OrLabel.Text" translate="yes" xml:space="preserve">
           <source>or</source>
-          <target state="new">or</target>
+          <target state="translated">ou</target>
         </trans-unit>
         <trans-unit id="RemoveFromButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Remove from Collection</source>
-          <target state="new">Remove from Collection</target>
+          <target state="translated">Supprimer de la collection</target>
         </trans-unit>
         <trans-unit id="SelectCollectionLabel" translate="yes" xml:space="preserve">
           <source>Select Collection</source>
-          <target state="new">Select Collection</target>
+          <target state="translated">Sélectionnez la collection</target>
         </trans-unit>
         <trans-unit id="SettingsCollectionsHeader" translate="yes" xml:space="preserve">
           <source>Collections</source>
@@ -1711,7 +1711,7 @@ Tap and hold to arrange.</target>
         </trans-unit>
         <trans-unit id="SuggestOptionCultureSpecific.Text" translate="yes" xml:space="preserve">
           <source>English</source>
-          <target state="translated">Anglais</target>
+          <target state="translated">Français</target>
         </trans-unit>
         <trans-unit id="SuggestOptionCustom.Text" translate="yes" xml:space="preserve">
           <source>Custom</source>
@@ -1759,7 +1759,7 @@ Tap and hold to arrange.</target>
         </trans-unit>
         <trans-unit id="SuggestOptionSample.Text" translate="yes" xml:space="preserve">
           <source>Font Sample Text</source>
-          <target state="new">Font Sample Text</target>
+          <target state="translated">Texte d’exemple de police</target>
         </trans-unit>
         <trans-unit id="SuggestOptionThai.Text" translate="yes" xml:space="preserve">
           <source>Thai</source>
@@ -2072,7 +2072,7 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
         </trans-unit>
         <trans-unit id="FileNameWriterFamilyDesc" translate="yes" xml:space="preserve">
           <source>Name of font family</source>
-          <target state="translated">Nom de la famille de polices</target>
+          <target state="translated">Nom de la famille de police</target>
         </trans-unit>
         <trans-unit id="FileNameWriterPixelSizeDesc" translate="yes" xml:space="preserve">
           <source>Size in pixels</source>

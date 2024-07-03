@@ -312,20 +312,42 @@
                         </ContentPresenter.RenderTransform>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="OpenStates">
+                                <VisualStateGroup.Transitions>
+                                    <VisualTransition From="Opened" To="Closed">
+                                        <Storyboard>
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="LayoutRoot"
+                                                Storyboard.TargetProperty="Opacity"
+                                                To="0"
+                                                Duration="0:0:0.1" />
+                                        </Storyboard>
+                                    </VisualTransition>
+                                    <VisualTransition From="Closed" To="Opened">
+                                        <Storyboard>
+                                            <!-- Shadow needs some opacity to start -->
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="LayoutRoot"
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0.001"
+                                                To="1"
+                                                Duration="0:0:0.07" />
+                                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                                <EasingDoubleKeyFrame KeyTime="0" Value="10" />
+                                                <SplineDoubleKeyFrame KeySpline="0.1 0.9 0.2 1" KeyTime="0:0:0.7" Value="0" />
+                                            </DoubleAnimationUsingKeyFrames>
+                                        </Storyboard>
+                                    </VisualTransition>
+                                </VisualStateGroup.Transitions>
                                 <VisualState x:Name="Closed">
                                     <Storyboard>
-                                        <FadeOutThemeAnimation TargetName="LayoutRoot" />
+                                        <DoubleAnimation
+                                            Storyboard.TargetName="LayoutRoot"
+                                            Storyboard.TargetProperty="Opacity"
+                                            To="0"
+                                            Duration="0:0:0" />
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Opened">
-                                    <Storyboard>
-                                        <FadeInThemeAnimation TargetName="LayoutRoot" />
-                                        <DoubleAnimationUsingKeyFrames Storyboard.TargetName="LayoutRoot" Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                            <EasingDoubleKeyFrame KeyTime="0" Value="10" />
-                                            <SplineDoubleKeyFrame KeySpline="0.1 0.9 0.2 1" KeyTime="0:0:0.7" Value="0" />
-                                        </DoubleAnimationUsingKeyFrames>
-                                    </Storyboard>
-                                </VisualState>
+                                <VisualState x:Name="Opened" />
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                     </ContentPresenter>
@@ -3059,7 +3081,8 @@
                                                     FontSize="12"
                                                     FontStyle="Normal"
                                                     Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
+                                                    IsTextScaleFactorEnabled="False"
+                                                    Text="&#xE711;" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -3337,7 +3360,8 @@
                                                     FontSize="{ThemeResource AutoSuggestBoxIconFontSize}"
                                                     FontStyle="Normal"
                                                     Foreground="{ThemeResource TextControlButtonForeground}"
-                                                    Text="&#xE10A;" />
+                                                    IsTextScaleFactorEnabled="False"
+                                                    Text="&#xE711;" />
                                             </Grid>
                                         </ControlTemplate>
                                     </Setter.Value>
@@ -3549,7 +3573,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                Glyph="&#xE11A;" />
+                                Glyph="&#xE721;" />
 
                         </Grid>
 
@@ -4444,7 +4468,7 @@
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                                Glyph="&#xE0E5;"
+                                Glyph="&#xE70D;"
                                 IsHitTestVisible="False" />-->
 
                         <Popup x:Name="Popup" RequestedTheme="Light">
@@ -4718,7 +4742,7 @@
                             FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="12"
                             Foreground="{ThemeResource ComboBoxDropDownGlyphForeground}"
-                            Glyph="&#xE0E5;"
+                            Glyph="&#xE70D;"
                             IsHitTestVisible="False" />
 
                         <Popup x:Name="Popup">
@@ -5274,7 +5298,7 @@
                                 FontSize="12"
                                 FontWeight="Black"
 
-                                Glyph="&#xE001;"
+                                Glyph="&#xE73E;"
                                  />-->
                         </Grid>
                         <ContentPresenter

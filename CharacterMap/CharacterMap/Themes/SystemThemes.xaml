@@ -102,7 +102,9 @@
         <Setter Property="core:Properties.PointerOverAnimation" Value="Root" />
     </Style>
 
-    <Style TargetType="GridViewItem">
+
+
+    <Style x:Key="DefaultThemeGridViewItemStyle" TargetType="GridViewItem">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="2" />
         <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
@@ -189,6 +191,8 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="GridViewItem" BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" />
 
     <DataTemplate x:Key="DefaultControlHeaderTemplate">
         <ContentPresenter Margin="0 12 0 0" Content="{Binding}" />
@@ -702,7 +706,7 @@
                 x:Name="DownSpinButton"
                 Grid.Row="1"
                 BorderThickness="1 1 0 1"
-                Content="&#xE00E;"
+                Content="&#xE76B;"
                 CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource LeftCornerRadiusFilterConverter}}"
                 FontSize="{TemplateBinding FontSize}"
                 Style="{StaticResource NumberBoxSpinButtonStyle}" />
@@ -722,7 +726,7 @@
                 x:Name="UpSpinButton"
                 Grid.Row="1"
                 Grid.Column="2"
-                Content="&#xE00F;"
+                Content="&#xE76C;"
                 CornerRadius="{Binding Source={ThemeResource ControlCornerRadius}, Converter={StaticResource RightCornerRadiusFilterConverter}}"
                 FontSize="{TemplateBinding FontSize}"
                 Style="{StaticResource NumberBoxSpinButtonStyle}" />

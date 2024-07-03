@@ -360,7 +360,7 @@
                                                 <controls:FontIconSource
                                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                     FontSize="{Binding ElementName=CollectionButton, Path=FontSize}"
-                                                    Glyph="&#xE099;" />
+                                                    Glyph="&#xE70D;" />
                                             </controls:AnimatedIcon.FallbackIconSource>
                                         </controls:AnimatedIcon>
                                     </Button.Content>
@@ -368,12 +368,12 @@
                                         <MenuFlyout Placement="Bottom">
                                             <MenuFlyoutItem x:Uid="CompareActiveItem" Style="{StaticResource ThemeMenuFlyoutItemStyle}">
                                                 <MenuFlyoutItem.Icon>
-                                                    <FontIcon Glyph="&#xE1D3;" />
+                                                    <FontIcon Glyph="&#xE8F1;" />
                                                 </MenuFlyoutItem.Icon>
                                             </MenuFlyoutItem>
                                             <MenuFlyoutSubItem x:Uid="AddActiveToCollectionItem" Style="{StaticResource ThemeMenuFlyoutSubItemStyle}">
                                                 <MenuFlyoutSubItem.Icon>
-                                                    <FontIcon Glyph="&#xE1DA;" />
+                                                    <FontIcon Glyph="&#xE8F4;" />
                                                 </MenuFlyoutSubItem.Icon>
                                             </MenuFlyoutSubItem>
                                         </MenuFlyout>
