@@ -1632,4 +1632,25 @@ Caso contrário, "Todos os tipos de letra" é selecionado por predefinição em 
   <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
     <value>Estilógrafo</value>
   </data>
+  <data name="FileTrueTypeFontDisplayName" xml:space="preserve">
+    <value>Tipo de letra TrueType</value>
+  </data>
+  <data name="FileTrueTypeCollectionDisplayName" xml:space="preserve">
+    <value>Coleção de tipos de letra TrueType</value>
+  </data>
+  <data name="FileOpenTypeFontDisplayName" xml:space="preserve">
+    <value>Tipo de letra OpenType</value>
+  </data>
+  <data name="FileOpenTypeCollectionDisplayName" xml:space="preserve">
+    <value>Coleção de tipos de letra OpenType</value>
+  </data>
+  <data name="FileWebFontDisplayName" xml:space="preserve">
+    <value>Tipo de letra WOFF</value>
+  </data>
+  <data name="FileWebFontTwoDisplayName" xml:space="preserve">
+    <value>Tipo de letra WOFF2</value>
+  </data>
+  <data name="FileZipFileDisplayName" xml:space="preserve">
+    <value>Pasta comprimida (zipada)</value>
+  </data>
 </root>

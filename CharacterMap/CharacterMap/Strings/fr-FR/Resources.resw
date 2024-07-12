@@ -893,4 +893,25 @@
   <data name="CalligraphyPenInkToolbarButtonToolTip" xml:space="preserve">
     <value>Stylo à plume</value>
   </data>
+  <data name="FileTrueTypeFontDisplayName" xml:space="preserve">
+    <value>Police TrueType</value>
+  </data>
+  <data name="FileTrueTypeCollectionDisplayName" xml:space="preserve">
+    <value>Collection de police TrueType</value>
+  </data>
+  <data name="FileOpenTypeFontDisplayName" xml:space="preserve">
+    <value>Police OpenType</value>
+  </data>
+  <data name="FileOpenTypeCollectionDisplayName" xml:space="preserve">
+    <value>Collection de police OpenType</value>
+  </data>
+  <data name="FileWebFontDisplayName" xml:space="preserve">
+    <value>Fichier de police WOFF</value>
+  </data>
+  <data name="FileWebFontTwoDisplayName" xml:space="preserve">
+    <value>Fichier de police WOFF2</value>
+  </data>
+  <data name="FileZipFileDisplayName" xml:space="preserve">
+    <value>Dossier compressé (ZIP)</value>
+  </data>
 </root>

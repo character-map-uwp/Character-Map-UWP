@@ -36,7 +36,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="application/x-font-ttf">.ttf</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>ms-resource:AppName</uap:DisplayName>
+            <uap:DisplayName>ms-resource:FileTrueTypeFontDisplayName</uap:DisplayName>
             <uap:InfoTip>ms-resource:FileExplorerFileToolTip</uap:InfoTip>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets\Logos\Font.png</uap:Logo>
@@ -47,7 +47,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType>.ttc</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>TrueType Font Collection</uap:DisplayName>
+            <uap:DisplayName>ms-resource:FileTrueTypeCollectionDisplayName</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets\Logos\FontCollection.png</uap:Logo>
           </uap:FileTypeAssociation>
@@ -57,7 +57,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="application/font-sfnt">.otf</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>OpenType Font</uap:DisplayName>
+            <uap:DisplayName>ms-resource:FileOpenTypeFontDisplayName</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets\Logos\Font.png</uap:Logo>
           </uap:FileTypeAssociation>
@@ -67,7 +67,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType>.otc</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>OpenType Font Collection</uap:DisplayName>
+            <uap:DisplayName>ms-resource:FileOpenTypeCollectionDisplayName</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets\Logos\FontCollection.png</uap:Logo>
           </uap:FileTypeAssociation>
@@ -77,7 +77,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="font/woff">.woff</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Web Open Font Format File</uap:DisplayName>
+            <uap:DisplayName>ms-resource:FileWebFontDisplayName</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets\Logos\WebFont.png</uap:Logo>
           </uap:FileTypeAssociation>
@@ -87,7 +87,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="font/woff2">.woff2</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Web Open Font Format 2.0 File</uap:DisplayName>
+            <uap:DisplayName>ms-resource:FileWebFontTwoDisplayName</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets\Logos\WebFont.png</uap:Logo>
           </uap:FileTypeAssociation>
@@ -97,7 +97,7 @@
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="application/zip-compressed">.zip</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:DisplayName>Zipped File</uap:DisplayName>
+            <uap:DisplayName>ms-resource:FileZipFileDisplayName</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
             <uap:Logo>Assets\Logos\CompressedFolder.png</uap:Logo>
           </uap:FileTypeAssociation>
