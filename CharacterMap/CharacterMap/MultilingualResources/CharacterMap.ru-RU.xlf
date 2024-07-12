@@ -2263,6 +2263,34 @@ Otherwise, "All Fonts" is selected by default on every launch.</target>
           <source>Calligraphy pen</source>
           <target state="new">Calligraphy pen</target>
         </trans-unit>
+        <trans-unit id="FileTrueTypeFontDisplayName" translate="yes" xml:space="preserve">
+          <source>TrueType Font</source>
+          <target state="new">TrueType Font</target>
+        </trans-unit>
+        <trans-unit id="FileTrueTypeCollectionDisplayName" translate="yes" xml:space="preserve">
+          <source>TrueType Font Collection</source>
+          <target state="new">TrueType Font Collection</target>
+        </trans-unit>
+        <trans-unit id="FileOpenTypeFontDisplayName" translate="yes" xml:space="preserve">
+          <source>OpenType Font</source>
+          <target state="new">OpenType Font</target>
+        </trans-unit>
+        <trans-unit id="FileOpenTypeCollectionDisplayName" translate="yes" xml:space="preserve">
+          <source>OpenType Font Collection</source>
+          <target state="new">OpenType Font Collection</target>
+        </trans-unit>
+        <trans-unit id="FileWebFontDisplayName" translate="yes" xml:space="preserve">
+          <source>Web Open Font Format File</source>
+          <target state="new">Web Open Font Format File</target>
+        </trans-unit>
+        <trans-unit id="FileWebFontTwoDisplayName" translate="yes" xml:space="preserve">
+          <source>Web Open Font Format 2.0 File</source>
+          <target state="new">Web Open Font Format 2.0 File</target>
+        </trans-unit>
+        <trans-unit id="FileZipFileDisplayName" translate="yes" xml:space="preserve">
+          <source>Compressed (zipped) Folder</source>
+          <target state="new">Compressed (zipped) Folder</target>
+        </trans-unit>
       </group>
     </body>
   </file>
