@@ -39,7 +39,7 @@
             <uap:DisplayName>ms-resource:AppName</uap:DisplayName>
             <uap:InfoTip>ms-resource:FileExplorerFileToolTip</uap:InfoTip>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\FileAssociationTile.png</uap:Logo>
+            <uap:Logo>Assets\Logos\Font.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>-->
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -49,7 +49,7 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>TrueType Font Collection</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\FileAssociationTile.png</uap:Logo>
+            <uap:Logo>Assets\Logos\FontCollection.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -59,7 +59,7 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>OpenType Font</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\FileAssociationTile.png</uap:Logo>
+            <uap:Logo>Assets\Logos\Font.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -69,7 +69,7 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>OpenType Font Collection</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\FileAssociationTile.png</uap:Logo>
+            <uap:Logo>Assets\Logos\FontCollection.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -79,7 +79,7 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>Web Open Font Format File</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\FileAssociationTile.png</uap:Logo>
+            <uap:Logo>Assets\Logos\WebFont.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
         <uap:Extension Category="windows.fileTypeAssociation">
@@ -89,19 +89,19 @@
             </uap:SupportedFileTypes>
             <uap:DisplayName>Web Open Font Format 2.0 File</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\FileAssociationTile.png</uap:Logo>
+            <uap:Logo>Assets\Logos\WebFont.png</uap:Logo>
           </uap:FileTypeAssociation>
         </uap:Extension>
-        <uap:Extension Category="windows.fileTypeAssociation">
+        <!--<uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="compressed">
             <uap:SupportedFileTypes>
               <uap:FileType ContentType="application/zip-compressed">.zip</uap:FileType>
             </uap:SupportedFileTypes>
             <uap:DisplayName>Zipped File</uap:DisplayName>
             <uap:EditFlags OpenIsSafe="true"/>
-            <uap:Logo>Assets\FileAssociationTile.png</uap:Logo>
+            <uap:Logo>Assets\Logos\CompressedFolder.png</uap:Logo>
           </uap:FileTypeAssociation>
-        </uap:Extension>
+        </uap:Extension>-->
       </Extensions>
     </Application>
   </Applications>
