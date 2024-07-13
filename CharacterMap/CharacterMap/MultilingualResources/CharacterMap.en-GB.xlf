@@ -232,17 +232,9 @@
           <source>Delete Collection</source>
           <target state="new">Delete Collection</target>
         </trans-unit>
-        <trans-unit id="DigCreateCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="new">Cancel</target>
-        </trans-unit>
         <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Delete</source>
           <target state="new">Delete</target>
-        </trans-unit>
-        <trans-unit id="DigDeleteCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="new">Cancel</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this collection?</source>
@@ -659,7 +651,7 @@ Turning this on has negligible performance impact.</target>
           <source>Apply</source>
           <target state="new">Apply</target>
         </trans-unit>
-        <trans-unit id="BtnCancel.Content" translate="yes" xml:space="preserve">
+        <trans-unit id="Cancel" translate="yes" xml:space="preserve">
           <source>Cancel</source>
           <target state="new">Cancel</target>
         </trans-unit>
@@ -1365,10 +1357,6 @@ Requires a restart to take effect.</target>
         <trans-unit id="DigOpenFolder.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Open Fonts</source>
           <target state="new">Open Fonts</target>
-        </trans-unit>
-        <trans-unit id="DigOpenFolder.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="new">Cancel</target>
         </trans-unit>
         <trans-unit id="DigOpenFolder.Title" translate="yes" xml:space="preserve">
           <source>Open Font Folder</source>

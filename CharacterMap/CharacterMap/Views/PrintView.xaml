@@ -333,11 +333,10 @@
                             Style="{StaticResource AccentButtonStyle}"
                             d:Content="{core:Localizer Key=BtnContinue/Content}" />
                         <Button
-                            x:Uid="BtnCancel"
                             Width="150"
                             Click="{x:Bind Hide}"
                             Style="{StaticResource DefaultThemeButtonStyle}"
-                            d:Content="{core:Localizer Key=BtnCancel/Content}" />
+                            Content="{core:Localizer Key=Cancel}" />
                     </StackPanel>
                 </Grid>
             </Grid>

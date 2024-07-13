@@ -13,10 +13,10 @@
     PrimaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
     SecondaryButtonClick="{x:Bind Hide}"
     SecondaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
+    SecondaryButtonText="{core:Localizer Key=Cancel}"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d"
     d:PrimaryButtonText="Create"
-    d:SecondaryButtonText="Cancel"
     d:Title="Create Collection">
 
     <Grid

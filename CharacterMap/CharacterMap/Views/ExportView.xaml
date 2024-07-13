@@ -778,13 +778,12 @@
                         Text="{x:Bind ViewModel.ExportMessage, Mode=OneWay}" />
 
                     <Button
-                        x:Uid="BtnCancel"
                         Width="150"
                         HorizontalAlignment="Center"
                         Click="{x:Bind ViewModel.CancelExport}"
+                        Content="{core:Localizer Key=Cancel}"
                         Style="{StaticResource AccentButtonStyle}"
-                        Visibility="{x:Bind ViewModel.ShowCancelExport, Mode=OneWay, FallbackValue=Collapsed}"
-                        d:Content="Cancel" />
+                        Visibility="{x:Bind ViewModel.ShowCancelExport, Mode=OneWay, FallbackValue=Collapsed}" />
                 </StackPanel>
             </Grid>
 
@@ -818,11 +817,10 @@
                         Style="{StaticResource AccentButtonStyle}"
                         d:Content="Export" />
                     <Button
-                        x:Uid="BtnCancel"
                         Width="150"
                         Click="{x:Bind Hide}"
-                        Style="{StaticResource DefaultThemeButtonStyle}"
-                        d:Content="Cancel" />
+                        Content="{core:Localizer Key=Cancel}"
+                        Style="{StaticResource DefaultThemeButtonStyle}" />
                 </StackPanel>
             </Grid>
 

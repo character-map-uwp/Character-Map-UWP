@@ -743,7 +743,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             IsPrimaryButtonEnabled = true,
             IsSecondaryButtonEnabled = true,
             PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
-            SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+            SecondaryButtonText = Localization.Get("Cancel"),
         };
 
         d.PrimaryButtonClick += DigDeleteCollection_PrimaryButtonClick;

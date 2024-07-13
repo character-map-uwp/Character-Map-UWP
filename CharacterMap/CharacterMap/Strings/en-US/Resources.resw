@@ -290,14 +290,8 @@
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Delete Collection</value>
   </data>
-  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Cancel</value>
-  </data>
   <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
     <value>Delete</value>
-  </data>
-  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Cancel</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>Are you sure you want to delete this collection?</value>
@@ -608,7 +602,7 @@ Turning this on has negligible performance impact.</value>
   <data name="BtnApply.Content" xml:space="preserve">
     <value>Apply</value>
   </data>
-  <data name="BtnCancel.Content" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
@@ -1132,9 +1126,6 @@ Requires a restart to take effect.</value>
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>Open Fonts</value>
-  </data>
-  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
-    <value>Cancel</value>
   </data>
   <data name="DigOpenFolder.Title" xml:space="preserve">
     <value>Open Font Folder</value>

@@ -232,17 +232,9 @@
           <source>Delete Collection</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Usuń kolekcję</target>
         </trans-unit>
-        <trans-unit id="DigCreateCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Anuluj</target>
-        </trans-unit>
         <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Delete</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Usunąć</target>
-        </trans-unit>
-        <trans-unit id="DigDeleteCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Anuluj</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this collection?</source>
@@ -659,9 +651,9 @@ Włączenie tej opcji ma znikomy wpływ na wydajność.</target>
           <source>Apply</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Zastosować</target>
         </trans-unit>
-        <trans-unit id="BtnCancel.Content" translate="yes" xml:space="preserve">
+        <trans-unit id="Cancel" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Anuluj</target>
+          <target state="translated">Anuluj</target>
         </trans-unit>
         <trans-unit id="BtnContinue.Content" translate="yes" xml:space="preserve">
           <source>Continue</source>
@@ -1365,10 +1357,6 @@ Wymaga ponownego uruchomienia, aby zaczął obowiązywać.</target>
         <trans-unit id="DigOpenFolder.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Open Fonts</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Otwarte czcionki</target>
-        </trans-unit>
-        <trans-unit id="DigOpenFolder.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Anuluj</target>
         </trans-unit>
         <trans-unit id="DigOpenFolder.Title" translate="yes" xml:space="preserve">
           <source>Open Font Folder</source>

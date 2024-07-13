@@ -62,7 +62,7 @@ public static class FlyoutHelper
             IsPrimaryButtonEnabled = true,
             IsSecondaryButtonEnabled = true,
             PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
-            SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+            SecondaryButtonText = Localization.Get("Cancel"),
         };
 
         d.PrimaryButtonClick += (ds, de) =>

@@ -12,10 +12,10 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     PrimaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
     SecondaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
+    SecondaryButtonText="{core:Localizer Key=Cancel}"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d"
     d:PrimaryButtonText="Open Fonts"
-    d:SecondaryButtonText="Cancel"
     d:Title="Open Font Folder">
 
 

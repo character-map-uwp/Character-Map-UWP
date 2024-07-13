@@ -233,17 +233,9 @@
           <source>Delete Collection</source>
           <target state="translated">ลบรายการสะสม</target>
         </trans-unit>
-        <trans-unit id="DigCreateCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">ยกเลิก</target>
-        </trans-unit>
         <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Delete</source>
           <target state="translated">ลบ</target>
-        </trans-unit>
-        <trans-unit id="DigDeleteCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">ยกเลิก</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this collection?</source>
@@ -662,9 +654,9 @@ Turning this on has negligible performance impact.</source>
           <source>Apply</source>
           <target state="translated">เลือกกลุ่มอักษร</target>
         </trans-unit>
-        <trans-unit id="BtnCancel.Content" translate="yes" xml:space="preserve">
+        <trans-unit id="Cancel" translate="yes" xml:space="preserve">
           <source>Cancel</source>
-          <target state="translated">ยกเลิกพิมพ์</target>
+          <target state="translated">ยกเลิก</target>
         </trans-unit>
         <trans-unit id="BtnContinue.Content" translate="yes" xml:space="preserve">
           <source>Continue</source>
@@ -1371,10 +1363,6 @@ Requires a restart to take effect.</source>
         <trans-unit id="DigOpenFolder.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Open Fonts</source>
           <target state="translated">เปิดฟ้อนต์</target>
-        </trans-unit>
-        <trans-unit id="DigOpenFolder.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">ยกเลืก</target>
         </trans-unit>
         <trans-unit id="DigOpenFolder.Title" translate="yes" xml:space="preserve">
           <source>Open Font Folder</source>

@@ -236,17 +236,9 @@
           <source>Delete Collection</source>
           <target state="translated">Elimina raccolta</target>
         </trans-unit>
-        <trans-unit id="DigCreateCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">Annulla</target>
-        </trans-unit>
         <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Delete</source>
           <target state="translated">Elimina</target>
-        </trans-unit>
-        <trans-unit id="DigDeleteCollection.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">Annulla</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this collection?</source>
@@ -662,7 +654,7 @@ L'abilitazione dell'animazione ha un impatto trascurabile sulle prestazioni.</ta
           <source>Apply</source>
           <target state="translated">Applica</target>
         </trans-unit>
-        <trans-unit id="BtnCancel.Content" translate="yes" xml:space="preserve">
+        <trans-unit id="Cancel" translate="yes" xml:space="preserve">
           <source>Cancel</source>
           <target state="translated">Annulla</target>
         </trans-unit>
@@ -1365,10 +1357,6 @@ Riavvio necessario.</target>
         <trans-unit id="DigOpenFolder.PrimaryButtonText" translate="yes" xml:space="preserve">
           <source>Open Fonts</source>
           <target state="translated">Apri font</target>
-        </trans-unit>
-        <trans-unit id="DigOpenFolder.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Cancel</source>
-          <target state="translated">Annulla</target>
         </trans-unit>
         <trans-unit id="DigOpenFolder.Title" translate="yes" xml:space="preserve">
           <source>Open Font Folder</source>
