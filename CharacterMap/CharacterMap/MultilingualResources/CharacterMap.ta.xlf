@@ -239,7 +239,7 @@
           <source>Delete Collection</source>
           <target state="translated" state-qualifier="tm-suggestion">தொகுப்பை நீக்கு</target>
         </trans-unit>
-        <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
+        <trans-unit id="Delete" translate="yes" xml:space="preserve">
           <source>Delete</source>
           <target state="translated" state-qualifier="tm-suggestion">நீக்கு</target>
         </trans-unit>

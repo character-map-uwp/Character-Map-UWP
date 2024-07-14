@@ -232,7 +232,7 @@
           <source>Delete Collection</source>
           <target state="translated">删除收藏集</target>
         </trans-unit>
-        <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
+        <trans-unit id="Delete" translate="yes" xml:space="preserve">
           <source>Delete</source>
           <target state="translated">删除</target>
         </trans-unit>

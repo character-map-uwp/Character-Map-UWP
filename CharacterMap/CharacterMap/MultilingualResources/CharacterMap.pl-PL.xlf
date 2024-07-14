@@ -232,9 +232,9 @@
           <source>Delete Collection</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Usuń kolekcję</target>
         </trans-unit>
-        <trans-unit id="DigDeleteCollection.PrimaryButtonText" translate="yes" xml:space="preserve">
+        <trans-unit id="Delete" translate="yes" xml:space="preserve">
           <source>Delete</source>
-          <target state="needs-review-translation" state-qualifier="mt-suggestion">Usunąć</target>
+          <target state="translated">Usuń</target>
         </trans-unit>
         <trans-unit id="DigDeleteCollection.Title" translate="yes" xml:space="preserve">
           <source>Are you sure you want to delete this collection?</source>
