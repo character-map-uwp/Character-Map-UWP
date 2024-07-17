@@ -1777,10 +1777,6 @@ Tap and hold to arrange.</source>
           <source>Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</source>
           <target state="translated">已弃用的图标字形依您的设置默认隐藏。您可以使用上面的筛选器按钮显示它们。</target>
         </trans-unit>
-        <trans-unit id="InstallDialog.SecondaryButtonText" translate="yes" xml:space="preserve">
-          <source>Close</source>
-          <target state="translated">关闭</target>
-        </trans-unit>
         <trans-unit id="InstallDialog.Title" translate="yes" xml:space="preserve">
           <source>Install Font</source>
           <target state="translated">安装字体</target>

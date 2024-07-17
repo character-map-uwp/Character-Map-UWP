@@ -16,8 +16,8 @@
     SecondaryButtonText="{core:Localizer Key=Cancel}"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d"
-    d:PrimaryButtonText="Create"
-    d:Title="Create Collection">
+    d:PrimaryButtonText="{core:Localizer Key=DigCreateCollection/PrimaryButtonText}"
+    d:Title="{core:Localizer Key=DigCreateCollection/Title}">
 
     <Grid
         MinWidth="{Binding MinWidth}"
@@ -27,7 +27,8 @@
             <TextBox
                 x:Name="InputBox"
                 x:Uid="CreateCollectionEntryBox"
-                Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{Binding CollectionTitle, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                d:Header="{core:Localizer Key=CreateCollectionEntryBox/Header}" />
 
             <controls:AutoGrid
                 x:Name="SmartCollectionHeaderContainer"
@@ -41,20 +42,21 @@
                     HorizontalAlignment="Stretch"
                     IsChecked="{x:Bind TemplateSettings.IsSmartCollection, Mode=TwoWay}"
                     Style="{StaticResource DefaultThemeCheckBoxStyle}"
-                    d:Content="Create as Smart Collection" />
+                    d:Content="{core:Localizer Key=CreateSmartCollectionCheck/Content}" />
                 <controls:UXButton
                     x:Uid="CreateSmartCollectionHint"
-                    MinWidth="0"
-                    MinHeight="0"
+                    MinWidth="24"
+                    MinHeight="24"
+                    Margin="4 0 0 0"
                     Padding="4"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
                     core:Properties.Cursor="Hand"
                     core:Properties.Hyperlink="https://github.com/character-map-uwp/Character-Map-UWP/wiki/Smart-Collections"
-                    CornerRadius="10"
-                    FontSize="12">
+                    CornerRadius="12">
                     <TextBlock
                         FontFamily="{StaticResource SymbolThemeFontFamily}"
+                        FontSize="12"
                         Foreground="{ThemeResource AccentFillColorDefaultBrush}"
                         IsTextScaleFactorEnabled="False"
                         Text="&#xE897;" />
@@ -76,11 +78,11 @@
                             <TextBlock
                                 x:Uid="SmartCollectionFilePathFilter"
                                 VerticalAlignment="Center"
-                                d:Text="File Path Filter" />
+                                d:Text="{core:Localizer Key=SmartCollectionFilePathFilter/Text}" />
                             <Border
                                 Padding="4 2"
                                 VerticalAlignment="Center"
-                                Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                                 CornerRadius="4">
                                 <TextBlock
                                     FontFamily="Consolas"
@@ -91,7 +93,7 @@
                         </StackPanel>
                     </TextBox.Header>
                 </TextBox>
-                <TextBox Text="{Binding FilterFoundry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox Text="{Binding FilterFoundry, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" d:PlaceholderText="Microsoft">
                     <TextBox.Header>
                         <StackPanel
                             Margin="0 -2"
@@ -100,11 +102,11 @@
                             <TextBlock
                                 x:Uid="SmartCollectionFoundryFilter"
                                 VerticalAlignment="Center"
-                                d:Text="Foundry Filter" />
+                                d:Text="{core:Localizer Key=SmartCollectionFoundryFilter/Text}" />
                             <Border
                                 Padding="4 2"
                                 VerticalAlignment="Center"
-                                Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                                 CornerRadius="4">
                                 <TextBlock
                                     FontFamily="Consolas"
@@ -124,11 +126,11 @@
                             <TextBlock
                                 x:Uid="SmartCollectionDesignerFilter"
                                 VerticalAlignment="Center"
-                                d:Text="Designer Filter" />
+                                d:Text="{core:Localizer Key=SmartCollectionDesignerFilter/Text}" />
                             <Border
                                 Padding="4 2"
                                 VerticalAlignment="Center"
-                                Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                                 CornerRadius="4">
                                 <TextBlock
                                     FontFamily="Consolas"
@@ -148,18 +150,17 @@
                             <TextBlock
                                 x:Uid="SmartCollectionCharacterFilter"
                                 VerticalAlignment="Center"
-                                d:Text="Character Filter" />
+                                d:Text="{core:Localizer Key=SmartCollectionCharacterFilter/Text}" />
                             <Border
                                 Padding="4 2"
                                 VerticalAlignment="Center"
-                                Background="{StaticResource CardBackgroundFillColorSecondaryBrush}"
+                                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
                                 CornerRadius="4">
                                 <TextBlock
                                     FontFamily="Consolas"
                                     FontSize="12"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Text="{core:Localizer Key=CharacterFilter}"
-                                    d:Text="char:" />
+                                    Text="{core:Localizer Key=CharacterFilter}" />
                             </Border>
                         </StackPanel>
                     </TextBox.Header>
@@ -183,7 +184,8 @@
                 FontStyle="Italic"
                 Opacity="0.7"
                 Text="{Binding ResultsLabel}"
-                TextAlignment="Center" />
+                TextAlignment="Center"
+                d:Text="11 results" />
 
             <ListView
                 MaxHeight="238"
@@ -202,6 +204,44 @@
                         </Setter>
                     </Style>
                 </ListView.ItemContainerStyle>
+                <d:ListView.Items>
+                    <ListViewItem MinWidth="0" HorizontalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Bahnschrift"
+                            Text="Bahnschrift" />
+                    </ListViewItem>
+                    <ListViewItem MinWidth="0" HorizontalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Calibri"
+                            Text="Calibri" />
+                    </ListViewItem>
+                    <ListViewItem MinWidth="0" HorizontalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Cambria"
+                            Text="Cambria" />
+                    </ListViewItem>
+                    <ListViewItem MinWidth="0" HorizontalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Candara"
+                            Text="Candara" />
+                    </ListViewItem>
+                    <ListViewItem MinWidth="0" HorizontalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Comic Sans MS"
+                            Text="Comic Sans MS" />
+                    </ListViewItem>
+                    <ListViewItem MinWidth="0" HorizontalAlignment="Center">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontFamily="Consolas"
+                            Text="Consolas" />
+                    </ListViewItem>
+                </d:ListView.Items>
             </ListView>
 
             <controls:UXButton
@@ -209,7 +249,7 @@
                 Click="{x:Bind TemplateSettings.UpdateResults}"
                 Style="{StaticResource DefaultThemeButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon FontSize="12" Glyph="&#57673;" />
+                    <FontIcon FontSize="12" Glyph="&#xE72C;" />
                     <TextBlock
                         Margin="0 -2 0 0"
                         VerticalAlignment="Center"

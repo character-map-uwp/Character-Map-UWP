@@ -1441,9 +1441,6 @@ Tap and hold to arrange.</value>
   <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
     <value>Deprecated icon glyphs are hidden by default based on your settings. You can show them using the filter button above.</value>
   </data>
-  <data name="InstallDialog.SecondaryButtonText" xml:space="preserve">
-    <value>Close</value>
-  </data>
   <data name="InstallDialog.Title" xml:space="preserve">
     <value>Install Font</value>
   </data>
