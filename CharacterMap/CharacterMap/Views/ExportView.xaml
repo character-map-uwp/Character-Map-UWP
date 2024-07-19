@@ -16,7 +16,7 @@
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
     d:DataContext="{d:DesignInstance Type=views:ExportView}"
-    d:DesignHeight="720"
+    d:DesignHeight="1024"
     d:DesignWidth="1280">
 
     <UserControl.Resources>
@@ -584,7 +584,10 @@
                             <Button Margin="0 2 0 8" Style="{StaticResource ThemeTextBlockButtonStyle}">
                                 <Button.Content>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
+                                        <TextBlock
+                                            x:Uid="PrintCharacterFilterContent"
+                                            OpticalMarginAlignment="TrimSideBearings"
+                                            d:Text="{core:Localizer Key=PrintCharacterFilterContent/Text}" />
                                         <TextBlock
                                             Margin="4 2 0 0"
                                             VerticalAlignment="Center"
@@ -612,11 +615,12 @@
                             <CheckBox
                                 x:Uid="ChkBxHideWhitespace"
                                 IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}"
-                                Style="{StaticResource DefaultThemeCheckBoxStyle}" />
+                                Style="{StaticResource DefaultThemeCheckBoxStyle}"
+                                d:Content="{core:Localizer Key=ChkBxHideWhitespace/Content}" />
 
                         </cmControls:ContentGroup>
 
-                        <cmControls:ContentGroup x:Uid="PreferredFormatGroup" d:Visibility="Collapsed">
+                        <cmControls:ContentGroup x:Uid="PreferredFormatGroup" d:Text="{core:Localizer Key=PreferredFormatGroup/Text}">
 
                             <TextBlock
                                 x:Uid="ExportGlyphFormatDescription"
@@ -646,11 +650,12 @@
                                     StepFrequency="64"
                                     TickFrequency="64"
                                     TickPlacement="Outside"
-                                    Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
+                                    Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}"
+                                    d:Value="1024" />
                                 <TextBlock Margin="0,0,0,16" Style="{StaticResource BaseTextStyle}">
-                                    <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
-                                    <Run Text="x" />
-                                    <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" />
+                                    <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" d:Text="1024" />
+                                    <Run Text="×" />
+                                    <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" d:Text="1024" />
                                 </TextBlock>
                             </StackPanel>
                         </cmControls:ContentGroup>
@@ -761,7 +766,8 @@
                 Grid.RowSpan="2"
                 Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
                 Canvas.ZIndex="1"
-                Visibility="{x:Bind ViewModel.IsExporting, Mode=OneWay, FallbackValue=Collapsed}">
+                Visibility="{x:Bind ViewModel.IsExporting, Mode=OneWay, FallbackValue=Collapsed}"
+                d:Visibility="Collapsed">
                 <StackPanel
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -775,7 +781,8 @@
                         HorizontalAlignment="Center"
                         FontSize="24"
                         FontWeight="Bold"
-                        Text="{x:Bind ViewModel.ExportMessage, Mode=OneWay}" />
+                        Text="{x:Bind ViewModel.ExportMessage, Mode=OneWay}"
+                        d:Text="{core:Localizer Key=ExportGlyphsProgressMessage/Text}" />
 
                     <Button
                         Width="150"
@@ -798,7 +805,7 @@
                     VerticalAlignment="Center"
                     FontSize="12"
                     Text="{x:Bind ViewModel.Summary, Mode=OneWay}"
-                    TextLineBounds="Tight" />
+                    d:Text="{core:Localizer Key=ExportGlyphSelectedCharacters/Text}" />
 
                 <StackPanel
                     x:Name="BottomButtonOptions"
@@ -815,7 +822,7 @@
                         Click="{x:Bind ViewModel.StartExport}"
                         IsEnabled="{x:Bind ViewModel.CanContinue, Mode=OneWay}"
                         Style="{StaticResource AccentButtonStyle}"
-                        d:Content="Export" />
+                        d:Content="{core:Localizer Key=BtnContinue/Content}" />
                     <Button
                         Width="150"
                         Click="{x:Bind Hide}"

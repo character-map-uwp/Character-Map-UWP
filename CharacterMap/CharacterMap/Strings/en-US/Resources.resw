@@ -1103,7 +1103,7 @@ Requires a restart to take effect.</value>
     <value>Switch</value>
     <comment>Labels must be as short as possible</comment>
   </data>
-  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Add to Collection</value>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">

@@ -131,7 +131,8 @@
                 x:Uid="OpenInNewWindow"
                 Click="OpenWindow_Click"
                 Icon="NewWindow"
-                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                d:Text="{core:Localizer Key=OpenInNewWindow/Text}" />
         </MenuFlyout>
 
         <MenuFlyout
@@ -144,12 +145,13 @@
                 Click="Remove_Clicked"
                 Icon="Clear"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                d:Text="Remove" />
+                d:Text="{core:Localizer Key=RemoveLabel/Text}" />
             <MenuFlyoutItem
                 x:Uid="OpenInNewWindow"
                 Click="OpenWindow_Click"
                 Icon="NewWindow"
-                Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                d:Text="{core:Localizer Key=OpenInNewWindow/Text}" />
         </MenuFlyout>
 
         <muxc:UniformGridLayout
@@ -395,13 +397,14 @@
             x:Name="Presenter"
             Title="{x:Bind ViewModel.Title}"
             CloseButtonVisibility="Collapsed"
-            IsWindowRoot="True">
+            IsWindowRoot="True"
+            d:Title="{core:Localizer Key=CompareFontsTitle/Text}">
             <controls:ModalPagePresenter.TitleBarContent>
                 <Grid>
                     <controls:XamlTitleBar VerticalAlignment="Top" IsDragTarget="False">
                         <Button
                             x:Name="BackButton"
-                            Width="45"
+                            Width="40"
                             VerticalAlignment="Stretch"
                             Background="Transparent"
                             BorderThickness="0"
@@ -462,10 +465,11 @@
                                 HorizontalContentAlignment="Center"
                                 VerticalContentAlignment="Center"
                                 Style="{StaticResource ThemeTextBlockButtonStyle}"
-                                ToolTipService.Placement="Bottom">
+                                ToolTipService.Placement="Bottom"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=FontListFilter/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
 
                                 <TextBlock>
-                                    <Run Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="All Fonts" />
+                                    <Run Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="{core:Localizer Key=OptionAllFonts/Text}" />
                                     <Run />
                                     <Run
                                         FontFamily="{ThemeResource SymbolThemeFontFamily}"

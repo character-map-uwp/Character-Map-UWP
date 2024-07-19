@@ -1326,7 +1326,7 @@ Wymaga ponownego uruchomienia, aby zaczął obowiązywać.</target>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Przełącznik</target>
           <note from="MultilingualBuild" annotates="source" priority="2">Labels must be as short as possible</note>
         </trans-unit>
-        <trans-unit id="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
+        <trans-unit id="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" translate="yes" xml:space="preserve">
           <source>Add to Collection</source>
           <target state="needs-review-translation" state-qualifier="mt-suggestion">Dodaj do kolekcji</target>
         </trans-unit>
