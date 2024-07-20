@@ -468,15 +468,10 @@
                                 ToolTipService.Placement="Bottom"
                                 d:ToolTipService.ToolTip="{core:Localizer Key=FontListFilter/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
 
-                                <TextBlock>
-                                    <Run Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="{core:Localizer Key=OptionAllFonts/Text}" />
-                                    <Run />
-                                    <Run
-                                        FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                        FontSize="10"
-                                        IsTextScaleFactorEnabled="False"
-                                        Text="&#xE70D;" />
-                                </TextBlock>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="{core:Localizer Key=OptionAllFonts/Text}" />
+                                    <FontIcon FontSize="10" Glyph="&#xE70D;" />
+                                </StackPanel>
 
                                 <Button.Flyout>
                                     <controls:FilterFlyout

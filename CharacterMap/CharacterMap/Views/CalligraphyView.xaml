@@ -323,6 +323,7 @@
                             Height="32"
                             Maximum="400"
                             Minimum="60"
+                            Style="{StaticResource DefaultThemeSliderStyle}"
                             Value="{x:Bind ViewModel.FontSize, Mode=TwoWay}"
                             d:Margin="0 4 0 0"
                             d:Value="220" />

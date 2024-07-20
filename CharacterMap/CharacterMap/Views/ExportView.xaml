@@ -563,7 +563,7 @@
             <Grid
                 x:Name="ContentPanel"
                 Grid.Row="2"
-                ColumnSpacing="24"
+                ColumnSpacing="12"
                 CornerRadius="8 8 0 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="0.8*" />
@@ -577,7 +577,8 @@
                 <ScrollViewer x:Name="ContentScroller">
                     <StackPanel
                         x:Name="OptionsPanel"
-                        Margin="20 20 20 120"
+                        Margin="0 12 0 0"
+                        Padding="20 0 20 40"
                         ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}">
 
                         <cmControls:ContentGroup x:Uid="PrintDataHeader" d:Text="{core:Localizer Key=PrintDataHeader/Text}">
@@ -638,7 +639,7 @@
                             <StackPanel Transitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}" Visibility="{x:Bind ViewModel.IsPngFormat, Mode=OneWay}">
                                 <TextBlock
                                     x:Uid="PrintViewCharSize"
-                                    Margin="0,16,0,0"
+                                    Margin="0 16 0 0"
                                     Style="{StaticResource HeaderStyle}"
                                     d:Text="{core:Localizer Key=PrintViewCharSize/Text}" />
                                 <Slider
@@ -648,11 +649,12 @@
                                     Maximum="2048"
                                     Minimum="128"
                                     StepFrequency="64"
+                                    Style="{StaticResource DefaultThemeSliderStyle}"
                                     TickFrequency="64"
                                     TickPlacement="Outside"
                                     Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}"
                                     d:Value="1024" />
-                                <TextBlock Margin="0,0,0,16" Style="{StaticResource BaseTextStyle}">
+                                <TextBlock Margin="0 0 0 12" Style="{StaticResource BaseTextStyle}">
                                     <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" d:Text="1024" />
                                     <Run Text="×" />
                                     <Run Text="{x:Bind SldResolution.Value, Mode=OneWay}" d:Text="1024" />
@@ -669,6 +671,7 @@
                                 d:Content="{core:Localizer Key=ExportAllowColor/Content}" />
 
                             <muxc:ColorPicker
+                                Margin="0 12 0 0"
                                 HorizontalAlignment="Left"
                                 IsAlphaEnabled="True"
                                 Style="{StaticResource ColorPickerStyle1}"
@@ -682,7 +685,7 @@
                                 IsChecked="{x:Bind ViewModel.SkipBlankGlyphs, Mode=TwoWay}"
                                 Style="{StaticResource DefaultThemeCheckBoxStyle}"
                                 d:Content="{core:Localizer Key=ExportSkipBlank/Content}" />
-                            <cmControls:GlyphNamingControl Margin="0,16,0,4" ViewModel="{x:Bind ViewModel.GlyphNameModel}" />
+                            <cmControls:GlyphNamingControl Margin="0 16 0 4" ViewModel="{x:Bind ViewModel.GlyphNameModel}" />
                         </cmControls:ContentGroup>
 
                     </StackPanel>
@@ -693,7 +696,7 @@
                     x:Name="PreviewContainer"
                     Grid.Column="1"
                     RowSpacing="8"
-                    Margin="12 24 12 12"
+                    Margin="0 12 0 0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
@@ -702,7 +705,10 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <Grid x:Name="PreviewOptions" Grid.Row="0">
+                    <Grid
+                        x:Name="PreviewOptions"
+                        Grid.Row="0"
+                        Padding="12 0 12 0">
                         <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                             <TextBlock
                                 VerticalAlignment="Center"
@@ -733,8 +739,7 @@
                         <cmControls:CharacterGridView
                             x:Name="ItemsGridView"
                             Grid.Row="1"
-                            Margin="0 0 16 0"
-                            Padding="0 24 0 24"
+                            Padding="20 20 20 40"
                             ContainerContentChanging="ItemsPanel_ContainerContentChanging"
                             IsItemClickEnabled="False"
                             ItemAnnotation="None"
@@ -773,8 +778,8 @@
                     VerticalAlignment="Center"
                     Spacing="24">
                     <ProgressRing
-                        Width="75"
-                        Height="75"
+                        Width="80"
+                        Height="80"
                         Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
                         IsActive="{x:Bind ViewModel.IsExporting, Mode=OneWay}" />
                     <TextBlock
@@ -785,7 +790,7 @@
                         d:Text="{core:Localizer Key=ExportGlyphsProgressMessage/Text}" />
 
                     <Button
-                        Width="150"
+                        MinWidth="128"
                         HorizontalAlignment="Center"
                         Click="{x:Bind ViewModel.CancelExport}"
                         Content="{core:Localizer Key=Cancel}"
@@ -815,7 +820,7 @@
                     Spacing="8">
                     <Button
                         x:Uid="BtnContinue"
-                        Width="150"
+                        MinWidth="128"
                         helpers:FluentAnimation.PointerOver="ContentPresenter.Content"
                         helpers:FluentAnimation.PointerOverOffset="-2"
                         helpers:FluentAnimation.Pressed="ContentPresenter"
@@ -824,7 +829,7 @@
                         Style="{StaticResource AccentButtonStyle}"
                         d:Content="{core:Localizer Key=BtnContinue/Content}" />
                     <Button
-                        Width="150"
+                        MinWidth="128"
                         Click="{x:Bind Hide}"
                         Content="{core:Localizer Key=Cancel}"
                         Style="{StaticResource DefaultThemeButtonStyle}" />
