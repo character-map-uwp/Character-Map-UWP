@@ -14,7 +14,7 @@
     Background="Transparent"
     TabFocusNavigation="Cycle"
     mc:Ignorable="d"
-    d:DesignHeight="1024"
+    d:DesignHeight="1064"
     d:DesignWidth="1280">
 
     <UserControl.Resources>
@@ -68,11 +68,14 @@
                             Margin="20 20 20 120"
                             ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}">
 
-                            <controls:ContentGroup x:Uid="PrintDataHeader">
+                            <controls:ContentGroup x:Uid="PrintDataHeader" d:Text="{core:Localizer Key=PrintDataHeader/Text}">
                                 <Button Margin="0 2 0 8" Style="{StaticResource ThemeTextBlockButtonStyle}">
                                     <Button.Content>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock x:Uid="PrintCharacterFilterContent" OpticalMarginAlignment="TrimSideBearings" />
+                                            <TextBlock
+                                                x:Uid="PrintCharacterFilterContent"
+                                                OpticalMarginAlignment="TrimSideBearings"
+                                                d:Text="{core:Localizer Key=PrintCharacterFilterContent/Text}" />
                                             <TextBlock
                                                 Margin="4 2 0 0"
                                                 VerticalAlignment="Center"
@@ -100,11 +103,15 @@
                                 <CheckBox
                                     x:Uid="ChkBxHideWhitespace"
                                     IsChecked="{x:Bind ViewModel.HideWhitespace, Mode=TwoWay}"
-                                    Style="{StaticResource DefaultThemeCheckBoxStyle}" />
+                                    Style="{StaticResource DefaultThemeCheckBoxStyle}"
+                                    d:Content="{core:Localizer Key=ChkBxHideWhitespace/Content}" />
                             </controls:ContentGroup>
 
-                            <controls:ContentGroup x:Uid="PrintViewLayoutHeader">
-                                <TextBlock x:Uid="PrintViewCharSize" Style="{StaticResource HeaderStyle}" />
+                            <controls:ContentGroup x:Uid="PrintViewLayoutHeader" d:Text="{core:Localizer Key=PrintViewLayoutHeader/Text}">
+                                <TextBlock
+                                    x:Uid="PrintViewCharSize"
+                                    Style="{StaticResource HeaderStyle}"
+                                    d:Text="{core:Localizer Key=PrintViewCharSize/Text}" />
                                 <Slider
                                     HorizontalAlignment="Stretch"
                                     IsThumbToolTipEnabled="True"
@@ -113,10 +120,11 @@
                                     StepFrequency="2"
                                     TickFrequency="4"
                                     TickPlacement="Outside"
-                                    Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}" />
+                                    Value="{x:Bind ViewModel.GlyphSize, Mode=TwoWay}"
+                                    d:Value="124" />
                                 <TextBlock Style="{StaticResource BaseTextStyle}">
-                                    <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" />
-                                    <Run x:Uid="PixelUnits" d:Text="px" />
+                                    <Run Text="{x:Bind ViewModel.GlyphSize, Mode=OneWay}" d:Text="124" />
+                                    <Run x:Uid="PixelUnits" d:Text="{core:Localizer Key=PixelUnits/Text}" />
                                 </TextBlock>
 
                                 <!--<TextBlock Style="{StaticResource HeaderStyle}" Text="Borders" />-->
@@ -124,7 +132,8 @@
                                     x:Uid="ChkBxShowBorders"
                                     Margin="0 16 0 -12"
                                     IsChecked="{x:Bind ViewModel.ShowBorders, Mode=TwoWay}"
-                                    Style="{StaticResource DefaultThemeCheckBoxStyle}" />
+                                    Style="{StaticResource DefaultThemeCheckBoxStyle}"
+                                    d:Content="{core:Localizer Key=ChkBxShowBorders/Content}" />
 
 
                                 <toolkit:WrapPanel
@@ -135,7 +144,9 @@
                                         x:Uid="CbListStyle"
                                         ItemsSource="{x:Bind Layouts}"
                                         SelectedIndex="0"
-                                        SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}">
+                                        SelectedItem="{x:Bind ViewModel.Layout, Mode=TwoWay}"
+                                        d:Header="{core:Localizer Key=CbListStyle/Header}"
+                                        d:PlaceholderText="{core:Localizer Key=PrintLayout_Grid}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate x:DataType="models:PrintLayout">
                                                 <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:PrintLayout))}" />
@@ -146,7 +157,9 @@
                                     <controls:UXComboBox
                                         x:Uid="CbCharacterLabel"
                                         ItemsSource="{x:Bind Annotations}"
-                                        SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}">
+                                        SelectedItem="{x:Bind ViewModel.Annotation, Mode=TwoWay}"
+                                        d:Header="{core:Localizer Key=CbCharacterLabel/Header}"
+                                        d:PlaceholderText="{core:Localizer Key=GlyphAnnotation_None}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate x:DataType="models:GlyphAnnotation">
                                                 <TextBlock Text="{x:Bind core:Converters.GetLocalizedEnumName((models:GlyphAnnotation))}" />
@@ -157,12 +170,16 @@
 
                             </controls:ContentGroup>
 
-                            <controls:ContentGroup x:Uid="PrintViewPageSetupHeader">
-                                <TextBlock x:Uid="PrintViewPageRange" Style="{StaticResource HeaderStyle}" />
+                            <controls:ContentGroup x:Uid="PrintViewPageSetupHeader" d:Text="{core:Localizer Key=PrintViewPageSetupHeader/Text}">
+                                <TextBlock
+                                    x:Uid="PrintViewPageRange"
+                                    Style="{StaticResource HeaderStyle}"
+                                    d:Text="{core:Localizer Key=PrintViewPageRange/Text}" />
                                 <TextBlock
                                     x:Uid="PrintViewPageRangeDesc"
                                     Margin="0 0 0 8"
-                                    Style="{StaticResource BaseTextStyle}" />
+                                    Style="{StaticResource BaseTextStyle}"
+                                    d:Text="{core:Localizer Key=PrintViewPageRangeDesc/Text}" />
                                 <toolkit:WrapPanel
                                     ChildrenTransitions="{x:Bind GetRepositionCollection(ViewModel.AllowAnimation), Mode=OneWay}"
                                     HorizontalSpacing="24"
@@ -174,7 +191,9 @@
                                         Maximum="{x:Bind PageCount, Mode=OneWay}"
                                         Minimum="1"
                                         SpinButtonPlacementMode="Inline"
-                                        Value="{x:Bind ViewModel.FirstPage, Mode=TwoWay}" />
+                                        Value="{x:Bind ViewModel.FirstPage, Mode=TwoWay}"
+                                        d:Header="{core:Localizer Key=PrintViewPageSelector/Header}"
+                                        d:Value="1" />
 
                                     <muxc:NumberBox
                                         x:Uid="PrintViewPageRangeSelector"
@@ -182,26 +201,32 @@
                                         Maximum="{x:Bind GetMaxPageRange(ViewModel.FirstPage, PageCount), Mode=OneWay}"
                                         Minimum="1"
                                         SpinButtonPlacementMode="Inline"
-                                        Value="{x:Bind ViewModel.PagesToPrint, Mode=TwoWay}" />
+                                        Value="{x:Bind ViewModel.PagesToPrint, Mode=TwoWay}"
+                                        d:Header="{core:Localizer Key=PrintViewPageRangeSelector/Header}"
+                                        d:Maximum="10"
+                                        d:Value="10" />
                                 </toolkit:WrapPanel>
 
-                                <TextBlock Style="{StaticResource HintStyle}" Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
+                                <TextBlock
+                                    Style="{StaticResource HintStyle}"
+                                    Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}"
+                                    d:Text="Printing pages 1 - 10" />
 
                                 <controls:UXComboBox
                                     x:Uid="PrintViewPageOrientation"
                                     Margin="{StaticResource HeaderMargin}"
                                     SelectedIndex="0"
                                     SelectionChanged="RadioButtons_SelectionChanged"
-                                    d:Header="Page Orientation"
-                                    d:PlaceholderText="Portrait">
-                                    <controls:UXComboBoxItem x:Uid="CbiPageOrientationPortrait" />
-                                    <controls:UXComboBoxItem x:Uid="CbiPageOrientationLandscape" />
+                                    d:Header="{core:Localizer Key=PrintViewPageOrientation/Header}">
+                                    <controls:UXComboBoxItem x:Uid="CbiPageOrientationPortrait" d:Content="{core:Localizer Key=CbiPageOrientationPortrait/Content}" />
+                                    <controls:UXComboBoxItem x:Uid="CbiPageOrientationLandscape" d:Content="{core:Localizer Key=CbiPageOrientationLandscape/Content}" />
                                 </controls:UXComboBox>
 
                                 <TextBlock
                                     x:Uid="PrintViewHorizontalMarginHeader"
                                     Margin="{StaticResource HeaderMargin}"
-                                    Style="{StaticResource HeaderStyle}" />
+                                    Style="{StaticResource HeaderStyle}"
+                                    d:Text="{core:Localizer Key=PrintViewHorizontalMarginHeader/Text}" />
                                 <Slider
                                     HorizontalAlignment="Stretch"
                                     IsThumbToolTipEnabled="True"
@@ -212,14 +237,15 @@
                                     TickPlacement="Outside"
                                     Value="{x:Bind ViewModel.HorizontalMargin, Mode=TwoWay}" />
                                 <TextBlock Style="{StaticResource BaseTextStyle}">
-                                    <Run Text="{x:Bind ViewModel.HorizontalMargin, Mode=OneWay}" />
-                                    <Run x:Uid="PixelUnits" d:Text="px" />
+                                    <Run Text="{x:Bind ViewModel.HorizontalMargin, Mode=OneWay}" d:Text="44" />
+                                    <Run x:Uid="PixelUnits" d:Text="{core:Localizer Key=PixelUnits/Text}" />
                                 </TextBlock>
 
                                 <TextBlock
                                     x:Uid="PrintViewVerticalMarginHeader"
                                     Margin="{StaticResource HeaderMargin}"
-                                    Style="{StaticResource HeaderStyle}" />
+                                    Style="{StaticResource HeaderStyle}"
+                                    d:Text="{core:Localizer Key=PrintViewVerticalMarginHeader/Text}" />
                                 <Slider
                                     HorizontalAlignment="Stretch"
                                     IsThumbToolTipEnabled="True"
@@ -228,10 +254,11 @@
                                     StepFrequency="2"
                                     TickFrequency="4"
                                     TickPlacement="Outside"
-                                    Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}" />
+                                    Value="{x:Bind ViewModel.VerticalMargin, Mode=TwoWay}"
+                                    d:Value="64" />
                                 <TextBlock Style="{StaticResource BaseTextStyle}">
-                                    <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" />
-                                    <Run x:Uid="PixelUnits" d:Text="px" />
+                                    <Run Text="{x:Bind ViewModel.VerticalMargin, Mode=OneWay}" d:Text="64" />
+                                    <Run x:Uid="PixelUnits" d:Text="{core:Localizer Key=PixelUnits/Text}" />
                                 </TextBlock>
                             </controls:ContentGroup>
 
@@ -257,13 +284,15 @@
                                 HorizontalAlignment="Center"
                                 IsChecked="{x:Bind ViewModel.ShowMargins, Mode=TwoWay}"
                                 IsThreeState="False"
-                                Style="{StaticResource DefaultThemeCheckBoxStyle}" />
+                                Style="{StaticResource DefaultThemeCheckBoxStyle}"
+                                d:Content="{core:Localizer Key=CbShowMargins/Content}" />
 
                             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
                                 <TextBlock
                                     x:Uid="PrintViewPreviewingLabel"
                                     VerticalAlignment="Center"
-                                    Style="{StaticResource BaseTextStyle}" />
+                                    Style="{StaticResource BaseTextStyle}"
+                                    d:Text="{core:Localizer Key=PrintViewPreviewingLabel/Text}" />
                                 <muxc:NumberBox
                                     Margin="8 0"
                                     LargeChange="1"
@@ -273,10 +302,11 @@
                                     SpinButtonPlacementMode="Inline"
                                     Template="{StaticResource HorizontalNumberBoxTemplate}"
                                     ValueChanged="NumberBox_ValueChanged"
-                                    Value="{x:Bind CurrentPage, Mode=TwoWay}" />
+                                    Value="{x:Bind CurrentPage, Mode=TwoWay}"
+                                    d:Value="1" />
                                 <TextBlock VerticalAlignment="Center">
-                                    <Run x:Uid="PrintViewOfLabel" />
-                                    <Run Text="{x:Bind PageCount, Mode=OneWay}" />
+                                    <Run x:Uid="PrintViewOfLabel" d:Text="{core:Localizer Key=PrintViewOfLabel/Text}" />
+                                    <Run Text="{x:Bind PageCount, Mode=OneWay}" d:Text="10" />
                                 </TextBlock>
                             </StackPanel>
 
@@ -286,7 +316,8 @@
                                 HorizontalAlignment="Center"
                                 Style="{StaticResource HintStyle}"
                                 TextAlignment="Center"
-                                Visibility="{x:Bind IsOutOfRange(ViewModel.FirstPage, ViewModel.PagesToPrint, CurrentPage), Mode=OneWay}" />
+                                Visibility="{x:Bind IsOutOfRange(ViewModel.FirstPage, ViewModel.PagesToPrint, CurrentPage), Mode=OneWay}"
+                                d:Text="{core:Localizer Key=PrintViewPreviewOutOfBoundsLabel/Text}" />
 
                         </StackPanel>
 
@@ -312,7 +343,7 @@
                         VerticalAlignment="Center"
                         FontSize="12"
                         TextLineBounds="Tight">
-                        <Run Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" />
+                        <Run Text="{x:Bind GetPageRangeLabel(ViewModel.FirstPage, ViewModel.PagesToPrint), Mode=OneWay}" d:Text="Printing page 1 of 10" />
                     </TextBlock>
 
                     <StackPanel
@@ -333,11 +364,10 @@
                             Style="{StaticResource AccentButtonStyle}"
                             d:Content="{core:Localizer Key=BtnContinue/Content}" />
                         <Button
-                            x:Uid="BtnCancel"
                             Width="150"
                             Click="{x:Bind Hide}"
                             Style="{StaticResource DefaultThemeButtonStyle}"
-                            d:Content="{core:Localizer Key=BtnCancel/Content}" />
+                            Content="{core:Localizer Key=Cancel}" />
                     </StackPanel>
                 </Grid>
             </Grid>

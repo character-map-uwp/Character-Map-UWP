@@ -56,8 +56,8 @@ public sealed partial class CollectionManagementView : UserControl, IActivateabl
             Title = Localization.Get("DigDeleteCollection/Title"),
             IsPrimaryButtonEnabled = true,
             IsSecondaryButtonEnabled = true,
-            PrimaryButtonText = Localization.Get("DigDeleteCollection/PrimaryButtonText"),
-            SecondaryButtonText = Localization.Get("DigDeleteCollection/SecondaryButtonText"),
+            PrimaryButtonText = Localization.Get("Delete"),
+            SecondaryButtonText = Localization.Get("Cancel"),
         };
 
         d.PrimaryButtonClick += DigDeleteCollection_PrimaryButtonClick;

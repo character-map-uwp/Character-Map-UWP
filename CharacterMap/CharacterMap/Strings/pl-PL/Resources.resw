@@ -182,14 +182,8 @@
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Usuń kolekcję</value>
   </data>
-  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Anuluj</value>
-  </data>
-  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
-    <value>Usunąć</value>
-  </data>
-  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Anuluj</value>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>Czy na pewno chcesz usunąć tę kolekcję?</value>
@@ -363,7 +357,7 @@
     <value>Aby pomóc nam debugować i rozwiązać ten problem, rozważ otwarcie problemu na naszej stronie GitHub i opublikowanie szczegółów. Postaramy się to naprawić od razu!</value>
   </data>
   <data name="BtnClose.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
-    <value>Zamykać</value>
+    <value>Zamknij</value>
   </data>
   <data name="BtnCopyDev.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Kopiować</value>
@@ -500,7 +494,7 @@ Włączenie tej opcji ma znikomy wpływ na wydajność.</value>
   <data name="BtnApply.Content" xml:space="preserve">
     <value>Zastosować</value>
   </data>
-  <data name="BtnCancel.Content" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
     <value>Anuluj</value>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
@@ -1004,7 +998,7 @@ Wymaga ponownego uruchomienia, aby zaczął obowiązywać.</value>
     <value>Przełącznik</value>
     <comment>Labels must be as short as possible</comment>
   </data>
-  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Dodaj do kolekcji</value>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
@@ -1027,9 +1021,6 @@ Wymaga ponownego uruchomienia, aby zaczął obowiązywać.</value>
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>Otwarte czcionki</value>
-  </data>
-  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
-    <value>Anuluj</value>
   </data>
   <data name="DigOpenFolder.Title" xml:space="preserve">
     <value>Otwórz folder czcionek</value>
@@ -1203,6 +1194,9 @@ Dotknij i przytrzymaj, aby rozmieścić.</value>
   </data>
   <data name="FontPropPanoseTitle.Text" xml:space="preserve">
     <value>Wartości PANOSE</value>
+  </data>
+  <data name="BtnTextClose.Content" xml:space="preserve">
+    <value>Zamknij</value>
   </data>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>Wybierz folder</value>

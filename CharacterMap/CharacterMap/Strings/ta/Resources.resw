@@ -185,14 +185,8 @@
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>தொகுப்பை நீக்கு</value>
   </data>
-  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
-    <value>இரத்து</value>
-  </data>
-  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+  <data name="Delete" xml:space="preserve">
     <value>நீக்கு</value>
-  </data>
-  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
-    <value>இரத்து</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>இந்தத் தொகுப்பை நிச்சயமாக நீக்க விரும்புகிறீர்களா?</value>
@@ -502,7 +496,7 @@
   <data name="BtnApply.Content" xml:space="preserve">
     <value>செயற்படுத்து</value>
   </data>
-  <data name="BtnCancel.Content" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
     <value>இரத்து</value>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
@@ -792,6 +786,9 @@ Imported font files are copied into the app's private storage, so will still sho
   </data>
   <data name="VariableFeaturesMessage.Text" xml:space="preserve">
     <value>இந்த எழுத்துருவில் மாறி அம்சங்கள் உள்ளன. அவற்றை ஆராய, மேலே உள்ள காட்சி பொத்தானை பயன்படுத்தி, வகை ராம்ப் காட்சிக்கு மாறவும்.</value>
+  </data>
+  <data name="BtnTextClose.Content" xml:space="preserve">
+    <value>மூடு</value>
   </data>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>கோப்புறையைத் தேர்ந்தெடு</value>
