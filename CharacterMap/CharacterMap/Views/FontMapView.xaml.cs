@@ -13,6 +13,18 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
 
+public class VariantTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate HeaderTemplate { get; set; }
+    public DataTemplate VariantTemplate { get; set; }
+
+    protected override DataTemplate SelectTemplateCore(object item)
+        => item is FontVariant ? VariantTemplate : HeaderTemplate;
+
+    protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        => item is FontVariant ? VariantTemplate : HeaderTemplate;
+}
+
 [DependencyProperty("TitleLeftContent")]
 [DependencyProperty("TitleRightContent")]
 [DependencyProperty<FontMapViewModel>("ViewModel")]

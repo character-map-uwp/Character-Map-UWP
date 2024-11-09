@@ -416,13 +416,16 @@ public partial class MainViewModel : ViewModelBase
                     // 1.2. The selected font face (or another in the family) may have been
                     //      deleted making the stored index invalid. Make sure the index is
                     //      still within a valid range.
-                    int faceIdx = Convert.ToInt32(list[++i]);
-                    if ((faceIdx < font.Variants.Count) is false)
-                        faceIdx = font.Variants.IndexOf(font.DefaultVariant);
+                    int faceIdx = Math.Max(0, Convert.ToInt32(list[++i]));
+                    if ((faceIdx < font.AllVariants.Count) is false)
+                        faceIdx = font.AllVariants.IndexOf(font.DefaultVariant);
+
+                    FontVariant sel = font.AllVariants[faceIdx] as FontVariant;
+                    sel ??= font.DefaultVariant;
 
                     Fonts.Add(new(font)
                     {
-                        Selected = font.Variants[faceIdx],
+                        Selected = sel,
                         DisplayMode = (FontDisplayMode)Convert.ToInt32(list[++i])
                     });
                 }

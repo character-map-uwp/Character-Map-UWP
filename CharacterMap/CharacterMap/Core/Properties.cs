@@ -79,6 +79,7 @@ namespace CharacterMap.Core;
 [AttachedProperty<FrameworkElement>("Receiver")] // Adds a receiver to ThemeShadow.Receivers
 [AttachedProperty<double>("Depth")] // Sets UIElement.Translation.Z
 [AttachedProperty<object>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
+[AttachedProperty<bool>("IsContainerEnabled", true)] // Is the parent ItemContainer enabled?
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1490,6 +1491,37 @@ public partial class Properties : DependencyObject
 
             // Set TextBlock text
             t.Text = text;
+        }
+    }
+
+    #endregion
+
+    #region IsContainerEnabled
+
+    static partial void OnIsContainerEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f && e.NewValue is bool b)
+        {
+            if (f.IsLoaded)
+            {
+                if (f.GetFirstAncestorOfType<UXComboBoxItem>() is { } item)
+                    item.IsEnabled = b;
+            }
+            else
+            {
+                f.Loaded -= OnLoaded;
+                f.Loaded += OnLoaded;
+            }
+
+
+            static void OnLoaded(object sender, RoutedEventArgs e)
+            {
+                FrameworkElement s = (FrameworkElement)sender;
+                s.Loaded -= OnLoaded;
+
+                if (s.GetFirstAncestorOfType<UXComboBoxItem>() is { } item)
+                    item.IsEnabled = GetIsContainerEnabled(s);
+            }
         }
     }
 

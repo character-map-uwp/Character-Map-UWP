@@ -203,16 +203,18 @@ public class FontFinder
         HasVariableFonts = true;
     }
 
-    internal static List<FontVariant> GetImportedVariants()
+    internal static List<FontVariant> GetImportedVariants(bool includeSimulations = false)
     {
         return Fonts.Where(f => f.HasImportedFiles)
-                    .SelectMany(f => f.Variants.Where(v => v.IsImported))
+                    .SelectMany(f => f.Variants.Where(v => v.IsImported 
+                        && (includeSimulations ? true : v.DirectWriteProperties.IsSimulated is false)))
                     .ToList();
     }
 
-    internal static List<FontVariant> GetSystemVariants()
+    internal static List<FontVariant> GetSystemVariants(bool includeSimulations = false)
     {
-        return Fonts.SelectMany(f => f.Variants.Where(v => v.IsImported is false))
+        return Fonts.SelectMany(f => f.Variants.Where(v => v.IsImported is false
+                        && (includeSimulations ? true : v.DirectWriteProperties.IsSimulated is false)))
                     .ToList();
     }
 
