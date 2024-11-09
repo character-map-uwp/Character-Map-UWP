@@ -753,7 +753,7 @@
                         <ComboBox.ItemTemplate>
                             <DataTemplate x:DataType="core:FontVariant">
                                 <TextBlock
-                                    FontFamily="{Binding Source}"
+                                    FontFamily="{x:Bind core:Converters.GetPreviewFontSource((core:FontVariant))}"
                                     FontStretch="{x:Bind DirectWriteProperties.Stretch}"
                                     FontStyle="{x:Bind DirectWriteProperties.Style}"
                                     FontWeight="{x:Bind DirectWriteProperties.Weight}"
