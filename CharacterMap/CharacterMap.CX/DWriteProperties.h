@@ -22,6 +22,10 @@ namespace CharacterMapCX
 			return ref new DWriteProperties(DWriteFontSource::PerMachine, nullptr, "Segoe UI", "Regular", false);
 		}
 
+		property CanvasFontSimulations Simulations { CanvasFontSimulations get() { return m_simulations; } }
+
+		property bool IsSimulated { bool get() { return m_isSimulated; } }
+
 		property bool IsMonospacedFont { bool get() { return m_font->IsMonospacedFont(); } }
 
 		property bool IsColorFont { bool get() { return m_isColorFont; } }
@@ -114,6 +118,9 @@ namespace CharacterMapCX
 			m_remoteSource = remoteSource;
 			m_familyName = familyName;
 			m_faceName = faceName;
+
+			m_simulations = static_cast<CanvasFontSimulations>(font->GetSimulations());
+			m_isSimulated = m_simulations != CanvasFontSimulations::None;
 		}
 
 		DWriteProperties(DWriteFontSource source, String^ remoteSource, String^ familyName, String^ faceName, bool isColor, bool hasVariations)
@@ -126,6 +133,8 @@ namespace CharacterMapCX
 			m_hasVariations = hasVariations;
 		}
 
+		bool m_isSimulated = false;
+		DWriteFontSource m_source = DWriteFontSource::Unknown;
 
 	private:
 		inline DWriteProperties() { }
@@ -160,6 +169,7 @@ namespace CharacterMapCX
 		FontWeight m_weight;
 		FontStyle m_style = FontStyle::Normal;
 		FontStretch m_stretch = FontStretch::Normal;
+		CanvasFontSimulations m_simulations = CanvasFontSimulations::None;
 
 		bool m_loadedVariations = false;
 		bool m_loadedRemote = false;
@@ -171,6 +181,5 @@ namespace CharacterMapCX
 		String^ m_remoteSource = nullptr;
 		String^ m_familyName = nullptr;
 		String^ m_faceName = nullptr;
-		DWriteFontSource m_source = DWriteFontSource::Unknown;
 	};
 }

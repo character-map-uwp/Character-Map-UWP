@@ -142,7 +142,7 @@ public class FontFinder
 
                 DWriteFontSet importedFonts = sets[i];
                 UpdateMeta(importedFonts);
-                ImportedFaceCount += importedFonts.Fonts.Count;
+                ImportedFaceCount += importedFonts.FaceCount;
                 ImportedFamilyCount += importedFonts.Families.Count;
 
                 foreach (DWriteFontFace font in importedFonts.Fonts)
@@ -155,7 +155,7 @@ public class FontFinder
 
             /* Add all system fonts */
             SystemFamilyCount = systemFonts.Families.Count;
-            SystemFaceCount = systemFonts.Fonts.Count;
+            SystemFaceCount = systemFonts.FaceCount;
 
             foreach (var font in systemFonts.Fonts)
                 AddFont(resultList, font);
