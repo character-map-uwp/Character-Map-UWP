@@ -886,6 +886,8 @@
                                                     x:Name="FontPropXaml"
                                                     x:Load="{x:Bind ViewModel.SelectedVariant.IsImported, Mode=OneWay, FallbackValue=False}"
                                                     x:Uid="FontPropXaml"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
                                                     Padding="0,4,0,0"
                                                     d:Text="{core:Localizer Key=FontPropXaml/Text}" />
 
@@ -900,6 +902,8 @@
 
                                                 <TextBlock
                                                     x:Uid="FontPropFilePath"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
                                                     Visibility="{x:Bind ShowFilePath(ViewModel.SelectedVariantAnalysis.FilePath, ViewModel.SelectedVariant.IsImported), Mode=OneWay, FallbackValue=Collapsed}"
                                                     d:Text="{core:Localizer Key=FontPropFilePath/Text}" />
                                                 <TextBlock
