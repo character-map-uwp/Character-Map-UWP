@@ -78,7 +78,7 @@ namespace CharacterMap.Core;
 [AttachedProperty<CoreCursorType>("Cursor", CoreCursorType.Arrow)]
 [AttachedProperty<FrameworkElement>("Receiver")] // Adds a receiver to ThemeShadow.Receivers
 [AttachedProperty<double>("Depth")] // Sets UIElement.Translation.Z
-[AttachedProperty<string>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
+[AttachedProperty<object>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -1481,6 +1481,12 @@ public partial class Properties : DependencyObject
                 && vm.FontSearch is { Length: > 4 } query
                 && FontFinder.IsQuery(query, Localization.Get("CharacterFilter"), "char:", out string q))
                 text = q;
+
+            // Try use fonts default preview string if we're not providing one.
+            // Useful for Segoe UI emoji / other symbol fonts with specific
+            // preview strings that would show nothing by default
+            else if (e.NewValue is FontVariant variant)
+                text = variant.TryGetSampleText() ?? text;
 
             // Set TextBlock text
             t.Text = text;

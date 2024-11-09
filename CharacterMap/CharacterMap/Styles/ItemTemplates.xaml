@@ -68,7 +68,7 @@
                 Text="{x:Bind Name}"
                 TextWrapping="Wrap" />
             <TextBlock
-                core:Properties.PreviewStringTrigger="{x:Bind Name}"
+                core:Properties.PreviewStringTrigger="{x:Bind DefaultVariant}"
                 FontFamily="{x:Bind DefaultVariant.Source}"
                 FontSize="32"
                 FontStretch="{x:Bind DefaultVariant.DirectWriteProperties.Stretch}"
