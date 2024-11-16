@@ -1070,11 +1070,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 // We apply the size changes by clearing the ItemsSource and resetting it,
                 // allowing the GridView to re-layout all of it's items with their new size.
-
                 CharGrid.ItemsSource = null;
                 CharGrid.ItemSize = ViewModel.Settings.GridSize;
                 await Task.Yield();
-                CharGrid.ItemsSource = ViewModel.Chars;
+                CharGrid.SetBinding(GridView.ItemsSourceProperty, new Binding() { Source = CharacterSource });
                 ViewModel.SetDefaultChar();
                 _ = SetCharacterSelectionAsync();
             }
