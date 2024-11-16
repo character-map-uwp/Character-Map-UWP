@@ -229,6 +229,9 @@ public class FontFinder
     {
         try
         {
+            if (font.Properties.IsSimulated && ResourceHelper.AppSettings.HideSimulatedFontFaces)
+                return;
+
             var familyName = font.Properties.FamilyName;
             if (!string.IsNullOrEmpty(familyName))
             {

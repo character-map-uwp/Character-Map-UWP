@@ -10,6 +10,9 @@ public record FaceMetadataInfo(string Key, string[] Values, CanvasFontInformatio
     public string Value => string.Join(", ", Values);
 }
 
+/// <summary>
+/// Represents an instance of a FontFace
+/// </summary>
 [System.Diagnostics.DebuggerDisplay("{FamilyName} {PreferredName}")]
 public partial class FontVariant : IDisposable
 {

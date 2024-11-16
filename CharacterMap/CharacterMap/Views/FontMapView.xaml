@@ -853,6 +853,9 @@
                                                 <TextBlock x:Uid="FontPropMonospaced" d:Text="{core:Localizer Key=FontPropMonospaced/Text}" />
                                                 <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsMonospacedFont}" />
 
+                                                <TextBlock  x:Uid="FontPropSimulated" d:Text="{core:Localizer Key=FontPropSimulated/Text}" />
+                                                <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.IsSimulated}" />
+
                                                 <TextBlock x:Uid="FontPropStyle" d:Text="{core:Localizer Key=FontPropStyle/Text}" />
                                                 <TextBlock Style="{StaticResource Value}" Text="{Binding SelectedVariant.DirectWriteProperties.Style}" />
 

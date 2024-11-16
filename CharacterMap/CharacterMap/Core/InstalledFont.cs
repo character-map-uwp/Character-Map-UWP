@@ -1,5 +1,8 @@
 ﻿namespace CharacterMap.Core;
 
+/// <summary>
+/// Represents an entire FontFamily (currently under the WWS definition)
+/// </summary>
 public class InstalledFont : IComparable, IEquatable<InstalledFont>
 {
     private List<FontVariant> _variants;
@@ -67,7 +70,7 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
         List<object> objs = new(Variants);
         if (_simulatedVariants is not null && _simulatedVariants.Count > 0)
         {
-            objs.Add("Simulated");
+            objs.Add(Localization.Get("SimulatedHeader"));
             objs.AddRange(_simulatedVariants);
         }
 
