@@ -127,6 +127,9 @@ public static class Utils
 
     public static async Task<bool> TryCopyToClipboardInternalAsync(string rawString, string formattedString, FontMapViewModel viewModel, CopyDataType type = CopyDataType.Text, IRandomAccessStream data = null)
     {
+        if (viewModel is null)
+            return false;
+
         // Internal helper method to set clipboard
         static void TrySetClipboard(string raw, string formatted, FontMapViewModel v, CopyDataType copyType, IRandomAccessStream stream = null)
         {

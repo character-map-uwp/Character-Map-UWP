@@ -739,7 +739,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void DevFlyout_Opening(object sender, object e)
     {
-        if (sender is MenuFlyout menu && menu.Items.Count < 2)
+        if (sender is MenuFlyout menu 
+            && menu.Items?.Count < 2
+            && ViewModel.Providers is not null)
         {
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
             foreach (var provider in ViewModel.Providers)
