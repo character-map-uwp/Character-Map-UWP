@@ -142,7 +142,7 @@ public class FontFinder
 
                 DWriteFontSet importedFonts = sets[i];
                 UpdateMeta(importedFonts);
-                ImportedFaceCount += importedFonts.Fonts.Count;
+                ImportedFaceCount += importedFonts.FaceCount;
                 ImportedFamilyCount += importedFonts.Families.Count;
 
                 foreach (DWriteFontFace font in importedFonts.Fonts)
@@ -155,7 +155,7 @@ public class FontFinder
 
             /* Add all system fonts */
             SystemFamilyCount = systemFonts.Families.Count;
-            SystemFaceCount = systemFonts.Fonts.Count;
+            SystemFaceCount = systemFonts.FaceCount;
 
             foreach (var font in systemFonts.Fonts)
                 AddFont(resultList, font);
@@ -203,16 +203,18 @@ public class FontFinder
         HasVariableFonts = true;
     }
 
-    internal static List<FontVariant> GetImportedVariants()
+    internal static List<FontVariant> GetImportedVariants(bool includeSimulations = false)
     {
         return Fonts.Where(f => f.HasImportedFiles)
-                    .SelectMany(f => f.Variants.Where(v => v.IsImported))
+                    .SelectMany(f => f.Variants.Where(v => v.IsImported 
+                        && (includeSimulations ? true : v.DirectWriteProperties.IsSimulated is false)))
                     .ToList();
     }
 
-    internal static List<FontVariant> GetSystemVariants()
+    internal static List<FontVariant> GetSystemVariants(bool includeSimulations = false)
     {
-        return Fonts.SelectMany(f => f.Variants.Where(v => v.IsImported is false))
+        return Fonts.SelectMany(f => f.Variants.Where(v => v.IsImported is false
+                        && (includeSimulations ? true : v.DirectWriteProperties.IsSimulated is false)))
                     .ToList();
     }
 
@@ -227,6 +229,9 @@ public class FontFinder
     {
         try
         {
+            if (font.Properties.IsSimulated && ResourceHelper.AppSettings.HideSimulatedFontFaces)
+                return;
+
             var familyName = font.Properties.FamilyName;
             if (!string.IsNullOrEmpty(familyName))
             {

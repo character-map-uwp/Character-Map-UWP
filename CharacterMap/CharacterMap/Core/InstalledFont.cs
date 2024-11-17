@@ -1,8 +1,15 @@
 ﻿namespace CharacterMap.Core;
 
+/// <summary>
+/// Represents an entire FontFamily (currently under the WWS definition)
+/// </summary>
 public class InstalledFont : IComparable, IEquatable<InstalledFont>
 {
     private List<FontVariant> _variants;
+
+    private List<FontVariant> _simulatedVariants;
+
+    private List<object> _allVariants;
 
     public string Name { get; }
 
@@ -10,12 +17,24 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
 
     public IList<FontVariant> Variants => _variants;
 
+    /// <summary>
+    /// Identifies if a font family has any REAL different font faces
+    /// </summary>
     public bool HasVariants => _variants.Count > 1;
+
+    /// <summary>
+    /// Identifies if a font family has any other font faces, included
+    /// simulated faces
+    /// </summary>
+    public bool HasAnyVariants => AllVariants.Count > 1;
 
     public bool HasImportedFiles { get; private set; }
 
     private FontVariant _defaultVariant;
     public FontVariant DefaultVariant => _defaultVariant ??= Utils.GetDefaultVariant(Variants);
+
+    public List<object> AllVariants => _allVariants ??= CreateVariants();
+
 
     private InstalledFont(string name)
     {
@@ -31,11 +50,31 @@ public class InstalledFont : IComparable, IEquatable<InstalledFont>
 
     public void AddVariant(DWriteFontFace fontFace, StorageFile file = null)
     {
-        _variants.Add(new(fontFace, file));
+        if (fontFace.Properties.IsSimulated is false)
+            _variants.Add(new(fontFace, file));
+        else
+        {
+            _simulatedVariants ??= new();
+            _simulatedVariants.Add(new(fontFace, file));
+        }
+
         if (file != null)
             HasImportedFiles = true;
 
+        _allVariants = null;
         _defaultVariant = null;
+    }
+
+    List<object> CreateVariants()
+    {
+        List<object> objs = new(Variants);
+        if (_simulatedVariants is not null && _simulatedVariants.Count > 0)
+        {
+            objs.Add(Localization.Get("SimulatedHeader"));
+            objs.AddRange(_simulatedVariants);
+        }
+
+        return objs;
     }
 
     public void SortVariants()

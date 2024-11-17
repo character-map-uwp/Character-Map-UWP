@@ -8,7 +8,18 @@ public sealed partial class UnhandledExceptionDialog
 {
     public static void Show(Exception ex)
     {
-        _ = (new UnhandledExceptionDialog(ex)).ShowAsync();
+        if (Window.Current is not null)
+        {
+            if (Window.Current.Dispatcher.HasThreadAccess)
+                Show();
+            else
+                _ = Window.Current.Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, Show);
+        }
+
+        void Show()
+        {
+            _ = (new UnhandledExceptionDialog(ex)).ShowAsync();
+        }
     }
 }
 

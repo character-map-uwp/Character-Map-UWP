@@ -13,6 +13,18 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
 
+public class VariantTemplateSelector : DataTemplateSelector
+{
+    public DataTemplate HeaderTemplate { get; set; }
+    public DataTemplate VariantTemplate { get; set; }
+
+    protected override DataTemplate SelectTemplateCore(object item)
+        => item is FontVariant ? VariantTemplate : HeaderTemplate;
+
+    protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
+        => item is FontVariant ? VariantTemplate : HeaderTemplate;
+}
+
 [DependencyProperty("TitleLeftContent")]
 [DependencyProperty("TitleRightContent")]
 [DependencyProperty<FontMapViewModel>("ViewModel")]
@@ -727,7 +739,9 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void DevFlyout_Opening(object sender, object e)
     {
-        if (sender is MenuFlyout menu && menu.Items.Count < 2)
+        if (sender is MenuFlyout menu 
+            && menu.Items?.Count < 2
+            && ViewModel.Providers is not null)
         {
             Style style = ResourceHelper.Get<Style>("ThemeMenuFlyoutItemStyle");
             foreach (var provider in ViewModel.Providers)
@@ -1056,11 +1070,10 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
             {
                 // We apply the size changes by clearing the ItemsSource and resetting it,
                 // allowing the GridView to re-layout all of it's items with their new size.
-
                 CharGrid.ItemsSource = null;
                 CharGrid.ItemSize = ViewModel.Settings.GridSize;
                 await Task.Yield();
-                CharGrid.ItemsSource = ViewModel.Chars;
+                CharGrid.SetBinding(GridView.ItemsSourceProperty, new Binding() { Source = CharacterSource });
                 ViewModel.SetDefaultChar();
                 _ = SetCharacterSelectionAsync();
             }

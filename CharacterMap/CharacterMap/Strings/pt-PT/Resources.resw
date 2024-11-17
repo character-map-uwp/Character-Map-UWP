@@ -174,14 +174,8 @@
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Eliminar coleção</value>
   </data>
-  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Cancelar</value>
-  </data>
-  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+  <data name="Delete" xml:space="preserve">
     <value>Eliminar</value>
-  </data>
-  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
-    <value>Cancelar</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>Tem a certeza de que pretende eliminar esta coleção?</value>
@@ -488,7 +482,7 @@ Ativar esta opção tem um impacto insignificante no desempenho.</value>
   <data name="BtnApply.Content" xml:space="preserve">
     <value>Aplicar</value>
   </data>
-  <data name="BtnCancel.Content" xml:space="preserve">
+  <data name="Cancel" xml:space="preserve">
     <value>Cancelar</value>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
@@ -981,7 +975,7 @@ Verá a sua alteração quando voltar a iniciar a aplicação.</value>
     <value>Mudar</value>
     <comment>Labels must be as short as possible</comment>
   </data>
-  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>Adicionar à coleção</value>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
@@ -1004,9 +998,6 @@ Verá a sua alteração quando voltar a iniciar a aplicação.</value>
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>Abrir tipos de letra</value>
-  </data>
-  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
-    <value>Cancelar</value>
   </data>
   <data name="DigOpenFolder.Title" xml:space="preserve">
     <value>Abrir pasta com tipos de letra</value>
@@ -1318,9 +1309,6 @@ Tocar e manter premido para organizar.</value>
   </data>
   <data name="HiddenGlyphsMessage.Text" xml:space="preserve">
     <value>Com base nas suas definições, os ícones preteridos estão ocultos por predefinição. Utiliza o botão de filtro acima para os mostrar.</value>
-  </data>
-  <data name="InstallDialog.SecondaryButtonText" xml:space="preserve">
-    <value>Fechar</value>
   </data>
   <data name="InstallDialog.Title" xml:space="preserve">
     <value>Instalar tipo de letra</value>

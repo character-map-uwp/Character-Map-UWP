@@ -182,14 +182,8 @@
   <data name="DeleteCollectionButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>ลบรายการสะสม</value>
   </data>
-  <data name="DigCreateCollection.SecondaryButtonText" xml:space="preserve">
-    <value>ยกเลิก</value>
-  </data>
-  <data name="DigDeleteCollection.PrimaryButtonText" xml:space="preserve">
+  <data name="Delete" xml:space="preserve">
     <value>ลบ</value>
-  </data>
-  <data name="DigDeleteCollection.SecondaryButtonText" xml:space="preserve">
-    <value>ยกเลิก</value>
   </data>
   <data name="DigDeleteCollection.Title" xml:space="preserve">
     <value>คุณแน่ในหรือไม่ว่าคุณต้องการลบรายการสะสมนี้?</value>
@@ -500,8 +494,8 @@
   <data name="BtnApply.Content" xml:space="preserve">
     <value>เลือกกลุ่มอักษร</value>
   </data>
-  <data name="BtnCancel.Content" xml:space="preserve">
-    <value>ยกเลิกพิมพ์</value>
+  <data name="Cancel" xml:space="preserve">
+    <value>ยกเลิก</value>
   </data>
   <data name="BtnContinue.Content" xml:space="preserve">
     <value>ส่งพิมพ์</value>
@@ -1006,7 +1000,7 @@
     <value>สลับ</value>
     <comment>Labels must be as short as possible</comment>
   </data>
-  <data name="AddTooButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
+  <data name="AddToButton.[using:Windows.UI.Xaml.Controls]ToolTipService.ToolTip" xml:space="preserve">
     <value>เพิ่มเข้ารายการสะสม</value>
   </data>
   <data name="ClearSelectionLabel" xml:space="preserve">
@@ -1029,9 +1023,6 @@
   </data>
   <data name="DigOpenFolder.PrimaryButtonText" xml:space="preserve">
     <value>เปิดฟ้อนต์</value>
-  </data>
-  <data name="DigOpenFolder.SecondaryButtonText" xml:space="preserve">
-    <value>ยกเลืก</value>
   </data>
   <data name="DigOpenFolder.Title" xml:space="preserve">
     <value>เปิดโฟลเดอร์ฟ้อนค์</value>
@@ -1065,6 +1056,9 @@
   </data>
   <data name="FontFolderMenuItem.Text" xml:space="preserve">
     <value>โฟลเดอร์ฟ้อนต์</value>
+  </data>
+  <data name="BtnTextClose.Content" xml:space="preserve">
+    <value>ปิด</value>
   </data>
   <data name="DigOpenFolderContent.SelectFolderButtonContent" xml:space="preserve">
     <value>เลือกโฟลเดอร์r</value>

@@ -188,13 +188,14 @@ namespace CharacterMapCX
 
 		ComPtr<IDWriteFont3> m_font = nullptr;
 
+		DWriteProperties^ m_dwProperties = nullptr;
+
 	private:
 		inline DWriteFontFace() { }
 
 		bool m_hasMetrics = false;
 		DWRITE_FONT_METRICS1 m_metrics{};
 		CanvasFontFace^ m_fontFace = nullptr;
-		DWriteProperties^ m_dwProperties = nullptr;
 		ComPtr<IDWriteFontFaceReference> m_fontResource = nullptr;
 	};
 }

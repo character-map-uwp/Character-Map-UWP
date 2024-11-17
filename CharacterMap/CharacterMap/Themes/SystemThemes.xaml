@@ -192,7 +192,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="GridViewItem" BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" />
+    <Style BasedOn="{StaticResource DefaultThemeGridViewItemStyle}" TargetType="GridViewItem" />
 
     <DataTemplate x:Key="DefaultControlHeaderTemplate">
         <ContentPresenter Margin="0 12 0 0" Content="{Binding}" />

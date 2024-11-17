@@ -152,6 +152,12 @@ public class AppSettings : INotifyPropertyChanged
         set => Set(value);
     }
 
+    public bool HideSimulatedFontFaces
+    {
+        get => Get(false);
+        set => Set(value);
+    }
+
     public ElementTheme UserRequestedTheme
     {
         get => (ElementTheme)Get((int)ElementTheme.Default);

@@ -42,7 +42,7 @@
                         ItemsSource="{x:Bind ViewModel.Collections, Mode=OneWay}"
                         SelectedItem="{x:Bind ViewModel.SelectedCollection, Mode=TwoWay}"
                         SelectionChanged="{x:Bind ViewModel.RefreshFontLists}"
-                        d:PlaceholderText="Select exisiting">
+                        d:PlaceholderText="{core:Localizer Key=CollectionSelector/PlaceholderText}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <controls:AutoGrid Definitions="c* cAuto" Orientation="Horizontal">
@@ -64,12 +64,12 @@
                     <TextBlock
                         x:Uid="OrLabel"
                         VerticalAlignment="Center"
-                        d:Text="or" />
+                        d:Text="{core:Localizer Key=OrLabel/Text}" />
                     <HyperlinkButton
                         x:Uid="CreateNewButton"
                         VerticalAlignment="Center"
                         Click="NewCollection_Click"
-                        d:Content="Create New" />
+                        d:Content="{core:Localizer Key=CreateNewButton/Content}" />
                 </StackPanel>
 
                 <StackPanel
@@ -88,7 +88,8 @@
                         IsEnabled="{x:Bind ViewModel.IsSelectedEditable, Mode=OneWay}"
                         Style="{StaticResource MapInfoButtonStyle}"
                         ToolTipService.Placement="Bottom"
-                        d:Label="Rename">
+                        d:Label="{core:Localizer Key=EditCollectionButton/Label}"
+                        d:ToolTipService.ToolTip="{core:Localizer Key=EditCollectionButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                         <FontIcon Glyph="&#xE8AC;" />
                     </controls:UXButton>
                     <controls:UXButton
@@ -100,7 +101,8 @@
                         IsEnabled="{x:Bind ViewModel.IsSelectedEditable, Mode=OneWay}"
                         Style="{StaticResource MapInfoButtonStyle}"
                         ToolTipService.Placement="Bottom"
-                        d:Label="Delete">
+                        d:Label="{core:Localizer Key=Delete}"
+                        d:ToolTipService.ToolTip="{core:Localizer Key=DeleteCollectionButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                         <FontIcon Glyph="&#xE74D;" />
                     </controls:UXButton>
                     <controls:UXButton
@@ -111,18 +113,24 @@
                         Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                         IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedCollection), Mode=OneWay}"
                         Style="{StaticResource MapInfoButtonStyle}"
-                        d:Label="Export">
+                        d:Label="{core:Localizer Key=CollectionExportButton/Label}"
+                        d:ToolTipService.ToolTip="{core:Localizer Key=CollectionExportButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                         <Button.Flyout>
                             <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
-                                <MenuFlyoutItem x:Uid="CollectionExportHeader" Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}" />
+                                <MenuFlyoutItem
+                                    x:Uid="CollectionExportHeader"
+                                    Style="{StaticResource MenuFlyoutItemReadOnlyHeaderStyle}"
+                                    d:Text="{core:Localizer Key=CollectionExportHeader/Text}" />
                                 <MenuFlyoutItem
                                     x:Uid="CollectionExportFolder"
                                     Click="{x:Bind ViewModel.ExportAsFolder}"
-                                    Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                                    d:Text="{core:Localizer Key=CollectionExportFolder/Text}" />
                                 <MenuFlyoutItem
                                     x:Uid="CollectionExportZip"
                                     Click="{x:Bind ViewModel.ExportAsZip}"
-                                    Style="{StaticResource ThemeMenuFlyoutItemStyle}" />
+                                    Style="{StaticResource ThemeMenuFlyoutItemStyle}"
+                                    d:Text="{core:Localizer Key=CollectionExportZip/Text}" />
                             </MenuFlyout>
                         </Button.Flyout>
                         <Grid>
@@ -142,7 +150,8 @@
                                     OpticalMarginAlignment="TrimSideBearings"
                                     Text="{x:Bind ViewModel.CollectionExportProgress, Mode=OneWay}"
                                     TextAlignment="Center"
-                                    TextLineBounds="Tight" />
+                                    TextLineBounds="Tight"
+                                    d:Text="11%" />
                             </StackPanel>
 
                             <Path
@@ -164,7 +173,7 @@
                     Grid.ColumnSpan="2"
                     Margin="0 12 0 0"
                     Style="{StaticResource DescriptionStyle}"
-                    d:Text="Create collections to compare, export or manage multiple fonts at once. To get started, select an existing collection above or create a new one." />
+                    d:Text="{core:Localizer Key=CollectionManagementHint/Text}" />
             </Grid>
         </controls:SettingsPresenter>
 
@@ -187,7 +196,7 @@
                         <TextBlock
                             x:Uid="AllFontsLabel"
                             VerticalAlignment="Center"
-                            d:Text="All Fonts" />
+                            d:Text="{core:Localizer Key=AllFontsLabel/Text}" />
                         <StackPanel
                             HorizontalAlignment="Right"
                             VerticalAlignment="Center"
@@ -201,10 +210,11 @@
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE8E6;" />
                             </controls:UXButton>
                             <controls:UXButton
-                                x:Uid="AddTooButton"
+                                x:Uid="AddToButton"
                                 Click="{x:Bind ViewModel.AddToCollection}"
                                 IsEnabled="{x:Bind core:Converters.TrueFalse(AllFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}"
-                                IsLabelVisible="True">
+                                IsLabelVisible="True"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=AddToButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE710;" />
                             </controls:UXButton>
                         </StackPanel>
@@ -217,7 +227,10 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBox x:Uid="FontFamilyFilterInput" Text="{Binding ViewModel.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBox
+                        x:Uid="FontFamilyFilterInput"
+                        Text="{Binding ViewModel.Query, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        d:PlaceholderText="{core:Localizer Key=FontFamilyFilterInput/PlaceholderText}" />
 
                     <TextBlock
                         Grid.Row="1"
@@ -260,7 +273,8 @@
                             <controls:UXButton
                                 x:Uid="RemoveFromButton"
                                 Click="{x:Bind ViewModel.RemoveFromCollection}"
-                                IsEnabled="{x:Bind core:Converters.TrueFalse(CollectionFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}">
+                                IsEnabled="{x:Bind core:Converters.TrueFalse(CollectionFontsList.HasSelection, ViewModel.IsSaving), Mode=OneWay}"
+                                d:ToolTipService.ToolTip="{core:Localizer Key=RemoveFromButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                                 <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE738;" />
                             </controls:UXButton>
                         </StackPanel>
@@ -299,7 +313,8 @@
             x:Uid="SmartCollectionEditHint"
             Grid.Row="2"
             Style="{StaticResource DescriptionStyle}"
-            Text="" />
+            Text=""
+            d:Text="{core:Localizer Key=SmartCollectionEditHint/Text}" />
 
     </Grid>
 </UserControl>

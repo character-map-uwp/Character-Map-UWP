@@ -12,12 +12,11 @@
     PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
     PrimaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
     SecondaryButtonStyle="{StaticResource DefaultThemeButtonStyle}"
+    SecondaryButtonText="{core:Localizer Key=Cancel}"
     Style="{StaticResource DefaultThemeContentDialogStyle}"
     mc:Ignorable="d"
-    d:PrimaryButtonText="Open Fonts"
-    d:SecondaryButtonText="Cancel"
-    d:Title="Open Font Folder">
-
+    d:PrimaryButtonText="{core:Localizer Key=DigOpenFolder/PrimaryButtonText}"
+    d:Title="{core:Localizer Key=DigOpenFolder/Title}">
 
     <Grid>
 
@@ -27,10 +26,11 @@
             MinWidth="500"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Spacing="24">
+            Spacing="24"
+            d:Visibility="Collapsed">
             <muxc:ProgressRing
-                Width="75"
-                Height="75"
+                Width="64"
+                Height="64"
                 Margin="0 24 0 0"
                 Background="Transparent"
                 Foreground="{ThemeResource ApplicationForegroundThemeBrush}"
@@ -42,48 +42,34 @@
             <TextBlock
                 HorizontalAlignment="Center"
                 Style="{StaticResource TitleTextStyle}"
-                Text="{core:Localizer Key=DigOpenFolderContent/FindingFontsLabel, Casing={StaticResource TitleCasing}}"
-                d:Text="Finding Files..." />
+                Text="{core:Localizer Key=DigOpenFolderContent/FindingFontsLabel, Casing={StaticResource TitleCasing}}" />
 
             <TextBlock Margin="0 -8 0 0" HorizontalAlignment="Center">
-                <Run Text="{core:Localizer Key=DigOpenFolderContent/PrefixLabel}" d:Text="Found" />
+                <Run Text="{core:Localizer Key=DigOpenFolderContent/PrefixLabel}" />
                 <Run Text="{x:Bind TemplateSettings.Count, Mode=OneWay}" d:Text="11" />
-                <Run Text="{core:Localizer Key=DigOpenFolderContent/SuffixLabel}" d:Text="font files" />
+                <Run Text="{core:Localizer Key=DigOpenFolderContent/SuffixLabel}" />
             </TextBlock>
         </StackPanel>
 
         <StackPanel
             x:Name="EntryRoot"
             x:Load="{x:Bind core:Converters.False(TemplateSettings.IsLoading), Mode=OneWay, FallbackValue=True}"
-            d:IsHidden="True">
-            <TextBlock
-                FontWeight="SemiBold"
-                Text="{core:Localizer Key=DigOpenFolderContent/SelectHeader}"
-                d:Text="Selected Folder (click to change)" />
+            d:Visibility="Visible">
+            <TextBlock FontWeight="SemiBold" Text="{core:Localizer Key=DigOpenFolderContent/SelectHeader}" />
             <Button
                 Margin="0 4 0 0"
                 Click="{x:Bind PickFolderClick}"
-                Content="{x:Bind TemplateSettings.Contents, Mode=OneWay}" />
+                Content="{x:Bind TemplateSettings.Contents, Mode=OneWay}"
+                d:Content="{core:Localizer Key=DigOpenFolderContent/SelectFolderButtonContent}" />
 
             <TextBlock
                 Margin="0 24 0 0"
                 FontWeight="SemiBold"
-                Text="{core:Localizer Key=DigOpenFolderContent/FindHeader}"
-                d:Text="Find Options" />
-            <TextBlock
-                Opacity="0.8"
-                Text="{core:Localizer Key=DigOpenFolderContent/FindDescription}"
-                d:Text="Enabling options may dramatically increase time required to open the folder" />
-            <CheckBox
-                Content="{core:Localizer Key=DigOpenFolderContent/CheckRecursiveContent}"
-                IsChecked="{x:Bind TemplateSettings.AllowRecursive, Mode=TwoWay}"
-                d:Content="Look for fonts inside child folders" />
-            <CheckBox
-                Content="{core:Localizer Key=DigOpenFolderContent/CheckZipContent}"
-                IsChecked="{x:Bind TemplateSettings.AllowZip, Mode=TwoWay}"
-                d:Content="Look for fonts inside .ZIP archives" />
+                Text="{core:Localizer Key=DigOpenFolderContent/FindHeader}" />
+            <TextBlock Style="{StaticResource DescriptionStyle}" Text="{core:Localizer Key=DigOpenFolderContent/FindDescription}" />
+            <CheckBox Content="{core:Localizer Key=DigOpenFolderContent/CheckRecursiveContent}" IsChecked="{x:Bind TemplateSettings.AllowRecursive, Mode=TwoWay}" />
+            <CheckBox Content="{core:Localizer Key=DigOpenFolderContent/CheckZipContent}" IsChecked="{x:Bind TemplateSettings.AllowZip, Mode=TwoWay}" />
         </StackPanel>
     </Grid>
-
 
 </ContentDialog>
