@@ -136,6 +136,8 @@ public static class ResourceHelper
 
     public static bool IsZuneTheme() => AppSettings.ApplicationDesignTheme == 3;
 
+    public static bool IsMaterialTheme => AppSettings.ApplicationDesignTheme == 4;
+
     public static void GoToThemeState(this Control control)
     {
         string state = AppSettings.ApplicationDesignTheme switch
@@ -144,6 +146,7 @@ public static class ResourceHelper
             1 => "FUIThemeState",
             2 => "ClassicThemeState",
             3 => "ZuneThemeState",
+            4 => "MaterialThemeState",
             _ => "DefaultThemeState"
         };
 

@@ -470,7 +470,10 @@
 
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <TextBlock Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="{core:Localizer Key=OptionAllFonts/Text}" />
-                                    <FontIcon FontSize="10" Glyph="&#xE70D;" />
+                                    <FontIcon
+                                        FontSize="10"
+                                        Glyph="{core:ThemeIcon Icon=ChevronDown}"
+                                        Style="{StaticResource ThemeFontIconStyle}" />
                                 </StackPanel>
 
                                 <Button.Flyout>
