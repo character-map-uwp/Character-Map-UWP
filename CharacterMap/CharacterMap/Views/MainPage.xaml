@@ -40,6 +40,7 @@
                     <Setter Property="Width" Value="470" />
                     <Setter Property="MaxWidth" Value="470" />
                     <Setter Property="MinWidth" Value="470" />
+                    <Setter Property="UseLayoutRounding" Value="False" />
                 </Style>
             </Flyout.FlyoutPresenterStyle>
 
@@ -81,14 +82,14 @@
                                 <controls:ButtonLabel
                                     Title="{core:Localizer Key='FontFileMenuItem/Text'}"
                                     Description="{core:Localizer Key='OpenFontDescription/Text'}"
-                                    Glyph="&#xE8E5;"
+                                    Glyph="{core:Icons Icon='FileOpen'}"
                                     Shortcut="Ctrl+O" />
                             </Button>
                             <Button Click="{x:Bind OpenFolder}">
                                 <controls:ButtonLabel
                                     Title="{core:Localizer Key='FontFolderMenuItem/Text'}"
                                     Description="{core:Localizer Key='OpenFolderDescription/Text'}"
-                                    Glyph="&#xE838;"
+                                    Glyph="{core:Icons Icon='FolderOpen'}"
                                     Shortcut="Ctrl+Shift+O" />
                             </Button>
                         </controls:ButtonGroup>
@@ -137,7 +138,7 @@
                                 <Button Click="{x:Bind ShowPrint}">
                                     <controls:ButtonLabel
                                         Title="{core:Localizer Key='BtnPrint/Content'}"
-                                        Glyph="&#xE749;"
+                                        Glyph="{core:Icons Icon='Print'}"
                                         Shortcut="Ctrl+P" />
                                 </Button>
 
@@ -145,14 +146,14 @@
                                     x:Name="AppMenuSettings"
                                     x:Load="{x:Bind core:Converters.False(ViewModel.IsSecondaryView)}"
                                     Click="BtnSettings_OnClick">
-                                    <controls:ButtonLabel Title="{core:Localizer Key='SettingsHeader/Text'}" Glyph="&#xE713;" />
+                                    <controls:ButtonLabel Title="{core:Localizer Key='SettingsHeader/Text'}" Glyph="{core:Icons Icon='Settings'}" />
                                 </Button>
 
                                 <Button
                                     x:Name="AppMenuAbout"
                                     x:Load="{x:Bind core:Converters.False(ViewModel.IsSecondaryView)}"
                                     Click="{x:Bind ShowAbout}">
-                                    <controls:ButtonLabel Title="{core:Localizer Key='SettingsAboutLabel/Text'}" Glyph="&#xE946;" />
+                                    <controls:ButtonLabel Title="{core:Localizer Key='SettingsAboutLabel/Text'}" Glyph="{core:Icons Icon='Info'}" />
                                 </Button>
 
                             </controls:ButtonGroup>
@@ -171,9 +172,9 @@
             <MenuFlyoutSubItem Text="{core:Localizer Key='OpenFontButton/Label'}">
                 <MenuFlyoutSubItem.Icon>
                     <FontIcon
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
-                        Glyph="&#xED25;" />
+                        Glyph="&#xED25;"
+                        Style="{StaticResource ThemeFontIconStyle}" />
                 </MenuFlyoutSubItem.Icon>
                 <MenuFlyoutItem
                     x:Uid="FontFileMenuItem"
@@ -199,9 +200,9 @@
                 </MenuFlyoutItem.KeyboardAccelerators>
                 <MenuFlyoutItem.Icon>
                     <FontIcon
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
-                        Glyph="&#xE8F1;" />
+                        Glyph="&#xE8F1;"
+                        Style="{StaticResource ThemeFontIconStyle}" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
@@ -212,9 +213,9 @@
                 <MenuFlyoutItem.Icon>
                     <FontIcon
                         x:Name="ToggleFullscreenIcon"
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
-                        Glyph="&#xE740;" />
+                        Glyph="&#xE740;"
+                        Style="{StaticResource ThemeFontIconStyle}" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
@@ -226,9 +227,9 @@
                 </MenuFlyoutItem.KeyboardAccelerators>
                 <MenuFlyoutItem.Icon>
                     <FontIcon
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
-                        Glyph="&#xE749;" />
+                        Glyph="&#xE749;"
+                        Style="{StaticResource ThemeFontIconStyle}" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
@@ -242,9 +243,9 @@
                 d:Text="{core:Localizer Key=SettingsHeader/Text}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
-                        Glyph="&#xE713;" />
+                        Glyph="&#xE713;"
+                        Style="{StaticResource ThemeFontIconStyle}" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
 
@@ -256,9 +257,9 @@
                 d:Text="{core:Localizer Key=SettingsAboutLabel/Text}">
                 <MenuFlyoutItem.Icon>
                     <FontIcon
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
                         FontSize="14"
-                        Glyph="&#xE946;" />
+                        Glyph="&#xE946;"
+                        Style="{StaticResource ThemeFontIconStyle}" />
                 </MenuFlyoutItem.Icon>
             </MenuFlyoutItem>
         </MenuFlyout>
@@ -333,9 +334,9 @@
                                 <FontIcon
                                     x:Name="MainMenuIcon"
                                     x:Load="False"
-                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
                                     FontSize="{Binding ElementName=MainMenuButton, Path=FontSize}"
-                                    Glyph="&#xE700;" />
+                                    Glyph="{core:Icons Icon='Menu'}"
+                                    Style="{StaticResource ThemeFontIconStyle}" />
                                 <muxc:AnimatedIcon
                                     x:Name="AnimatedMenuIcon"
                                     x:Load="False"
@@ -347,7 +348,7 @@
                                         <muxc:FontIconSource
                                             FontFamily="{StaticResource SymbolThemeFontFamily}"
                                             FontSize="{Binding ElementName=MainMenuButton, Path=FontSize}"
-                                            Glyph="&#xE700;" />
+                                            Glyph="{core:Icons Icon='Menu'}" />
                                     </muxc:AnimatedIcon.FallbackIconSource>
                                 </muxc:AnimatedIcon>
                             </Grid>
@@ -936,7 +937,7 @@
                             <FontIcon
                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="18"
-                                Glyph="&#xE8A0;" />
+                                Glyph="{core:Icons Icon='ClosePane'}" />
                         </controls:UXButton>
 
                         <controls:UXButton
@@ -1067,7 +1068,7 @@
                     x:Load="False"
                     Grid.Row="2"
                     Grid.ColumnSpan="3"
-                    Background="{ThemeResource LayerOnMicaBaseAltFillColorDefaultBrush}"
+                    Background="{ThemeResource TopCardBrush}"
                     BackgroundTransition="{StaticResource RootBackgroundTransition}"
                     BorderBrush="{ThemeResource TabViewSelectedItemBorderBrush}"
                     BorderThickness="1 0 0 0"
@@ -1104,9 +1105,8 @@
                                             x:Load="False"
                                             HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
-                                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                            FontSize="16"
-                                            Glyph="&#xE713;" />
+                                            Glyph="{core:Icons Icon='Settings'}"
+                                            Style="{StaticResource ThemeFontIconStyle}" />
                                         <muxc:AnimatedIcon
                                             x:Name="SettingsButtonAnimatedIcon"
                                             x:Load="False"
@@ -1118,7 +1118,7 @@
                                                 <muxc:FontIconSource
                                                     FontFamily="{StaticResource SymbolThemeFontFamily}"
                                                     FontSize="16"
-                                                    Glyph="&#xE713;" />
+                                                    Glyph="{core:Icons Icon='Settings'}" />
                                             </muxc:AnimatedIcon.FallbackIconSource>
                                         </muxc:AnimatedIcon>
                                     </Grid>
@@ -1422,6 +1422,30 @@
                         <Setter Target="LayoutRoot.Background" Value="{ThemeResource DefaultPageBackgroundBrush}" />
                         <Setter Target="OverlayPaneRootBackground.Background" Value="White" />
                         <!--<Setter Target="FontListFilter.Foreground" Value="Black" />-->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="MaterialThemeState">
+                    <VisualState.Setters>
+                        <Setter Target="TabBorder.CornerRadius" Value="16 0 0 0" />
+                        <Setter Target="FontsTabContainer.Margin" Value="12 0 0 0" />
+                        <Setter Target="PageRoot.Foreground" Value="{ThemeResource TextFillColorPrimaryBrush}" />
+                        <!--<Setter Target="MainMenuButton.(core:Properties.SupportAnimatedIcon)" Value="True" />
+                        <Setter Target="BtnSettings.(core:Properties.SupportAnimatedIcon)" Value="True" />
+                        <Setter Target="AnimatedMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="SettingsButtonAnimatedIcon.Visibility" Value="Visible" />-->
+                        <Setter Target="MainMenuIcon.Visibility" Value="Visible" />
+                        <Setter Target="SettingsButtonIcon.Visibility" Value="Visible" />
+                        <Setter Target="PaneRootBackground.Visibility" Value="Visible" />
+                        <Setter Target="PaneRootBackground.CornerRadius" Value="0" />
+                        <Setter Target="OverlayPaneRootBackground.Background" Value="{ThemeResource SystemChromeMediumColor}" />
+                        <Setter Target="FontMap.Margin" Value="0 0 2 0" />
+                        <Setter Target="FontMap.Padding" Value="0 0 0 4" />
+                        <Setter Target="FontListFilter.(core:Properties.MaterialCornerStyle)" Value="FlatLeft" />
+                        <Setter Target="FontListFilter.Margin" Value="-2 0 0 0" />
+                        <Setter Target="SplitViewContentRoot.Margin" Value="12 0 0 0" />
+                        <Setter Target="LstFontFamily.ItemContainerStyle" Value="{core:OptionalResource Key='FontListItemStyle'}" />
+                        <Setter Target="MainMenuButton.Style" Value="{core:OptionalResource Key='MaterialTitleBarButtonStyle'}" />
+                        <Setter Target="MainMenuButton.FontSize" Value="20" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>

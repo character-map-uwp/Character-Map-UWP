@@ -165,7 +165,7 @@
                         Tag="SearchPanel"
                         d:Content="{core:Localizer Key=SettingsCharacterSearchHeader/Text}">
                         <controls:MenuButton.Icon>
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE721;" />
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{core:Icons Icon='Search'}" />
                         </controls:MenuButton.Icon>
                     </controls:MenuButton>
 
@@ -260,7 +260,7 @@
                                             TickPlacement="Outside"
                                             Value="{x:Bind GetGridSize(GridSize), Mode=TwoWay, BindBack=UpdateGridSize}"
                                             d:Value="80" />
-                                        <TextBlock Style="{StaticResource BodyTextBlockStyle}">
+                                        <TextBlock FontFamily="{StaticResource ContentControlThemeFontFamily}" Style="{StaticResource BodyTextBlockStyle}">
                                             <Run Text="{x:Bind GridSize, Mode=OneWay}" d:Text="80" />
                                             <Run x:Uid="PixelUnits" d:Text="{core:Localizer Key=PixelUnits/Text}" />
                                         </TextBlock>
@@ -399,6 +399,7 @@
                                             BorderBrush="{ThemeResource PivotNavButtonBackgroundThemeBrush}"
                                             BorderThickness="1"
                                             CornerRadius="4"
+                                            FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                             IsHitTestVisible="False"
                                             IsItemClickEnabled="False"
                                             IsSwipeEnabled="False"
@@ -1122,7 +1123,7 @@
 
                                         <TextBlock
                                             x:Uid="Settings_AboutDescription"
-                                            Style="{StaticResource BodyTextBlockStyle}"
+                                            Style="{StaticResource BaseTextStyle}"
                                             TextWrapping="Wrap"
                                             d:Text="{core:Localizer Key=Settings_AboutDescription/Text}" />
 

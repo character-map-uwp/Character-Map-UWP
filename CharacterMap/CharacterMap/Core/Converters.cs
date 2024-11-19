@@ -92,6 +92,8 @@ public static class Converters
     public static string GetFormat2(string key, object arg, object arg2)
         => Localization.Get(key, arg, arg2);
 
+
+    private static FontFamily _previewFamily = null;
     public static FontFamily GetPreviewFontSource(FontVariant variant)
     {
         if (_settings == null)
@@ -105,7 +107,7 @@ public static class Converters
             && !_userCollections.SymbolCollection.Fonts.Contains(variant.FamilyName))
             return new FontFamily(variant.Source);
 
-        return FontFamily.XamlAutoFontFamily;
+        return _previewFamily ??= ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
     }
 
     public static string GetFileSize(int fileSize)

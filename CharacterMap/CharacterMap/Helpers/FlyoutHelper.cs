@@ -233,7 +233,7 @@ public static class FlyoutHelper
                         Create("OpenInNewTab/Text", "\uECCD", OpenInNewTab);
 
                     // 1.2. Create "Open in New Window"
-                    MenuFlyoutItem newWindow = Create("OpenInNewWindow/Text", "\uE17C", OpenInNewWindow);
+                    MenuFlyoutItem newWindow = Create("OpenInNewWindow/Text", Core.Icons.Get("NewWindow"), OpenInNewWindow);
                     if (showAdvanced)
                         newWindow.AddKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control);
                 }
@@ -241,7 +241,7 @@ public static class FlyoutHelper
                 // 2. Add Save Font File & Export Font Glyphs options
                 if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.Face))
                 {
-                    Create("ExportFontFileLabel/Text", "\uE792", SaveFont_Click, VirtualKey.S);
+                    Create("ExportFontFileLabel/Text", Core.Icons.Get("Save"), SaveFont_Click, VirtualKey.S);
                     if (showAdvanced && !args.IsTabContext)
                         Create("ExportCharactersLabel/Text", "\uE105", Export_Click, VirtualKey.E);
                 }
@@ -272,7 +272,7 @@ public static class FlyoutHelper
             {
                 if (Windows.Graphics.Printing.PrintManager.IsSupported())
                 {
-                    MenuFlyoutItem print = Create("BtnPrint/Content", "\uE749", Print_Click, VirtualKey.P, false);
+                    MenuFlyoutItem print = Create("BtnPrint/Content", Core.Icons.Get("Print"), Print_Click, VirtualKey.P, false);
                     menu.Items.Insert(standalone ? 2 : 3, print);
                 }
             }
@@ -284,7 +284,7 @@ public static class FlyoutHelper
                 && font.HasImportedFiles)
             {
                 menu.AddSeparator();
-                MenuFlyoutItem del = Create("RemoveFontFlyout/Text", "\uE107", DeleteClick);
+                MenuFlyoutItem del = Create("RemoveFontFlyout/Text", Core.Icons.Get("Delete"), DeleteClick);
                 if (showAdvanced)
                     del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
             }
@@ -415,7 +415,7 @@ public static class FlyoutHelper
         MenuFlyoutItem newCollection = new()
         {
             Text = Localization.Get("NewCollectionItem/Text"),
-            Icon = new FontIcon { Glyph = "\uE109" },
+            Icon = new FontIcon { Glyph = Core.Icons.Get("Add") },
             DataContext = items,
             Style = style
         };

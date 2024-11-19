@@ -324,7 +324,7 @@
                                     </VisualTransition>
                                     <VisualTransition From="Closed" To="Opened">
                                         <Storyboard>
-                                            <!-- Shadow needs some opacity to start -->
+                                            <!--  Shadow needs some opacity to start  -->
                                             <DoubleAnimation
                                                 Storyboard.TargetName="LayoutRoot"
                                                 Storyboard.TargetProperty="Opacity"

@@ -95,6 +95,10 @@ public sealed partial class XamlTitleBar : ContentControl
         if (GetTemplateChild("BackgroundElement") is FrameworkElement e)
         {
             _backgroundElement = e;
+
+            if (DesignMode.DesignModeEnabled)
+                return;
+
             UpdateDragElement();
             TryUpdateMetrics();
         }
