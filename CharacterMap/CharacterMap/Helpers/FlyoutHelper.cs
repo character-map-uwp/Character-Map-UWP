@@ -181,12 +181,12 @@ public static class FlyoutHelper
             }
         }
 
-        MenuFlyoutItem Create(string key, string icon, RoutedEventHandler handler, VirtualKey accel = VirtualKey.None, bool add = true)
+        MenuFlyoutItem Create(string key, ThemeIcon icon, RoutedEventHandler handler, VirtualKey accel = VirtualKey.None, bool add = true)
         {
             MenuFlyoutItem item = new()
             {
                 Text = key.StartsWith("~") ? key.Remove(0, 1) : Localization.Get(key),
-                Icon = new FontIcon { Glyph = icon },
+                Icon = Icon(icon),
                 Tag = font,
                 DataContext = options,
                 Style = style
@@ -230,10 +230,10 @@ public static class FlyoutHelper
                     // 1.1. Only show "Open in New Tab" if this is Font List context menu
                     //      and supported by theme
                     if (showAdvanced is false && ResourceHelper.SupportsTabs)
-                        Create("OpenInNewTab/Text", "\uECCD", OpenInNewTab);
+                        Create("OpenInNewTab/Text", ThemeIcon.NewTab, OpenInNewTab);
 
                     // 1.2. Create "Open in New Window"
-                    MenuFlyoutItem newWindow = Create("OpenInNewWindow/Text", "\uE17C", OpenInNewWindow);
+                    MenuFlyoutItem newWindow = Create("OpenInNewWindow/Text", ThemeIcon.NewWindow, OpenInNewWindow);
                     if (showAdvanced)
                         newWindow.AddKeyboardAccelerator(VirtualKey.N, VirtualKeyModifiers.Control);
                 }
@@ -241,9 +241,9 @@ public static class FlyoutHelper
                 // 2. Add Save Font File & Export Font Glyphs options
                 if (options != null && options.Variant != null && DirectWrite.IsFontLocal(options.Variant.Face))
                 {
-                    Create("ExportFontFileLabel/Text", "\uE792", SaveFont_Click, VirtualKey.S);
+                    Create("ExportFontFileLabel/Text", ThemeIcon.Save, SaveFont_Click, VirtualKey.S);
                     if (showAdvanced && !args.IsTabContext)
-                        Create("ExportCharactersLabel/Text", "\uE105", Export_Click, VirtualKey.E);
+                        Create("ExportCharactersLabel/Text", ThemeIcon.Save, Export_Click, VirtualKey.E);
                 }
 
                 // 3. Add "Add to Collection" button
@@ -272,7 +272,7 @@ public static class FlyoutHelper
             {
                 if (Windows.Graphics.Printing.PrintManager.IsSupported())
                 {
-                    MenuFlyoutItem print = Create("BtnPrint/Content", "\uE749", Print_Click, VirtualKey.P, false);
+                    MenuFlyoutItem print = Create("BtnPrint/Content", ThemeIcon.Print, Print_Click, VirtualKey.P, false);
                     menu.Items.Insert(standalone ? 2 : 3, print);
                 }
             }
@@ -284,7 +284,7 @@ public static class FlyoutHelper
                 && font.HasImportedFiles)
             {
                 menu.AddSeparator();
-                MenuFlyoutItem del = Create("RemoveFontFlyout/Text", "\uE107", DeleteClick);
+                MenuFlyoutItem del = Create("RemoveFontFlyout/Text", ThemeIcon.Delete, DeleteClick);
                 if (showAdvanced)
                     del.AddKeyboardAccelerator(VirtualKey.Delete, VirtualKeyModifiers.Control);
             }
@@ -296,15 +296,15 @@ public static class FlyoutHelper
 
             // 7.1. Add "Compare Fonts button"
             if (font.HasVariants)
-                Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", "\uE1D3", OpenFaceCompare);
+                Create($"~{string.Format(Localization.Get("CompareFacesCountLabel/Text"), font.Variants.Count)}", ThemeIcon.CompareFonts, OpenFaceCompare);
 
             // 7.2. Add "Add to quick compare" button if we're viewing a variant
             if (qc)
-                Create("AddToQuickCompare/Text", "\uE109", AddToQuickCompare, VirtualKey.Q);
+                Create("AddToQuickCompare/Text", ThemeIcon.Add, AddToQuickCompare, VirtualKey.Q);
 
             // 8. Add Calligraphy button
             menu.AddSeparator();
-            Create("CalligraphyLabel/Text", "\uEDFB", OpenCalligraphy, VirtualKey.I);
+            Create("CalligraphyLabel/Text", ThemeIcon.Calligraphy, OpenCalligraphy, VirtualKey.I);
         }
     }
 
@@ -337,7 +337,7 @@ public static class FlyoutHelper
             MenuFlyoutItem removeItem = new()
             {
                 Text = Localization.Get("RemoveFromCollectionItem/Text"),
-                Icon = new FontIcon { Glyph = "\uE108" },
+                Icon = Icon(ThemeIcon.Remove),
                 Tag = collection == null && filter == BasicFontFilter.SymbolFonts ? _collections.SymbolCollection : collection,
                 DataContext = font,
                 Style = style
@@ -359,6 +359,13 @@ public static class FlyoutHelper
                 }
             }
         }
+    }
+
+    static FontIcon Icon(ThemeIcon icon)
+    {
+        FontIcon f = new();
+        Properties.SetThemeIcon(f, icon);
+        return f;
     }
 
     /// <summary>
@@ -407,7 +414,7 @@ public static class FlyoutHelper
         MenuFlyoutSubItem parent = new()
         {
             Text = Localization.Get(key ?? "AddToCollectionFlyout/Text"),
-            Icon = new FontIcon { Glyph = "\uE71D" },
+            Icon = Icon(ThemeIcon.Collections),
             Style = substyle
         };
 
@@ -415,7 +422,7 @@ public static class FlyoutHelper
         MenuFlyoutItem newCollection = new()
         {
             Text = Localization.Get("NewCollectionItem/Text"),
-            Icon = new FontIcon { Glyph = "\uE109" },
+            Icon = Icon(ThemeIcon.Add),
             DataContext = items,
             Style = style
         };

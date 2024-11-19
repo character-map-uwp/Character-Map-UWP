@@ -416,10 +416,9 @@
                             d:Visibility="Visible">
                             <FontIcon
                                 x:Name="BackIcon"
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
+                                core:Properties.ThemeIcon="Back"
                                 FontSize="12"
-                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
-                                Glyph="&#xE72B;" />
+                                Foreground="{ThemeResource AppBarItemForegroundThemeBrush}" />
                         </Button>
                     </controls:XamlTitleBar>
 
@@ -470,7 +469,10 @@
 
                                 <StackPanel Orientation="Horizontal" Spacing="8">
                                     <TextBlock Text="{x:Bind ViewModel.FilterTitle, Mode=OneWay}" d:Text="{core:Localizer Key=OptionAllFonts/Text}" />
-                                    <FontIcon FontSize="10" Glyph="&#xE70D;" />
+                                    <FontIcon
+                                        FontSize="10"
+                                        Glyph="{core:ThemeIconGlyph Icon=ChevronDown}"
+                                        Style="{StaticResource ThemeFontIconStyle}" />
                                 </StackPanel>
 
                                 <Button.Flyout>
@@ -536,13 +538,13 @@
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     Click="GridView_Click"
                                     IsChecked="True">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xF0E2;" />
+                                    <FontIcon core:Properties.ThemeIcon="GridView" />
                                 </RadioButton>
                                 <RadioButton
                                     x:Uid="LayoutListToggle"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"
                                     Click="ListView_Click">
-                                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xE8FD;" />
+                                    <FontIcon core:Properties.ThemeIcon="ListView" />
                                 </RadioButton>
                             </muxc:RadioButtons>
 

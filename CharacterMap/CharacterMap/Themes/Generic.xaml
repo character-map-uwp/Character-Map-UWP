@@ -353,6 +353,7 @@
         <Setter Property="TitleBackgroundBrush" Value="{ThemeResource DefaultHostBrush}" />
         <Setter Property="TitleBarHeight" Value="32" />
         <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="CloseGlyph" Value="{core:ThemeIconGlyph Icon=ViewClose}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ModalPagePresenter">
@@ -387,7 +388,8 @@
                         <Grid
                             x:Name="HeaderGrid"
                             Grid.Row="1"
-                            Height="{StaticResource TitleRowHeight}">
+                            Height="{StaticResource TitleRowHeight}"
+                            core:Properties.GridDefinitions="c* cAuto">
 
                             <TextBlock
                                 x:Name="TitleHeader"
@@ -401,6 +403,7 @@
                             <controls:UXButton
                                 x:Name="BtnClose"
                                 x:Uid="BtnClose"
+                                Grid.Column="1"
                                 Width="45"
                                 Height="45"
                                 HorizontalAlignment="Right"
@@ -410,7 +413,7 @@
                                 h:FluentAnimation.UsePointerOver="True"
                                 Style="{StaticResource DefaultThemeAppBarButtonStyle}"
                                 Visibility="{TemplateBinding CloseButtonVisibility}">
-                                <FontIcon Glyph="&#xE711;" />
+                                <FontIcon Glyph="{TemplateBinding CloseGlyph}" Style="{StaticResource ThemeFontIconStyle}" />
                                 <Button.KeyboardAccelerators>
                                     <KeyboardAccelerator Key="Escape" Modifiers="None" />
                                 </Button.KeyboardAccelerators>
@@ -428,6 +431,20 @@
                                 <ContentPresenter Content="{TemplateBinding Content}" />
                             </Border>
                         </Grid>
+
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup x:Name="CloseStates">
+                                <VisualState x:Name="RightAligned" />
+                                <VisualState x:Name="LeftAligned">
+                                    <VisualState.Setters>
+                                        <Setter Target="BtnClose.Margin" Value="4 0 0 0" />
+                                        <Setter Target="BtnClose.(Grid.Column)" Value="0" />
+                                        <Setter Target="TitleHeader.(Grid.Column)" Value="1" />
+                                        <Setter Target="HeaderGrid.(core:Properties.GridDefinitions)" Value="cAuto c* cs0" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -486,6 +503,7 @@
     </Style>
 
     <Style TargetType="controls:CategoryFlyout">
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
@@ -508,6 +526,7 @@
                             <TextBlock
                                 x:Uid="UnicodeFiltersTitle"
                                 Margin="12 12 0 6"
+                                FontFamily="{TemplateBinding FontFamily}"
                                 FontWeight="Bold"
                                 Opacity="0.5" />
 
@@ -518,7 +537,7 @@
                                         x:Uid="AppBtnSelectAll"
                                         Style="{StaticResource LabelAppBarButtonStyle}">
                                         <AppBarButton.Icon>
-                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8B3;" />
+                                            <FontIcon core:Properties.ThemeIcon="SelectAll" />
                                         </AppBarButton.Icon>
                                     </AppBarButton>
                                     <AppBarButton
@@ -526,7 +545,7 @@
                                         x:Uid="AppBtnClear"
                                         Style="{StaticResource LabelAppBarButtonStyle}">
                                         <AppBarButton.Icon>
-                                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8E6;" />
+                                            <FontIcon core:Properties.ThemeIcon="ClearSelection" />
                                         </AppBarButton.Icon>
                                     </AppBarButton>
                                 </StackPanel>
@@ -536,7 +555,7 @@
                                     HorizontalAlignment="Right"
                                     Style="{StaticResource LabelAppBarButtonStyle}">
                                     <AppBarButton.Icon>
-                                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE72C;" />
+                                        <FontIcon core:Properties.ThemeIcon="Reset" />
                                     </AppBarButton.Icon>
                                 </AppBarButton>
                             </Grid>
@@ -647,7 +666,7 @@
         <Setter Property="FontSize" Value="12" />
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="Foreground" Value="{ThemeResource ComboBoxDropDownGlyphForeground}" />
-        <Setter Property="Content" Value="&#xE710;" />
+        <Setter Property="Content" Value="{core:ThemeIconElement Icon=Add}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:CharacterPickerButton">
@@ -791,10 +810,13 @@
                             Background="Transparent"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="0"
-                            Content="&#xE70D;"
                             CornerRadius="0"
-                            FontSize="12"
-                            Style="{StaticResource SmolButton}" />
+                            Style="{StaticResource SmolButton}">
+                            <FontIcon
+                                FontSize="12"
+                                Glyph="{core:ThemeIconGlyph Icon=ChevronDown}"
+                                Style="{StaticResource ThemeFontIconStyle}" />
+                        </Button>
 
                         <controls:CharacterPickerButton
                             x:Name="PickerButton"
@@ -930,6 +952,7 @@
         <Setter Property="CornerRadius" Value="{StaticResource InfoBarCornerRadius}" />
         <Setter Property="Padding" Value="8 4 8 6" />
         <Setter Property="Margin" Value="6 12 0 0" />
+        <Setter Property="FontSize" Value="12" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:InfoBar">
@@ -947,15 +970,15 @@
                             </Grid.ColumnDefinitions>
 
                             <FontIcon
-                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                 FontSize="13.333"
-                                Glyph="&#xE946;" />
+                                Glyph="{core:ThemeIconGlyph Icon=FontInfo}"
+                                Style="{StaticResource ThemeFontIconStyle}" />
 
                             <ContentPresenter
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Content="{TemplateBinding Content}"
-                                FontSize="12"
+                                FontSize="{TemplateBinding FontSize}"
                                 Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                 TextLineBounds="Full"
                                 TextWrapping="Wrap" />
@@ -1011,16 +1034,15 @@
                             Style="{StaticResource ThemeTextBlockButtonStyle}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock x:Uid="GlyphNameToggleLabel" OpticalMarginAlignment="TrimSideBearings" />
-                                <TextBlock
+                                <FontIcon
                                     x:Name="Chevron"
                                     Margin="4 2 0 0"
                                     VerticalAlignment="Center"
                                     core:Properties.RotationTransition="0:0:0.2"
-                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                     FontSize="12"
+                                    Glyph="{core:ThemeIconGlyph Icon=ChevronDown}"
                                     IsTextScaleFactorEnabled="False"
-                                    Text="&#xE70D;"
-                                    TextLineBounds="Tight" />
+                                    Style="{StaticResource ThemeFontIconStyle}" />
                             </StackPanel>
                         </Button>
 

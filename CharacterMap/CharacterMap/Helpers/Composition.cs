@@ -516,6 +516,12 @@ public static class Composition
         return animation;
     }
 
+    public static T AddKeyFrame<T>(this T animation, float normalizedProgressKey, string expression, CubicBezierPoints spline) where T : KeyFrameAnimation
+    {
+        animation.InsertExpressionKeyFrame(normalizedProgressKey, expression, animation.Compositor.CreateCubicBezierEasingFunction(spline));
+        return animation;
+    }
+
     public static T AddKeyFrame<T>(this T animation, float normalizedProgressKey, string expression, CompositionEasingFunction ease = null) where T : KeyFrameAnimation
     {
         animation.InsertExpressionKeyFrame(normalizedProgressKey, expression, ease);

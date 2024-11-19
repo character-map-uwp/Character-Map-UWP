@@ -20,12 +20,13 @@ public partial class SettingsViewModel : ViewModelBase
     ];
 
     public IReadOnlyList<String> Themes { get; } =
-        [
-            "Windows 10",
-            "Windows 11",
-            "Classic Windows",
-            "Zune Desktop"
-        ];
+    [
+        "Windows 10",
+        "Windows 11",
+        "Classic Windows",
+        "Zune Desktop",
+        "Material"
+    ];
 
     public GlyphFileNameViewModel GlyphNameModel { get; } = new() { SaveTemplate = true };
 

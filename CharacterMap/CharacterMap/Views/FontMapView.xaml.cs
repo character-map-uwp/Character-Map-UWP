@@ -719,6 +719,13 @@ public sealed partial class FontMapView : ViewBase, IInAppNotificationPresenter,
 
     private void MenuFlyout_Opening(object sender, object e)
     {
+        if (ViewModel.RenderingOptions is null)
+        {
+            // Startup has gone wrong, ViewModel has no selected character
+            ViewModel.SetDefaultChar();
+            MoreMenu.Hide();
+        }
+
         if (ViewModel.SelectedFont is FontItem item)
         {
             FlyoutHelper.CreateMenu(

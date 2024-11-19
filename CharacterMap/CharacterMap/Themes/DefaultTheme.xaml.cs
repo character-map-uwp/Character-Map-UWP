@@ -35,6 +35,16 @@ public sealed partial class DefaultTheme : ResourceDictionary
                 this.MergeMUXC(ControlsResourcesVersion.Version1)
                     .Merge("ms-appx:///Themes/ZuneThemeStyles.xaml");
                 break;
+
+            case 4: // Material
+                this.Merge(
+                    new XamlControlsResources { ControlsResourcesVersion = ControlsResourcesVersion.Version2 }
+                        .Merge("ms-appx:///Styles/TabViewFluent.xaml")
+                        .Merge("ms-appx:///Themes/SystemThemes.xaml")
+                        .Merge("ms-appx:///Themes/MaterialThemeStyles.xaml"));
+
+                ThemeIconGlyph.EnableMaterialIcons();
+                break;
         }
     }
 }

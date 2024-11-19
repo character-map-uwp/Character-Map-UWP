@@ -49,19 +49,28 @@ public sealed partial class ExportView : PopoverViewBase
             return;
         }
 
-        List<UIElement> elements = new() { this };
-        elements.AddRange(OptionsPanel.Children);
-        CompositionFactory.PlayEntrance(elements, 0, 200);
+        if (ResourceHelper.IsMaterialTheme)
+        {
+            CompositionFactory.PlayScaleEntrance(this, 0.8f, 1, 0.3);
+        }
+        else
+        {
+            List<UIElement> elements = new() { this };
+            elements.AddRange(OptionsPanel.Children);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
-        elements.Clear();
-        elements.AddRange(PreviewOptions.Children);
-        elements.Add(PreviewContainer);
-        CompositionFactory.PlayEntrance(elements, 0, 200);
+            elements.Clear();
+            elements.AddRange(PreviewOptions.Children);
+            elements.Add(PreviewContainer);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
-        elements.Clear();
-        elements.Add(BottomLabel);
-        elements.AddRange(BottomButtonOptions.Children);
-        CompositionFactory.PlayEntrance(elements, 0, 200);
+            elements.Clear();
+            elements.Add(BottomLabel);
+            elements.AddRange(BottomButtonOptions.Children);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
+        }
+
+       
     }
 
     private void ItemsPanel_ContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)

@@ -18,6 +18,7 @@
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     x:Name="ViewRoot"
     BorderThickness="0"
+    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
     SizeChanged="UserControl_SizeChanged"
     mc:Ignorable="d"
     d:DesignHeight="800"
@@ -98,52 +99,41 @@
                 </AppBarButton>-->
                 <AppBarToggleButton
                     x:Uid="CharacterGroupingToggle"
+                    core:Properties.ThemeIcon="EnableGrouping"
                     IsChecked="{x:Bind ViewModel.Settings.GroupCharacters, Mode=TwoWay}"
-                    d:ToolTipService.ToolTip="{core:Localizer Key=CharacterGroupingToggle/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                    <AppBarToggleButton.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xF168;" />
-                    </AppBarToggleButton.Icon>
-                </AppBarToggleButton>
+                    d:ToolTipService.ToolTip="{core:Localizer Key=CharacterGroupingToggle/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
                 <AppBarButton
                     x:Name="IncreaseSizeButton"
                     x:Uid="IncreaseSizeButton"
                     Grid.Column="1"
+                    core:Properties.ThemeIcon="IncreaseFontSize"
                     Click="{x:Bind ViewModel.IncreaseCharacterSize}"
-                    d:ToolTipService.ToolTip="{core:Localizer Key=IncreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8E8;" />
-                </AppBarButton>
+                    d:ToolTipService.ToolTip="{core:Localizer Key=IncreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
                 <AppBarButton
                     x:Name="DecreaseSizeButton"
                     x:Uid="DecreaseSizeButton"
                     Grid.Column="2"
+                    core:Properties.ThemeIcon="DecreaseFontSize"
                     Click="{x:Bind ViewModel.DecreaseCharacterSize}"
-                    d:ToolTipService.ToolTip="{core:Localizer Key=DecreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE8E7;" />
-                </AppBarButton>
+                    d:ToolTipService.ToolTip="{core:Localizer Key=DecreaseSizeButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
                 <AppBarToggleButton
                     x:Name="ToggleCopyPaneButton"
                     x:Uid="ToggleCopyPaneButton"
                     Grid.Column="3"
+                    core:Properties.ThemeIcon="BottomPane"
                     Checked="{x:Bind ViewModel.ShowCopyPane}"
                     Loaded="ToggleCopyPaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.HideCopyPane}"
-                    d:ToolTipService.ToolTip="{core:Localizer Key=ToggleCopyPaneButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                    <AppBarToggleButton.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE75B;" />
-                    </AppBarToggleButton.Icon>
-                </AppBarToggleButton>
+                    d:ToolTipService.ToolTip="{core:Localizer Key=ToggleCopyPaneButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
                 <AppBarToggleButton
                     x:Name="TogglePaneButton"
                     x:Uid="TogglePaneButton"
                     Grid.Column="4"
+                    core:Properties.ThemeIcon="RightPane"
                     Checked="{x:Bind ViewModel.ShowPane}"
                     Loaded="PaneButton_Loaded"
                     Unchecked="{x:Bind ViewModel.HidePane}"
-                    d:ToolTipService.ToolTip="{core:Localizer Key=TogglePaneButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                    <AppBarToggleButton.Icon>
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE90D;" />
-                    </AppBarToggleButton.Icon>
-                </AppBarToggleButton>
+                    d:ToolTipService.ToolTip="{core:Localizer Key=TogglePaneButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
             </Grid>
         </Grid>
     </Control.Tag>
@@ -187,6 +177,7 @@
                     x:Name="PopupChar"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                     FontSize="150" />
 
                 <StackPanel Grid.Row="1">
@@ -222,16 +213,16 @@
             Placement="Bottom">
             <MenuFlyoutItem
                 x:Uid="BtnCopy"
+                core:Properties.ThemeIcon="Copy"
                 Click="CopyClick"
                 CommandParameter="{x:Bind models:DevValueType.Char}"
-                Icon="Copy"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                 d:Text="{core:Localizer Key=BtnCopy/Text}" />
-
             <MenuFlyoutSubItem
                 x:Uid="CopyAsImageItem"
-                Icon="Copy"
+                core:Properties.ThemeIcon="Copy"
                 d:Text="{core:Localizer Key=CopyAsImageItem/Text}">
+
                 <MenuFlyoutItem
                     x:Uid="CopyAsPngItem"
                     KeyboardAcceleratorTextOverride="Ctrl+Alt+C"
@@ -258,7 +249,7 @@
                     Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
                     d:Text="{core:Localizer Key=BlackFill/Text}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="Black" Glyph="&#xE73B;" />
+                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="Black" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -270,7 +261,7 @@
                     Visibility="{x:Bind core:Converters.FalseToVis(ViewModel.SelectedCharAnalysis.ContainsBitmapGlyphs), Mode=OneWay, FallbackValue=Collapsed}"
                     d:Text="{core:Localizer Key=WhiteFill/Text}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="White" Glyph="&#xE73B;" />
+                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="White" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -300,7 +291,7 @@
                     Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}"
                     d:Text="{core:Localizer Key=BlackFill/Text}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="Black" Glyph="&#xE73B;" />
+                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="Black" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -312,7 +303,7 @@
                     Visibility="{x:Bind core:Converters.TrueAndFalseToVis(ViewModel.SelectedCharAnalysis.IsFullVectorBased, ViewModel.IsSvgChar), Mode=OneWay}"
                     d:Text="{core:Localizer Key=WhiteFill/Text}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="White" Glyph="&#xE73B;" />
+                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="White" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyoutSubItem>
@@ -320,8 +311,8 @@
             <MenuFlyoutItem
                 x:Name="AddSelectionButton"
                 x:Uid="AddSelectionItem"
+                core:Properties.ThemeIcon="Add"
                 Click="AddClick"
-                Icon="Add"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                 d:Text="{core:Localizer Key=AddSelectionItem/Text}" />
 
@@ -330,8 +321,8 @@
             <MenuFlyoutItem
                 x:Name="FindCharButton"
                 x:Uid="FindCharButton"
+                core:Properties.ThemeIcon="Search"
                 Click="FindClick"
-                Icon="Find"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                 d:Text="{core:Localizer Key=FindCharButton/Text}" />
 
@@ -339,19 +330,16 @@
 
             <MenuFlyoutItem
                 x:Uid="CalligraphyLabel"
+                core:Properties.ThemeIcon="Calligraphy"
                 Click="OpenCalligraphyClick"
                 Style="{StaticResource ThemeMenuFlyoutItemStyle}"
-                d:Text="{core:Localizer Key=CalligraphyLabel/Text}">
-                <MenuFlyoutItem.Icon>
-                    <FontIcon FontFamily="{ThemeResource SymbolThemeFontFamily}" Glyph="&#xEDFB;" />
-                </MenuFlyoutItem.Icon>
-            </MenuFlyoutItem>
+                d:Text="{core:Localizer Key=CalligraphyLabel/Text}" />
             <MenuFlyoutSeparator />
 
             <MenuFlyoutSubItem
                 x:Name="PngRoot"
                 x:Uid="ExportPNGLabel"
-                Icon="Save"
+                core:Properties.ThemeIcon="Save"
                 d:Text="{core:Localizer Key=ExportPNGLabel/Text}">
                 <MenuFlyoutItem
                     x:Name="SavePNGColouredItem"
@@ -371,7 +359,7 @@
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     d:Text="{core:Localizer Key=BlackFill/Text}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="Black" Glyph="&#xE73B;" />
+                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="Black" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -381,14 +369,14 @@
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     d:Text="{core:Localizer Key=WhiteFill/Text}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="White" Glyph="&#xE73B;" />
+                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="White" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyoutSubItem>
             <MenuFlyoutSubItem
                 x:Name="SvgRoot"
                 x:Uid="ExportSVGLabel"
-                Icon="Save"
+                core:Properties.ThemeIcon="Save"
                 d:Text="{core:Localizer Key=ExportSVGLabel/Text}">
                 <MenuFlyoutItem
                     x:Name="SaveSVGColouredItem"
@@ -408,7 +396,7 @@
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     d:Text="{core:Localizer Key=BlackFill/Text}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="Black" Glyph="&#xE73B;" />
+                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="Black" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
                 <MenuFlyoutItem
@@ -418,7 +406,7 @@
                     Style="{StaticResource ThemeMenuFlyoutItemStyle}"
                     d:Text="{core:Localizer Key=WhiteFill/Text}">
                     <MenuFlyoutItem.Icon>
-                        <FontIcon Foreground="White" Glyph="&#xE73B;" />
+                        <FontIcon core:Properties.ThemeIcon="FilledSquare" Foreground="White" />
                     </MenuFlyoutItem.Icon>
                 </MenuFlyoutItem>
             </MenuFlyoutSubItem>
@@ -555,6 +543,7 @@
                         <TextBlock
                             x:Uid="InstallLabel"
                             Grid.Column="1"
+                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                             TextTrimming="CharacterEllipsis"
                             d:Text="{core:Localizer Key=InstallLabel/Text}" />
                     </Grid>
@@ -573,10 +562,11 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE710;" />
+                        <FontIcon core:Properties.ThemeIcon="Add" />
                         <TextBlock
                             x:Uid="AddToCollectionHint"
                             Grid.Column="1"
+                            FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                             TextTrimming="CharacterEllipsis"
                             d:Text="{core:Localizer Key=AddToCollectionHint/Text}" />
                     </Grid>
@@ -626,7 +616,7 @@
                         <CompositeTransform />
                     </AutoSuggestBox.RenderTransform>
                     <AutoSuggestBox.QueryIcon>
-                        <FontIcon Glyph="&#xE721;" />
+                        <FontIcon core:Properties.ThemeIcon="Search" />
                     </AutoSuggestBox.QueryIcon>
                     <AutoSuggestBox.KeyboardAccelerators>
                         <KeyboardAccelerator
@@ -644,7 +634,7 @@
                     Content="{x:Bind TitleRightContent, Mode=OneWay}">
                     <d:ContentPresenter.Content>
                         <Border Width="45" Height="45">
-                            <SymbolIcon Symbol="Setting" />
+                            <FontIcon core:Properties.ThemeIcon="Settings" />
                         </Border>
                     </d:ContentPresenter.Content>
                 </ContentPresenter>
@@ -735,6 +725,7 @@
                         x:Name="WeightSelector"
                         MinWidth="160"
                         Margin="0 -1 0 0"
+                        VerticalAlignment="Stretch"
                         FontSize="12"
                         FontWeight="SemiBold"
                         IsEnabled="{Binding SelectedFont.Font.HasAnyVariants}"
@@ -793,9 +784,8 @@
                         <FontIcon
                             Margin="0,0,-2,0"
                             VerticalAlignment="Center"
-                            FontFamily="{StaticResource SymbolThemeFontFamily}"
-                            FontSize="18"
-                            Glyph="&#xE946;" />
+                            core:Properties.ThemeIcon="FontInfo"
+                            FontSize="18" />
                         <Button.Flyout>
                             <Flyout
                                 core:Properties.UseExpandContractAnimation="True"
@@ -807,11 +797,13 @@
                                         <StackPanel Padding="12 24" Spacing="12">
                                             <Panel.Resources>
                                                 <Style BasedOn="{StaticResource BaseTextStyle}" TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
                                                     <Setter Property="Opacity" Value="0.5" />
                                                     <Setter Property="TextWrapping" Value="Wrap" />
                                                     <Setter Property="VerticalAlignment" Value="Top" />
                                                 </Style>
                                                 <Style x:Key="Value" BasedOn="{StaticResource BaseTextStyle}" TargetType="TextBlock">
+                                                    <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
                                                     <Setter Property="Opacity" Value="1" />
                                                     <Setter Property="Grid.Column" Value="1" />
                                                     <Setter Property="TextWrapping" Value="Wrap" />
@@ -821,6 +813,7 @@
                                             </Panel.Resources>
                                             <TextBlock
                                                 x:Uid="FontPropTitle"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                 FontWeight="Bold"
                                                 d:Text="{core:Localizer Key=FontPropTitle/Text}" />
                                             <controls:AutoGrid RowSpacing="8">
@@ -1012,9 +1005,9 @@
                         d:ToolTipService.ToolTip="{core:Localizer Key=FontOptionsButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                         <FontIcon
                             Margin="0,0,-2,0"
-                            FontFamily="{StaticResource SymbolThemeFontFamily}"
                             FontSize="18"
-                            Glyph="&#xE8D2;" />
+                            Glyph="{core:ThemeIconGlyph Icon=RenderingOptions}"
+                            Style="{StaticResource ThemeFontIconStyle}" />
                         <Button.Flyout>
                             <Flyout
                                 core:Properties.UseExpandContractAnimation="True"
@@ -1049,6 +1042,7 @@
                                                     x:Name="ColorHeader"
                                                     x:Load="{x:Bind ViewModel.SelectedVariantAnalysis.ContainsVectorColorGlyphs, Mode=OneWay}"
                                                     x:Uid="FontDisplayHeader"
+                                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                     FontWeight="Bold"
                                                     Opacity="0.5"
                                                     d:Text="{core:Localizer Key=FontDisplayHeader/Text}" />
@@ -1063,6 +1057,7 @@
                                                 <TextBlock
                                                     x:Uid="TypographyVariantsHeader"
                                                     Margin="0,12,0,0"
+                                                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                     FontWeight="Bold"
                                                     Opacity="0.5"
                                                     Visibility="{x:Bind ViewModel.SelectedVariant.HasXamlTypographyFeatures, Mode=OneWay}"
@@ -1112,10 +1107,10 @@
                         <FontIcon
                             x:Name="Icon"
                             Margin="0,0,-2,0"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="18"
-                            Glyph="&#xE8AB;"
-                            RenderTransformOrigin="0.5 0.5">
+                            Glyph="{core:ThemeIconGlyph Icon=ViewSwitch}"
+                            RenderTransformOrigin="0.5 0.5"
+                            Style="{StaticResource ThemeFontIconStyle}">
                             <FontIcon.RenderTransform>
                                 <CompositeTransform />
                             </FontIcon.RenderTransform>
@@ -1134,9 +1129,9 @@
                         d:ToolTipService.ToolTip="{core:Localizer Key=CharacterFilterButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
                         <FontIcon
                             Margin="0,0,-2,0"
-                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
                             FontSize="18"
-                            Glyph="&#xE71C;" />
+                            Glyph="{core:ThemeIconGlyph Icon=Filter}"
+                            Style="{StaticResource ThemeFontIconStyle}" />
                         <Button.Flyout>
                             <Flyout
                                 x:Name="CatFlyout"
@@ -1183,9 +1178,8 @@
                     </Button.Flyout>
                     <FontIcon
                         Margin="0,-2,-2,-2"
-                        FontFamily="{StaticResource SymbolThemeFontFamily}"
-                        FontSize="18"
-                        Glyph="&#xE712;" />
+                        Glyph="{core:ThemeIconGlyph Icon=More}"
+                        Style="{StaticResource ThemeFontIconStyle}" />
                 </controls:UXButton>
 
 
@@ -1252,9 +1246,9 @@
                                         Style="{StaticResource ChromelessButtonStyle}"
                                         ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
                                         <FontIcon
-                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                             FontSize="13.333"
-                                            Glyph="&#xE8AB;" />
+                                            Glyph="{core:ThemeIconGlyph Icon=ViewSwitch}"
+                                            Style="{StaticResource ThemeFontIconStyle}" />
                                     </Button>
                                 </controls:InfoBar.SecondaryContent>
                             </controls:InfoBar>
@@ -1269,9 +1263,9 @@
                                         Style="{StaticResource ChromelessButtonStyle}"
                                         ToolTipService.ToolTip="{core:Localizer Key=LblSwitchToTypeRamp/Text}">
                                         <FontIcon
-                                            FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                             FontSize="13.333"
-                                            Glyph="&#xE8AB;" />
+                                            Glyph="{core:ThemeIconGlyph Icon=ViewSwitch}"
+                                            Style="{StaticResource ThemeFontIconStyle}" />
                                     </Button>
                                 </controls:InfoBar.SecondaryContent>
                             </controls:InfoBar>
@@ -1284,9 +1278,9 @@
                                     <StackPanel Orientation="Horizontal" Spacing="12">
                                         <Button Click="FilterHint_Click" Style="{StaticResource ChromelessButtonStyle}">
                                             <FontIcon
-                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 FontSize="13.333"
-                                                Glyph="&#xE71C;" />
+                                                Glyph="{core:ThemeIconGlyph Icon=Filter}"
+                                                Style="{StaticResource ThemeFontIconStyle}" />
                                         </Button>
 
                                         <Button
@@ -1294,9 +1288,9 @@
                                             Style="{StaticResource ChromelessButtonStyle}"
                                             ToolTipService.ToolTip="{core:Localizer Key=SettingsHeader/Text}">
                                             <FontIcon
-                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 FontSize="13.333"
-                                                Glyph="&#xE713;" />
+                                                Glyph="{core:ThemeIconGlyph Icon=Settings}"
+                                                Style="{StaticResource ThemeFontIconStyle}" />
                                         </Button>
                                     </StackPanel>
 
@@ -1445,13 +1439,10 @@
                             <AppBarButton
                                 x:Uid="AppBtnClear"
                                 Grid.Row="2"
+                                core:Properties.ThemeIcon="ClearText"
                                 Click="{x:Bind ViewModel.ClearSequence}"
                                 IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
-                                d:Label="{core:Localizer Key=AppBtnClear/Label}">
-                                <AppBarButton.Icon>
-                                    <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED62;" />
-                                </AppBarButton.Icon>
-                            </AppBarButton>
+                                d:Label="{core:Localizer Key=AppBtnClear/Label}" />
                         </Grid>
                     </Grid>
                 </Border>
@@ -1650,7 +1641,17 @@
                         ResizeBehavior="BasedOnAlignment"
                         ResizeDirection="Columns" />
 
-                    <TextBlock
+                    <FontIcon
+                        Margin="-4 0 0 0"
+                        VerticalAlignment="Center"
+                        core:Properties.ThemeIcon="DragIndicator"
+                        FontSize="18"
+                        Foreground="{ThemeResource ListViewItemPlaceholderBackgroundThemeBrush}"
+                        IsHitTestVisible="False"
+                        IsTextScaleFactorEnabled="False"
+                        d:Foreground="Green" />
+
+                    <!--<TextBlock
                         Margin="3 0 0 0"
                         VerticalAlignment="Center"
                         FontFamily="{ThemeResource SymbolThemeFontFamily}"
@@ -1659,7 +1660,7 @@
                         IsHitTestVisible="False"
                         IsTextScaleFactorEnabled="False"
                         OpticalMarginAlignment="TrimSideBearings"
-                        Text="&#xE784;" />
+                        Text="&#xE784;" />-->
                 </Grid>
 
 
@@ -1795,12 +1796,14 @@
                             VerticalAlignment="Bottom"
                             core:Properties.UseStandardReposition="{x:Bind ViewModel.AllowAnimation, Mode=OneWay}">
                             <TextBlock
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                 FontSize="12"
                                 IsTextSelectionEnabled="True"
                                 Text="{x:Bind ViewModel.GetCharName(ViewModel.SelectedChar), Mode=OneWay}"
                                 TextWrapping="Wrap"
                                 d:Text="Latin Small Letter A" />
                             <TextBlock
+                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                 FontSize="12"
                                 Foreground="{ThemeResource TextControlPlaceholderForeground}"
                                 IsTextSelectionEnabled="True"
@@ -1955,12 +1958,8 @@
                                     <FontIcon
                                         x:Name="CopyIcon"
                                         FontSize="18"
-                                        Glyph="&#xE8C8;"
-                                        RenderTransformOrigin="0.5,0.5">
-                                        <FontIcon.RenderTransform>
-                                            <CompositeTransform />
-                                        </FontIcon.RenderTransform>
-                                    </FontIcon>
+                                        Glyph="{core:ThemeIconGlyph Icon=Copy}"
+                                        Style="{StaticResource ThemeFontIconStyle}" />
                                 </controls:UXButton>
 
                                 <StackPanel
@@ -1997,7 +1996,7 @@
                                         x:Uid="BtnSaveGlyph"
                                         d:Label="{core:Localizer Key=BtnSaveGlyph/Label}"
                                         d:ToolTipService.ToolTip="{core:Localizer Key=BtnSaveGlyph/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                                        <FontIcon Glyph="&#xE74E;" />
+                                        <FontIcon Glyph="{core:ThemeIconGlyph Icon=Save}" Style="{StaticResource ThemeFontIconStyle}" />
                                         <Button.Flyout>
                                             <MenuFlyout
                                                 x:Name="SaveAsFlyout"
@@ -2189,9 +2188,9 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <FontIcon
+                                    core:Properties.ThemeIcon="Copy"
                                     FontSize="20"
-                                    Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
-                                    Glyph="&#xEC61;" />
+                                    Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
 
                                 <StackPanel
                                     Grid.Column="1"
@@ -2200,11 +2199,13 @@
                                     <TextBlock
                                         x:Name="TxtCopiedMessage"
                                         x:Uid="TxtCopiedMessage"
+                                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                         Foreground="{ThemeResource TextOnAccentFillColorPrimaryBrush}"
                                         d:Text="{core:Localizer Key=TxtCopiedMessage/Text}" />
                                     <TextBlock
                                         x:Name="TxtCopiedVariantMessage"
                                         x:Uid="TxtCopiedVariantMessage"
+                                        FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                         FontSize="12"
                                         Foreground="{ThemeResource TextOnAccentFillColorSecondaryBrush}"
                                         TextWrapping="Wrap"
@@ -2242,6 +2243,7 @@
                                         <StackPanel Margin="0 0 0 0">
                                             <TextBlock
                                                 Margin="14 0 0 0"
+                                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                                                 FontSize="12"
                                                 Foreground="{ThemeResource TextControlHeaderForeground}"
                                                 Opacity="0.5"
@@ -2284,7 +2286,10 @@
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
 
-                                                            <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
+                                                            <TextBlock
+                                                                VerticalAlignment="Center"
+                                                                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                                                                Text="{x:Bind Name}" />
 
                                                             <controls:UXButton
                                                                 x:Uid="BtnCopyDev"
@@ -2294,10 +2299,7 @@
                                                                 Style="{StaticResource CopyButtonStyle}"
                                                                 Tag="{x:Bind Value}"
                                                                 d:ToolTipService.ToolTip="{core:Localizer Key=BtnCopyDev/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                                                                <FontIcon
-                                                                    FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                                    FontSize="16"
-                                                                    Glyph="&#xE8C8;" />
+                                                                <FontIcon core:Properties.ThemeIcon="Copy" FontSize="16" />
                                                             </controls:UXButton>
 
                                                             <!--
@@ -2328,14 +2330,10 @@
                                             Grid.Column="1"
                                             VerticalAlignment="Bottom"
                                             Click="BtnCopyCode_OnClick"
+                                            Content="{core:ThemeIconElement Icon=Copy}"
                                             Style="{StaticResource CopyButtonStyle}"
                                             Tag="{x:Bind Value}"
-                                            d:ToolTipService.ToolTip="{core:Localizer Key=BtnCopyDev/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
-                                            <FontIcon
-                                                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                                                FontSize="16"
-                                                Glyph="&#xE8C8;" />
-                                        </controls:UXButton>
+                                            d:ToolTipService.ToolTip="{core:Localizer Key=BtnCopyDev/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -2653,6 +2651,20 @@
                         <Setter Target="SelectorLabel.FontWeight" Value="SemiBold" />
                         <Setter Target="WeightSelector.FontWeight" Value="SemiBold" />
                         <Setter Target="SearchContainer.Margin" Value="0 8 0 -8" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="MaterialThemeState">
+                    <VisualState.Setters>
+                        <!--<Setter Target="CopySequenceRoot.CornerRadius" Value="8" />
+          <Setter Target="CopySequenceRoot.Margin" Value="8 0 8 8" />
+          <Setter Target="CopySequenceRoot.Background" Value="{ThemeResource CardBackgroundFillColorSecondaryBrush}" />-->
+                        <!--<Setter Target="MoreSwitchView.(core:Properties.UseAttachedStates)" Value="True" />-->
+                        <Setter Target="CharGrid.ItemContainerStyle" Value="{core:OptionalResource Key='MaterialGridViewItemStyle'}" />
+                        <Setter Target="ViewToggleButton.(core:Properties.UseAttachedStates)" Value="True" />
+                        <Setter Target="ViewRoot.(muxc:BackdropMaterial.ApplyToRootOrPageBackground)" Value="False" />
+                        <Setter Target="BackgroundBorder.Visibility" Value="Collapsed" />
+                        <Setter Target="CopyTopBorder.Visibility" Value="Collapsed" />
+                        <Setter Target="WeightSelector.MinHeight" Value="44" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
