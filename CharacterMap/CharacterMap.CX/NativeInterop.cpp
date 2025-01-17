@@ -115,7 +115,7 @@ IVectorView<DWriteFontSet^>^ NativeInterop::GetFonts(IVectorView<StorageFile^>^ 
 
 DWriteFontSet^ NativeInterop::GetFonts(StorageFile^ file)
 {
-	auto collection = m_fontManager->GetFontCollectionFromFile(file);
+	auto collection = m_fontManager->GetFontCollection(file->Path);
 	DWriteFontSet^ set = DirectWrite::GetFonts(collection)->Inflate();
 	return set;
 }

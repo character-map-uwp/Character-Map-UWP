@@ -65,6 +65,8 @@ namespace CharacterMapCX
 
 		static IMapView<UINT32, UINT32>^ GetSupportedTypography(DWriteFontFace^ fontFace);
 
+		static CanvasFontSet^ CreateFontSet(String^ path);
+
 	internal:
 		static __inline String^ GetLocaleString(ComPtr<IDWriteLocalizedStrings> strings, int ls, wchar_t* locale);
 

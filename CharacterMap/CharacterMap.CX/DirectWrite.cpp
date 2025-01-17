@@ -19,6 +19,23 @@ using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 using namespace concurrency;
 
+CanvasFontSet^ DirectWrite::CreateFontSet(String^ path)
+{
+	auto customFontManager = CustomFontManager::GetInstance();
+
+	auto fontCollection = customFontManager->GetFontCollection(path);
+
+	if (!fontCollection)
+		ThrowHR(E_INVALIDARG);
+
+	ComPtr<IDWriteFontSet> fontResource;
+	ThrowIfFailed(fontCollection->GetFontSet(&fontResource));
+
+	CanvasFontSet^ fontSet = GetOrCreate<CanvasFontSet>(fontResource.Get());
+
+	return fontSet;
+}
+
 String^ DirectWrite::GetTagName(UINT32 tag)
 {
 	return GetTagName(GetFeatureTag(tag));
@@ -270,7 +287,7 @@ IVectorView<DWriteKnownFontAxisValues^>^ DirectWrite::GetNamedAxisValues(ComPtr<
 
 DWriteFontSet^ DirectWrite::GetFonts(Uri^ uri, ComPtr<IDWriteFactory7> fac)
 {
-	CanvasFontSet^ set = ref new CanvasFontSet(uri);
+	CanvasFontSet^ set = CreateFontSet(uri->Path);
 	ComPtr<IDWriteFontSet3> fontSet = GetWrappedResource<IDWriteFontSet3>(set);
 
 	ComPtr<IDWriteFontCollection1> f1;
@@ -389,7 +406,10 @@ bool DirectWrite::HasValidFonts(Uri^ uri)
 	   To avoid garbage collection issues with CanvasFontSet in C# preventing us from
 	   immediately deleting the StorageFile, we shall do this here in C++
 	   */
-	CanvasFontSet^ fontset = ref new CanvasFontSet(uri);
+
+	auto fontset = CreateFontSet(uri->RawUri);
+
+	//CanvasFontSet^ fontset = ref new CanvasFontSet(uri);
 	bool valid = false;
 	if (fontset->Fonts->Size > 0)
 	{
