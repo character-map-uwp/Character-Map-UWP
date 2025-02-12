@@ -42,7 +42,8 @@ public class FontFinder
 
     public static HashSet<string> ImportFormats { get; } = new()
     {
-        ".ttf", ".otf", ".otc", ".ttc", ".woff", ".zip", ".woff2"
+        ".ttf", ".otf", ".otc", ".ttc", ".woff", ".zip", ".woff2",
+        ".TTF", ".OTF", ".OTC", ".TTC", ".WOFF", ".ZIP", ".WOFF2"
     };
 
 
@@ -536,7 +537,8 @@ public class FontFinder
                     new QueryOptions(CommonFileQuery.DefaultQuery, FontFinder.ImportFormats)
                     {
                         FolderDepth = options.Recursive ? FolderDepth.Deep : FolderDepth.Shallow,
-                        IndexerOption = IndexerOption.UseIndexerWhenAvailable,
+                        IndexerOption = IndexerOption.DoNotUseIndexer,
+                         
                     });
 
                 files = (await query.GetFilesAsync().AsTask(options.Token.Value)).ToList();
