@@ -16,24 +16,25 @@ public static class TypographyAnalyzer
     /// </summary>
     public static List<TypographyFeatureInfo> GetCharacterVariants(FontVariant font, Models.Character character)
     {
-        CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
-        KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
+        List<TypographyFeatureInfo> supported = [TypographyFeatureInfo.None];
 
-        List<TypographyFeatureInfo> supported = new()
+        if (font.HasXamlTypographyFeatures)
         {
-            TypographyFeatureInfo.None
-        };
-
-        foreach (var feature in font.XamlTypographyFeatures)
-        {
-            if (feature == TypographyFeatureInfo.None)
-                continue;
+            CanvasTextAnalyzer textAnalyzer = new(character.Char, CanvasTextDirection.TopToBottomThenLeftToRight);
+            KeyValuePair<CanvasCharacterRange, CanvasAnalyzedScript> analyzed = textAnalyzer.GetScript().First();
 
             var glyphs = textAnalyzer.GetGlyphs(analyzed.Key, font.FontFace, 24, false, false, analyzed.Value);
-            bool[] results = font.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
 
-            if (results.Any(r => r))
-                supported.Add(feature);
+            foreach (var feature in font.XamlTypographyFeatures)
+            {
+                if (feature == TypographyFeatureInfo.None)
+                    continue;
+
+                bool[] results = font.FontFace.GetTypographicFeatureGlyphSupport(analyzed.Value, feature.Feature, glyphs);
+
+                if (results.Any(r => r))
+                    supported.Add(feature);
+            }
         }
 
         return supported;
