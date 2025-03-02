@@ -22,13 +22,13 @@ public static class FontConverter
                 name += $"-{_random.Next(1000, 100000)}";
 
             StorageFile newFile = await folder.CreateFileAsync($"{name}.otf", CreationCollisionOption.ReplaceExisting).AsTask().ConfigureAwait(false);
-            ConversionStatus result =
-                isWoff ? await TryConvertWoffToOtfAsync(file, newFile).ConfigureAwait(false)
+            ConversionStatus result = isWoff 
+                ? await TryConvertWoffToOtfAsync(file, newFile).ConfigureAwait(false)
                 : await TryConvertToWoff2Async(file, newFile).ConfigureAwait(false);
 
             if (result == ConversionStatus.OK)
             {
-                if (DirectWrite.HasValidFonts(GetAppUri(newFile)))
+                if (DirectWrite.HasValidFonts(newFile))
                     return (newFile, ConversionStatus.OK);
                 else
                     return (default, ConversionStatus.UnspecifiedError);

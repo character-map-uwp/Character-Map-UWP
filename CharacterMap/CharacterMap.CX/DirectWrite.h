@@ -43,8 +43,9 @@ namespace CharacterMapCX
 
 		/// <summary>
 		/// Verifies if a font file actually contains a font(s) usable by the system.
+		/// StorageFile needs to be in apps local storage due to permission restrictions.
 		/// </summary>
-		static bool HasValidFonts(Uri^ uri);
+		static bool HasValidFonts(StorageFile^ file);
 
 		/// <summary>
 		/// Verifies if a font is actually completely on a users system. Some cloud fonts may only be partially downloaded.
@@ -79,6 +80,8 @@ namespace CharacterMapCX
 		static IMapView<UINT32, UINT32>^ GetSupportedTypography(ComPtr<IDWriteFontFaceReference> faceRef);
 
 		//static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontSet3> fontSet);
+
+		static ComPtr<IDWriteFontSet> DirectWrite::CreateIDWriteFontSet(String^ path);
 
 		static __inline DWriteFontSet^ GetFonts(ComPtr<IDWriteFontCollection3> fontSet);
 
