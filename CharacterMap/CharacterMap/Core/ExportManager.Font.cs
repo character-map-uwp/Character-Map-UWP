@@ -6,6 +6,14 @@ namespace CharacterMap.Core;
 
 public static partial class ExportManager
 {
+    public static void RequestExportFont(CharacterRenderingOptions ops, bool family = true)
+    {
+        if (family && ops.Family is { HasVariants: true } fam)
+            _ = ExportFontsToFolderAsync(fam.Variants.ToList());
+        else
+            RequestExportFontFile(ops.Variant);
+    }
+
     public static async void RequestExportFontFile(FontVariant variant)
     {
         var scheme = ResourceHelper.AppSettings.ExportNamingScheme;

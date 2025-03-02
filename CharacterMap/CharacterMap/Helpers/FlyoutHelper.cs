@@ -123,7 +123,7 @@ public static class FlyoutHelper
         {
             if (sender is MenuFlyoutItem item && item.DataContext is CharacterRenderingOptions opts)
             {
-                ExportManager.RequestExportFontFile(opts.Variant);
+                ExportManager.RequestExportFont(opts, true);
             }
         }
 
