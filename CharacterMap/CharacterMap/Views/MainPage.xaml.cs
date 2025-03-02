@@ -779,7 +779,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             try
             {
                 var items = await e.DataView.GetStorageItemsAsync();
-                if (await FontFinder.ImportFontsAsync(items) is FontImportResult result)
+                if (await FontImporter.ImportFontsAsync(items) is FontImportResult result)
                 {
                     if (result.Imported.Count > 0)
                     {
@@ -803,7 +803,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         DismissMenu();
 
         var picker = new FileOpenPicker();
-        foreach (var format in FontFinder.ImportFormats)
+        foreach (var format in FontImporter.ImportFormats)
             picker.FileTypeFilter.Add(format);
 
         picker.CommitButtonText = Localization.Get("OpenFontPickerConfirm");
@@ -816,7 +816,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
 
                 if (file.FileType == ".zip")
                 {
-                    if (await FontFinder.LoadZipToTempFolderAsync(file) is FolderContents folder && folder.Fonts.Count > 0)
+                    if (await FontImporter.LoadZipToTempFolderAsync(file) is FolderContents folder && folder.Fonts.Count > 0)
                     {
                         await MainPage.CreateWindowAsync(new(
                             Ioc.Default.GetService<IDialogService>(),
@@ -824,7 +824,7 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                             folder));
                     }
                 }
-                else if (await FontFinder.LoadFromFileAsync(file) is InstalledFont font)
+                else if (await FontImporter.LoadFromFileAsync(file) is InstalledFont font)
                 {
                     await FontMapView.CreateNewViewForFontAsync(font, file);
                 }

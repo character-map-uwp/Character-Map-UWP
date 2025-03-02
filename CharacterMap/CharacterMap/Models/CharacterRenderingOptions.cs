@@ -9,6 +9,7 @@ namespace CharacterMap.Models
 {
     public record CharacterRenderingOptions
     {
+        public InstalledFont Family { get; init; }
         public FontVariant Variant { get; }
         public float FontSize { get; init; }
         public CanvasTextLayoutAnalysis Analysis { get; init; }
@@ -31,17 +32,20 @@ namespace CharacterMap.Models
 
         public static CharacterRenderingOptions CreateDefault(InstalledFont font)
         {
-            return CreateDefault(font.DefaultVariant);
+            return CreateDefault(font.DefaultVariant, font);
         }
 
-        public static CharacterRenderingOptions CreateDefault(FontVariant variant)
+        public static CharacterRenderingOptions CreateDefault(FontVariant variant, InstalledFont fam = null)
         {
             CharacterRenderingOptions options = new(
                 variant,
                 new() { TypographyFeatureInfo.None },
                 64,
                 null,
-                null);
+                null)
+            {
+                Family = fam
+            };
 
             return options;
         }

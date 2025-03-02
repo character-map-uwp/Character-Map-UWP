@@ -49,7 +49,7 @@ public partial class FileNameWriter
         Match = "{face}",
         Description = Localization.Get("FileNameWriterFaceDesc"),
         Example = "Regular",
-        Func = a => a.Options.Options.Variant.PreferredName
+        Func = a => a.Options?.Options?.Variant?.PreferredName
     };
 
     public static FileNameWriter CharacterDescription { get; } = new()
@@ -57,7 +57,7 @@ public partial class FileNameWriter
         Match = "{desc}",
         Description = Localization.Get("FileNameWriterCharDescDesc"),
         Example = "Latin Capital Letter A",
-        Func = a => a.Options.Options.Variant.GetDescription(a.Character) ?? a.Character.UnicodeString
+        Func = a => a.Options?.Options?.Variant?.GetDescription(a.Character) ?? a.Character.UnicodeString
     };
 
     public static FileNameWriter UnicodeHex { get; } = new()
