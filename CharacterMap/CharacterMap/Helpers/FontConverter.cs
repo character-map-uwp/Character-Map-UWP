@@ -106,7 +106,7 @@ public static class FontConverter
                     return files;
 
                 var ext = Path.GetExtension(entry.Name);
-                if (FontFinder.ImportFormats.Contains(ext.ToLower()))
+                if (FontImporter.ImportFormats.Contains(ext.ToLower()))
                 {
                     try
                     {

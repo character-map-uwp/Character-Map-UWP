@@ -166,7 +166,7 @@ public static partial class ExportManager
             fileName = src;
 
         // Optimized export will export as .otf regardless
-        if (scheme is ExportNamingScheme.Optimised && FontFinder.ImportFormats.Contains(ext.ToLower()) is false)
+        if (scheme is ExportNamingScheme.Optimised && FontImporter.ImportFormats.Contains(ext.ToLower()) is false)
             ext = ".otf";
 
         // Get the default font for the group

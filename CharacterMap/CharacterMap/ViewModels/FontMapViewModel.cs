@@ -637,7 +637,7 @@ public partial class FontMapViewModel : ViewModelBase
         try
         {
             if (args.Files.FirstOrDefault() is StorageFile file
-                && await FontFinder.LoadFromFileAsync(file) is { } font)
+                && await FontImporter.LoadFromFileAsync(file) is { } font)
             {
                 SourceFile = file;
                 IsLoading = false;
@@ -669,7 +669,7 @@ public partial class FontMapViewModel : ViewModelBase
         try
         {
             List<StorageFile> items = new() { SourceFile };
-            if (await FontFinder.ImportFontsAsync(items) is { } result
+            if (await FontImporter.ImportFontsAsync(items) is { } result
                 && (result.Imported.Count > 0 || result.Existing.Count > 0))
             {
                 await WindowService.ActivateMainWindowAsync();
