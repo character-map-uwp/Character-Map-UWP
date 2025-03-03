@@ -118,19 +118,26 @@ public partial class PrintView : PopoverViewBase
             return;
         }
 
-        List<UIElement> elements = new() { this };
-        elements.AddRange(OptionsPanel.Children);
-        CompositionFactory.PlayEntrance(elements, 0, 200);
+        if (ResourceHelper.IsMaterialTheme)
+        {
+            CompositionFactory.PlayScaleEntrance(this, 0.8f, 1, 0.3);
+        }
+        else
+        {
+            List<UIElement> elements = new() { this };
+            elements.AddRange(OptionsPanel.Children);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
-        elements.Clear();
-        elements.AddRange(PreviewOptions.Children);
-        elements.Add(PreviewViewBox);
-        CompositionFactory.PlayEntrance(elements, 0, 200);
+            elements.Clear();
+            elements.AddRange(PreviewOptions.Children);
+            elements.Add(PreviewViewBox);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
 
-        elements.Clear();
-        elements.Add(BottomLabel);
-        elements.AddRange(BottomButtonOptions.Children);
-        CompositionFactory.PlayEntrance(elements, 0, 200);
+            elements.Clear();
+            elements.Add(BottomLabel);
+            elements.AddRange(BottomButtonOptions.Children);
+            CompositionFactory.PlayEntrance(elements, 0, 200);
+        }
     }
 
     private void ViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -7,11 +7,13 @@ using Windows.UI.Xaml.Core.Direct;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Helpers;
 
 [Bindable]
-public class CompositionFactory : DependencyObject
+[AttachedProperty<double>("BounceDuration", 0.15)]
+public partial class CompositionFactory : DependencyObject
 {
     public const double DefaultOffsetDuration = 0.325;
 
@@ -29,6 +31,22 @@ public class CompositionFactory : DependencyObject
     public const int DEFAULT_STAGGER_MS = 83;
 
     #region Attached Properties
+
+    static partial void OnBounceDurationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f)
+        {
+            Visual v = f.GetElementVisual();
+            if (e.NewValue is double w && w > 0)
+            {
+                CompositionFactory.EnableStandardTranslation(v, w);
+            }
+            else
+            {
+                v.Properties.SetImplicitAnimation(CompositionFactory.TRANSLATION, null);
+            }
+        }
+    }
 
     public static bool GetEnableBounceScale(DependencyObject obj)
     {
@@ -173,18 +191,37 @@ public class CompositionFactory : DependencyObject
 
         Visual v = e.EnableTranslation(true).GetElementVisual();
 
-        var g = v.GetCached("OPA", () =>
+
+        if (ResourceHelper.IsMaterialTheme)
         {
-            var t = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                    .AddKeyFrame(1, 0, 200)
-                    .SetDuration(0.375);
+            var g = v.GetCached("MTOPH", () =>
+            {
+                var t = v.CreateVector3KeyFrameAnimation("Scale")
+                        .AddKeyFrame(1, new Vector3(0.8f, 0.8f, 1), CubicBezierPoints.FluentAccelerate)
+                        .SetDuration(0.2);
 
-            var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 200);
-            return v.Compositor.CreateAnimationGroup(t, o);
-        });
+                var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 165);
+                return v.Compositor.CreateAnimationGroup(t, o);
+            });
 
-        e.SetHideAnimation(g);
-        e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
+            e.SetHideAnimation(g);
+        }
+        else
+        {
+            var g = v.GetCached("OPA", () =>
+            {
+                var t = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                        .AddKeyFrame(1, 0, 200)
+                        .SetDuration(0.375);
+
+                var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 200);
+                return v.Compositor.CreateAnimationGroup(t, o);
+            });
+
+            e.SetHideAnimation(g);
+            e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(0, 200, 0), 0, 550));
+        }
+        
     }
 
     public static void SetupOverlayPanelAnimationX(UIElement e)
@@ -194,18 +231,35 @@ public class CompositionFactory : DependencyObject
 
         Visual v = e.EnableTranslation(true).GetElementVisual();
 
-        var g = v.GetCached("OPAX", () =>
+        if (ResourceHelper.IsMaterialTheme)
         {
-            var t = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
-                    .AddKeyFrame(1, 200, 0)
-                    .SetDuration(0.375);
+            var g = v.GetCached("MOPH", () =>
+            {
+                var t = v.CreateVector3KeyFrameAnimation("Scale")
+                        .AddKeyFrame(1, new Vector3(0.8f, 0.8f, 1), KeySplines.FluentAccelerate)
+                        .SetDuration(0.3);
 
-            var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 200);
-            return v.Compositor.CreateAnimationGroup(t, o);
-        });
+                var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 300);
+                return v.Compositor.CreateAnimationGroup(t, o);
+            });
 
-        e.SetHideAnimation(g);
-        e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(200, 0, 0), 0, 550));
+            e.SetHideAnimation(g);
+        }
+        else
+        {
+            var g = v.GetCached("OPAX", () =>
+            {
+                var t = v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
+                        .AddKeyFrame(1, 200, 0)
+                        .SetDuration(0.375);
+
+                var o = CompositionFactory.CreateFade(v.Compositor, 0, null, 200);
+                return v.Compositor.CreateAnimationGroup(t, o);
+            });
+
+            e.SetHideAnimation(g);
+            e.SetShowAnimation(CompositionFactory.CreateEntranceAnimation(e, new Vector3(200, 0, 0), 0, 550));
+        }
     }
 
     public static void PlayEntrance(UIElement target, int delayMs = 0, int fromOffsetY = 40, int fromOffsetX = 0, int durationMs = 1000)
@@ -318,7 +372,7 @@ public class CompositionFactory : DependencyObject
         return e;
     }
 
-    public static void PlayScaleEntrance(FrameworkElement target, float from, float to)
+    public static void PlayScaleEntrance(FrameworkElement target, float from, float to, double duration = 0.6)
     {
         if (!UISettings.AnimationsEnabled)
             return;
@@ -331,12 +385,12 @@ public class CompositionFactory : DependencyObject
             target.Tag = target;
         }
 
-        var e = v.Compositor.CreateEntranceEasingFunction();
+        var e = CubicBezierPoints.FluentDecelerate;// v.Compositor.CreateEntranceEasingFunction();
 
         var t = v.CreateVector3KeyFrameAnimation(nameof(Visual.Scale))
             .AddKeyFrame(0, new Vector3(from, from, 0))
             .AddKeyFrame(1, new Vector3(to, to, 0), e)
-            .SetDuration(0.6);
+            .SetDuration(duration);
 
         var o = CreateFade(v.Compositor, 1, 0, 200);
 
@@ -373,7 +427,7 @@ public class CompositionFactory : DependencyObject
         var o = v.GetCached($"__ST{(duration.HasValue ? duration.Value : DefaultOffsetDuration)}",
             () => v.CreateVector3KeyFrameAnimation(CompositionFactory.TRANSLATION)
                    .AddKeyFrame(0, STARTING_VALUE)
-                   .AddKeyFrame(1, FINAL_VALUE)
+                   .AddKeyFrame(1, FINAL_VALUE, CubicBezierPoints.FluentDecelerate)
                    .SetDuration(duration ?? DefaultOffsetDuration));
 
         v.Properties.SetImplicitAnimation(CompositionFactory.TRANSLATION, o);
@@ -463,6 +517,41 @@ public class CompositionFactory : DependencyObject
         var v = e.GetElementVisual();
         e.SetHideAnimation(CreateFade(v.Compositor, 0, null, durationMs));
         e.SetShowAnimation(CreateFade(v.Compositor, 1, null, durationMs));
+    }
+
+    public static void PlayFluentStartupAnimation(
+        FrameworkElement bar,
+        FrameworkElement content)
+    {
+        var bv = bar.EnableTranslation(true).GetElementVisual();
+        bv.StartAnimation(
+            bv.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
+                .AddKeyFrame(0, 0)
+                .AddKeyFrame(1, 1)
+                .SetDelay(0.1, AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                .SetDuration(0.3));
+
+        bv.StartAnimation(
+            bv.CreateVector3KeyFrameAnimation(TRANSLATION)
+                .AddKeyFrame(0, new Vector3(-200, 0, 0))
+                .AddKeyFrame(1, Vector3.Zero, bv.Compositor.GetCachedEntranceEase())
+                .SetDelay(0.1, AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                .SetDuration(1.2));
+
+        var cv = content.EnableCompositionTranslation().GetElementVisual();
+        cv.StartAnimation(
+            cv.CreateScalarKeyFrameAnimation(nameof(Visual.Opacity))
+                .AddKeyFrame(0, 0)
+                .AddKeyFrame(1, 1)
+                .SetDelay(0.1, AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                .SetDuration(0.3));
+
+        cv.StartAnimation(
+            cv.CreateVector3KeyFrameAnimation(TRANSLATION)
+                .AddKeyFrame(0, new Vector3(0, 140, 0))
+                .AddKeyFrame(1, Vector3.Zero, cv.Compositor.GetCachedEntranceEase())
+                .SetDelay(0.1, AnimationDelayBehavior.SetInitialValueBeforeDelay)
+                .SetDuration(1.2));
     }
 
     public static void PlayStartUpAnimation(

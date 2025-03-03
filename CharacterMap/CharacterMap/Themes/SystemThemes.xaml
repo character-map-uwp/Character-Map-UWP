@@ -16,8 +16,12 @@
     <CornerRadius x:Key="CardCornerRadius">0</CornerRadius>
     <CornerRadius x:Key="InfoBarCornerRadius">0</CornerRadius>
     <CornerRadius x:Key="CommandToggleCornerRadius">0</CornerRadius>
+    <CornerRadius x:Key="ButtonCornerRadius">0</CornerRadius>
 
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe MDL2 Assets</FontFamily>
+    <FontFamily x:Key="FallbackSymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+    <FontFamily x:Key="ContentControlBoldThemeFontFamily">XamlAutoFontFamily</FontFamily>
+
 
     <AcrylicBrush
         x:Key="DefaultHostBrush"
@@ -29,24 +33,33 @@
 
     <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="{ThemeResource SystemChromeMediumColor}" />
 
+    <Style x:Key="ThemeFontIconStyle" TargetType="FontIcon">
+        <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
+    </Style>
+
+    <Style BasedOn="{StaticResource ThemeFontIconStyle}" TargetType="FontIcon" />
+
     <Style x:Key="HeaderStyle" TargetType="TextBlock">
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlBoldThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Margin" Value="0 20 0 4" />
     </Style>
 
     <Style x:Key="TitleTextStyle" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlBoldThemeFontFamily}" />
         <Setter Property="FontSize" Value="22" />
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
     <Style x:Key="FontFilterTitleStyle" TargetType="TextBlock">
         <Setter Property="FontSize" Value="16" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlBoldThemeFontFamily}" />
         <Setter Property="FontWeight" Value="Bold" />
     </Style>
 
     <Style x:Key="DescriptionStyle" BasedOn="{StaticResource BaseTextStyle}" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="Opacity" Value="0.7" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Margin" Value="0 0 0 8" />
@@ -57,6 +70,7 @@
     </Style>
 
     <Style x:Key="DescriptionContentStyle" TargetType="ContentPresenter">
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="Opacity" Value="0.7" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Margin" Value="0 0 0 8" />
@@ -71,6 +85,7 @@
     </Style>
 
     <Style x:Key="DevToolsAppBarButtonStyle" BasedOn="{StaticResource DefaultThemeAppBarButtonStyle}" TargetType="controls:UXButton">
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
         <Setter Property="Height" Value="52" />
         <Setter Property="IsLabelVisible" Value="True" />
         <Setter Property="core:Properties.ClickAnimation" Value="FluentContentPresenter" />
@@ -225,6 +240,7 @@
                     Padding="15,8,15,10"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
+                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     FontSize="30"
                     FontWeight="SemiBold"
                     Text="{Binding Key}" />
@@ -479,7 +495,7 @@
                                                 VerticalAlignment="Top"
                                                 Content="{TemplateBinding Title}"
                                                 ContentTemplate="{TemplateBinding TitleTemplate}"
-                                                FontFamily="XamlAutoFontFamily"
+                                                FontFamily="{StaticResource ContentControlThemeFontFamily}"
                                                 FontSize="20"
                                                 FontWeight="Normal"
                                                 Foreground="{TemplateBinding Foreground}"
@@ -606,12 +622,11 @@
 
             <FontIcon
                 Name="Icon"
-                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                FontSize="30"
-                Glyph="{Binding Glyph}" />
+                core:Properties.ThemeIcon="{Binding Icon}"
+                FontSize="30" />
 
             <StackPanel x:Name="LabelRoot" Grid.Column="1">
-                <TextBlock>
+                <TextBlock FontFamily="{StaticResource ContentControlThemeFontFamily}">
                     <Run FontWeight="SemiBold" Text="{Binding Title}" />
                     <Run
                         FontSize="12"
@@ -620,6 +635,7 @@
                         Text="{Binding Shortcut}" />
                 </TextBlock>
                 <TextBlock
+                    FontFamily="{StaticResource ContentControlThemeFontFamily}"
                     FontSize="12.666"
                     FontWeight="Normal"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -634,11 +650,10 @@
             <FontIcon
                 Name="Icon"
                 HorizontalAlignment="Center"
-                FontFamily="{ThemeResource SymbolThemeFontFamily}"
-                FontSize="24"
-                Glyph="{Binding Glyph}" />
+                core:Properties.ThemeIcon="{Binding Icon}"
+                FontSize="24" />
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
-                <TextBlock TextAlignment="Center">
+                <TextBlock FontFamily="{StaticResource ContentControlThemeFontFamily}" TextAlignment="Center">
                     <Run FontSize="13" Text="{Binding Title, Converter={StaticResource FontSelectorTitleConverter}}" />
                     <Run Foreground="{ThemeResource ButtonDisabledForegroundThemeBrush}" Text="{Binding Shortcut}" />
                 </TextBlock>

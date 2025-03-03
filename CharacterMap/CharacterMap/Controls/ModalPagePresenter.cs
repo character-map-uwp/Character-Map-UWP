@@ -14,6 +14,8 @@ namespace CharacterMap.Controls;
 [DependencyProperty<GridLength>("TitleBarHeight", "new GridLength(32)")]
 [DependencyProperty<Brush>("TitleBackgroundBrush")]
 [DependencyProperty<Brush>("ContentBackground")]
+[DependencyProperty<string>("CloseGlyph")]
+[DependencyProperty<bool>("IsCloseAlignedLeft", false, nameof(UpdateClose))]
 public sealed partial class ModalPagePresenter : ContentControl
 {
     public event RoutedEventHandler CloseClicked;
@@ -47,6 +49,7 @@ public sealed partial class ModalPagePresenter : ContentControl
         }
 
         OnTitleContentChanged();
+        UpdateClose();
     }
 
     public UIElement GetTitleElement()
@@ -98,5 +101,10 @@ public sealed partial class ModalPagePresenter : ContentControl
     public void GetAnimationTargets()
     {
         this.ApplyTemplate();
+    }
+
+    void UpdateClose()
+    {
+        VisualStateManager.GoToState(this, IsCloseAlignedLeft ? "LeftAligned" : "RightAligned", true);
     }
 }

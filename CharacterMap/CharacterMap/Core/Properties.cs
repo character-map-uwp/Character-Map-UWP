@@ -21,6 +21,14 @@ using Windows.UI.Xaml.Media.Animation;
 
 namespace CharacterMap.Core;
 
+public enum MaterialCornerStyle
+{
+    None,
+    Default,
+    Circular,
+    FlatLeft
+}
+
 /// <summary>
 /// XAML Attached Properties
 /// </summary>
@@ -58,6 +66,7 @@ namespace CharacterMap.Core;
 [AttachedProperty<bool>("IsCompact")] // Sets a TabViewItem to compact state
 [AttachedProperty<bool>("IsTabOpenAnimationEnabled")] // Sets a tab open animation on a TabView
 [AttachedProperty<bool>("DisableTranslation")] // Fixes flyout animation error
+[AttachedProperty<bool>("DisableShadow")] // Turns off popup shadow
 [AttachedProperty<bool>("RequireOpenTab")] // Sets a require open tab on a TabView
 [AttachedProperty<double>("RenderScale", 1d)] // Sets CompositeTransform ScaleX/Y
 [AttachedProperty<double>("Rotation", 0d)] // Sets RotationAngleInDegrees on elements handout visual
@@ -80,6 +89,8 @@ namespace CharacterMap.Core;
 [AttachedProperty<double>("Depth")] // Sets UIElement.Translation.Z
 [AttachedProperty<object>("PreviewStringTrigger")] // Sets a contextually aware preview string to Font List ToolTip
 [AttachedProperty<bool>("IsContainerEnabled", true)] // Is the parent ItemContainer enabled?
+[AttachedProperty<MaterialCornerStyle>("MaterialCornerStyle", MaterialCornerStyle.None)]
+[AttachedProperty<ThemeIcon>("ThemeIcon")]
 public partial class Properties : DependencyObject
 {
     #region FILTER 
@@ -945,6 +956,26 @@ public partial class Properties : DependencyObject
 
     #endregion
 
+    #region DisableShadow
+
+    static partial void OnDisableShadowChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is Popup popup && e.NewValue is bool s && s)
+        {
+            popup.Opened += async (src, arg) =>
+            {
+                if (src is Popup p)
+                {
+                    p.Shadow = null;
+                    await Task.Yield();
+                    p.Shadow = null;
+                }
+            };
+        }
+    }
+
+    #endregion
+
     #region RenderScale
 
     static partial void OnRenderScaleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -1522,6 +1553,96 @@ public partial class Properties : DependencyObject
                 if (s.GetFirstAncestorOfType<UXComboBoxItem>() is { } item)
                     item.IsEnabled = GetIsContainerEnabled(s);
             }
+        }
+    }
+
+    #endregion
+
+    #region MaterialCornerStyle
+
+    static partial void OnMaterialCornerStyleChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is FrameworkElement f && e.NewValue is not null && (MaterialCornerStyle)e.NewValue is MaterialCornerStyle mode)
+        {
+            f.SizeChanged -= OnSizeChanged;
+            
+            if (mode is not MaterialCornerStyle.None)
+            {
+                f.SizeChanged += OnSizeChanged;
+                UpdateMaterialCornerRadius(f, mode);
+            }
+        }
+
+        static void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (sender is FrameworkElement f && GetMaterialCornerStyle(f) is MaterialCornerStyle mode)
+                UpdateMaterialCornerRadius(f, mode);
+        }
+    }
+
+    static void UpdateMaterialCornerRadius(FrameworkElement f, MaterialCornerStyle mode)
+    {
+        if (f.ActualHeight <= 0)
+            return;
+
+        double max = mode == MaterialCornerStyle.Default ? 16 : 10000;
+        double height = Math.Min(max, f.ActualHeight / 2d);
+
+        CornerRadius radius = mode == MaterialCornerStyle.FlatLeft
+            ? new CornerRadius(0, height, height, 0)
+            : new(height);
+
+        if (f is Control c)
+            c.CornerRadius = radius;
+        else if (f is ContentPresenter p)
+            p.CornerRadius = radius;
+        else if (f is Grid g)
+            g.CornerRadius = radius;
+        else if (f is Border b)
+            b.CornerRadius = radius;
+        else if (f is StackPanel s)
+            s.CornerRadius = radius;
+        else if (f is RelativePanel r)
+            r.CornerRadius = radius;
+    }
+
+    #endregion
+
+    #region ThemeIcon
+
+    static partial void OnThemeIconChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (e.NewValue is ThemeIcon i)
+        {
+            if (d is FontIcon f)
+                Make(i, f);
+            else if (d is AppBarToggleButton atb)
+                atb.Icon = Make(i);
+            else if (d is AppBarButton abb)
+                abb.Icon = Make(i);
+            else if (d is MenuButton mb)
+                mb.Icon = Make(i);
+            else if (d is MenuFlyoutItem mfi)
+                mfi.Icon = Make(i);
+            else if (d is MenuFlyoutSubItem mfsi)
+                mfsi.Icon = Make(i);
+        }
+
+        static FontIcon Make(ThemeIcon ti, FontIcon source = null)
+        {
+            FontIcon f = source ?? new ();
+
+            if (ThemeIconGlyph.GetWithFallback(ti) is { } result)
+            {
+                if (result.isFallback is false)
+                    f.Style ??= ResourceHelper.GetThemeFontIconStyle();
+                else
+                    f.FontFamily = ResourceHelper.Get<FontFamily>("FallbackSymbolThemeFontFamily");
+
+                f.Glyph = result.glyph;
+            }
+
+            return f;
         }
     }
 

@@ -537,7 +537,6 @@
                             <Button
                                 x:Name="SaveButton"
                                 x:Uid="SaveButton"
-                                Content="&#xE74E;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:ToolTipService.ToolTip="{core:Localizer Key=SaveButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
@@ -558,17 +557,19 @@
                                             d:Text="{core:Localizer Key=ExportSVGLabel/Text}" />
                                     </MenuFlyout>
                                 </Button.Flyout>
+                                <FontIcon core:Properties.ThemeIcon="Save" />
                             </Button>
                             <Button
                                 x:Name="AddButton"
                                 x:Uid="AddHistoryButton"
                                 HorizontalAlignment="Right"
                                 Click="AddHistoryButton_Click"
-                                Content="&#xE710;"
                                 IsEnabled="{x:Bind ViewModel.InkManager.HasStrokes, Mode=OneWay, FallbackValue=False}"
                                 Style="{StaticResource SmolButton}"
                                 d:IsEnabled="False"
-                                d:ToolTipService.ToolTip="{core:Localizer Key=AddHistoryButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
+                                d:ToolTipService.ToolTip="{core:Localizer Key=AddHistoryButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">
+                                <FontIcon core:Properties.ThemeIcon="Add" />
+                            </Button>
                         </StackPanel>
 
                     </Grid>

@@ -39,12 +39,9 @@ namespace CharacterMapCX {
         ComPtr<IDWriteFontFallback> m_systemFontFallback;
     
     public:
+        CustomFontManager();
         CustomFontManager(ComPtr<IDWriteFactory7> sharedFactory);
-        ComPtr<IDWriteFontCollection3> GetFontCollectionFromFile(StorageFile^ file);
+        ComPtr<IDWriteFontCollection3> GetFontCollection(Platform::String^ path);
         ComPtr<IDWriteFactory7> const& GetIsolatedFactory();
-    
-    private:
-    
-        __inline ComPtr<IDWriteFontCollection3> GetFontCollectionFromPath(Platform::String^ path);
     };
 }

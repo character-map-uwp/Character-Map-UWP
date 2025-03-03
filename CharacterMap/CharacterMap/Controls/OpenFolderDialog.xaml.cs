@@ -122,7 +122,7 @@ public sealed partial class OpenFolderDialog : ContentDialog
                 TemplateSettings.IsLoading = true;
 
                 FolderOpenOptions opts = TemplateSettings.GetOptions();
-                if (await FontFinder.LoadToTempFolderAsync(opts) is FolderContents folder)
+                if (await FontImporter.LoadToTempFolderAsync(opts) is FolderContents folder)
                 {
                     if (opts.IsCancelled)
                     {

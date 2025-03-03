@@ -95,6 +95,7 @@
         <ResourceDictionary x:Key="Dark">
             <StaticResource x:Key="TabViewBackground" ResourceKey="SubtleFillColorTransparentBrush" />
             <StaticResource x:Key="TabViewItemHeaderBackground" ResourceKey="LayerOnMicaBaseAltFillColorTransparentBrush" />
+
             <StaticResource x:Key="TabViewItemHeaderBackgroundSelected" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
             <StaticResource x:Key="TabViewItemHeaderBackgroundPointerOver" ResourceKey="LayerOnMicaBaseAltFillColorSecondaryBrush" />
             <StaticResource x:Key="TabViewItemHeaderBackgroundPressed" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
@@ -176,6 +177,8 @@
 
     <primitives:CornerRadiusFilterConverter x:Key="TopCornerRadiusFilterConverter" Filter="Top" />
 
+    <StaticResource x:Key="TabViewItemCornerRadius" ResourceKey="OverlayCornerRadius" />
+
     <Thickness x:Key="TabViewHeaderPadding">0,8,0,0</Thickness>
     <Thickness x:Key="TabViewItemHeaderPadding">8,15,4,3</Thickness>
     <Thickness x:Key="TabViewSelectedItemHeaderPadding">9,3,5,4</Thickness>
@@ -218,7 +221,7 @@
 
     <Thickness x:Key="TabViewSelectedItemHeaderMargin">-1,0,-1,0</Thickness>
 
-    <Style x:Name="TabViewButtonStyle" TargetType="Button">
+    <Style x:Key="TabViewButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="{ThemeResource TabViewButtonBackground}" />
         <Setter Property="Foreground" Value="{ThemeResource TabViewButtonForeground}" />
         <Setter Property="FontSize" Value="{ThemeResource TabViewItemAddButtonFontSize}" />
@@ -226,6 +229,7 @@
         <Setter Property="Width" Value="{ThemeResource TabViewItemAddButtonWidth}" />
         <Setter Property="Height" Value="{ThemeResource TabViewItemAddButtonHeight}" />
         <Setter Property="core:Properties.ToolTipStyleKey" Value="DefaultThemeToolTipStyle" />
+        <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="FocusVisualMargin" Value="-3" />
         <Setter Property="Template">
             <Setter.Value>
@@ -233,7 +237,10 @@
                     <Border
                         x:Name="BorderRoot"
                         Background="{TemplateBinding Background}"
-                        CornerRadius="{ThemeResource ControlCornerRadius}">
+                        CornerRadius="{TemplateBinding CornerRadius}">
+                        <Border.BackgroundTransition>
+                            <BrushTransition Duration="0:0:0.13" />
+                        </Border.BackgroundTransition>
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup
                                 x:Name="CommonStates"
@@ -316,7 +323,7 @@
                                 Grid.Column="0"
                                 Content="{TemplateBinding TabStripHeader}"
                                 ContentTemplate="{TemplateBinding TabStripHeaderTemplate}" />
-                            <!--core:Properties.ToolTipTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.ToolTipTemplate)}"-->
+                            <!--  core:Properties.ToolTipTemplate="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(core:Properties.ToolTipTemplate)}"  -->
                             <primitives:TabViewListView
                                 x:Name="TabListView"
                                 Grid.Column="1"
@@ -341,31 +348,23 @@
                                     VerticalAlignment="Center"
                                     Command="{TemplateBinding AddTabButtonCommand}"
                                     CommandParameter="{TemplateBinding AddTabButtonCommandParameter}"
-                                    Content="&#xE710;"
                                     HighContrastAdjustment="None"
                                     IsTextScaleFactorEnabled="False"
-                                    Style="{ThemeResource TabViewButtonStyle}" />
+                                    Style="{ThemeResource TabViewButtonStyle}">
+                                    <FontIcon core:Properties.ThemeIcon="Add" FontSize="{ThemeResource TabViewItemAddButtonFontSize}" />
+                                </Button>
                                 <Button
                                     x:Name="CollectionButton"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    core:Properties.SupportAnimatedIcon="True"
                                     HighContrastAdjustment="None"
                                     IsTextScaleFactorEnabled="False"
                                     Style="{ThemeResource TabViewButtonStyle}">
                                     <Button.Content>
-                                        <controls:AnimatedIcon Height="14" IsHitTestVisible="False">
-                                            <av:AnimatedChevronDownSmallVisualSource />
-                                            <controls:AnimatedIcon.FallbackIconSource>
-                                                <controls:FontIconSource
-                                                    FontFamily="{StaticResource SymbolThemeFontFamily}"
-                                                    FontSize="{Binding ElementName=CollectionButton, Path=FontSize}"
-                                                    Glyph="&#xE70D;" />
-                                            </controls:AnimatedIcon.FallbackIconSource>
-                                        </controls:AnimatedIcon>
+                                        <FontIcon core:Properties.ThemeIcon="ChevronDown" FontSize="{ThemeResource TabViewItemAddButtonFontSize}" />
                                     </Button.Content>
                                     <Button.Flyout>
-                                        <MenuFlyout Placement="Bottom">
+                                        <MenuFlyout MenuFlyoutPresenterStyle="{StaticResource DefaultFlyoutStyle}" Placement="Bottom">
                                             <MenuFlyoutItem x:Uid="CompareActiveItem" Style="{StaticResource ThemeMenuFlyoutItemStyle}">
                                                 <MenuFlyoutItem.Icon>
                                                     <FontIcon Glyph="&#xE8F1;" />
@@ -373,7 +372,7 @@
                                             </MenuFlyoutItem>
                                             <MenuFlyoutSubItem x:Uid="AddActiveToCollectionItem" Style="{StaticResource ThemeMenuFlyoutSubItemStyle}">
                                                 <MenuFlyoutSubItem.Icon>
-                                                    <FontIcon Glyph="&#xE8F4;" />
+                                                    <FontIcon Glyph="{core:ThemeIconGlyph Icon=Add}" />
                                                 </MenuFlyoutSubItem.Icon>
                                             </MenuFlyoutSubItem>
                                         </MenuFlyout>
@@ -762,13 +761,13 @@
         </Setter>
     </Style>
 
-    <Style TargetType="controls:TabViewItem">
+    <Style x:Key="DefaultTabViewItemStyle" TargetType="controls:TabViewItem">
         <Setter Property="Background" Value="{ThemeResource TabViewItemHeaderBackground}" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
         <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
         <Setter Property="MinHeight" Value="32" />
-        <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource TabViewItemCornerRadius}" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Tag">
@@ -1210,5 +1209,6 @@
         </Setter>
     </Style>
 
+    <Style BasedOn="{StaticResource DefaultTabViewItemStyle}" TargetType="controls:TabViewItem" />
 
 </ResourceDictionary>

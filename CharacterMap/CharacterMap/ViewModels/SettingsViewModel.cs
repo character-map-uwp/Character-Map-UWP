@@ -20,12 +20,13 @@ public partial class SettingsViewModel : ViewModelBase
     ];
 
     public IReadOnlyList<String> Themes { get; } =
-        [
-            "Windows 10",
-            "Windows 11",
-            "Classic Windows",
-            "Zune Desktop"
-        ];
+    [
+        "Windows 10",
+        "Windows 11",
+        "Classic Windows",
+        "Zune Desktop",
+        //"Material"
+    ];
 
     public GlyphFileNameViewModel GlyphNameModel { get; } = new() { SaveTemplate = true };
 
@@ -128,7 +129,7 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-            new("Latest Update (November 2024)", // April 2024
+            new("Latest Update", // November 2024
                 "- Simulated font faces are now grouped separately from real fonts faces\n" +
                 "- Added option in Settings->Advanced to hide showing simulated font faces"),
              new("2024.7.0.0 (June 2024)", // June 2024

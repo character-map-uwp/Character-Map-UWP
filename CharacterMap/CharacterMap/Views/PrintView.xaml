@@ -76,14 +76,20 @@
                                                 x:Uid="PrintCharacterFilterContent"
                                                 OpticalMarginAlignment="TrimSideBearings"
                                                 d:Text="{core:Localizer Key=PrintCharacterFilterContent/Text}" />
-                                            <TextBlock
+
+                                            <FontIcon
                                                 Margin="4 2 0 0"
+                                                core:Properties.ThemeIcon="ChevronDown"
+                                                FontSize="12" />
+
+                                            <!--<TextBlock
+
                                                 VerticalAlignment="Center"
                                                 FontFamily="{ThemeResource SymbolThemeFontFamily}"
                                                 FontSize="12"
                                                 IsTextScaleFactorEnabled="False"
                                                 Text="&#xE70D;"
-                                                TextLineBounds="Tight" />
+                                                TextLineBounds="Tight" />-->
                                         </StackPanel>
                                     </Button.Content>
                                     <Button.Flyout>
@@ -366,8 +372,8 @@
                         <Button
                             Width="150"
                             Click="{x:Bind Hide}"
-                            Style="{StaticResource DefaultThemeButtonStyle}"
-                            Content="{core:Localizer Key=Cancel}" />
+                            Content="{core:Localizer Key=Cancel}"
+                            Style="{StaticResource DefaultThemeButtonStyle}" />
                     </StackPanel>
                 </Grid>
             </Grid>

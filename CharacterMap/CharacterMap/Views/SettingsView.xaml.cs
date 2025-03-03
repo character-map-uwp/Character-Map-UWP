@@ -353,6 +353,8 @@ public sealed partial class SettingsView : ViewBase
         List<UIElement> elements = new() { this, MenuColumn, ContentBorder };
         if (ResourceHelper.IsZuneTheme())
             CompositionFactory.PlayEntrance(elements, 0, 0, 40);
+        else if (ResourceHelper.IsMaterialTheme)
+            CompositionFactory.PlayScaleEntrance(this, 0.8f, 1, 0.3f);
         else
             CompositionFactory.PlayEntrance(elements, 0, 200);
 

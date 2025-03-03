@@ -83,19 +83,24 @@ public:
 };
 
 
+CustomFontManager::CustomFontManager() : m_adapter(CustomFontManagerAdapter::GetInstance())
+{
+    // DEATH;
+}
+
 CustomFontManager::CustomFontManager(ComPtr<IDWriteFactory7> sharedFactory)
     : m_adapter(CustomFontManagerAdapter::GetInstance())
 {
     m_sharedFactory = sharedFactory;
 }
 
-ComPtr<IDWriteFontCollection3> CustomFontManager::GetFontCollectionFromFile(StorageFile^ file)
-{
-    auto path = file->Path;
-    return GetFontCollectionFromPath(path);
-}
+//ComPtr<IDWriteFontCollection3> CustomFontManager::GetFontCollectionFromFile(StorageFile^ file)
+//{
+//    auto path = file->Path;
+//    return GetFontCollectionFromPath(path);
+//}
 
-ComPtr<IDWriteFontCollection3> CustomFontManager::GetFontCollectionFromPath(Platform::String^ path)
+ComPtr<IDWriteFontCollection3> CustomFontManager::GetFontCollection(Platform::String^ path)
 {
     auto pathBegin = begin(path);
     auto pathEnd = end(path);

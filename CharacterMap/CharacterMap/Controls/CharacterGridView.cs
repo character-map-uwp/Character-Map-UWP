@@ -173,6 +173,8 @@ public partial class CharacterGridView : GridView
                                 WrapPanel panel = new() { HorizontalSpacing = 4, VerticalSpacing = 4 };
                                 s.Children.Add(panel);
 
+                                bool material = ResourceHelper.AppSettings.ApplicationDesignTheme == 4;
+
                                 // Manually add each character
                                 foreach (var variation in list)
                                 {
@@ -180,8 +182,12 @@ public partial class CharacterGridView : GridView
 
                                     var item = (Grid)this.ItemTemplate.LoadContent();
                                     item.DataContext = data.Char;
-                                    item.CornerRadius = new CornerRadius(4);
                                     item.Background = bg;
+                                    if (material is false)
+                                        item.CornerRadius = new CornerRadius(4);
+                                    else
+                                        Properties.SetMaterialCornerStyle(item, MaterialCornerStyle.Default);
+
                                     panel.Children.Add(item);
                                     UpdateContainer(item, data.Char);
                                 }
