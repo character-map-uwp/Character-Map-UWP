@@ -16,6 +16,7 @@
             <SolidColorBrush x:Key="DefaultHostBrush" Color="{StaticResource SolidBackgroundFillColorBase}" />
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
             <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
+            <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
         </ResourceDictionary>
         <ResourceDictionary x:Key="Light">
             <Color x:Key="SolidBackgroundFillColorBase">#F3F3F3</Color>
@@ -23,6 +24,7 @@
             <SolidColorBrush x:Key="DefaultHostBrush" Color="{ThemeResource SolidBackgroundFillColorBase}" />
             <StaticResource x:Key="AltHostBrush" ResourceKey="CardBackgroundFillColorDefaultBrush" />
             <SolidColorBrush x:Key="PaneCollapsedBackgroundBrush" Color="Transparent" />
+            <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
@@ -39,7 +41,6 @@
     <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
 
 
-    <StaticResource x:Key="TopCardBrush" ResourceKey="LayerOnMicaBaseAltFillColorDefaultBrush" />
 
     <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
     <FontFamily x:Key="SymbolThemeFontFamily">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
