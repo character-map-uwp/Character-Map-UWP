@@ -158,13 +158,23 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             idFormat->SetFontAxisValues(values, Axis->Size);
         }
 
-        /* Set trimming. Much easier to let Win2D handle this */
-        auto format = GetOrCreate<CanvasTextFormat>(idFormat.Get());
+        /* Set trimming. */
         if (IsTextWrappingEnabled)
         {
-            idFormat->SetWordWrapping(DWRITE_WORD_WRAPPING::DWRITE_WORD_WRAPPING_CHARACTER);
-            format->TrimmingGranularity = CanvasTextTrimmingGranularity::Character;
-            format->TrimmingSign = CanvasTrimmingSign::Ellipsis;
+            // Define the trimming options
+            DWRITE_TRIMMING trimmingOptions = {};
+            trimmingOptions.granularity = DWRITE_TRIMMING_GRANULARITY_CHARACTER; // Trim at the character level
+            trimmingOptions.delimiter = 0; // No specific delimiter
+            trimmingOptions.delimiterCount = 0;
+
+            // Create the ellipsis trimming sign
+            ComPtr<IDWriteInlineObject> ellipsisSign;
+            HRESULT hr = NativeInterop::_Current->m_dwriteFactory->CreateEllipsisTrimmingSign(idFormat.Get(), &ellipsisSign);
+            if (SUCCEEDED(hr))
+            {
+                // Set the trimming options and ellipsis sign on the text format
+                idFormat->SetTrimming(&trimmingOptions, ellipsisSign.Get());
+            }
         }
 
         /* Prepare typography */
@@ -181,30 +191,35 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         width = min(width, m);
         height = min(height, m);
 
-        /* Create and set properties */
-        auto layout = ref new CanvasTextLayout(device, text, format, width, height);
-        layout->SetTypography(0, text->Length(), typography);
-        if (IsColorFontEnabled && !IsOverwriteCompensationEnabled)
-            layout->Options = CanvasDrawTextOptions::EnableColorFont | CanvasDrawTextOptions::Clip;
-        else if (IsColorFontEnabled)
-            layout->Options = CanvasDrawTextOptions::EnableColorFont;
-        else if (!IsCharacterFitEnabled && !IsOverwriteCompensationEnabled)
-            layout->Options = CanvasDrawTextOptions::Clip;
-        else
-            layout->Options = CanvasDrawTextOptions::Default;
+
+        ComPtr<IDWriteTextLayout> textLayout;
+		NativeInterop::_Current->m_dwriteFactory->CreateTextLayout(
+			text->Data(),
+			text->Length(),
+			idFormat.Get(),
+			width,
+			height,
+			&textLayout);
+
+	
 
         if (IsCharacterFitEnabled)
         {
-            layout->VerticalAlignment = CanvasVerticalAlignment::Top;
-            layout->HorizontalAlignment = CanvasHorizontalAlignment::Center;
+		    textLayout->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+			textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
         }
 
+        /* Create and set properties */
+        // TODO: See if we can do this without CanvasTextLayout?
+        auto layout = GetOrCreate<CanvasTextLayout>(device, textLayout.Get());
+        
         m_layout = layout;
         m_render = true;
         
         m_canvas->Invalidate();
-        delete format;
     }
+
+    
 
     auto minh = min(m_layout->DrawBounds.Top, m_layout->LayoutBounds.Top);
     auto maxh = max(m_layout->DrawBounds.Bottom, m_layout->LayoutBounds.Bottom);
@@ -254,8 +269,8 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         return;
 
     // Useful for debugging to see which textboxes are DX
-    if (Windows::UI::Xaml::Application::Current->DebugSettings->IsTextPerformanceVisualizationEnabled)
-        args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);
+  /*  if (Windows::UI::Xaml::Application::Current->DebugSettings->IsTextPerformanceVisualizationEnabled)
+        args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);*/
 
     auto db = m_layout->DrawBounds;
     auto lb = m_layout->LayoutBounds;

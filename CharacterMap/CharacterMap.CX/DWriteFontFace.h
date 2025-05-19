@@ -180,6 +180,7 @@ namespace CharacterMapCX
 					ThrowIfFailed(m_face->GetFontFaceReference(&ref));
 				else
 					ThrowIfFailed(m_font->GetFontFaceReference(&ref));
+
 				m_fontResource = ref;
 			}
 
