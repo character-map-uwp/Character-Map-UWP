@@ -229,7 +229,7 @@ IVectorView<DWriteFontAxis^>^ DirectWrite::GetAxis(ComPtr<IDWriteFontFaceReferen
 
 		String^ name = "";
 
-		if (attribute == DWRITE_FONT_AXIS_ATTRIBUTES_VARIABLE)
+		if (attribute != DWRITE_FONT_AXIS_ATTRIBUTES_NONE)
 		{
 			ComPtr<IDWriteLocalizedStrings> strings;
 			resource->GetAxisNames(i, &strings);

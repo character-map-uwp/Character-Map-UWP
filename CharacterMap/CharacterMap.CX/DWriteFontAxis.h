@@ -41,6 +41,8 @@ namespace CharacterMapCX
 
 		property float Maximum		{ float get() { return m_maximumValue; } }
 
+		property bool IsHidden		{ bool get() { return m_isHidden; } }
+
 		
 		DWriteFontAxis^ WithValue(float value)
 		{
@@ -62,6 +64,8 @@ namespace CharacterMapCX
 			m_originalValue = axis->m_originalValue;
 			m_label = axis->Label;
 			m_tag_raw = axis->Tag;
+
+			m_isHidden = (m_attribute & DWriteFontAxisAttribute::Hidden) == DWriteFontAxisAttribute::Hidden;
 		};
 
 		DWriteFontAxis(
@@ -82,6 +86,8 @@ namespace CharacterMapCX
 			m_originalValue = value.value;
 			m_label = name == nullptr ? GetOpenTypeFeatureTag(tag) : name;
 			m_tag_raw = tag;
+
+			m_isHidden = (m_attribute & DWriteFontAxisAttribute::Hidden) == DWriteFontAxisAttribute::Hidden;
 		};
 
 		DWRITE_FONT_AXIS_VALUE GetDWriteValue()
@@ -100,5 +106,6 @@ namespace CharacterMapCX
 		float m_defaultValue;
 		float m_minimumValue;
 		float m_maximumValue;
+		bool m_isHidden;
 	};
 }

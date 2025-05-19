@@ -380,7 +380,9 @@ public partial class FontMapViewModel : ViewModelBase
 
     internal void UpdateVariations()
     {
-        VariationAxis = SelectedVariantAnalysis?.Axis?.Where(a => a.Attribute == DWriteFontAxisAttribute.Variable).ToList() ?? new List<DWriteFontAxis>();
+        VariationAxis = 
+            SelectedVariantAnalysis?.Axis?.Where(a => (a.Attribute & DWriteFontAxisAttribute.Variable) != 0).ToList() 
+            ?? new List<DWriteFontAxis>();
         UpdateRampOptions();
     }
 
