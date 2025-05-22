@@ -6,6 +6,7 @@ using Windows.UI.Xaml.Controls;
 namespace CharacterMap.Views;
 
 [DependencyProperty<int>("GridSize")]
+[DependencyProperty<double>("FontListFontSize", 12d)]
 public sealed partial class SettingsView : ViewBase
 {
     public AppSettings Settings { get; }
@@ -25,6 +26,12 @@ public sealed partial class SettingsView : ViewBase
 
     private int _requested = 0;
 
+    private List<String> _listSizeNames { get; } = [
+        Localization.Get("FontListSizeNormal"),
+        Localization.Get("FontListSizeLarge"),
+        Localization.Get("FontListSizeLarger")
+    ];
+
     public SettingsView()
     {
         this.InitializeComponent();
@@ -38,6 +45,7 @@ public sealed partial class SettingsView : ViewBase
         Register<FontListCreatedMessage>(m => UpdateExport());
 
         GridSize = Settings.GridSize;
+        FontListFontSize = ResourceHelper.GetFontListFontSize();
 
         _themeSupportsShadows = ResourceHelper.SupportsShadows();
         _themeSupportsDark = ResourceHelper.Get<Boolean>("SupportsDarkTheme");
@@ -116,6 +124,9 @@ public sealed partial class SettingsView : ViewBase
                     break;
                 case nameof(Settings.ApplicationDesignTheme):
                     //UpdateStyle();
+                    break;
+                case nameof(Settings.FontListFontSizeIndex):
+                    RunOnUI(() => FontListFontSize = ResourceHelper.GetFontListFontSize());
                     break;
             }
         });

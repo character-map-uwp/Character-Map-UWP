@@ -14,6 +14,13 @@ public enum DesignStyle : int
     ZuneDesktop = 3,
 }
 
+public enum FontListFontSize
+{
+    Normal,
+    Large,
+    Larger
+}
+
 public class ThemeChangedMessage { }
 
 public static class ResourceHelper
@@ -96,6 +103,21 @@ public static class ResourceHelper
         {
             ElementTheme.Default => App.Current.RequestedTheme == ApplicationTheme.Dark ? ElementTheme.Dark : ElementTheme.Light,
             _ => AppSettings.UserRequestedTheme
+        };
+    }
+
+    public static double GetFontListFontSize()
+    {
+        return GetFontListFontSize((FontListFontSize)AppSettings.FontListFontSizeIndex);
+    }
+
+    public static double GetFontListFontSize(FontListFontSize size)
+    {
+        return size switch
+        {
+            FontListFontSize.Large => ResourceHelper.Get<double>("FontListFontSizeLarge"),
+            FontListFontSize.Larger => ResourceHelper.Get<double>("FontListFontSizeLarger"),
+            _ => ResourceHelper.Get<double>("FontListFontSize"),
         };
     }
 
@@ -191,7 +213,7 @@ public static class ResourceHelper
 
     internal static string GetAppName()
     {
-        return "Character Map UWP";
+        return Localization.Get("AppName");
     }
 
     public static void RegisterForThemeChanges<T>(T element) where T : FrameworkElement

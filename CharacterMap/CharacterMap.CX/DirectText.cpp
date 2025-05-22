@@ -351,9 +351,9 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         left += m_canvas->ActualWidth - m_layout->DrawBounds.Width - 4;
     }
 
-    auto fam = m_layout->DefaultFontFamily;
+   /* auto fam = m_layout->DefaultFontFamily;
     auto fam2 = m_layout->GetFontFamily(0);
-    auto loc = m_layout->DefaultLocaleName;
+    auto loc = m_layout->DefaultLocaleName;*/
     m_layout->SetLocaleName(0, 1, L"en-us");
 
     args->DrawingSession->DrawTextLayout(m_layout, float2(left, top), ((SolidColorBrush^)this->Foreground)->Color);

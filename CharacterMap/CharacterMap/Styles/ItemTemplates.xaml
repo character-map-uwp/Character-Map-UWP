@@ -51,7 +51,7 @@
                 Padding="5"
                 VerticalAlignment="Center"
                 FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
-                FontSize="{ThemeResource FontListFontSize}"
+                FontSize="12"
                 Text="{x:Bind Name}"
                 TextAlignment="Center"
                 TextTrimming="CharacterEllipsis"
@@ -114,7 +114,7 @@
                 Padding="5"
                 VerticalAlignment="Center"
                 FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
-                FontSize="{ThemeResource FontListFontSize}"
+                FontSize="{Binding ElementName=LstFontFamily, Path=FontSize}"
                 Text="{x:Bind Name}"
                 TextTrimming="CharacterEllipsis"
                 TextWrapping="NoWrap" />

@@ -1805,4 +1805,13 @@ Requires a restart to take effect.</value>
     <value>Simulated</value>
     <comment>Simulated font faces descriptor</comment>
   </data>
+  <data name="FontListSizeNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="FontListSizeLarge" xml:space="preserve">
+    <value>Large</value>
+  </data>
+  <data name="FontListSizeLarger" xml:space="preserve">
+    <value>Larger</value>
+  </data>
 </root>

@@ -129,7 +129,10 @@ public partial class SettingsViewModel : ViewModelBase
         // is to expose features people may not be aware exist inside the
         // application rather than bug-fixes or visual changes.
         return [
-            new("Latest Update", // November 2024
+             new("Latest Update (June 2025)", // June 2025
+                "- Hidden variable font axis are now visible and editable in Type Ramp View\n" +
+                "- Added option in Settings->Layout->Font List Display to increase font size of the main font list"),
+             new("2024.8.0.0 (November 2024)", // November 2024
                 "- Simulated font faces are now grouped separately from real fonts faces\n" +
                 "- Added option in Settings->Advanced to hide showing simulated font faces"),
              new("2024.7.0.0 (June 2024)", // June 2024
@@ -139,11 +142,11 @@ public partial class SettingsViewModel : ViewModelBase
                 "- Added additional search filters to \"Find a font family\" search box - \"filepath:\", \"foundry\", \"designer:\"\n" +
                 "- The Unicode character search box now supports searching Unihan descriptions\n" +
                 "- Added a link for Helps and Tips at our Wiki in Settings->About"),
-            new("2024.2.0.0 (April 2024)", // April 2024
+             new("2024.2.0.0 (April 2024)", // April 2024
                 "- Support searching font families in Settings->Collections\n" +
                 "- Added option to restore last selected font filter / collection on app launch in Settings->Advanced\n" +
                 "- Added option to define how exported glyph files are named by default in Settings->Export"),
-            new("2024.1.1.0 (December 2023)", // Dec 2023
+             new("2024.1.1.0 (December 2023)", // Dec 2023
                 "- Support search for fonts that contain specific characters in \"Find a font family\" search box, by typing in \"char:\" followed by your query\n" +
                 "    • e.g. to find all fonts that contain the two arrow characters '←' & '↗', type in \"char: ←↗\"\n" +
                 "- Added option to search for other fonts with the selected character in context menu of main window's Character Map"),

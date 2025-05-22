@@ -19,6 +19,7 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
 
+[DependencyProperty<double>("FontListFontSize", 12d)]
 public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IPopoverPresenter
 {
     public static CoreDispatcher MainDispatcher { get; private set; }
@@ -188,6 +189,10 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
             case nameof(AppSettings.UseFontForPreview):
                 OnFontPreviewUpdated();
                 break;
+
+            case nameof(AppSettings.FontListFontSizeIndex):
+                RunOnUI(() => FontListFontSize = ResourceHelper.GetFontListFontSize());
+                break;
         }
     }
 
@@ -271,6 +276,8 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
         else
         {
             GoToState(nameof(FontsLoadedState), false);
+            FontListFontSize = ResourceHelper.GetFontListFontSize();
+            
             if (ResourceHelper.AllowAnimation)
             {
                 CompositionFactory.PlayStartUpAnimation(
@@ -602,6 +609,17 @@ public sealed partial class MainPage : ViewBase, IInAppNotificationPresenter, IP
                     // Update tabs font previews
                     ViewModel.NotifyTabs();
                 });
+            });
+        }
+    }
+
+    void OnFontSizeUpdated()
+    {
+        if (ViewModel.InitialLoad.IsCompleted)
+        {
+            RunOnUI(() =>
+            {
+                FontListFontSize = ResourceHelper.GetFontListFontSize();
             });
         }
     }

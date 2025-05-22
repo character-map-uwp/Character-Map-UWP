@@ -100,6 +100,13 @@ public class AppSettings : INotifyPropertyChanged
         set => BroadcastSet(value);
     }
 
+
+    public int FontListFontSizeIndex
+    {
+        get => Get(0);
+        set => BroadcastSet(value);
+    }
+
     public int MaxSearchResult
     {
         get => Get(101, "MSR");

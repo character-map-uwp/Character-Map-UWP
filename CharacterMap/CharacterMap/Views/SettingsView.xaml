@@ -12,6 +12,7 @@
     xmlns:viewmodels="using:CharacterMap.ViewModels"
     xmlns:views="using:CharacterMap.Views"
     xmlns:win1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
+    x:Name="SettingsRoot"
     DataContext="{x:Bind}"
     Loaded="View_Loaded"
     TabFocusNavigation="Cycle"
@@ -365,6 +366,14 @@
                                             GroupName="FontList"
                                             d:Content="{core:Localizer Key=RbUseSystemFont/Content}" />
 
+                                        <ContentPresenter
+                                            Margin="0 8 0 4"
+                                            Content="Change the font size"
+                                            Style="{StaticResource DescriptionContentStyle}"
+                                            d:Content="{core:Localizer Key=SettingsFontImportDescription/Text}" />
+
+                                        <controls:UXComboBox ItemsSource="{x:Bind _listSizeNames}" SelectedIndex="{Binding Settings.FontListFontSizeIndex, Mode=TwoWay}" />
+
                                         <ListView
                                             x:Name="LstFontFamily"
                                             Width="256"
@@ -375,6 +384,7 @@
                                             BorderThickness="1"
                                             CornerRadius="4"
                                             FontFamily="{StaticResource ContentControlThemeFontFamily}"
+                                            FontSize="{Binding ElementName=SettingsRoot, Path=FontListFontSize}"
                                             IsHitTestVisible="False"
                                             IsItemClickEnabled="False"
                                             IsSwipeEnabled="False"

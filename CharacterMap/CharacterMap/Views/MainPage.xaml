@@ -783,6 +783,7 @@
                                         core:Properties.ItemContainerBackgroundTransition="{StaticResource BackgroundTransition}"
                                         core:Properties.ToolTipPlacement="Bottom"
                                         ContainerContentChanging="LstFontFamily_ContainerContentChanging"
+                                        FontSize="{Binding ElementName=PageRoot, Path=FontListFontSize}"
                                         IsItemClickEnabled="False"
                                         IsSwipeEnabled="False"
                                         ItemContainerTransitions="{StaticResource NoTransitions}"

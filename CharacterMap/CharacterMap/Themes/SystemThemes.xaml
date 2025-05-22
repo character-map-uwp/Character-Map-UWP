@@ -100,6 +100,8 @@
 
     <CornerRadius x:Key="PopupCornerRadius">4</CornerRadius>
     <x:Double x:Key="FontListFontSize">14</x:Double>
+    <x:Double x:Key="FontListFontSizeLarge">18</x:Double>
+    <x:Double x:Key="FontListFontSizeLarger">22</x:Double>
 
     <Style x:Key="SettingsMenuStyle" TargetType="StackPanel" />
 

@@ -99,6 +99,8 @@
     <x:Double x:Key="FontListFlyoutFontSize">13.333</x:Double>
     <x:Double x:Key="ControlContentThemeFontSize">13.333</x:Double>
     <x:Double x:Key="FontListFontSize">12</x:Double>
+    <x:Double x:Key="FontListFontSizeLarge">16</x:Double>
+    <x:Double x:Key="FontListFontSizeLarger">20</x:Double>
 
     <cv:UpperConverter x:Name="Upper" />
     <cv:LowerConverter x:Key="TitleConverter" />

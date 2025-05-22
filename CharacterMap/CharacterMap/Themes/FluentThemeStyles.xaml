@@ -494,6 +494,13 @@
         </Setter>
     </Style>
 
+    <Style x:Key="DescriptionContentStyle" TargetType="ContentPresenter">
+        <Setter Property="FontSize" Value="12.666" />
+        <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="FontFamily" Value="{StaticResource ContentControlThemeFontFamily}" />
+    </Style>
+
     <Style x:Key="DefaultSettingsPresenterStyle" TargetType="controls:SettingsPresenter">
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Padding" Value="16,14,16,14" />
@@ -618,10 +625,7 @@
                                     Grid.Row="1"
                                     Margin="0 2 0 0"
                                     Content="{TemplateBinding Description}"
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    FontSize="12.666"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    TextWrapping="Wrap"
+                                    Style="{StaticResource DescriptionContentStyle}"
                                     Visibility="Collapsed" />
                             </Grid>
 
