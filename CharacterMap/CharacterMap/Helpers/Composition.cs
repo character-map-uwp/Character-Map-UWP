@@ -79,18 +79,18 @@ public static class Composition
         batch.End();
     }
 
-    private static Dictionary<Compositor, Dictionary<string, CompositionObject>> _objCache { get; } = new();
+    private static Dictionary<Compositor, Dictionary<string, object>> _objCache { get; } = new();
 
-    public static T GetCached<T>(this Compositor c, string key, Func<T> create) where T : CompositionObject
+    public static T GetCached<T>(this Compositor c, string key, Func<T> create)
     {
-#if DEBUG
-        return create();
-#endif
+//#if DEBUG
+//        return create();
+//#endif
 
-        if (_objCache.TryGetValue(c, out Dictionary<string, CompositionObject> dic) is false)
+        if (_objCache.TryGetValue(c, out Dictionary<string, object> dic) is false)
             _objCache[c] = dic = new();
 
-        if (dic.TryGetValue(key, out CompositionObject value) is false)
+        if (dic.TryGetValue(key, out object value) is false)
             dic[key] = value = create();
 
         return (T)value;

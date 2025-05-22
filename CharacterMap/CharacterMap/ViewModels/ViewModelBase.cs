@@ -132,6 +132,8 @@ public abstract class BaseNotifyingModel
             _originalContext.Post(_ => a(), null);
     }
 
+    protected bool IsOnSyncContext() => SynchronizationContext.Current == _originalContext;
+
     /// <summary>
     /// Private data store that contains all of the properties access through GetProperty 
     /// method.

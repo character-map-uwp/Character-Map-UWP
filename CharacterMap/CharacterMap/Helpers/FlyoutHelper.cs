@@ -96,8 +96,6 @@ public static class FlyoutHelper
         FrameworkElement headerContent,
         FlyoutArgs args)
     {
-        MainViewModel main = Ioc.Default.GetService<MainViewModel>();
-
         bool standalone = args.Standalone;
         bool showAdvanced = args.ShowAdvanced;
         bool isExternalFile = args.IsExternalFile;
@@ -116,7 +114,7 @@ public static class FlyoutHelper
         static void OpenInNewTab(object s, RoutedEventArgs args)
         {
             if (s is FrameworkElement f && f.Tag is InstalledFont fnt)
-                Ioc.Default.GetService<MainViewModel>().OpenTab(fnt);
+                WeakReferenceMessenger.Default.Send(new OpenTabMessage(fnt));
         }
 
         static void SaveFont_Click(object sender, RoutedEventArgs e)
@@ -264,6 +262,7 @@ public static class FlyoutHelper
             //     the user has manually tagged as a symbol font
             if (!standalone && !args.IsFolderView)
             {
+                MainViewModel main = Ioc.Default.GetService<MainViewModel>();
                 TryAddRemoveFromCollection(menu, font, main.SelectedCollection, main.FontListFilter);
             }
 

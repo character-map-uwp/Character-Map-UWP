@@ -94,6 +94,7 @@ public static class Converters
 
 
     private static FontFamily _previewFamily = null;
+
     public static FontFamily GetPreviewFontSource(FontVariant variant)
     {
         if (_settings == null)
@@ -107,7 +108,11 @@ public static class Converters
             && !_userCollections.SymbolCollection.Fonts.Contains(variant.FamilyName))
             return new FontFamily(variant.Source);
 
-        return _previewFamily ??= ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
+
+        return Composition.GetCached<FontFamily>(Window.Current.Compositor, "PFS", () =>
+        {
+            return ResourceHelper.Get<FontFamily>("ContentControlThemeFontFamily");
+        });
     }
 
     public static string GetFileSize(int fileSize)

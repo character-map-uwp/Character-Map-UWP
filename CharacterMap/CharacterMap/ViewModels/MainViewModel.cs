@@ -11,6 +11,8 @@ namespace CharacterMap.ViewModels;
 
 public partial class MainViewModel : ViewModelBase
 {
+    protected override bool CaptureContext => true;
+
     public event EventHandler FontListCreated;
 
     private Debouncer _searchDebouncer { get; } = new ();
@@ -125,6 +127,12 @@ public partial class MainViewModel : ViewModelBase
         InitialLoad = LoadAsync(true);
 
         Fonts.CollectionChanged += Fonts_CollectionChanged;
+
+        WeakReferenceMessenger.Default.Register<OpenTabMessage>(this, (o, m) =>
+        {
+            if (IsOnSyncContext())
+                OpenTab(m.Font);
+        });
     }
     protected override void OnPropertyChangeNotified(string propertyName)
     {
@@ -566,7 +574,7 @@ public partial class MainViewModel : ViewModelBase
         IsCreating = false;
     }
 
-    public void OpenTab(InstalledFont font)
+    private void OpenTab(InstalledFont font)
     {
         Fonts.Insert(TabIndex + 1, new(font));
     }
