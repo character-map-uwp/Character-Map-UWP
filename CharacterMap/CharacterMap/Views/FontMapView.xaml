@@ -1424,15 +1424,15 @@
 
                             <AppBarButton
                                 x:Uid="AddButton"
+                                core:Properties.ThemeIcon="Add"
                                 Click="AppBarButton_Click"
-                                Icon="Add"
                                 IsEnabled="{x:Bind core:Converters.IsNotNull(ViewModel.SelectedChar), Mode=OneWay}"
                                 d:Label="{core:Localizer Key=AddButton/Label}" />
                             <AppBarButton
                                 x:Uid="BtnCopyGlyph"
                                 Grid.Row="1"
+                                core:Properties.ThemeIcon="Copy"
                                 Click="{x:Bind ViewModel.CopySequence}"
-                                Icon="Copy"
                                 IsEnabled="{x:Bind core:Converters.IsNotNullOrEmpty(ViewModel.Sequence), Mode=OneWay}"
                                 d:Label="{core:Localizer Key=BtnCopyGlyph/Label}"
                                 d:ToolTipService.ToolTip="{core:Localizer Key=BtnCopyGlyph/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}" />
@@ -1531,7 +1531,6 @@
                                     </Grid.ColumnDefinitions>
                                     <Slider
                                         x:Name="AxisSlider"
-                                        Header="{x:Bind Label}"
                                         Maximum="{x:Bind Maximum}"
                                         Minimum="{x:Bind Minimum}"
                                         SmallChange="0.1"
@@ -1539,15 +1538,23 @@
                                         Style="{StaticResource DefaultThemeSliderStyle}"
                                         ValueChanged="Slider_ValueChanged"
                                         Value="{x:Bind Value, Mode=TwoWay}">
-                                        <Slider.HeaderTemplate>
-                                            <DataTemplate>
+                                        <Slider.Header>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
                                                 <TextBlock
                                                     Margin="0 0 0 -8"
                                                     FontSize="12"
                                                     Foreground="{ThemeResource TextControlPlaceholderForeground}"
-                                                    Text="{Binding}" />
-                                            </DataTemplate>
-                                        </Slider.HeaderTemplate>
+                                                    Text="{x:Bind Label}" />
+
+                                                <FontIcon
+                                                    x:Name="Hidden"
+                                                    x:Load="{x:Bind IsHidden}"
+                                                    Margin="0 2 0 -6"
+                                                    core:Properties.ThemeIcon="Hidden"
+                                                    FontSize="12"
+                                                    Opacity="0.4" />
+                                            </StackPanel>
+                                        </Slider.Header>
                                     </Slider>
                                     <Button
                                         x:Uid="BtnReset"
