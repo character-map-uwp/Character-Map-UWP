@@ -1498,6 +1498,7 @@
                         VerticalAlignment="Center"
                         helpers:FluentAnimation.PointerOver="FluentContentPresenter"
                         helpers:FluentAnimation.PointerOverOffset="-2"
+                        AutomationProperties.Name="{core:Localizer Key=TypeRampFlowButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}"
                         Click="TypeRampFlowButton_Click"
                         Style="{StaticResource MapInfoButtonStyle}"
                         d:ToolTipService.ToolTip="{core:Localizer Key=TypeRampFlowButton/[using:Windows.UI.Xaml.Controls]ToolTipService/ToolTip}">

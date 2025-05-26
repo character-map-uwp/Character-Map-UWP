@@ -5,8 +5,8 @@ using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Controls;
 
-[DependencyProperty<Control>("Target", typeof(Control))]
-[DependencyProperty<CharacterRenderingOptions>("Options", typeof(CharacterRenderingOptions))]
+[DependencyProperty<Control>("Target")]
+[DependencyProperty<CharacterRenderingOptions>("Options")]
 [DependencyProperty<FlyoutPlacementMode>("Placement", FlyoutPlacementMode.Bottom, nameof(UpdatePlacement))]
 public sealed partial class CharacterPickerButton : ContentControl
 {

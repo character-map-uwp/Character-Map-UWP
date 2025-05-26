@@ -352,27 +352,94 @@
                                     ContentPlacement="Bottom"
                                     Description="{core:Localizer Key=SettingsFontListDescription/Text}">
                                     <StackPanel>
+                                        <Panel.Resources>
+                                            <CircleEase x:Key="Ease" EasingMode="EaseInOut" />
+                                            <Style TargetType="RadioButton">
+                                                <Setter Property="MinHeight" Value="36" />
+                                                <Setter Property="VerticalAlignment" Value="Stretch" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="RadioButton">
+                                                            <ContentPresenter
+                                                                x:Name="Presenter"
+                                                                Margin="8 4"
+                                                                HorizontalContentAlignment="Center"
+                                                                VerticalContentAlignment="Center"
+                                                                Background="Transparent"
+                                                                Content="{TemplateBinding Content}"
+                                                                Foreground="White"
+                                                                TextLineBounds="Tight">
+                                                                <VisualStateManager.VisualStateGroups>
+                                                                    <VisualStateGroup>
+                                                                        <VisualState x:Name="Checked">
+                                                                            <VisualState.Setters>
+                                                                                <Setter Target="Presenter.(ContentPresenter.Foreground).(SolidColorBrush.Color)" Value="{ThemeResource TextOnAccentFillColorPrimary}" />
+                                                                            </VisualState.Setters>
+                                                                        </VisualState>
+                                                                        <VisualState x:Name="Unchecked" />
+                                                                        <VisualState x:Name="Indeterminate" />
+                                                                        <VisualStateGroup.Transitions>
+                                                                            <VisualTransition
+                                                                                GeneratedDuration="0:0:0.4"
+                                                                                GeneratedEasingFunction="{StaticResource Ease}"
+                                                                                From="*"
+                                                                                To="Unchecked" />
+                                                                            <VisualTransition
+                                                                                GeneratedDuration="0:0:0.4"
+                                                                                GeneratedEasingFunction="{StaticResource Ease}"
+                                                                                From="*"
+                                                                                To="Checked" />
+                                                                        </VisualStateGroup.Transitions>
+                                                                    </VisualStateGroup>
+                                                                </VisualStateManager.VisualStateGroups>
+                                                            </ContentPresenter>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Panel.Resources>
 
-                                        <controls:UXRadioButton
-                                            x:Name="UseActualFont"
-                                            x:Uid="RbUseActualFont"
-                                            Checked="UseActualFont_Checked"
-                                            GroupName="FontList"
-                                            d:Content="{core:Localizer Key=RbUseActualFont/Content}" />
-                                        <controls:UXRadioButton
-                                            x:Name="UseSystemFont"
-                                            x:Uid="RbUseSystemFont"
-                                            Checked="UseSystemFont_Checked"
-                                            GroupName="FontList"
-                                            d:Content="{core:Localizer Key=RbUseSystemFont/Content}" />
+                                        <Grid>
+                                            <muxc:RadioButtons
+                                                x:Name="FontTypeRadios"
+                                                HorizontalAlignment="Left"
+                                                MaxColumns="2"
+                                                SelectionChanged="FontTypeRadios_SelectionChanged">
+                                                <controls:SelectorVisualElement.Element>
+                                                    <controls:SelectorVisualElement
+                                                        Fill="{ThemeResource SelectorHighlightBrush}"
+                                                        OffsetTransition="{StaticResource DefaultSelectorTransition}"
+                                                        SizeTransition="{StaticResource DefaultSelectorTransition}"
+                                                        VisualCornerRadius="4 4" />
+                                                </controls:SelectorVisualElement.Element>
+                                                <RadioButton x:Uid="RbUseActualFont" />
+                                                <RadioButton x:Uid="RbUseSystemFont" />
+                                            </muxc:RadioButtons>
+                                        </Grid>
+
 
                                         <ContentPresenter
-                                            Margin="0 8 0 4"
+                                            Margin="0 12 0 8"
                                             Content="Change the font size"
                                             Style="{StaticResource DescriptionContentStyle}"
                                             d:Content="{core:Localizer Key=SettingsFontImportDescription/Text}" />
 
-                                        <controls:UXComboBox ItemsSource="{x:Bind _listSizeNames}" SelectedIndex="{Binding Settings.FontListFontSizeIndex, Mode=TwoWay}" />
+                                        <muxc:RadioButtons
+                                            x:Name="FontListFontSizeRadios"
+                                            HorizontalAlignment="Left"
+                                            MaxColumns="3"
+                                            SelectedIndex="{Binding Settings.FontListFontSizeIndex, Mode=TwoWay}">
+                                            <controls:SelectorVisualElement.Element>
+                                                <controls:SelectorVisualElement
+                                                    Fill="{ThemeResource SelectorHighlightBrush}"
+                                                    OffsetTransition="{StaticResource DefaultSelectorTransition}"
+                                                    SizeTransition="{StaticResource DefaultSelectorTransition}"
+                                                    VisualCornerRadius="4 4" />
+                                            </controls:SelectorVisualElement.Element>
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeNormal}" />
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeLarge}" />
+                                            <RadioButton Content="{core:Localizer Key=FontListSizeLarger}" />
+                                        </muxc:RadioButtons>
 
                                         <ListView
                                             x:Name="LstFontFamily"
@@ -406,7 +473,6 @@
 
                                         <TextBlock x:Uid="SettingsFontListPreviewHint" Style="{StaticResource HintStyle}" />
                                     </StackPanel>
-
                                 </controls:SettingsPresenter>
 
                                 <controls:SettingsPresenter Title="{core:Localizer Key=SettingsEnablePaneHeader/Text}" Description="{core:Localizer Key=SettingsEnablePaneDescription/Text}">

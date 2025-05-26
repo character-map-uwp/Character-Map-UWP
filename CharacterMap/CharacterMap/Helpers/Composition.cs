@@ -749,7 +749,7 @@ public static class Composition
 
     public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(this Compositor compositor, Windows.UI.Xaml.Media.Animation.KeySpline spline)
     {
-        return compositor.CreateCubicBezierEasingFunction(spline);
+        return compositor.CreateCubicBezierEasingFunction(spline.ControlPoint1.ToVector2(), spline.ControlPoint2.ToVector2());
     }
 
     public static CubicBezierEasingFunction CreateCubicBezierEasingFunction(this Compositor compositor, CubicBezierPoints points)
@@ -947,6 +947,14 @@ public static class Composition
         foreach (var a in animations)
             group.Add(a);
         return group;
+    }
+
+
+    public static bool HasImplicitAnimation<T>(this T c, string path) where T: CompositionObject
+    {
+        return c.ImplicitAnimations != null 
+            && c.ImplicitAnimations.TryGetValue(path, out ICompositionAnimationBase v)
+            && v != null;
     }
 
     public static T SetImplicitAnimation<T>(this T composition, string path, ICompositionAnimationBase animation)

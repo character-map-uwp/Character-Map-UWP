@@ -2,6 +2,7 @@
 using Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Views;
 
@@ -165,15 +166,9 @@ public sealed partial class SettingsView : ViewBase
         Settings.ExportNamingScheme = (ExportNamingScheme)((RadioButtons)sender).SelectedIndex;
     }
 
-    private void UseSystemFont_Checked(object sender, RoutedEventArgs e)
+    private void FontTypeRadios_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        Settings.UseFontForPreview = false;
-        ViewModel.ResetFontPreview();
-    }
-
-    private void UseActualFont_Checked(object sender, RoutedEventArgs e)
-    {
-        Settings.UseFontForPreview = true;
+        Settings.UseFontForPreview = FontTypeRadios.SelectedIndex >= 1 ? false : true;
         ViewModel.ResetFontPreview();
     }
 
@@ -250,10 +245,7 @@ public sealed partial class SettingsView : ViewBase
             //    and can't be set earlier due to x:Load
             if (panel == UserInterfacePanel)
             {
-                if (Settings.UseFontForPreview)
-                    UseActualFont.IsChecked = true;
-                else
-                    UseSystemFont.IsChecked = true;
+                FontTypeRadios.SelectedIndex = Settings.UseFontForPreview ? 0 : 1;
             }
             else if (panel == UserInterfaceAdvancedPanel)
             {

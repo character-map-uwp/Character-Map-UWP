@@ -1070,6 +1070,7 @@
                                     helpers:FluentAnimation.PointerOver="FluentContentPresenter"
                                     helpers:FluentAnimation.PointerOverOffset="-2"
                                     helpers:FluentAnimation.UsePointerOver="True"
+                                    AutomationProperties.Name="{core:Localizer Key='SettingsHeader/Text'}"
                                     Click="BtnSettings_OnClick"
                                     Foreground="{ThemeResource AppBarItemForegroundThemeBrush}"
                                     Label="{core:Localizer Key='SettingsHeader/Text'}"

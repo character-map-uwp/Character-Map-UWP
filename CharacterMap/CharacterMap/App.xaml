@@ -61,6 +61,8 @@
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
 
+                    <StaticResource x:Key="SelectorHighlightBrush" ResourceKey="AccentTextFillColorPrimaryBrush" />
+
                     <SolidColorBrush
                         x:Key="ExportBorderBrush"
                         Opacity="0.5"

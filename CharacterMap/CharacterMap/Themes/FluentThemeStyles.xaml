@@ -28,6 +28,8 @@
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 
+    <TextTrimming x:Key="MenuFlyoutItemTextTrimming">CharacterEllipsis</TextTrimming>
+
     <x:Boolean x:Key="SupportsFluentAnimation">True</x:Boolean>
     <x:Boolean x:Key="SupportsShadows">False</x:Boolean>
     <x:Boolean x:Key="SupportsTabs">True</x:Boolean>
@@ -40,6 +42,15 @@
     <CornerRadius x:Key="ButtonCornerRadius">100</CornerRadius>
     <CornerRadius x:Key="ControlCornerRadius">6</CornerRadius>
 
+    <controls:CompositionTransition
+        x:Key="DefaultSelectorTransition"
+        KeySpline="0.8, 0, 0.2, 1"
+        Duration="0:0:0.4" />
+
+    <controls:CompositionTransition
+        x:Key="QuickCompositionTransition"
+        KeySpline="0.395, 0.56, 0.06, 0.95"
+        Duration="0:0:0.15" />
 
 
     <FontFamily x:Key="ContentControlThemeFontFamily">Segoe UI Variable Text, XamlAutoFontFamily</FontFamily>
@@ -482,12 +493,13 @@
                         </VisualStateManager.VisualStateGroups>
                         <muxc:ItemsRepeater x:Name="InnerRepeater">
                             <muxc:ItemsRepeater.Layout>
-                                <primitives:ColumnMajorUniformToLargestGridLayout
-                                    ColumnSpacing="{TemplateBinding Tag}"
+                                <primitives:ColumnMajorUniformToLargestGridLayout 
+                                    ColumnSpacing="{TemplateBinding Tag}" 
                                     RowSpacing="{ThemeResource RadioButtonsRowSpacing}"
                                     MaxColumns="{Binding MaxColumns, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                             </muxc:ItemsRepeater.Layout>
                         </muxc:ItemsRepeater>
+                        <ContentPresenter Canvas.ZIndex="-1" Content="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=(controls:SelectorVisualElement.Element)}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
