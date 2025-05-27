@@ -763,7 +763,7 @@
     <Style x:Name="RadioButtonsButtonStyle" TargetType="RadioButton">
         <Setter Property="MinHeight" Value="36" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
-        <Setter Property="core:Properties.Color" Value="White" />
+        <Setter Property="core:Properties.Color" Value="Black" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="RadioButton">
