@@ -114,16 +114,17 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
     m_canvas->Measure(size);
 
-    if (m_layout == nullptr || m_isStale)
+    if (m_textLayout == nullptr || m_isStale)
     {
         m_isStale = false;
 
-        if (m_layout != nullptr)
-            delete m_layout;
+        if (m_textLayout != nullptr)
+            m_textLayout = nullptr;
 
         auto fontFace = FontFace;
 
         Platform::String^ text = Text;
+        textLength = text->Length();
 
         auto fontSize = 8 > FontSize ? 8 : FontSize;
 
@@ -177,31 +178,42 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
             }
         }
 
-        /* Prepare typography */
-        auto typography = ref new CanvasTypography();
-        if (Typography->Feature != CanvasTypographyFeatureName::None)
-            typography->AddFeature(Typography->Feature, 1);
 
-        ComPtr<IDWriteTextLayout4> dlayout;
         /* CREATE LAYOUT */
         /* calculate dimensions */
         auto device = m_canvas->Device;
-        float width = IsTextWrappingEnabled ? size.Width : m;
-        float height = IsTextWrappingEnabled ? size.Height : m;
-        width = min(width, m);
-        height = min(height, m);
-
+        float lwidth = IsTextWrappingEnabled ? size.Width : m;
+        float lheight = IsTextWrappingEnabled ? size.Height : m;
+        lwidth = min(lwidth, m);
+        lheight = min(lheight, m);
 
         ComPtr<IDWriteTextLayout> textLayout;
-		NativeInterop::_Current->m_dwriteFactory->CreateTextLayout(
-			text->Data(),
-			text->Length(),
-			idFormat.Get(),
-			width,
-			height,
-			&textLayout);
+        ThrowIfFailed(
+            NativeInterop::_Current->m_dwriteFactory->CreateTextLayout(
+                text->Data(),
+                textLength,
+                idFormat.Get(),
+                lwidth,
+                lheight,
+                &textLayout));
 
-	
+       
+		// Assign OpenType features
+        if (Typography->Feature != CanvasTypographyFeatureName::None)
+        {
+			// Create a typography object
+            ComPtr<IDWriteTypography> typography;
+            ThrowIfFailed(NativeInterop::_Current->m_dwriteFactory->CreateTypography(&typography));
+
+            // Add the feature to the typography object
+            DWRITE_FONT_FEATURE f;
+            f.nameTag = static_cast<DWRITE_FONT_FEATURE_TAG>(Typography->Feature);
+            f.parameter = 1;
+            typography->AddFontFeature(f);
+
+			// Set typography on the text layout
+            textLayout->SetTypography(typography.Get(), DWRITE_TEXT_RANGE{ 0 , textLength });
+		}
 
         if (IsCharacterFitEnabled)
         {
@@ -209,29 +221,62 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 			textLayout->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
         }
 
+        // Calculate LayoutBounds
+        DWRITE_TEXT_METRICS1 dwriteMetrics;
+        ThrowIfFailed(textLayout->GetMetrics(&dwriteMetrics));
+        Rect rect { dwriteMetrics.left, dwriteMetrics.top, dwriteMetrics.width, dwriteMetrics.height };
+
+		// Correct for alternate reading directions
+        auto readingDirection = textLayout->GetReadingDirection();
+        if (readingDirection == DWRITE_READING_DIRECTION_RIGHT_TO_LEFT)
+        {
+            const float whitespace = dwriteMetrics.widthIncludingTrailingWhitespace - dwriteMetrics.width;
+            rect.X += whitespace;
+        }
+        else if (readingDirection == DWRITE_READING_DIRECTION_BOTTOM_TO_TOP)
+        {
+            const float whitespace = dwriteMetrics.heightIncludingTrailingWhitespace - dwriteMetrics.height;
+            rect.Y += whitespace;
+        }
+
+        layoutBounds = rect;
+
+		// Calculate DrawBounds
+        DWRITE_OVERHANG_METRICS overhang;
+        ThrowIfFailed(textLayout->GetOverhangMetrics(&overhang));
+
+        const float left = -overhang.left;
+        const float right = overhang.right + textLayout->GetMaxWidth();
+        const float width = right - left;
+
+        const float top = -overhang.top;
+        const float bottom = overhang.bottom + textLayout->GetMaxHeight();
+        const float height = bottom - top;
+
+        Rect draw = { left, top, width, height };
+        drawBounds = draw;
+
         /* Create and set properties */
         // TODO: See if we can do this without CanvasTextLayout?
-        auto layout = GetOrCreate<CanvasTextLayout>(device, textLayout.Get());
         
-        m_layout = layout;
+        m_textLayout = textLayout;
         m_render = true;
-        
+
         m_canvas->Invalidate();
     }
 
-    
 
-    auto minh = min(m_layout->DrawBounds.Top, m_layout->LayoutBounds.Top);
-    auto maxh = max(m_layout->DrawBounds.Bottom, m_layout->LayoutBounds.Bottom);
+    auto minh = min(drawBounds.Top, layoutBounds.Top);
+    auto maxh = max(drawBounds.Bottom, layoutBounds.Bottom);
 
-    auto minw = min(m_layout->DrawBounds.Left, m_layout->LayoutBounds.Left);
-    auto maxw = max(m_layout->DrawBounds.Right, m_layout->LayoutBounds.Right);
+    auto minw = min(drawBounds.Left, layoutBounds.Left);
+    auto maxw = max(drawBounds.Right, layoutBounds.Right);
 
     auto targetsize = Size(min(m, ceil(maxw - minw)), min(m, ceil(maxh - minh)));
 
-    if (IsOverwriteCompensationEnabled && m_layout->DrawBounds.Left < 0)
+    if (IsOverwriteCompensationEnabled && drawBounds.Left < 0)
     {
-        targetsize = Size(targetsize.Width - m_layout->DrawBounds.Left, targetsize.Height);
+        targetsize = Size(targetsize.Width - drawBounds.Left, targetsize.Height);
     }
 
     if (IsCharacterFitEnabled)
@@ -239,11 +284,11 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
         if (targetsize.Width < size.Width || targetsize.Height < size.Height)
         {
             m_minWidth = FontSize / 2.2;
-            auto dHeight = m_layout->DrawBounds.Height;
-            auto dWidth = max(m_minWidth, m_layout->DrawBounds.Width);
+            auto dHeight = drawBounds.Height;
+            auto dWidth = max(m_minWidth, drawBounds.Width);
 
-            auto lHeight = m_layout->LayoutBounds.Height;
-            auto lWidth = max(m_minWidth, m_layout->LayoutBounds.Width);
+            auto lHeight = layoutBounds.Height;
+            auto lWidth = max(m_minWidth, layoutBounds.Width);
 
             targetsize = Size(dWidth, dHeight);
 
@@ -265,15 +310,15 @@ Windows::Foundation::Size CharacterMapCX::Controls::DirectText::MeasureOverride(
 
 void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
 {
-    if (m_layout == nullptr)
+    if (m_textLayout == nullptr)
         return;
 
     // Useful for debugging to see which textboxes are DX
   /*  if (Windows::UI::Xaml::Application::Current->DebugSettings->IsTextPerformanceVisualizationEnabled)
         args->DrawingSession->Clear(Windows::UI::Colors::DarkRed);*/
 
-    auto db = m_layout->DrawBounds;
-    auto lb = m_layout->LayoutBounds;
+    auto db = drawBounds;
+    auto lb = layoutBounds;
     auto left = -min(db.Left, lb.Left);
     auto top = -min(db.Top, lb.Top);
 
@@ -304,20 +349,36 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         args->DrawingSession->DrawRectangle(left + lb.Left, top + lb.Top, lb.Width, lb.Height, Windows::UI::Colors::DarkGreen);
         args->DrawingSession->DrawRectangle(left + db.Left, top + db.Top, db.Width, db.Height, Windows::UI::Colors::DarkBlue);
         
-        auto metrics = this->FontFace->GetMetrics();
-        double capRatio = (double)metrics.capHeight / (double)metrics.designUnitsPerEm;
-        auto capHeight = FontSize * capRatio;
+        // Fix later - removed Win2D TextLayout
+        // 
+        //auto metrics = this->FontFace->GetMetrics();
+        //double capRatio = (double)metrics.capHeight / (double)metrics.designUnitsPerEm;
+        //auto capHeight = FontSize * capRatio;
 
-        auto base = m_layout->LineMetrics[0].Baseline + lb.Top + top;
-        auto cap = base - capHeight;
-        args->DrawingSession->DrawLine(left + db.Left, base, left + db.Right, base, Windows::UI::Colors::DarkGoldenrod);
-        args->DrawingSession->DrawLine(left + db.Left, cap, left + db.Right, cap, Windows::UI::Colors::DarkMagenta);
+        //auto base = m_layout->LineMetrics[0].Baseline + lb.Top + top;
+        //auto cap = base - capHeight;
+        //args->DrawingSession->DrawLine(left + db.Left, base, left + db.Right, base, Windows::UI::Colors::DarkGoldenrod);
+        //args->DrawingSession->DrawLine(left + db.Left, cap, left + db.Right, cap, Windows::UI::Colors::DarkMagenta);
+
+        //// --- Draw a green line along the baseline ---
+        //if (m_layout->LineMetrics != nullptr && m_layout->LineMetrics->Length > 0)
+        //{
+        //    // Baseline is relative to the layout bounds
+        //    float baseline = m_layout->LineMetrics[0].Baseline + lb.Top + top;
+        //    args->DrawingSession->DrawLine(
+        //        left + db.Left, baseline,
+        //        left + db.Right, baseline,
+        //        Windows::UI::Colors::HotPink
+        //    );
+        //}
     }
 
-    if (IsOverwriteCompensationEnabled && !IsCharacterFitEnabled && (m_layout->DrawBounds.Left < 0 || m_layout->DrawBounds.Top < 0))
+   
+
+    if (IsOverwriteCompensationEnabled && !IsCharacterFitEnabled && (db.Left < 0 || db.Top < 0))
     {
-        auto b = m_layout->DrawBounds.Left;
-        auto t = m_layout->DrawBounds.Top;
+        auto b = db.Left;
+        auto t = db.Top;
 
         m_canvas->Margin = ThicknessHelper::FromLengths(b, t, 0, 0);
         left -= b;
@@ -348,15 +409,36 @@ void DirectText::OnDraw(CanvasControl^ sender, CanvasDrawEventArgs^ args)
         // Note: something is wrong here causing the right hand side to clip slightly.
         //       currently we use 4 as a magic number to avoid this in 90% of cases.
         //       need to figure out what's up at some point.
-        left += m_canvas->ActualWidth - m_layout->DrawBounds.Width - 4;
+        left += m_canvas->ActualWidth - db.Width - 4;
     }
 
    /* auto fam = m_layout->DefaultFontFamily;
     auto fam2 = m_layout->GetFontFamily(0);
     auto loc = m_layout->DefaultLocaleName;*/
-    m_layout->SetLocaleName(0, 1, L"en-us");
+    m_textLayout->SetLocaleName(L"en-us", { 0,  textLength });
 
-    args->DrawingSession->DrawTextLayout(m_layout, float2(left, top), ((SolidColorBrush^)this->Foreground)->Color);
+    // Make sure we have a colour brush
+    ComPtr<ID2D1DeviceContext1> ctx = GetWrappedResource<ID2D1DeviceContext1>(args->DrawingSession);
+    if (m_brush == nullptr)
+    {
+		ctx->CreateSolidColorBrush(ToD2DColor(((SolidColorBrush^)this->Foreground)->Color), &m_brush);
+    }
+    else
+    {
+        m_brush->SetColor(ToD2DColor(((SolidColorBrush^)this->Foreground)->Color));
+	}
+
+    D2D1_DRAW_TEXT_OPTIONS ops = D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_NONE;
+    if (IsColorFontEnabled)
+        ops = D2D1_DRAW_TEXT_OPTIONS::D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT;
+
+    // Draw it
+    ctx->DrawTextLayout(
+        { left, top },
+        m_textLayout.Get(),
+        m_brush.Get(),
+        ops
+    );
 
     m_render = false;
 }

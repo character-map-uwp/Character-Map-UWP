@@ -11,6 +11,7 @@
 
 
 using namespace Platform;
+using namespace Windows::Foundation;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Data;
@@ -167,12 +168,19 @@ namespace CharacterMapCX
 			static DependencyProperty^ _IsCharacterFitEnabledProperty;
 
 			Windows::Foundation::EventRegistrationToken m_drawToken;
+
+			ComPtr<ID2D1SolidColorBrush> m_brush;
+			ComPtr<IDWriteTextLayout> m_textLayout;
 			CanvasControl^ m_canvas;
-			CanvasTextLayout^ m_layout;
 			bool m_isStale;
 			bool m_render;
 			double m_minWidth = 1.0;
 			double m_targetScale = 1.0;
+			UINT32 textLength = 0;
+
+			Rect drawBounds;
+			Rect layoutBounds;
+
 
 			void OnPropChanged(DependencyObject^ d, DependencyProperty^ p);
 
