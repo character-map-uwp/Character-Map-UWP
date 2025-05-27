@@ -51,7 +51,7 @@
                 Padding="5"
                 VerticalAlignment="Center"
                 FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
-                FontSize="12"
+                FontSize="{ThemeResource FontListFontSize}"
                 Text="{x:Bind Name}"
                 TextAlignment="Center"
                 TextTrimming="CharacterEllipsis"
@@ -101,7 +101,7 @@
         <Grid
             Name="TemplateContent"
             ColumnSpacing="12"
-            Padding="12 4"
+            Padding="12 4 12 6"
             Background="Transparent">
             <!--
                 ToolTipService.ToolTip="{x:Bind Name}"
@@ -114,8 +114,9 @@
                 Padding="5"
                 VerticalAlignment="Center"
                 FontFamily="{x:Bind core:Converters.GetPreviewFontSource(DefaultVariant)}"
-                FontSize="{Binding ElementName=LstFontFamily, Path=FontSize}"
+                FontSize="{Binding ElementName=LstFontFamily, Path=FontSize, TargetNullValue={ThemeResource FontListFontSize}, FallbackValue={ThemeResource FontListFontSize}}"
                 Text="{x:Bind Name}"
+                TextLineBounds="Tight"
                 TextTrimming="CharacterEllipsis"
                 TextWrapping="NoWrap" />
             <TextBlock

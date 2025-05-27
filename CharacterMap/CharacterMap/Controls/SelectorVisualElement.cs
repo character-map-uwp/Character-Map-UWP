@@ -16,7 +16,7 @@ public partial class CompositionTransition : DependencyObject
 
     public CompositionEasingFunction GetEase(Compositor c)
     {
-        return Composition.GetCached<CompositionEasingFunction>(c, $"ScEa{Duration}{KeySpline}", () =>
+        return Composition.GetCached<CompositionEasingFunction>(c, $"__ctEa{KeySpline}", () =>
         {
             return c.CreateCubicBezierEasingFunction(KeySpline);
         });
@@ -171,8 +171,8 @@ public partial class SelectorVisualElement : FrameworkElement
 
         // 1: Get the target element's position relative to the container
         var r = target.GetBoundingRect(container).Value;
-        Vector3 position = new Vector3((float)r.Left - (float)VisualInset.Left,
-            (float)r.Top - (float)VisualInset.Top, 0);
+        Vector3 position = new Vector3((float)r.Left + (float)VisualInset.Left,
+            (float)r.Top + (float)VisualInset.Top, 0);
 
         position += new Vector3(VisualOffset.ToVector2(), 0);
 

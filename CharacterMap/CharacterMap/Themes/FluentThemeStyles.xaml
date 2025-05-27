@@ -96,6 +96,18 @@
 
     <!--  MISC CONTROLS  -->
 
+    <DataTemplate x:Name="PointerSelectorVisualTemplate">
+        <controls:SelectorVisualElement
+            Fill="{ThemeResource ListViewItemBackgroundPointerOver}"
+            OffsetTransition="{StaticResource QuickCompositionTransition}"
+            SizeTransition="{StaticResource QuickCompositionTransition}"
+            VisualCornerRadius="4 4" />
+    </DataTemplate>
+
+    <Style TargetType="controls:ExtendedListView">
+        <Setter Property="SelectorTemplate" Value="{StaticResource PointerSelectorVisualTemplate}" />
+    </Style>
+
     <Style TargetType="controls:PreviewTip">
         <Setter Property="Foreground" Value="{ThemeResource ToolTipForegroundBrush}" />
         <Setter Property="Background" Value="{ThemeResource ToolTipBackgroundBrush}" />
@@ -2328,7 +2340,7 @@
                                     <Border.RenderTransform>
                                         <CompositeTransform x:Name="PopupTransform" />
                                     </Border.RenderTransform>
-                                    <ListView
+                                    <controls:ExtendedListView
                                         x:Name="SuggestionsList"
                                         MaxHeight="{TemplateBinding MaxSuggestionListHeight}"
                                         Margin="{ThemeResource AutoSuggestListPadding}"
@@ -2340,7 +2352,7 @@
                                         ItemContainerTransitions="{StaticResource NoTransitions}"
                                         ItemTemplate="{TemplateBinding ItemTemplate}"
                                         ItemTemplateSelector="{TemplateBinding ItemTemplateSelector}">
-                                        <ListView.GroupStyle>
+                                        <controls:ExtendedListView.GroupStyle>
                                             <GroupStyle HidesIfEmpty="True">
                                                 <GroupStyle.HeaderContainerStyle>
                                                     <Style TargetType="ListViewHeaderItem">
@@ -2365,8 +2377,8 @@
                                                     </Style>
                                                 </GroupStyle.HeaderContainerStyle>
                                             </GroupStyle>
-                                        </ListView.GroupStyle>
-                                    </ListView>
+                                        </controls:ExtendedListView.GroupStyle>
+                                    </controls:ExtendedListView>
                                 </Border>
 
                             </Border>

@@ -361,11 +361,11 @@
                                 </VisualStateGroup>
                                 <VisualStateGroup x:Name="CheckStates">
                                     <VisualState x:Name="Checked">
-                                        <Storyboard>
+                                        <!--<Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ContentPresenter" Storyboard.TargetProperty="Foreground">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource HyperlinkButtonForeground}" />
                                             </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
+                                        </Storyboard>-->
                                     </VisualState>
                                     <VisualState x:Name="Unchecked" />
                                     <VisualState x:Name="Indeterminate" />
@@ -532,7 +532,16 @@
                             <muxc:RadioButtons
                                 x:Name="RadioButtons"
                                 Margin="-8 -2 0 0"
-                                MaxColumns="2">
+                                MaxColumns="2"
+                                SelectedIndex="0">
+                                <controls:SelectorVisualElement.Element>
+                                    <controls:SelectorVisualElement
+                                        Fill="{ThemeResource SelectorHighlightBrush}"
+                                        OffsetTransition="{StaticResource DefaultSelectorTransition}"
+                                        SizeTransition="{StaticResource DefaultSelectorTransition}"
+                                        VisualCornerRadius="4 4"
+                                        VisualInset="0 0 2 2" />
+                                </controls:SelectorVisualElement.Element>
                                 <RadioButton
                                     x:Uid="LayoutGridToggle"
                                     core:Properties.ToolTipStyleKey="DefaultThemeToolTipStyle"

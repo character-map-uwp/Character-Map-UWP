@@ -32,6 +32,7 @@
                     <converters:ZoomBackgroundConverter x:Key="ZoomBackgroundConverter" />
                     <converters:CasingConverter x:Key="CasingConverter" />
                     <converters:VisibilityConverter x:Key="VisConverter" />
+                    <converters:IsNullConverter x:Key="NullConverter" />
 
                     <FontFamily x:Key="BLANK">"ms-appx:///Assets/AdobeBlank.otf"</FontFamily>
 
@@ -61,7 +62,7 @@
                     <SolidColorBrush x:Key="ListViewItemRevealBackgroundSelectedPressed" Color="Transparent" />
                     <SolidColorBrush x:Key="ListViewItemRevealPlaceholderBackground" Color="Transparent" />
 
-                    <StaticResource x:Key="SelectorHighlightBrush" ResourceKey="AccentTextFillColorPrimaryBrush" />
+                    <StaticResource x:Key="SelectorHighlightBrush" ResourceKey="SliderTrackValueFill" />
 
                     <SolidColorBrush
                         x:Key="ExportBorderBrush"

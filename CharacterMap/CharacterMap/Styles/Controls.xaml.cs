@@ -1,5 +1,8 @@
-﻿using Windows.UI.Composition;
+﻿using CharacterMap.Controls;
+using Windows.UI.Composition;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace CharacterMap.Styles;
 
@@ -46,4 +49,14 @@ public sealed partial class Controls : ResourceDictionary
             }
         }
     }));
+
+    private void ContentPresenter_Loaded(object sender, RoutedEventArgs e)
+    {
+        if (sender is FrameworkElement f 
+            && f.GetFirstAncestorOfType<ListViewBaseHeaderItem>() is { } hi
+            && f.GetFirstAncestorOfType<ExtendedListView>() is { } lv)
+        {
+            lv.RegisterHeader(hi);
+        }
+    }
 }
